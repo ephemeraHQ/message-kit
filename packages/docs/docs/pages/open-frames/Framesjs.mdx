@@ -1,0 +1,45 @@
+## Frames.js
+
+Learn more about the integration of XMTP payloads within FrameJS
+
+**Metadata**
+
+```jsx
+const acceptedProtocols: ClientProtocolId[] = [
+  {
+    id: "xmtp",
+    version: "vNext",
+  },
+  {
+    id: "farcaster",
+    version: "vNext",
+  },
+];
+```
+
+**Validate incoming messages**:
+
+```jsx
+let fid: number | undefined;
+let walletAddress: string | undefined;
+
+import {
+  isXmtpFrameRequest,
+  getXmtpFrameMessage,
+} from "@coinbase/onchainkit/xmtp";
+import { NextResponse } from "next/server";
+import type { FrameRequest } from "@coinbase/onchainkit";
+
+async function getResponse(req: any): Promise<NextResponse> {
+  const body: FrameRequest = await req.json();
+  if (isXmtpFrameRequest(body)) {
+    const { isValid, message } = await getXmtpFrameMessage(body);
+    walletAddress = frameMessage?.verifiedWalletAddress;
+  } else {
+    // ...
+  }
+}
+```
+
+- [Frames.js](https://framesjs.org/reference/js/xmtp): Official Framesjs Documentation.
+- [Quickstart](https://github.com/framesjs/frames.js/tree/main/templates/next-starter-with-examples/): OnchainKit quickstart that integrates XMTP.

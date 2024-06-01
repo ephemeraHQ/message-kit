@@ -1,0 +1,27 @@
+# Reactions
+
+With XMTP, reactions are represented as objects with the following keys:
+
+```tsx
+const reaction = {
+  reference: message.id, //ID of the message being reacted to
+  schema: "unicode", //Schema of the reaction (Unicode, shortcode, or custom)
+  action: action, //Action of the reaction (added or removed)
+  content: emoji, //String representation of the reaction (smile, for example) to be interpreted by clients
+  receiver: address, //Address of the user who received the reaction
+};
+```
+
+### Receive a reaction
+
+Now that you understand how reactions are represented, you can receive them in your app. Here's an example of how you can receive a reaction in your app:
+
+```tsx
+const { content, contentType, senderAddress } = context.message;
+const { typeId } = contentType;
+
+if (typeId == "reaction") {
+  const { action, content: emoji } = content;
+  // Use reaction...
+}
+```

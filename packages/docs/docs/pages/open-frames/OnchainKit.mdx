@@ -1,0 +1,50 @@
+# OnChainKit
+
+Discover how OnchainKit seamlessly incorporates XMTP payloads
+
+**Metadata:**
+
+```jsx
+const frameMetadata = getFrameMetadata({
+  /**
+   * Frame metadata like Image, Buttons, Input, etc.
+   */
+  isOpenFrame: true,
+  accepts: { xmtp: "vNext" },
+});
+
+export const metadata: Metadata = {
+  /**
+   * ...other metadata
+   */
+  other: {
+    ...frameMetadata,
+  },
+};
+```
+
+**Validate incoming messages**
+
+```jsx
+import {
+  isXmtpFrameRequest,
+  getXmtpFrameMessage,
+} from "@coinbase/onchainkit/xmtp";
+/* ... */
+async function getResponse(req: any): Promise<NextResponse> {
+  const body: FrameRequest = await req.json();
+  if (isXmtpFrameRequest(body)) {
+    const { isValid, message } = await getXmtpFrameMessage(body);
+    // ... do something with the message if isValid is true
+    if (isValid) {
+      const { verifiedWalletAddress } = message;
+      // ... do something with the verifiedWalletAddress
+    }
+  } else {
+    // ...
+  }
+}
+```
+
+- [OnChainKit](https://onchainkit.xyz/xmtp/introduction): Official OnchainKit documentation.
+- [Quickstart](https://github.com/daria-github/a-frame-in-100-lines/): OnchainKit quickstart that integrates XMTP.

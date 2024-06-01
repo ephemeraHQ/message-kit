@@ -1,0 +1,38 @@
+### Cron for daily subscriptions
+
+Create a cron that sends daily messages to your **redis database** subscribers. This bot can run daily or according to your logic:
+
+### Install dependency
+
+```bash
+yarn add node-cron
+```
+
+### Usage
+
+Run a node cron daily to send message to users
+
+```jsx [index.ts]
+cron.schedule(
+  "0 0 * * *", //Daily
+  async () => {
+    const redisClient = await getRedisClient();
+    const keys = await redisClient.keys("*");
+    console.log(`Running daily task. ${keys.length} subscribers.`);
+    for (const address of keys) {
+      const subscriptionStatus = await redisClient.get(address);
+      if (subscriptionStatus === "subscribed") {
+        console.log(`Sending daily update to ${address}`);
+        const client = await xmtpClient();
+        const conversation =
+          await client?.conversations.newConversation(address);
+        await conversation.send("Here is your daily update!");
+      }
+    }
+  },
+  {
+    scheduled: true,
+    timezone: "UTC",
+  },
+);
+```

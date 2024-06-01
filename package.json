@@ -1,0 +1,37 @@
+{
+  "name": "botkit-monorepo",
+  "version": "0.0.0",
+  "private": true,
+  "workspaces": [
+    "examples/*",
+    "packages/*",
+    "shared/*"
+  ],
+  "scripts": {
+    "build": "turbo run build --filter='./packages/*'",
+    "clean": "turbo run clean && rm -rf node_modules && rm -rf .turbo && yarn cache clean",
+    "format": "turbo run format",
+    "format:check": "turbo run format:check",
+    "publish": "yarn build && changeset publish",
+    "start:conversational": "turbo run start --filter='./examples/conversational'",
+    "start:gm": "turbo run start --filter='./examples/gm'",
+    "start:gpt": "turbo run start --filter='./examples/gpt'",
+    "start:group": "turbo run start --filter='./examples/group'",
+    "start:playground": "turbo run dev --filter='./packages/playground'",
+    "typecheck": "FORCE_COLOR=1 turbo run typecheck"
+  },
+  "dependencies": {
+    "@changesets/changelog-git": "^0.2.0",
+    "@changesets/cli": "^2.27.1",
+    "vocs": "1.0.0-alpha.52"
+  },
+  "devDependencies": {
+    "prettier": "^3.2.5",
+    "prettier-plugin-packagejson": "^2.5.0",
+    "turbo": "^1.13.3"
+  },
+  "packageManager": "yarn@4.1.1",
+  "engines": {
+    "node": ">=18"
+  }
+}

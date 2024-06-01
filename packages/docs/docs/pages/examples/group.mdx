@@ -1,0 +1,45 @@
+# Group Bot
+
+## Structure
+
+```
+bot-project/           # Your project's root directory.
+├── node_modules/
+├── index.ts           # Simple group bot. // [!code hl] // [!code focus]
+├── .gitignore
+├── package.json
+└── .env               # Environment variables
+```
+
+## Usage
+
+```jsx [index.ts]
+import "dotenv/config";
+import { run, HandlerContext } from "@xmtp/botkit";
+import { commands } from "./lib/commands.json";
+
+const newBotConfig = {
+  commands: commands,
+};
+
+// Main bot runner
+run(async (context: HandlerContext) => {
+  const { content, contentType, senderAddress } = context.message;
+  const { typeId } = contentType;
+
+  if (typeId == "reaction") {
+    const { action, content: emoji } = content;
+    // handle reactions
+  } else if (typeId == "reply") {
+    // handle replies
+  } else if (typeId == "text") {
+    if (content.startsWith("@bot")) {
+      // Handle direct messages to the bot
+    }else if (content.startsWith("/help")) {
+      // Handle help command
+    }
+  }
+}, newBotConfig);
+```
+
+- Check out the [repository](https://github.com/xmtp/botkit/tree/main/examples/group) for the full code.

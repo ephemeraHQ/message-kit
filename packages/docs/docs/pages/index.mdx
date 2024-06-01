@@ -1,0 +1,26 @@
+---
+layout: landing
+---
+
+import { HomePage } from "vocs/components";
+
+<HomePage.Root>
+  <HomePage.Logo />
+  <HomePage.Tagline>
+    Create group chat experiences, powered by [xmtp](https://xmtp.org).
+
+  </HomePage.Tagline>
+  <HomePage.InstallPackage
+    name="xmtp-bot"
+    type="init"
+  />
+  <HomePage.Description>
+    Create interactive bots that can be deployed on the xmtp network.
+  </HomePage.Description>
+  <HomePage.Buttons>
+    <HomePage.Button href="/installation" variant="accent">
+      Get started
+    </HomePage.Button>
+    <HomePage.Button href="https://github.com/xmtp">GitHub</HomePage.Button>
+  </HomePage.Buttons>
+</HomePage.Root>

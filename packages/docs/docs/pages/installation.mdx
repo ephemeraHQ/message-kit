@@ -1,0 +1,153 @@
+# Installation
+
+## CLI Quickstart
+
+You can use the `create-xmtp-bot` CLI tool, which simplifies the creation and configuration of new bots.
+
+:::code-group
+
+```bash [yarn]
+yarn create xmtp-bot
+```
+
+```bash [npm]
+npm create xmtp-bot
+```
+
+```bash [pnpm]
+pnpm create xmtp-bot
+```
+
+:::
+
+Please refer to its [documentation](https://github.com/xmtp/botkit/tree/main/create-xmtp-bot).
+
+## Manual Installation
+
+You can install Botkit in an existing project, or start from scratch, by installing Botkit as a dependency.
+
+::::steps
+
+### Create files
+
+Create a directory called `src`, and create 3 files:
+
+```
+bot-project/
+├── src/
+│   ├── index.ts          // [!code hl] // [!code focus]
+├── tsconfig.json         // [!code hl] // [!code focus]
+└── package.json          // [!code hl] // [!code focus]
+```
+
+### Add scripts to `package.json`
+
+After that, let's add some scripts to our `package.json` for `@xmtp/botkit`.
+
+```json [package.json]
+{
+  "name": "bot-project",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc -w",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "start": "node dist/index.js",
+    "start:watch": "nodemon dist/index.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@xmtp/botkit": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.7",
+    "nodemon": "^3.1.0",
+    "prettier": "^3.2.5",
+    "typescript": "^5.4.3"
+  }
+}
+```
+
+### Add typescript configuration
+
+Next, let's add a `tsconfig.json` file to the root of our project.
+
+```json [tsconfig.json]
+{
+  "include": ["src/**/*"],
+  "compilerOptions": {
+    "outDir": "./dist",
+    "allowJs": false,
+    "composite": false,
+    "declaration": true,
+    "declarationMap": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "lib": ["ESNext"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "strict": true,
+    "target": "ESNext"
+  }
+}
+```
+
+### Add code to `index.ts`
+
+```jsx [src/index.ts]
+import "dotenv/config";
+import { run, HandlerContext } from "@xmtp/botkit";
+
+run(async (context: HandlerContext) => {
+  // Get the message and the address from the sender
+  const { content, senderAddress } = context.message;
+
+  // To reply, just call `reply` on the HandlerContext.
+  await context.reply(`gm`);
+});
+
+```
+
+### Install
+
+```bash [Terminal]
+yarn install
+```
+
+### Set variables
+
+next, create a `.env` file in the root of your project with the following content:
+
+```bash [.env]
+KEY= # 0x... the private key of the bot (with the 0x prefix)
+XMTP_ENV=production # or `dev`
+```
+
+### Run
+
+Next, let's run the bot.
+
+```bash [Terminal]
+yarn build:watch
+yarn start:watch
+```
+
+Send a message to the bot, and will reply `gm`!
+
+### Next Steps
+
+You can learn more about how Bots are structured in [Structure](/structure).

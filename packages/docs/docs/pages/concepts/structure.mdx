@@ -1,0 +1,73 @@
+# Structure
+
+A general overview of the structure of a Bot:
+
+### File structure
+
+```
+bot-project/
+├── lib/               # Optional middleware files
+├── node_modules/
+├── commands.json      # Commands for your bot. // [!code hl] // [!code focus]
+├── index.ts           # Entry point for your bot. // [!code hl] // [!code focus]
+├── .gitignore
+├── package.json
+└── .env               # Environment variables
+```
+
+### `index.ts`
+
+The `index.ts` file is the entry point for your bot. It should contain something like the following:
+
+```jsx
+import "dotenv/config";
+import { run, HandlerContext } from "@xmtp/botkit";
+
+run(async (context: HandlerContext) => {
+  // Get the message and the address from the sender
+  const { content, senderAddress } = context.message;
+
+  // To reply, just call `reply` on the HandlerContext.
+  await context.reply(`gm`);
+});
+```
+
+### Message object
+
+The `message` object contains the following
+
+```tsx
+{
+  id: string, // The id of the message
+  content: string, // The content of the message
+  senderAddress: string, // The address of the sender
+  sent: Date, // The timestamp of the message
+  contentType: ContentTypeId; // The content type of the message
+}
+```
+
+### Commands
+
+Each bot can have a `commands.json` file that contains the commands that the bot can execute. The commands are defined as an array of objects with the following keys:
+
+```json
+export const commands = [
+  {
+    command: "/example",
+    description: "An example command.",
+  },
+  {
+    command: "/help",
+    description: "Get help with the bot.",
+  },
+];
+```
+
+### Environment variables
+
+Each bot should have an `.env` file that contains the following:
+
+```bash
+KEY= # 0x... the private key of the bot (with the 0x prefix)
+XMTP_ENV=production # or `dev`
+```

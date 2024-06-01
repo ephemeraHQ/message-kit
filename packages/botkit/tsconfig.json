@@ -1,0 +1,7 @@
+{
+  "include": ["src/**/*"],
+  "extends": "@xmtp/tsconfig/base.json",
+  "compilerOptions": {
+    "outDir": "./dist"
+  }
+}

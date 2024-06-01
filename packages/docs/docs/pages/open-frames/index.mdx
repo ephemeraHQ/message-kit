@@ -1,0 +1,26 @@
+# Overview
+
+**Metadata**
+
+In compliance with [Open Frames](https://github.com/open-frames/standard/blob/v0.0.1/README.md), use a meta tag in your frame's HTML to declare the client protocols your frame supports.
+
+```html
+<meta property="of:accepts:xmtp" content="vNext" />
+```
+
+**Validate incoming messages**
+
+Implement message validation using `@xmtp/frames-validator` to ensure the authenticity of incoming POST requests.
+
+```tsx
+import { validateFramesPost } from "@xmtp/frames-validator";
+
+export function handler(requestBody: any) {
+  if (requestBody.clientProtocol.startsWith("xmtp")) {
+    const { verifiedWalletAddress } = await validateFramesPost(requestBody);
+    // Handle verified XMTP payload
+  } else {
+    // Handle Farcaster or other protocol payloads
+  }
+}
+```

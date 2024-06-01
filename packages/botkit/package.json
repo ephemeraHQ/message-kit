@@ -1,0 +1,51 @@
+{
+  "name": "@xmtp/botkit",
+  "version": "2.3.1",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc -w",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "format": "yarn format:base -w .",
+    "format:base": "prettier --ignore-path ../../.gitignore",
+    "format:check": "yarn format:base -c .",
+    "start": "node dist/src/index.js",
+    "start:gm": "nodemon dist/src/gm.js",
+    "start:watch": "nodemon --exec node --loader ts-node/esm ./src/gm.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@xmtp/grpc-api-client": "^0.2.7",
+    "@xmtp/xmtp-js": "^11.5.1",
+    "dotenv": "^16.4.5",
+    "ethers": "^5.7.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.7",
+    "nodemon": "^3.1.0",
+    "prettier": "^3.2.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.3"
+  },
+  "packageManager": "yarn@4.1.1",
+  "engines": {
+    "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
+}
