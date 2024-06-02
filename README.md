@@ -8,17 +8,17 @@ To learn more about the contents of this repository, see this README and the REA
 
 ### Packages
 
-- [`botkit`](https://github.com/xmtp/botkit/blob/main/packages/botkit): A kit for quickly building bots on the XMTP network
-- [`create-xmtp-bot`](https://github.com/xmtp/botkit/blob/main/packages/create-xmtp-bot): A CLI for creating new XMTP bot projects
-- [`playground`](https://github.com/xmtp/botkit/blob/main/packages/playground): A visual playground for creating groups
-- [`docs`](https://github.com/xmtp/botkit/blob/main/packages/docs): Documentation for botkit
+- [`botkit`](./packages/botkit): A kit for quickly building bots on the XMTP network
+- [`create-xmtp-bot`](./packages/create-xmtp-bot): A CLI for creating new XMTP bot projects
+- [`playground`](./packages/playground): A visual playground for creating groups
+- [`docs`](./packages/docs): Documentation for botkit
 
 ### Examples
 
-- [`conversational`](https://github.com/xmtp/botkit/blob/main/examples/conversational): A simple, customizable, and powerful conversational framework
-- [`gm`](https://github.com/xmtp/botkit/blob/main/examples/gm): A simple bot that responds `gm` to any incoming messages
-- [`gpt`](https://github.com/xmtp/botkit/blob/main/examples/gpt): A bot that relays incoming messages to OpenAI's ChatGPT
-- [`group`](https://github.com/xmtp/botkit/tree/main/examples/group): Group bot example.
+- [`conversational`](./examples/conversational): A simple, customizable, and powerful conversational framework
+- [`gm`](./examples/gm): A simple bot that responds `gm` to any incoming messages
+- [`gpt`](./examples/gpt): A bot that relays incoming messages to OpenAI's ChatGPT
+- [`group`](./examples/group): Group bot example.
 
 See more examples in the [Awesome XMTP ⭐️](https://github.com/xmtp/awesome-xmtp) repo
 
