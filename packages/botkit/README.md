@@ -10,8 +10,6 @@ For a streamlined setup process, you can use the `create-xmtp-bot` CLI tool, whi
 npx init xmtp-bot
 ```
 
-Please refer to its [documentation](https://github.com/xmtp/botkit/tree/main/create-xmtp-bot).
-
 ## Overview
 
 Here's a basic example of the code with a bot that responds with a gm:
@@ -30,10 +28,10 @@ run(async (context: HandlerContext) => {
 
 ## Examples
 
-- [Gm](https://github.com/xmtp/botkit/tree/main/examples/gm): Get started with a simple gm bot.
-- [Conversational](https://github.com/xmtp/botkit/tree/main/examples/conversational): Drive retention with conversations and subscriptions with redisDb.
-- [GPT](https://github.com/xmtp/botkit/tree/main/examples/gpt): Relay messages through Open AI APIs.
-- [Group](https://github.com/xmtp/botkit/tree/main/examples/group): Group bot example.
+- [Gm](/examples/gm): Get started with a simple gm bot.
+- [Conversational](/examples/conversational): Drive retention with conversations and subscriptions with redisDb.
+- [GPT](/examples/gpt): Relay messages through Open AI APIs.
+- [Group](/examples/group): Group bot example.
 
 See more examples in the [Awesome XMTP ⭐️](https://github.com/xmtp/awesome-xmtp) repo
 
@@ -56,7 +54,7 @@ _Head to the [tutorial on how to deploy an XMTP bot](https://junk-range-possible
 To develop on this repo clone the repository containing the bot code:
 
 ```bash
-git clone https://github.com/xmtp/botkit
+git clone https://github.com/xmtp-labs/botkit
 cd botkit
 # copy env variables template
 cp .env.example .env

@@ -11,7 +11,7 @@ export default async function openaiCall(
   content: string,
   messages: any[] = [],
   senderAddress: string,
-  systemPrompt: string
+  systemPrompt: string,
 ) {
   // Check if the limit of 5 questions per day has been reached
   const today = new Date().toISOString().slice(0, 10); // Format: YYYY-MM-DD

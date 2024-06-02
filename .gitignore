@@ -52,6 +52,7 @@ dist
 .yarn/cache/**
 packages/debugger/.yarn/cache/**
 packages/playground/.yarn/cache/**
+packages/playground/build/**
 packages/docs/.yarn/cache/**
 
 # next.js

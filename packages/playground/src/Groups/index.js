@@ -412,13 +412,6 @@ export function FloatingInbox({
                       navigator.clipboard.writeText(address);
                       alert("Address copied to clipboard");
                     }}>
-                    <a
-                      href="https://github.com/xmtp/dev-inbox"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={styles.labelGithub}>
-                      View on GitHub
-                    </a>
                     {"Your address: " +
                       address?.substring(0, 7) +
                       "..." +
@@ -438,13 +431,6 @@ export function FloatingInbox({
                 <div style={styles.label} onClick={createNewWallet}>
                   or create new one
                 </div>
-                <a
-                  href="https://github.com/xmtp/dev-inbox"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={styles.labelGithub2}>
-                  View on GitHub
-                </a>
               </div>
             )}
             {isConnected && !isOnNetwork && (

@@ -20,7 +20,7 @@ async function start() {
       inMemoryCacheStep.set(senderAddress, 0);
       await redisClient.del(senderAddress);
       await context.reply(
-        "You are now unsubscribed. You will no longer receive updates!."
+        "You are now unsubscribed. You will no longer receive updates!.",
       );
     }
 
@@ -65,9 +65,8 @@ async function start() {
           console.log(`Sending daily update to ${address}`);
           // Logic to send daily updates to each subscriber
           const client = await xmtpClient();
-          const conversation = await client?.conversations.newConversation(
-            address
-          );
+          const conversation =
+            await client?.conversations.newConversation(address);
           await conversation.send("Here is your daily update!");
         }
       }
@@ -75,7 +74,7 @@ async function start() {
     {
       scheduled: true,
       timezone: "UTC",
-    }
+    },
   );
 }
 

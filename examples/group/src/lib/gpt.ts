@@ -10,7 +10,7 @@ let dailyQuestionCountPerUser: Map<string, Record<string, number>> = new Map();
 export default async function openaiCall(
   content: string,
   senderAddress: string,
-  systemPrompt: string
+  systemPrompt: string,
 ) {
   let messages = [
     {

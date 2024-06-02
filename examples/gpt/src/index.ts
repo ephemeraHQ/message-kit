@@ -22,14 +22,14 @@ run(async (context: HandlerContext) => {
       content,
       conversationHistory,
       message.senderAddress,
-      systemPrompt
+      systemPrompt,
     );
     conversationHistory = messages; // Update the conversation history
     await context.reply(reply);
   } catch (error) {
     // Handle the error, for example, by sending an error message to the user
     await context.reply(
-      "Failed to process your request. Please try again later."
+      "Failed to process your request. Please try again later.",
     );
   }
 });

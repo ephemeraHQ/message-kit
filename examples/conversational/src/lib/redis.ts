@@ -17,7 +17,7 @@ export const getRedisConfig = async (redisClient: any) => {
   const newBotConfig = {
     basePersistance: new redisPersistence.RedisPersistence(
       redisClient as any,
-      "xmtp:"
+      "xmtp:",
     ),
   };
   return newBotConfig;
