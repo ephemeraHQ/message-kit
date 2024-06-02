@@ -10,8 +10,6 @@ For a streamlined setup process, you can use the `create-xmtp-bot` CLI tool, whi
 npx init xmtp-bot
 ```
 
-Please refer to its [documentation](./create-xmtp-bot).
-
 ## Overview
 
 Here's a basic example of the code with a bot that responds with a gm:
@@ -30,10 +28,10 @@ run(async (context: HandlerContext) => {
 
 ## Examples
 
-- [Gm](./examples/gm): Get started with a simple gm bot.
-- [Conversational](./examples/conversational): Drive retention with conversations and subscriptions with redisDb.
-- [GPT](./examples/gpt): Relay messages through Open AI APIs.
-- [Group](./examples/group): Group bot example.
+- [Gm](/examples/gm): Get started with a simple gm bot.
+- [Conversational](/examples/conversational): Drive retention with conversations and subscriptions with redisDb.
+- [GPT](/examples/gpt): Relay messages through Open AI APIs.
+- [Group](/examples/group): Group bot example.
 
 See more examples in the [Awesome XMTP ⭐️](https://github.com/xmtp/awesome-xmtp) repo
 
