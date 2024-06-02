@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/static/css/main.e39d255c.css",
+    "main.js": "/static/js/main.818295f9.js",
+    "static/media/user_preferences_bindings_wasm_bg.wasm": "/static/media/user_preferences_bindings_wasm_bg.5b66183432e2ef252edc.wasm",
+    "static/media/DegenEmoji.svg": "/static/media/DegenEmoji.d97e49c7990641b7157d2fddec22f4ed.svg",
+    "index.html": "/index.html",
+    "main.e39d255c.css.map": "/static/css/main.e39d255c.css.map",
+    "main.818295f9.js.map": "/static/js/main.818295f9.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e39d255c.css",
+    "static/js/main.818295f9.js"
+  ]
+}
