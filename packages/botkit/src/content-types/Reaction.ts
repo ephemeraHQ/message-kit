@@ -20,7 +20,7 @@ export class ReactionCodec {
       type: ContentTypeReaction,
       parameters: {},
       content: new TextEncoder().encode(
-        JSON.stringify({ action, reference, schema, content, receiver })
+        JSON.stringify({ action, reference, schema, content, receiver }),
       ),
     };
   }

@@ -56,9 +56,8 @@ cron.schedule(
       if (subscriptionStatus === "subscribed") {
         console.log(`Sending daily update to ${address}`);
         const client = await xmtpClient();
-        const conversation = await client?.conversations.newConversation(
-          address
-        );
+        const conversation =
+          await client?.conversations.newConversation(address);
         await conversation.send("Here is your daily update!");
       }
     }
@@ -66,7 +65,7 @@ cron.schedule(
   {
     scheduled: true,
     timezone: "UTC",
-  }
+  },
 );
 ```
 
