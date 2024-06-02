@@ -12,11 +12,11 @@ export default defineConfig({
   socials: [
     {
       icon: "github",
-      link: "https://github.com/fabriguespe/botkit",
+      link: "https://github.com/xmtp-labs/botkit",
     },
   ],
   editLink: {
-    pattern: "https://github.com/fabriguespe/botkit/packages/docs/main/:path",
+    pattern: "https://github.com/xmtp-labs/botkit/packages/docs/main/:path",
     text: "Suggest changes to this page",
   },
   sidebar: [
@@ -30,11 +30,7 @@ export default defineConfig({
     },
     {
       text: "Structure",
-      link: "/concepts/structure",
-    },
-    {
-      text: "Deeplinks",
-      link: "/concepts/deeplinks",
+      link: "/structure",
     },
     {
       text: "Content Types",
@@ -44,6 +40,10 @@ export default defineConfig({
         { text: "Bot", link: "/content-types/bot" },
         { text: "Reaction", link: "/content-types/reaction" },
         { text: "Reply", link: "/content-types/reply" },
+        {
+          text: "Deeplinks",
+          link: "/content-types/deeplinks",
+        },
       ],
     },
     {

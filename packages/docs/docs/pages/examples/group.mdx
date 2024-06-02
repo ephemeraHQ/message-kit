@@ -5,9 +5,11 @@
 ```
 bot-project/           # Your project's root directory.
 ├── node_modules/
-├── index.ts           # Simple group bot. // [!code hl] // [!code focus]
+├── src/
+│   ├── index.ts         # Simple group bot. // [!code hl] // [!code focus]
 ├── .gitignore
 ├── package.json
+├── tsconfig.json         // [!code hl] // [!code focus]
 └── .env               # Environment variables
 ```
 
@@ -16,7 +18,7 @@ bot-project/           # Your project's root directory.
 ```jsx [index.ts]
 import "dotenv/config";
 import { run, HandlerContext } from "@xmtp/botkit";
-import { commands } from "./lib/commands.json";
+import { commands } from "./commands.ts";
 
 const newBotConfig = {
   commands: commands,

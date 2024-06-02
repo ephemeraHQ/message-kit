@@ -8,10 +8,12 @@ A general overview of the structure of a Bot:
 bot-project/
 ├── lib/               # Optional middleware files
 ├── node_modules/
-├── commands.json      # Commands for your bot. // [!code hl] // [!code focus]
-├── index.ts           # Entry point for your bot. // [!code hl] // [!code focus]
+├── src/
+│   ├── index.ts         # Entry point for your bot. // [!code hl] // [!code focus]
+│   ├── commands.ts      # Commands for your bot. // [!code hl] // [!code focus]
 ├── .gitignore
-├── package.json
+├── tsconfig.json         // [!code hl] // [!code focus]
+├── package.json         // [!code hl] // [!code focus]
 └── .env               # Environment variables
 ```
 
@@ -32,30 +34,12 @@ run(async (context: HandlerContext) => {
 });
 ```
 
-### Message object
-
-The `message` object contains the following
-
-```tsx
-{
-  id: string, // The id of the message
-  content: string, // The content of the message
-  senderAddress: string, // The address of the sender
-  sent: Date, // The timestamp of the message
-  contentType: ContentTypeId; // The content type of the message
-}
-```
-
 ### Commands
 
-Each bot can have a `commands.json` file that contains the commands that the bot can execute. The commands are defined as an array of objects with the following keys:
+Each bot can have a `commands.ts` file that contains the commands that the bot can execute. The commands are defined as an array of objects with the following keys:
 
 ```json
 export const commands = [
-  {
-    command: "/example",
-    description: "An example command.",
-  },
   {
     command: "/help",
     description: "Get help with the bot.",

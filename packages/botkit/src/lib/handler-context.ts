@@ -21,15 +21,30 @@ export default class HandlerContext {
     await this.message.conversation.send(content);
   }
   async grant_access(content: any) {
-    let acceptAccess = {
-      content: "grant_access",
-      sender: content.sender,
-      reference: content.reference,
-      metadata: { hello: "world" },
-    };
-    await this.message.conversation.send(acceptAccess, {
-      contentType: ContentTypeSilent,
-    });
+    await this.message.conversation.send(
+      {
+        content: "grant_access",
+        metadata: {
+          access: true,
+          sender: content.sender,
+          ...this.context,
+        },
+      },
+      {
+        contentType: ContentTypeSilent,
+      },
+    );
+  }
+  async ping() {
+    await this.message.conversation.send(
+      {
+        content: "ping",
+        metadata: { ...this.context },
+      },
+      {
+        contentType: ContentTypeSilent,
+      },
+    );
   }
   async reply(
     message: string,
@@ -39,7 +54,7 @@ export default class HandlerContext {
     let context = JSON.stringify(this.context);
     const botMessage = {
       sender: this.message.senderAddress,
-      receivers: receivers, // Assuming receiver is available in context
+      receivers: receivers,
       content: message,
       context,
       reference: messageId,

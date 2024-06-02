@@ -339,18 +339,6 @@ export const MessageItem = ({
       await conversation.send(reaction, {
         contentType: ContentTypeReaction,
       });
-    }
-    if (emojiData === "silent") {
-      const silent = {
-        //degen
-        reference: message.id,
-        content: emojiData,
-        metadata: { hello: "world" },
-      };
-
-      await conversation.send(silent, {
-        contentType: ContentTypeSilent,
-      });
     } else if (emojiData === "reply") {
       await conversation.send(content);
     } else if (emojiData === "pin") {

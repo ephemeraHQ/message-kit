@@ -2,7 +2,7 @@ import "dotenv/config";
 import { run, HandlerContext, xmtpClient } from "@xmtp/botkit";
 import { users } from "./lib/users.js";
 import { handler as baseHandler } from "./bots/baseframe.js";
-import { commands } from "./lib/commands.js";
+import { commands } from "./commands.js";
 import { handler as basebetHandler } from "./bots/basebet.js";
 import { handler as degenHandler } from "./bots/degen.js";
 import { handler as gptHandler } from "./bots/gpt.js";
@@ -15,9 +15,9 @@ const newBotConfig = {
     users: users,
   },
 };
-
 // Main bot runner
 run(async (context: HandlerContext) => {
+  console.log("message", context.message);
   const { content, contentType, senderAddress } = context.message;
   const { typeId } = contentType;
 
@@ -52,8 +52,8 @@ run(async (context: HandlerContext) => {
       const intro =
         "Available experiences:\n" +
         commands
-          .flatMap((bot) => bot.commands)
-          .map((command) => `${command.command} - ${command.description}`)
+          .flatMap((bot: any) => bot.commands)
+          .map((command: any) => `${command.command} - ${command.description}`)
           .join("\n") +
         "\nUse these commands to interact with specific bots.";
       context.reply(intro);
