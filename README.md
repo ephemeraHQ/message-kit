@@ -8,17 +8,17 @@ To learn more about the contents of this repository, see this README and the REA
 
 ### Packages
 
-- [`botkit`](./packages/botkit): A kit for quickly building bots on the XMTP network
-- [`create-xmtp-bot`](./packages/create-xmtp-bot): A CLI for creating new XMTP bot projects
-- [`playground`](./packages/playground): A visual playground for creating groups
-- [`docs`](./packages/docs): Documentation for botkit
+- [`botkit`](/packages/botkit): A kit for quickly building bots on the XMTP network
+- [`create-xmtp-bot`](/packages/create-xmtp-bot): A CLI for creating new XMTP bot projects
+- [`playground`](/packages/playground): A visual playground for creating groups
+- [`docs`](/packages/docs): Documentation for botkit
 
 ### Examples
 
-- [`conversational`](./examples/conversational): A simple, customizable, and powerful conversational framework
-- [`gm`](./examples/gm): A simple bot that responds `gm` to any incoming messages
-- [`gpt`](./examples/gpt): A bot that relays incoming messages to OpenAI's ChatGPT
-- [`group`](./examples/group): Group bot example.
+- [`conversational`](/examples/conversational): A simple, customizable, and powerful conversational framework
+- [`gm`](/examples/gm): A simple bot that responds `gm` to any incoming messages
+- [`gpt`](/examples/gpt): A bot that relays incoming messages to OpenAI's ChatGPT
+- [`group`](/examples/group): Group bot example.
 
 See more examples in the [Awesome XMTP ⭐️](https://github.com/xmtp/awesome-xmtp) repo
 
