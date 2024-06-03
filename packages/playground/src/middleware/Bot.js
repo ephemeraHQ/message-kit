@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { ContentTypeId } from "@xmtp/xmtp-js";
 
 export const ContentTypeBotMessage = new ContentTypeId({
