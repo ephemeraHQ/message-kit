@@ -363,10 +363,11 @@ export const MessageContainer = ({
   const handleSetTextInputValue = (value) => {
     setTextInputValue(value);
   };
-  const [hasAccess, setHasAccess] = useState(false);
+  const [hasAccess, setHasAccess] = useState(true);
 
   useEffect(() => {
     if (commands.length > 0 && !hasAccess) {
+      console.log(commands, hasAccess);
       // Assuming that the presence of "/access" means access needs to be requested or granted
       const accessRequired = commands.some((command) =>
         command.commands?.some((item) => item.command === "/access"),
