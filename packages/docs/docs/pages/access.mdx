@@ -1,0 +1,96 @@
+# Access
+
+For declaring that the bot will handle access we need to add the access command to the commands file
+
+```tsx [src/commands.ts]
+export const commands = [
+  {
+    name: "General Commands",
+    icon: "🔧",
+    description: "Command for managing default behaviours.",
+    commands: [
+      /* Declare access command*/
+      {
+        command: "/access",
+        description: "Grant access to a user to the bot.",
+      },
+      /* Other commands */
+    ],
+  },
+];
+```
+
+### Declare commands
+
+To declare the access command in the botkit app, you need to add the following code:
+
+```tsx
+import { commands } from "./commands.js";
+
+const newBotConfig = {
+  context: {
+    commands: commands,
+  },
+};
+
+run(async (context: HandlerContext) => {
+  //Your logic here
+}, newBotConfig);
+```
+
+For allowing access to a new user botkit receives a `silent` request with this structure
+
+```tsx
+{
+  content: "/access",
+  metadata: {}
+}
+```
+
+### Receive an access request
+
+To accept an access request in your app, you can use the following code:
+
+```jsx
+if (typeId == "silent") {
+  const { content: command } = content;
+  // Do something with the command
+  if (command == "/access")
+    if (senderAddress) {
+      /*here put the token gated logic*/
+      // accept the access request
+      context.grant_access();
+    }
+}
+```
+
+### Full example
+
+```jsx [src/index.ts]
+import "dotenv/config";
+import { run, HandlerContext } from "@xmtp/botkit";
+import { commands } from "./commands.js";
+
+const newBotConfig = {
+  context: {
+    commands: commands,
+  },
+};
+
+run(async (context: HandlerContext) => {
+  const { content, contentType, senderAddress } = context.message;
+  const { typeId } = contentType;
+
+  if (typeId == "silent") {
+    const { content: command } = content;
+    // Do something with the command
+    if (command == "/access")
+      if (senderAddress) {
+        /*here put the token gated logic*/
+        // accept the access request
+        context.grant_access();
+      }
+  }
+  context.reply("gm!");
+}, newBotConfig);
+```
