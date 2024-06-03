@@ -1,0 +1,37 @@
+# Commands
+
+Each bot can have a `commands.ts` file that contains the commands that the bot can execute. The commands are defined as an array of objects with the following keys:
+
+```tsx
+export const commands = [
+  {
+    name: "General Commands",
+    icon: "🔧",
+    description: "Command for managing default behaviours.",
+    commands: [
+      {
+        command: "/help",
+        description: "Get help with the bot.",
+      },
+    ],
+  },
+];
+```
+
+### Declare commands
+
+To declare the access command in the botkit app, you need to add the following code:
+
+```tsx
+import { commands } from "./commands.js";
+
+const newBotConfig = {
+  context: {
+    commands: commands,
+  },
+};
+
+run(async (context: HandlerContext) => {
+  //Your logic here
+}, newBotConfig);
+```

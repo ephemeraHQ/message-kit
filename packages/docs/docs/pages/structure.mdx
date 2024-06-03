@@ -35,14 +35,23 @@ run(async (context: HandlerContext) => {
 
 Each bot can have a `commands.ts` file that contains the commands that the bot can execute. The commands are defined as an array of objects with the following keys:
 
-```json
+```tsx
 export const commands = [
   {
-    command: "/help",
-    description: "Get help with the bot.",
+    name: "General Commands",
+    icon: "🔧",
+    description: "Command for managing default behaviours.",
+    commands: [
+      {
+        command: "/help",
+        description: "Get help with the bot.",
+      },
+    ],
   },
 ];
 ```
+
+To learn more go to [commands](/docs/pages/commands)
 
 ### Environment variables
 

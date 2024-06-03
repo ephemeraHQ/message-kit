@@ -29,12 +29,16 @@ export default defineConfig({
       link: "/structure",
     },
     {
-      text: "Examples",
-      link: "/examples",
+      text: "Commands",
+      link: "/commands",
     },
     {
       text: "Access",
       link: "/access",
+    },
+    {
+      text: "Examples",
+      link: "/examples",
     },
     {
       text: "Content Types",
@@ -83,7 +87,7 @@ export default defineConfig({
           link: "/middleware/cron",
         },
         {
-          text: "Commands",
+          text: "Parse commands",
           link: "/middleware/commands",
         },
       ],
@@ -93,16 +97,38 @@ export default defineConfig({
       link: "/open-frames",
       items: [
         {
-          text: "OnchainKit",
-          link: "/open-frames/onchainkit",
+          text: "Introduction",
+          link: "/open-frames",
         },
         {
-          text: "Frames.js",
-          link: "/open-frames/framesjs",
+          text: "Frameworks",
+          items: [
+            {
+              text: "OnchainKit",
+              link: "/open-frames/frameworks/onchainkit",
+            },
+            {
+              text: "Frames.js",
+              link: "/open-frames/frameworks/framesjs",
+            },
+            {
+              text: "Frog",
+              link: "/open-frames/frameworks/frog",
+            },
+          ],
         },
         {
-          text: "Frog",
-          link: "/open-frames/frog",
+          text: "Tutorials",
+          items: [
+            {
+              text: "Subscribe",
+              link: "/open-frames/tutorials/subscribe",
+            },
+            {
+              text: "Transactions",
+              link: "/open-frames/tutorials/transactions",
+            },
+          ],
         },
       ],
     },
