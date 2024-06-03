@@ -14,14 +14,12 @@ export class SilentCodec {
   }
 
   encode(silent) {
-    const { sender, reference, content, metadata } = silent;
+    const { content, metadata } = silent;
 
     return {
       type: ContentTypeSilent,
       parameters: {},
-      content: new TextEncoder().encode(
-        JSON.stringify({ sender, reference, content, metadata }),
-      ),
+      content: new TextEncoder().encode(JSON.stringify({ content, metadata })),
     };
   }
 
@@ -30,16 +28,13 @@ export class SilentCodec {
 
     try {
       const silent = JSON.parse(decodedContent);
-      const { sender, reference, content, metadata } = silent;
-      return { sender, reference, content, metadata };
+      const { content, metadata } = silent;
+      return { content, metadata };
     } catch (e) {
       const parameters = encodedContent.parameters;
       return {
-        action: parameters.action,
-        reference: parameters.reference,
-        schema: parameters.schema,
         content: decodedContent,
-        receiver: parameters.receiver,
+        metadata: parameters.metadata,
       };
     }
   }

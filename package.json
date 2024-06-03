@@ -13,11 +13,12 @@
     "format": "turbo run format",
     "format:check": "turbo run format:check",
     "publish": "yarn build && changeset publish",
-    "start:conversational": "turbo run start --filter='./examples/conversational'",
+    "start:docs": "turbo run dev --filter='./packages/docs'",
     "start:gm": "turbo run start --filter='./examples/gm'",
     "start:gpt": "turbo run start --filter='./examples/gpt'",
     "start:group": "turbo run start --filter='./examples/group'",
     "start:playground": "turbo run dev --filter='./packages/playground'",
+    "start:subscription": "turbo run start --filter='./examples/subscription'",
     "typecheck": "FORCE_COLOR=1 turbo run typecheck"
   },
   "dependencies": {

@@ -18,8 +18,11 @@
     "botkit-playground#dev": {
       "persistent": true
     },
-    "conversational-bot#start": {
-      "dependsOn": ["^build", "conversational-bot#build"],
+    "botkit-docs#dev": {
+      "persistent": true
+    },
+    "subscription-bot#start": {
+      "dependsOn": ["^build", "subscription-bot#build"],
       "persistent": true
     },
     "gm-bot#start": {

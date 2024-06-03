@@ -28,7 +28,10 @@ export const commands = [
         command: "/baseframe mint [collection_address] [token_id]",
         description: "Create (mint) a new token or NFT.",
       },
-      { command: "/baseframe help", description: "Display this help message." },
+      {
+        command: "/baseframe help",
+        description: "Display this help message.",
+      },
       { command: "/baseframe show", description: "Show the whole frame." },
     ],
   },

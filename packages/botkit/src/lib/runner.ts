@@ -15,10 +15,18 @@ export default async function run(handler: Handler, newBotConfig?: any) {
         //if a bot speaks do nothing
         continue;
       }
-
-      const context = new HandlerContext(message, newBotConfig, client.address);
-
-      await handler(context);
+      const context = new HandlerContext(
+        message,
+        newBotConfig?.context ?? {},
+        client.address,
+      );
+      if (
+        message.contentType.typeId == "silent" &&
+        message.content?.content === "/ping"
+      ) {
+        //if a bot speaks do nothing
+        context.ping();
+      } else await handler(context);
     } catch (e) {
       console.log(`error`, e);
     }

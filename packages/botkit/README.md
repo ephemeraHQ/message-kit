@@ -28,8 +28,7 @@ run(async (context: HandlerContext) => {
 
 ## Examples
 
-- [Gm](/examples/gm): Get started with a simple gm bot.
-- [Conversational](/examples/conversational): Drive retention with conversations and subscriptions with redisDb.
+- [Subscription](/examples/subscription): Drive retention with conversations and subscriptions with redisDb.
 - [GPT](/examples/gpt): Relay messages through Open AI APIs.
 - [Group](/examples/group): Group bot example.
 

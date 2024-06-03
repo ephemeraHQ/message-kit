@@ -4,6 +4,7 @@ import { Client } from "@xmtp/xmtp-js";
 import { ListConversations } from "./ListConversations";
 import { MessageContainer } from "./MessageContainer";
 import { useNavigate } from "react-router-dom";
+import { ContentTypeSilent } from "../middleware/Silent";
 
 export const ConversationContainer = ({
   client,
@@ -271,6 +272,15 @@ export const ConversationContainer = ({
                     try {
                       const newConversation =
                         await client.conversations.newConversation(peerAddress);
+
+                      newConversation.send(
+                        {
+                          content: "/ping",
+                        },
+                        {
+                          contentType: ContentTypeSilent,
+                        },
+                      );
                       setSelectedConversation(newConversation);
                       setSearchTerm("");
                       if (newConversation?.peerAddress) {

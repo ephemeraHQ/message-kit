@@ -151,10 +151,25 @@ export const MessageContainer = ({
     ) {
       setHasAccess(true);
     } else if (
+      newMessage.contentType.sameAs(ContentTypeSilent) &&
+      newMessage.senderAddress !== client.address &&
+      newMessage.content.content === "ping"
+    ) {
+      let context = newMessage.content.metadata;
+
+      if (context.commands) {
+        setCommands(context.commands);
+        setBotCommands(context.commands);
+      }
+      if (context.users) {
+        setUsers(context.users);
+        setUsersData(context.users);
+      }
+    } else if (
       newMessage.contentType.sameAs(ContentTypeBotMessage) &&
       newMessage.content.context
     ) {
-      let context = JSON.parse(newMessage.content.context).context;
+      let context = JSON.parse(newMessage.content.context);
 
       if (context.commands) {
         setCommands(context.commands);
@@ -349,21 +364,26 @@ export const MessageContainer = ({
   const handleSetTextInputValue = (value) => {
     setTextInputValue(value);
   };
+  const [hasAccess, setHasAccess] = useState(!commands.includes("/access"));
 
-  const [hasAccess, setHasAccess] = useState(false);
-
+  useEffect(() => {
+    // Update hasAccess based on the presence of "/access" command when commands change
+    setHasAccess(!commands.includes("/access"));
+  }, [commands]);
   const sendAccess = async () => {
     try {
-      //console.log(conversation);
-      let accessRequest = {
-        content: "/access",
-        sender: client.address,
-        reference: conversation.topic,
-        metadata: { hello: "world" },
-      };
-      await conversation.send(accessRequest, {
-        contentType: ContentTypeSilent,
-      });
+      await conversation.send(
+        {
+          content: "/access",
+          metadata: {
+            sender: client.address,
+            reference: conversation.topic,
+          },
+        },
+        {
+          contentType: ContentTypeSilent,
+        },
+      );
     } catch (error) {
       console.error("Error requesting access:", error);
     }
@@ -481,15 +501,17 @@ export const MessageContainer = ({
           )}
         </>
       ) : (
-        <div>
-          <button
-            style={styles.accessButton}
-            onClick={() => {
-              sendAccess(true);
-            }}>
-            Request access
-          </button>
-        </div>
+        commands.includes("/access") && (
+          <div>
+            <button
+              style={styles.accessButton}
+              onClick={() => {
+                sendAccess(true);
+              }}>
+              Request access
+            </button>
+          </div>
+        )
       )}
     </div>
   );

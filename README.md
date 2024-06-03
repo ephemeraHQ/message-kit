@@ -13,10 +13,9 @@ To learn more about the contents of this repository, see this README and the REA
 - [`playground`](/packages/playground): A visual playground for creating groups
 - [`docs`](/packages/docs): Documentation for botkit
 
-### Examples
+### Templates
 
-- [`conversational`](/examples/conversational): A simple, customizable, and powerful conversational framework
-- [`gm`](/examples/gm): A simple bot that responds `gm` to any incoming messages
+- [`subscription`](/examples/subscription): A simple, customizable, and powerful conversational framework
 - [`gpt`](/examples/gpt): A bot that relays incoming messages to OpenAI's ChatGPT
 - [`group`](/examples/group): Group bot example.
 

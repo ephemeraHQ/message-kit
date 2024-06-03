@@ -7762,9 +7762,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"conversational-bot@workspace:examples/conversational":
+"conversational-bot@workspace:examples/subscription":
   version: 0.0.0-use.local
-  resolution: "conversational-bot@workspace:examples/conversational"
+  resolution: "conversational-bot@workspace:examples/subscription"
   dependencies:
     "@redis/client": "npm:^1.5.14"
     "@types/node": "npm:^20.12.7"
@@ -10643,18 +10643,6 @@ __metadata:
   checksum: 10/4494a9d2162a7e4d327988b26be66d8eab87d7f59a83219e74b065e2c3ced23698f68fb10482bf9337133819281803fb886d6ae06afbb2affa743623eb0b1949
   languageName: node
   linkType: hard
-
-"gm-bot@workspace:examples/gm":
-  version: 0.0.0-use.local
-  resolution: "gm-bot@workspace:examples/gm"
-  dependencies:
-    "@types/node": "npm:^20.12.7"
-    "@xmtp/botkit": "workspace:*"
-    nodemon: "npm:^3.1.0"
-    prettier: "npm:^3.2.5"
-    typescript: "npm:^5.4.3"
-  languageName: unknown
-  linkType: soft
 
 "gopd@npm:^1.0.1":
   version: 1.0.1

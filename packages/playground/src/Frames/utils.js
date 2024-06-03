@@ -3,7 +3,7 @@ import { readMetadata } from "./openFrames";
 export const fetchFrameFromUrl = async (message) => {
   let content = message.content;
   if (content?.content) content = content?.content;
-  if (!content) return "";
+  if (!content || typeof content !== "string") return;
   try {
     const words = content?.split(/(\r?\n|\s+)/);
     // Improved regex to better handle URLs with multiple query parameters and special characters

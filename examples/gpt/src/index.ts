@@ -13,19 +13,18 @@ let conversationHistory = [
 ];
 
 run(async (context: HandlerContext) => {
-  const { message } = context;
-
-  const { content } = message;
+  const { content, contentType, senderAddress } = context.message;
+  const { typeId } = contentType;
 
   try {
     const { reply, messages } = await openaiCall(
       content,
       conversationHistory,
-      message.senderAddress,
+      senderAddress,
       systemPrompt,
     );
     conversationHistory = messages; // Update the conversation history
-    await context.reply(reply);
+    await context.reply(reply as string);
   } catch (error) {
     // Handle the error, for example, by sending an error message to the user
     await context.reply(
