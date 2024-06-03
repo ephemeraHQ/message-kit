@@ -10644,6 +10644,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"gm-bot@workspace:examples/gm":
+  version: 0.0.0-use.local
+  resolution: "gm-bot@workspace:examples/gm"
+  dependencies:
+    "@types/node": "npm:^20.12.7"
+    "@xmtp/botkit": "workspace:*"
+    nodemon: "npm:^3.1.0"
+    prettier: "npm:^3.2.5"
+    typescript: "npm:^5.4.3"
+  languageName: unknown
+  linkType: soft
+
 "gopd@npm:^1.0.1":
   version: 1.0.1
   resolution: "gopd@npm:1.0.1"

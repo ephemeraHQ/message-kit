@@ -59,7 +59,7 @@ export const Debug = ({ client, users, commands }) => {
           <li key={index} style={styles.listItem}>
             {command.icon} <b>{command.name}</b> {command.description}
             <ul style={styles.subList}>
-              {command.commands.map((subCommand, subIndex) => (
+              {command?.commands?.map((subCommand, subIndex) => (
                 <li key={subIndex} style={styles.subListItem}>
                   {subCommand.command}: {subCommand.description}
                 </li>

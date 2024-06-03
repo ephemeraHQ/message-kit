@@ -21,14 +21,13 @@ run(async (context: HandlerContext) => {
   const { typeId } = contentType;
 
   populateFakeUsers(context);
-  console.log("message", content, contentType, senderAddress, typeId);
   if (typeId == "reaction") {
     const { action, content: emoji } = content;
     if (emoji == "degen" && action == "added") await degenHandler(context);
   } else if (typeId == "reply") {
     const { receiver, content: reply } = content;
     if (receiver && reply.includes("degen")) await degenHandler(context);
-  } else if (content == "/access" && typeId == "silent") {
+  } else if (content.content == "/access" && typeId == "silent") {
     if (senderAddress) {
       /*here put the token gated logic*/
       context.grant_access();

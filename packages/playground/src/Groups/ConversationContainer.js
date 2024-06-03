@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import { Client } from "@xmtp/xmtp-js";
 import { ListConversations } from "./ListConversations";
@@ -138,7 +138,27 @@ export const ConversationContainer = ({
   const isValidEthereumAddress = (address) => {
     return /^0x[a-fA-F0-9]{40}$/.test(address);
   };
+  useEffect(() => {
+    const sendPing = async () => {
+      if (selectedConversation) {
+        try {
+          const sendResult = await selectedConversation.send(
+            {
+              content: "/ping",
+            },
+            {
+              contentType: ContentTypeSilent,
+            },
+          );
+          console.log("send", sendResult);
+        } catch (error) {
+          console.error("Failed to send ping:", error);
+        }
+      }
+    };
 
+    sendPing();
+  }, [selectedConversation]);
   const handleSearchChange = async (e) => {
     setCreateNew(false);
     setConversationFound(false);
@@ -273,14 +293,6 @@ export const ConversationContainer = ({
                       const newConversation =
                         await client.conversations.newConversation(peerAddress);
 
-                      newConversation.send(
-                        {
-                          content: "/ping",
-                        },
-                        {
-                          contentType: ContentTypeSilent,
-                        },
-                      );
                       setSelectedConversation(newConversation);
                       setSearchTerm("");
                       if (newConversation?.peerAddress) {

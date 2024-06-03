@@ -13,13 +13,13 @@ export class BotMessageCodec {
   }
 
   encode(message) {
-    const { sender, receivers, content, context, reference } = message; // Include receivers in the destructuring
+    const { sender, receivers, content, metadata, reference } = message; // Include receivers in the destructuring
 
     return {
       type: ContentTypeBotMessage,
       parameters: {},
       content: new TextEncoder().encode(
-        JSON.stringify({ sender, receivers, content, context, reference }), // Include receivers in the JSON string
+        JSON.stringify({ sender, receivers, content, metadata, reference }), // Include receivers in the JSON string
       ),
     };
   }
@@ -29,15 +29,15 @@ export class BotMessageCodec {
 
     try {
       const message = JSON.parse(decodedContent);
-      const { sender, receivers, content, context, reference } = message; // Include receivers in the destructuring
-      return { sender, receivers, content, context, reference }; // Return receivers along with other properties
+      const { sender, receivers, content, metadata, reference } = message; // Include receivers in the destructuring
+      return { sender, receivers, content, metadata, reference }; // Return receivers along with other properties
     } catch (e) {
       const parameters = encodedContent.parameters;
       return {
         sender: parameters.sender,
         receivers: parameters.receivers, // Fallback to receivers in parameters if JSON parsing fails
         content: decodedContent,
-        context: parameters.context,
+        metadata: parameters.metadata,
         reference: parameters.reference,
       };
     }

@@ -44,7 +44,6 @@ export const MessageContainer = ({
         content: content, // Spread the content object if it exists
         id: message.id, // Ensure the id is included
       };
-      console.log(pinnedMessage);
       setPinnedMessage(pinnedMessage);
     }
   };
@@ -149,6 +148,7 @@ export const MessageContainer = ({
       newMessage.senderAddress !== client.address &&
       newMessage.content.content === "grant_access"
     ) {
+      console.log("grant_access", true);
       setHasAccess(true);
     } else if (
       newMessage.contentType.sameAs(ContentTypeSilent) &&
@@ -156,7 +156,7 @@ export const MessageContainer = ({
       newMessage.content.content === "ping"
     ) {
       let context = newMessage.content.metadata;
-
+      console.log("context", newMessage.content);
       if (context.commands) {
         setCommands(context.commands);
         setBotCommands(context.commands);
@@ -167,10 +167,9 @@ export const MessageContainer = ({
       }
     } else if (
       newMessage.contentType.sameAs(ContentTypeBotMessage) &&
-      newMessage.content.context
+      newMessage.content.metadata
     ) {
-      let context = JSON.parse(newMessage.content.context);
-
+      let context = newMessage.content.metadata;
       if (context.commands) {
         setCommands(context.commands);
         setBotCommands(context.commands);
@@ -364,12 +363,19 @@ export const MessageContainer = ({
   const handleSetTextInputValue = (value) => {
     setTextInputValue(value);
   };
-  const [hasAccess, setHasAccess] = useState(!commands.includes("/access"));
+  const [hasAccess, setHasAccess] = useState(false);
 
   useEffect(() => {
-    // Update hasAccess based on the presence of "/access" command when commands change
-    setHasAccess(!commands.includes("/access"));
+    if (commands.length > 0 && !hasAccess) {
+      // Assuming that the presence of "/access" means access needs to be requested or granted
+      const accessRequired = commands.some((command) =>
+        command.commands?.some((item) => item.command === "/access"),
+      );
+      // Set hasAccess to false if "/access" is present, indicating that access is not yet granted
+      setHasAccess(!accessRequired);
+    }
   }, [commands]);
+
   const sendAccess = async () => {
     try {
       await conversation.send(
@@ -501,17 +507,15 @@ export const MessageContainer = ({
           )}
         </>
       ) : (
-        commands.includes("/access") && (
-          <div>
-            <button
-              style={styles.accessButton}
-              onClick={() => {
-                sendAccess(true);
-              }}>
-              Request access
-            </button>
-          </div>
-        )
+        <div>
+          <button
+            style={styles.accessButton}
+            onClick={() => {
+              sendAccess(true);
+            }}>
+            Request access
+          </button>
+        </div>
       )}
     </div>
   );

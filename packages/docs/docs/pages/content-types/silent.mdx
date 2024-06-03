@@ -1,0 +1,24 @@
+# Silent
+
+For special uses cases where the app needs to send commands to a bot without being displayed in the app, botkit receives a `silent` request with this structure
+
+```tsx
+{
+  content: "command",
+  metadata: {}
+}
+```
+
+### Receive an silent message
+
+This example shows how recieve a silent message and grant access to a user
+
+```jsx
+const { content, contentType, senderAddress } = context.message;
+const { typeId } = contentType;
+
+if (typeId == "silent") {
+  const { content: command } = content;
+  // Do something with the command
+}
+```

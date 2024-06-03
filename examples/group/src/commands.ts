@@ -69,4 +69,8 @@ export const commands = [
       { command: "/help", description: "Show available commands." },
     ],
   },
+  {
+    name: "/access",
+    description: "Command for managing the access of users to the bot.",
+  },
 ];

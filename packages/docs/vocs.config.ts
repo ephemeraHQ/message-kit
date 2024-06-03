@@ -33,12 +33,16 @@ export default defineConfig({
       link: "/examples",
     },
     {
+      text: "Access",
+      link: "/access",
+    },
+    {
       text: "Content Types",
       items: [
         { text: "Text", link: "/content-types/text" },
         { text: "Reaction", link: "/content-types/reaction" },
         { text: "Reply", link: "/content-types/reply" },
-        { text: "Access", link: "/content-types/access" },
+        { text: "Silent", link: "/content-types/silent" },
         { text: "Bot", link: "/content-types/bot" },
         {
           text: "Deeplinks",
