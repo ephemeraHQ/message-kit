@@ -17,7 +17,7 @@ export async function handler(context: HandlerContext) {
     slot: "https://slot-machine-frame.vercel.app/",
     guess: "https://farguessr.vercel.app/",
   };
-
+  console.log(extracted);
   switch (extracted.command) {
     case "framedl":
     case "slot":

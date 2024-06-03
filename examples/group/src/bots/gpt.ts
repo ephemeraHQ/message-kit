@@ -9,7 +9,7 @@ export async function handler(context: HandlerContext, commands: any) {
   This group bot has many commands avaiable: ${JSON.stringify(commands)}\n
   When possible, answer with the command from the list for the user to perform. put this command in a new line\n
   The message was sent by ${senderAddress}`;
-  console.log(systemPrompt);
+
   let message = content.replace("@bot", "");
   let { reply } = await openaiCall(message, senderAddress, systemPrompt);
 

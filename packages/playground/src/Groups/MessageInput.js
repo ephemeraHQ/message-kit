@@ -284,7 +284,7 @@ export const MessageInput = ({
     }
   };
   const sendMessage = (message, replyingToMessage) => {
-    if (message.startsWith("/")) message = "```" + message + "```";
+    //if (message.startsWith("/")) message = "```" + message + "```";
 
     onSendMessage(message, replyingToMessage);
     setNewMessage("");

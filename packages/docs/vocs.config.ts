@@ -25,21 +25,21 @@ export default defineConfig({
       link: "/installation",
     },
     {
-      text: "Playground",
-      link: "/playground",
-    },
-    {
       text: "Structure",
       link: "/structure",
     },
     {
+      text: "Examples",
+      link: "/examples",
+    },
+    {
       text: "Content Types",
-      link: "/content-types",
       items: [
         { text: "Text", link: "/content-types/text" },
-        { text: "Bot", link: "/content-types/bot" },
         { text: "Reaction", link: "/content-types/reaction" },
         { text: "Reply", link: "/content-types/reply" },
+        { text: "Access", link: "/content-types/access" },
+        { text: "Bot", link: "/content-types/bot" },
         {
           text: "Deeplinks",
           link: "/content-types/deeplinks",
@@ -48,23 +48,18 @@ export default defineConfig({
     },
     {
       text: "Templates",
-      link: "/examples",
       items: [
         {
-          text: "Gm",
-          link: "/examples/gm",
-        },
-        {
-          text: "Conversational",
-          link: "/examples/conversational",
+          text: "Subscription",
+          link: "/templates/Subscription",
         },
         {
           text: "GPT",
-          link: "/examples/gpt",
+          link: "/templates/gpt",
         },
         {
           text: "Group",
-          link: "/examples/group",
+          link: "/templates/group",
         },
       ],
     },

@@ -27,10 +27,9 @@ yarn start:watch
 
 ## Examples
 
-By default the `create-xmtp-bot` starter comes with a conversational bot but without using a DB. Here are other examples you can use:
+By default the `create-xmtp-bot` starter comes with a subscription bot but without using a DB. Here are other examples you can use:
 
-- [Gm](/examples/gm): Get started with a simple gm bot.
-- [Conversational](/examples/conversational): Drive retention with conversations and subscriptions with redisDb.
+- [Subscription](/examples/subscription): Drive retention with conversations and subscriptions with redisDb.
 - [GPT](/examples/gpt): Relay messages through Open AI APIs.
 - [Group](/examples/group): Group bot example.
 

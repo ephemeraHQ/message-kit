@@ -20,13 +20,12 @@ export default class HandlerContext {
   async textReply(content: any) {
     await this.message.conversation.send(content);
   }
-  async grant_access(content: any) {
+  async grant_access() {
     await this.message.conversation.send(
       {
         content: "grant_access",
         metadata: {
           access: true,
-          sender: content.sender,
           ...this.context,
         },
       },
@@ -51,12 +50,11 @@ export default class HandlerContext {
     receivers: string[] = [],
     messageId: string = "",
   ) {
-    let context = JSON.stringify(this.context);
     const botMessage = {
       sender: this.message.senderAddress,
       receivers: receivers,
       content: message,
-      context,
+      ...this.context,
       reference: messageId,
     };
 

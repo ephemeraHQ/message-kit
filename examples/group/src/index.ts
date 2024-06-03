@@ -15,22 +15,24 @@ const newBotConfig = {
     users: users,
   },
 };
-// Main bot runner
+
 run(async (context: HandlerContext) => {
-  console.log("message", context.message);
   const { content, contentType, senderAddress } = context.message;
   const { typeId } = contentType;
 
   populateFakeUsers(context);
-
+  console.log("message", content, contentType, senderAddress, typeId);
   if (typeId == "reaction") {
     const { action, content: emoji } = content;
     if (emoji == "degen" && action == "added") await degenHandler(context);
   } else if (typeId == "reply") {
     const { receiver, content: reply } = content;
     if (receiver && reply.includes("degen")) await degenHandler(context);
-  } else if (typeId == "silent") {
-    if (1 == 1) context.grant_access(content);
+  } else if (content == "/access" && typeId == "silent") {
+    if (senderAddress) {
+      /*here put the token gated logic*/
+      context.grant_access();
+    }
   } else if (typeId == "text") {
     if (content.startsWith("@bot")) {
       await gptHandler(context, commands);
@@ -46,8 +48,6 @@ run(async (context: HandlerContext) => {
       await degenHandler(context);
     } else if (content.startsWith("/games")) {
       await gamesHandler(context);
-    } else if (content.startsWith("/ping")) {
-      await context.reply("");
     } else if (content.startsWith("/help")) {
       const intro =
         "Available experiences:\n" +

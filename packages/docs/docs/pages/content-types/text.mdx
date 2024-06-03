@@ -11,3 +11,16 @@ The `message` object contains the following
   contentType: ContentTypeId; // The content type of the message
 }
 ```
+
+### Receive a message
+
+Here's an example of how you can receive a message in your app:
+
+```tsx
+const { content, contentType, senderAddress } = context.message;
+const { typeId } = contentType;
+
+if (typeId == "text") {
+  // Use content
+}
+```

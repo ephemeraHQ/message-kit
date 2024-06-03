@@ -149,7 +149,6 @@ export const MessageContainer = ({
       newMessage.senderAddress !== client.address &&
       newMessage.content.content === "grant_access"
     ) {
-      console.log(newMessage);
       setHasAccess(true);
     } else if (
       newMessage.contentType.sameAs(ContentTypeSilent) &&
@@ -365,9 +364,12 @@ export const MessageContainer = ({
   const handleSetTextInputValue = (value) => {
     setTextInputValue(value);
   };
+  const [hasAccess, setHasAccess] = useState(!commands.includes("/access"));
 
-  const [hasAccess, setHasAccess] = useState(false);
-
+  useEffect(() => {
+    // Update hasAccess based on the presence of "/access" command when commands change
+    setHasAccess(!commands.includes("/access"));
+  }, [commands]);
   const sendAccess = async () => {
     try {
       await conversation.send(
@@ -499,15 +501,17 @@ export const MessageContainer = ({
           )}
         </>
       ) : (
-        <div>
-          <button
-            style={styles.accessButton}
-            onClick={() => {
-              sendAccess(true);
-            }}>
-            Request access
-          </button>
-        </div>
+        commands.includes("/access") && (
+          <div>
+            <button
+              style={styles.accessButton}
+              onClick={() => {
+                sendAccess(true);
+              }}>
+              Request access
+            </button>
+          </div>
+        )
       )}
     </div>
   );
