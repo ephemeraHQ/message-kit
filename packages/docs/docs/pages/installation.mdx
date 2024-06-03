@@ -2,16 +2,33 @@
 
 ## Environment
 
-For developing you will need the playground and the docs running in the monorepo
+For developing you will need the playground and the docs running in the monorepo. This is only relevant in this phase of development.
+
 To run the playground run:
 
 ```bash
-yarn start:debugger
+// First install yarn inside folder
+cd packages/playground
+yarn install
+
+// Run from the folder
+yarn dev
+
+// Run from the root
+yarn start:playground
 ```
 
 To run the docs run:
 
 ```bash
+// First install yarn inside folder
+cd packages/docs
+yarn install
+
+// Run from the folder
+yarn dev
+
+// Run from the root
 yarn start:docs
 ```
 
