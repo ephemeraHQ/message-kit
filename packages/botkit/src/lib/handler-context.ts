@@ -50,11 +50,13 @@ export default class HandlerContext {
     receivers: string[] = [],
     messageId: string = "",
   ) {
+    const { typeId } = this.message.contentType;
+    if (typeId == "silent") return;
     const botMessage = {
       sender: this.message.senderAddress,
       receivers: receivers,
       content: message,
-      ...this.context,
+      metadata: { ...this.context },
       reference: messageId,
     };
 
