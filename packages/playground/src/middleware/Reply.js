@@ -55,7 +55,6 @@ export class ReplyCodec {
     return {
       reference: content.parameters.reference,
       contentType,
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       content: codec.decode(decodedContent, codecs),
       receiver: content.parameters.receiver,
     };
