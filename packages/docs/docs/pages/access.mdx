@@ -2,7 +2,7 @@
 
 Create the `accessHandler` function to handle the access request. Returns true or false based on the access request.
 
-```tsx [src/commands.ts]
+```tsx [src/index.ts]
 const accessHandler = async (context: HandlerContext): Promise<boolean> => {
   const { senderAddress } = context.message;
 
@@ -17,7 +17,7 @@ const accessHandler = async (context: HandlerContext): Promise<boolean> => {
 
 To declare the access command in the botkit app, you need to add the following code:
 
-```tsx
+```tsx [src/index.ts]
 run(
   async (context: HandlerContext) => {
     /* Bot logic here */
