@@ -9,6 +9,8 @@ export default defineConfig({
       dark: "#F04D23",
     },
   },
+  outputDir: "dist", // Specify 'dist' as the output directory
+
   socials: [
     {
       icon: "github",
