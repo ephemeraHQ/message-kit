@@ -46,7 +46,6 @@ export default defineConfig({
         { text: "Text", link: "/content-types/text" },
         { text: "Reaction", link: "/content-types/reaction" },
         { text: "Reply", link: "/content-types/reply" },
-        { text: "Silent", link: "/content-types/silent" },
         { text: "Bot", link: "/content-types/bot" },
         {
           text: "Deeplinks",
