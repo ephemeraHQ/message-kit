@@ -146,17 +146,18 @@ export const MessageContainer = ({
     if (
       newMessage.contentType.sameAs(ContentTypeSilent) &&
       newMessage.senderAddress !== client.address &&
-      newMessage.content.content === "grant_access"
+      newMessage.content?.metadata?.type === "access"
     ) {
-      console.log("grant_access", true);
+      const localStorageKey = `accessGranted-${client.address}-${conversation.topic}`;
+      localStorage.setItem(localStorageKey, "true");
       setHasAccess(true);
     } else if (
       newMessage.contentType.sameAs(ContentTypeSilent) &&
       newMessage.senderAddress !== client.address &&
-      newMessage.content.content === "ping"
+      newMessage.content?.metadata?.type === "ping"
     ) {
       let context = newMessage.content.metadata;
-      console.log("context", newMessage.content);
+      //console.log("context", newMessage.content);
       if (context.commands) {
         setCommands(context.commands);
         setBotCommands(context.commands);
@@ -164,6 +165,11 @@ export const MessageContainer = ({
       if (context.users) {
         setUsers(context.users);
         setUsersData(context.users);
+      }
+      const access = newMessage.content?.metadata?.access;
+
+      if (access) {
+        setHasRequiredAccess(true);
       }
     } else if (
       newMessage.contentType.sameAs(ContentTypeBotMessage) &&
@@ -364,18 +370,19 @@ export const MessageContainer = ({
     setTextInputValue(value);
   };
   const [hasAccess, setHasAccess] = useState(true);
+  const [hasRequiredAccess, setHasRequiredAccess] = useState(false);
 
   useEffect(() => {
-    if (commands.length > 0 && !hasAccess) {
-      console.log(commands, hasAccess);
-      // Assuming that the presence of "/access" means access needs to be requested or granted
-      const accessRequired = commands.some((command) =>
-        command.commands?.some((item) => item.command === "/access"),
-      );
-      // Set hasAccess to false if "/access" is present, indicating that access is not yet granted
-      setHasAccess(!accessRequired);
+    console.log(hasAccess, hasRequiredAccess, "gest");
+    if (hasRequiredAccess) {
+      console.log(hasRequiredAccess, "hasRequiredAccess");
+      // Generate a unique key for local storage based on the user and conversation
+      const localStorageKey = `accessGranted-${client.address}-${conversation.topic}`;
+      // Check local storage to see if access has already been granted for this conversation
+      const accessGranted = localStorage.getItem(localStorageKey) === "true";
+      setHasAccess(accessGranted);
     }
-  }, [commands]);
+  }, [hasRequiredAccess, hasAccess]);
 
   const sendAccess = async () => {
     try {

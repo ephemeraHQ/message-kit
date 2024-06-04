@@ -248,16 +248,24 @@ export const ListConversations = ({
     return conversations.map((conversation, index) => {
       let lastMessageContent = "";
       try {
-        let test =
-          lastMessages.find((msg) => msg.topic === conversation.topic)
-            ?.content || "...";
-        if (test.content) {
-          test = test.content;
-          if (test.emoji) {
-            test = lastMessageContent.content;
+        let lastMessage = lastMessages.find(
+          (msg) => msg.topic === conversation.topic,
+        );
+        let test = "";
+        if (lastMessage) {
+          test = lastMessage.content;
+          if (lastMessage.emoji) {
+            test = lastMessage.emoji;
+          } else if (lastMessage.content?.content?.content) {
+            test = lastMessage.content?.content?.content;
+          } else if (lastMessage.content?.content) {
+            test = lastMessage.content?.content;
+          } else if (lastMessage.content) {
+            test = lastMessage.content;
           }
+          console.log(typeof test, test, "test");
+          if (typeof test === "string") lastMessageContent = test;
         }
-        lastMessageContent = test;
       } catch (error) {
         console.error("Failed to fetch last message:", error);
       }

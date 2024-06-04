@@ -27,11 +27,6 @@ run(async (context: HandlerContext) => {
   } else if (typeId == "reply") {
     const { receiver, content: reply } = content;
     if (receiver && reply.includes("degen")) await degenHandler(context);
-  } else if (content.content == "/access" && typeId == "silent") {
-    if (senderAddress) {
-      /*here put the token gated logic*/
-      context.grant_access();
-    }
   } else if (typeId == "text") {
     if (content.startsWith("@bot")) {
       await gptHandler(context, commands);
