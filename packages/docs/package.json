@@ -14,5 +14,8 @@
     "typescript": "latest",
     "vocs": "latest"
   },
-  "packageManager": "yarn@4.2.2"
+  "packageManager": "yarn@4.1.1",
+  "engines": {
+    "node": ">=18"
+  }
 }
