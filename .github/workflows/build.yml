@@ -53,3 +53,14 @@ jobs:
         run: corepack enable
       - name: Build
         run: yarn build
+      - name: Check output directory
+        run: |
+          if [ ! -d "build" ]; then
+            echo "Output directory 'build' not found."
+            exit 1
+          fi
+      - name: Cache build output
+        uses: actions/cache@v2
+        with:
+          path: build
+          key: ${{ runner.os }}-build-${{ hashFiles('**/lockfiles') }}
