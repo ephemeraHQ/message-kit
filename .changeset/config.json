@@ -16,7 +16,6 @@
     "subscription-bot",
     "gm-bot",
     "gpt-bot",
-    "botkit-playground",
     "botkit-docs",
     "@xmtp/tsconfig"
   ]
