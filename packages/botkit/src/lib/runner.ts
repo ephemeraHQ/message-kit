@@ -27,8 +27,15 @@ export default async function run(
         continue;
       }
       const context = new HandlerContext(
-        message,
+        {
+          id: message.id,
+          content: typeof content === "string" ? { content } : content,
+          senderAddress,
+          typeId,
+          sent: message.sent,
+        },
         newBotConfig?.context ?? {},
+        message.conversation,
         address,
       );
       if (
@@ -45,10 +52,13 @@ export default async function run(
         }
       } else if (typeId == "silent" && content?.content === "/ping") {
         //if a bot speaks do nothing
-        ping(message, newBotConfig?.context, accessHandler);
+        ping(
+          message?.conversation,
+          newBotConfig?.context,
+          accessHandler ? true : false,
+        );
         continue;
       }
-
       await handler(context);
     } catch (e) {
       console.log(`error`, e);
@@ -56,9 +66,9 @@ export default async function run(
   }
 }
 
-async function grant_access(message: any, context: any) {
+async function grant_access(conversation: any, context: any) {
   // add group member
-  await message.conversation.send(
+  await conversation.send(
     {
       content: "",
       metadata: {
@@ -71,13 +81,13 @@ async function grant_access(message: any, context: any) {
     },
   );
 }
-async function ping(message: any, context: any, accessHandler: any) {
-  await message.conversation.send(
+async function ping(conversation: any, context: any, accessHandler: boolean) {
+  await conversation.send(
     {
       content: "",
       metadata: {
         type: "ping",
-        access: accessHandler ? true : false,
+        access: accessHandler,
         ...context,
       },
     },

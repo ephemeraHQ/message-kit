@@ -1,0 +1,22 @@
+# Text
+
+The `message` object contains the following
+
+```tsx
+{
+  content: string, // The content of the message
+}
+```
+
+### Receive a message
+
+Here's an example of how you can receive a message in your app:
+
+```tsx
+const { content, typeId, senderAddress } = context.message;
+
+if (typeId == "text") {
+  const { content: text } = content;
+  // Use text
+}
+```

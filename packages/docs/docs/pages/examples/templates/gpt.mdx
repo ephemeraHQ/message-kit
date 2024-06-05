@@ -26,6 +26,7 @@ export async function handler(context: HandlerContext, commands: any) {
     `You are a helpful assistant that lives inside a web3 messaging group`;
 
   const { content, senderAddress } = context.message;
+
   let { reply } = await openaiCall(content, senderAddress, systemPrompt);
 
   await context.reply(`bot:/x ${reply}`);
@@ -111,4 +112,4 @@ XMTP_ENV=production # or `dev`
 OPEN_AI_API_KEY= # openai api key
 ```
 
-- Check out the [repository](https://github.com/xmtp/botkit/tree/main/examples/gpt) for the full code.
+- Check out the [repository](https://github.com/xmtp-labs/botkit/tree/main/examples/gpt) for the full code.

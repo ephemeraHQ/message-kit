@@ -13,8 +13,7 @@ let conversationHistory = [
 ];
 
 run(async (context: HandlerContext) => {
-  const { content, contentType, senderAddress } = context.message;
-  const { typeId } = contentType;
+  const { content, typeId, senderAddress } = context.message;
 
   try {
     const { reply, messages } = await openaiCall(

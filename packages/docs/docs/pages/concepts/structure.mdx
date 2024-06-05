@@ -2,7 +2,7 @@
 
 A general overview of the structure of a Bot:
 
-### File structure
+## File structure
 
 ```
 bot-project/         # Optional middleware files
@@ -14,11 +14,11 @@ bot-project/         # Optional middleware files
 └── .env               # Environment variables
 ```
 
-### `index.ts`
+## Logic
 
 The `index.ts` file is the entry point for your bot. It should contain something like the following:
 
-```jsx
+```jsx [src/index.ts]
 import "dotenv/config";
 import { run, HandlerContext } from "@xmtp/botkit";
 
@@ -31,7 +31,7 @@ run(async (context: HandlerContext) => {
 });
 ```
 
-### Commands
+## Commands
 
 Each bot can have a `commands.ts` file that contains the commands that the bot can execute. The commands are defined as an array of objects with the following keys:
 
@@ -53,7 +53,7 @@ export const commands = [
 
 To learn more go to [commands](./commands)
 
-### Environment variables
+## Environment variables
 
 Each bot should have an `.env` file that contains the following:
 

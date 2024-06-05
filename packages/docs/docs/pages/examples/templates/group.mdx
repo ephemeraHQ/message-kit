@@ -24,8 +24,7 @@ const newBotConfig = {
 
 // Main bot runner
 run(async (context: HandlerContext) => {
-  const { content, contentType, senderAddress } = context.message;
-  const { typeId } = contentType;
+  const { content, typeId, senderAddress } = context.message;
 
   if (typeId == "reaction") {
     const { action, content: emoji } = content;
@@ -42,4 +41,4 @@ run(async (context: HandlerContext) => {
 }, newBotConfig);
 ```
 
-- Check out the [repository](https://github.com/xmtp/botkit/tree/main/examples/group) for the full code.
+- Check out the [repository](https://github.com/xmtp-labs/botkit/tree/main/examples/group) for the full code.
