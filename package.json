@@ -17,7 +17,6 @@
     "start:gm": "turbo run start --filter='./examples/gm'",
     "start:gpt": "turbo run start --filter='./examples/gpt'",
     "start:group": "turbo run start --filter='./examples/group'",
-    "start:playground": "turbo run dev --filter='./packages/playground'",
     "start:subscription": "turbo run start --filter='./examples/subscription'",
     "typecheck": "FORCE_COLOR=1 turbo run typecheck"
   },

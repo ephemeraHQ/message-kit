@@ -10,7 +10,7 @@ To learn more about the contents of this repository, see this README and the REA
 
 - [`botkit`](/packages/botkit): A kit for quickly building bots on the XMTP network
 - [`create-xmtp-bot`](/packages/create-xmtp-bot): A CLI for creating new XMTP bot projects
-- [`playground`](/packages/playground): A visual playground for creating groups
+- [`playground`](https://github.com/fabriguespe/playground): A visual playground for creating groups
 - [`docs`](/packages/docs): Documentation for botkit
 
 ### Templates

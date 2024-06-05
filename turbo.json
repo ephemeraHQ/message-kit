@@ -15,9 +15,6 @@
     "format:check": {
       "outputs": []
     },
-    "botkit-playground#dev": {
-      "persistent": true
-    },
     "botkit-docs#dev": {
       "persistent": true
     },
