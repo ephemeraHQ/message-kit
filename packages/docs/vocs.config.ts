@@ -28,7 +28,6 @@ export default defineConfig({
     },
     {
       text: "Concepts",
-      link: "/concepts",
       items: [
         {
           text: "Structure",
@@ -67,22 +66,22 @@ export default defineConfig({
       items: [
         {
           text: "Introduction",
-          link: "/introduction",
+          link: "/examples/introduction",
         },
         {
           text: "Templates",
           items: [
             {
               text: "Subscription",
-              link: "/templates/Subscription",
+              link: "/examples/templates/Subscription",
             },
             {
               text: "GPT",
-              link: "/templates/gpt",
+              link: "/examples/templates/gpt",
             },
             {
               text: "Group",
-              link: "/templates/group",
+              link: "/examples/templates/group",
             },
           ],
         },
@@ -91,19 +90,19 @@ export default defineConfig({
           items: [
             {
               text: "Redis",
-              link: "/integrations/redis",
+              link: "/examples/integrations/redis",
             },
             {
               text: "GPT",
-              link: "/integrations/gpt",
+              link: "/examples/integrations/gpt",
             },
             {
               text: "Cron",
-              link: "/integrations/cron",
+              link: "/examples/integrations/cron",
             },
             {
               text: "Parse commands",
-              link: "/integrations/commands",
+              link: "/examples/integrations/commands",
             },
           ],
         },
