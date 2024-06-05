@@ -1,8 +1,13 @@
 # Frog
 
-**Metadata**
+Discover how Frog seamlessly incorporates XMTP payloads
 
-To build a Frame with XMTP, you must first add XMTP metadata.
+- [Frog](https://frog.fm/concepts/middleware#xmtp-frames-middleware): XMTP Frog official middleware
+- [Quickstart](https://github.com/fabriguespe/frog-starter): Frog open frame XMTP quickstart
+
+## Metadata
+
+First add the metadata indicating which protocols you support.
 
 ```jsx
 const addMetaTags = (client: string, version?: string) => {
@@ -18,7 +23,7 @@ const addMetaTags = (client: string, version?: string) => {
 export const app = new Frog(addMetaTags("xmtp"));
 ```
 
-**Validate incoming messages**:
+## Validate incoming messages:
 
 Install the `@xmtp/frames-validator` package to validate incoming messages.
 
@@ -63,6 +68,3 @@ app.frame("/", (c) => {
   /* return */
 });
 ```
-
-- [Frog](https://frog.fm/concepts/middleware#xmtp-frames-middleware): XMTP Frog official middleware
-- [Quickstart](https://github.com/fabriguespe/frog-starter): Frog open frame XMTP quickstart

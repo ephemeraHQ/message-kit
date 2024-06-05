@@ -17,8 +17,7 @@ const newBotConfig = {
 };
 
 run(async (context: HandlerContext) => {
-  const { content, contentType, senderAddress } = context.message;
-  const { typeId } = contentType;
+  const { content, typeId, senderAddress } = context.message;
 
   populateFakeUsers(context);
   if (typeId == "reaction") {

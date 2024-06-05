@@ -3,8 +3,14 @@ import { run, HandlerContext } from "@xmtp/botkit";
 
 run(async (context: HandlerContext) => {
   // Get the message and the address from the sender
-  const { content, senderAddress } = context.message;
+  const { content, senderAddress, typeId } = context.message;
 
-  // To reply, just call `reply` on the HandlerContext.
-  await context.reply(`gm`);
+  if (typeId === "text") {
+    const { content: text } = content;
+    if (text?.startsWith("/slots") || text?.startsWith("/slots")) {
+      await context.textReply(`https://slot-machine-frame.vercel.app/`);
+    } else {
+      await context.textReply(`gm`);
+    }
+  }
 });

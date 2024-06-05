@@ -15,7 +15,7 @@ const accessHandler = async (context: HandlerContext): Promise<boolean> => {
 
 ### Send it as parameter
 
-To declare the access command in the botkit app, you need to add the following code:
+To declare the access command in the app, you need to add the following code:
 
 ```tsx [src/index.ts]
 run(
@@ -45,8 +45,7 @@ const accessHandler = async (context: HandlerContext): Promise<boolean> => {
 };
 
 run(async (context: HandlerContext) => {
-  const { content, contentType, senderAddress } = context.message;
-  const { typeId } = contentType;
+  const { content, typeId, senderAddress } = context.message;
 
   context.reply("gm!");
 

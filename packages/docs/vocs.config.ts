@@ -27,69 +27,85 @@ export default defineConfig({
       link: "/installation",
     },
     {
-      text: "Structure",
-      link: "/structure",
+      text: "Concepts",
+      link: "/concepts",
+      items: [
+        {
+          text: "Structure",
+          link: "/concepts/structure",
+        },
+        {
+          text: "Messages",
+          link: "/concepts/messages",
+        },
+        {
+          text: "Types",
+          items: [
+            { text: "Text", link: "/concepts/content-types/text" },
+            { text: "Reaction", link: "/concepts/content-types/reaction" },
+            { text: "Reply", link: "/concepts/content-types/reply" },
+          ],
+        },
+        {
+          text: "Commands",
+          link: "/concepts/commands",
+        },
+
+        {
+          text: "Access",
+          link: "/concepts/access",
+        },
+        {
+          text: "Deployment",
+          link: "/concepts/deployment/railway",
+        },
+      ],
     },
-    {
-      text: "Commands",
-      link: "/commands",
-    },
-    {
-      text: "Access",
-      link: "/access",
-    },
+
     {
       text: "Examples",
-      link: "/examples",
-    },
-    {
-      text: "Content Types",
-      items: [
-        { text: "Text", link: "/content-types/text" },
-        { text: "Reaction", link: "/content-types/reaction" },
-        { text: "Reply", link: "/content-types/reply" },
-        { text: "Bot", link: "/content-types/bot" },
-        {
-          text: "Deeplinks",
-          link: "/content-types/deeplinks",
-        },
-      ],
-    },
-    {
-      text: "Templates",
       items: [
         {
-          text: "Subscription",
-          link: "/templates/Subscription",
+          text: "Introduction",
+          link: "/introduction",
         },
         {
-          text: "GPT",
-          link: "/templates/gpt",
+          text: "Templates",
+          items: [
+            {
+              text: "Subscription",
+              link: "/templates/Subscription",
+            },
+            {
+              text: "GPT",
+              link: "/templates/gpt",
+            },
+            {
+              text: "Group",
+              link: "/templates/group",
+            },
+          ],
         },
         {
-          text: "Group",
-          link: "/templates/group",
-        },
-      ],
-    },
-    {
-      text: "Middleware",
-      items: [
-        {
-          text: "Redis",
-          link: "/middleware/redis",
-        },
-        {
-          text: "GPT",
-          link: "/middleware/gpt",
-        },
-        {
-          text: "Cron",
-          link: "/middleware/cron",
-        },
-        {
-          text: "Parse commands",
-          link: "/middleware/commands",
+          text: "Integrations",
+          items: [
+            {
+              text: "Redis",
+              link: "/integrations/redis",
+            },
+            {
+              text: "GPT",
+              link: "/integrations/gpt",
+            },
+            {
+              text: "Cron",
+              link: "/integrations/cron",
+            },
+            {
+              text: "Parse commands",
+              link: "/integrations/commands",
+            },
+          ],
         },
       ],
     },
@@ -130,15 +146,6 @@ export default defineConfig({
               link: "/open-frames/tutorials/transactions",
             },
           ],
-        },
-      ],
-    },
-    {
-      text: "Deployment",
-      items: [
-        {
-          text: "Railway",
-          link: "/deployment/railway",
         },
       ],
     },

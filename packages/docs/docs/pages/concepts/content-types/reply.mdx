@@ -16,8 +16,7 @@ With XMTP, replies are represented as objects with the following keys:
 Now that you understand how replies are represented, you can receive them in your app. Here's an example of how you can receive a reply in your app:
 
 ```tsx
-const { content, contentType, senderAddress } = context.message;
-const { typeId } = contentType;
+const { content, typeId } = context.message;
 
 if (typeId == "reply") {
   const { content: reply, receiver } = content;
