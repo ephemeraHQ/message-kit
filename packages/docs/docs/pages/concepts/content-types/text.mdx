@@ -1,6 +1,10 @@
 # Text
 
-The `message` object contains the following
+With XMTP, text is represented as objects with the following keys:
+
+## Text object
+
+The `text` type contains the following
 
 ```tsx
 {
@@ -8,9 +12,9 @@ The `message` object contains the following
 }
 ```
 
-### Receive a message
+## Receive a text message
 
-Here's an example of how you can receive a message in your app:
+Here's an example of how you can receive a `text` message in your app:
 
 ```tsx
 const { content, typeId, senderAddress } = context.message;

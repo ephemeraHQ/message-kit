@@ -2,7 +2,11 @@
 
 Each bot can have a `commands.ts` file that contains the commands that the bot can execute. The commands are defined as an array of objects with the following keys:
 
-```tsx
+## Create commands
+
+Create the command file `commands.ts` in your project root `src` folder.
+
+```tsx [src/commands.ts]
 export const commands = [
   {
     name: "General Commands",
@@ -18,7 +22,7 @@ export const commands = [
 ];
 ```
 
-### Declare commands
+## Declare commands
 
 To declare the access command in the app, you need to add the following code:
 

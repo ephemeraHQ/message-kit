@@ -1,6 +1,8 @@
 # Access
 
-Create the `accessHandler` function to handle the access request. Returns true or false based on the access request.
+## Grant access
+
+Create the `accessHandler` function to handle access to a group chat. Returns `true` or `false` based on the access request.
 
 ```tsx [src/index.ts]
 const accessHandler = async (context: HandlerContext): Promise<boolean> => {
@@ -13,7 +15,7 @@ const accessHandler = async (context: HandlerContext): Promise<boolean> => {
 };
 ```
 
-### Send it as parameter
+## Send it as parameter
 
 To declare the access command in the app, you need to add the following code:
 
@@ -29,7 +31,7 @@ run(
 );
 ```
 
-### Full example
+## Full example
 
 ```jsx [src/index.ts]
 import "dotenv/config";
@@ -47,7 +49,6 @@ const accessHandler = async (context: HandlerContext): Promise<boolean> => {
 run(async (context: HandlerContext) => {
   const { content, typeId, senderAddress } = context.message;
 
-  context.reply("gm!");
-
+  if (typeId == "text") context.reply("gm!");
 }, {}, accessHandler);
 ```

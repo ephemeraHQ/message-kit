@@ -1,11 +1,13 @@
 # OnChainKit
 
-Discover how OnchainKit seamlessly incorporates XMTP payloads
+OnchainKit incorporates XMTP payloads
 
 - [OnChainKit](https://onchainkit.xyz/xmtp/introduction): Official OnchainKit documentation.
 - [Quickstart](https://github.com/daria-github/a-frame-in-100-lines/): OnchainKit quickstart that integrates XMTP.
 
 ## Metadata
+
+First add the metadata indicating which protocols you support.
 
 ```jsx
 const frameMetadata = getFrameMetadata({
@@ -26,7 +28,9 @@ export const metadata: Metadata = {
 };
 ```
 
-## Validate incoming messages
+## Validate incoming messages:
+
+Validate incoming messages to ensure they are from XMTP.
 
 ```jsx
 import {

@@ -1,0 +1,60 @@
+# AI Bot
+
+This is a simple bot that replies with gpt
+
+## Structure
+
+> Check out the [repository](https://github.com/xmtp-labs/botkit/tree/main/examples/gpt) for the full code.
+
+```
+bot-project/            # Your project's root directory.
+├── lib/
+│   ├── gpt.ts          # OpenAI GPT-4o API call // [!code hl] // [!code focus]
+├── src/
+│   ├── index.ts        # simple gpt bot // [!code hl] // [!code focus]
+├── package.json
+├── tsconfig.json
+└── .env
+```
+
+## Logic
+
+In this case the bot replies with gpt
+
+```jsx [src/index.ts]
+import "dotenv/config";
+import { run, HandlerContext } from "@xmtp/botkit";
+import openaiCall from "./lib/gpt.js";
+
+run(async (context: HandlerContext) => {
+  const { content, typeId, senderAddress } = context.message;
+  const { content: text } = content;
+
+  // Initialize an array to store the conversation history
+  const systemPrompt =
+    "You are a helpful assistant that lives inside a web3 messaging app. You love blockchain and decentralization and you are quite funny. You often tell crypto jokes.";
+
+  try {
+    let { reply } = await openaiCall(text, senderAddress, systemPrompt);
+
+    await context.textReply(`${reply}`);
+  } catch (error) {
+    // Handle the error, for example, by sending an error message to the user
+    await context.textReply(
+      "Failed to process your request. Please try again later.",
+    );
+  }
+});
+```
+
+> Check out [openai](/examples/ai/gpt) middleware
+
+### Variables
+
+Set up this variables in your bot yo connect to GPT and xmtp
+
+```bash
+KEY= # 0x... the private key of the bot (with the 0x prefix)
+XMTP_ENV=production # or `dev`
+OPEN_AI_API_KEY= # openai api key
+```
