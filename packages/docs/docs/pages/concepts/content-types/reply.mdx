@@ -2,16 +2,20 @@
 
 With XMTP, replies are represented as objects with the following keys:
 
+## Reply object
+
+The `reply` type contains the following
+
 ```tsx
 {
   reference: someMessageID, //ID of the message being replied to
-  contentType: ContentTypeText, //Content type of the reply
+  contentType: ContentTypeText, // type of the reply
   content: "I concur", //String representation of the reply
   receiver: address, //Address of the user who received the reply
 };
 ```
 
-### Receive a reply
+## Receive a reply
 
 Now that you understand how replies are represented, you can receive them in your app. Here's an example of how you can receive a reply in your app:
 

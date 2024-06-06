@@ -9,21 +9,26 @@ let dailyQuestionCountPerUser: Map<string, Record<string, number>> = new Map();
 
 export default async function openaiCall(
   content: string,
-  messages: any[] = [],
   senderAddress: string,
   systemPrompt: string,
 ) {
+  let messages = [
+    {
+      role: "system",
+      content: systemPrompt,
+    },
+  ];
   // Check if the limit of 5 questions per day has been reached
   const today = new Date().toISOString().slice(0, 10); // Format: YYYY-MM-DD
   let userDailyCount = dailyQuestionCountPerUser.get(senderAddress) || {};
-  if (userDailyCount[today] >= 5) {
+  /*if (userDailyCount[today] >= 5) {
     // If the limit is reached, return a warning message
     return {
       reply:
         "Oops, looks like you've hit the 5-question cap! At this rate, my OpenAI key's gonna drain faster than Fabri's crypto funds. NGMI, try again tomorrow!",
       messages,
     };
-  }
+  }*/
 
   try {
     if (content.toLowerCase() === "stop") {
@@ -42,15 +47,14 @@ export default async function openaiCall(
       });
     }
     const response = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
+      model: "gpt-4o",
       messages: messages as any,
     });
-
     const reply = response.choices[0].message.content;
     // Add the assistant's reply to the conversation history
     messages.push({
       role: "assistant",
-      content: reply,
+      content: reply || "No response from OpenAI.",
     });
 
     userDailyCount[today] = (userDailyCount[today] || 0) + 1;

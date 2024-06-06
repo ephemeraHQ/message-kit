@@ -1,0 +1,97 @@
+# Redis
+
+Integrate Redis with your bot to manage state.
+
+## Install dependency
+
+Install the redis client in your project.
+
+```bash
+yarn add @redis/client
+```
+
+## Redis middleware
+
+Copy paste the following code in your `lib/redis.ts` file.
+
+```jsx [lib/redis.ts]
+import { createClient } from "@redis/client";
+
+export const getRedisClient = async () => {
+  const client = createClient({
+    url: process.env.REDIS_CONNECTION_STRING,
+  });
+  await client.connect();
+  return client;
+};
+
+/* To boost the efficiency of managing XMTP conversations, a caching mechanism is essential. Utilizing fs-persistence or Redis allows the system to swiftly verify the existence of a conversation, eliminating the need to reload and inspect every conversation.
+This method greatly accelerates both initial and subsequent requests, minimizing wait times and preventing timeouts.
+For additional information on configuring fs-persistence with XMTP, please consult the fs-persistence documentation.
+The need for this caching mechanism stems from the requirement to ascertain whether newConversation is continuing an existing conversation or starting a new one. This verification aids in avoiding duplicate conversations with the same user, ensuring compliance with privacy standards. */
+export const getRedisConfig = async (redisClient: any) => {
+  const redisPersistence = await import("@xmtp/redis-persistence");
+  const newBotConfig = {
+    basePersistance: new redisPersistence.RedisPersistence(
+      redisClient as any,
+      "xmtp:"
+    ),
+  };
+  return newBotConfig;
+};
+```
+
+## Add redis in your logic
+
+Import the redis config file and send it as parameter to the `run` function.
+
+```jsx [src/index.ts]
+async function start() {
+  const redisClient = await getRedisClient(); // [!code hl] // [!code focus]
+  const newBotConfig = await getRedisConfig(redisClient); // [!code hl] // [!code focus]
+  run(async (context: HandlerContext) => {
+
+   const { content, senderAddress } = context.message;
+    const lowerContent = content.toLowerCase();
+
+    //Handles unsubscribe and resets step
+    if (stopWords.some((word) => lowerContent.includes(word))) {
+      inMemoryCacheStep.set(senderAddress, 0);
+      await redisClient.del(senderAddress); // [!code hl] // [!code focus]
+      await context.reply(
+        "You are now unsubscribed. You will no longer receive updates!.",
+      );
+    }
+
+    const cacheStep = inMemoryCacheStep.get(senderAddress) || 0;
+    let message = "";
+    if (cacheStep === 0) {
+      message = "Welcome! Choose an option:\n1. Info\n2. Subscribe";
+      // Move to the next step
+      inMemoryCacheStep.set(senderAddress, cacheStep + 1);
+    } else if (cacheStep === 1) {
+      if (content === "1") {
+        message = "Here is the info.";
+      } else if (content === "2") {
+        await redisClient.set(senderAddress, "subscribed"); // [!code hl] // [!code focus]
+        message =
+          "You are now subscribed. You will receive updates.\n\ntype 'stop' to unsubscribe";
+        //reset the bot to the initial step
+        inMemoryCacheStep.set(senderAddress, 0);
+      } else {
+        message = "Invalid option. Please choose 1 for Info or 2 to Subscribe.";
+        // Keep the same step to allow for re-entry
+      }
+    } else {
+      message = "Invalid option. Please start again.";
+      inMemoryCacheStep.set(senderAddress, 0);
+    }
+
+    //Send the message
+    await context.reply(message);
+
+  }, newBotConfig);
+}
+
+start();
+```

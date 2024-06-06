@@ -1,0 +1,17 @@
+# GM Bot
+
+This is a simple bot that replies with GM
+
+```jsx [src/index.ts]
+import "dotenv/config";
+import { run, HandlerContext } from "@xmtp/botkit";
+
+run(async (context: HandlerContext) => {
+  // Get the message and the address from the sender
+  const { content, senderAddress, typeId } = context.message;
+
+  // Do something with content
+
+  await context.reply(`gm`);
+});
+```

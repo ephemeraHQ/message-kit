@@ -104,7 +104,9 @@ Next, let's add a `tsconfig.json` file to the root of our project.
 }
 ```
 
-### Add code to `index.ts`
+### Create `index.ts`
+
+Add the following code to `src/index.ts`. This bot will reply `gm` to every message it receives.
 
 ```jsx [src/index.ts]
 import "dotenv/config";
@@ -120,22 +122,24 @@ run(async (context: HandlerContext) => {
 
 ```
 
-### Install
+::::
 
-```bash [Terminal]
-yarn install
-```
+## Set variables
 
-### Set variables
-
-next, create a `.env` file in the root of your project with the following content:
+Create a `.env` file in the root of your project with the following content. You can copy `.env.example`:
 
 ```bash [.env]
 KEY= # 0x... the private key of the bot (with the 0x prefix)
 XMTP_ENV=production # or `dev`
 ```
 
-### Run
+## Run the bot
+
+Install the dependencies
+
+```bash [Terminal]
+yarn install
+```
 
 Next, let's run the bot.
 
@@ -145,7 +149,3 @@ yarn start:watch
 ```
 
 Send a message to the bot, and will reply `gm`!
-
-### Next Steps
-
-You can learn more about the basic structure of Bots in [Structure](/concepts/structure).

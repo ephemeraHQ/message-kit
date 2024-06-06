@@ -9,8 +9,7 @@ export default defineConfig({
       dark: "#F04D23",
     },
   },
-  outputDir: "dist", // Specify 'dist' as the output directory
-
+  outputDir: "dist",
   socials: [
     {
       icon: "github",
@@ -27,7 +26,12 @@ export default defineConfig({
       link: "/installation",
     },
     {
+      text: "Deployment",
+      link: "/concepts/deployment/railway",
+    },
+    {
       text: "Concepts",
+      collapsed: false,
       items: [
         {
           text: "Structure",
@@ -54,82 +58,76 @@ export default defineConfig({
           text: "Access",
           link: "/concepts/access",
         },
-        {
-          text: "Deployment",
-          link: "/concepts/deployment/railway",
-        },
       ],
     },
 
     {
-      text: "Examples",
+      text: "Bots",
+      collapsed: false,
       items: [
         {
           text: "Introduction",
           link: "/examples/introduction",
         },
         {
-          text: "Templates",
+          text: "Subscription",
+          link: "/examples/subscription",
           items: [
             {
-              text: "Subscription",
-              link: "/examples/templates/Subscription",
+              text: "Redis",
+              link: "/examples/subscription/redis",
             },
             {
-              text: "GPT",
-              link: "/examples/templates/gpt",
-            },
-            {
-              text: "Group",
-              link: "/examples/templates/group",
+              text: "Cron",
+              link: "/examples/subscription/cron",
             },
           ],
         },
         {
-          text: "Integrations",
+          text: "AI",
+          link: "/examples/ai",
           items: [
             {
-              text: "Redis",
-              link: "/examples/integrations/redis",
-            },
-            {
               text: "GPT",
-              link: "/examples/integrations/gpt",
+              link: "/examples/ai/gpt",
             },
-            {
-              text: "Cron",
-              link: "/examples/integrations/cron",
-            },
+          ],
+        },
+        {
+          text: "Group",
+          link: "/examples/group",
+          items: [
             {
               text: "Parse commands",
-              link: "/examples/integrations/commands",
+              link: "/examples/group/commands",
             },
           ],
         },
       ],
     },
     {
-      text: "Open Frames",
-      link: "/open-frames",
+      text: "Frames",
+      collapsed: false,
+      link: "/frames",
       items: [
         {
           text: "Introduction",
-          link: "/open-frames",
+          link: "/frames",
         },
         {
           text: "Frameworks",
           items: [
             {
               text: "OnchainKit",
-              link: "/open-frames/frameworks/onchainkit",
+              link: "/frames/frameworks/onchainkit",
             },
             {
               text: "Frames.js",
-              link: "/open-frames/frameworks/framesjs",
+              link: "/frames/frameworks/framesjs",
             },
             {
               text: "Frog",
-              link: "/open-frames/frameworks/frog",
+              link: "/frames/frameworks/frog",
             },
           ],
         },
@@ -138,11 +136,11 @@ export default defineConfig({
           items: [
             {
               text: "Subscribe",
-              link: "/open-frames/tutorials/subscribe",
+              link: "/frames/tutorials/subscribe",
             },
             {
               text: "Transactions",
-              link: "/open-frames/tutorials/transactions",
+              link: "/frames/tutorials/transactions",
             },
           ],
         },

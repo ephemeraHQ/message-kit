@@ -3,17 +3,17 @@
 ## Structure
 
 ```
-bot-project/           # Your project's root directory.
+bot-project/              # Your project's root directory.
 ├── src/
-│   ├── index.ts         # Simple group bot. // [!code hl] // [!code focus]
+│   ├── index.ts          # Simple group bot. // [!code hl] // [!code focus]
 ├── package.json
-├── tsconfig.json         // [!code hl] // [!code focus]
-└── .env               # Environment variables
+├── tsconfig.json
+└── .env
 ```
 
-## Usage
+## Logic
 
-```jsx [index.ts]
+```jsx [src/index.ts]
 import "dotenv/config";
 import { run, HandlerContext } from "@xmtp/botkit";
 import { commands } from "./commands.ts";
@@ -27,18 +27,18 @@ run(async (context: HandlerContext) => {
   const { content, typeId, senderAddress } = context.message;
 
   if (typeId == "reaction") {
-    const { action, content: emoji } = content;
+    const { action, content: emoji, receiver } = content;
     // handle reactions
   } else if (typeId == "reply") {
+    const { content: reply, receiver } = content;
     // handle replies
   } else if (typeId == "text") {
-    if (content.startsWith("@bot")) {
+    const { content: text, receiver } = content;
+    if (text.startsWith("@bot")) {
       // Handle direct messages to the bot
-    }else if (content.startsWith("/help")) {
+    }else if (text.startsWith("/help")) {
       // Handle help command
     }
   }
 }, newBotConfig);
 ```
-
-- Check out the [repository](https://github.com/xmtp-labs/botkit/tree/main/examples/group) for the full code.

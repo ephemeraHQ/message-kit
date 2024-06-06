@@ -1,14 +1,50 @@
-# Examples
+# Bots
+
+In this section you will learn how to build your own bot with different primitives and tools.
+
+## Gm Bot
+
+Start with a simple bot that replies with GM.
+
+```jsx [src/index.ts]
+import "dotenv/config";
+import { run, HandlerContext } from "@xmtp/botkit";
+
+run(async (context: HandlerContext) => {
+  // Get the message and the address from the sender
+  const { content, senderAddress, typeId } = context.message;
+
+  // Do something with content
+
+  await context.reply(`gm`);
+});
+```
+
+> Check out the [repository](https://github.com/xmtp-labs/botkit/tree/main/examples/gm) for the full code.
+
+## Live examples
 
 > 💬 **Try it:** Message `awesome.hi.xmtp.eth`
 
-### Bots 🤖
+Start with some examples to see how you can use Bots in your app.
 
-- 🚀 [`trendingmints.eth`](https://github.com/fabriguespe/trendingmints-bot) : Subscribe to get real-time trending mints in Base through [Airstack](https://www.airstack.xyz/)
+### Group conversations
+
+-- coming soon
+
+### 1:1 conversations
+
+- 🚀[`trendingmints.eth`](https://github.com/fabriguespe/trendingmints-bot) : Subscribe to get real-time trending mints in through [Airstack](https://www.airstack.xyz/)
 - 💧 [`faucetbot.eth`](https://github.com/fabriguespe/faucet-bot) : Delivers Faucet funds to devs on Testnet via [Learnweb3](https://learnweb3.io/faucets/).
 - 🤖 [`docs.hi.xmtp.eth`](https://github.com/fabriguespe/xmtp-docs-bot) : Chat with the XMTP [Docs](https://xmtp.org/docs/introduction) through [Kapa](https://kapa.ai).
 - 🛒 [`thegeneralstore.eth`](https://github.com/fabriguespe/thegeneralstore-bot) : E-commerce bot for ordering goodies in hackathons.
 - 📅 [`dailywordle.eth`](https://converse.xyz/dm/dailywordle.eth) : Play daily to the WORDLE game by [du8](https://warpcast.com/ds8/0x2d31015a) through messaging.
 - 🃏 [`gpt.hi.xmtp.eth`](https://github.com/fabriguespe/crypto-joker) : Get funny cypto jokes with an a GPT powered bot using Open AI APIs.
 
-### Frames 🖼️
+## Templates
+
+Learn how to build your own bot with different primitives and tools.
+
+- [Subscription](/examples/subscription): Register subscribers and send them updates regularly
+- [GPT](/examples/ai): Use GPT to answer questions and provide context.
+- [Group](/examples/group): Interact with multiple users and commands in a group chat.

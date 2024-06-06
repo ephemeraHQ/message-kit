@@ -1,6 +1,6 @@
 # Railway
 
-### Introduction
+## Introduction
 
 Here’s how to easily deploy this bot:
 
@@ -10,9 +10,9 @@ Here’s how to easily deploy this bot:
 - Connect your GitHub repository
 - Set your environment variables
 - Deploy your application.
-- Register an ENS domain and share your bot!
+- Register an [ENS domain](https://ens.domains/) and share your bot!
 
-### Deployment
+## Deployment
 
 1. **Sign Up and Setup**: Create an account at [Railway](https://railway.app/) and start a new empty project.
 
@@ -20,11 +20,19 @@ Here’s how to easily deploy this bot:
 
 2. **Database (Optional)**: Optionally, Right click to add a Redis database to your project.
 
-![](/railway/2.png)
+![](/railway/redis.png)
 
 - **Get the redis connection string**
 
 ![](/railway/3.gif)
+
+Add the variable to the env editor in Railway.
+
+```bash [.env]
+KEY= # 0x... the private key of the bot (with the 0x prefix)
+XMTP_ENV=production # or `dev`
+REDIS_CONNECTION_STRING= # the connection string for the Redis database
+```
 
 3. **Repository**: Connect your GitHub repository where your bot code resides and deploy the repo.
 
@@ -33,7 +41,3 @@ Here’s how to easily deploy this bot:
 4. **Environment Variables**: Set up environment variables in Railway.
 
 ![](/railway/5.gif)
-
-### Register an ENS Domain
-
-Register an [ENS domain](https://ens.domains/) and share your bot!

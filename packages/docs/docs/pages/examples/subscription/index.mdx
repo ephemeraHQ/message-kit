@@ -1,3 +1,27 @@
+# Subscription Bot
+
+This is a simple yet powerful subscription bot that will allow you to customize it to your needs.
+
+## Structure
+
+> Check out the [repository](https://github.com/xmtp-labs/botkit/tree/main/examples/subscription) for the full code.
+
+```
+bot-project/              # Your project's root directory.
+├── lib/
+│   ├── redis.ts          # Redis middleware // [!code hl] // [!code focus]
+├── src/
+│   ├── index.ts          # Conversational logic // [!code hl] // [!code focus]
+├── package.json
+├── tsconfig.json
+└── .env
+```
+
+### Conversational logic
+
+With simple concepts like steps and if statements create powerful subscription experiences:
+
+```tsx [src/index.ts]
 import "dotenv/config";
 import { getRedisClient, getRedisConfig } from "./lib/redis.js";
 import cron from "node-cron";
@@ -21,7 +45,7 @@ async function start() {
     if (stopWords.some((word) => lowerContent.includes(word))) {
       inMemoryCacheStep.set(senderAddress, 0);
       await redisClient.del(senderAddress);
-      await context.textReply(
+      await context.reply(
         "You are now unsubscribed. You will no longer receive updates!.",
       );
     }
@@ -51,7 +75,7 @@ async function start() {
     }
 
     //Send the message
-    await context.textReply(message);
+    await context.reply(message);
   }, newBotConfig);
 
   // Daily task
@@ -81,3 +105,16 @@ async function start() {
 }
 
 start();
+```
+
+> Check out [redis](/examples/subscription/redis) middleware
+
+### Variables
+
+Set up this variables in your bot yo connect to redis and xmtp
+
+```bash
+KEY= # 0x... the private key of the bot (with the 0x prefix)
+XMTP_ENV=production # or `dev`
+REDIS_CONNECTION_STRING= # the connection string for the Redis database
+```
