@@ -10,11 +10,11 @@
     "format:base": "prettier --ignore-path ../../.gitignore",
     "format:check": "yarn format:base -c ."
   },
+  "devDependencies": {
+    "prettier": "^3.3.1"
+  },
   "packageManager": "yarn@4.2.2",
   "engines": {
     "node": ">=20"
-  },
-  "devDependencies": {
-    "prettier": "^3.3.1"
   }
 }
