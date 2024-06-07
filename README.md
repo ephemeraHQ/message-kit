@@ -2,7 +2,7 @@
 
 This is the official repository for the XMTP bot kit and examples, powered by [Turborepo](https://turbo.build/repo).
 
-To learn more about the contents of this repository, see this README and the READMEs provided for [packages](https://github.com/xmtp/botkit/tree/main/packages) and [examples](https://github.com/xmtp/botkit/tree/main/examples).
+To learn more about the contents of this repository, see this README and the READMEs provided for [packages](https://github.com/xmtp-labs/botkit/tree/main/packages) and [examples](https://github.com/xmtp-labs/botkit/tree/main/examples).
 
 ## What's inside?
 

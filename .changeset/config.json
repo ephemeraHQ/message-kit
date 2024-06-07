@@ -3,7 +3,7 @@
   "changelog": [
     "@changesets/changelog-git",
     {
-      "repo": "xmtp/botkit"
+      "repo": "xmtp-labs/botkit"
     }
   ],
   "commit": false,
