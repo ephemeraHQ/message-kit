@@ -13,9 +13,9 @@
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
   "ignore": [
-    "subscription-bot",
+    "conversational-bot",
     "gm-bot",
-    "gpt-bot",
+    "group-bot",
     "botkit-docs",
     "@xmtp/tsconfig"
   ]
