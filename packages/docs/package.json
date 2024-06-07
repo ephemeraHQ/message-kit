@@ -13,5 +13,9 @@
     "react-dom": "latest",
     "typescript": "latest",
     "vocs": "latest"
+  },
+  "packageManager": "yarn@4.2.2",
+  "engines": {
+    "node": ">=20"
   }
 }
