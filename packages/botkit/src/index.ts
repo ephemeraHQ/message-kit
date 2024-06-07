@@ -6,3 +6,6 @@ export {
   mapUsernamesToAddresses,
   generateFrameURL,
 } from "./lib/helper.js";
+export { runGroup } from "./lib-mls/runner.js";
+export { mlsClient } from "./lib-mls/client.js";
+export { HandlerContext as MlsHandlerContext } from "./lib-mls/handlerContext.js";
