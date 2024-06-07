@@ -18,16 +18,16 @@
     "botkit-docs#dev": {
       "persistent": true
     },
+    "group-bot#start": {
+      "dependsOn": ["^build", "subscription-bot#build"],
+      "persistent": true
+    },
     "subscription-bot#start": {
       "dependsOn": ["^build", "subscription-bot#build"],
       "persistent": true
     },
     "gm-bot#start": {
       "dependsOn": ["^build", "gm-bot#build"],
-      "persistent": true
-    },
-    "gpt-bot#start": {
-      "dependsOn": ["^build", "gpt-bot#build"],
       "persistent": true
     },
     "typecheck": {

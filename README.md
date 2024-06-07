@@ -28,7 +28,6 @@ See more examples in the [Awesome XMTP ⭐️](https://github.com/xmtp/awesome-x
 
 - `yarn start:conversational`: Start the conversational bot
 - `yarn start:gm`: Start the GM bot
-- `yarn start:gpt`: Start the ChatGPT bot
 - `yarn start:group`: Start the Group bot
 
 ## Contributing

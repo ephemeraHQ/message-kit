@@ -29,7 +29,6 @@ run(async (context: HandlerContext) => {
 ## Examples
 
 - [Subscription](/examples/subscription): Drive retention with conversations and subscriptions with redisDb.
-- [GPT](/examples/gpt): Relay messages through Open AI APIs.
 - [Group](/examples/group): Group bot example.
 
 See more examples in the [Awesome XMTP ⭐️](https://github.com/xmtp/awesome-xmtp) repo
