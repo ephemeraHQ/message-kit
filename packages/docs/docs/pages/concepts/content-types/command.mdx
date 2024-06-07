@@ -1,0 +1,27 @@
+# Command
+
+If the message starts with a `/` it is considered a command
+
+## Command object
+
+The `text` type contains the following
+
+```tsx
+{
+  content: string, // The raw content of the message
+  params: params // The value of the parameters of the command
+}
+```
+
+## Receive a command
+
+Here's an example of how you can receive a `text` message in your app:
+
+```tsx
+const { content, typeId, senderAddress } = context.message;
+
+if (typeId == "text") {
+  const { params } = content;
+  // Use params of the command
+}
+```

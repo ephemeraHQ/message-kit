@@ -7,7 +7,8 @@ import { handler as basebetHandler } from "./bots/basebet.js";
 import { handler as degenHandler } from "./bots/degen.js";
 import { handler as gptHandler } from "./bots/gpt.js";
 import { handler as gamesHandler } from "./bots/games.js";
-import { handler as groupChatHandler } from "./bots/groupchat.js";
+import { handler as generalHandler } from "./bots/general.js";
+import { handler as commandHandler } from "./bots/cmd.js";
 
 const newBotConfig = {
   context: {
@@ -18,7 +19,7 @@ const newBotConfig = {
 
 run(async (context: HandlerContext) => {
   const { content, typeId, senderAddress } = context.message;
-
+  console.log(content);
   populateFakeUsers(context);
   if (typeId == "reaction") {
     const { action, content: emoji } = content;
@@ -27,35 +28,26 @@ run(async (context: HandlerContext) => {
     const { receiver, content: reply } = content;
     if (receiver && reply.includes("degen")) await degenHandler(context);
   } else if (typeId == "text") {
-    if (content.startsWith("@bot")) {
+    const { content: text } = content;
+    if (text.startsWith("@bot")) {
       await gptHandler(context, commands);
-    } else if (content.startsWith("/basebet")) {
+    } else if (text.startsWith("/cmd")) {
+      await commandHandler(context);
+    } else if (text.startsWith("/bet")) {
       await basebetHandler(context);
-    } else if (content.startsWith("/base")) {
+    } else if (
+      text.startsWith("/send") ||
+      text.startsWith("/swap") ||
+      text.startsWith("/mint") ||
+      text.startsWith("/show")
+    ) {
       await baseHandler(context);
-    } else if (content.startsWith("/tx")) {
-      context.reply("Send 1 ETH tx:0xf0490b45884803924Ca84C2051ef435991D7350D");
-    } else if (content.startsWith("/dm")) {
-      context.reply("dm:/0x1CB3649469546D10b7fa4fd1d1c63e8aA3a0E667");
-    } else if (content.startsWith("/tip")) {
+    } else if (text.startsWith("/tip")) {
       await degenHandler(context);
-    } else if (content.startsWith("/games")) {
+    } else if (text.startsWith("/game")) {
       await gamesHandler(context);
-    } else if (content.startsWith("/help")) {
-      const intro =
-        "Available experiences:\n" +
-        commands
-          .flatMap((bot: any) => bot.commands)
-          .map((command: any) => `${command.command} - ${command.description}`)
-          .join("\n") +
-        "\nUse these commands to interact with specific bots.";
-      context.reply(intro);
-    } else if (content.startsWith("/block") || content.startsWith("/unblock")) {
-      context.reply("❌ you are not an admin");
-    } else if (content.startsWith("/")) {
-      context.reply("Command not found. Use /help to see available commands.");
-    } else {
-      await groupChatHandler(context, commands);
+    } else if (text.startsWith("/")) {
+      await generalHandler(context);
     }
   }
 }, newBotConfig);
