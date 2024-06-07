@@ -13,7 +13,7 @@
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
   "ignore": [
-    "conversational-bot",
+    "subscription-bot",
     "gm-bot",
     "group-bot",
     "botkit-docs",
