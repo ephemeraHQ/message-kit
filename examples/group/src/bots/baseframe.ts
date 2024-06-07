@@ -1,53 +1,21 @@
-import { run, HandlerContext } from "@xmtp/botkit";
-import { extractCommandValues, generateFrameURL } from "../lib/helper.js";
+import { HandlerContext } from "@xmtp/botkit";
+import { generateFrameURL } from "@xmtp/botkit";
 import { users } from "../lib/users.js";
 
 const baseUrl = "https://base-frame-lyart.vercel.app/transaction";
-const commandConfig = {
-  send: {
-    params: {
-      amount: [],
-      token: ["eth", "dai", "usdc", "degen"],
-      username: [],
-    },
-  },
-  swap: {
-    params: {
-      amount: [],
-      token_from: ["eth", "dai", "usdc", "degen"],
-      token_to: ["eth", "dai", "usdc", "degen"],
-    },
-  },
-  mint: {
-    params: {
-      address: [],
-      amount: [],
-    },
-  },
-  help: {
-    params: {},
-  },
-  show: {
-    params: {},
-  },
-};
 
 export function handler(context: HandlerContext) {
-  const { content, senderAddress } = context.message;
-
-  const extractedValues = extractCommandValues(content, commandConfig);
+  const { content } = context.message;
+  const { params } = content;
 
   let url = "";
-  switch (extractedValues.command) {
+
+  switch (params.type) {
     case "send":
     case "tip":
     case "donate":
     case "buy":
-      const {
-        amount: amountSend,
-        token: tokenSend,
-        username,
-      } = extractedValues.params;
+      const { amount: amountSend, token: tokenSend, username } = params;
       if (!amountSend || !tokenSend || !username) {
         context.reply(
           "Missing required parameters. Please provide amount, token, and username.",
@@ -67,7 +35,7 @@ export function handler(context: HandlerContext) {
       context.reply(`${url}`);
       break;
     case "swap":
-      const { amount, token_from, token_to } = extractedValues.params;
+      const { amount, token_from, token_to } = params;
       if (!amount || !token_from || !token_to) {
         context.reply(
           "Missing required parameters. Please provide amount, token_from, and token_to.",
@@ -82,8 +50,7 @@ export function handler(context: HandlerContext) {
       context.reply(`${url}`);
       break;
     case "mint":
-      const { address: collectionAddress, numeric: tokenId } =
-        extractedValues.params;
+      const { address: collectionAddress, numeric: tokenId } = params;
       let collection =
         collectionAddress || "0x73a333cb82862d4f66f0154229755b184fb4f5b0";
       let token = tokenId || 1;
@@ -100,21 +67,10 @@ export function handler(context: HandlerContext) {
       });
       context.reply(url);
       break;
-    case "help":
-      context.reply(
-        "Available commands:\n" +
-          "/baseframe send [amount] [token] [username] - Send a specified amount of a cryptocurrency to a destination address.\n" +
-          "/baseframe swap [amount] [token_from] [token_to] - Exchange one type of cryptocurrency for another.\n" +
-          "/baseframe mint [collection_address] [token_id] - Create (mint) a new token or NFT.\n" +
-          "/baseframe help - Display this help message.",
-      );
-      break;
     case "show":
       context.reply(`${baseUrl.replace("/transaction", "")}`);
       break;
     default:
-      context.reply(
-        "Unknown command. Use /help to see all available commands.",
-      );
+      context.reply("Unknown command. Use help to see all available commands.");
   }
 }

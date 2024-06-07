@@ -1,61 +1,25 @@
 import { HandlerContext } from "@xmtp/botkit";
 import { Wallet } from "ethers";
 import { Client as xmtpClient } from "@xmtp/xmtp-js";
-import { extractCommandValues } from "../lib/helper.js";
-import { users } from "../lib/users.js";
-
-const commandConfig = {
-  bet: {
-    params: {
-      username: [],
-      name: [],
-      amount: [],
-    },
-  },
-};
 
 export async function handler(context: HandlerContext) {
   const { content, senderAddress } = context.message;
+  const { params } = content;
+  const { amount, name, users } = params;
 
-  const extractedValues = extractCommandValues(content, commandConfig);
-  let url = "";
-  switch (extractedValues.command) {
-    case "bet":
-      const { amount, name, username } = extractedValues.params;
-      if (!amount || !name || !username) {
-        context.reply(
-          "Missing required parameters. Please provide amount, token, and username.",
-        );
-        return;
-      }
-
-      // Ensure that amount, name, and username are treated as single strings
-      const singleName = Array.isArray(name) ? name[0] : name;
-      const singleAmount = Array.isArray(amount) ? amount[0] : amount;
-
-      /* This is for creating a group
-      
-      const recipientUser = users.find(
-        //@ts-ignore
-        (user) => user.username === username[0]?.replace("@", ""),
-      );
-      if (!recipientUser || !recipientUser.address) {
-        context.reply("User not found or user address is missing.");
-        return;
-      }
-      */
-      url = await generateBetUrl(
-        context.message.senderAddress,
-        singleName,
-        singleAmount,
-      );
-      context.reply(`Bet created!. Go here: ${url}`, []);
-      break;
-    default:
-      context.reply(
-        "Unknown command. Use /help to see all available commands.",
-      );
+  if (!amount || !name || !users) {
+    context.reply(
+      "Missing required parameters. Please provide amount, token, and username.",
+    );
+    return;
   }
+
+  let url = await generateBetUrl(
+    senderAddress,
+    name as string,
+    amount as string,
+  );
+  context.reply(`Bet created!. Go here: ${url}`, []);
 }
 
 async function generateBetUrl(
@@ -74,7 +38,7 @@ async function generateBetUrl(
     `https://base-frame-lyart.vercel.app/transaction?transaction_type=send&amount=1&token=eth&receiver=0xA45020BdA714c3F43fECDC6e38F873fFF2Dec8ec`,
   );
   await conv.send(
-    `Place your bet tx:0xf0490b45884803924Ca84C2051ef435991D7350D`,
+    `Or use a deeplink. Place your bet tx:0xf0490b45884803924Ca84C2051ef435991D7350D`,
   );
   const link = `${baseUrl}${client.address}`;
   return link;

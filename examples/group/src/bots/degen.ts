@@ -1,43 +1,29 @@
 import { HandlerContext } from "@xmtp/botkit";
-import {
-  extractCommandValues,
-  mapUsernamesToAddresses,
-} from "../lib/helper.js";
+import { mapUsernamesToAddresses } from "@xmtp/botkit";
 import { users } from "../lib/users.js";
 import { Client as xmtpClient } from "@xmtp/xmtp-js";
 import { Wallet } from "ethers";
 
 export async function handler(context: HandlerContext) {
-  const { senderAddress, content: mContent, contentType } = context.message;
-  const { typeId } = contentType;
-  let emoji: string = "",
-    action: string = "",
-    amount: number = 0,
+  const { senderAddress, content, typeId } = context.message;
+  const { params } = content;
+  let amount: number = 0,
     receiverAddresses: string[] = [],
-    content: any = mContent,
     reference: string = "";
 
   if (typeId === "reply") {
+    const { content: reply, receiver } = content;
     //Reply
-    receiverAddresses = [content.receiver];
-    content = content.content;
-    reference = content.reference;
-    if (content.includes("degen")) {
-      const match = content.match(/(\d+)\s+(\w+)/);
-      if (match) amount = parseInt(match[1]);
+    console.log("reply", reply); //reply 10 $degen
+    receiverAddresses = [receiver];
+    if (reply.includes("$degen")) {
+      const match = reply.match(/(\d+)/);
+      if (match) amount = parseInt(match[0]);
     }
   } else if (typeId === "text") {
-    if (content.startsWith("/tip")) {
-      const commandConfig = {
-        tip: {
-          params: {
-            amount: [],
-            username: [],
-          },
-        },
-      };
-      const extracted = extractCommandValues(content, commandConfig);
-      const { amount: extractedAmount, username } = extracted.params;
+    const { content: text } = content;
+    if (text.startsWith("/tip")) {
+      const { amount: extractedAmount, username } = params;
 
       //@ts-ignore
       amount = parseInt(extractedAmount) || 10;
@@ -45,11 +31,12 @@ export async function handler(context: HandlerContext) {
       receiverAddresses = mapUsernamesToAddresses(username, users);
     }
   } else if (typeId === "reaction") {
+    const { content: reaction, action, receiver } = content;
     //Reaction
-    emoji = content.content;
-    action = content.action;
-    amount = 10;
-    receiverAddresses = [content.receiver];
+    if (reaction === "degen" && action === "added") {
+      amount = 10;
+      receiverAddresses = [receiver];
+    }
   }
   const sender = users.find((user) => user.address === senderAddress);
   const receivers = users.filter((user) =>

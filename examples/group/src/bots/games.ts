@@ -1,35 +1,23 @@
-import { run, HandlerContext } from "@xmtp/botkit";
-import { extractCommandValues } from "../lib/helper.js";
-
-const commandConfig = {
-  framedl: { params: {} },
-  slot: { params: {} },
-  guess: { params: {} },
-  help: { params: {} },
-};
+import { HandlerContext } from "@xmtp/botkit";
 
 export async function handler(context: HandlerContext) {
   const { content } = context.message;
-  const extracted = extractCommandValues(content, commandConfig);
+  const { params } = content;
 
   const baseUrlMap = {
-    framedl: "https://openframedl.vercel.app/",
+    wordle: "https://openframedl.vercel.app/",
     slot: "https://slot-machine-frame.vercel.app/",
     guess: "https://farguessr.vercel.app/",
   };
-  console.log(extracted);
-  switch (extracted.command) {
-    case "framedl":
+  switch (params.type) {
+    case "wordle":
     case "slot":
     case "guess":
-      context.reply(baseUrlMap[extracted.command as keyof typeof baseUrlMap]);
-      break;
-    case "help":
-      context.reply("Available games: framedl, slot, guess.");
+      context.reply(baseUrlMap[params.type as keyof typeof baseUrlMap]);
       break;
     default:
       context.reply(
-        "Command not recognized. Available games: framedl, slot, guess or help.",
+        "Command not recognized. Available games: worlde, slot, guess or help.",
       );
   }
 }

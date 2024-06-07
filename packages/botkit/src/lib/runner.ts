@@ -1,6 +1,7 @@
 import xmtpClient from "./client.js";
 import HandlerContext from "./handler-context.js";
 import { ContentTypeSilent } from "../content-types/Silent.js";
+import { extractCommandValues } from "./helper.js";
 
 type Handler = (context: HandlerContext) => Promise<void>;
 
@@ -15,7 +16,6 @@ export default async function run(
     try {
       const {
         senderAddress,
-        content,
         contentType: { typeId },
       } = message;
 
@@ -26,10 +26,29 @@ export default async function run(
         //if a bot speaks do nothing
         continue;
       }
+
+      let content = message.content;
+      if (typeId == "text") {
+        content = {
+          content: content,
+        };
+        if (content?.content?.startsWith("/")) {
+          const extractedValues = extractCommandValues(
+            content?.content,
+            newBotConfig?.context.commands,
+          );
+
+          content = {
+            ...content,
+            params: extractedValues.params,
+          };
+        }
+      }
+
       const context = new HandlerContext(
         {
           id: message.id,
-          content: typeof content === "string" ? { content } : content,
+          content,
           senderAddress,
           typeId,
           sent: message.sent,
