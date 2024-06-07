@@ -96,6 +96,10 @@ export default defineConfig({
               text: "GPT",
               link: "/examples/group/gpt",
             },
+            {
+              text: "Games",
+              link: "/examples/group/gpt",
+            },
           ],
         },
       ],

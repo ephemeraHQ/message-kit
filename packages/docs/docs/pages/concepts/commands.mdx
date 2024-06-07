@@ -2,24 +2,49 @@
 
 Each bot can have a `commands.ts` file that contains the commands that the bot can execute. The commands are defined as an array of objects with the following keys:
 
+## Example command
+
+First think of which command you want the bot to respond to. For example
+
+```bash [cmd]
+/send [amount] [token] [@username]
+```
+
 ## Create commands
 
 Create the command file `commands.ts` in your project root `src` folder.
 
-```tsx [src/commands.ts]
+```json [src/commands.ts]
 export const commands = [
-  {
-    name: "General Commands",
-    icon: "🔧",
-    description: "Command for managing default behaviours.",
-    commands: [
-      {
-        command: "/help",
-        description: "Get help with the bot.",
-      },
-    ],
-  },
-];
+{
+  "name": "BaseFrame",
+  "icon": "🖼️",
+  "description": "Multipurpose transaction frame.",
+  "commands": [
+    {
+      "command": "/send [amount] [token] [@username]",
+      "description": "Send a specified amount of a cryptocurrency to a destination address.",
+      "params": {
+        "amount": {
+          // Amount field has special treatment
+          "default": 10, // Default value
+          "type": "number" // This will parse it to a number
+        },
+        "token": {
+          // Arbitrary name
+
+          "default": "usdc", // Default value
+          "type": "string", // String field always need to specify accepted values
+          "values": ["eth", "dai", "usdc", "degen"] // Accepted values
+        },
+        "username": {
+          "default": "", // No default username
+          "type": "username" // This will parse it to a usernamearray
+        }
+      }
+    }
+  ]
+}
 ```
 
 ## Declare commands
@@ -39,3 +64,24 @@ run(async (context: HandlerContext) => {
   //Your logic here
 }, newBotConfig);
 ```
+
+## User sends command
+
+Finally, the user sends the command to the bot.
+
+```bash [cmd]
+/send 10 usdc @bob
+```
+
+## Extract parameters
+
+The helper function will extract the parameters from the command. See more details in the [command](/concepts/content-types/command) type.
+
+```json [params]
+{
+  "command": "send",
+  "params": { "amount": 10, "token": "usdc", "username": ["bob"] }
+}
+```
+
+_Note: The helper function is limited in terms of how parameters can be extracted. This is only one possible approach and we can think of AI approaches more suitable for multipurpose commands. In the scope of this repo here is the example parser._

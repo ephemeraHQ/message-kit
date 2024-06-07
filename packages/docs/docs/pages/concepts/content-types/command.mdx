@@ -4,14 +4,16 @@ If the message starts with a `/` it is considered a command
 
 ## Command object
 
-The `text` type contains the following
+The command object is a `text` type contains the following extra property:
 
 ```tsx
 {
   content: string, // The raw content of the message
-  params: params // The value of the parameters of the command
+  params: params // The value of the parameters of the command // [!code hl] // [!code focus]
 }
 ```
+
+> If the parameter is not correcly declared in the `src/command.ts` file or the text input from the user is not correct, the `params` will return `undefined`
 
 ## Receive a command
 

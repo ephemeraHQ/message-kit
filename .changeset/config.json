@@ -12,11 +12,5 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": [
-    "subscription-bot",
-    "gm-bot",
-    "gpt-bot",
-    "botkit-docs",
-    "@xmtp/tsconfig"
-  ]
+  "ignore": ["subscription-bot", "gm-bot", "botkit-docs", "@xmtp/tsconfig"]
 }
