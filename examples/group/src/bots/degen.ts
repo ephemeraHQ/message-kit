@@ -1,8 +1,6 @@
 import { HandlerContext } from "@xmtp/botkit";
 import { mapUsernamesToAddresses } from "@xmtp/botkit";
 import { users } from "../lib/users.js";
-import { Client as xmtpClient } from "@xmtp/xmtp-js";
-import { Wallet } from "ethers";
 
 export async function handler(context: HandlerContext) {
   const { senderAddress, content, typeId } = context.message;
@@ -14,7 +12,6 @@ export async function handler(context: HandlerContext) {
   if (typeId === "reply") {
     const { content: reply, receiver } = content;
     //Reply
-    console.log("reply", reply); //reply 10 $degen
     receiverAddresses = [receiver];
     if (reply.includes("$degen")) {
       const match = reply.match(/(\d+)/);
@@ -43,8 +40,6 @@ export async function handler(context: HandlerContext) {
     receiverAddresses.includes(user.address),
   );
 
-  //console.log("content", sender, receivers, amount);
-
   if (!sender || receivers.length === 0 || amount === 0) {
     context.reply("Sender or receiver or amount not found.");
     return;
@@ -72,14 +67,3 @@ export async function handler(context: HandlerContext) {
     context.reply("Insufficient DEGEN tokens to send.");
   }
 }
-const notifyUser = async (receiver: any, amount: number, sender: any) => {
-  if (sender.username === "bot") return;
-  const key =
-    "0x1807fa41217bee883da6d4daea305b3157d1787bea40fd26040b031f4d65b38e";
-  const wallet = new Wallet(key);
-  const client = await xmtpClient.create(wallet, { env: "production" });
-  const conv = await client.conversations.newConversation(sender.address);
-  conv.send(
-    `You received ${amount} DEGEN tokens from ${sender.username}. Your new balance is ${receiver.degen} DEGEN tokens.`,
-  );
-};

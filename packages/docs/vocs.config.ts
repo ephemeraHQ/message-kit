@@ -47,6 +47,7 @@ export default defineConfig({
             { text: "Text", link: "/concepts/content-types/text" },
             { text: "Reaction", link: "/concepts/content-types/reaction" },
             { text: "Reply", link: "/concepts/content-types/reply" },
+            { text: "Command", link: "/concepts/content-types/command" },
           ],
         },
         {
@@ -84,22 +85,16 @@ export default defineConfig({
           ],
         },
         {
-          text: "AI",
-          link: "/examples/ai",
-          items: [
-            {
-              text: "GPT",
-              link: "/examples/ai/gpt",
-            },
-          ],
-        },
-        {
           text: "Group",
           link: "/examples/group",
           items: [
             {
-              text: "Parse commands",
-              link: "/examples/group/commands",
+              text: "Degen",
+              link: "/examples/group/degen",
+            },
+            {
+              text: "GPT",
+              link: "/examples/group/gpt",
             },
           ],
         },
