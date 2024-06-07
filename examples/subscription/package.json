@@ -1,5 +1,5 @@
 {
-  "name": "conversational-bot",
+  "name": "subscription-bot",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -21,16 +21,20 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@redis/client": "^1.5.14",
+    "@redis/client": "^1.5.16",
     "@xmtp/botkit": "workspace:*",
     "@xmtp/redis-persistence": "^0.0.4",
     "node-cron": "^3.0.3"
   },
   "devDependencies": {
-    "@types/node": "^20.12.7",
-    "@types/node-cron": "^3",
-    "nodemon": "^3.1.0",
-    "prettier": "^3.2.5",
-    "typescript": "^5.4.3"
+    "@types/node": "^20.14.2",
+    "@types/node-cron": "^3.0.11",
+    "nodemon": "^3.1.3",
+    "prettier": "^3.3.1",
+    "typescript": "^5.4.5"
+  },
+  "packageManager": "yarn@4.2.2",
+  "engines": {
+    "node": ">=20"
   }
 }

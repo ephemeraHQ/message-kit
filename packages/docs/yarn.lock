@@ -1845,13 +1845,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:latest":
-  version: 18.3.2
-  resolution: "@types/react@npm:18.3.2"
+"@types/react@npm:^18.3.3":
+  version: 18.3.3
+  resolution: "@types/react@npm:18.3.3"
   dependencies:
     "@types/prop-types": "npm:*"
     csstype: "npm:^3.0.2"
-  checksum: 10/a85eed82c1009dc9d979281d9ea1f5322255003de3378390f35d897b4bdaf1d34ea748636c03e9e9b4b7cc97c2f4582993d2d60e40846226ad497d97c7d8565a
+  checksum: 10/68e203b7f1f91d6cf21f33fc7af9d6d228035a26c83f514981e54aa3da695d0ec6af10c277c6336de1dd76c4adbe9563f3a21f80c4462000f41e5f370b46e96c
   languageName: node
   linkType: hard
 
@@ -2189,11 +2189,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "botkit-docs@workspace:."
   dependencies:
-    "@types/react": "npm:latest"
-    react: "npm:latest"
-    react-dom: "npm:latest"
-    typescript: "npm:latest"
-    vocs: "npm:latest"
+    "@types/react": "npm:^18.3.3"
+    react: "npm:^18.3.1"
+    react-dom: "npm:^18.3.1"
+    typescript: "npm:^5.4.5"
+    vocs: "npm:1.0.0-alpha.52"
   languageName: unknown
   linkType: soft
 
@@ -5329,7 +5329,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:latest":
+"react-dom@npm:^18.3.1":
   version: 18.3.1
   resolution: "react-dom@npm:18.3.1"
   dependencies:
@@ -5474,7 +5474,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:latest":
+"react@npm:^18.3.1":
   version: 18.3.1
   resolution: "react@npm:18.3.1"
   dependencies:
@@ -6285,7 +6285,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:latest":
+"typescript@npm:^5.4.5":
   version: 5.4.5
   resolution: "typescript@npm:5.4.5"
   bin:
@@ -6295,7 +6295,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3Alatest#optional!builtin<compat/typescript>":
+"typescript@patch:typescript@npm%3A^5.4.5#optional!builtin<compat/typescript>":
   version: 5.4.5
   resolution: "typescript@patch:typescript@npm%3A5.4.5#optional!builtin<compat/typescript>::version=5.4.5&hash=5adc0c"
   bin:
@@ -6614,7 +6614,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vocs@npm:latest":
+"vocs@npm:1.0.0-alpha.52":
   version: 1.0.0-alpha.52
   resolution: "vocs@npm:1.0.0-alpha.52"
   dependencies:

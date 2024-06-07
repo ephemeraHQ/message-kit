@@ -51,5 +51,9 @@ jobs:
         run: corepack enable
       - name: Install dependencies
         run: yarn
+      - name: Install docs dependencies
+        run: |
+          cd packages/docs
+          yarn
       - name: Build
         run: yarn build

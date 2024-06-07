@@ -43,15 +43,11 @@ dist
 # yarn
 .pnp.*
 .yarn/*
-.yarn/cache
 !.yarn/patches
 !.yarn/plugins
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
-.yarn/cache/**
-packages/debugger/.yarn/cache/**
-packages/docs/.yarn/cache/**
 
 # next.js
 .next
