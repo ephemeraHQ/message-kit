@@ -36,11 +36,12 @@ export default async function run(
           const extractedValues = extractCommandValues(
             content?.content,
             newBotConfig?.context.commands,
+            newBotConfig?.context.users,
           );
 
           content = {
             ...content,
-            params: extractedValues.params,
+            ...extractedValues,
           };
         }
       }

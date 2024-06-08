@@ -89,12 +89,24 @@ export default defineConfig({
           link: "/examples/group",
           items: [
             {
-              text: "Degen",
-              link: "/examples/group/degen",
+              text: "Tipping",
+              link: "/examples/group/tipping",
             },
             {
               text: "GPT",
               link: "/examples/group/gpt",
+            },
+            {
+              text: "Games",
+              link: "/examples/group/games",
+            },
+            {
+              text: "Frames",
+              link: "/examples/group/frames",
+            },
+            {
+              text: "Other",
+              link: "/examples/group/other",
             },
           ],
         },
