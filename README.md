@@ -26,8 +26,8 @@ See more examples in the [Awesome XMTP ⭐️](https://github.com/xmtp/awesome-x
 > **Note**  
 > Before starting the bots locally, install the necessary dependencies by running `yarn` first. Update yarn with `yarn set version stable`
 
-- `yarn start:conversational`: Start the conversational bot
 - `yarn start:gm`: Start the GM bot
+- `yarn start:conversational`: Start the conversational bot
 - `yarn start:group`: Start the Group bot
 
 ## Contributing

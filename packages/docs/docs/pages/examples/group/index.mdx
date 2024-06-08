@@ -1,15 +1,24 @@
 # Group Bot
 
-This is a powerful group bot that will allow you to understand the potential.
+This is a powerful group bot that will allow you to understand the potential and all of its features. Through many handlers you will be able to understand different use cases.
 
 ## Structure
 
 > Check out the [repository](https://github.com/xmtp-labs/botkit/tree/main/examples/group) for the full code.
 
 ```
-bot-project/              # Your project's root directory.
+bot-project/
 ├── src/
-│   ├── index.ts          # Simple group bot. // [!code hl] // [!code focus]
+│   ├── index.ts              # Index file of the bot. // [!code hl] // [!code focus]
+│   ├── command.ts            # For handling commands. // [!code hl] // [!code focus]
+├── src/
+│   ├──handler/
+│         ├── command.ts      # Handles the command logic. // [!code hl] // [!code focus]
+│         ├── bet.ts          # Handles the bet logic. // [!code hl] // [!code focus]
+│         ├── tipping.ts        # Handles the tipping logic. // [!code hl] // [!code focus]
+│         ├── gpt.ts          # Handles the gpt logic. // [!code hl] // [!code focus]
+│         ├── games.ts        # Handles the games logic. // [!code hl] // [!code focus]
+│         ├── general.ts      # Handles the general logic. // [!code hl] // [!code focus]
 ├── package.json
 ├── tsconfig.json
 └── .env
@@ -20,28 +29,51 @@ bot-project/              # Your project's root directory.
 ```jsx [src/index.ts]
 import "dotenv/config";
 import { run, HandlerContext } from "@xmtp/botkit";
-import { commands } from "./commands.ts";
+import { users } from "./lib/users.js";
+import { handler as baseHandler } from "./bots/frame.js";
+import { commands } from "./commands.js";
+import { handler as bet } from "./bots/bet.js";
+import { handler as tipping } from "./bots/degen.js";
+import { handler as gpt } from "./bots/gpt.js";
+import { handler as games } from "./bots/games.js";
+import { handler as general } from "./bots/general.js";
 
 const newBotConfig = {
-  commands: commands,
+  context: {
+    commands: commands,
+    users: users,
+  },
 };
 
-// Main bot runner
 run(async (context: HandlerContext) => {
   const { content, typeId, senderAddress } = context.message;
+  const { content: text } = content;
 
   if (typeId == "reaction") {
-    const { action, content: emoji, receiver } = content;
-    // handle reactions
+    const { action, content: emoji } = content;
+    if (emoji == "degen" && action == "added") await tipping(context);
   } else if (typeId == "reply") {
-    const { content: reply, receiver } = content;
-    // handle replies
+    const { receiver, content: reply } = content;
+    if (receiver && reply.includes("degen")) await tipping(context);
+  } else if (typeId == "text" && text.startsWith("/tip")) {
+    await tipping(context);
   } else if (typeId == "text") {
-    const { content: text, receiver } = content;
+    const { content: text } = content;
     if (text.startsWith("@bot")) {
-      // Handle direct messages to the bot
-    }else if (text.startsWith("/help")) {
-      // Handle help command
+      await gptHandler(context, commands);
+    } else if (text.startsWith("/bet")) {
+      await betHandler(context);
+    } else if (
+      text.startsWith("/send") ||
+      text.startsWith("/swap") ||
+      text.startsWith("/mint") ||
+      text.startsWith("/show")
+    ) {
+      await baseHandler(context);
+    } else if (text.startsWith("/game")) {
+      await games(context);
+    } else if (text.startsWith("/")) {
+      await general(context);
     }
   }
 }, newBotConfig);
