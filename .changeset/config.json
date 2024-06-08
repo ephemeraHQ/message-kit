@@ -3,7 +3,7 @@
   "changelog": [
     "@changesets/changelog-git",
     {
-      "repo": "xmtp/botkit"
+      "repo": "xmtp-labs/botkit"
     }
   ],
   "commit": false,
@@ -12,5 +12,11 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["subscription-bot", "gm-bot", "botkit-docs", "@xmtp/tsconfig"]
+  "ignore": [
+    "subscription-bot",
+    "gm-bot",
+    "group-bot",
+    "botkit-docs",
+    "@xmtp/tsconfig"
+  ]
 }

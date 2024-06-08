@@ -8,10 +8,14 @@
     "preview": "vocs preview"
   },
   "dependencies": {
-    "@types/react": "latest",
-    "react": "latest",
-    "react-dom": "latest",
-    "typescript": "latest",
-    "vocs": "latest"
+    "@types/react": "^18.3.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "typescript": "^5.4.5",
+    "vocs": "1.0.0-alpha.52"
+  },
+  "packageManager": "yarn@4.2.2",
+  "engines": {
+    "node": ">=20"
   }
 }
