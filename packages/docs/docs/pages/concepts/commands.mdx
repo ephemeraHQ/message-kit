@@ -16,35 +16,33 @@ Create the command file `commands.ts` in your project root `src` folder.
 
 ```json [src/commands.ts]
 export const commands = [
-{
-  "name": "BaseFrame",
-  "icon": "🖼️",
-  "description": "Multipurpose transaction frame.",
-  "commands": [
-    {
-      "command": "/send [amount] [token] [@username]",
-      "description": "Send a specified amount of a cryptocurrency to a destination address.",
-      "params": {
-        "amount": {
-          // Amount field has special treatment
-          "default": 10, // Default value
-          "type": "number" // This will parse it to a number
-        },
-        "token": {
-          // Arbitrary name
-
-          "default": "usdc", // Default value
-          "type": "string", // String field always need to specify accepted values
-          "values": ["eth", "dai", "usdc", "degen"] // Accepted values
-        },
-        "username": {
-          "default": "", // No default username
-          "type": "username" // This will parse it to a usernamearray
+  {
+    "name": "BaseFrame",
+    "icon": "🖼️",
+    "description": "Multipurpose transaction frame.",
+    "commands": [
+      {
+        "command": "/send [amount] [token] [@username]",
+        "description": "Send a specified amount of a cryptocurrency to a destination address.",
+        "params": {
+          "amount": { // Amount field has special treatment
+            "default": 10, // Default value
+            "type": "number" // This will parse it to a number
+          },
+          "token": { // Arbitrary name
+            "default": "usdc", // Default value
+            "type": "string", // String field always need to specify accepted values
+            "values": ["eth", "dai", "usdc", "degen"] // Accepted values
+          },
+          "username": {
+            "default": "", // No default username
+            "type": "username" // This will parse it to a usernamearray
+          }
         }
       }
-    }
-  ]
-}
+    ]
+  }
+]
 ```
 
 ## Declare commands

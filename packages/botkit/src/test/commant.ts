@@ -1,6 +1,6 @@
-import { HandlerContext } from "@xmtp/botkit";
+/*import { HandlerContext } from "@xmtp/botkit";
 import { commands } from "../commands.js"; // Assuming commands.ts is in the same directory
-import { extractCommandValues } from "@xmtp/botkit";
+import { extractCommandValues } from "./helper.js";
 
 export async function handler(context: HandlerContext) {
   const { content, senderAddress } = context.message;
@@ -30,3 +30,4 @@ export async function handler(context: HandlerContext) {
 
   console.log(inputContent, extractCommandValues(inputContent, commands));
 }
+*/

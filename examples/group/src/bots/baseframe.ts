@@ -1,20 +1,15 @@
 import { HandlerContext } from "@xmtp/botkit";
-import { generateFrameURL } from "@xmtp/botkit";
 import { users } from "../lib/users.js";
 
 const baseUrl = "https://base-frame-lyart.vercel.app/transaction";
 
 export function handler(context: HandlerContext) {
   const { content } = context.message;
-  const { params } = content;
-
+  const { params, command } = content;
   let url = "";
 
-  switch (params.type) {
+  switch (command) {
     case "send":
-    case "tip":
-    case "donate":
-    case "buy":
       const { amount: amountSend, token: tokenSend, username } = params;
       if (!amountSend || !tokenSend || !username) {
         context.reply(
@@ -22,15 +17,10 @@ export function handler(context: HandlerContext) {
         );
         return;
       }
-
-      const recipientUser = users.find(
-        //@ts-ignore
-        (user) => user.username === username[0]?.replace("@", ""),
-      );
       url = generateFrameURL(baseUrl, "send", {
         amount: amountSend,
         token: tokenSend,
-        receiver: recipientUser?.address,
+        receiver: username[0]?.address,
       });
       context.reply(`${url}`);
       break;
@@ -73,4 +63,24 @@ export function handler(context: HandlerContext) {
     default:
       context.reply("Unknown command. Use help to see all available commands.");
   }
+}
+
+function generateFrameURL(
+  baseUrl: string,
+  transaction_type: string,
+  params: any,
+) {
+  // Filter out undefined parameters
+  let filteredParams: { [key: string]: any } = {};
+
+  for (const key in params) {
+    if (params[key] !== undefined) {
+      filteredParams[key] = params[key];
+    }
+  }
+  let queryParams = new URLSearchParams({
+    transaction_type,
+    ...filteredParams,
+  }).toString();
+  return `${baseUrl}?${queryParams}`;
 }
