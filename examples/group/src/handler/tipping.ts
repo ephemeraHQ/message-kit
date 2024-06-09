@@ -1,7 +1,7 @@
 import { HandlerContext } from "@xmtp/botkit";
-import { users } from "../lib/users.js";
 
 export async function handler(context: HandlerContext) {
+  const { users, commands } = context.context;
   const { senderAddress, content, typeId } = context.message;
   const { params } = content;
   let amount: number = 0,
@@ -10,7 +10,7 @@ export async function handler(context: HandlerContext) {
 
   // Handle different types of messages
   if (typeId === "reply") {
-    // Replies with degen //  [!code hl] // [!code focus]
+    // Extracts amount from reply //  [!code hl] // [!code focus]
     const { content: reply, receiver } = content;
     // Process reply messages
     receiverAddresses = [receiver];
@@ -32,8 +32,8 @@ export async function handler(context: HandlerContext) {
     // Uses reaction emoji to tip //  [!code hl] // [!code focus]
     const { content: reaction, action, receiver } = content;
 
-    // Process reactions, specifically "degen" added reactions
-    if (reaction === "degen" && action === "added") {
+    // Process reactions, specifically tipping added reactions
+    if (reaction === "🎩" && action === "added") {
       amount = 10; // Set a fixed amount for reactions
       receiverAddresses = [receiver];
     }
@@ -47,12 +47,12 @@ export async function handler(context: HandlerContext) {
     return;
   }
 
-  // Check if sender has enough DEGEN tokens
-  if (sender.degen >= amount * receiverAddresses.length) {
-    // Process sending DEGEN tokens to each receiver
+  // Check if sender has enough tokens
+  if (sender.tokens >= amount * receiverAddresses.length) {
+    // Process sending tokens to each receiver
     receiverAddresses.forEach(async (receiver: any) => {
       context.reply(
-        `You received ${amount} DEGEN tokens from ${sender.username}. Your new balance is ${receiver.degen} DEGEN tokens.`,
+        `You received ${amount} tokens from ${sender.username}. Your new balance is ${receiver.tokens} tokens.`,
         [receiver.address], // Notify only 1 address //  [!code hl] // [!code focus]
       );
     });
@@ -60,13 +60,13 @@ export async function handler(context: HandlerContext) {
     context.reply(
       `You sent ${
         amount * receiverAddresses.length
-      } DEGEN tokens in total. Your remaining balance: ${
-        sender.degen // The hypotetical logic of distributing tokens //  [!code hl] // [!code focus]
-      } DEGEN tokens.`,
+      } tokens in total. Your remaining balance: ${
+        sender.tokens // The hypotetical logic of distributing tokens //  [!code hl] // [!code focus]
+      } tokens.`,
       [sender.address], // Notify only 1 address //  [!code hl] // [!code focus]
       reference,
     );
   } else {
-    context.reply("Insufficient DEGEN tokens to send.");
+    context.reply("Insufficient tokens to send.");
   }
 }

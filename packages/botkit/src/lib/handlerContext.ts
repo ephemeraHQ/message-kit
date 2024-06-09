@@ -1,28 +1,23 @@
 import { ContentTypeBotMessage } from "../content-types/Bot.js";
-import { DecodedMessage } from "@xmtp/xmtp-js";
-
-type Conversation = {
-  send: (content: any, options?: any) => Promise<DecodedMessage<any>>;
-};
-
-// Define a type for the message that includes the conversation property
-type Message = {
-  id: string;
-  sent: Date;
-  content: any;
-  senderAddress: string;
-  typeId: string;
-};
+import { Conversation } from "@xmtp/xmtp-js";
+import { MessageAbstracted } from "../helpers/types";
+import { CommandGroup, User } from "../helpers/types";
 
 export default class HandlerContext {
-  message: Message;
+  message: MessageAbstracted;
   conversation: Conversation;
-  context: {};
+  context: {
+    commands: CommandGroup[];
+    users: User[];
+  };
   clientAddress: string; // Add this line
 
   constructor(
-    message: Message,
-    context: {} = {},
+    message: MessageAbstracted,
+    context: { commands: CommandGroup[]; users: User[] } = {
+      commands: [],
+      users: [],
+    },
     conversation: Conversation,
     clientAddress: string,
   ) {

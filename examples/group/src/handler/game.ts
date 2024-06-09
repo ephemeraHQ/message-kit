@@ -1,53 +1,9 @@
-# Games
-
-Create a bot that receives a game as a command request and sends a frame to the user.
-
-## Commands
-
-Here are the commands to play the games:
-
-```bash [cmd]
-/game slot
-```
-
-::::note[Commands]
-To declare this commands you need to add them first. Learn more about commands [here](/concepts/commands).
-:::details[Snippet]
-
-```json
-{
-  "name": "Games",
-  "icon": "🕹️",
-  "description": "Provides various gaming experiences.",
-  "commands": [
-    {
-      "command": "/game [type]",
-      "description": "Play a game.",
-      "params": {
-        "type": {
-          "default": "",
-          "type": "string",
-          "values": ["wordle", "slot", "guess"]
-        }
-      }
-    }
-  ]
-}
-```
-
-:::
-::::
-
-## Logic
-
-```jsx [src/handler/games.ts]
 import { HandlerContext } from "@xmtp/botkit";
 
 // Handler function to process game-related commands
 export async function handler(context: HandlerContext) {
   const { content } = context.message;
   const { params } = content;
-
   // URLs for each game type
   const gameUrls: { [key: string]: string } = {
     wordle: "https://openframedl.vercel.app/",
@@ -72,4 +28,3 @@ export async function handler(context: HandlerContext) {
       );
   }
 }
-```

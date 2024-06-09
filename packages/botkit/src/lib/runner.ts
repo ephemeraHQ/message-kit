@@ -1,7 +1,11 @@
 import xmtpClient from "./client.js";
-import HandlerContext from "./handler-context.js";
+import HandlerContext from "./handlerContext.js";
 import { ContentTypeSilent } from "../content-types/Silent.js";
-import { extractCommandValues } from "./helper.js";
+import { ContentTypeBotMessage } from "../content-types/Bot.js";
+import { extractCommandValues } from "../helpers/commands.js";
+import { handleSilentMessage } from "../helpers/context.js";
+import { ContentTypeText } from "@xmtp/xmtp-js";
+import { User } from "../helpers/types";
 
 type Handler = (context: HandlerContext) => Promise<void>;
 
@@ -12,40 +16,51 @@ export default async function run(
 ) {
   const client = await xmtpClient(newBotConfig);
   const { address } = client;
+  let currentUsers: User[] = []; // Initialize currentUsers to hold onto user data across messages
+
   for await (const message of await client.conversations.streamAllMessages()) {
     try {
       const {
         senderAddress,
         contentType: { typeId },
+        content: { metadata },
       } = message;
 
       if (senderAddress === address) {
         // if same address do nothing
         continue;
-      } else if (typeId == "bot") {
-        //if a bot speaks do nothing
+      } else if (message.contentType.sameAs(ContentTypeBotMessage)) {
+        // if a bot speaks do nothing
         continue;
       }
 
-      let content = message.content;
-      if (typeId == "text") {
-        content = {
-          content: content,
-        };
-        if (content?.content?.startsWith("/")) {
-          const extractedValues = extractCommandValues(
-            content?.content,
-            newBotConfig?.context.commands,
-            newBotConfig?.context.users,
-          );
+      // Update currentUsers based on metadata, replace if empty array provided
+      if (Array.isArray(metadata?.users) && metadata.users.length === 0) {
+        currentUsers = []; // Reset if empty array
+      } else if (metadata?.users) {
+        currentUsers = metadata.users; // Update if users are provided
+      }
 
+      let content = message.content;
+      if (message.contentType.sameAs(ContentTypeText)) {
+        if (content?.startsWith("/")) {
+          const extractedValues = extractCommandValues(
+            content,
+            newBotConfig?.context.commands,
+            currentUsers,
+          );
           content = {
-            ...content,
+            content: content,
             ...extractedValues,
+          };
+        } else {
+          content = {
+            content: content,
           };
         }
       }
 
+      /* Abstract some of the concepts in the runner */
       const context = new HandlerContext(
         {
           id: message.id,
@@ -54,65 +69,22 @@ export default async function run(
           typeId,
           sent: message.sent,
         },
-        newBotConfig?.context ?? {},
+        {
+          commands: newBotConfig?.context?.commands ?? {},
+          users: currentUsers,
+        },
         message.conversation,
         address,
       );
-      if (
-        typeId == "silent" &&
-        content?.content === "/access" &&
-        accessHandler
-      ) {
-        //if a bot speaks do nothing
-        const accept = await accessHandler(context);
-        if (accept) {
-          // add to group
-          grant_access(message, newBotConfig?.context);
-          continue;
-        }
-      } else if (typeId == "silent" && content?.content === "/ping") {
-        //if a bot speaks do nothing
-        ping(
-          message?.conversation,
-          newBotConfig?.context,
-          accessHandler ? true : false,
-        );
+
+      if (message.contentType.sameAs(ContentTypeSilent)) {
+        await handleSilentMessage(message, context, accessHandler);
         continue;
       }
+
       await handler(context);
     } catch (e) {
       console.log(`error`, e);
     }
   }
-}
-
-async function grant_access(conversation: any, context: any) {
-  // add group member
-  await conversation.send(
-    {
-      content: "",
-      metadata: {
-        type: "access",
-        ...context,
-      },
-    },
-    {
-      contentType: ContentTypeSilent,
-    },
-  );
-}
-async function ping(conversation: any, context: any, accessHandler: boolean) {
-  await conversation.send(
-    {
-      content: "",
-      metadata: {
-        type: "ping",
-        access: accessHandler,
-        ...context,
-      },
-    },
-    {
-      contentType: ContentTypeSilent,
-    },
-  );
 }

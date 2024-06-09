@@ -33,9 +33,9 @@ Create a directory called `src`, and create 3 files:
 ```
 bot-project/
 ├── src/
-│   ├── index.ts          // [!code hl] // [!code focus]
-├── tsconfig.json         // [!code hl] // [!code focus]
-└── package.json          // [!code hl] // [!code focus]
+│   └── index.ts          // [!code ++] // [!code focus]
+├── tsconfig.json         // [!code ++] // [!code focus]
+└── package.json          // [!code ++] // [!code focus]
 ```
 
 ### Add scripts to `package.json`
@@ -124,28 +124,33 @@ run(async (context: HandlerContext) => {
 
 ::::
 
-## Set variables
-
-Create a `.env` file in the root of your project with the following content. You can copy `.env.example`:
-
-```bash [.env]
-KEY= # 0x... the private key of the bot (with the 0x prefix)
-XMTP_ENV=production # or `dev`
-```
-
 ## Run the bot
 
-Install the dependencies
+Follow the steps below to run the bot
 
-```bash [Terminal]
+::::steps
+
+### Setup
+
+```bash [cmd]
+# Install the dependencies
 yarn install
-```
-
-Next, let's run the bot.
-
-```bash [Terminal]
+# Run the bot
 yarn build:watch
 yarn start:watch
 ```
 
+### Variables
+
+Create a `.env` file in the root of your project
+
+```bash [cmd]
+KEY= # 0x... the private key of the bot (with the 0x prefix)
+XMTP_ENV=production # or `dev`
+```
+
+### Test
+
 Send a message to the bot, and will reply `gm`!
+
+::::

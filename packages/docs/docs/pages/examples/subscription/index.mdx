@@ -2,16 +2,19 @@
 
 This is a simple yet powerful subscription bot that will allow you to customize it to your needs.
 
+- [Redis](/examples/subscription/redis): Integrate with Redis db to store the subscription status
+- [Cron](/examples/subscription/cron): Integrate with Cron to send the subscription message every day
+
 ## Structure
 
 > Check out the [repository](https://github.com/xmtp-labs/botkit/tree/main/examples/subscription) for the full code.
 
 ```
 bot-project/              # Your project's root directory.
-├── lib/
-│   ├── redis.ts          # Redis middleware // [!code hl] // [!code focus]
 ├── src/
 │   ├── index.ts          # Conversational logic // [!code hl] // [!code focus]
+│   └── lib/
+│       └── redis.ts      # Redis middleware // [!code hl] // [!code focus]
 ├── package.json
 ├── tsconfig.json
 └── .env
@@ -66,14 +69,34 @@ run(async (context: HandlerContext) => {
 });
 ```
 
-- Check out [Redis](/examples/subscription/redis) & [Cron](/examples/subscription/cron) middleware
+## Run the bot
+
+Follow the steps below to run the bot
+
+::::steps
+
+### Setup
+
+```bash [cmd]
+# Clone the repo
+git clone https://github.com/xmtp-labs/botkit
+# Go to the examples/subscription folder
+cd examples/subscription
+# Install the dependencies
+yarn install
+# Run the bot
+yarn build:watch
+yarn start:watch
+```
 
 ### Variables
 
-Set up this variables in your bot yo connect to redis and xmtp
+Set up this variables in your bot to connect to redis and xmtp
 
-```bash
+```bash [.env]
 KEY= # 0x... the private key of the bot (with the 0x prefix)
 XMTP_ENV=production # or `dev`
 REDIS_CONNECTION_STRING= # the connection string for the Redis database
 ```
+
+::::

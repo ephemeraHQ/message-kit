@@ -1,50 +1,133 @@
 # Frame
 
-```jsx
-import { HandlerContext } from "@xmtp/botkit";
-import { generateFrameURL } from "@xmtp/botkit";
-import { users } from "../lib/users.js";
+This example demonstrates how to generate frame URLs for different types of transactions.
 
+```bash [cmd]
+/send 1 eth to @bob
+/swap 1 DAI to USDC
+/mint 0x73a333cb82862d4f66f0154229755b184fb4f5b0 1
+/show
+```
+
+_The frame used in this example [BaseFrame](https://base-frame-lyart.vercel.app)_
+
+::::note[Commands]
+To declare this commands you need to add them first. Learn more about commands [here](/concepts/commands).
+:::details[Snippet]
+
+```json
+{
+  "name": "Base Transactions",
+  "icon": "🖼️",
+  "description": "Multipurpose transaction frame built onbase.",
+  "commands": [
+    {
+      "command": "/send [amount] [token] [@username]",
+      "description": "Send a specified amount of a cryptocurrency to a destination address.",
+      "params": {
+        "amount": {
+          "default": 10,
+          "type": "number"
+        },
+        "token": {
+          "default": "usdc",
+          "type": "string",
+          "values": ["eth", "dai", "usdc", "degen"] // Accepted tokens
+        },
+        "username": {
+          "default": "",
+          "type": "username"
+        }
+      }
+    },
+    {
+      "command": "/swap [amount] [token_from] [token_to]",
+      "description": "Exchange one type of cryptocurrency for another.",
+      "params": {
+        "amount": {
+          "default": 10,
+          "type": "number"
+        },
+        "token_from": {
+          "default": "usdc",
+          "type": "string",
+          "values": ["eth", "dai", "usdc", "degen"] // Accepted tokens
+        },
+        "token_to": {
+          "default": "eth",
+          "type": "string",
+          "values": ["eth", "dai", "usdc", "degen"] // Accepted tokenss
+        }
+      }
+    },
+    {
+      "command": "/mint [collection_address] [token_id]",
+      "description": "Create (mint) a new token or NFT.",
+      "params": {
+        "collection": {
+          "default": "0x73a333cb82862d4f66f0154229755b184fb4f5b0",
+          "type": "address"
+        },
+        "tokenId": {
+          "default": 1,
+          "type": "number"
+        }
+      }
+    },
+    {
+      "command": "/show",
+      "description": "Show the whole frame.",
+      "params": {}
+    }
+  ]
+}
+```
+
+:::
+::::
+
+## Logic
+
+```jsx [src/handler/frames]
+import { HandlerContext } from "@xmtp/botkit";
 const baseUrl = "https://base-frame-lyart.vercel.app/transaction";
 
+// Main handler function for processing commands
 export function handler(context: HandlerContext) {
   const { content } = context.message;
-  const { params } = content;
-
+  const { params, command } = content;
   let url = "";
 
-  switch (params.type) {
+  switch (command) {
     case "send":
-    case "tip":
-    case "donate":
-    case "buy":
-      const { amount: amountSend, token: tokenSend, username } = params;
+      // Destructure and validate parameters for the send command
+      const { amount: amountSend, token: tokenSend, username } = params; // [!code hl] // [!code focus]
+
       if (!amountSend || !tokenSend || !username) {
         context.reply(
           "Missing required parameters. Please provide amount, token, and username.",
         );
         return;
       }
-
-      const recipientUser = users.find(
-        //@ts-ignore
-        (user) => user.username === username[0]?.replace("@", ""),
-      );
+      // Generate URL for the send transaction
       url = generateFrameURL(baseUrl, "send", {
         amount: amountSend,
         token: tokenSend,
-        receiver: recipientUser?.address,
+        receiver: username[0]?.address,
       });
       context.reply(`${url}`);
       break;
     case "swap":
-      const { amount, token_from, token_to } = params;
+      // Destructure and validate parameters for the swap command
+      const { amount, token_from, token_to } = params; // [!code hl] // [!code focus]
+
       if (!amount || !token_from || !token_to) {
         context.reply(
           "Missing required parameters. Please provide amount, token_from, and token_to.",
         );
         return;
       }
+      // Generate URL for the swap transaction
       url = generateFrameURL(baseUrl, "swap", {
         amount,
         token_from,
@@ -53,29 +136,50 @@ export function handler(context: HandlerContext) {
       context.reply(`${url}`);
       break;
     case "mint":
-      const { address: collectionAddress, numeric: tokenId } = params;
-      let collection =
-        collectionAddress || "0x73a333cb82862d4f66f0154229755b184fb4f5b0";
-      let token = tokenId || 1;
-      if (!collection || !token) {
+      // Destructure and provide default values for the mint command
+      const { collection, tokenId } = params; // [!code hl] // [!code focus]
+
+      if (!collection || !tokenId) {
         context.reply(
           "Missing required parameters. Please provide collection address and token id.",
         );
         return;
       }
+      // Generate URL for the mint transaction
       url = generateFrameURL(baseUrl, "mint", {
-        collection:
-          collectionAddress || "0x73a333cb82862d4f66f0154229755b184fb4f5b0",
-        token_id: tokenId || 1, // Default token ID if not specified
+        collection,
+        token_id: tokenId,
       });
       context.reply(url);
       break;
-    case "show":
+    case "show": // [!code hl] // [!code focus]
+      // Show the base URL without the transaction path
       context.reply(`${baseUrl.replace("/transaction", "")}`);
       break;
     default:
+      // Handle unknown commands
       context.reply("Unknown command. Use help to see all available commands.");
   }
 }
 
+// Function to generate a URL with query parameters for transactions
+function generateFrameURL(
+  baseUrl: string,
+  transaction_type: string,
+  params: any,
+) {
+  // Filter out undefined parameters
+  let filteredParams: { [key: string]: any } = {};
+
+  for (const key in params) {
+    if (params[key] !== undefined) {
+      filteredParams[key] = params[key];
+    }
+  }
+  let queryParams = new URLSearchParams({
+    transaction_type,
+    ...filteredParams,
+  }).toString();
+  return `${baseUrl}?${queryParams}`;
+}
 ```

@@ -1,26 +1,4 @@
-interface CommandParamConfig {
-  default?: any;
-  type: "number" | "string" | "username" | "quoted";
-  values?: string[]; // Accepted values for the parameter
-}
-
-interface CommandConfig {
-  command: string;
-  description: string;
-  params: { [param: string]: CommandParamConfig };
-}
-
-interface CommandGroup {
-  name: string;
-  icon: string;
-  description: string;
-  commands: CommandConfig[];
-}
-
-interface User {
-  username: string;
-  address: string;
-}
+import { CommandGroup, CommandConfig, User } from "./types";
 
 function mapUsernamesToAddresses(
   usernames: string[],
@@ -90,6 +68,16 @@ export function extractCommandValues(
           usedIndices.add(quotedIndex);
           valueFound = true;
         }
+      } else if (type === "address") {
+        const addressIndex = parts.findIndex(
+          (part, idx) =>
+            /^0x[a-fA-F0-9]{40}$/.test(part) && !usedIndices.has(idx),
+        );
+        if (addressIndex !== -1) {
+          values.params[param] = parts[addressIndex];
+          usedIndices.add(addressIndex);
+          valueFound = true;
+        }
       } else if (possibleValues.length > 0) {
         const index = parts.findIndex(
           (part, idx) =>
@@ -138,7 +126,6 @@ export function extractCommandValues(
       }
     });
 
-    const usernames = values.params.username || [];
     return values;
   } catch (e) {
     console.error(e);

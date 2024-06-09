@@ -6,7 +6,46 @@ In this example you can tip using 3 primitives:
 - Text message starting with `/tip @bob 10 degen`
 - Reply `10 $degen`
 
-```tsx [handler/tipping.ts]
+## Commands
+
+```bash [cmd]
+/tip @bob @alice 15
+```
+
+::::note[Commands]
+To declare this commands you need to add them first. Learn more about commands [here](/concepts/commands).
+:::details[Snippet]
+
+```json
+{
+  "name": "Tipping",
+  "icon": "🎩",
+  "description": "Tip tokens via emoji, replies or command.",
+  "commands": [
+    {
+      "command": "/tip [@users] [amount] [token]",
+      "description": "Tip users in a specified token.",
+      "params": {
+        "username": {
+          "default": "",
+          "type": "username"
+        },
+        "amount": {
+          "default": 10,
+          "type": "number"
+        }
+      }
+    }
+  ]
+}
+```
+
+:::
+::::
+
+## Logic
+
+```jsx [src/handler/tipping.ts]
 import { HandlerContext } from "@xmtp/botkit";
 import { users } from "../lib/users.js";
 
@@ -19,30 +58,27 @@ export async function handler(context: HandlerContext) {
 
   // Handle different types of messages
   if (typeId === "reply") {
-    // Replies with degen //  [!code hl] // [!code focus]
     const { content: reply, receiver } = content;
     // Process reply messages
     receiverAddresses = [receiver];
-    if (reply.includes("$degen")) {
+    if (reply.includes("$degen")) { //  [!code hl] // [!code focus]
       const match = reply.match(/(\d+)/);
       if (match) amount = parseInt(match[0]); // Extract amount from reply
     }
   } else if (typeId === "text") {
-    // Uses tip command //  [!code hl] // [!code focus]
     const { content: text } = content;
     // Process text commands starting with "/tip"
-    if (text.startsWith("/tip")) {
+    if (text.startsWith("/tip")) { //  [!code hl] // [!code focus]
       const { amount: extractedAmount, username } = params;
 
       amount = extractedAmount || 10; // Default amount if not specified
       receiverAddresses = username; // Extract receiver from parameters
     }
   } else if (typeId === "reaction") {
-    // Uses reaction emoji to tip //  [!code hl] // [!code focus]
     const { content: reaction, action, receiver } = content;
 
-    // Process reactions, specifically "degen" added reactions
-    if (reaction === "degen" && action === "added") {
+    // Process reactions, specifically tipping added reactions
+    if (reaction === "🎩" && action === "added") { //  [!code hl] // [!code focus]
       amount = 10; // Set a fixed amount for reactions
       receiverAddresses = [receiver];
     }
@@ -56,12 +92,12 @@ export async function handler(context: HandlerContext) {
     return;
   }
 
-  // Check if sender has enough DEGEN tokens
-  if (sender.degen >= amount * receiverAddresses.length) {
-    // Process sending DEGEN tokens to each receiver
+  // Check if sender has enough tokens
+  if (sender.tokens >= amount * receiverAddresses.length) {
+    // Process sending tokens to each receiver
     receiverAddresses.forEach(async (receiver: any) => {
       context.reply(
-        `You received ${amount} DEGEN tokens from ${sender.username}. Your new balance is ${receiver.degen} DEGEN tokens.`,
+        `You received ${amount} tokens from ${sender.username}. Your new balance is ${receiver.tokens} tokens.`,
         [receiver.address], // Notify only 1 address //  [!code hl] // [!code focus]
       );
     });
@@ -69,14 +105,14 @@ export async function handler(context: HandlerContext) {
     context.reply(
       `You sent ${
         amount * receiverAddresses.length
-      } DEGEN tokens in total. Your remaining balance: ${
-        sender.degen // The hypotetical logic of distributing tokens //  [!code hl] // [!code focus]
-      } DEGEN tokens.`,
+      } tokens in total. Your remaining balance: ${
+        sender.tokens // The hypotetical logic of distributing tokens //  [!code hl] // [!code focus]
+      } tokens.`,
       [sender.address], // Notify only 1 address //  [!code hl] // [!code focus]
       reference,
     );
   } else {
-    context.reply("Insufficient DEGEN tokens to send.");
+    context.reply("Insufficient tokens to send.");
   }
 }
 ```

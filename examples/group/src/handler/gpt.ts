@@ -1,8 +1,8 @@
 import { HandlerContext } from "@xmtp/botkit";
-import { users } from "../lib/users.js";
 import openaiCall from "../lib/gpt.js";
 
-export async function handler(context: HandlerContext, commands: any) {
+export async function handler(context: HandlerContext) {
+  const { users, commands } = context.context;
   const { content, senderAddress } = context.message;
   const { content: text } = content;
   const systemPrompt = `You are a helpful assistant that lives inside a web3 messaging group.\n
