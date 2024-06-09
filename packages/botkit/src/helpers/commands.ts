@@ -148,7 +148,6 @@ export function extractCommandValues(
       }
     });
 
-    const usernames = values.params.username || [];
     return values;
   } catch (e) {
     console.error(e);

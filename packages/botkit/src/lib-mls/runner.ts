@@ -1,6 +1,7 @@
 import { HandlerContext } from "./handlerContext.js";
 import { ContentTypeSilent } from "../content-types/Silent.js";
-import { extractCommandValues } from "../lib/commands.js";
+import { extractCommandValues } from "../helpers/commands.js";
+import { handleSilentMessage } from "../helpers/context.js";
 import { ClientOptions, Conversation } from "@xmtp/mls-client";
 import { mlsClient } from "./client.js";
 import { ContentTypeBotMessage } from "../content-types/Bot.js";
@@ -11,16 +12,17 @@ type Handler = (context: HandlerContext) => Promise<void>;
 export const runGroup = async (
   handler: Handler,
   groupId: string,
-  commands: any,
+  newBotConfig?: any,
   clientConfig?: ClientOptions,
   accessHandler?: (context: HandlerContext) => Promise<boolean>,
 ) => {
   console.log(groupId);
   const client = await mlsClient(clientConfig);
-  const { inboxId } = client;
+  const { inboxId: address } = client;
   await client.conversations.sync();
   const conversations = await client.conversations.list();
   console.log(conversations);
+  let currentUsers = {}; // Initialize currentUsers to hold onto user data across messages
   const group = conversations.find((conversation) => {
     return conversation.id === groupId;
   });
@@ -34,57 +36,60 @@ export const runGroup = async (
   for await (const message of stream) {
     if (message) {
       try {
-        const { senderInboxId } = message;
+        const {
+          senderInboxId: senderAddress,
+          contentType,
+          content: { metadata },
+        } = message;
 
-        if (senderInboxId === inboxId) {
+        if (senderAddress === address) {
           // if same address do nothing
           continue;
         } else if (message.contentType.sameAs(ContentTypeBotMessage)) {
-          //if a bot speaks do nothing
+          // if a bot speaks do nothing
           continue;
         }
 
         let content = message.content;
-
         if (message.contentType.sameAs(ContentTypeText)) {
-          content = {
-            content,
-          };
-          if (content?.content?.startsWith("/")) {
+          if (content?.startsWith("/")) {
             const extractedValues = extractCommandValues(
-              content?.content,
-              commands,
-              [],
+              content,
+              newBotConfig?.context.commands,
+              newBotConfig?.context.users,
             );
             content = {
-              ...content,
-              params: extractedValues.params,
+              content: content,
+              ...extractedValues,
+            };
+          } else {
+            content = {
+              content: content,
             };
           }
         }
+        // Update currentUsers based on metadata, replace if empty array provided
+        if (Array.isArray(metadata?.users) && metadata.users.length === 0) {
+          currentUsers = {}; // Reset if empty array
+        } else if (metadata?.users) {
+          currentUsers = metadata.users; // Update if users are provided
+        }
 
-        const context = new HandlerContext(message, client.accountAddress);
+        /* Abstract some of the concepts in the runner */
+        const context = new HandlerContext(
+          message,
+          {
+            commands: newBotConfig?.context?.commands ?? {},
+            users: currentUsers,
+          },
+          address,
+        );
 
-        if (
-          message.contentType.sameAs(ContentTypeSilent) &&
-          content?.content === "/access" &&
-          accessHandler
-        ) {
-          //if a bot speaks do nothing
-          const accept = await accessHandler(context);
-          if (accept) {
-            // add to group
-            grant_access(message.conversation, {});
-            continue;
-          }
-        } else if (
-          message.contentType.sameAs(ContentTypeSilent) &&
-          content?.metadata?.type === "ping"
-        ) {
-          //if a bot speaks do nothing
-          ping(message?.conversation, {}, accessHandler ? true : false);
+        if (message.contentType.sameAs(ContentTypeSilent)) {
+          await handleSilentMessage(message, context, accessHandler);
           continue;
         }
+
         await handler(context);
       } catch (e) {
         console.log(`error`, e);
@@ -92,35 +97,3 @@ export const runGroup = async (
     }
   }
 };
-
-async function grant_access(conversation: Conversation, context: any) {
-  // add group member
-  await conversation.send(
-    {
-      content: "",
-      metadata: {
-        type: "access",
-        ...context,
-      },
-    },
-    ContentTypeSilent,
-  );
-}
-
-async function ping(
-  conversation: Conversation,
-  context: any,
-  accessHandler: boolean,
-) {
-  await conversation.send(
-    {
-      content: "",
-      metadata: {
-        type: "ping",
-        access: accessHandler,
-        ...context,
-      },
-    },
-    ContentTypeSilent,
-  );
-}

@@ -19,11 +19,7 @@ const newBotConfig = {
 
 // Main function to run the bot
 run(async (context: HandlerContext) => {
-  const { users, commands: groupCommands } = context.context;
   const { content, typeId, senderAddress } = context.message;
-
-  // Populate fake users for testing or simulation purposes
-
   // Handling different types of messages
   switch (typeId) {
     case "reaction":

@@ -1,13 +1,13 @@
 import { ContentTypeSilent } from "../content-types/Silent.js";
 
-export async function grantAccess(conversation: any, context: any) {
+export async function grantAccess(conversation: any, metadata: any) {
   // Add group member
   await conversation.send(
     {
       content: "",
       metadata: {
         type: "access",
-        ...context,
+        ...metadata,
       },
     },
     {
@@ -18,7 +18,7 @@ export async function grantAccess(conversation: any, context: any) {
 
 export async function ping(
   conversation: any,
-  context: any,
+  metadata: any,
   accessHandler: boolean,
 ) {
   // Send a ping with access handler status
@@ -27,7 +27,7 @@ export async function ping(
     metadata: {
       type: "ping",
       access: accessHandler,
-      ...context,
+      ...metadata,
     },
   };
   await conversation.send(content, {
@@ -49,7 +49,6 @@ export function handleSilentMessage(
         }
       });
     } else if (message.content.metadata.type === "ping") {
-      const users = message.content.metadata.users || [];
       return ping(
         message.conversation,
         message.content.metadata,

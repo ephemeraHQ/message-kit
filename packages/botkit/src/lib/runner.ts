@@ -1,9 +1,10 @@
 import xmtpClient from "./client.js";
-import HandlerContext from "./handler-context.js";
+import HandlerContext from "./handlerContext.js";
 import { ContentTypeSilent } from "../content-types/Silent.js";
 import { ContentTypeBotMessage } from "../content-types/Bot.js";
-import { extractCommandValues } from "./commands.js";
-import { handleSilentMessage } from "./context.js";
+import { extractCommandValues } from "../helpers/commands.js";
+import { handleSilentMessage } from "../helpers/context.js";
+import { ContentTypeText } from "@xmtp/xmtp-js";
 
 type Handler = (context: HandlerContext) => Promise<void>;
 
@@ -33,7 +34,7 @@ export default async function run(
       }
 
       let content = message.content;
-      if (typeId == "text") {
+      if (message.contentType.sameAs(ContentTypeText)) {
         if (content?.startsWith("/")) {
           const extractedValues = extractCommandValues(
             content,
@@ -57,6 +58,7 @@ export default async function run(
         currentUsers = metadata.users; // Update if users are provided
       }
 
+      /* Abstract some of the concepts in the runner */
       const context = new HandlerContext(
         {
           id: message.id,
@@ -72,6 +74,7 @@ export default async function run(
         message.conversation,
         address,
       );
+
       if (message.contentType.sameAs(ContentTypeSilent)) {
         await handleSilentMessage(message, context, accessHandler);
         continue;

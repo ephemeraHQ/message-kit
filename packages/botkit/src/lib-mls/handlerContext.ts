@@ -6,10 +6,16 @@ import { ContentTypeSilent } from "../content-types/Silent.js";
 export class HandlerContext {
   message: DecodedMessage;
   conversation: Conversation;
+  context: {};
   clientAddress: string; // Add this line
 
-  constructor(message: DecodedMessage, clientAddress: string) {
+  constructor(
+    message: DecodedMessage,
+    context: {} = {},
+    clientAddress: string,
+  ) {
     this.message = message;
+    this.context = context;
     this.conversation = message.conversation;
     this.clientAddress = clientAddress;
   }
