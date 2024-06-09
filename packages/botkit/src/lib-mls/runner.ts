@@ -1,6 +1,6 @@
 import { HandlerContext } from "./handlerContext.js";
 import { ContentTypeSilent } from "../content-types/Silent.js";
-import { extractCommandValues } from "../lib/helper.js";
+import { extractCommandValues } from "../lib/commands.js";
 import { ClientOptions, Conversation } from "@xmtp/mls-client";
 import { mlsClient } from "./client.js";
 import { ContentTypeBotMessage } from "../content-types/Bot.js";
@@ -15,11 +15,12 @@ export const runGroup = async (
   clientConfig?: ClientOptions,
   accessHandler?: (context: HandlerContext) => Promise<boolean>,
 ) => {
+  console.log(groupId);
   const client = await mlsClient(clientConfig);
   const { inboxId } = client;
   await client.conversations.sync();
   const conversations = await client.conversations.list();
-
+  console.log(conversations);
   const group = conversations.find((conversation) => {
     return conversation.id === groupId;
   });
@@ -78,7 +79,7 @@ export const runGroup = async (
           }
         } else if (
           message.contentType.sameAs(ContentTypeSilent) &&
-          content?.content === "/ping"
+          content?.metadata?.type === "ping"
         ) {
           //if a bot speaks do nothing
           ping(message?.conversation, {}, accessHandler ? true : false);

@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "@xmtp/grpc-api-client": "^0.2.7",
-    "@xmtp/mls-client": "^0.0.4",
+    "@xmtp/mls-client": "^0.0.5",
     "@xmtp/xmtp-js": "^11.6.3",
     "dotenv": "^16.4.5",
     "ethers": "^5.7.2"

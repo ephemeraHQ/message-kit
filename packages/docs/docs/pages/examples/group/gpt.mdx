@@ -1,77 +1,47 @@
-# AI Bot
+# GPT
 
-This is a simple bot that replies with gpt
+Messages that start with `@bot` will trigger the GPT response.
 
-## Structure
-
-> Check out the [repository](https://github.com/xmtp-labs/botkit/tree/main/examples/gpt) for the full code.
-
-```
-bot-project/            # Your project's root directory.
-├── lib/
-│   ├── gpt.ts          # OpenAI GPT-4o API call // [!code hl] // [!code focus]
-├── src/
-│   ├── index.ts        # simple gpt bot // [!code hl] // [!code focus]
-├── package.json
-├── tsconfig.json
-└── .env
+```bash [cmd]
+@bot hey, which games can i play?
 ```
 
 ## Logic
 
-In this case the bot replies with gpt
+In this case the bot replies with context about the group like users and commands.
 
-```jsx [src/index.ts]
-import "dotenv/config";
-import { run, HandlerContext } from "@xmtp/botkit";
-import openaiCall from "./lib/gpt.js";
+```jsx [src/handler/gpt.ts]
+import { HandlerContext } from "@xmtp/botkit";
+import { users } from "../lib/users.js";
+import openaiCall from "../lib/gpt.js";
 
-run(async (context: HandlerContext) => {
-  const { content, typeId, senderAddress } = context.message;
+export async function handler(context: HandlerContext, commands: any) {
+  const { content, senderAddress } = context.message;
   const { content: text } = content;
+  const systemPrompt = `You are a helpful assistant that lives inside a web3 messaging group.\n
+  This are the users of the group:${JSON.stringify(users)}\n
+  This group bot has many commands avaiable: ${JSON.stringify(commands)}\n
+  When possible, answer with the command from the list for the user to perform. put this command in a new line\n
+  The message was sent by ${senderAddress}`;
 
-  // Initialize an array to store the conversation history
-  const systemPrompt =
-    "You are a helpful assistant that lives inside a web3 messaging app. You love blockchain and decentralization and you are quite funny. You often tell crypto jokes.";
+  let message = text.replace("@bot", "");
+  let { reply } = await openaiCall(message, senderAddress, systemPrompt);
 
-  try {
-    let { reply } = await openaiCall(text, senderAddress, systemPrompt);
-
-    await context.textReply(`${reply}`);
-  } catch (error) {
-    // Handle the error, for example, by sending an error message to the user
-    await context.textReply(
-      "Failed to process your request. Please try again later.",
-    );
-  }
-});
-```
-
-### Variables
-
-Set up this variables in your bot yo connect to GPT and xmtp
-
-```bash
-KEY= # 0x... the private key of the bot (with the 0x prefix)
-XMTP_ENV=production # or `dev`
-OPEN_AI_API_KEY= # openai api key
-```
-
-# GPT
-
-The GPT middleware allows you to integrate OpenAI's GPT model into your chatbot.
-
-## Install dependency
-
-```bash
-yarn add openai
+  await context.reply(`${reply}`);
+}
 ```
 
 ## OpenAI middleware
 
+### Install dependency
+
+```bash [cmd]
+yarn add openai
+```
+
 Copy the following code into your `lib/gpt.js` file.
 
-```jsx [lib/gpt.js]
+```jsx [src/lib/gpt.js]
 import OpenAI from "openai";
 
 const openai = new OpenAI({
@@ -95,14 +65,6 @@ export default async function openaiCall(
   // Check if the limit of 5 questions per day has been reached
   const today = new Date().toISOString().slice(0, 10); // Format: YYYY-MM-DD
   let userDailyCount = dailyQuestionCountPerUser.get(senderAddress) || {};
-  /*if (userDailyCount[today] >= 5) {
-    // If the limit is reached, return a warning message
-    return {
-      reply:
-        "Oops, looks like you've hit the 5-question cap! At this rate, my OpenAI key's gonna drain faster than Fabri's crypto funds. NGMI, try again tomorrow!",
-      messages,
-    };
-  }*/
 
   try {
     if (content.toLowerCase() === "stop") {

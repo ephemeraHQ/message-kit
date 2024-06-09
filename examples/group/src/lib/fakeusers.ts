@@ -1,8 +1,8 @@
 import { HandlerContext } from "@xmtp/botkit";
-import { users } from "../lib/users.js";
-import openaiCall from "../lib/gpt.js";
+import openaiCall from "./gpt.js";
 
-export async function handler(context: HandlerContext, commands: any) {
+export async function handler(context: HandlerContext) {
+  const { users, commands } = context.context;
   const { content, senderAddress } = context.message;
   const { content: text } = content;
   const systemPrompt = `You love blockchain and decentralization and you are quite funny. You often tell crypto jokes\n

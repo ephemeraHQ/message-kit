@@ -1,12 +1,12 @@
 export const commands = [
   {
-    name: "DegenBot",
+    name: "Tipping",
     icon: "🎩",
-    description: "Send degen tipping via emoji, replies or command.",
+    description: "Tip tokens via emoji, replies or command.",
     commands: [
       {
         command: "/tip [@users] [amount] [token]",
-        description: "Tip users in degen.",
+        description: "Tip users in a specified token.",
         params: {
           username: {
             default: "",
@@ -16,19 +16,14 @@ export const commands = [
             default: 10,
             type: "number",
           },
-          token: {
-            default: "degen",
-            type: "string",
-            values: ["degen"], // Accepted tokens
-          },
         },
       },
     ],
   },
   {
-    name: "BaseFrame",
+    name: "Base Transactions",
     icon: "🖼️",
-    description: "Multipurpose transaction frame.",
+    description: "Multipurpose transaction frame built onbase.",
     commands: [
       {
         command: "/send [amount] [token] [@username]",
@@ -74,11 +69,11 @@ export const commands = [
         command: "/mint [collection_address] [token_id]",
         description: "Create (mint) a new token or NFT.",
         params: {
-          collection_address: {
-            default: "0x1234567890",
-            type: "string",
+          collection: {
+            default: "0x73a333cb82862d4f66f0154229755b184fb4f5b0",
+            type: "address",
           },
-          token_id: {
+          tokenId: {
             default: 1,
             type: "number",
           },
@@ -92,8 +87,8 @@ export const commands = [
     ],
   },
   {
-    name: "BaseBet",
-    icon: "🤖",
+    name: "Betting",
+    icon: "🎰",
     description: "Betting on basebet.",
     commands: [
       {
@@ -117,7 +112,7 @@ export const commands = [
     ],
   },
   {
-    name: "GamesBot",
+    name: "Games",
     icon: "🕹️",
     description: "Provides various gaming experiences.",
     commands: [
@@ -135,16 +130,30 @@ export const commands = [
     ],
   },
   {
-    name: "GeneralCommands",
-    icon: "⚙️",
-    description:
-      "General utility commands for user management and information.",
+    name: "Admin",
+    icon: "🔐",
+    description: "Moderate access to the group with admin commands.",
     commands: [
-      { command: "/tx", description: "Transaction primitive deeplink." },
-      { command: "/dm", description: "Dm primitive." },
-      { command: "/block", description: "Block a user." },
-      { command: "/unblock", description: "Unblock a user." },
-      { command: "/help", description: "Show available commands." },
+      {
+        command: "/block",
+        description: "Block a user.",
+        params: {
+          username: {
+            default: "",
+            type: "username",
+          },
+        },
+      },
+      {
+        command: "/unblock",
+        description: "Unblock a user.",
+        params: {
+          username: {
+            default: "",
+            type: "username",
+          },
+        },
+      },
     ],
   },
 ];

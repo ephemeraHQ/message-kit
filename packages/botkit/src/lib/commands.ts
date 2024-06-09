@@ -1,6 +1,6 @@
 interface CommandParamConfig {
   default?: any;
-  type: "number" | "string" | "username" | "quoted";
+  type: "number" | "string" | "username" | "quoted" | "address";
   values?: string[]; // Accepted values for the parameter
 }
 
@@ -88,6 +88,16 @@ export function extractCommandValues(
         if (quotedIndex !== -1) {
           values.params[param] = parts[quotedIndex].slice(1, -1);
           usedIndices.add(quotedIndex);
+          valueFound = true;
+        }
+      } else if (type === "address") {
+        const addressIndex = parts.findIndex(
+          (part, idx) =>
+            /^0x[a-fA-F0-9]{40}$/.test(part) && !usedIndices.has(idx),
+        );
+        if (addressIndex !== -1) {
+          values.params[param] = parts[addressIndex];
+          usedIndices.add(addressIndex);
           valueFound = true;
         }
       } else if (possibleValues.length > 0) {

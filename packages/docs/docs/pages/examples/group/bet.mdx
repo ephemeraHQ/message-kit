@@ -1,3 +1,55 @@
+# Bet
+
+This example shows how to create a bet that creates a new group and sends a message to the users.
+
+## Commands
+
+This is the command to create a bet:
+
+```bash [cmd]
+/bet @bob @alice 100 "bet name"
+```
+
+::::note[Commands]
+To declare this commands you need to add them first. Learn more about commands [here](/concepts/commands).
+:::details[Snippet]
+
+```json
+{
+  "name": "Betting",
+  "icon": "🎰",
+  "description": "Betting on basebet.",
+  "commands": [
+    {
+      "command": "/bet @users [Bet Name] [Bet Amount]",
+      "description": "Bet on basebet.",
+      "params": {
+        "users": {
+          "default": "",
+          "type": "username"
+        },
+        "name": {
+          "default": "",
+          "type": "quoted"
+        },
+        "amount": {
+          "default": 10,
+          "type": "number"
+        }
+      }
+    }
+  ]
+}
+```
+
+:::
+::::
+
+## Logic
+
+The bot creates a new group and sends a message to the users with a Frame to confirm the bet
+
+```jsx [src/handler/bet.ts]
 import { HandlerContext } from "@xmtp/botkit";
 import { Wallet } from "ethers";
 import { Client as xmtpClient } from "@xmtp/xmtp-js";
@@ -40,3 +92,4 @@ async function generateBetUrl(
   const link = `${baseUrl}${client.address}`;
   return link;
 }
+```

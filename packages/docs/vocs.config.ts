@@ -63,12 +63,13 @@ export default defineConfig({
     },
 
     {
-      text: "Bots",
+      text: "Examples",
+      link: "/examples/",
       collapsed: false,
       items: [
         {
           text: "Introduction",
-          link: "/examples/introduction",
+          link: "/examples/",
         },
         {
           text: "Subscription",
@@ -89,12 +90,16 @@ export default defineConfig({
           link: "/examples/group",
           items: [
             {
+              text: "GPT",
+              link: "/examples/group/gpt",
+            },
+            {
               text: "Tipping",
               link: "/examples/group/tipping",
             },
             {
-              text: "GPT",
-              link: "/examples/group/gpt",
+              text: "Bet",
+              link: "/examples/group/bet",
             },
             {
               text: "Games",
@@ -105,8 +110,8 @@ export default defineConfig({
               link: "/examples/group/frames",
             },
             {
-              text: "Other",
-              link: "/examples/group/other",
+              text: "Admin",
+              link: "/examples/group/admin",
             },
           ],
         },
