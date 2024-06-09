@@ -1,26 +1,4 @@
-interface CommandParamConfig {
-  default?: any;
-  type: "number" | "string" | "username" | "quoted" | "address";
-  values?: string[]; // Accepted values for the parameter
-}
-
-interface CommandConfig {
-  command: string;
-  description: string;
-  params: { [param: string]: CommandParamConfig };
-}
-
-interface CommandGroup {
-  name: string;
-  icon: string;
-  description: string;
-  commands: CommandConfig[];
-}
-
-interface User {
-  username: string;
-  address: string;
-}
+import { CommandGroup, CommandConfig, User } from "./types";
 
 function mapUsernamesToAddresses(
   usernames: string[],

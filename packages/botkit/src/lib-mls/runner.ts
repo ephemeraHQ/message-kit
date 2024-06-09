@@ -6,6 +6,7 @@ import { ClientOptions, Conversation } from "@xmtp/mls-client";
 import { mlsClient } from "./client.js";
 import { ContentTypeBotMessage } from "../content-types/Bot.js";
 import { ContentTypeText } from "@xmtp/xmtp-js";
+import { User } from "../helpers/types";
 
 type Handler = (context: HandlerContext) => Promise<void>;
 
@@ -22,7 +23,8 @@ export const runGroup = async (
   await client.conversations.sync();
   const conversations = await client.conversations.list();
   console.log(conversations);
-  let currentUsers = {}; // Initialize currentUsers to hold onto user data across messages
+  let currentUsers: User[] = []; // Initialize currentUsers to hold onto user data across messages
+
   const group = conversations.find((conversation) => {
     return conversation.id === groupId;
   });
@@ -70,7 +72,7 @@ export const runGroup = async (
         }
         // Update currentUsers based on metadata, replace if empty array provided
         if (Array.isArray(metadata?.users) && metadata.users.length === 0) {
-          currentUsers = {}; // Reset if empty array
+          currentUsers = []; // Reset if empty array
         } else if (metadata?.users) {
           currentUsers = metadata.users; // Update if users are provided
         }

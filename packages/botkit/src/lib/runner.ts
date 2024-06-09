@@ -5,6 +5,7 @@ import { ContentTypeBotMessage } from "../content-types/Bot.js";
 import { extractCommandValues } from "../helpers/commands.js";
 import { handleSilentMessage } from "../helpers/context.js";
 import { ContentTypeText } from "@xmtp/xmtp-js";
+import { User } from "../helpers/types";
 
 type Handler = (context: HandlerContext) => Promise<void>;
 
@@ -15,7 +16,7 @@ export default async function run(
 ) {
   const client = await xmtpClient(newBotConfig);
   const { address } = client;
-  let currentUsers = {}; // Initialize currentUsers to hold onto user data across messages
+  let currentUsers: User[] = []; // Initialize currentUsers to hold onto user data across messages
 
   for await (const message of await client.conversations.streamAllMessages()) {
     try {
@@ -33,13 +34,20 @@ export default async function run(
         continue;
       }
 
+      // Update currentUsers based on metadata, replace if empty array provided
+      if (Array.isArray(metadata?.users) && metadata.users.length === 0) {
+        currentUsers = []; // Reset if empty array
+      } else if (metadata?.users) {
+        currentUsers = metadata.users; // Update if users are provided
+      }
+
       let content = message.content;
       if (message.contentType.sameAs(ContentTypeText)) {
         if (content?.startsWith("/")) {
           const extractedValues = extractCommandValues(
             content,
             newBotConfig?.context.commands,
-            newBotConfig?.context.users,
+            currentUsers,
           );
           content = {
             content: content,
@@ -50,12 +58,6 @@ export default async function run(
             content: content,
           };
         }
-      }
-      // Update currentUsers based on metadata, replace if empty array provided
-      if (Array.isArray(metadata?.users) && metadata.users.length === 0) {
-        currentUsers = {}; // Reset if empty array
-      } else if (metadata?.users) {
-        currentUsers = metadata.users; // Update if users are provided
       }
 
       /* Abstract some of the concepts in the runner */
