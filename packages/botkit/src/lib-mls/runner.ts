@@ -53,6 +53,7 @@ export const runGroup = async (
             const extractedValues = extractCommandValues(
               content?.content,
               commands,
+              [],
             );
             content = {
               ...content,

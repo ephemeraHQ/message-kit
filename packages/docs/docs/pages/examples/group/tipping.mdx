@@ -1,8 +1,13 @@
 # Tipping
 
-```jsx
+In this example you can tip using 3 primitives:
+
+- Emoji reaction `emoji:🎩`
+- Text message starting with `/tip @bob 10 degen`
+- Reply `10 $degen`
+
+```tsx [handler/tipping.ts]
 import { HandlerContext } from "@xmtp/botkit";
-import { mapUsernamesToAddresses } from "@xmtp/botkit";
 import { users } from "../lib/users.js";
 
 export async function handler(context: HandlerContext) {
@@ -12,64 +17,66 @@ export async function handler(context: HandlerContext) {
     receiverAddresses: string[] = [],
     reference: string = "";
 
+  // Handle different types of messages
   if (typeId === "reply") {
+    // Replies with degen //  [!code hl] // [!code focus]
     const { content: reply, receiver } = content;
-    //Reply
+    // Process reply messages
     receiverAddresses = [receiver];
     if (reply.includes("$degen")) {
       const match = reply.match(/(\d+)/);
-      if (match) amount = parseInt(match[0]);
+      if (match) amount = parseInt(match[0]); // Extract amount from reply
     }
   } else if (typeId === "text") {
+    // Uses tip command //  [!code hl] // [!code focus]
     const { content: text } = content;
+    // Process text commands starting with "/tip"
     if (text.startsWith("/tip")) {
       const { amount: extractedAmount, username } = params;
 
-      //@ts-ignore
-      amount = parseInt(extractedAmount) || 10;
-      //@ts-ignore
-      receiverAddresses = mapUsernamesToAddresses(username, users);
+      amount = extractedAmount || 10; // Default amount if not specified
+      receiverAddresses = username; // Extract receiver from parameters
     }
   } else if (typeId === "reaction") {
+    // Uses reaction emoji to tip //  [!code hl] // [!code focus]
     const { content: reaction, action, receiver } = content;
-    //Reaction
+
+    // Process reactions, specifically "degen" added reactions
     if (reaction === "degen" && action === "added") {
-      amount = 10;
+      amount = 10; // Set a fixed amount for reactions
       receiverAddresses = [receiver];
     }
   }
-  const sender = users.find((user) => user.address === senderAddress);
-  const receivers = users.filter((user) =>
-    receiverAddresses.includes(user.address),
-  );
+  // Find sender user details
+  const sender = users.find((user: any) => user.address === senderAddress);
 
-  if (!sender || receivers.length === 0 || amount === 0) {
+  // Validate transaction feasibility
+  if (!sender || receiverAddresses.length === 0 || amount === 0) {
     context.reply("Sender or receiver or amount not found.");
     return;
   }
-  if (sender.degen >= amount * receivers.length) {
-    sender.degen -= amount * receivers.length;
-    receivers.forEach(async (receiver) => {
-      receiver.degen += amount;
+
+  // Check if sender has enough DEGEN tokens
+  if (sender.degen >= amount * receiverAddresses.length) {
+    // Process sending DEGEN tokens to each receiver
+    receiverAddresses.forEach(async (receiver: any) => {
       context.reply(
         `You received ${amount} DEGEN tokens from ${sender.username}. Your new balance is ${receiver.degen} DEGEN tokens.`,
-        [receiver.address],
+        [receiver.address], // Notify only 1 address //  [!code hl] // [!code focus]
       );
-      //notifyUser(receiver, amount, sender);
     });
+    // Notify sender of the transaction details
     context.reply(
       `You sent ${
-        amount * receivers.length
+        amount * receiverAddresses.length
       } DEGEN tokens in total. Your remaining balance: ${
-        sender.degen
+        sender.degen // The hypotetical logic of distributing tokens //  [!code hl] // [!code focus]
       } DEGEN tokens.`,
-      [sender.address],
+      [sender.address], // Notify only 1 address //  [!code hl] // [!code focus]
       reference,
     );
   } else {
     context.reply("Insufficient DEGEN tokens to send.");
   }
 }
-
-
 ```

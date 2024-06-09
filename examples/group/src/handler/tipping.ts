@@ -3,57 +3,67 @@ import { users } from "../lib/users.js";
 
 export async function handler(context: HandlerContext) {
   const { senderAddress, content, typeId } = context.message;
-  const { params, users: receivers, url } = content;
-
+  const { params } = content;
   let amount: number = 0,
     receiverAddresses: string[] = [],
     reference: string = "";
 
+  // Handle different types of messages
   if (typeId === "reply") {
+    // Replies with degen //  [!code hl] // [!code focus]
     const { content: reply, receiver } = content;
-    //Reply
+    // Process reply messages
     receiverAddresses = [receiver];
     if (reply.includes("$degen")) {
       const match = reply.match(/(\d+)/);
-      if (match) amount = parseInt(match[0]);
+      if (match) amount = parseInt(match[0]); // Extract amount from reply
     }
   } else if (typeId === "text") {
+    // Uses tip command //  [!code hl] // [!code focus]
     const { content: text } = content;
+    // Process text commands starting with "/tip"
     if (text.startsWith("/tip")) {
       const { amount: extractedAmount, username } = params;
 
-      amount = parseInt(extractedAmount) || 10;
-      receiverAddresses = receivers;
+      amount = extractedAmount || 10; // Default amount if not specified
+      receiverAddresses = username; // Extract receiver from parameters
     }
   } else if (typeId === "reaction") {
+    // Uses reaction emoji to tip //  [!code hl] // [!code focus]
     const { content: reaction, action, receiver } = content;
 
+    // Process reactions, specifically "degen" added reactions
     if (reaction === "degen" && action === "added") {
-      amount = 10;
+      amount = 10; // Set a fixed amount for reactions
       receiverAddresses = [receiver];
     }
   }
+  // Find sender user details
   const sender = users.find((user: any) => user.address === senderAddress);
 
+  // Validate transaction feasibility
   if (!sender || receiverAddresses.length === 0 || amount === 0) {
     context.reply("Sender or receiver or amount not found.");
     return;
   }
 
+  // Check if sender has enough DEGEN tokens
   if (sender.degen >= amount * receiverAddresses.length) {
+    // Process sending DEGEN tokens to each receiver
     receiverAddresses.forEach(async (receiver: any) => {
       context.reply(
         `You received ${amount} DEGEN tokens from ${sender.username}. Your new balance is ${receiver.degen} DEGEN tokens.`,
-        [receiver.address],
+        [receiver.address], // Notify only 1 address //  [!code hl] // [!code focus]
       );
     });
+    // Notify sender of the transaction details
     context.reply(
       `You sent ${
         amount * receiverAddresses.length
       } DEGEN tokens in total. Your remaining balance: ${
-        sender.degen
+        sender.degen // The hypotetical logic of distributing tokens //  [!code hl] // [!code focus]
       } DEGEN tokens.`,
-      [sender.address],
+      [sender.address], // Notify only 1 address //  [!code hl] // [!code focus]
       reference,
     );
   } else {

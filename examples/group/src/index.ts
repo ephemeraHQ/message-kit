@@ -1,13 +1,13 @@
 import "dotenv/config";
 import { run, HandlerContext } from "@xmtp/botkit";
 import { users } from "./lib/users.js";
-import { handler as baseHandler } from "./bots/baseframe.js";
+import { handler as baseHandler } from "./handler/frame.js";
 import { commands } from "./commands.js";
-import { handler as basebetHandler } from "./bots/basebet.js";
-import { handler as tippingHandler } from "./bots/degen.js";
-import { handler as gptHandler } from "./bots/gpt.js";
-import { handler as gamesHandler } from "./bots/games.js";
-import { handler as generalHandler } from "./bots/general.js";
+import { handler as bet } from "./handler/bet.js";
+import { handler as tipping } from "./handler/tipping.js";
+import { handler as gpt } from "./handler/gpt.js";
+import { handler as games } from "./handler/games.js";
+import { handler as general } from "./handler/general.js";
 
 const newBotConfig = {
   context: {
@@ -21,16 +21,18 @@ run(async (context: HandlerContext) => {
   populateFakeUsers(context);
   if (typeId == "reaction") {
     const { action, content: emoji } = content;
-    if (emoji == "degen" && action == "added") await tippingHandler(context);
+    if (emoji == "degen" && action == "added") await tipping(context);
   } else if (typeId == "reply") {
     const { receiver, content: reply } = content;
-    if (receiver && reply.includes("degen")) await tippingHandler(context);
+    if (receiver && reply.includes("degen")) await tipping(context);
   } else if (typeId == "text") {
     const { content: text } = content;
-    if (text.startsWith("@bot")) {
-      await gptHandler(context, commands);
+    if (text.startsWith("/tip")) {
+      await tipping(context);
+    } else if (text.startsWith("@bot")) {
+      await gpt(context, commands);
     } else if (text.startsWith("/bet")) {
-      await basebetHandler(context);
+      await bet(context);
     } else if (
       text.startsWith("/send") ||
       text.startsWith("/swap") ||
@@ -38,12 +40,10 @@ run(async (context: HandlerContext) => {
       text.startsWith("/show")
     ) {
       await baseHandler(context);
-    } else if (text.startsWith("/tip")) {
-      await tippingHandler(context);
     } else if (text.startsWith("/game")) {
-      await gamesHandler(context);
+      await games(context);
     } else if (text.startsWith("/")) {
-      await generalHandler(context);
+      await general(context);
     }
   }
 }, newBotConfig);
