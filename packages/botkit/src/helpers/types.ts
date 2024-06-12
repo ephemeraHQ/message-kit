@@ -29,4 +29,5 @@ export interface CommandGroup {
 export interface User {
   username: string;
   address: string;
+  tokens: number;
 }
