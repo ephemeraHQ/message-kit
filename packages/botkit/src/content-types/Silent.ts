@@ -1,5 +1,5 @@
-// @ts-nocheck
-import { ContentTypeId } from "@xmtp/xmtp-js";
+import { ContentCodec, ContentTypeId, EncodedContent } from "@xmtp/xmtp-js";
+import { Metadata } from "../helpers/types";
 
 export const ContentTypeSilent = new ContentTypeId({
   authorityId: "xmtp.org",
@@ -8,42 +8,47 @@ export const ContentTypeSilent = new ContentTypeId({
   versionMinor: 0,
 });
 
-export class SilentCodec {
+export type SilentMetadata = {
+  type: "access" | "ping";
+  access?: boolean;
+} & Metadata;
+
+export type Silent = {
+  metadata?: SilentMetadata;
+};
+
+export class SilentCodec implements ContentCodec<Silent> {
   get contentType() {
     return ContentTypeSilent;
   }
 
-  encode(silent) {
-    const { content, metadata } = silent;
+  encode(silent: Silent) {
+    const { metadata } = silent;
 
     return {
-      type: ContentTypeSilent,
+      type: this.contentType,
       parameters: {},
-      content: new TextEncoder().encode(JSON.stringify({ content, metadata })),
+      content: new TextEncoder().encode(JSON.stringify({ metadata })),
     };
   }
 
-  decode(encodedContent) {
+  decode(encodedContent: EncodedContent): Silent {
     const decodedContent = new TextDecoder().decode(encodedContent.content);
 
     try {
-      const silent = JSON.parse(decodedContent);
-      const { content, metadata } = silent;
-      return { content, metadata };
+      const silent = JSON.parse(decodedContent) as Silent;
+      const { metadata } = silent;
+      return { metadata };
     } catch (e) {
-      const parameters = encodedContent.parameters;
-      return {
-        content: decodedContent,
-        metadata: parameters.metadata,
-      };
+      return {};
     }
   }
 
-  fallback(content) {
+  fallback() {
     return undefined;
   }
 
-  shouldPush(content) {
+  shouldPush() {
     return false;
   }
 }

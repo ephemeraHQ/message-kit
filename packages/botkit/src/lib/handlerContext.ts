@@ -1,4 +1,7 @@
-import { ContentTypeBotMessage } from "../content-types/Bot.js";
+import {
+  BotMessage,
+  ContentTypeBotMessage,
+} from "../content-types/BotMessage.js";
 import { Conversation } from "@xmtp/xmtp-js";
 import { MessageAbstracted } from "../helpers/types";
 import { CommandGroup, User } from "../helpers/types";
@@ -38,15 +41,13 @@ export default class HandlerContext {
     const { typeId } = this.message;
 
     if (typeId == "silent") return;
-    const botMessage = {
-      sender: this.message.senderAddress,
+    const content: BotMessage = {
       receivers: receivers,
       content: message,
       metadata: { ...this.context },
-      reference: messageId,
     };
 
-    await this.conversation.send(botMessage, {
+    await this.conversation.send(content, {
       contentType: ContentTypeBotMessage,
     });
   }

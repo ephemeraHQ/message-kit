@@ -1,29 +1,31 @@
-import { ContentTypeSilent } from "../content-types/Silent.js";
+import { Conversation, DecodedMessage } from "@xmtp/xmtp-js";
+import { ContentTypeSilent, Silent } from "../content-types/Silent.js";
+import HandlerContext from "../lib/handlerContext.js";
+import { Metadata } from "./types.js";
 
-export async function grantAccess(conversation: any, metadata: any) {
+export async function grantAccess(
+  conversation: Conversation,
+  metadata?: Metadata,
+) {
+  const content: Silent = {
+    metadata: {
+      type: "access",
+      ...metadata,
+    },
+  };
   // Add group member
-  await conversation.send(
-    {
-      content: "",
-      metadata: {
-        type: "access",
-        ...metadata,
-      },
-    },
-    {
-      contentType: ContentTypeSilent,
-    },
-  );
+  await conversation.send(content, {
+    contentType: ContentTypeSilent,
+  });
 }
 
 export async function ping(
-  conversation: any,
-  metadata: any,
+  conversation: Conversation,
   accessHandler: boolean,
+  metadata?: Metadata,
 ) {
   // Send a ping with access handler status
-  let content = {
-    content: "",
+  let content: Silent = {
     metadata: {
       type: "ping",
       access: accessHandler,
@@ -35,24 +37,24 @@ export async function ping(
   });
 }
 
-export function handleSilentMessage(
-  message: any,
-  context: any,
-  accessHandler?: (context: any) => Promise<boolean>,
+export async function handleSilentMessage(
+  message: DecodedMessage,
+  context: HandlerContext,
+  accessHandler?: (context: HandlerContext) => Promise<boolean>,
 ) {
   // Handle silent messages and populate context based on message type
   if (message.contentType.sameAs(ContentTypeSilent)) {
-    if (message.content.metadata.type === "access" && accessHandler) {
-      return accessHandler(context).then((accept) => {
-        if (accept) {
-          return grantAccess(message.conversation, message.content.metadata);
-        }
-      });
-    } else if (message.content.metadata.type === "ping") {
+    const messageContent = message.content as Silent;
+    if (messageContent.metadata?.type === "access" && accessHandler) {
+      const accept = await accessHandler(context);
+      if (accept) {
+        return grantAccess(message.conversation, messageContent.metadata);
+      }
+    } else if (messageContent.metadata?.type === "ping") {
       return ping(
         message.conversation,
-        message.content.metadata,
-        !!accessHandler,
+        (await accessHandler?.(context)) ?? false,
+        messageContent.metadata,
       );
     }
   }

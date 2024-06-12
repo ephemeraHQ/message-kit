@@ -1,7 +1,7 @@
 import xmtpClient from "./client.js";
 import HandlerContext from "./handlerContext.js";
 import { ContentTypeSilent } from "../content-types/Silent.js";
-import { ContentTypeBotMessage } from "../content-types/Bot.js";
+import { ContentTypeBotMessage } from "../content-types/BotMessage.js";
 import { extractCommandValues } from "../helpers/commands.js";
 import { handleSilentMessage } from "../helpers/context.js";
 import { ContentTypeText } from "@xmtp/xmtp-js";

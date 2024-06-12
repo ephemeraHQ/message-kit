@@ -4,7 +4,7 @@ import { extractCommandValues } from "../helpers/commands.js";
 import { handleSilentMessage } from "../helpers/context.js";
 import { ClientOptions, Conversation } from "@xmtp/mls-client";
 import { mlsClient } from "./client.js";
-import { ContentTypeBotMessage } from "../content-types/Bot.js";
+import { ContentTypeBotMessage } from "../content-types/BotMessage.js";
 import { ContentTypeText } from "@xmtp/xmtp-js";
 import { User } from "../helpers/types";
 
@@ -87,10 +87,10 @@ export const runGroup = async (
           address,
         );
 
-        if (message.contentType.sameAs(ContentTypeSilent)) {
-          await handleSilentMessage(message, context, accessHandler);
-          continue;
-        }
+        // if (message.contentType.sameAs(ContentTypeSilent)) {
+        //   await handleSilentMessage(message, context, accessHandler);
+        //   continue;
+        // }
 
         await handler(context);
       } catch (e) {

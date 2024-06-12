@@ -16,7 +16,7 @@ export interface CommandParamConfig {
 export interface CommandConfig {
   command: string;
   description: string;
-  params: { [param: string]: CommandParamConfig };
+  params: Record<string, CommandParamConfig>;
 }
 
 export interface CommandGroup {
@@ -31,3 +31,6 @@ export interface User {
   address: string;
   tokens: number;
 }
+
+export type MetadataValue = string | number | boolean;
+export type Metadata = Record<string, MetadataValue | MetadataValue[]>;
