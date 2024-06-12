@@ -1,5 +1,5 @@
 import { Conversation, DecodedMessage } from "@xmtp/mls-client";
-import { ContentTypeBotMessage } from "../content-types/Bot.js";
+import { ContentTypeBotMessage } from "../content-types/BotMessage.js";
 import { ContentTypeText } from "@xmtp/xmtp-js";
 import { ContentTypeSilent } from "../content-types/Silent.js";
 

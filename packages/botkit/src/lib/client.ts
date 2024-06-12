@@ -1,10 +1,10 @@
-import { Client as XmtpClient } from "@xmtp/xmtp-js";
+import { Client as XmtpClient, XmtpEnv } from "@xmtp/xmtp-js";
 import { Wallet } from "ethers";
 import { GrpcApiClient } from "@xmtp/grpc-api-client";
 import { ReactionCodec } from "../content-types/Reaction.js";
 import { ReplyCodec } from "../content-types/Reply.js";
 import { SilentCodec } from "../content-types/Silent.js";
-import { BotMessageCodec } from "../content-types/Bot.js";
+import { BotMessageCodec } from "../content-types/BotMessage.js";
 
 export default async function xmtpClient(
   newBotConfig = {},
@@ -26,7 +26,7 @@ export default async function xmtpClient(
   }
 
   const defaultConfig = {
-    env: env as any,
+    env: env as XmtpEnv,
     apiClientFactory: GrpcApiClient.fromOptions as any,
     codecs: [
       new ReactionCodec(),
