@@ -1,4 +1,4 @@
-# @xmtp/mkit
+# @xmtp/message-kit
 
 ## 2.3.1
 

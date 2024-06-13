@@ -1,16 +1,16 @@
-# Subscription Bot
+# Subscription
 
-This is a simple yet powerful subscription bot that will allow you to customize it to your needs.
+This is a simple yet powerful subscription app that will allow you to customize it to your needs.
 
 - [Redis](/examples/subscription/redis): Integrate with Redis db to store the subscription status
 - [Cron](/examples/subscription/cron): Integrate with Cron to send the subscription message every day
 
 ## Structure
 
-> Check out the [repository](https://github.com/xmtp-labs/botkit/tree/main/examples/subscription) for the full code.
+> Check out the [repository](https://github.com/xmtp-labs/message-kit/tree/main/examples/subscription) for the full code.
 
 ```
-bot-project/              # Your project's root directory.
+subscription/              # Your project's root directory.
 ├── src/
 │   ├── index.ts          # Conversational logic // [!code hl] // [!code focus]
 │   └── lib/
@@ -53,7 +53,7 @@ run(async (context: HandlerContext) => {
       await redisClient.set(senderAddress, "subscribed"); //test
       message =
         "You are now subscribed. You will receive updates.\n\ntype 'stop' to unsubscribe";
-      //reset the bot to the initial step
+      //reset the app to the initial step
       inMemoryCacheStep.set(senderAddress, 0);
     } else {
       message = "Invalid option. Please choose 1 for Info or 2 to Subscribe.";
@@ -69,9 +69,9 @@ run(async (context: HandlerContext) => {
 });
 ```
 
-## Run the bot
+## Run the app
 
-Follow the steps below to run the bot
+Follow the steps below to run the app
 
 ::::steps
 
@@ -79,22 +79,22 @@ Follow the steps below to run the bot
 
 ```bash [cmd]
 # Clone the repo
-git clone https://github.com/xmtp-labs/botkit
+git clone https://github.com/xmtp-labs/message-kit
 # Go to the examples/subscription folder
 cd examples/subscription
 # Install the dependencies
 yarn install
-# Run the bot
+# Run the app
 yarn build:watch
 yarn start:watch
 ```
 
 ### Variables
 
-Set up this variables in your bot to connect to redis and xmtp
+Set up this variables in your app to connect to redis and xmtp
 
 ```bash [.env]
-KEY= # 0x... the private key of the bot (with the 0x prefix)
+KEY= # 0x... the private key of the app (with the 0x prefix)
 XMTP_ENV=production # or `dev`
 REDIS_CONNECTION_STRING= # the connection string for the Redis database
 ```

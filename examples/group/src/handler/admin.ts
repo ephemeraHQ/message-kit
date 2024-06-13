@@ -1,4 +1,4 @@
-import { HandlerContext } from "@xmtp/mkit";
+import { HandlerContext } from "@xmtp/message-kit";
 
 export async function handler(context: HandlerContext) {
   const { content } = context.message;

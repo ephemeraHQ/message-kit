@@ -1,4 +1,4 @@
-# create-mkit
+# create-message-kit
 
 ## 1.4.0
 
@@ -16,7 +16,7 @@
 
 - d581e9f: Remove auto-install of dependencies when creating a new bot
 - Updated dependencies [a9087e0]
-  - @xmtp/mkit@2.3.0
+  - @xmtp/message-kit@2.3.0
 
 ## 1.2.0
 
@@ -27,7 +27,7 @@
 ### Patch Changes
 
 - Updated dependencies [2b9c1a1]
-  - @xmtp/mkit@2.2.0
+  - @xmtp/message-kit@2.2.0
 
 ## 1.1.0
 
@@ -38,11 +38,11 @@
 ### Patch Changes
 
 - Updated dependencies [af35b8d]
-  - @xmtp/mkit@2.1.0
+  - @xmtp/message-kit@2.1.0
 
 ## 1.0.5
 
 ### Patch Changes
 
 - Updated dependencies [a212a3c]
-  - @xmtp/mkit@2.0.0
+  - @xmtp/message-kit@2.0.0

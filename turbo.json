@@ -18,16 +18,16 @@
     "docs#dev": {
       "persistent": true
     },
-    "group-bot#start": {
-      "dependsOn": ["^build", "subscription-bot#build"],
+    "group#start": {
+      "dependsOn": ["^build", "group#build"],
       "persistent": true
     },
-    "subscription-bot#start": {
-      "dependsOn": ["^build", "subscription-bot#build"],
+    "gm#start": {
+      "dependsOn": ["^build", "gm#build"],
       "persistent": true
     },
-    "gm-bot#start": {
-      "dependsOn": ["^build", "gm-bot#build"],
+    "subscription#start": {
+      "dependsOn": ["^build", "subscription#build"],
       "persistent": true
     },
     "typecheck": {

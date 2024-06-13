@@ -1,6 +1,6 @@
 # Games
 
-Create a bot that receives a game as a command request and sends a frame to the user.
+Create an app that receives a game as a command request and sends a frame to the user.
 
 ## Commands
 
@@ -41,7 +41,7 @@ To declare this commands you need to add them first. Learn more about commands [
 ## Logic
 
 ```jsx [src/handler/games.ts]
-import { HandlerContext } from "@xmtp/mkit";
+import { HandlerContext } from "@xmtp/message-kit";
 
 // Handler function to process game-related commands
 export async function handler(context: HandlerContext) {

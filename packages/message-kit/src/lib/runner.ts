@@ -11,10 +11,10 @@ type Handler = (context: HandlerContext) => Promise<void>;
 
 export default async function run(
   handler: Handler,
-  newBotConfig?: any,
+  appConfig?: any,
   accessHandler?: (context: HandlerContext) => Promise<boolean>,
 ) {
-  const client = await xmtpClient(newBotConfig);
+  const client = await xmtpClient(appConfig);
   const { address } = client;
   let currentUsers: User[] = []; // Initialize currentUsers to hold onto user data across messages
 
@@ -46,7 +46,7 @@ export default async function run(
         if (content?.startsWith("/")) {
           const extractedValues = extractCommandValues(
             content,
-            newBotConfig?.context.commands,
+            appConfig?.context.commands,
             currentUsers,
           );
           content = {
@@ -70,7 +70,7 @@ export default async function run(
           sent: message.sent,
         },
         {
-          commands: newBotConfig?.context?.commands ?? {},
+          commands: appConfig?.context?.commands ?? {},
           users: currentUsers,
         },
         message.conversation,

@@ -22,10 +22,10 @@ To declare the access command in the app, you need to add the following code:
 ```tsx [src/index.ts]
 run(
   async (context: HandlerContext) => {
-    /* Bot logic here */
+    /* app logic here */
   },
   {
-    /* Additional bot config*/
+    /* Additional app config*/
   },
   accessHandler,
 );
@@ -35,7 +35,7 @@ run(
 
 ```jsx [src/index.ts]
 import "dotenv/config";
-import { run, HandlerContext } from "@xmtp/mkit";
+import { run, HandlerContext } from "@xmtp/message-kit";
 
 const accessHandler = async (context: HandlerContext): Promise<boolean> => {
   const { senderAddress } = context.message;

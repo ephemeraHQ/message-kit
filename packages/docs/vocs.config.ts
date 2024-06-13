@@ -13,11 +13,12 @@ export default defineConfig({
   socials: [
     {
       icon: "github",
-      link: "https://github.com/xmtp-labs/messagekit",
+      link: "https://github.com/xmtp-labs/message-kit",
     },
   ],
   editLink: {
-    pattern: "https://github.com/xmtp-labs/messagekit/packages/docs/main/:path",
+    pattern:
+      "https://github.com/xmtp-labs/message-kit/packages/docs/main/:path",
     text: "Suggest changes to this page",
   },
   sidebar: [

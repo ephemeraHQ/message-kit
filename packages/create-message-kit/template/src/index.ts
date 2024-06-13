@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { run, HandlerContext } from "@xmtp/mkit";
+import { run, HandlerContext } from "@xmtp/message-kit";
 
 run(async (context: HandlerContext) => {
   const { content, senderAddress } = context.message;

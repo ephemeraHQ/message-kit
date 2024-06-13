@@ -3,7 +3,7 @@
   "changelog": [
     "@changesets/changelog-git",
     {
-      "repo": "xmtp-labs/messagekit"
+      "repo": "xmtp-labs/message-kit"
     }
   ],
   "commit": false,
@@ -12,11 +12,5 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": [
-    "subscription-bot",
-    "gm-bot",
-    "group-bot",
-    "docs",
-    "@xmtp/tsconfig"
-  ]
+  "ignore": ["subscription", "gm", "group", "docs", "@xmtp/tsconfig"]
 }

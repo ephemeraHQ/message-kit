@@ -1,6 +1,6 @@
 export const commands = [
   {
     command: "/help",
-    description: "Get help with the bot.",
+    description: "Get help with the app.",
   },
 ];

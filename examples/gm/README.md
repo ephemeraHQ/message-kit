@@ -1,12 +1,12 @@
-# Gm Bot
+# Gm
 
-Simple Gm bot
+Simple Gm app
 
 ## Usage
 
 ```jsx
 import "dotenv/config";
-import { xmtpClient, run, HandlerContext } from "@xmtp/mkit";
+import { xmtpClient, run, HandlerContext } from "@xmtp/message-kit";
 
 run(async (context: HandlerContext) => {
   const { content, senderAddress } = context.message;
@@ -15,7 +15,7 @@ run(async (context: HandlerContext) => {
 });
 ```
 
-## Running the bot
+## Running the app
 
 > ⚠️ Bot kit is not compatible with `bun`. Use `npm` or `yarn`
 
@@ -23,7 +23,7 @@ run(async (context: HandlerContext) => {
 # install dependencies
 yarn install
 
-# running the bot
+# running the app
 yarn build
 yarn start
 
@@ -35,6 +35,6 @@ yarn start:watch
 ## Variables
 
 ```bash
-KEY= # 0x... the private key of the bot (with the 0x prefix)
+KEY= # 0x... the private key of the app (with the 0x prefix)
 XMTP_ENV=production # or `dev`
 ```

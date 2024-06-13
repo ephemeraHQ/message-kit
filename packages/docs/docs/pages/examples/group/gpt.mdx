@@ -8,10 +8,10 @@ Messages that start with `@bot` will trigger the GPT response.
 
 ## Logic
 
-In this case the bot replies with context about the group like users and commands.
+In this case the app replies with context about the group like users and commands.
 
 ```jsx [src/handler/gpt.ts]
-import { HandlerContext } from "@xmtp/mkit";
+import { HandlerContext } from "@xmtp/message-kit";
 import { users } from "../lib/users.js";
 import openaiCall from "../lib/gpt.js";
 

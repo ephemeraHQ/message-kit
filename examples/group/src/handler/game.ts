@@ -1,4 +1,4 @@
-import { HandlerContext } from "@xmtp/mkit";
+import { HandlerContext } from "@xmtp/message-kit";
 
 // Handler function to process game-related commands
 export async function handler(context: HandlerContext) {

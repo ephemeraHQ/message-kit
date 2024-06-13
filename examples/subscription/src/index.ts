@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { getRedisClient, getRedisConfig } from "./lib/redis.js";
 import cron from "node-cron";
-import { xmtpClient, run, HandlerContext } from "@xmtp/mkit";
+import { xmtpClient, run, HandlerContext } from "@xmtp/message-kit";
 
 //Tracks conversation steps
 const inMemoryCacheStep = new Map<string, number>();
@@ -10,7 +10,7 @@ const inMemoryCacheStep = new Map<string, number>();
 const stopWords = ["stop", "unsubscribe", "cancel", "list"];
 async function start() {
   const redisClient = await getRedisClient();
-  const newBotConfig = await getRedisConfig(redisClient); // Send it at the bottm of the run function
+  const appConfig = await getRedisConfig(redisClient); // Send it at the apptm of the run function
   run(async (context: HandlerContext) => {
     const { content, senderAddress } = context.message;
     const { content: text } = content;
@@ -39,7 +39,7 @@ async function start() {
         await redisClient.set(senderAddress, "subscribed"); //test
         message =
           "You are now subscribed. You will receive updates.\n\ntype 'stop' to unsubscribe";
-        //reset the bot to the initial step
+        //reset the app to the initial step
         inMemoryCacheStep.set(senderAddress, 0);
       } else {
         message = "Invalid option. Please choose 1 for Info or 2 to Subscribe.";
@@ -52,7 +52,7 @@ async function start() {
 
     //Send the message
     await context.textReply(message);
-  }, newBotConfig);
+  }, appConfig);
 
   // Daily task
   cron.schedule(

@@ -1,6 +1,6 @@
-# Gpt Bot
+# Gpt
 
-Learn how to relay your bot messages to GPT Api's
+Learn how to relay your app messages to GPT Api's
 
 ## Usage
 
@@ -36,7 +36,7 @@ run(async (context: HandlerContext) => {
 });
 ```
 
-## Running the bot
+## Running the app
 
 > ⚠️ Bot kit is not compatible with `bun`. Use `npm` or `yarn`
 
@@ -44,7 +44,7 @@ run(async (context: HandlerContext) => {
 # install dependencies
 yarn install
 
-# running the bot
+# running the app
 yarn build
 yarn start
 
@@ -56,7 +56,7 @@ yarn start:watch
 ## Variables
 
 ```bash
-KEY= # 0x... the private key of the bot (with the 0x prefix)
+KEY= # 0x... the private key of the app (with the 0x prefix)
 XMTP_ENV=production # or `dev`
 OPEN_AI_API_KEY= # openai api key
 ```

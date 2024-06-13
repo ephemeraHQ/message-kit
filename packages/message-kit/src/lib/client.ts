@@ -7,7 +7,7 @@ import { SilentCodec } from "../content-types/Silent.js";
 import { BotMessageCodec } from "../content-types/BotMessage.js";
 
 export default async function xmtpClient(
-  newBotConfig = {},
+  appConfig = {},
   privateKey: string | null = null,
 ): Promise<XmtpClient> {
   let key = privateKey ?? process.env.KEY;
@@ -35,8 +35,8 @@ export default async function xmtpClient(
       new SilentCodec(),
     ],
   };
-  // Merge the default configuration with the provided config. Repeated fields in newBotConfig will override the default values
-  const finalConfig = { ...defaultConfig, ...newBotConfig };
+  // Merge the default configuration with the provided config. Repeated fields in appConfig will override the default values
+  const finalConfig = { ...defaultConfig, ...appConfig };
   //sconsole.log(`Creating client with config: ${JSON.stringify(finalConfig)}`);
   const client = await XmtpClient.create(wallet, finalConfig);
   console.log(`Listening on ${client.address}`);

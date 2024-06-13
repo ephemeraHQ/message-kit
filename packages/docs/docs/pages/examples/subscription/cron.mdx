@@ -1,6 +1,6 @@
 # Cron for daily subscriptions
 
-Create a cron that sends daily messages to your **redis database** subscribers. This bot can run daily or according to your logic:
+Create a cron that sends daily messages to your **redis database** subscribers. This app can run daily or according to your logic:
 
 ## Install dependency
 
@@ -45,11 +45,11 @@ cron.schedule(
 ```jsx [src/index.ts]
 async function start() {
   const redisClient = await getRedisClient();
-  const newBotConfig = await getRedisConfig(redisClient);
+  const appConfig = await getRedisConfig(redisClient);
   run(async (context: HandlerContext) => {
 
     // Your logic
-  }, newBotConfig);
+  }, appConfig);
 
   // Run the cron job every day
   cron.schedule( // [!code hl] // [!code focus]

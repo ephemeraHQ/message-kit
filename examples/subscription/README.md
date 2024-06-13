@@ -1,4 +1,4 @@
-# Conversational Bot
+# Conversational
 
 This is a simple yet powerful conversational framework that will allow you to customize it to your needs.
 
@@ -19,13 +19,13 @@ if (cacheStep === 0) {
 } else if (cacheStep === 1) {
   if (content === "1") {
     message = "Here is the info.";
-    //reset the bot to the initial step
+    //reset the app to the initial step
     inMemoryCacheStep.set(senderAddress, 0);
   } else if (content === "2") {
     await redisClient.set(senderAddress, "subscribed");
     message =
       "You are now subscribed. You will receive updates.\n\ntype 'stop' to unsubscribe";
-    //reset the bot to the initial step
+    //reset the app to the initial step
     inMemoryCacheStep.set(senderAddress, 0);
   } else {
     message = "Invalid option. Please choose 1 for Info or 2 to Subscribe.";
@@ -42,7 +42,7 @@ await context.reply(message);
 
 ### Cron for daily subscriptions
 
-Create a cron that sends daily messages to your **redis database** subscribers. This bot can run daily or according to your logic:
+Create a cron that sends daily messages to your **redis database** subscribers. This app can run daily or according to your logic:
 
 ```jsx
 cron.schedule(
@@ -69,7 +69,7 @@ cron.schedule(
 );
 ```
 
-## Running the bot
+## Running the app
 
 > ⚠️ Bot kit is not compatible with `bun`. Use `npm` or `yarn`
 
@@ -77,7 +77,7 @@ cron.schedule(
 # install dependencies
 yarn install
 
-# running the bot
+# running the app
 yarn build
 yarn start
 
@@ -89,7 +89,7 @@ yarn start:watch
 ## Variables
 
 ```bash
-KEY= # 0x... the private key of the bot (with the 0x prefix)
+KEY= # 0x... the private key of the app (with the 0x prefix)
 XMTP_ENV=production # or `dev`
 REDIS_CONNECTION_STRING= # the connection string for the Redis database
 ```
