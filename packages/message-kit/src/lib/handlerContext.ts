@@ -3,8 +3,8 @@ import {
   ContentTypeBotMessage,
 } from "../content-types/BotMessage.js";
 import { Conversation } from "@xmtp/xmtp-js";
-import { MessageAbstracted } from "../helpers/types";
-import { CommandGroup, User } from "../helpers/types";
+import { MessageAbstracted } from "../helpers/types.js";
+import { CommandGroup, User } from "../helpers/types.js";
 
 export default class HandlerContext {
   message: MessageAbstracted;

@@ -2,11 +2,11 @@
 
 ## Listening
 
-When you start the bot, you can listen for incoming messages in the conversation using the `run` function.
+When you start the app, you can listen for incoming messages in the conversation using the `run` function.
 
 ```jsx [src/index.ts]
 import "dotenv/config";
-import { run, HandlerContext } from "@xmtp/botkit";
+import { run, HandlerContext } from "@xmtp/message-kit";
 
 run(async (context: HandlerContext) => {
   // Get the message and the address from the sender
@@ -34,9 +34,9 @@ The `message` object contains the following
 
 To learn more about the types, see [types](/concepts/content-types/text)
 
-## Bot message
+## App message
 
-Bot messages are messages that are sent when you send a reply to a message and are highlighted differently by the apps.
+App messages are messages that are sent when you send a reply to a message and are highlighted differently by the apps.
 
 ```tsx
 // Message to all users
@@ -50,11 +50,11 @@ context.reply("Sender or receiver not found.");
 );
 ```
 
-> _Bot messages are prevented from being sent to the bot itself_
+> _Bot messages are prevented from being sent to the app itself_
 
 ## Deep Links
 
-You can send text messages to the app and the app will parse the message and execute the command. This is useful for deep linking to a conversation or executing commands from a chatbot.
+You can send text messages to the app and the app will parse the message and execute the command. This is useful for deep linking to a conversation or executing commands.
 
 **Link to conversation**
 

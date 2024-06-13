@@ -1,4 +1,4 @@
-import { HandlerContext } from "@xmtp/botkit";
+import { HandlerContext } from "@xmtp/message-kit";
 import { commands } from "../commands.js"; // Assuming commands.ts is in the same directory
 
 export async function handler(context: HandlerContext) {
@@ -15,10 +15,10 @@ export async function handler(context: HandlerContext) {
       const intro =
         "Available experiences:\n" +
         commands
-          .flatMap((bot: any) => bot.commands)
+          .flatMap((app: any) => app.commands)
           .map((command: any) => `${command.command} - ${command.description}`)
           .join("\n") +
-        "\nUse these commands to interact with specific bots.";
+        "\nUse these commands to interact with specific apps.";
       context.reply(intro);
       break;
     default:

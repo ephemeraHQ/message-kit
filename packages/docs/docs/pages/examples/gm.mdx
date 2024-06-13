@@ -1,10 +1,10 @@
-# GM Bot
+# GM
 
-This is a simple bot that replies with GM
+This is a simple app that replies with GM
 
 ```jsx [src/index.ts]
 import "dotenv/config";
-import { run, HandlerContext } from "@xmtp/botkit";
+import { run, HandlerContext } from "@xmtp/message-kit";
 
 run(async (context: HandlerContext) => {
   // Get the message and the address from the sender

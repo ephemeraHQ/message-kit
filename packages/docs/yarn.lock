@@ -2185,18 +2185,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"botkit-docs@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "botkit-docs@workspace:."
-  dependencies:
-    "@types/react": "npm:^18.3.3"
-    react: "npm:^18.3.1"
-    react-dom: "npm:^18.3.1"
-    typescript: "npm:^5.4.5"
-    vocs: "npm:1.0.0-alpha.52"
-  languageName: unknown
-  linkType: soft
-
 "brace-expansion@npm:^2.0.1":
   version: 2.0.1
   resolution: "brace-expansion@npm:2.0.1"
@@ -2683,6 +2671,18 @@ __metadata:
   checksum: 10/836459ec6b50e43e9ed388a5fc28954be99e3481af3fa4b5d82a600762eb65ef8faacd454097ed7fc2f8a60aea2800d65a4cece5cd0d81ab82b2031f3f759e6e
   languageName: node
   linkType: hard
+
+"docs@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "docs@workspace:."
+  dependencies:
+    "@types/react": "npm:^18.3.3"
+    react: "npm:^18.3.1"
+    react-dom: "npm:^18.3.1"
+    typescript: "npm:^5.4.5"
+    vocs: "npm:1.0.0-alpha.52"
+  languageName: unknown
+  linkType: soft
 
 "eastasianwidth@npm:^0.2.0":
   version: 0.2.0

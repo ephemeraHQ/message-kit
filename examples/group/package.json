@@ -1,5 +1,5 @@
 {
-  "name": "group-bot",
+  "name": "group",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -21,7 +21,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@xmtp/botkit": "workspace:^",
+    "@xmtp/message-kit": "workspace:^",
     "openai": "^4.49.0"
   },
   "devDependencies": {

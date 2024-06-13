@@ -1,4 +1,4 @@
-import { HandlerContext } from "@xmtp/botkit";
+import { HandlerContext } from "@xmtp/message-kit";
 import { Wallet } from "ethers";
 import { Client as xmtpClient } from "@xmtp/xmtp-js";
 

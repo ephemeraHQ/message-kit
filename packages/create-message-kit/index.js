@@ -59,7 +59,7 @@ program
 
     console.log("Your new project is ready!");
     console.log(
-      `Run 'cd ${name}' and install the dependencies with your preferred package manager.\n\nRun the 'build:watch' command to build the bot and watch for changes.\n\nRun the 'start:watch' command in another terminal to start your project.`,
+      `Run 'cd ${name}' and install the dependencies with your preferred package manager.\n\nRun the 'build:watch' command to build the app and watch for changes.\n\nRun the 'start:watch' command in another terminal to start your project.`,
     );
   });
 

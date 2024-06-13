@@ -1,6 +1,6 @@
-# Group Bot
+# Group
 
-This is a reference bot that will allow you to understand the potential and all of its features. Through many handlers you will be able to understand different use case:
+This is a reference app that will allow you to understand the potential and all of its features. Through many handlers you will be able to understand different use case:
 
 - [GPT](/examples/group/gpt): Reply with GPT when called by `@bot`.
 - [Tipping](/examples/group/tipping): Tip when a user reacts with the `🎩` emoji, replies `10 $degen` and `/tip`.
@@ -11,12 +11,12 @@ This is a reference bot that will allow you to understand the potential and all 
 
 ## Structure
 
-> Check out the [repository](https://github.com/xmtp-labs/botkit/tree/main/examples/group) for the full code.
+> Check out the [repository](https://github.com/xmtp-labs/message-kit/tree/main/examples/group) for the full code.
 
 ```
-bot-project/
+group/
 ├── src/
-│   ├── index.ts              # Index file of the bot. // [!code hl] // [!code focus]
+│   ├── index.ts              # Index file of the app. // [!code hl] // [!code focus]
 │   ├── command.ts            # For handling commands. // [!code hl] // [!code focus]
 │   └── handler/
 │         └── gpt.ts          # Handles gpt. // [!code hl] // [!code focus]
@@ -205,7 +205,7 @@ export const commands = [
 
 ```tsx [src/index.ts]
 import "dotenv/config";
-import { run, HandlerContext } from "@xmtp/botkit";
+import { run, HandlerContext } from "@xmtp/message-kit";
 import { commands } from "./commands.js";
 import { handler as frame } from "./handler/frame.js";
 import { handler as bet } from "./handler/bet.js";
@@ -214,14 +214,14 @@ import { handler as gpt } from "./handler/gpt.js";
 import { handler as games } from "./handler/games.js";
 import { handler as general } from "./handler/general.js";
 
-// Configuration object for the bot
-const newBotConfig = {
+// Configuration object for the app
+const appConfig = {
   context: {
     commands: commands,
   },
 };
 
-// Main function to run the bot
+// Main function to run the app
 run(async (context: HandlerContext) => {
   const { content, typeId, senderAddress } = context.message;
 
@@ -261,12 +261,12 @@ run(async (context: HandlerContext) => {
       }
       break;
   }
-}, newBotConfig);
+}, appConfig);
 ```
 
-## Run the bot
+## Run the app
 
-Follow the steps below to run the bot
+Follow the steps below to run the app
 
 ::::steps
 
@@ -274,22 +274,22 @@ Follow the steps below to run the bot
 
 ```bash [cmd]
 # Clone the repo
-git clone https://github.com/xmtp-labs/botkit
+git clone https://github.com/xmtp-labs/message-kit
 # Go to the examples/group folder
 cd examples/group
 # Install the dependencies
 yarn install
-# Run the bot
+# Run the app
 yarn build:watch
 yarn start:watch
 ```
 
 ### Variables
 
-Set up this variables in your bot to connect to redis and xmtp
+Set up this variables in your app to connect to redis and xmtp
 
 ```bash [cmd]
-KEY= # 0x... the private key of the bot (with the 0x prefix)
+KEY= # 0x... the private key of the app (with the 0x prefix)
 XMTP_ENV=production # or `dev`
 OPENAI_API_KEY= # your openai api key
 ```

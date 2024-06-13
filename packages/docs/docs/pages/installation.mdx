@@ -2,20 +2,20 @@
 
 ## CLI Quickstart
 
-You can use the `create-xmtp-bot` CLI tool, which simplifies the creation and configuration of new bots.
+You can use the `create-message-kit` CLI tool, which simplifies the creation and configuration of new apps.
 
 :::code-group
 
 ```bash [npm]
-npm init xmtp-bot
+npm init message-kit
 ```
 
 ```bash [yarn]
-yarn create xmtp-bot
+yarn create message-kit
 ```
 
 ```bash [pnpm]
-pnpm create xmtp-bot
+pnpm create message-kit
 ```
 
 :::
@@ -31,7 +31,7 @@ You can also install it in an existing project, or start from scratch
 Create a directory called `src`, and create 3 files:
 
 ```
-bot-project/
+app-project/
 ├── src/
 │   └── index.ts          // [!code ++] // [!code focus]
 ├── tsconfig.json         // [!code ++] // [!code focus]
@@ -44,7 +44,7 @@ After that, let's add some scripts to our `package.json`
 
 ```json [package.json]
 {
-  "name": "bot-project",
+  "name": "app-project",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -66,7 +66,7 @@ After that, let's add some scripts to our `package.json`
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@xmtp/botkit": "latest"
+    "@xmtp/message-kit": "latest"
   },
   "devDependencies": {
     "@types/node": "^20.12.7",
@@ -106,11 +106,11 @@ Next, let's add a `tsconfig.json` file to the root of our project.
 
 ### Create `index.ts`
 
-Add the following code to `src/index.ts`. This bot will reply `gm` to every message it receives.
+Add the following code to `src/index.ts`. This app will reply `gm` to every message it receives.
 
 ```jsx [src/index.ts]
 import "dotenv/config";
-import { run, HandlerContext } from "@xmtp/botkit";
+import { run, HandlerContext } from "@xmtp/message-kit";
 
 run(async (context: HandlerContext) => {
   // Get the message and the address from the sender
@@ -124,9 +124,9 @@ run(async (context: HandlerContext) => {
 
 ::::
 
-## Run the bot
+## Run the app
 
-Follow the steps below to run the bot
+Follow the steps below to run the app
 
 ::::steps
 
@@ -135,7 +135,7 @@ Follow the steps below to run the bot
 ```bash [cmd]
 # Install the dependencies
 yarn install
-# Run the bot
+# Run the app
 yarn build:watch
 yarn start:watch
 ```
@@ -145,12 +145,12 @@ yarn start:watch
 Create a `.env` file in the root of your project
 
 ```bash [cmd]
-KEY= # 0x... the private key of the bot (with the 0x prefix)
+KEY= # 0x... the private key of the app (with the 0x prefix)
 XMTP_ENV=production # or `dev`
 ```
 
 ### Test
 
-Send a message to the bot, and will reply `gm`!
+Send a message to the app, and will reply `gm`!
 
 ::::

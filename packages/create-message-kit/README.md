@@ -1,19 +1,17 @@
-# create-xmtp-bot
+# create-message-kit
 
-create-xmtp-bot is a command-line interface tool designed to help developers create and manage their custom build configurations easily.
+create-message-kit is a command-line interface tool designed to help developers create and manage their custom build configurations easily.
 
 To install it run the following command:
 
 ```bash
-npx create-xmtp-bot@latest bot-name
-# enter the recently created folder
-cd bot-name
+npm init message-kit
 ```
 
 **Set the variables**
 
 ```bash
-KEY= # 0x... the private key of the bot (with the 0x prefix)
+KEY= # 0x... the private key of the app (with the 0x prefix)
 XMTP_ENV=production # or `dev`
 ```
 
@@ -27,7 +25,7 @@ yarn start:watch
 
 ## Examples
 
-By default the `create-xmtp-bot` starter comes with a subscription bot but without using a DB. Here are other examples you can use:
+By default the `create-message-kit` starter comes with a subscription app but without using a DB. Here are other examples you can use:
 
 - [Subscription](/examples/subscription): Drive retention with conversations and subscriptions with redisDb.
 - [GPT](/examples/gpt): Relay messages through Open AI APIs.

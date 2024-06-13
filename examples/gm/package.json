@@ -1,5 +1,5 @@
 {
-  "name": "gm-bot",
+  "name": "gm",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -21,7 +21,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@xmtp/botkit": "workspace:*"
+    "@xmtp/message-kit": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^20.14.2",

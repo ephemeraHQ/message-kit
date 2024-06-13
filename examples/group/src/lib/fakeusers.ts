@@ -1,4 +1,4 @@
-import { HandlerContext } from "@xmtp/botkit";
+import { HandlerContext } from "@xmtp/message-kit";
 import openaiCall from "./gpt.js";
 
 export async function handler(context: HandlerContext) {

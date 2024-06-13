@@ -1,14 +1,14 @@
-# Bots
+# Apps
 
-In this section you will learn how to build your own bot with different primitives and tools.
+In this section you will learn how to build your own app with different primitives and tools.
 
-## Gm Bot
+## GM
 
-Start with a simple bot that replies with GM.
+Start with a simple app that replies with GM.
 
 ```jsx [src/index.ts]
 import "dotenv/config";
-import { run, HandlerContext } from "@xmtp/botkit";
+import { run, HandlerContext } from "@xmtp/message-kit";
 
 run(async (context: HandlerContext) => {
   // Get the message and the address from the sender
@@ -20,13 +20,13 @@ run(async (context: HandlerContext) => {
 });
 ```
 
-> Check out the [repository](https://github.com/xmtp-labs/botkit/tree/main/examples/gm) for the full code.
+> Check out the [repository](https://github.com/xmtp-labs/message-kit/tree/main/examples/gm) for the full code.
 
 ## Live examples
 
 > 💬 **Try it:** Message `awesome.hi.xmtp.eth`
 
-Start with some examples to see how you can use Bots in your app.
+Start with some examples to see how you can use Apps in your app.
 
 ### Group conversations
 
@@ -43,7 +43,8 @@ Start with some examples to see how you can use Bots in your app.
 
 ## Templates
 
-Learn how to build your own bot with different primitives and tools.
+Learn how to build your own app with different primitives and tools.
 
+- [Gm](/examples/gm): Simple app that replies with GM
 - [Subscription](/examples/subscription): Register subscribers and send them updates regularly
 - [Group](/examples/group): Interact with multiple users and commands in a group chat.

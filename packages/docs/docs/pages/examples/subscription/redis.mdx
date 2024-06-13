@@ -1,6 +1,6 @@
 # Redis
 
-Integrate Redis with your bot to manage state.
+Integrate Redis with your app to manage state.
 
 ## Install dependency
 
@@ -31,13 +31,13 @@ For additional information on configuring fs-persistence with XMTP, please consu
 The need for this caching mechanism stems from the requirement to ascertain whether newConversation is continuing an existing conversation or starting a new one. This verification aids in avoiding duplicate conversations with the same user, ensuring compliance with privacy standards. */
 export const getRedisConfig = async (redisClient: any) => {
   const redisPersistence = await import("@xmtp/redis-persistence");
-  const newBotConfig = {
+  const appConfig = {
     basePersistance: new redisPersistence.RedisPersistence(
       redisClient as any,
       "xmtp:"
     ),
   };
-  return newBotConfig;
+  return appConfig;
 };
 ```
 
@@ -48,7 +48,7 @@ Import the redis config file and send it as parameter to the `run` function.
 ```jsx [src/index.ts]
 async function start() {
   const redisClient = await getRedisClient(); // [!code hl] // [!code focus]
-  const newBotConfig = await getRedisConfig(redisClient); // [!code hl] // [!code focus]
+  const appConfig = await getRedisConfig(redisClient); // [!code hl] // [!code focus]
   run(async (context: HandlerContext) => {
 
    const { content, senderAddress } = context.message;
@@ -76,7 +76,7 @@ async function start() {
         await redisClient.set(senderAddress, "subscribed"); // [!code hl] // [!code focus]
         message =
           "You are now subscribed. You will receive updates.\n\ntype 'stop' to unsubscribe";
-        //reset the bot to the initial step
+        //reset the app to the initial step
         inMemoryCacheStep.set(senderAddress, 0);
       } else {
         message = "Invalid option. Please choose 1 for Info or 2 to Subscribe.";
@@ -90,7 +90,7 @@ async function start() {
     //Send the message
     await context.reply(message);
 
-  }, newBotConfig);
+  }, appConfig);
 }
 
 start();

@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { run, HandlerContext } from "@xmtp/botkit";
+import { run, HandlerContext } from "@xmtp/message-kit";
 import { commands } from "./commands.js";
 import { handler as bet } from "./handler/bet.js";
 import { handler as tipping } from "./handler/tipping.js";
@@ -10,14 +10,14 @@ import { handler as admin } from "./handler/admin.js";
 import { handler as other } from "./handler/other.js";
 import { handler as fakeusers } from "./lib/fakeusers.js";
 
-// Configuration object for the bot
-const newBotConfig = {
+// Configuration object for the app
+const appConfig = {
   context: {
     commands: commands,
   },
 };
 
-// Main function to run the bot
+// Main function to run the app
 run(async (context: HandlerContext) => {
   const { content, typeId, senderAddress } = context.message;
   // Handling different types of messages
@@ -60,4 +60,4 @@ run(async (context: HandlerContext) => {
       }
       break;
   }
-}, newBotConfig);
+}, appConfig);

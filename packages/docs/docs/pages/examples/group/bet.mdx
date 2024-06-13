@@ -47,10 +47,10 @@ To declare this commands you need to add them first. Learn more about commands [
 
 ## Logic
 
-The bot creates a new group and sends a message to the users with a Frame to confirm the bet
+the app creates a new group and sends a message to the users with a Frame to confirm the bet
 
 ```jsx [src/handler/bet.ts]
-import { HandlerContext } from "@xmtp/botkit";
+import { HandlerContext } from "@xmtp/message-kit";
 import { Wallet } from "ethers";
 import { Client as xmtpClient } from "@xmtp/xmtp-js";
 

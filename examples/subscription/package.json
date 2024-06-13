@@ -1,5 +1,5 @@
 {
-  "name": "subscription-bot",
+  "name": "subscription",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@redis/client": "^1.5.16",
-    "@xmtp/botkit": "workspace:*",
+    "@xmtp/message-kit": "workspace:*",
     "@xmtp/redis-persistence": "^0.0.4",
     "node-cron": "^3.0.3"
   },

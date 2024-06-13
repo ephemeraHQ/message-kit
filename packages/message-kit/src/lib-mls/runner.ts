@@ -6,14 +6,14 @@ import { ClientOptions, Conversation } from "@xmtp/mls-client";
 import { mlsClient } from "./client.js";
 import { ContentTypeBotMessage } from "../content-types/BotMessage.js";
 import { ContentTypeText } from "@xmtp/xmtp-js";
-import { User } from "../helpers/types";
+import { User } from "../helpers/types.js";
 
 type Handler = (context: HandlerContext) => Promise<void>;
 
 export const runGroup = async (
   handler: Handler,
   groupId: string,
-  newBotConfig?: any,
+  appConfig?: any,
   clientConfig?: ClientOptions,
   accessHandler?: (context: HandlerContext) => Promise<boolean>,
 ) => {
@@ -57,8 +57,8 @@ export const runGroup = async (
           if (content?.startsWith("/")) {
             const extractedValues = extractCommandValues(
               content,
-              newBotConfig?.context.commands,
-              newBotConfig?.context.users,
+              appConfig?.context.commands,
+              appConfig?.context.users,
             );
             content = {
               content: content,
@@ -81,7 +81,7 @@ export const runGroup = async (
         const context = new HandlerContext(
           message,
           {
-            commands: newBotConfig?.context?.commands ?? {},
+            commands: appConfig?.context?.commands ?? {},
             users: currentUsers,
           },
           address,

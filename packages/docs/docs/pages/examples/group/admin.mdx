@@ -1,6 +1,6 @@
 # Admin
 
-This example shows how to create an admin bot that will allow you to block and unblock users.
+This example shows how to create an admin app that will allow you to block and unblock users.
 
 ## Commands
 
@@ -12,7 +12,7 @@ Here are the commands to block and unblock users:
 ```
 
 ::::note[Commands]
-_See how commands are defined in [`src/commands.ts`](https://github.com/xmtp-labs/botkit/blob/main/examples/group/src/commands.ts)_
+_See how commands are defined in [`src/commands.ts`](https://github.com/xmtp-labs/message-kit/blob/main/examples/group/src/commands.ts)_
 :::details[Commands]
 
 ```json
@@ -51,7 +51,7 @@ _See how commands are defined in [`src/commands.ts`](https://github.com/xmtp-lab
 ## Logic
 
 ```jsx [src/handler/admin.ts]
-import { HandlerContext } from "@xmtp/botkit";
+import { HandlerContext } from "@xmtp/message-kit";
 
 export async function handler(context: HandlerContext) {
   const { content } = context.message;
