@@ -6,7 +6,7 @@ Simple Gm bot
 
 ```jsx
 import "dotenv/config";
-import { xmtpClient, run, HandlerContext } from "@xmtp/botkit";
+import { xmtpClient, run, HandlerContext } from "@xmtp/mkit";
 
 run(async (context: HandlerContext) => {
   const { content, senderAddress } = context.message;

@@ -1,7 +1,7 @@
 import { defineConfig } from "vocs";
 
 export default defineConfig({
-  title: "Botkit",
+  title: "MessageKit",
   theme: {
     colorScheme: "dark",
     accentColor: {
@@ -13,11 +13,11 @@ export default defineConfig({
   socials: [
     {
       icon: "github",
-      link: "https://github.com/xmtp-labs/botkit",
+      link: "https://github.com/xmtp-labs/messagekit",
     },
   ],
   editLink: {
-    pattern: "https://github.com/xmtp-labs/botkit/packages/docs/main/:path",
+    pattern: "https://github.com/xmtp-labs/messagekit/packages/docs/main/:path",
     text: "Suggest changes to this page",
   },
   sidebar: [

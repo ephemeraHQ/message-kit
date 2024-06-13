@@ -1,4 +1,4 @@
-# @xmtp/botkit
+# @xmtp/mkit
 
 ## 2.3.1
 

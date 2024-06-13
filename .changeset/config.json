@@ -3,7 +3,7 @@
   "changelog": [
     "@changesets/changelog-git",
     {
-      "repo": "xmtp-labs/botkit"
+      "repo": "xmtp-labs/messagekit"
     }
   ],
   "commit": false,
@@ -16,7 +16,7 @@
     "subscription-bot",
     "gm-bot",
     "group-bot",
-    "botkit-docs",
+    "docs",
     "@xmtp/tsconfig"
   ]
 }

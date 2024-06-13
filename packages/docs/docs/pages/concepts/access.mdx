@@ -35,7 +35,7 @@ run(
 
 ```jsx [src/index.ts]
 import "dotenv/config";
-import { run, HandlerContext } from "@xmtp/botkit";
+import { run, HandlerContext } from "@xmtp/mkit";
 
 const accessHandler = async (context: HandlerContext): Promise<boolean> => {
   const { senderAddress } = context.message;

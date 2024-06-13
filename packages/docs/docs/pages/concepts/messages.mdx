@@ -6,7 +6,7 @@ When you start the bot, you can listen for incoming messages in the conversation
 
 ```jsx [src/index.ts]
 import "dotenv/config";
-import { run, HandlerContext } from "@xmtp/botkit";
+import { run, HandlerContext } from "@xmtp/mkit";
 
 run(async (context: HandlerContext) => {
   // Get the message and the address from the sender

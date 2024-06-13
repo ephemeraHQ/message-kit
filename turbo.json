@@ -15,7 +15,7 @@
     "format:check": {
       "outputs": []
     },
-    "botkit-docs#dev": {
+    "docs#dev": {
       "persistent": true
     },
     "group-bot#start": {

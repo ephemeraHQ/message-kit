@@ -6,7 +6,7 @@ import { ClientOptions, Conversation } from "@xmtp/mls-client";
 import { mlsClient } from "./client.js";
 import { ContentTypeBotMessage } from "../content-types/BotMessage.js";
 import { ContentTypeText } from "@xmtp/xmtp-js";
-import { User } from "../helpers/types";
+import { User } from "../helpers/types.js";
 
 type Handler = (context: HandlerContext) => Promise<void>;
 

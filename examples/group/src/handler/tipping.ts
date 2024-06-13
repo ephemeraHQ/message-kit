@@ -1,4 +1,4 @@
-import { HandlerContext } from "@xmtp/botkit";
+import { HandlerContext } from "@xmtp/mkit";
 
 export async function handler(context: HandlerContext) {
   const { users, commands } = context.context;

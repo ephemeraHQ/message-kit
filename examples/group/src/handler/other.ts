@@ -1,4 +1,4 @@
-import { HandlerContext } from "@xmtp/botkit";
+import { HandlerContext } from "@xmtp/mkit";
 import { commands } from "../commands.js"; // Assuming commands.ts is in the same directory
 
 export async function handler(context: HandlerContext) {

@@ -5,7 +5,7 @@ import { ContentTypeBotMessage } from "../content-types/BotMessage.js";
 import { extractCommandValues } from "../helpers/commands.js";
 import { handleSilentMessage } from "../helpers/context.js";
 import { ContentTypeText } from "@xmtp/xmtp-js";
-import { User } from "../helpers/types";
+import { User } from "../helpers/types.js";
 
 type Handler = (context: HandlerContext) => Promise<void>;
 

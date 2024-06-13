@@ -21,7 +21,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@xmtp/botkit": "workspace:^",
+    "@xmtp/mkit": "workspace:^",
     "openai": "^4.49.0"
   },
   "devDependencies": {

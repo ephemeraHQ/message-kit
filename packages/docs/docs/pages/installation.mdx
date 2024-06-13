@@ -2,20 +2,20 @@
 
 ## CLI Quickstart
 
-You can use the `create-xmtp-bot` CLI tool, which simplifies the creation and configuration of new bots.
+You can use the `create-mkit` CLI tool, which simplifies the creation and configuration of new bots.
 
 :::code-group
 
 ```bash [npm]
-npm init xmtp-bot
+npm init mkit
 ```
 
 ```bash [yarn]
-yarn create xmtp-bot
+yarn create mkit
 ```
 
 ```bash [pnpm]
-pnpm create xmtp-bot
+pnpm create mkit
 ```
 
 :::
@@ -66,7 +66,7 @@ After that, let's add some scripts to our `package.json`
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@xmtp/botkit": "latest"
+    "@xmtp/mkit": "latest"
   },
   "devDependencies": {
     "@types/node": "^20.12.7",
@@ -110,7 +110,7 @@ Add the following code to `src/index.ts`. This bot will reply `gm` to every mess
 
 ```jsx [src/index.ts]
 import "dotenv/config";
-import { run, HandlerContext } from "@xmtp/botkit";
+import { run, HandlerContext } from "@xmtp/mkit";
 
 run(async (context: HandlerContext) => {
   // Get the message and the address from the sender

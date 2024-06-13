@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { getRedisClient, getRedisConfig } from "./lib/redis.js";
 import cron from "node-cron";
-import { xmtpClient, run, HandlerContext } from "@xmtp/botkit";
+import { xmtpClient, run, HandlerContext } from "@xmtp/mkit";
 
 //Tracks conversation steps
 const inMemoryCacheStep = new Map<string, number>();

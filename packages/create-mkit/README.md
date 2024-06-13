@@ -1,11 +1,11 @@
-# create-xmtp-bot
+# create-mkit
 
-create-xmtp-bot is a command-line interface tool designed to help developers create and manage their custom build configurations easily.
+create-mkit is a command-line interface tool designed to help developers create and manage their custom build configurations easily.
 
 To install it run the following command:
 
 ```bash
-npx create-xmtp-bot@latest bot-name
+npx create-mkit@latest bot-name
 # enter the recently created folder
 cd bot-name
 ```
@@ -27,7 +27,7 @@ yarn start:watch
 
 ## Examples
 
-By default the `create-xmtp-bot` starter comes with a subscription bot but without using a DB. Here are other examples you can use:
+By default the `create-mkit` starter comes with a subscription bot but without using a DB. Here are other examples you can use:
 
 - [Subscription](/examples/subscription): Drive retention with conversations and subscriptions with redisDb.
 - [GPT](/examples/gpt): Relay messages through Open AI APIs.

@@ -1,22 +1,20 @@
-# BOTKIT
+# MessageKit
 
 This is the official repository for the XMTP bot kit and examples, powered by [Turborepo](https://turbo.build/repo).
 
-To learn more about the contents of this repository, see this README and the READMEs provided for [packages](https://github.com/xmtp-labs/botkit/tree/main/packages) and [examples](https://github.com/xmtp-labs/botkit/tree/main/examples).
+To learn more about the contents of this repository, see this README and the READMEs provided for [packages](https://github.com/xmtp-labs/messagekit/tree/main/packages) and [examples](https://github.com/xmtp-labs/messagekit/tree/main/examples).
 
 ## What's inside?
 
 ### Packages
 
-- [`botkit`](/packages/botkit): A kit for quickly building bots on the XMTP network
-- [`create-xmtp-bot`](/packages/create-xmtp-bot): A CLI for creating new XMTP bot projects
-- [`playground`](https://github.com/fabriguespe/playground): A visual playground for creating groups
-- [`docs`](/packages/docs): Documentation for botkit
+- [`MessageKit`](/packages/mkit): A kit for quickly building bots on the XMTP network
+- [`create-mkit`](/packages/create-mkit): A CLI for creating new XMTP bot projects
+- [`docs`](/packages/docs): Documentation for MessageKit
 
 ### Templates
 
 - [`subscription`](/examples/subscription): A simple, customizable, and powerful conversational framework
-- [`gpt`](/examples/gpt): A bot that relays incoming messages to OpenAI's ChatGPT
 - [`group`](/examples/group): Group bot example.
 
 See more examples in the [Awesome XMTP ⭐️](https://github.com/xmtp/awesome-xmtp) repo

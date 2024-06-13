@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { run, HandlerContext } from "@xmtp/botkit";
+import { run, HandlerContext } from "@xmtp/mkit";
 import { commands } from "./commands.js";
 import { handler as bet } from "./handler/bet.js";
 import { handler as tipping } from "./handler/tipping.js";

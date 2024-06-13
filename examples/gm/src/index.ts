@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { run, HandlerContext } from "@xmtp/botkit";
+import { run, HandlerContext } from "@xmtp/mkit";
 
 run(async (context: HandlerContext) => {
   // Get the message and the address from the sender

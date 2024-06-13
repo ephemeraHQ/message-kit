@@ -1,5 +1,5 @@
 {
-  "name": "xmtp-bot",
+  "name": "mkit",
   "version": "0.0.1",
   "type": "module",
   "exports": {
@@ -21,7 +21,7 @@
     "start:watch": "nodemon --exec node --loader ts-node/esm ./src/index.ts"
   },
   "dependencies": {
-    "@xmtp/botkit": "latest"
+    "@xmtp/mkit": "latest"
   },
   "devDependencies": {
     "@types/node": "^20.12.7",

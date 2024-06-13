@@ -21,7 +21,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@xmtp/botkit": "workspace:*"
+    "@xmtp/mkit": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^20.14.2",

@@ -8,11 +8,11 @@ Have a question about how to build with XMTP? Ask your question and learn with t
 
 ## 🐞 Bugs
 
-Report a bug using [GitHub Issues](https://github.com/xmtp-labs/botkit/issues).
+Report a bug using [GitHub Issues](https://github.com/xmtp-labs/messagekit/issues).
 
 ## ✨ Feature requests
 
-Request a feature using [GitHub Issues](https://github.com/xmtp-labs/botkit/issues).
+Request a feature using [GitHub Issues](https://github.com/xmtp-labs/messagekit/issues).
 
 ## 🔀 Pull requests
 
@@ -35,7 +35,7 @@ This repository uses the [Yarn package manager](https://yarnpkg.com/). To use it
 ### Useful commands
 
 - `yarn`: Installs all dependencies
-- `yarn build`: Builds the examples and `packages/botkit`
+- `yarn build`: Builds the examples and `packages/mkit`
 - `yarn clean`: Remove all `node_modules`, `.turbo`, and build folders, clears Yarn cache
 - `yarn format`: Run prettier format and write changes on all packages
 - `yarn format:check`: Run prettier format check on all packages

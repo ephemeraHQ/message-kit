@@ -1,4 +1,4 @@
-import { HandlerContext } from "@xmtp/botkit";
+import { HandlerContext } from "@xmtp/mkit";
 const baseUrl = "https://base-frame-lyart.vercel.app/transaction";
 
 // Main handler function for processing commands
