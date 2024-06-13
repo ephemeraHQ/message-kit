@@ -1,5 +1,9 @@
-import { ContentCodec, ContentTypeId, EncodedContent } from "@xmtp/xmtp-js";
-import { CommandGroup, Metadata, User } from "../helpers/types";
+import {
+  ContentCodec,
+  ContentTypeId,
+  EncodedContent,
+} from "@xmtp/content-type-primitives";
+import { CommandGroup, User } from "../helpers/types";
 
 export const ContentTypeBotMessage = new ContentTypeId({
   authorityId: "xmtp.org",

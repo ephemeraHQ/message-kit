@@ -1,4 +1,8 @@
-import { ContentCodec, ContentTypeId, EncodedContent } from "@xmtp/xmtp-js";
+import {
+  ContentCodec,
+  ContentTypeId,
+  EncodedContent,
+} from "@xmtp/content-type-primitives";
 import { Metadata } from "../helpers/types";
 
 export const ContentTypeSilent = new ContentTypeId({
