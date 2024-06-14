@@ -4,6 +4,7 @@ import { ReplyCodec } from "../content-types/Reply.js";
 import { SilentCodec } from "../content-types/Silent.js";
 import { BotMessageCodec } from "../content-types/BotMessage.js";
 import { Client, ClientOptions, XmtpEnv } from "@xmtp/mls-client";
+import { TextCodec } from "@xmtp/content-type-text";
 
 export const mlsClient = async (
   clientConfig: ClientOptions = {},
@@ -23,6 +24,7 @@ export const mlsClient = async (
   const defaultConfig: ClientOptions = {
     env: env,
     codecs: [
+      new TextCodec(),
       new ReactionCodec(),
       new BotMessageCodec(),
       new ReplyCodec(),

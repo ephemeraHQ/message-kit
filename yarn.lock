@@ -3025,6 +3025,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@xmtp/content-type-primitives@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "@xmtp/content-type-primitives@npm:1.0.1"
+  dependencies:
+    "@xmtp/proto": "npm:^3.61.1"
+  checksum: 10/656826cda74328e3079c7f5937eeb694260bd68a66090303fdf6abf4c54c8bbf924064eb6895b9e66addee1269779dfe1c3f0e836fcd8857f784c5645c7b7bf5
+  languageName: node
+  linkType: hard
+
+"@xmtp/content-type-text@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@xmtp/content-type-text@npm:1.0.0"
+  dependencies:
+    "@xmtp/content-type-primitives": "npm:^1.0.1"
+  checksum: 10/b195060ad5686a6ace2772d5208d535d1f5062820629764aec52cedf3f2630885b5913aea6d2f0186a49139845c20d2ded783c6bf998884f09374c07b183141f
+  languageName: node
+  linkType: hard
+
 "@xmtp/grpc-api-client@npm:^0.2.7":
   version: 0.2.7
   resolution: "@xmtp/grpc-api-client@npm:0.2.7"
@@ -3045,8 +3063,10 @@ __metadata:
   resolution: "@xmtp/message-kit@workspace:packages/message-kit"
   dependencies:
     "@types/node": "npm:^20.14.2"
+    "@xmtp/content-type-primitives": "npm:^1.0.1"
+    "@xmtp/content-type-text": "npm:^1.0.0"
     "@xmtp/grpc-api-client": "npm:^0.2.7"
-    "@xmtp/mls-client": "npm:^0.0.5"
+    "@xmtp/mls-client": "npm:^0.0.8"
     "@xmtp/xmtp-js": "npm:^11.6.3"
     dotenv: "npm:^16.4.5"
     ethers: "npm:^5.7.2"
@@ -3057,21 +3077,22 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@xmtp/mls-client-bindings-node@npm:^0.0.3":
-  version: 0.0.3
-  resolution: "@xmtp/mls-client-bindings-node@npm:0.0.3"
-  checksum: 10/3e1d578e462965d992b23020c69619231af5022b2f015ec67187f0fabb2b657ace68f013df65ed057b2716801099aa6f7679cd86818b90168de7ef51abb72be1
+"@xmtp/mls-client-bindings-node@npm:^0.0.4":
+  version: 0.0.4
+  resolution: "@xmtp/mls-client-bindings-node@npm:0.0.4"
+  checksum: 10/508839e57a7126f8f2d9898c62c117cd2626279c244b57c2a257bb7681755e19bde985df4a666c61b665b7bb23b9aa8d784527c601797845271c1cf61af26808
   languageName: node
   linkType: hard
 
-"@xmtp/mls-client@npm:^0.0.5":
-  version: 0.0.5
-  resolution: "@xmtp/mls-client@npm:0.0.5"
+"@xmtp/mls-client@npm:^0.0.8":
+  version: 0.0.8
+  resolution: "@xmtp/mls-client@npm:0.0.8"
   dependencies:
-    "@xmtp/mls-client-bindings-node": "npm:^0.0.3"
+    "@xmtp/content-type-primitives": "npm:^1.0.1"
+    "@xmtp/content-type-text": "npm:^1.0.0"
+    "@xmtp/mls-client-bindings-node": "npm:^0.0.4"
     "@xmtp/proto": "npm:^3.61.1"
-    "@xmtp/xmtp-js": "npm:^11.6.2"
-  checksum: 10/6b50b16e888e7f3238e358a2bfce4b5cb9d9de786f04badd74f5b4792d5d0e832b9321ad5a904fbd985eedb5a72119f881eea166a1552174527a2deaead550bc
+  checksum: 10/fa922d8a825656c31473842c8eb990bdb2e198f3b1ee3576af2d0500520ef581745cefdee896f878cca8f42479509d8a22f5081e55214544cb9064322152a1e1
   languageName: node
   linkType: hard
 
@@ -3162,7 +3183,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@xmtp/xmtp-js@npm:^11.6.2, @xmtp/xmtp-js@npm:^11.6.3":
+"@xmtp/xmtp-js@npm:^11.6.3":
   version: 11.6.3
   resolution: "@xmtp/xmtp-js@npm:11.6.3"
   dependencies:

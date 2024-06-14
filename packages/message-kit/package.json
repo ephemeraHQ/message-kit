@@ -28,8 +28,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@xmtp/content-type-primitives": "^1.0.1",
+    "@xmtp/content-type-text": "^1.0.0",
     "@xmtp/grpc-api-client": "^0.2.7",
-    "@xmtp/mls-client": "^0.0.5",
+    "@xmtp/mls-client": "^0.0.8",
     "@xmtp/xmtp-js": "^11.6.3",
     "dotenv": "^16.4.5",
     "ethers": "^5.7.2"

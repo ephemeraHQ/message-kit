@@ -1,3 +1,6 @@
+import { HandlerContext as MlsHandlerContext } from "../lib-mls/handlerContext.js";
+import JsHandlerContext from "../lib/handlerContext.js";
+
 // Define a type for the message that includes the conversation property
 export type MessageAbstracted = {
   id: string;
@@ -34,3 +37,7 @@ export interface User {
 
 export type MetadataValue = string | number | boolean;
 export type Metadata = Record<string, MetadataValue | MetadataValue[]>;
+
+export type HandlerContext = JsHandlerContext | MlsHandlerContext;
+export type AccessHandler = (context: HandlerContext) => Promise<boolean>;
+export type Handler = (context: HandlerContext) => Promise<void>;

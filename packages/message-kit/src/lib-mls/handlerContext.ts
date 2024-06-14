@@ -10,13 +10,14 @@ export class HandlerContext {
   clientAddress: string; // Add this line
 
   constructor(
+    conversation: Conversation,
     message: DecodedMessage,
     context: {} = {},
     clientAddress: string,
   ) {
     this.message = message;
     this.context = context;
-    this.conversation = message.conversation;
+    this.conversation = conversation;
     this.clientAddress = clientAddress;
   }
 
