@@ -3066,7 +3066,7 @@ __metadata:
     "@xmtp/content-type-primitives": "npm:^1.0.1"
     "@xmtp/content-type-text": "npm:^1.0.0"
     "@xmtp/grpc-api-client": "npm:^0.2.7"
-    "@xmtp/mls-client": "npm:^0.0.7"
+    "@xmtp/mls-client": "npm:^0.0.8"
     "@xmtp/xmtp-js": "npm:^11.6.3"
     dotenv: "npm:^16.4.5"
     ethers: "npm:^5.7.2"
@@ -3084,14 +3084,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@xmtp/mls-client@npm:^0.0.7":
-  version: 0.0.7
-  resolution: "@xmtp/mls-client@npm:0.0.7"
+"@xmtp/mls-client@npm:^0.0.8":
+  version: 0.0.8
+  resolution: "@xmtp/mls-client@npm:0.0.8"
   dependencies:
     "@xmtp/content-type-primitives": "npm:^1.0.1"
+    "@xmtp/content-type-text": "npm:^1.0.0"
     "@xmtp/mls-client-bindings-node": "npm:^0.0.4"
     "@xmtp/proto": "npm:^3.61.1"
-  checksum: 10/4d6ca15c1dd9f6c1b0178bcb4de0f22ba633df9cfea15a3938843b0356cad6fe528aeeb6360ae03b47c1ecf7caacdf665375a5f90532d011f1ce22cd3c53a210
+  checksum: 10/fa922d8a825656c31473842c8eb990bdb2e198f3b1ee3576af2d0500520ef581745cefdee896f878cca8f42479509d8a22f5081e55214544cb9064322152a1e1
   languageName: node
   linkType: hard
 
