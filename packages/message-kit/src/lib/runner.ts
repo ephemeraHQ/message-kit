@@ -5,14 +5,14 @@ import { ContentTypeBotMessage } from "../content-types/BotMessage.js";
 import { extractCommandValues } from "../helpers/commands.js";
 import { handleSilentMessage } from "../helpers/context.js";
 import { ContentTypeText } from "@xmtp/xmtp-js";
-import { User } from "../helpers/types.js";
+import { AccessHandler, User } from "../helpers/types.js";
 
 type Handler = (context: HandlerContext) => Promise<void>;
 
 export default async function run(
   handler: Handler,
   appConfig?: any,
-  accessHandler?: (context: HandlerContext) => Promise<boolean>,
+  accessHandler?: AccessHandler,
 ) {
   const client = await xmtpClient(appConfig);
   const { address } = client;
@@ -78,7 +78,12 @@ export default async function run(
       );
 
       if (message.contentType.sameAs(ContentTypeSilent)) {
-        await handleSilentMessage(message, context, accessHandler);
+        await handleSilentMessage(
+          message.conversation,
+          message,
+          context,
+          accessHandler,
+        );
         continue;
       }
 
