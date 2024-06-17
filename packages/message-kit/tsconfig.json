@@ -1,7 +1,4 @@
 {
-  "include": ["src/**/*"],
-  "extends": "@xmtp/tsconfig/base.json",
-  "compilerOptions": {
-    "outDir": "./dist"
-  }
+  "include": ["src/**/*", "rollup.config.js"],
+  "extends": "@xmtp/tsconfig/base.json"
 }
