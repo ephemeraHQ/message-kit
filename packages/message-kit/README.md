@@ -7,7 +7,11 @@ Minimal viable package for creating messaging apps.
 For a streamlined setup process, you can use the `create-message-kit` CLI tool, which simplifies the creation and configuration of new XMTP apps.
 
 ```bash
+# with NPM
 npm init message-kit
+
+# with yarn
+yarn dlx create-message-kit
 ```
 
 ## Overview
@@ -44,7 +48,7 @@ KEY= # 0x... the private key of the app (with the 0x prefix)
 XMTP_ENV=production # or `dev`
 ```
 
-> ⚠️ Bot kit is not compatible with `bun` yet. Use `npm` or `yarn`
+> ⚠️ This package is not compatible with `bun` yet. Use `npm` or `yarn`
 
 ```bash
 # install dependencies
