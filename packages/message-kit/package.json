@@ -23,7 +23,7 @@
     "format": "yarn format:base -w .",
     "format:base": "prettier --ignore-path ../../.gitignore",
     "format:check": "yarn format:base -c .",
-    "typecheck": "tsc"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@xmtp/content-type-primitives": "^1.0.1",
