@@ -1,10 +1,12 @@
-import { Wallet } from "ethers";
 import { ReactionCodec } from "../content-types/Reaction.js";
 import { ReplyCodec } from "../content-types/Reply.js";
 import { SilentCodec } from "../content-types/Silent.js";
 import { BotMessageCodec } from "../content-types/BotMessage.js";
 import { Client, ClientOptions, XmtpEnv } from "@xmtp/mls-client";
 import { TextCodec } from "@xmtp/content-type-text";
+import { createWalletClient, http, toBytes } from "viem";
+import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
+import { mainnet } from "viem/chains";
 
 export const mlsClient = async (
   clientConfig: ClientOptions = {},
@@ -12,13 +14,20 @@ export const mlsClient = async (
 ): Promise<Client> => {
   let key = privateKey ?? process.env.KEY;
   if (!key) {
-    key = Wallet.createRandom().privateKey;
+    key = generatePrivateKey();
     console.error(
       "KEY not set. Using random one. For using your own wallet , set the KEY environment variable.",
     );
     console.log("Random private key: ", key);
   }
-  const wallet = new Wallet(key);
+
+  const account = privateKeyToAccount(key as `0x${string}`);
+  const wallet = createWalletClient({
+    account,
+    chain: mainnet,
+    transport: http(),
+  });
+
   let env = process.env.XMTP_ENV as XmtpEnv;
 
   const defaultConfig: ClientOptions = {
@@ -33,7 +42,18 @@ export const mlsClient = async (
   };
   // Merge the default configuration with the provided config. Repeated fields in clientConfig will override the default values
   const finalConfig = { ...defaultConfig, ...clientConfig };
-  const client = await Client.create(await wallet.getAddress(), finalConfig);
+  const client = await Client.create(account.address, finalConfig);
+
+  // register identity
+  if (!client.isRegistered && client.signatureText) {
+    const signature = await wallet.signMessage({
+      message: client.signatureText,
+    });
+    const signatureBytes = toBytes(signature);
+    client.addEcdsaSignature(signatureBytes);
+    await client.registerIdentity();
+  }
+
   console.log(`Listening on ${client.accountAddress}`);
   return client;
 };
