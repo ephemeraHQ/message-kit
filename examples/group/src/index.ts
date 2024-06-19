@@ -49,7 +49,12 @@ run(async (context: HandlerContext) => {
         await frame(context);
       } else if (text.startsWith("/game")) {
         await games(context);
-      } else if (text.startsWith("/block") || text.startsWith("/unblock")) {
+      } else if (
+        text.startsWith("/add") ||
+        text.startsWith("/remove") ||
+        text.startsWith("/addAdmin") ||
+        text.startsWith("/removeAdmin")
+      ) {
         await admin(context);
       } else if (text.startsWith("/")) {
         await other(context);
