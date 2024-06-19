@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { run, MlsHandlerContext } from "@xmtp/message-kit";
+import { run, HandlerContext } from "@xmtp/message-kit";
 import { commands } from "./commands.js";
 import { handler as bet } from "./handler/bet.js";
 import { handler as tipping } from "./handler/tipping.js";
@@ -15,8 +15,9 @@ const appConfig = {
 };
 
 // Main function to run the app
-run(async (context: MlsHandlerContext) => {
+run(async (context: HandlerContext) => {
   const { content, typeId } = context.message;
+  console.log(content);
   // Handling different types of messages
   switch (typeId) {
     case "reaction":

@@ -1,4 +1,4 @@
-import { MlsHandlerContext as HandlerContext } from "@xmtp/message-kit";
+import { HandlerContext as HandlerContext } from "@xmtp/message-kit";
 const baseUrl = "https://base-frame-lyart.vercel.app/transaction";
 
 // Main handler function for processing commands

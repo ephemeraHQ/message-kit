@@ -1,4 +1,4 @@
-import { MlsHandlerContext as HandlerContext } from "@xmtp/message-kit";
+import { HandlerContext as HandlerContext } from "@xmtp/message-kit";
 export async function handler(context: HandlerContext) {
   const { members } = context;
 
@@ -44,12 +44,12 @@ export async function handler(context: HandlerContext) {
   }
 
   // Process sending tokens to each receiver
-  receiverAddresses.forEach(async (receiver: any) => {
+  /*receiverAddresses.forEach(async (receiver: any) => {
     context.reply(
       `You received ${amount} tokens from ${senderUser.username}.`,
       [receiver?.address], // Notify only 1 address
     );
-  });
+  });*/
   // Notify sender of the transaction details
   context.reply(
     `You sent ${amount} tokens in total.`,

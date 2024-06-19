@@ -18,10 +18,6 @@ export type MessageAbstractedV2 = {
   senderAddress: string;
   typeId: string;
 };
-export type BotConfig = {
-  users?: User[];
-  commands?: CommandGroup[];
-};
 export interface CommandParamConfig {
   default?: any;
   type: "number" | "string" | "username" | "quoted" | "address";

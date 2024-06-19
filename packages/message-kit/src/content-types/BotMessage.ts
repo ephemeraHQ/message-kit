@@ -12,15 +12,9 @@ export const ContentTypeBotMessage = new ContentTypeId({
   versionMinor: 0,
 });
 
-export type BotMessageMetadata = {
-  users?: User[];
-  commands?: CommandGroup[];
-};
-
 export type BotMessage = {
   receivers: string[];
   content: string;
-  metadata?: BotMessageMetadata;
 };
 
 export class BotMessageCodec implements ContentCodec<BotMessage> {

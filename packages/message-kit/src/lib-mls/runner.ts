@@ -10,7 +10,6 @@ type Handler = (context: HandlerContext) => Promise<void>;
 
 type Config = {
   commands?: CommandGroup[];
-  users?: User[];
   client?: ClientOptions;
   accessHandler?: AccessHandler;
 };

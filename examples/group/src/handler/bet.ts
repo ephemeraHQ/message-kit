@@ -1,6 +1,8 @@
-import { MlsHandlerContext as HandlerContext } from "@xmtp/message-kit";
+import {
+  xmtpClient,
+  HandlerContext as HandlerContext,
+} from "@xmtp/message-kit";
 import { Wallet } from "ethers";
-import { Client as xmtpClient } from "@xmtp/xmtp-js";
 
 export async function handler(context: HandlerContext) {
   const { content, sender } = context.message;
@@ -25,7 +27,7 @@ async function generateBetUrl(sender: string, betName: string, amount: string) {
   const key =
     "0xf999aa0e24be24df5700e76f8d146c049e99ad6480918ee6cbdd73fec3336a98";
   const wallet = new Wallet(key);
-  const client = await xmtpClient.create(wallet, { env: "production" });
+  const client = await xmtpClient(wallet, { env: "production" });
   const conv = await client.conversations.newConversation(sender);
   await conv.send(`Bet created!\n${betName} for $${amount}`);
   await conv.send(
