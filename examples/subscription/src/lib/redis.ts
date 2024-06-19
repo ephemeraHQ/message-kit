@@ -14,11 +14,10 @@ For additional information on configuring fs-persistence with XMTP, please consu
 The need for this caching mechanism stems from the requirement to ascertain whether newConversation is continuing an existing conversation or starting a new one. This verification aids in avoiding duplicate conversations with the same user, ensuring compliance with privacy standards. */
 export const getRedisConfig = async (redisClient: any) => {
   const redisPersistence = await import("@xmtp/redis-persistence");
-  const appConfig = {
+  return {
     basePersistance: new redisPersistence.RedisPersistence(
       redisClient as any,
       "xmtp:",
     ),
   };
-  return appConfig;
 };

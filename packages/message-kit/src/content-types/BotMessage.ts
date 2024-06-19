@@ -56,10 +56,10 @@ export class BotMessageCodec implements ContentCodec<BotMessage> {
   }
 
   fallback() {
-    return undefined;
+    return "Message sent by a bot";
   }
 
   shouldPush() {
-    return false;
+    return true;
   }
 }

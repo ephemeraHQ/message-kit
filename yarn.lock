@@ -3165,6 +3165,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@xmtp/content-type-reaction@npm:^1.1.9":
+  version: 1.1.9
+  resolution: "@xmtp/content-type-reaction@npm:1.1.9"
+  dependencies:
+    "@xmtp/content-type-primitives": "npm:^1.0.1"
+  checksum: 10/08cb7e67ddd49ae4a3366808488dcd6c27951fdf4cab17c043f9de1b7de5029c75fd074ff67b6c53549f76d12a7f164914f69772b251f13aa3c8891bec5b9e31
+  languageName: node
+  linkType: hard
+
+"@xmtp/content-type-reply@npm:^1.1.11":
+  version: 1.1.11
+  resolution: "@xmtp/content-type-reply@npm:1.1.11"
+  dependencies:
+    "@xmtp/content-type-primitives": "npm:^1.0.1"
+    "@xmtp/proto": "npm:^3.61.1"
+  checksum: 10/ae4d70cc3c46e12321a2d5dc5ace32cd5507671844081a1e245f378e3145bd7b582745305e677e5a9a88fa7fcb62044ff20cf1718f14d284755e633bbae1c73a
+  languageName: node
+  linkType: hard
+
 "@xmtp/content-type-text@npm:^1.0.0":
   version: 1.0.0
   resolution: "@xmtp/content-type-text@npm:1.0.0"
@@ -3196,6 +3215,8 @@ __metadata:
     "@rollup/plugin-typescript": "npm:^11.1.6"
     "@types/node": "npm:^20.14.2"
     "@xmtp/content-type-primitives": "npm:^1.0.1"
+    "@xmtp/content-type-reaction": "npm:^1.1.9"
+    "@xmtp/content-type-reply": "npm:^1.1.11"
     "@xmtp/content-type-text": "npm:^1.0.0"
     "@xmtp/grpc-api-client": "npm:^0.2.7"
     "@xmtp/mls-client": "npm:^0.0.8"

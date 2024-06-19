@@ -1,22 +1,22 @@
 import { CommandGroup, CommandConfig, User } from "./types";
 
-function mapUsernamesToAddresses(
+function mapUsernamesToInboxId(
   usernames: string[],
   users: User[],
-): { name: string; address: string }[] {
+): { name: string; inboxId: string }[] {
   return usernames
     .map((username) => {
       const user = users.find(
         (user) => user.username === username.replace("@", ""),
       );
-      return user ? { name: user.username, address: user.address } : null;
+      return user ? { name: user.username, inboxId: user.inboxId } : null;
     })
-    .filter((user): user is { name: string; address: string } => user !== null);
+    .filter((user): user is { name: string; inboxId: string } => user !== null);
 }
 export function extractCommandValues(
   content: string,
   commands: CommandGroup[],
-  users: User[],
+  members: User[],
 ): {
   command: string | undefined;
   params: { [key: string]: any };
@@ -25,7 +25,6 @@ export function extractCommandValues(
     command: undefined,
     params: {} as { [key: string]: any },
   };
-
   try {
     if (typeof content !== "string") return defaultResult;
 
@@ -107,7 +106,7 @@ export function extractCommandValues(
         if (indices.length > 0) {
           if (type === "username") {
             const usernames = indices.map((idx) => parts[idx].slice(1));
-            const mappedUsers = mapUsernamesToAddresses(usernames, users);
+            const mappedUsers = mapUsernamesToInboxId(usernames, members);
             values.params[param] = mappedUsers; // Directly assign the array of mapped users
             indices.forEach((idx) => usedIndices.add(idx));
           } else {

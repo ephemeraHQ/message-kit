@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { run, HandlerContext } from "@xmtp/message-kit";
+import { run, MlsHandlerContext } from "@xmtp/message-kit";
 import { commands } from "./commands.js";
 import { handler as bet } from "./handler/bet.js";
 import { handler as tipping } from "./handler/tipping.js";
@@ -8,29 +8,26 @@ import { handler as frame } from "./handler/frame.js";
 import { handler as games } from "./handler/game.js";
 import { handler as admin } from "./handler/admin.js";
 import { handler as other } from "./handler/other.js";
-import { handler as fakeusers } from "./lib/fakeusers.js";
+import { handler as fakeReply } from "./handler/fakeReply.js";
 
-// Configuration object for the app
 const appConfig = {
-  context: {
-    commands: commands,
-  },
+  commands: commands,
 };
 
 // Main function to run the app
-run(async (context: HandlerContext) => {
-  const { content, typeId, senderAddress } = context.message;
+run(async (context: MlsHandlerContext) => {
+  const { content, typeId } = context.message;
   // Handling different types of messages
   switch (typeId) {
     case "reaction":
       const { action, content: emoji } = content;
-      if (emoji == "🎩" && action == "added") {
+      if ((emoji == "degen" || emoji == "🎩") && action == "added") {
         await tipping(context);
       }
       break;
     case "reply":
-      const { receiver, content: reply } = content;
-      if (receiver && reply.includes("$degen")) {
+      const { referenceInboxId: receiver, content: reply } = content;
+      if (reply.includes("$degen")) {
         await tipping(context);
       }
       break;
@@ -56,7 +53,7 @@ run(async (context: HandlerContext) => {
       } else if (text.startsWith("/")) {
         await other(context);
       } else {
-        await fakeusers(context);
+        await fakeReply(context);
       }
       break;
   }

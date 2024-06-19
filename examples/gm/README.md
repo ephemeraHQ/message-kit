@@ -1,4 +1,4 @@
-# Gm
+# Gm Bot
 
 Simple Gm app
 

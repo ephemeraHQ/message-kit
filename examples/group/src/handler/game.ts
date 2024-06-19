@@ -1,4 +1,4 @@
-import { HandlerContext } from "@xmtp/message-kit";
+import { MlsHandlerContext as HandlerContext } from "@xmtp/message-kit";
 
 // Handler function to process game-related commands
 export async function handler(context: HandlerContext) {
@@ -10,7 +10,6 @@ export async function handler(context: HandlerContext) {
     slot: "https://slot-machine-frame.vercel.app/",
     guess: "https://farguessr.vercel.app/",
   };
-
   // Respond with the appropriate game URL or an error message
   switch (params.type) {
     case "wordle":

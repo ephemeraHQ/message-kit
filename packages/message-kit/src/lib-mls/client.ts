@@ -1,5 +1,5 @@
-import { ReactionCodec } from "../content-types/Reaction.js";
-import { ReplyCodec } from "../content-types/Reply.js";
+import { ReplyCodec } from "@xmtp/content-type-reply";
+import { ReactionCodec } from "@xmtp/content-type-reaction";
 import { SilentCodec } from "../content-types/Silent.js";
 import { BotMessageCodec } from "../content-types/BotMessage.js";
 import { Client, ClientOptions, XmtpEnv } from "@xmtp/mls-client";
@@ -8,10 +8,10 @@ import { createWalletClient, http, toBytes } from "viem";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { mainnet } from "viem/chains";
 
-export const mlsClient = async (
+export default async function xmtpClient(
   clientConfig: ClientOptions = {},
   privateKey: string | null = null,
-): Promise<Client> => {
+): Promise<Client> {
   let key = privateKey ?? process.env.KEY;
   if (!key) {
     key = generatePrivateKey();
@@ -32,6 +32,7 @@ export const mlsClient = async (
 
   const defaultConfig: ClientOptions = {
     env: env,
+    dbPath: `.cache/${wallet.account?.address}-${process.env.XMTP_ENV}`,
     codecs: [
       new TextCodec(),
       new ReactionCodec(),
@@ -56,4 +57,4 @@ export const mlsClient = async (
 
   console.log(`Listening on ${client.accountAddress}`);
   return client;
-};
+}

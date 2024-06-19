@@ -1,13 +1,7 @@
-import {
-  Conversation as JsConversation,
-  DecodedMessage as JsDecodedMessage,
-} from "@xmtp/xmtp-js";
+import { Conversation as JsConversation } from "@xmtp/xmtp-js";
 import { ContentTypeSilent, Silent } from "../content-types/Silent.js";
-import { AccessHandler, HandlerContext, Metadata } from "./types.js";
-import {
-  DecodedMessage as MlsDecodedMessage,
-  Conversation as MlsConversation,
-} from "@xmtp/mls-client";
+import { HandlerContext, CommandGroup, AccessHandler } from "./types.js";
+import { Conversation as MlsConversation } from "@xmtp/mls-client";
 
 const isMlsConversation = (
   conversation: JsConversation | MlsConversation,
@@ -15,12 +9,14 @@ const isMlsConversation = (
 
 export async function grantAccess(
   conversation: JsConversation | MlsConversation,
-  metadata?: Metadata,
+  accessHandler: AccessHandler,
+  context: any,
 ) {
-  const content: Silent = {
+  // Send a ping with access handler status
+  let accept = await accessHandler(context);
+  let content: Silent = {
     metadata: {
-      type: "access",
-      ...metadata,
+      type: accept ? "grant_access" : "deny_access",
     },
   };
 
@@ -31,20 +27,19 @@ export async function grantAccess(
     await conversation.send(content, {
       contentType: ContentTypeSilent,
     });
+    return;
   }
 }
 
-export async function ping(
+export async function commands(
   conversation: JsConversation | MlsConversation,
-  accessHandler: boolean,
-  metadata?: Metadata,
+  commands: CommandGroup[],
 ) {
   // Send a ping with access handler status
   let content: Silent = {
     metadata: {
-      type: "ping",
-      access: accessHandler,
-      ...metadata,
+      type: "commands",
+      commands: commands,
     },
   };
 
@@ -55,30 +50,6 @@ export async function ping(
     await conversation.send(content, {
       contentType: ContentTypeSilent,
     });
+    return;
   }
-}
-
-export async function handleSilentMessage(
-  conversation: JsConversation | MlsConversation,
-  message: JsDecodedMessage | MlsDecodedMessage,
-  context: HandlerContext,
-  accessHandler?: AccessHandler,
-) {
-  // Handle silent messages and populate context based on message type
-  if (message.contentType.sameAs(ContentTypeSilent)) {
-    const messageContent = message.content as Silent;
-    if (messageContent.metadata?.type === "access" && accessHandler) {
-      const accept = await accessHandler(context);
-      if (accept) {
-        return grantAccess(conversation, messageContent.metadata);
-      }
-    } else if (messageContent.metadata?.type === "ping") {
-      return ping(
-        conversation,
-        (await accessHandler?.(context)) ?? false,
-        messageContent.metadata,
-      );
-    }
-  }
-  return Promise.resolve(context);
 }

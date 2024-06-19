@@ -1,8 +1,8 @@
-import { HandlerContext } from "@xmtp/message-kit";
+import { MlsHandlerContext as HandlerContext } from "@xmtp/message-kit";
 
 export async function handler(context: HandlerContext) {
   const { content } = context.message;
-  const { content: text, command, params } = content;
+  const { command, params } = content;
   switch (command) {
     case "block":
       // context.addMember(params.username);
