@@ -3,8 +3,8 @@ import {
   BotMessage,
   ContentTypeBotMessage,
 } from "../content-types/BotMessage.js";
-import { populateUsernames } from "../helpers/fakeusers.js";
-import { ContentTypeText } from "@xmtp/xmtp-js";
+import { populateUsernames } from "../helpers/usernames.js";
+import { ContentTypeText } from "@xmtp/content-type-text";
 import { CommandGroup, User, MessageAbstracted } from "../helpers/types.js";
 import { extractCommandValues } from "../helpers/commands.js";
 

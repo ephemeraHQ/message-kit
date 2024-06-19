@@ -1,6 +1,6 @@
 import { Conversation as JsConversation } from "@xmtp/xmtp-js";
 import { ContentTypeSilent, Silent } from "../content-types/Silent.js";
-import { HandlerContext, CommandGroup, AccessHandler } from "./types.js";
+import { CommandGroup, AccessHandler } from "./types.js";
 import { Conversation as MlsConversation } from "@xmtp/mls-client";
 
 const isMlsConversation = (

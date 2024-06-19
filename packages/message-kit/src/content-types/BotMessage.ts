@@ -15,6 +15,7 @@ export const ContentTypeBotMessage = new ContentTypeId({
 export type BotMessage = {
   receivers: string[];
   content: string;
+  metadata?: Record<string, string>;
 };
 
 export class BotMessageCodec implements ContentCodec<BotMessage> {

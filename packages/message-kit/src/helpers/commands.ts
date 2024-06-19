@@ -27,8 +27,9 @@ export function extractCommandValues(
   };
   try {
     if (typeof content !== "string") return defaultResult;
-
-    const parts = content.match(/[^\s"']+|"([^"]*)"|'([^']*)'|`([^`]*)`/g);
+    const parts = content.match(
+      /[^\s"“”']+|["“”]([^"“”]*)["“”]|'([^']*)'|`([^`]*)`/g,
+    );
     if (!parts) return defaultResult;
 
     let commandName = parts[0].startsWith("/") ? parts[0].slice(1) : parts[0];
