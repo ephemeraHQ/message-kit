@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { getRedisClient, getRedisConfig } from "./lib/redis.js";
 import cron from "node-cron";
-import { xmtpClientV2, runV2, HandlerContextV2 } from "@xmtp/message-kit";
+import { xmtpClient, run, HandlerContext } from "@xmtp/message-kit";
 
 //Tracks conversation steps
 const inMemoryCacheStep = new Map<string, number>();
@@ -13,7 +13,7 @@ async function start() {
   const appConfig = {
     client: await getRedisConfig(redisClient), // Send it at the apptm of the run function
   };
-  runV2(async (context: HandlerContextV2) => {
+  run(async (context: HandlerContext) => {
     const { content: text, senderAddress } = context.message;
     //To lower case
     const lowerContent = text?.toLowerCase();
@@ -67,7 +67,7 @@ async function start() {
         if (subscriptionStatus === "subscribed") {
           console.log(`Sending daily update to ${address}`);
           // Logic to send daily updates to each subscriber
-          const client = await xmtpClientV2();
+          const client = await xmtpClient();
           const conversation =
             await client?.conversations.newConversation(address);
           await conversation.send("Here is your daily update!");

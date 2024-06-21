@@ -3,15 +3,17 @@ import { CommandGroup, CommandConfig, User } from "./types";
 function mapUsernamesToInboxId(
   usernames: string[],
   users: User[],
-): { name: string; inboxId: string }[] {
+): {
+  user: User;
+}[] {
   return usernames
     .map((username) => {
       const user = users.find(
         (user) => user.username === username.replace("@", ""),
       );
-      return user ? { name: user.username, inboxId: user.inboxId } : null;
+      return user ? { user } : null;
     })
-    .filter((user): user is { name: string; inboxId: string } => user !== null);
+    .filter((user): user is { user: User } => user !== null);
 }
 export function extractCommandValues(
   content: string,

@@ -141,7 +141,7 @@ export const commands: CommandGroup[] = [
           type: {
             default: "",
             type: "string",
-            values: ["wordle", "slot", "guess"],
+            values: ["wordle", "slot"],
           },
         },
       },
@@ -153,22 +153,21 @@ export const commands: CommandGroup[] = [
     description: "Moderate access to the group with admin commands.",
     commands: [
       {
-        command: "/block",
-        description: "Block a user.",
+        command: "/admin [type]",
+        description: "Add or remove a user.",
         params: {
+          type: {
+            default: "",
+            type: "string",
+            values: ["add", "remove"],
+          },
           username: {
             default: "",
             type: "username",
           },
-        },
-      },
-      {
-        command: "/unblock",
-        description: "Unblock a user.",
-        params: {
-          username: {
+          address: {
             default: "",
-            type: "username",
+            type: "address",
           },
         },
       },

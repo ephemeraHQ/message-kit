@@ -7,8 +7,6 @@ import { handler as gpt } from "./handler/gpt.js";
 import { handler as frame } from "./handler/frame.js";
 import { handler as games } from "./handler/game.js";
 import { handler as admin } from "./handler/admin.js";
-import { handler as other } from "./handler/other.js";
-import { handler as fakeReply } from "./handler/fakeReply.js";
 
 const appConfig = {
   commands: commands,
@@ -17,7 +15,6 @@ const appConfig = {
 // Main function to run the app
 run(async (context: HandlerContext) => {
   const { content, typeId } = context.message;
-  console.log(content);
   // Handling different types of messages
   switch (typeId) {
     case "reaction":
@@ -49,18 +46,17 @@ run(async (context: HandlerContext) => {
         await frame(context);
       } else if (text.startsWith("/game")) {
         await games(context);
-      } else if (
-        text.startsWith("/add") ||
-        text.startsWith("/remove") ||
-        text.startsWith("/addAdmin") ||
-        text.startsWith("/removeAdmin")
-      ) {
+      } else if (text.startsWith("/admin")) {
         await admin(context);
-      } else if (text.startsWith("/")) {
-        await other(context);
-      } else {
-        await fakeReply(context);
+      } else if (text === "/help") {
+        const intro =
+          "Available experiences:\n" +
+          commands
+            .flatMap((app) => app.commands)
+            .map((command) => `${command.command} - ${command.description}`)
+            .join("\n") +
+          "\nUse these commands to interact with specific apps.";
+        context.reply(intro);
       }
-      break;
   }
 }, appConfig);
