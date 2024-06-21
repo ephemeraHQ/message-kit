@@ -8,6 +8,7 @@
     "shared/*"
   ],
   "scripts": {
+    "prebuild": "cd packages/docs && yarn install && cd ..",
     "build": "turbo run build --filter='./packages/*'",
     "clean": "turbo run clean && rm -rf node_modules && rm -rf .turbo && yarn cache clean",
     "format": "turbo run format",

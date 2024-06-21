@@ -15,11 +15,12 @@
     "format:check": {
       "outputs": []
     },
-    "docs#dev": {
-      "persistent": true
-    },
     "group#start": {
       "dependsOn": ["^build", "group#build"],
+      "persistent": true
+    },
+    "docs#dev": {
+      "dependsOn": ["^build", "docs#build"],
       "persistent": true
     },
     "gm#start": {
