@@ -1,7 +1,4 @@
-import {
-  xmtpClient,
-  HandlerContext as HandlerContext,
-} from "@xmtp/message-kit";
+import { HandlerContext } from "@xmtp/message-kit";
 import { ContentTypeText } from "@xmtp/content-type-text";
 
 interface User {
@@ -13,9 +10,16 @@ interface User {
 }
 
 export async function handler(context: HandlerContext) {
-  const { content, sender } = context.message;
-  const { params } = content;
-  const { amount, name, users } = params;
+  const {
+    client,
+    members,
+    message: {
+      content: {
+        params: { amount, name, users },
+      },
+      senderInboxId,
+    },
+  } = context;
 
   if (!amount || !name || !users) {
     context.reply(
@@ -23,20 +27,21 @@ export async function handler(context: HandlerContext) {
     );
     return;
   }
-
-  let groupId = await generateBetUrl(users, name, amount);
-  context.reply(`Bet created!. Deeplink to groupId: ${groupId}`);
-}
-
-async function generateBetUrl(users: User[], betName: string, amount: string) {
-  const client = await xmtpClient();
-  const conv = await client.conversations.newConversation(
-    users.filter((user) => user.inboxId).map((user) => user.inboxId!),
+  let inboxIds = users
+    .filter((user: User) => user.inboxId)
+    .map((user: User) => user.inboxId!);
+  inboxIds.push(
+    members?.find((user: User) => user.inboxId === senderInboxId)?.address,
   );
-  await conv.send(`Bet created!\n${betName} for $${amount}`, ContentTypeText);
+  const conv = await client.conversations.newConversation(inboxIds);
+  await conv.send(`Bet created!\n${name} for $${amount}`, ContentTypeText);
   await conv.send(
     `https://base-frame-lyart.vercel.app/transaction?transaction_type=send&amount=1&token=eth&receiver=0xA45020BdA714c3F43fECDC6e38F873fFF2Dec8ec`,
     ContentTypeText,
   );
-  return conv.id;
+
+  let groupId = conv.id;
+  context.reply(
+    `Bet created!. Deeplink to groupId: https://converse.xyz/${groupId}`,
+  );
 }

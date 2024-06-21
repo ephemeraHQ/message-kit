@@ -3,7 +3,7 @@ import { Client, ClientOptions } from "@xmtp/mls-client";
 import { default as xmtpClient } from "./client.js";
 import { ContentTypeSilent } from "../content-types/Silent.js";
 import { ContentTypeBotMessage } from "../content-types/BotMessage.js";
-import { AccessHandler, CommandGroup, User } from "../helpers/types";
+import { AccessHandler, CommandGroup, User } from "../helpers/types.js";
 import { grantAccess, commands } from "../helpers/context.js";
 
 type Handler = (context: HandlerContext) => Promise<void>;
@@ -85,7 +85,7 @@ export default async function run(handler: Handler, config?: Config) {
         const context = new HandlerContext(
           conversation,
           message,
-          address,
+          client,
           config?.commands ?? [],
         );
 

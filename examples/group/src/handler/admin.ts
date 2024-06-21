@@ -1,39 +1,30 @@
 import { HandlerContext } from "@xmtp/message-kit";
 
 export async function handler(context: HandlerContext) {
-  const { conversation: group } = context;
-  const { content } = context.message;
-  const { command, params } = content;
-  console.log(params);
+  const {
+    conversation,
+    members,
+    message: {
+      content: {
+        params: { type, username, address },
+      },
+    },
+  } = context;
 
-  const userArrays = params.username
-    .filter((user: any) => user.inboxId)
-    .map((user: any) => user.inboxId);
-
-  switch (command) {
+  switch (type) {
     case "remove":
-      await group.removeMembersByInboxId(userArrays);
+      const userArrays = username.filter((user: any) => user.address);
+      await conversation.sync();
+      const removed = await conversation.removeMembers(userArrays);
       context.reply("User removed");
+      console.log(removed);
       break;
     case "add":
-      await group.addMembersByInboxId(userArrays);
+      await conversation.sync();
+      console.log(address);
+      const added = await conversation.addMembers([address]);
       context.reply("User added");
+      console.log(added);
       break;
-    case "addAdmin":
-      for (const inboxId of userArrays) {
-        await group.addAdmin(inboxId);
-      }
-      context.reply("Admin added");
-      break;
-    case "removeAdmin":
-      for (const inboxId of userArrays) {
-        await group.removeAdmin(inboxId);
-      }
-      context.reply("Admin removed");
-      break;
-    default:
-      context.reply(
-        "Command not recognized. Available commands: block, unblock, add, addAdmin, removeAdmin.",
-      );
   }
 }

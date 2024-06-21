@@ -1,10 +1,14 @@
-import { HandlerContext as HandlerContext } from "@xmtp/message-kit";
+import { HandlerContext } from "@xmtp/message-kit";
 const baseUrl = "https://base-frame-lyart.vercel.app/transaction";
 
 // Main handler function for processing commands
 export function handler(context: HandlerContext) {
-  const { content } = context.message;
-  const { params, command } = content;
+  const {
+    message: {
+      content: { command, params },
+    },
+  } = context;
+
   let url = "";
 
   switch (command) {
@@ -19,7 +23,7 @@ export function handler(context: HandlerContext) {
         return;
       }
       // Generate URL for the send transaction
-      url = generateFrameURL(baseUrl, "send", {
+      let url = generateFrameURL(baseUrl, "send", {
         amount: amountSend,
         token: tokenSend,
         receiver: username[0]?.address,

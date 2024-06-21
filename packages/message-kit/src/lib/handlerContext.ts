@@ -1,4 +1,4 @@
-import { Conversation, DecodedMessage } from "@xmtp/mls-client";
+import { Conversation, DecodedMessage, Client } from "@xmtp/mls-client";
 import {
   BotMessage,
   ContentTypeBotMessage,
@@ -11,31 +11,32 @@ import { extractCommandValues } from "../helpers/commands.js";
 export default class HandlerContext {
   message: MessageAbstracted;
   conversation: Conversation;
-  clientAddress: string;
+  client: Client;
   commands?: CommandGroup[];
   members?: User[];
 
   constructor(
     conversation: Conversation,
     message: DecodedMessage,
-    clientAddress: string,
+    client: Client,
     commands?: CommandGroup[],
   ) {
+    this.client = client;
     this.conversation = conversation;
     this.members = populateUsernames(
       conversation.members,
-      clientAddress,
+      client.accountAddress,
       message.senderInboxId,
     );
     let content = parseCommands(message, commands ?? [], this.members ?? []);
     this.message = {
       id: message.id,
       content: content,
-      sender: message.senderInboxId,
+      senderAddress: message.senderInboxId,
+      senderInboxId: message.senderInboxId,
       typeId: message.contentType.typeId,
       sent: message.sentAt,
     };
-    this.clientAddress = clientAddress ?? "";
   }
 
   async reply(message: string, receivers?: string[]) {

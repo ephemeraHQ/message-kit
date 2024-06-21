@@ -1,23 +1,15 @@
-import { default as HandlerContextV3 } from "../lib-mls/handlerContext.js";
-import { default as HandlerContextV2 } from "../v2/handlerContext.js";
+import { default as HandlerContext } from "../lib/handlerContext.js";
 
 // Define a type for the message that includes the conversation property
 export type MessageAbstracted = {
   id: string;
   sent: Date;
   content: any;
-  sender: string;
+  senderAddress: string;
+  senderInboxId?: string;
   typeId: string;
 };
 
-// Define a type for the message that includes the conversation property
-export type MessageAbstractedV2 = {
-  id: string;
-  sent: Date;
-  content: any;
-  senderAddress: string;
-  typeId: string;
-};
 export interface CommandParamConfig {
   default?: any;
   type: "number" | "string" | "username" | "quoted" | "address";
@@ -48,6 +40,5 @@ export interface User {
 export type MetadataValue = string | number | boolean;
 export type Metadata = Record<string, MetadataValue | MetadataValue[]>;
 
-export type HandlerContext = HandlerContextV2 | HandlerContextV3;
 export type AccessHandler = (context: HandlerContext) => Promise<boolean>;
 export type Handler = (context: HandlerContext) => Promise<void>;

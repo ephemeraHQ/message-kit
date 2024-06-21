@@ -4,24 +4,21 @@ import { User } from "./types";
 export const fakeUsers: User[] = [
   {
     username: "alice",
-    address: "0x20B572bE48527a770479744AeC6fE5644F97678B",
-    accountAddresses: ["0x20B572bE48527a770479744AeC6fE5644F97678B"],
-    inboxId: "0x20B572bE48527a770479744AeC6fE5644F97678B",
+    address: "0x460a92579DF57eb3E8786BA72B83e37E03831635",
   },
   {
     username: "eva",
-    address: "0x1b3Fa6C3Ad9a9090059C98cfd8De2d1C95ab1C42",
-    accountAddresses: ["0x1b3Fa6C3Ad9a9090059C98cfd8De2d1C95ab1C42"],
-    inboxId: "0x1b3Fa6C3Ad9a9090059C98cfd8De2d1C95ab1C42",
+    address: "0xeAc10D864802fCcfe897E3957776634D1AE006B2",
   },
   {
     username: "bob",
-    address: "0xf0490b45884803924Ca84C2051ef435991D7350D",
-    accountAddresses: ["0xf0490b45884803924Ca84C2051ef435991D7350D"],
-    inboxId: "0xf0490b45884803924Ca84C2051ef435991D7350D",
+    address: "0x388547F774377C6BEA0844A3221B0Ae2B33F52A4",
   },
 ];
-
+// bot 0x9dcfdcc4d2bd07916d51bdc0d8fedfad864cfd16
+// 8648095e06507a597a6ac8aae7c4b468c8946ca34bd48047f1fc2a77b0947a19
+// fabri desktop 0x2bf357b8bc06bd6f79ac963868d904495e6bc695
+// 049f4dce5f7a1dd70e3d10f73c8bef5739906e975b71f9632bf3b386d6aac585
 export function populateUsernames(
   members: any,
   clientAddress: string,
@@ -30,44 +27,27 @@ export function populateUsernames(
   // Map existing members to the required format
   const mappedMembers = members.map((member: any) => ({
     username: member.username,
-    address: member.address,
-    accountAddresses: member.accountAddresses,
-    inboxId: member.inboxId,
+    accountAddresses: member.accountAddresses.map((address: string) =>
+      address.toLowerCase(),
+    ),
+    address: member.accountAddresses?.[0].toLowerCase(),
+    inboxId: member.inboxId.toLowerCase(),
+    permissionLevel: member.permissionLevel,
   }));
-
-  // Create entries for 'bot' and 'me'
-  const bot = {
-    username: "bot",
-    address: clientAddress,
-    accountAddresses: [clientAddress],
-    inboxId: clientAddress,
-  };
-
-  const me = {
-    username: "me",
-    address: senderInboxId,
-    accountAddresses: [senderInboxId],
-    inboxId: senderInboxId,
-  };
-
-  // Combine all users
-  let combinedUsers = [...mappedMembers, ...fakeUsers, bot, me];
-
-  // Remove duplicates, prioritize 'bot' and 'me' entries
-  const uniqueUsers = combinedUsers.reduce((acc, currentUser) => {
-    const index = acc.findIndex(
-      (user: any) => user.inboxId === currentUser.inboxId,
-    );
-    if (index > -1) {
-      // Replace existing with 'bot' or 'me' if applicable
-      if (currentUser.username === "bot" || currentUser.username === "me") {
-        acc[index] = currentUser;
-      }
+  for (let member of mappedMembers) {
+    if (member.inboxId === senderInboxId.toLowerCase()) {
+      member.username = "me";
+    } else if (member.address === clientAddress.toLowerCase()) {
+      member.username = "bot";
     } else {
-      acc.push(currentUser);
+      const fakeUser = fakeUsers.find(
+        (user) => user.address.toLowerCase() === member.address,
+      );
+      if (fakeUser) {
+        member.username = fakeUser.username;
+        member.address = member.address;
+      }
     }
-    return acc;
-  }, []);
-
-  return uniqueUsers;
+  }
+  return mappedMembers;
 }

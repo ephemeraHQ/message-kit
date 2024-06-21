@@ -53,9 +53,7 @@ To declare the access command in the app, you need to add the following code:
 import { commands } from "./commands.js";
 
 const appConfig = {
-  context: {
-    commands: commands,
-  },
+  commands: commands,
 };
 
 run(async (context: HandlerContext) => {
