@@ -13,6 +13,7 @@ const external = [
   "@xmtp/xmtp-js",
   "viem",
   "viem/accounts",
+  "fs",
   "viem/chains",
   "dotenv",
   "ethers",

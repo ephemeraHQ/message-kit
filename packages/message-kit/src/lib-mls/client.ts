@@ -4,6 +4,7 @@ import { SilentCodec } from "../content-types/Silent.js";
 import { BotMessageCodec } from "../content-types/BotMessage.js";
 import { Client, ClientOptions, XmtpEnv } from "@xmtp/mls-client";
 import { TextCodec } from "@xmtp/content-type-text";
+import * as fs from "fs";
 import { createWalletClient, http, toBytes } from "viem";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { mainnet } from "viem/chains";
@@ -29,6 +30,10 @@ export default async function xmtpClient(
   });
 
   let env = process.env.XMTP_ENV as XmtpEnv;
+
+  if (!fs.existsSync(`.cache`)) {
+    fs.mkdirSync(`.cache`);
+  }
 
   const defaultConfig: ClientOptions = {
     env: env,

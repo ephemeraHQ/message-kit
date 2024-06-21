@@ -1,11 +1,12 @@
 import xmtpClient from "./client.js";
 import HandlerContext from "./handlerContext.js";
-import { ClientOptions } from "@xmtp/xmtp-js";
+import { CommandGroup } from "../helpers/types.js";
 
 type Handler = (context: HandlerContext) => Promise<void>;
 
 type Config = {
   client?: any;
+  commands?: CommandGroup[];
 };
 
 export default async function runV2(handler: Handler, config?: Config) {
