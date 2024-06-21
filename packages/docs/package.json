@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "build": "vocs build",
+    "build": "vocs build ",
     "dev": "vocs dev",
     "preview": "vocs preview"
   },
