@@ -9,7 +9,6 @@ export default defineConfig({
       dark: "#F04D23",
     },
   },
-  outputDir: "public",
   socials: [
     {
       icon: "github",
