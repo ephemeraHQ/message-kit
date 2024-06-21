@@ -1,4 +1,4 @@
-import { HandlerContext } from "@xmtp/message-kit";
+import { HandlerContext as HandlerContext } from "@xmtp/message-kit";
 import { commands } from "../commands.js"; // Assuming commands.ts is in the same directory
 
 export async function handler(context: HandlerContext) {

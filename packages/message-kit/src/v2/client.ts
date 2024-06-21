@@ -1,10 +1,8 @@
 import { Client as XmtpClient, XmtpEnv } from "@xmtp/xmtp-js";
 import { Wallet } from "ethers";
 import { GrpcApiClient } from "@xmtp/grpc-api-client";
-import { ReactionCodec } from "../content-types/Reaction.js";
-import { ReplyCodec } from "../content-types/Reply.js";
-import { SilentCodec } from "../content-types/Silent.js";
-import { BotMessageCodec } from "../content-types/BotMessage.js";
+import { ReactionCodec } from "@xmtp/content-type-reaction";
+import { ReplyCodec } from "@xmtp/content-type-reply";
 
 export default async function xmtpClient(
   appConfig = {},
@@ -28,16 +26,9 @@ export default async function xmtpClient(
   const defaultConfig = {
     env: env as XmtpEnv,
     apiClientFactory: GrpcApiClient.fromOptions as any,
-    codecs: [
-      new ReactionCodec(),
-      new BotMessageCodec(),
-      new ReplyCodec(),
-      new SilentCodec(),
-    ],
   };
   // Merge the default configuration with the provided config. Repeated fields in appConfig will override the default values
   const finalConfig = { ...defaultConfig, ...appConfig };
-  //sconsole.log(`Creating client with config: ${JSON.stringify(finalConfig)}`);
   const client = await XmtpClient.create(wallet, finalConfig);
   console.log(`Listening on ${client.address}`);
   return client;

@@ -3,7 +3,7 @@ import {
   ContentTypeId,
   EncodedContent,
 } from "@xmtp/content-type-primitives";
-import { Metadata } from "../helpers/types";
+import { Metadata, CommandGroup, User } from "../helpers/types";
 
 export const ContentTypeSilent = new ContentTypeId({
   authorityId: "xmtp.org",
@@ -13,12 +13,20 @@ export const ContentTypeSilent = new ContentTypeId({
 });
 
 export type SilentMetadata = {
-  type: "access" | "ping";
-  access?: boolean;
-} & Metadata;
+  type:
+    | "request_access"
+    | "ping"
+    | "grant_access"
+    | "deny_access"
+    | "commands"
+    | "usernames"
+    | null;
+  commands?: CommandGroup[];
+  usernames?: User[];
+};
 
 export type Silent = {
-  metadata?: SilentMetadata;
+  metadata: SilentMetadata;
 };
 
 export class SilentCodec implements ContentCodec<Silent> {
@@ -44,7 +52,7 @@ export class SilentCodec implements ContentCodec<Silent> {
       const { metadata } = silent;
       return { metadata };
     } catch (e) {
-      return {};
+      return { metadata: { type: null } };
     }
   }
 

@@ -27,6 +27,8 @@
   },
   "dependencies": {
     "@xmtp/content-type-primitives": "^1.0.1",
+    "@xmtp/content-type-reaction": "^1.1.9",
+    "@xmtp/content-type-reply": "^1.1.11",
     "@xmtp/content-type-text": "^1.0.0",
     "@xmtp/grpc-api-client": "^0.2.7",
     "@xmtp/mls-client": "^0.0.8",

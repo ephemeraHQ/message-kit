@@ -12,15 +12,10 @@ export const ContentTypeBotMessage = new ContentTypeId({
   versionMinor: 0,
 });
 
-export type BotMessageMetadata = {
-  users?: User[];
-  commands?: CommandGroup[];
-};
-
 export type BotMessage = {
   receivers: string[];
   content: string;
-  metadata?: BotMessageMetadata;
+  metadata?: Record<string, string>;
 };
 
 export class BotMessageCodec implements ContentCodec<BotMessage> {
@@ -56,10 +51,10 @@ export class BotMessageCodec implements ContentCodec<BotMessage> {
   }
 
   fallback() {
-    return undefined;
+    return "Message sent by a bot";
   }
 
   shouldPush() {
-    return false;
+    return true;
   }
 }

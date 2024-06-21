@@ -1,21 +1,39 @@
 import { HandlerContext } from "@xmtp/message-kit";
 
 export async function handler(context: HandlerContext) {
+  const { conversation: group } = context;
   const { content } = context.message;
-  const { content: text, command, params } = content;
+  const { command, params } = content;
+  console.log(params);
+
+  const userArrays = params.username
+    .filter((user: any) => user.inboxId)
+    .map((user: any) => user.inboxId);
+
   switch (command) {
-    case "block":
-      // context.addMember(params.username);
-      context.reply("❌ you are not an admin");
+    case "remove":
+      await group.removeMembersByInboxId(userArrays);
+      context.reply("User removed");
       break;
-    case "unblock":
-      // context.removeMember(params.username);
-      context.reply("❌ you are not an admin");
+    case "add":
+      await group.addMembersByInboxId(userArrays);
+      context.reply("User added");
+      break;
+    case "addAdmin":
+      for (const inboxId of userArrays) {
+        await group.addAdmin(inboxId);
+      }
+      context.reply("Admin added");
+      break;
+    case "removeAdmin":
+      for (const inboxId of userArrays) {
+        await group.removeAdmin(inboxId);
+      }
+      context.reply("Admin removed");
       break;
     default:
-      // Inform the user about unrecognized commands and provide available options
       context.reply(
-        "Command not recognized. Available commands: block, unblock.",
+        "Command not recognized. Available commands: block, unblock, add, addAdmin, removeAdmin.",
       );
   }
 }

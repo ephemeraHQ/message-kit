@@ -9,7 +9,7 @@ let dailyQuestionCountPerUser: Map<string, Record<string, number>> = new Map();
 
 export default async function openaiCall(
   content: string,
-  senderAddress: string,
+  sender: string,
   systemPrompt: string,
 ) {
   let messages = [
@@ -20,7 +20,7 @@ export default async function openaiCall(
   ];
   // Check if the limit of 5 questions per day has been reached
   const today = new Date().toISOString().slice(0, 10); // Format: YYYY-MM-DD
-  let userDailyCount = dailyQuestionCountPerUser.get(senderAddress) || {};
+  let userDailyCount = dailyQuestionCountPerUser.get(sender) || {};
   /*if (userDailyCount[today] >= 5) {
     // If the limit is reached, return a warning message
     return {
@@ -58,9 +58,9 @@ export default async function openaiCall(
     });
 
     userDailyCount[today] = (userDailyCount[today] || 0) + 1;
-    dailyQuestionCountPerUser.set(senderAddress, userDailyCount);
+    dailyQuestionCountPerUser.set(sender, userDailyCount);
 
-    return { reply, messages };
+    return { reply: reply as string, messages };
   } catch (error) {
     console.error("Failed to fetch from OpenAI:", error);
     throw error;

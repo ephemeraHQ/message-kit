@@ -5,12 +5,11 @@
 Create the `accessHandler` function to handle access to a group chat. Returns `true` or `false` based on the access request.
 
 ```tsx [src/index.ts]
-const accessHandler = async (context: HandlerContext): Promise<boolean> => {
-  const { senderAddress } = context.message;
+type AccessHandler = (request: any) => Promise<boolean>;
 
-  /*here put the token gated logic*/
-
-  if (senderAddress) return true;
+const accessHandler: AccessHandler = async (request) => {
+  const { sender, conversationId } = request;
+  if (sender) return true;
   return false;
 };
 ```
@@ -20,15 +19,13 @@ const accessHandler = async (context: HandlerContext): Promise<boolean> => {
 To declare the access command in the app, you need to add the following code:
 
 ```tsx [src/index.ts]
-run(
-  async (context: HandlerContext) => {
-    /* app logic here */
-  },
-  {
-    /* Additional app config*/
-  },
-  accessHandler,
-);
+const appConfig = {
+  accessHandler: accessHandler,
+};
+
+run(async (context: HandlerContext) => {
+  /* app logic here */
+}, appConfig);
 ```
 
 ## Full example
@@ -37,18 +34,20 @@ run(
 import "dotenv/config";
 import { run, HandlerContext } from "@xmtp/message-kit";
 
-const accessHandler = async (context: HandlerContext): Promise<boolean> => {
-  const { senderAddress } = context.message;
+type AccessHandler = (request: any) => Promise<boolean>;
 
-  /*here put the token gated logic*/
-
-  if (senderAddress) return true;
+const accessHandler: AccessHandler = async (request) => {
+  const { sender, conversationId } = request;
+  if (sender) return true;
   return false;
 };
 
-run(async (context: HandlerContext) => {
-  const { content, typeId, senderAddress } = context.message;
+const appConfig = {
+  accessHandler: accessHandler,
+};
 
-  if (typeId == "text") context.reply("gm!");
-}, {}, accessHandler);
+// Main function to run the app
+run(async (context: HandlerContext) => {
+  context.reply("Welcome");
+}, appConfig);
 ```

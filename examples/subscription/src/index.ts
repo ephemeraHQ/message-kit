@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { getRedisClient, getRedisConfig } from "./lib/redis.js";
 import cron from "node-cron";
-import { xmtpClient, run, HandlerContext } from "@xmtp/message-kit";
+import { xmtpClientV2, runV2, HandlerContextV2 } from "@xmtp/message-kit";
 
 //Tracks conversation steps
 const inMemoryCacheStep = new Map<string, number>();
@@ -10,18 +10,19 @@ const inMemoryCacheStep = new Map<string, number>();
 const stopWords = ["stop", "unsubscribe", "cancel", "list"];
 async function start() {
   const redisClient = await getRedisClient();
-  const appConfig = await getRedisConfig(redisClient); // Send it at the apptm of the run function
-  run(async (context: HandlerContext) => {
-    const { content, senderAddress } = context.message;
-    const { content: text } = content;
+  const appConfig = {
+    client: await getRedisConfig(redisClient), // Send it at the apptm of the run function
+  };
+  runV2(async (context: HandlerContextV2) => {
+    const { content: text, senderAddress } = context.message;
     //To lower case
-    const lowerContent = text.toLowerCase();
+    const lowerContent = text?.toLowerCase();
 
     //Handles unsubscribe and resets step
     if (stopWords.some((word) => lowerContent.includes(word))) {
       inMemoryCacheStep.set(senderAddress, 0);
       await redisClient.del(senderAddress);
-      await context.textReply(
+      await context.reply(
         "You are now unsubscribed. You will no longer receive updates!.",
       );
     }
@@ -51,7 +52,7 @@ async function start() {
     }
 
     //Send the message
-    await context.textReply(message);
+    await context.reply(message);
   }, appConfig);
 
   // Daily task
@@ -66,7 +67,7 @@ async function start() {
         if (subscriptionStatus === "subscribed") {
           console.log(`Sending daily update to ${address}`);
           // Logic to send daily updates to each subscriber
-          const client = await xmtpClient();
+          const client = await xmtpClientV2();
           const conversation =
             await client?.conversations.newConversation(address);
           await conversation.send("Here is your daily update!");

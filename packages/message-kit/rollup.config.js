@@ -8,7 +8,12 @@ const external = [
   "@xmtp/grpc-api-client",
   "@xmtp/mls-client",
   "@xmtp/proto",
+  "@xmtp/content-type-reaction",
+  "@xmtp/content-type-reply",
   "@xmtp/xmtp-js",
+  "viem",
+  "viem/accounts",
+  "viem/chains",
   "dotenv",
   "ethers",
 ];
