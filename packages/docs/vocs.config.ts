@@ -2,6 +2,7 @@ import { defineConfig } from "vocs";
 
 export default defineConfig({
   title: "MessageKit",
+  rootDir: ".",
   theme: {
     colorScheme: "dark",
     accentColor: {
@@ -9,7 +10,6 @@ export default defineConfig({
       dark: "#F04D23",
     },
   },
-  outputDir: "dist",
   socials: [
     {
       icon: "github",
