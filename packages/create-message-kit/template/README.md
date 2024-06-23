@@ -1,12 +1,12 @@
 # Gm Example
 
-To learn more about MessageKit go to the [docs][https://message-kit.vercel.app]
+> To learn more about Message Kit go to the [docs](https://message-kit.vercel.app)
 
 ## Running locally
 
 Follow the steps below to run the app
 
-### Setup
+### Set up
 
 ```bash [cmd]
 # Clone the repo
@@ -22,10 +22,10 @@ yarn start:watch
 
 ### Variables
 
-Set up this variables in your app to connect to redis and xmtp
+Set up these variables in your app to connect to redis and xmtp
 
 ```bash [cmd]
 KEY= # 0x... the private key of the app (with the 0x prefix)
-XMTP_ENV=production # or `dev`
-REDIS_CONNECTION_STRING= # redis db connection string
+XMTP_ENV=production # or dev
+REDIS_CONNECTION_STRING= # Redis DB connection string
 ```

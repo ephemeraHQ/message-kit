@@ -5,15 +5,11 @@
 When you start the app, you can listen for incoming messages in the conversation using the `run` function.
 
 ```jsx [src/index.ts]
-import "dotenv/config";
-import { run, HandlerContext } from "@xmtp/message-kit";
-
 run(async (context: HandlerContext) => {
   // Get the message and the address from the sender
-  const { content, senderAddress, typeId } = context.message;
+  const { content, senderAddress } = context.message;
 
-  // Do something with content
-
+  // To reply, just call `reply` on the HandlerContext.
   await context.reply(`gm`);
 });
 ```
