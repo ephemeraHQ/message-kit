@@ -17,6 +17,7 @@ run(async (context: HandlerContext) => {
   const {
     message: { content, typeId },
   } = context;
+  console.log(typeId);
 
   switch (typeId) {
     case "reaction":

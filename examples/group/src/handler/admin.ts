@@ -100,7 +100,7 @@ export async function handler(context: HandlerContext) {
           const messages = handleGroupname(name, sender.username);
           context.reply(messages);
         } catch (error) {
-          context.reply("No admin priviliges");
+          context.reply("No admin privileges");
           console.error(error);
         }
         break;
@@ -112,7 +112,7 @@ export async function handler(context: HandlerContext) {
           const messages = handleRemoveMembers(sender.username);
           context.reply(messages);
         } catch (error) {
-          context.reply("User doesnt exist or admin priviliges");
+          context.reply("User doesnt exist or lacks admin privileges");
           console.error(error);
         }
         break;
@@ -131,7 +131,7 @@ export async function handler(context: HandlerContext) {
           );
           context.reply(messages);
         } catch (error) {
-          context.reply("User already exists or admin priviliges");
+          context.reply("User already exists or lacks admin privileges");
           console.error(error);
         }
         break;
