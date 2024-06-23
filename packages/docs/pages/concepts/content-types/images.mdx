@@ -8,14 +8,14 @@ The `remoteStaticAttachment` type contains the following
 
 ```tsx
 {
-  url: // URL of the image
-  filename: //   Name of the file
-  contentDigest: // content digest
-  salt: // salt
-  nonce: // nonce
-  secret: // secret
-  scheme: // scheme
-  contentLength: // content length
+  url: string; // URL of the image
+  filename: string; // Name of the file
+  contentDigest: string; // content digest
+  salt: Uint8Array; // salt
+  nonce: Uint8Array; // nonce
+  secret: Uint8Array; // secret
+  scheme: string; // scheme
+  contentLength: number; // content length
 }
 ```
 

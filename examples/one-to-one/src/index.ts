@@ -21,9 +21,16 @@ async function start() {
       const {
         message: {
           content: { content: text },
+          typeId,
           sender: { address: senderAddress },
         },
       } = context;
+
+      if (typeId !== "text") {
+        /* If the input is not text do nothing */
+        return;
+      }
+
       const lowerContent = text?.toLowerCase();
 
       //Handles unsubscribe and resets step
