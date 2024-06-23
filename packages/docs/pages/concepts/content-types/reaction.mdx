@@ -23,8 +23,8 @@ Now that you understand how reactions are represented, you can receive them in y
 ```tsx
 const { content, typeId } = context.message;
 
-if (typeId == "reaction") {
-  const { action, content: emoji, receiver } = content;
+if (typeId === "reaction") {
+  const { action, content: emoji, referenceInboxId } = content;
   // Use reaction...
 }
 ```

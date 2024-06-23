@@ -46,7 +46,7 @@ export default class HandlerContext {
 
   async botReply(message: string, receivers?: string[]) {
     const { typeId } = this.message;
-    if (typeId == "silent") return;
+    if (typeId === "silent") return;
     const content: BotMessage = {
       receivers: receivers ?? [],
       content: message,

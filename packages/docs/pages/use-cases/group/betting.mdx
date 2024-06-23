@@ -75,7 +75,7 @@ export async function handler(context: HandlerContext) {
 
   if (!amount || !name || !username) {
     context.reply(
-      "Missing required parameters. Please provide amount, token, and username.",
+      "Missing required parameters. Please provide amount, name, and username.",
     );
     return;
   }

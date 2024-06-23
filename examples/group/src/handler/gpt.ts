@@ -15,7 +15,7 @@ export async function handler(context: HandlerContext) {
   } = context;
 
   const systemPrompt = `You are a helpful assistant that lives inside a web3 messaging group.\n
-  This are the users of the group:${JSON.stringify(members)}\n 
+  These are the users of the group:${JSON.stringify(members)}\n 
   This group app has many commands avaiable: ${JSON.stringify(commands)}\n
   When possible, answer with the command from the list for the user to perform. put this command in a new line\n
   The message was sent by ${

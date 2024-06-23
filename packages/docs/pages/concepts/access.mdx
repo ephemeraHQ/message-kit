@@ -14,7 +14,7 @@ const accessHandler: AccessHandler = async (request) => {
 };
 ```
 
-## Send it as parameter
+## Send it as a parameter
 
 To declare the access command in the app, you need to add the following code:
 
@@ -46,7 +46,7 @@ const appConfig = {
   accessHandler: accessHandler,
 };
 
-// Main function to run the app
+// Entry point for running the app
 run(async (context: HandlerContext) => {
   context.reply("Welcome");
 }, appConfig);

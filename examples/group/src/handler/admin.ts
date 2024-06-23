@@ -81,7 +81,7 @@ export async function handler(context: HandlerContext) {
       console.log(message);
     } else if (metadataFieldChanges && metadataFieldChanges[0]) {
       const { fieldName, newValue } = metadataFieldChanges?.[0];
-      if (fieldName == "group_name") {
+      if (fieldName === "group_name") {
         message += handleGroupname(newValue, adminName);
       }
     }

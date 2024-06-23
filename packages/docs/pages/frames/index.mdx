@@ -1,6 +1,6 @@
 # Frames
 
-Applications like [Converse](https://converse.app/) use have implemented the Open Frames standard.
+Applications like [Converse](https://converse.app/) implement the Open Frames standard.
 
 ## Metadata
 
@@ -17,7 +17,7 @@ Implement message validation using `@xmtp/frames-validator` to ensure the authen
 ```tsx
 import { validateFramesPost } from "@xmtp/frames-validator";
 
-export function handler(requestBody: any) {
+export async function handler(requestBody: any) {
   if (requestBody.clientProtocol.startsWith("xmtp")) {
     const { verifiedWalletAddress } = await validateFramesPost(requestBody);
     // Handle verified XMTP payload
