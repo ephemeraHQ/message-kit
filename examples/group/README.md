@@ -1,6 +1,6 @@
 # Group Example
 
-> To learn more about Message Kit go to the [docs](https://message-kit.vercel.app)
+> To learn more about MessageKit go to the [docs](https://message-kit.vercel.app)
 
 ## Running locally
 
