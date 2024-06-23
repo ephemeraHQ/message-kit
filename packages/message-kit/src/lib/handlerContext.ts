@@ -7,6 +7,7 @@ import { populateUsernames } from "../helpers/usernames.js";
 import { ContentTypeText } from "@xmtp/content-type-text";
 import { CommandGroup, User, MessageAbstracted } from "../helpers/types.js";
 import { extractCommandValues } from "../helpers/commands.js";
+import { ContentTypeReply } from "@xmtp/content-type-reply";
 
 export default class HandlerContext {
   message: MessageAbstracted;
@@ -32,8 +33,9 @@ export default class HandlerContext {
     this.message = {
       id: message.id,
       content: content,
-      senderAddress: message.senderInboxId,
-      senderInboxId: message.senderInboxId,
+      sender: this.members?.find(
+        (member) => member.inboxId === message.senderInboxId,
+      ) as User,
       typeId: message.contentType.typeId,
       sent: message.sentAt,
     };
@@ -78,6 +80,11 @@ function parseCommands(
         content: content,
       };
     }
+  } else if (message.contentType.sameAs(ContentTypeReply)) {
+    content = {
+      content: message.content.content,
+      typeId: message.content.contentType.typeId,
+    };
   }
   return content;
 }

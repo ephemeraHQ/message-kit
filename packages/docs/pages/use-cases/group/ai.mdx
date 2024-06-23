@@ -12,7 +12,7 @@ In this case the app replies with context about the group like users and command
 
 ```jsx [src/handler/gpt.ts]
 export async function handler(context: HandlerContext) {
-  if (!process.env.OPENAI_API_KEY) {
+  if (!process.env.OPEN_AI_API_KEY) {
     return context.reply("No OpenAI API key found");
   }
   const {
@@ -52,7 +52,7 @@ Copy the following code into your `lib/gpt.js` file.
 import OpenAI from "openai";
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: process.env.OPEN_AI_API_KEY,
 });
 
 // Use a Map to store daily question counts per user

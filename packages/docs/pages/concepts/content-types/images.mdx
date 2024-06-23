@@ -1,0 +1,33 @@
+# Images
+
+With XMTP, images are represented as objects with the following keys:
+
+## Image object
+
+The `remoteStaticAttachment` type contains the following
+
+```tsx
+{
+  url: // URL of the image
+  filename: //   Name of the file
+  contentDigest: // content digest
+  salt: // salt
+  nonce: // nonce
+  secret: // secret
+  scheme: // scheme
+  contentLength: // content length
+}
+```
+
+## Receive an image
+
+Now that you understand how images are represented, you can receive them in your app. Here's an example of how you can receive an image in your app:
+
+```tsx
+const { content, typeId } = context.message;
+
+if (typeId === "remoteStaticAttachment") {
+  const { url, filename } = content;
+  // Use image...
+}
+```

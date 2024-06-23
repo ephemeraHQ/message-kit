@@ -17,7 +17,7 @@ export async function handler(context: HandlerContext) {
       content: {
         params: { amount, name, username },
       },
-      senderInboxId,
+      sender: { inboxId },
     },
   } = context;
 
@@ -32,7 +32,7 @@ export async function handler(context: HandlerContext) {
     .map((user: User) => user.address!);
 
   addresses.push(
-    members?.find((user: User) => user.inboxId === senderInboxId)?.address,
+    members?.find((user: User) => user.inboxId === inboxId)?.address,
   );
   const conv = await client.conversations.newConversation(addresses);
   await conv.send(`Bet created!\n${name} for $${amount}`, ContentTypeText);
@@ -40,6 +40,7 @@ export async function handler(context: HandlerContext) {
     `https://base-frame-lyart.vercel.app/transaction?transaction_type=send&amount=1&token=eth&receiver=0xA45020BdA714c3F43fECDC6e38F873fFF2Dec8ec`,
     ContentTypeText,
   );
+  await conv.updateName(`${name} for $${amount}`);
 
   let groupId = conv.id;
   context.reply(

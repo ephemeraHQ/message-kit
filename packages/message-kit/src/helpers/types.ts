@@ -5,8 +5,12 @@ export type MessageAbstracted = {
   id: string;
   sent: Date;
   content: any;
-  senderAddress: string;
-  senderInboxId?: string;
+  sender: {
+    inboxId: string;
+    username: string;
+    address: string;
+    accountAddresses: string[];
+  };
   typeId: string;
 };
 
@@ -28,13 +32,12 @@ export interface CommandGroup {
   description: string;
   commands: CommandConfig[];
 }
-
 export interface User {
+  inboxId: string; // Ensure this is always a string
+  username: string;
   address: string;
-  username?: string;
-  inboxId?: string;
-  accountAddresses?: Array<string>;
-  installationIds?: Array<string>;
+  accountAddresses: string[];
+  installationIds: string[];
 }
 
 export type MetadataValue = string | number | boolean;

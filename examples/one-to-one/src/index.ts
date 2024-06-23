@@ -21,7 +21,7 @@ async function start() {
       const {
         message: {
           content: { content: text },
-          senderAddress,
+          sender: { address: senderAddress },
         },
       } = context;
       const lowerContent = text?.toLowerCase();

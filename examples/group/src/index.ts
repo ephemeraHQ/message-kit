@@ -14,7 +14,10 @@ const appConfig = {
 
 // Main function to run the app
 run(async (context: HandlerContext) => {
-  const { content, typeId } = context.message;
+  const {
+    message: { content, typeId },
+  } = context;
+
   switch (typeId) {
     case "reaction":
       const { action, content: emoji } = content;
@@ -30,6 +33,10 @@ run(async (context: HandlerContext) => {
       break;
     case "group_updated":
       await admin(context);
+      break;
+    case "remoteStaticAttachment":
+      const { url, filename } = content;
+      context.reply(`Image ${filename} has been uploaded to ${url}`);
       break;
     case "text":
       const { content: text } = content;
@@ -49,7 +56,6 @@ run(async (context: HandlerContext) => {
       } else if (text.startsWith("/game")) {
         await games(context);
       } else if (text.startsWith("/admin")) {
-        console.log(text);
         await admin(context);
       } else if (text === "/help") {
         const intro =

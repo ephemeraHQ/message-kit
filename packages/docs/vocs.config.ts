@@ -57,7 +57,11 @@ export default defineConfig({
             { text: "Reaction", link: "/concepts/content-types/reaction" },
             { text: "Reply", link: "/concepts/content-types/reply" },
             { text: "Command", link: "/concepts/content-types/command" },
-            { text: "Group updates", link: "/concepts/content-types/updates" },
+            { text: "Image", link: "/concepts/content-types/images" },
+            {
+              text: "Group update",
+              link: "/concepts/content-types/group-update",
+            },
           ],
         },
         {

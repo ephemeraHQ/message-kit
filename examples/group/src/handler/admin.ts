@@ -58,7 +58,7 @@ export async function handler(context: HandlerContext) {
   const {
     conversation,
     members,
-    message: { content, typeId },
+    message: { content, typeId, sender },
   } = context;
   if (typeId === "group_updated") {
     const {
@@ -76,9 +76,7 @@ export async function handler(context: HandlerContext) {
     if (addedInboxes.length > 0) {
       message += handleAddMembers(addedInboxes, members, adminName);
     } else if (removedInboxes.length > 0) {
-      console.log(removedInboxes);
       message += handleRemoveMembers(adminName);
-      console.log(message);
     } else if (metadataFieldChanges && metadataFieldChanges[0]) {
       const { fieldName, newValue } = metadataFieldChanges?.[0];
       if (fieldName === "group_name") {
@@ -94,7 +92,7 @@ export async function handler(context: HandlerContext) {
       case "name":
         try {
           await conversation.updateName(name);
-          const messages = handleGroupname(name, "bot");
+          const messages = handleGroupname(name, sender.username);
           context.reply(messages);
         } catch (error) {
           context.reply("No admin priviliges");
@@ -105,9 +103,8 @@ export async function handler(context: HandlerContext) {
         try {
           const userArrays = username.map((user: any) => user.address);
           await conversation.sync();
-          console.log("userArrays", userArrays);
           await conversation.removeMembers(userArrays);
-          const messages = handleRemoveMembers("bot");
+          const messages = handleRemoveMembers(sender.username);
           context.reply(messages);
         } catch (error) {
           context.reply("User doesnt exist or admin priviliges");
@@ -119,14 +116,13 @@ export async function handler(context: HandlerContext) {
           const addedInboxes = username.map((user: any) =>
             user.inboxId.toLowerCase(),
           );
-          console.log(addedInboxes);
           await conversation.sync();
           await conversation.addMembersByInboxId(addedInboxes);
           await conversation.sync();
           const messages = handleAddMembers(
             [{ inboxId: addedInboxes[0] }],
             members,
-            "bot",
+            sender.username,
           );
           context.reply(messages);
         } catch (error) {

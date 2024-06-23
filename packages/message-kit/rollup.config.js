@@ -7,6 +7,7 @@ const external = [
   "@xmtp/content-type-text",
   "@xmtp/content-type-reaction",
   "@xmtp/content-type-reply",
+  "@xmtp/content-type-remote-attachment",
   "@xmtp/mls-client",
   "@xmtp/proto",
   "viem",

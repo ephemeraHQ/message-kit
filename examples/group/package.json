@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@xmtp/message-kit": "workspace:^",
-    "openai": "^4.49.0"
+    "openai": "^4.52.0"
   },
   "devDependencies": {
     "@types/node": "^20.14.2",

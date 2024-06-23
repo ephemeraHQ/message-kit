@@ -1,7 +1,7 @@
 import OpenAI from "openai";
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: "sk-proj-BZeFg03TnggnhTkyryXdT3BlbkFJO2UFQSDKdiKLFDxQAtQ2",
 });
 
 // Use a Map to store daily question counts per user
