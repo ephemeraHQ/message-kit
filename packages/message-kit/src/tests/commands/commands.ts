@@ -1,4 +1,22 @@
-export const commands = [
+interface CommandParamConfig {
+  default?: any;
+  type: "number" | "string" | "username" | "quoted" | "address";
+  values?: string[]; // Accepted values for the parameter
+}
+interface CommandConfig {
+  command: string;
+  description: string;
+  params: Record<string, CommandParamConfig>;
+}
+
+interface CommandGroup {
+  name: string;
+  icon: string;
+  description: string;
+  commands: CommandConfig[];
+}
+
+export const commands: CommandGroup[] = [
   {
     name: "Tipping",
     icon: "🎩",
@@ -95,7 +113,7 @@ export const commands = [
         command: "/bet @users [Bet Name] [Bet Amount]",
         description: "Bet on basebet.",
         params: {
-          users: {
+          username: {
             default: "",
             type: "username",
           },
@@ -123,7 +141,7 @@ export const commands = [
           type: {
             default: "",
             type: "string",
-            values: ["wordle", "slot", "guess"],
+            values: ["wordle", "slot"],
           },
         },
       },
@@ -135,22 +153,25 @@ export const commands = [
     description: "Moderate access to the group with admin commands.",
     commands: [
       {
-        command: "/block",
-        description: "Block a user.",
+        command: "/admin [type]",
+        description: "Add or remove a user.",
         params: {
+          type: {
+            default: "",
+            type: "string",
+            values: ["add", "remove", "name"],
+          },
           username: {
             default: "",
             type: "username",
           },
-        },
-      },
-      {
-        command: "/unblock",
-        description: "Unblock a user.",
-        params: {
-          username: {
+          address: {
             default: "",
-            type: "username",
+            type: "address",
+          },
+          name: {
+            default: "",
+            type: "quoted",
           },
         },
       },

@@ -81,7 +81,7 @@ export default defineConfig({
       collapsed: false,
       items: [
         {
-          text: "Group",
+          text: "Group chat",
           link: "/use-cases/group",
           items: [
             {
@@ -101,8 +101,8 @@ export default defineConfig({
               link: "/use-cases/group/games",
             },
             {
-              text: "Frames",
-              link: "/use-cases/group/frames",
+              text: "Transactions",
+              link: "/use-cases/group/transactions",
             },
             {
               text: "Admin",
