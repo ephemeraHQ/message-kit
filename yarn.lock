@@ -9997,6 +9997,7 @@ __metadata:
     "@redis/client": "npm:^1.5.16"
     "@types/node": "npm:^20.14.2"
     "@types/node-cron": "npm:^3.0.11"
+    "@xmtp/content-type-text": "npm:^1.0.0"
     "@xmtp/message-kit": "workspace:*"
     "@xmtp/redis-persistence": "npm:^0.0.4"
     node-cron: "npm:^3.0.3"
