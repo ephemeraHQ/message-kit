@@ -44,15 +44,15 @@ export async function handler(context: HandlerContext) {
   }
 
   // Process sending tokens to each receiver
-  /*receiverAddresses.forEach(async (receiver: any) => {
+  receiverAddresses.forEach(async (receiver: any) => {
     context.reply(
       `You received ${amount} tokens from ${senderUser.username}.`,
       [receiver?.address], // Notify only 1 address
     );
-  });*/
+  });
   // Notify sender of the transaction details
   context.reply(
-    `You sent ${amount} tokens in total.`,
+    `You sent ${amount * receiverAddresses.length} tokens in total.`,
     [senderInboxId!], // Notify only 1 address //  [!code hl] // [!code focus]
   );
 }

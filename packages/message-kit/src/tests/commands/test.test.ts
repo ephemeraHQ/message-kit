@@ -56,7 +56,7 @@ describe("Command extraction tests", () => {
   });
 
   test("Extract values from /game command", () => {
-    const inputContent = "/game slots";
+    const inputContent = "/game slot";
     const extractedValues = extractCommandValues(inputContent, commands, users);
     expect(extractedValues).toEqual({ command: "game", gameType: "slot" });
   });

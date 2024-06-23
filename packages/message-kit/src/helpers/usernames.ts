@@ -1,24 +1,40 @@
 import { User } from "./types";
 
+/*
+  Issue:
+  There are many incostencies with casing. Parsing everything with lowerCase
+  is not ideal, but it's the best we can do for now.
+*/
+
+export function mapUsernamesToInboxId(
+  usernames: string[],
+  users: User[],
+): User[] {
+  return usernames
+    .map((username) => {
+      return users.find((user) => user.username === username.replace("@", ""));
+    })
+    .filter((user): user is User => user !== null);
+}
+
 // Define a list of fake users with usernames and addresses
 export const fakeUsers: User[] = [
   {
     username: "alice",
     address: "0x460a92579DF57eb3E8786BA72B83e37E03831635",
+    inboxId: "0c85109d5242431e541c28c0f837cca4ce5b6129b5acae7e8b588c3ba5cba5e2",
   },
   {
     username: "eva",
     address: "0xeAc10D864802fCcfe897E3957776634D1AE006B2",
+    inboxId: "3942e354e8cce5e9d550cf152749a795514adbe1c27d97b88b9fcc63a596c7e4",
   },
   {
     username: "bob",
     address: "0x388547F774377C6BEA0844A3221B0Ae2B33F52A4",
+    inboxId: "ba6c932e48826aafe413d49505531e0c12f5d1c185a2ffe5174c75e9d0692f32",
   },
 ];
-// bot 0x9dcfdcc4d2bd07916d51bdc0d8fedfad864cfd16
-// 8648095e06507a597a6ac8aae7c4b468c8946ca34bd48047f1fc2a77b0947a19
-// fabri desktop 0x2bf357b8bc06bd6f79ac963868d904495e6bc695
-// 049f4dce5f7a1dd70e3d10f73c8bef5739906e975b71f9632bf3b386d6aac585
 export function populateUsernames(
   members: any,
   clientAddress: string,
@@ -26,7 +42,7 @@ export function populateUsernames(
 ) {
   // Map existing members to the required format
   const mappedMembers = members.map((member: any) => ({
-    username: member.username,
+    username: member.username?.toLowerCase(),
     accountAddresses: member.accountAddresses.map((address: string) =>
       address.toLowerCase(),
     ),
@@ -41,13 +57,29 @@ export function populateUsernames(
       member.username = "bot";
     } else {
       const fakeUser = fakeUsers.find(
-        (user) => user.address.toLowerCase() === member.address,
+        (user) => user.address.toLowerCase() === member.address.toLowerCase(),
       );
       if (fakeUser) {
-        member.username = fakeUser.username;
-        member.address = member.address;
+        member.username = fakeUser.username?.toLowerCase();
+        member.address = member.address?.toLowerCase();
       }
     }
   }
+  const remainingUsers = fakeUsers.filter(
+    (fakeUser) =>
+      !mappedMembers.some(
+        (member: any) =>
+          member.address.toLowerCase() === fakeUser.address.toLowerCase(),
+      ),
+  );
+  remainingUsers.forEach((user) => {
+    mappedMembers.push({
+      username: user.username?.toLowerCase(),
+      accountAddresses: [user.address?.toLowerCase()],
+      address: user.address?.toLowerCase(),
+      inboxId: user.inboxId?.toLowerCase(),
+      permissionLevel: 0,
+    });
+  });
   return mappedMembers;
 }

@@ -1,0 +1,47 @@
+# Group updates
+
+With XMTP, group metadata updates are represented as objects with the following keys:
+
+## Group updated object
+
+The `group_updated` type contains the following
+
+```tsx
+{
+  initiatedByInboxId: address, //Address of the user who initiated the update
+  metadataFieldChanges: Record<string, string>[], //Record of metadata fields that changed
+  removedInboxes: string[], //Array of addresses of users removed from the group
+  addedInboxes: string[], //Array of addresses of users added to the group
+}
+```
+
+## Receive a group membership update
+
+When a member is added or removed from a group it will emit a `group_updated` event with a `removedInboxes` or `addedInboxes` array containing the addresses of the users removed or added.
+
+```tsx
+if (typeId === "group_updated") {
+  const {
+    initiatedByInboxId,
+    metadataFieldChanges,
+    removedInboxes,
+    addedInboxes,
+  } = content;
+  // Use the update information...
+}
+```
+
+## Receive a group name update
+
+When a group name is changed it will emit a `group_updated` event with a `metadataFieldChanges` array containing the new group name.
+
+```tsx
+if (typeId === "group_updated") {
+  if (metadataFieldChanges && metadataFieldChanges[0]) {
+    const { fieldName, newValue } = metadataFieldChanges?.[0];
+    if (fieldName == "group_name") {
+      // Use the new group name...
+    }
+  }
+}
+```

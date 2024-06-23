@@ -15,22 +15,6 @@
     "format:check": {
       "outputs": []
     },
-    "group#start": {
-      "dependsOn": ["^build", "group#build"],
-      "persistent": true
-    },
-    "docs#dev": {
-      "dependsOn": ["^build", "docs#build"],
-      "persistent": true
-    },
-    "gm#start": {
-      "dependsOn": ["^build", "gm#build"],
-      "persistent": true
-    },
-    "subscription#start": {
-      "dependsOn": ["^build", "subscription#build"],
-      "persistent": true
-    },
     "typecheck": {
       "dependsOn": ["^build"],
       "outputs": []

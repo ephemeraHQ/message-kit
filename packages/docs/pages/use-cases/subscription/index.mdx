@@ -1,0 +1,102 @@
+# Subscription
+
+This is a simple yet powerful subscription app that will allow you to customize it to your needs.
+
+- [Redis](/use-cases/subscription/database): Integrate with Redis db to store the subscription status
+- [Cron](/use-cases/subscription/cron): Integrate with Cron to send the subscription message every day
+
+## Structure
+
+> Check out the [repository](https://github.com/xmtp-labs/message-kit/tree/main/examples/subscription) for the full code.
+
+```
+subscription/              # Your project's root directory.
+├── src/
+│   ├── index.ts          # Conversational logic // [!code hl] // [!code focus]
+│   └── lib/
+│       └── redis.ts      # Redis middleware // [!code hl] // [!code focus]
+├── package.json
+├── tsconfig.json
+└── .env
+```
+
+### Conversational logic
+
+With simple concepts like steps and if statements create powerful subscription experiences:
+
+```tsx [src/index.ts]
+run(async (context: HandlerContext) => {
+  const { content, senderAddress } = context.message;
+  const { content: text } = content;
+  //To lower case
+  const lowerContent = text.toLowerCase();
+
+  //Handles unsubscribe and resets step
+  if (stopWords.some((word) => lowerContent.includes(word))) {
+    inMemoryCacheStep.set(senderAddress, 0);
+    await redisClient.del(senderAddress);
+    await context.reply(
+      "You are now unsubscribed. You will no longer receive updates!.",
+    );
+  }
+
+  const cacheStep = inMemoryCacheStep.get(senderAddress) || 0;
+  let message = "";
+  if (cacheStep === 0) {
+    message = "Welcome! Choose an option:\n1. Info\n2. Subscribe";
+    // Move to the next step
+    inMemoryCacheStep.set(senderAddress, cacheStep + 1);
+  } else if (cacheStep === 1) {
+    if (text === "1") {
+      message = "Here is the info.";
+    } else if (text === "2") {
+      await redisClient.set(senderAddress, "subscribed"); //test
+      message =
+        "You are now subscribed. You will receive updates.\n\ntype 'stop' to unsubscribe";
+      //reset the app to the initial step
+      inMemoryCacheStep.set(senderAddress, 0);
+    } else {
+      message = "Invalid option. Please choose 1 for Info or 2 to Subscribe.";
+      // Keep the same step to allow for re-entry
+    }
+  } else {
+    message = "Invalid option. Please start again.";
+    inMemoryCacheStep.set(senderAddress, 0);
+  }
+
+  //Send the message
+  await context.reply(message);
+});
+```
+
+## Run the app
+
+Follow the steps below to run the app
+
+::::steps
+
+### Setup
+
+```bash [cmd]
+# Clone the repo
+git clone https://github.com/xmtp-labs/message-kit
+# Go to the examples/subscription folder
+cd examples/subscription
+# Install the dependencies
+yarn install
+# Run the app
+yarn build:watch
+yarn start:watch
+```
+
+### Variables
+
+Set up this variables in your app to connect to redis and xmtp
+
+```bash [.env]
+KEY= # 0x... the private key of the app (with the 0x prefix)
+XMTP_ENV=production # or `dev`
+REDIS_CONNECTION_STRING= # the connection string for the Redis database
+```
+
+::::

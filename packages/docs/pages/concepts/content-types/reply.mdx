@@ -9,9 +9,9 @@ The `reply` type contains the following
 ```tsx
 {
   reference: someMessageID, //ID of the message being replied to
-  contentType: ContentTypeText, // type of the reply
+  contentType: ContentType, // type of the reply
   content: "I concur", //String representation of the reply
-  receiver: address, //Address of the user who received the reply
+  referenceInboxId: address, //Address of the user who received the reply
 };
 ```
 

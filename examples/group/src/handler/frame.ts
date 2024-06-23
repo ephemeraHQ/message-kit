@@ -1,5 +1,4 @@
 import { HandlerContext } from "@xmtp/message-kit";
-const baseUrl = "https://base-frame-lyart.vercel.app/transaction";
 
 // Main handler function for processing commands
 export function handler(context: HandlerContext) {
@@ -9,7 +8,7 @@ export function handler(context: HandlerContext) {
     },
   } = context;
 
-  let url = "";
+  const baseUrl = "https://base-frame-lyart.vercel.app/transaction";
 
   switch (command) {
     case "send":
@@ -23,12 +22,12 @@ export function handler(context: HandlerContext) {
         return;
       }
       // Generate URL for the send transaction
-      let url = generateFrameURL(baseUrl, "send", {
+      let url_send = generateFrameURL(baseUrl, "send", {
         amount: amountSend,
         token: tokenSend,
         receiver: username[0]?.address,
       });
-      context.reply(`${url}`);
+      context.reply(`${url_send}`);
       break;
     case "swap":
       // Destructure and validate parameters for the swap command
@@ -41,12 +40,12 @@ export function handler(context: HandlerContext) {
         return;
       }
       // Generate URL for the swap transaction
-      url = generateFrameURL(baseUrl, "swap", {
+      let url_swap = generateFrameURL(baseUrl, "swap", {
         amount,
         token_from,
         token_to,
       });
-      context.reply(`${url}`);
+      context.reply(`${url_swap}`);
       break;
     case "mint":
       // Destructure and provide default values for the mint command
@@ -59,11 +58,11 @@ export function handler(context: HandlerContext) {
         return;
       }
       // Generate URL for the mint transaction
-      url = generateFrameURL(baseUrl, "mint", {
+      let url_mint = generateFrameURL(baseUrl, "mint", {
         collection,
         token_id: tokenId,
       });
-      context.reply(url);
+      context.reply(`${url_mint}`);
       break;
     case "show": // [!code hl] // [!code focus]
       // Show the base URL without the transaction path

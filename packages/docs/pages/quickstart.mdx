@@ -1,0 +1,72 @@
+# Quickstart
+
+Start with a simple app that replies with GM.
+
+```jsx [src/index.ts]
+import "dotenv/config";
+import { run, HandlerContext } from "@xmtp/message-kit";
+
+run(async (context: HandlerContext) => {
+  // Get the message and the address from the sender
+  const {
+    message: { content: text, senderInboxId, typeId },
+  } = context;
+
+  // Do something with content
+
+  await context.reply(`gm`);
+});
+```
+
+> Check out the [repository](https://github.com/xmtp-labs/message-kit/tree/main/examples/gm) for the full code.
+
+## Run the app
+
+Follow the steps below to run the app
+
+::::steps
+
+### CLI command
+
+This tool simplifies the creation and configuration of new apps.
+
+:::code-group
+
+```bash [npm]
+npm init message-kit
+```
+
+```bash [yarn]
+yarn create message-kit
+```
+
+```bash [pnpm]
+pnpm create message-kit
+```
+
+:::
+
+### Variables
+
+Set up this variables in your app to connect to redis and xmtp
+
+```bash [cmd]
+KEY= # 0x... the private key of the app (with the 0x prefix)
+XMTP_ENV=production # or `dev`
+```
+
+### Setup
+
+```bash [cmd]
+# Install the dependencies
+yarn install
+# Run the app
+yarn build:watch
+yarn start:watch
+```
+
+### Test
+
+Add the bot address to your group chat and send a message, it will reply `gm`!
+
+::::

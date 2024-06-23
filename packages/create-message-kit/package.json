@@ -8,7 +8,8 @@
   "bin": "index.js",
   "files": [
     "index.js",
-    "template/**/*"
+    "template/**/*",
+    "examples/gm/**/*"
   ],
   "scripts": {
     "clean": "rm -rf .turbo && rm -rf node_modules",

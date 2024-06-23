@@ -1,40 +1,31 @@
-# Gm
+# Gm Example
 
-Simple Gm app
+To learn more about MessageKit go to the [docs][https://message-kit.vercel.app]
 
-## Usage
+## Running locally
 
-```jsx
-import "dotenv/config";
-import { xmtpClient, run, HandlerContext } from "@xmtp/message-kit";
+Follow the steps below to run the app
 
-run(async (context: HandlerContext) => {
-  const { content, senderAddress } = context.message;
+### Setup
 
-  await context.reply(`gm`);
-});
-```
-
-## Running the app
-
-> ⚠️ Bot kit is not compatible with `bun`. Use `npm` or `yarn`
-
-```bash
-# install dependencies
+```bash [cmd]
+# Clone the repo
+git clone https://github.com/xmtp-labs/message-kit
+# Go to the example folder
+cd examples/gm
+# Install the dependencies
 yarn install
-
-# running the app
-yarn build
-yarn start
-
-# to run with hot-reload
+# Run the app
 yarn build:watch
 yarn start:watch
 ```
 
-## Variables
+### Variables
 
-```bash
+Set up this variables in your app to connect to redis and xmtp
+
+```bash [cmd]
 KEY= # 0x... the private key of the app (with the 0x prefix)
 XMTP_ENV=production # or `dev`
+REDIS_CONNECTION_STRING= # redis db connection string
 ```

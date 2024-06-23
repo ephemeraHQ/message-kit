@@ -1,20 +1,6 @@
 import { CommandGroup, CommandConfig, User } from "./types";
+import { mapUsernamesToInboxId } from "./usernames";
 
-function mapUsernamesToInboxId(
-  usernames: string[],
-  users: User[],
-): {
-  user: User;
-}[] {
-  return usernames
-    .map((username) => {
-      const user = users.find(
-        (user) => user.username === username.replace("@", ""),
-      );
-      return user ? { user } : null;
-    })
-    .filter((user): user is { user: User } => user !== null);
-}
 export function extractCommandValues(
   content: string,
   commands: CommandGroup[],

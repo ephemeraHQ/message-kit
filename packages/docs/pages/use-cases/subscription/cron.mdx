@@ -1,0 +1,61 @@
+# Cron for daily subscriptions
+
+Create a cron that sends daily messages to your **redis database** subscribers. This app can run daily or according to your logic:
+
+## Install dependency
+
+Install `node-cron`
+
+```bash [cmd]
+yarn add node-cron
+```
+
+## Usage
+
+Run a node cron daily to send message to users
+
+```jsx [src/index.ts]
+cron.schedule(
+  // [!code hl] // [!code focus]
+  "0 0 * * *", //Daily // [!code hl] // [!code focus]
+  async () => {
+    const redisClient = await getRedisClient();
+    const keys = await redisClient.keys("*");
+    console.log(`Running daily task. ${keys.length} subscribers.`);
+    for (const address of keys) {
+      const subscriptionStatus = await redisClient.get(address);
+      if (subscriptionStatus === "subscribed") {
+        console.log(`Sending daily update to ${address}`);
+        const client = await xmtpClient();
+        const conversation =
+          await client?.conversations.newConversation(address);
+        await conversation.send("Here is your daily update!");
+      }
+    }
+  },
+  {
+    scheduled: true, // [!code hl] // [!code focus]
+    timezone: "UTC", // [!code hl] // [!code focus]
+  },
+);
+```
+
+## Add cron in your logic
+
+```jsx [src/index.ts]
+async function start() {
+  const redisClient = await getRedisClient();
+  const appConfig = await getRedisConfig(redisClient);
+  run(async (context: HandlerContext) => {
+
+    // Your logic
+  }, appConfig);
+
+  // Run the cron job every day
+  cron.schedule( // [!code hl] // [!code focus]
+    /* Your cron logic */ // [!code hl] // [!code focus]
+  ); // [!code hl] // [!code focus]
+}
+
+start();
+```

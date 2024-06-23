@@ -1,95 +1,31 @@
-# Conversational
+# Subscription Example
 
-This is a simple yet powerful conversational framework that will allow you to customize it to your needs.
+To learn more about MessageKit go to the [docs][https://message-kit.vercel.app]
 
-## Usage
+## Running locally
 
-### Conversational logic
+Follow the steps below to run the app
 
-With simple concepts like steps and if statements create powerful conversational experiences:
+### Setup
 
-```tsx
-const cacheStep = inMemoryCacheStep.get(senderAddress) || 0;
-
-let message = "";
-if (cacheStep === 0) {
-  message = "Welcome! Choose an option:\n1. Info\n2. Subscribe";
-  // Move to the next step
-  inMemoryCacheStep.set(senderAddress, cacheStep + 1);
-} else if (cacheStep === 1) {
-  if (content === "1") {
-    message = "Here is the info.";
-    //reset the app to the initial step
-    inMemoryCacheStep.set(senderAddress, 0);
-  } else if (content === "2") {
-    await redisClient.set(senderAddress, "subscribed");
-    message =
-      "You are now subscribed. You will receive updates.\n\ntype 'stop' to unsubscribe";
-    //reset the app to the initial step
-    inMemoryCacheStep.set(senderAddress, 0);
-  } else {
-    message = "Invalid option. Please choose 1 for Info or 2 to Subscribe.";
-    // Keep the same step to allow for re-entry
-  }
-} else {
-  message = "Invalid option. Please start again.";
-  inMemoryCacheStep.set(senderAddress, 0);
-}
-
-//Send the message
-await context.reply(message);
-```
-
-### Cron for daily subscriptions
-
-Create a cron that sends daily messages to your **redis database** subscribers. This app can run daily or according to your logic:
-
-```jsx
-cron.schedule(
-  "0 0 * * *", //Daily
-  async () => {
-    const redisClient = await getRedisClient();
-    const keys = await redisClient.keys("*");
-    console.log(`Running daily task. ${keys.length} subscribers.`);
-    for (const address of keys) {
-      const subscriptionStatus = await redisClient.get(address);
-      if (subscriptionStatus === "subscribed") {
-        console.log(`Sending daily update to ${address}`);
-        const client = await xmtpClient();
-        const conversation =
-          await client?.conversations.newConversation(address);
-        await conversation.send("Here is your daily update!");
-      }
-    }
-  },
-  {
-    scheduled: true,
-    timezone: "UTC",
-  },
-);
-```
-
-## Running the app
-
-> ⚠️ Bot kit is not compatible with `bun`. Use `npm` or `yarn`
-
-```bash
-# install dependencies
+```bash [cmd]
+# Clone the repo
+git clone https://github.com/xmtp-labs/message-kit
+# Go to the example folder
+cd examples/subscription
+# Install the dependencies
 yarn install
-
-# running the app
-yarn build
-yarn start
-
-# to run with hot-reload
+# Run the app
 yarn build:watch
 yarn start:watch
 ```
 
-## Variables
+### Variables
 
-```bash
+Set up this variables in your app to connect to redis and xmtp
+
+```bash [cmd]
 KEY= # 0x... the private key of the app (with the 0x prefix)
 XMTP_ENV=production # or `dev`
-REDIS_CONNECTION_STRING= # the connection string for the Redis database
+REDIS_CONNECTION_STRING= # redis db connection string
 ```
