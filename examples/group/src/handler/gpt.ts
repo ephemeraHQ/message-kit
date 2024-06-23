@@ -2,6 +2,7 @@ import { HandlerContext } from "@xmtp/message-kit";
 import openaiCall from "../lib/gpt.js";
 
 export async function handler(context: HandlerContext) {
+  console.log(process.env.OPENAI_API_KEY);
   if (!process.env.OPENAI_API_KEY) {
     return context.reply("No OpenAI API key found");
   }
