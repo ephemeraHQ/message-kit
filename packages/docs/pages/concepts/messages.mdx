@@ -52,30 +52,13 @@ context.reply("Sender or receiver not found.");
 
 > _Bot messages are prevented from being sent to the app itself_
 
-## Deep Links
+## Message history
 
-You can send text messages to the app and the app will parse the message and execute the command. This is useful for deep linking to a conversation or executing commands.
+To get the message history in a conversation you can use the `messages` property.
 
-**Link to conversation**
-
-Show a nice UI to the user to open the conversation with another user
-
-```jsx
-dm:/0x1CB3649469546D10b7fa4fd1d1c63e8aA3a0E667
-```
-
-**Link to group**
-
-Show a nice UI to the user to open a new group with other users
-
-```jsx
-group:/0x22323
-```
-
-**USDC Base Transaction**
-
-Show a nice UI to the user to send a USDC Base transaction
-
-```jsx
-tx:/0x1CB3649469546D10b7fa4fd1d1c63e8aA3a0E667/usdc
+```tsx
+// sync group first
+await group.sync();
+// get messages
+const messages = group.messages();
 ```

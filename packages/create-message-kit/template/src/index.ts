@@ -1,16 +1,13 @@
 import "dotenv/config";
 import { run, HandlerContext } from "@xmtp/message-kit";
-import { commands } from "./commands.js";
-
-const appConfig = {
-  commands: commands,
-};
 
 run(async (context: HandlerContext) => {
-  const { content, sender } = context.message;
+  // Get the message and the address from the sender
+  const {
+    message: { content: text, senderInboxId, typeId },
+  } = context;
 
-  /* Your logic*/
+  // Do something with content
 
-  //Send the message
-  await context.reply("gm");
-}, appConfig);
+  await context.reply(`gm`);
+});

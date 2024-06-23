@@ -1,3 +1,60 @@
+# Admin
+
+This example shows how to create an admin app that will allow you to block and unblock users.
+
+## Commands
+
+Here are the commands to block and unblock users:
+
+```bash [cmd]
+/admin add @alice
+/admin remove @alice
+/admin name "New Group Name"
+```
+
+::::note[Commands]
+_See how commands are defined in [`src/commands.ts`](https://github.com/xmtp-labs/message-kit/blob/main/examples/group/src/commands.ts)_
+:::details[Commands]
+
+```json
+{
+  "name": "Admin",
+  "icon": "🔐",
+  "description": "Moderate access to the group with admin commands.",
+  "commands": [
+    {
+      "command": "/admin [type]",
+      "description": "Add or remove a user.",
+      "params": {
+        "type": {
+          "default": "",
+          "type": "string",
+          "values": ["add", "remove", "name"]
+        },
+        "username": {
+          "default": "",
+          "type": "username"
+        },
+        "address": {
+          "default": "",
+          "type": "address"
+        },
+        "name": {
+          "default": "",
+          "type": "quoted"
+        }
+      }
+    }
+  ]
+}
+```
+
+:::
+::::
+
+## Logic
+
+```jsx [src/handler/admin.ts]
 import { HandlerContext } from "@xmtp/message-kit";
 
 // Reusable function to handle adding members
@@ -138,3 +195,4 @@ export async function handler(context: HandlerContext) {
   }
   return;
 }
+```

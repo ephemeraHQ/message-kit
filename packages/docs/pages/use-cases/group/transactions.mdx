@@ -1,3 +1,94 @@
+# Transactions
+
+This example demonstrates how to generate frame URLs for different types of transactions.
+
+```bash [cmd]
+/send 1 eth to @bob
+/swap 1 DAI to USDC
+/mint 0x73a333cb82862d4f66f0154229755b184fb4f5b0 1
+/show
+```
+
+_The frame used in this example is [BaseFrame](https://base-frame-lyart.vercel.app)_, made by [builders.garden](https://github.com/builders-garden)
+
+::::note[Commands]
+To declare this commands you need to add them first. Learn more about commands [here](/concepts/commands).
+:::details[Snippet]
+
+```json
+{
+  "name": "Base Transactions",
+  "icon": "🖼️",
+  "description": "Multipurpose transaction frame built onbase.",
+  "commands": [
+    {
+      "command": "/send [amount] [token] [@username]",
+      "description": "Send a specified amount of a cryptocurrency to a destination address.",
+      "params": {
+        "amount": {
+          "default": 10,
+          "type": "number"
+        },
+        "token": {
+          "default": "usdc",
+          "type": "string",
+          "values": ["eth", "dai", "usdc", "degen"] // Accepted tokens
+        },
+        "username": {
+          "default": "",
+          "type": "username"
+        }
+      }
+    },
+    {
+      "command": "/swap [amount] [token_from] [token_to]",
+      "description": "Exchange one type of cryptocurrency for another.",
+      "params": {
+        "amount": {
+          "default": 10,
+          "type": "number"
+        },
+        "token_from": {
+          "default": "usdc",
+          "type": "string",
+          "values": ["eth", "dai", "usdc", "degen"] // Accepted tokens
+        },
+        "token_to": {
+          "default": "eth",
+          "type": "string",
+          "values": ["eth", "dai", "usdc", "degen"] // Accepted tokenss
+        }
+      }
+    },
+    {
+      "command": "/mint [collection_address] [token_id]",
+      "description": "Create (mint) a new token or NFT.",
+      "params": {
+        "collection": {
+          "default": "0x73a333cb82862d4f66f0154229755b184fb4f5b0",
+          "type": "address"
+        },
+        "tokenId": {
+          "default": 1,
+          "type": "number"
+        }
+      }
+    },
+    {
+      "command": "/show",
+      "description": "Show the whole frame.",
+      "params": {}
+    }
+  ]
+}
+```
+
+:::
+::::
+
+## Logic
+
+```jsx [src/handler/frames.ts]
 import { HandlerContext } from "@xmtp/message-kit";
 
 // Main handler function for processing commands
@@ -94,3 +185,4 @@ function generateFrameURL(
   }).toString();
   return `${baseUrl}?${queryParams}`;
 }
+```

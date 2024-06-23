@@ -1,0 +1,43 @@
+# Railway
+
+## Introduction
+
+Here’s how to easily deploy this app:
+
+- Sign up at [Railway](https://railway.app/).
+- Click 'New Project' and select 'Node.js'.
+- Create a Redis DB or other (Optional)
+- Connect your GitHub repository
+- Set your environment variables
+- Deploy your application.
+- Register an [ENS domain](https://ens.domains/) and share your app!
+
+## Deployment
+
+1. **Sign Up and Setup**: Create an account at [Railway](https://railway.app/) and start a new empty project.
+
+![](/img/railway/2.png)
+
+2. **Database (Optional)**: Optionally, Right click to add a Redis database to your project.
+
+![](/img/railway/3.png)
+
+- **Get the redis connection string**
+
+![](/img/railway/6.gif)
+
+Add the variable to the env editor in Railway.
+
+```bash [.env]
+KEY= # 0x... the private key of the app (with the 0x prefix)
+XMTP_ENV=production # or `dev`
+REDIS_CONNECTION_STRING= # the connection string for the Redis database
+```
+
+3. **Repository**: Connect your GitHub repository where your app code resides and deploy the repo.
+
+![](/img/railway/5.png)
+
+4. **Environment Variables**: Set up environment variables in Railway.
+
+![](/img/railway/5.gif)

@@ -14,10 +14,6 @@
     "format": "turbo run format",
     "format:check": "turbo run format:check",
     "publish": "yarn build && changeset publish",
-    "start:docs": "turbo run dev --filter='./packages/docs'",
-    "start:gm": "turbo run start --filter='./examples/gm'",
-    "start:group": "turbo run start --filter='./examples/group'",
-    "start:subscription": "turbo run start --filter='./examples/subscription'",
     "typecheck": "FORCE_COLOR=1 turbo run typecheck"
   },
   "dependencies": {

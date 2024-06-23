@@ -1,4 +1,4 @@
-# Group Example
+# Subscription Example
 
 To learn more about MessageKit go to the [docs][https://message-kit.vercel.app]
 
@@ -12,7 +12,7 @@ Follow the steps below to run the app
 # Clone the repo
 git clone https://github.com/xmtp-labs/message-kit
 # Go to the example folder
-cd examples/group
+cd examples/one-to-one
 # Install the dependencies
 yarn install
 # Run the app
@@ -27,5 +27,5 @@ Set up this variables in your app to connect to redis and xmtp
 ```bash [cmd]
 KEY= # 0x... the private key of the app (with the 0x prefix)
 XMTP_ENV=production # or `dev`
-OPEN_AI_API_KEY= # openai api key
+REDIS_CONNECTION_STRING= # redis db connection string
 ```

@@ -1,0 +1,102 @@
+# Bet
+
+This example shows how to create a bet that creates a new group and sends a message to the users.
+
+## Commands
+
+This is the command to create a bet:
+
+```bash [cmd]
+/bet @bob @alice 100 "bet name"
+```
+
+::::note[Commands]
+To declare this commands you need to add them first. Learn more about commands [here](/concepts/commands).
+:::details[Snippet]
+
+```json
+{
+  "name": "Betting",
+  "icon": "🎰",
+  "description": "Betting on basebet.",
+  "commands": [
+    {
+      "command": "/bet @users [Bet Name] [Bet Amount]",
+      "description": "Bet on basebet.",
+      "params": {
+        "username": {
+          "default": "",
+          "type": "username"
+        },
+        "name": {
+          "default": "",
+          "type": "quoted"
+        },
+        "amount": {
+          "default": 10,
+          "type": "number"
+        }
+      }
+    }
+  ]
+}
+```
+
+:::
+::::
+
+## Logic
+
+the app creates a new group and sends a message to the users with a Frame to confirm the bet
+
+```jsx [src/handler/betting.ts]
+import { HandlerContext } from "@xmtp/message-kit";
+import { ContentTypeText } from "@xmtp/content-type-text";
+
+interface User {
+  address: string;
+  username?: string;
+  inboxId?: string;
+  accountAddresses?: Array<string>;
+  installationIds?: Array<string>;
+}
+
+export async function handler(context: HandlerContext) {
+  const {
+    client,
+    members,
+    message: {
+      content: {
+        params: { amount, name, username },
+      },
+      senderInboxId,
+    },
+  } = context;
+
+  if (!amount || !name || !username) {
+    context.reply(
+      "Missing required parameters. Please provide amount, token, and username.",
+    );
+    return;
+  }
+  let addresses = username
+    .filter((user: User) => user.address)
+    .map((user: User) => user.address!);
+
+  addresses.push(
+    members?.find((user: User) => user.inboxId === senderInboxId)?.address,
+  );
+  const conv = await client.conversations.newConversation(addresses);
+  await conv.send(`Bet created!\n${name} for $${amount}`, ContentTypeText);
+  await conv.send(
+    `https://base-frame-lyart.vercel.app/transaction?transaction_type=send&amount=1&token=eth&receiver=0xA45020BdA714c3F43fECDC6e38F873fFF2Dec8ec`,
+    ContentTypeText,
+  );
+
+  let groupId = conv.id;
+  context.reply(
+    `Bet created!. Go to the new group: https://converse.xyz/${groupId}`,
+    addresses,
+  );
+}
+```

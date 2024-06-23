@@ -113,7 +113,7 @@ export const commands: CommandGroup[] = [
         command: "/bet @users [Bet Name] [Bet Amount]",
         description: "Bet on basebet.",
         params: {
-          users: {
+          username: {
             default: "",
             type: "username",
           },
@@ -159,7 +159,7 @@ export const commands: CommandGroup[] = [
           type: {
             default: "",
             type: "string",
-            values: ["add", "remove"],
+            values: ["add", "remove", "name"],
           },
           username: {
             default: "",
@@ -168,6 +168,10 @@ export const commands: CommandGroup[] = [
           address: {
             default: "",
             type: "address",
+          },
+          name: {
+            default: "",
+            type: "quoted",
           },
         },
       },

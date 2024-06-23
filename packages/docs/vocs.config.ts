@@ -27,8 +27,16 @@ export default defineConfig({
       link: "/installation",
     },
     {
+      text: "Quickstart",
+      link: "/quickstart",
+    },
+    {
+      text: "App Directory",
+      link: "/directory",
+    },
+    {
       text: "Deployment",
-      link: "/concepts/deployment/railway",
+      link: "/deployment",
     },
     {
       text: "Concepts",
@@ -49,11 +57,16 @@ export default defineConfig({
             { text: "Reaction", link: "/concepts/content-types/reaction" },
             { text: "Reply", link: "/concepts/content-types/reply" },
             { text: "Command", link: "/concepts/content-types/command" },
+            { text: "Group updates", link: "/concepts/content-types/updates" },
           ],
         },
         {
           text: "Commands",
           link: "/concepts/commands",
+        },
+        {
+          text: "Conversations",
+          link: "/concepts/conversations",
         },
 
         {
@@ -64,55 +77,50 @@ export default defineConfig({
     },
 
     {
-      text: "Examples",
-      link: "/examples/",
+      text: "Use cases",
       collapsed: false,
       items: [
         {
-          text: "Introduction",
-          link: "/examples/",
-        },
-        {
-          text: "Subscription",
-          link: "/examples/subscription",
+          text: "Group chat",
+          link: "/use-cases/group",
           items: [
             {
-              text: "Redis",
-              link: "/examples/subscription/redis",
+              text: "AI",
+              link: "/use-cases/group/ai",
             },
             {
-              text: "Cron",
-              link: "/examples/subscription/cron",
+              text: "Tipping",
+              link: "/use-cases/group/tipping",
+            },
+            {
+              text: "Betting",
+              link: "/use-cases/group/betting",
+            },
+            {
+              text: "Games",
+              link: "/use-cases/group/games",
+            },
+            {
+              text: "Transactions",
+              link: "/use-cases/group/transactions",
+            },
+            {
+              text: "Admin",
+              link: "/use-cases/group/admin",
             },
           ],
         },
         {
-          text: "Group",
-          link: "/examples/group",
+          text: "One-to-one",
+          link: "/use-cases/one-to-one",
           items: [
             {
-              text: "GPT",
-              link: "/examples/group/gpt",
+              text: "Subscribe",
+              link: "/use-cases/one-to-one/subscribe",
             },
             {
-              text: "Tipping",
-              link: "/examples/group/tipping",
-            },
-            {
-              text: "Bet",
-              link: "/examples/group/bet",
-            },
-            {
-              text: "Games",
-              link: "/examples/group/games",
-            },
-            {
-              text: "Frames",
-              link: "/examples/group/frames",
-            },
-            {
-              text: "Admin",
-              link: "/examples/group/admin",
+              text: "Broadcast",
+              link: "/use-cases/one-to-one/broadcast",
             },
           ],
         },

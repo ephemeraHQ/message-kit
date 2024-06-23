@@ -37,6 +37,7 @@ export default class HandlerContext {
       typeId: message.contentType.typeId,
       sent: message.sentAt,
     };
+    this.commands = commands;
   }
 
   async reply(message: string, receivers?: string[]) {
