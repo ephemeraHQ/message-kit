@@ -1,5 +1,5 @@
 {
-  "name": "@xmtp/message-kit",
+  "name": "message-kit",
   "version": "1.0.0",
   "license": "MIT",
   "type": "module",

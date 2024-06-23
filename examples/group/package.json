@@ -21,7 +21,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@xmtp/message-kit": "workspace:^",
+    "message-kit": "workspace:^",
     "openai": "^4.52.0"
   },
   "devDependencies": {

@@ -66,7 +66,7 @@ After that, let's add some scripts to our `package.json`
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@xmtp/message-kit": "latest"
+    "message-kit": "latest"
   },
   "devDependencies": {
     "@types/node": "^20.12.7",
@@ -110,7 +110,7 @@ Add the following code to `src/index.ts`. This app will reply `gm` to every mess
 
 ```jsx [src/index.ts]
 import "dotenv/config";
-import { run, HandlerContext } from "@xmtp/message-kit";
+import { run, HandlerContext } from "message-kit";
 
 run(async (context: HandlerContext) => {
   // Get the message and the address from the sender

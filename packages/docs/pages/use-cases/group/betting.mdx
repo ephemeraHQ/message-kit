@@ -50,9 +50,9 @@ To declare these commands you need to add them first. Learn more about commands 
 the app creates a new group and sends a message to the users with a Frame to confirm the bet
 
 ```jsx [src/handler/betting.ts]
-import { HandlerContext } from "@xmtp/message-kit";
+import { HandlerContext } from "message-kit";
 import { ContentTypeText } from "@xmtp/content-type-text";
-import type { User } from "@xmtp/message-kit";
+import type { User } from "message-kit";
 
 export async function handler(context: HandlerContext) {
   const {

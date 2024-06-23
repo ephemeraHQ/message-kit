@@ -1,5 +1,5 @@
-import { HandlerContext } from "@xmtp/message-kit";
-import type { User } from "@xmtp/message-kit";
+import { HandlerContext } from "message-kit";
+import type { User } from "message-kit";
 
 // Reusable function to handle adding members
 function handleAddMembers(
