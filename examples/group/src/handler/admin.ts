@@ -1,16 +1,21 @@
 import { HandlerContext } from "@xmtp/message-kit";
+import type { User } from "@xmtp/message-kit";
 
 // Reusable function to handle adding members
-function handleAddMembers(addedInboxes: any, members: any, adminName: any) {
+function handleAddMembers(
+  addedInboxes: { inboxId: string }[],
+  members: User[],
+  adminName: string,
+) {
   const addedNames = members
-    ?.filter((member: any) =>
+    ?.filter((member: User) =>
       addedInboxes.some(
-        (added: any) =>
+        (added: { inboxId: string }) =>
           added.inboxId.toLowerCase() === member?.inboxId?.toLowerCase(),
       ),
     )
-    .map((member: any) => `@${member.username}`)
-    .filter((name: any) => name.trim() !== "@") // Filter out empty or undefined usernames
+    .map((member: User) => `@${member.username}`)
+    .filter((name: string) => name.trim() !== "@") // Filter out empty or undefined usernames
     .join(", "); // Join names for message formatting
 
   if (addedNames && addedNames.trim().length > 0) {
@@ -26,7 +31,7 @@ function handleAddMembers(addedInboxes: any, members: any, adminName: any) {
   }
   return "";
 }
-function handleRemoveMembers(adminName: any) {
+function handleRemoveMembers(adminName: string) {
   let messages = [
     `See ya! 👋 Don't let the blockchain hit you on the way out, says @${adminName}.`,
     `@${adminName} won't miss the buggy code!`,
@@ -39,7 +44,7 @@ function handleRemoveMembers(adminName: any) {
   ];
   return messages[Math.floor(Math.random() * messages.length)];
 }
-const handleGroupname = (newValue: any, adminName: any) => {
+const handleGroupname = (newValue: string, adminName: string) => {
   let messages = [
     `The group name was just renamed to '${newValue}'! 📝 Now @${adminName} is scrambling to update the smart contracts!`,
     `The group name has changed to '${newValue}'! 🎉 @${adminName} is now rewriting the blockchain in panic!`,
@@ -74,7 +79,7 @@ export async function handler(context: HandlerContext) {
 
     let message: string = "";
     if (addedInboxes.length > 0) {
-      message += handleAddMembers(addedInboxes, members, adminName);
+      message += handleAddMembers(addedInboxes, members!, adminName);
     } else if (removedInboxes.length > 0) {
       message += handleRemoveMembers(adminName);
     } else if (metadataFieldChanges && metadataFieldChanges[0]) {
@@ -101,7 +106,7 @@ export async function handler(context: HandlerContext) {
         break;
       case "remove":
         try {
-          const userArrays = username.map((user: any) => user.address);
+          const userArrays = username.map((user: User) => user.address);
           await conversation.sync();
           await conversation.removeMembers(userArrays);
           const messages = handleRemoveMembers(sender.username);
@@ -113,7 +118,7 @@ export async function handler(context: HandlerContext) {
         break;
       case "add":
         try {
-          const addedInboxes = username.map((user: any) =>
+          const addedInboxes = username.map((user: User) =>
             user.inboxId.toLowerCase(),
           );
           await conversation.sync();
@@ -121,7 +126,7 @@ export async function handler(context: HandlerContext) {
           await conversation.sync();
           const messages = handleAddMembers(
             [{ inboxId: addedInboxes[0] }],
-            members,
+            members!,
             sender.username,
           );
           context.reply(messages);

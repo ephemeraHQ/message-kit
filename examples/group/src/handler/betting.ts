@@ -1,23 +1,15 @@
 import { HandlerContext } from "@xmtp/message-kit";
 import { ContentTypeText } from "@xmtp/content-type-text";
-
-interface User {
-  address: string;
-  username?: string;
-  inboxId?: string;
-  accountAddresses?: Array<string>;
-  installationIds?: Array<string>;
-}
+import type { User } from "@xmtp/message-kit";
 
 export async function handler(context: HandlerContext) {
   const {
     client,
-    members,
     message: {
       content: {
         params: { amount, name, username },
       },
-      sender: { inboxId },
+      sender,
     },
   } = context;
 
@@ -27,13 +19,14 @@ export async function handler(context: HandlerContext) {
     );
     return;
   }
-  let addresses = username
-    .filter((user: User) => user.address)
-    .map((user: User) => user.address!);
 
-  addresses.push(
-    members?.find((user: User) => user.inboxId === inboxId)?.address,
-  );
+  let addresses = [
+    sender.address,
+    ...username
+      .filter((user: User) => user.address)
+      .map((user: User) => user.address!),
+  ];
+
   const conv = await client.conversations.newConversation(addresses);
   await conv.send(`Bet created!\n${name} for $${amount}`, ContentTypeText);
   await conv.send(

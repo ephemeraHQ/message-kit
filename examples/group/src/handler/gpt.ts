@@ -10,7 +10,7 @@ export async function handler(context: HandlerContext) {
     commands,
     message: {
       content: { content: text },
-      sender: { inboxId },
+      sender,
     },
   } = context;
 
@@ -18,11 +18,10 @@ export async function handler(context: HandlerContext) {
   These are the users of the group:${JSON.stringify(members)}\n 
   This group app has many commands avaiable: ${JSON.stringify(commands)}\n
   When possible, answer with the command from the list for the user to perform. put this command in a new line\n
-  The message was sent by ${
-    members?.find((member) => member.inboxId === inboxId)?.username
-  }`;
+  The message was sent by ${sender?.username}`;
   let message = text.replace("@bot", "");
-  let { reply } = await openaiCall(message, inboxId!, systemPrompt);
+
+  let { reply } = await openaiCall(message, sender.inboxId, systemPrompt);
 
   await context.reply(`${reply}`);
 }

@@ -1,10 +1,9 @@
 import { HandlerContext } from "@xmtp/message-kit";
 export async function handler(context: HandlerContext) {
   const {
-    members,
     message: {
       content: { content, params, action, referenceInboxId: receiver },
-      sender: { inboxId },
+      sender,
       typeId,
     },
   } = context;
@@ -33,16 +32,13 @@ export async function handler(context: HandlerContext) {
       receiverAddresses = [receiver];
     }
   }
-  // Find sender user details
-  const senderUser = members?.find((user: any) => user.inboxId === inboxId);
-
-  if (!senderUser || receiverAddresses.length === 0 || amount === 0) {
+  if (!sender || receiverAddresses.length === 0 || amount === 0) {
     context.reply("Sender or receiver or amount not found.");
     return;
   }
 
   // Process sending tokens to each receiver
-  /*receiverAddresses.forEach(async (receiver: any) => {
+  /*receiverAddresses.forEach(async (receiver: string) => {
     context.reply(
       `You received ${amount} tokens from ${senderUser.username}.`,
       [receiver?.address], // Notify only 1 address
@@ -51,6 +47,6 @@ export async function handler(context: HandlerContext) {
   // Notify sender of the transaction details
   context.reply(
     `You sent ${amount * receiverAddresses.length} tokens in total.`,
-    [inboxId], // Notify only 1 address //  [!code hl] // [!code focus]
+    [sender.address], // Notify only 1 address //  [!code hl] // [!code focus]
   );
 }
