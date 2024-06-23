@@ -52,10 +52,10 @@ _See how commands are defined in [`src/commands.ts`](https://github.com/xmtp-lab
 :::
 ::::
 
-## Logic
+## Main code
 
 ```jsx [src/handler/admin.ts]
-import { HandlerContext } from "@xmtp/message-kit";
+import { HandlerContext } from "message-kit";
 
 // Reusable function to handle adding members
 function handleAddMembers(addedInboxes: any, members: any, adminName: any) {

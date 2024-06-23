@@ -222,11 +222,11 @@ export const commands: CommandGroup[] = [
 :::
 ::::
 
-## Logic
+## Main code
 
 ```tsx [src/index.ts]
 import "dotenv/config";
-import { run, HandlerContext } from "@xmtp/message-kit";
+import { run, HandlerContext } from "message-kit";
 import { commands } from "./commands.js";
 import { handler as bet } from "./handler/betting.js";
 import { handler as tipping } from "./handler/tipping.js";
@@ -319,7 +319,7 @@ Set up these variables in your app to connect to redis and xmtp
 ```bash [cmd]
 KEY= # 0x... the private key of the app (with the 0x prefix)
 XMTP_ENV=production # or `dev`
-OPENAI_API_KEY= # your openai api key
+OPEN_AI_API_KEY= # your openai api key
 ```
 
 ::::

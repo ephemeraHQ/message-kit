@@ -5,18 +5,16 @@ import { dts } from "rollup-plugin-dts";
 const external = [
   "@xmtp/content-type-primitives",
   "@xmtp/content-type-text",
-  "@xmtp/grpc-api-client",
-  "@xmtp/mls-client",
-  "@xmtp/proto",
   "@xmtp/content-type-reaction",
   "@xmtp/content-type-reply",
-  "@xmtp/xmtp-js",
+  "@xmtp/content-type-remote-attachment",
+  "@xmtp/mls-client",
+  "@xmtp/proto",
   "viem",
   "viem/accounts",
   "fs",
   "viem/chains",
   "dotenv",
-  "ethers",
 ];
 
 const plugins = [

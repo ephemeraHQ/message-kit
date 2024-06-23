@@ -1,5 +1,5 @@
 {
-  "name": "@xmtp/message-kit",
+  "name": "message-kit",
   "version": "1.0.0",
   "license": "MIT",
   "type": "module",
@@ -29,13 +29,11 @@
   "dependencies": {
     "@xmtp/content-type-primitives": "^1.0.1",
     "@xmtp/content-type-reaction": "^1.1.9",
+    "@xmtp/content-type-remote-attachment": "^1.1.9",
     "@xmtp/content-type-reply": "^1.1.11",
     "@xmtp/content-type-text": "^1.0.0",
-    "@xmtp/grpc-api-client": "^0.2.7",
-    "@xmtp/mls-client": "^0.0.8",
-    "@xmtp/xmtp-js": "^11.6.3",
+    "@xmtp/mls-client": "^0.0.10",
     "dotenv": "^16.4.5",
-    "ethers": "^5.7.2",
     "viem": "^2.15.1"
   },
   "devDependencies": {

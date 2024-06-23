@@ -1,4 +1,4 @@
-import { HandlerContext } from "@xmtp/message-kit";
+import { HandlerContext } from "message-kit";
 
 // Main handler function for processing commands
 export function handler(context: HandlerContext) {

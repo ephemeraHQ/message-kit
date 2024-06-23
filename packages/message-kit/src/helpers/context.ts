@@ -1,14 +1,9 @@
-import { Conversation as JsConversation } from "@xmtp/xmtp-js";
 import { ContentTypeSilent, Silent } from "../content-types/Silent.js";
 import { CommandGroup, AccessHandler } from "./types.js";
-import { Conversation as MlsConversation } from "@xmtp/mls-client";
-
-const isMlsConversation = (
-  conversation: JsConversation | MlsConversation,
-): conversation is MlsConversation => "sync" in conversation;
+import { Conversation } from "@xmtp/mls-client";
 
 export async function grantAccess(
-  conversation: JsConversation | MlsConversation,
+  conversation: Conversation,
   accessHandler: AccessHandler,
   context: any,
 ) {
@@ -20,19 +15,12 @@ export async function grantAccess(
     },
   };
 
-  if (isMlsConversation(conversation)) {
-    await conversation.send(content, ContentTypeSilent);
-    return;
-  } else {
-    await conversation.send(content, {
-      contentType: ContentTypeSilent,
-    });
-    return;
-  }
+  await conversation.send(content, ContentTypeSilent);
+  return;
 }
 
 export async function commands(
-  conversation: JsConversation | MlsConversation,
+  conversation: Conversation,
   commands: CommandGroup[],
 ) {
   // Send a ping with access handler status
@@ -43,13 +31,6 @@ export async function commands(
     },
   };
 
-  if (isMlsConversation(conversation)) {
-    await conversation.send(content, ContentTypeSilent);
-    return;
-  } else {
-    await conversation.send(content, {
-      contentType: ContentTypeSilent,
-    });
-    return;
-  }
+  await conversation.send(content, ContentTypeSilent);
+  return;
 }

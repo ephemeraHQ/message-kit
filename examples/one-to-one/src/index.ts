@@ -2,7 +2,7 @@ import "dotenv/config";
 import { getRedisClient, getRedisConfig } from "./lib/redis.js";
 import cron from "node-cron";
 import { ContentTypeText } from "@xmtp/content-type-text";
-import { xmtpClient, run, HandlerContext } from "@xmtp/message-kit";
+import { xmtpClient, run, HandlerContext } from "message-kit";
 
 //Tracks conversation steps
 const inMemoryCacheStep = new Map<string, number>();
@@ -21,9 +21,16 @@ async function start() {
       const {
         message: {
           content: { content: text },
-          senderAddress,
+          typeId,
+          sender: { address: senderAddress },
         },
       } = context;
+
+      if (typeId !== "text") {
+        /* If the input is not text do nothing */
+        return;
+      }
+
       const lowerContent = text?.toLowerCase();
 
       //Handles unsubscribe and resets step

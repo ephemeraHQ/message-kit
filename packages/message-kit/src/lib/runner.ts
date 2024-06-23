@@ -51,7 +51,7 @@ export default async function run(handler: Handler, config?: Config) {
     if (message) {
       try {
         const {
-          senderInboxId: senderAddress,
+          senderInboxId,
           contentType,
           content: { metadata },
         } = message;
@@ -61,7 +61,7 @@ export default async function run(handler: Handler, config?: Config) {
           message.conversationId,
         );
 
-        if (senderAddress === address) {
+        if (senderInboxId === address) {
           // if same address do nothing
           continue;
         } else if (contentType.sameAs(ContentTypeBotMessage)) {
@@ -71,7 +71,7 @@ export default async function run(handler: Handler, config?: Config) {
           if (metadata?.type === "request_access" && config?.accessHandler) {
             /*Still in prototype phase. If the app detects a user does not have access to the group, the app will send a SilentContentType to the group and this will be catched by the bot. The bot in case it has access will grant access to the user.*/
             grantAccess(conversation, config?.accessHandler, {
-              sender: senderAddress,
+              sender: senderInboxId,
               conversationId: conversation.id,
             });
           } else if (metadata?.type === "ping") {

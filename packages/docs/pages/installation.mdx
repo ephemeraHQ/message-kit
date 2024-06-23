@@ -66,7 +66,7 @@ After that, let's add some scripts to our `package.json`
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@xmtp/message-kit": "latest"
+    "message-kit": "latest"
   },
   "devDependencies": {
     "@types/node": "^20.12.7",
@@ -104,17 +104,17 @@ Next, let's add a `tsconfig.json` file to the root of our project.
 }
 ```
 
-### Logic
+### Main code
 
 Add the following code to `src/index.ts`. This app will reply `gm` to every message it receives.
 
 ```jsx [src/index.ts]
 import "dotenv/config";
-import { run, HandlerContext } from "@xmtp/message-kit";
+import { run, HandlerContext } from "message-kit";
 
 run(async (context: HandlerContext) => {
-  // Get the message and the sender's address
-  const { content, senderAddress } = context.message;
+  // Get the message and the address from the sender
+  const { content, sender } = context.message;
 
   // To reply, just call `reply` on the HandlerContext.
   await context.reply(`gm`);

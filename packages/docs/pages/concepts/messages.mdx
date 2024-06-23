@@ -7,7 +7,7 @@ When you start the app, you can listen for incoming messages in the conversation
 ```jsx [src/index.ts]
 run(async (context: HandlerContext) => {
   // Get the message and the address from the sender
-  const { content, senderAddress } = context.message;
+  const { content, sender } = context.message;
 
   // To reply, just call `reply` on the HandlerContext.
   await context.reply(`gm`);
@@ -22,7 +22,7 @@ The `message` object contains the following
 {
   id: string, // The id of the message
   content: {}, // The content of the message depending on the  type
-  senderAddress: string, // The address of the sender
+  sender: User, // The user object of the sender
   sent: Date, // The timestamp of the message
   typeId: string; // The  type of the message (text, reply or reaction)
 }

@@ -43,10 +43,10 @@ To declare these commands you need to add them first. Learn more about commands 
 :::
 ::::
 
-## Logic
+## Main code
 
 ```jsx [src/handler/tipping.ts]
-import { HandlerContext } from "@xmtp/message-kit";
+import { HandlerContext } from "message-kit";
 export async function handler(context: HandlerContext) {
   const {
     members,
