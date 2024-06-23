@@ -17,7 +17,7 @@ The `text` type contains the following
 Here's an example of how you can receive a `text` message in your app:
 
 ```tsx
-const { content, typeId, senderAddress } = context.message;
+const { content, typeId } = context.message;
 
 if (typeId === "text") {
   const { content: text } = content;

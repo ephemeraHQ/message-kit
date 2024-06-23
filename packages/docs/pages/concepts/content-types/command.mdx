@@ -20,7 +20,7 @@ The command object is a `text` type contains the following extra property:
 Here's an example of how you can receive a `text` message in your app:
 
 ```tsx
-const { content, typeId, senderAddress } = context.message;
+const { content, typeId } = context.message;
 
 if (typeId === "text") {
   const { params } = content;

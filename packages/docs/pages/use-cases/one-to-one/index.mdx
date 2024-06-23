@@ -26,10 +26,18 @@ With simple concepts like steps and if statements create powerful subscription e
 
 ```tsx [src/index.ts]
 run(async (context: HandlerContext) => {
-  const { content, senderAddress } = context.message;
-  const { content: text } = content;
-  //To lower case
-  const lowerContent = text.toLowerCase();
+  const {
+    message: {
+      content: { content: text },
+      typeId,
+      sender: { address: senderAddress },
+    },
+  } = context;
+
+  if (typeId !== "text") {
+    /* If the input is not text do nothing */
+    return;
+  }
 
   //Handles unsubscribe and resets step
   if (stopWords.some((word) => lowerContent.includes(word))) {
