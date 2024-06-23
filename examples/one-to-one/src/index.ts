@@ -24,7 +24,6 @@ async function start() {
           senderAddress,
         },
       } = context;
-
       const lowerContent = text?.toLowerCase();
 
       //Handles unsubscribe and resets step

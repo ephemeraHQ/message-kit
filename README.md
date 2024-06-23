@@ -1,14 +1,14 @@
-# MessageKit
+# Message kit
 
 This is the official repository for MessageKit and examples, powered by [Turborepo](https://turbo.build/repo).
 
-To learn more about MessageKit go to the [docs][https://message-kit.vercel.app]
+> To learn more about Message Kit go to the [docs](https://message-kit.vercel.app)
 
 ## What's inside?
 
 ### Packages
 
-- [`MessageKit`](/packages/message-kit): A kit for quickly building messaging apps
+- [`message-kit`](/packages/message-kit): A kit for quickly building messaging apps
 - [`create-message-kit`](/packages/create-message-kit): A CLI for creating new apps easily
 - [`docs`](/packages/docs): Documentation for MessageKit
 
@@ -16,7 +16,7 @@ To learn more about MessageKit go to the [docs][https://message-kit.vercel.app]
 
 - [`gm`](/examples/gm): A simple, customizable, and powerful conversational framework
 - [`one-to-one`](/examples/one-to-one): A simple, customizable, and powerful conversational framework
-- [`group`](/examples/group): Groupchat app example.
+- [`group`](/examples/group): Group chat app example.
 
 ## Contributing
 

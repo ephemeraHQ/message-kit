@@ -138,7 +138,7 @@ export async function handler(context: HandlerContext) {
       console.log(message);
     } else if (metadataFieldChanges && metadataFieldChanges[0]) {
       const { fieldName, newValue } = metadataFieldChanges?.[0];
-      if (fieldName == "group_name") {
+      if (fieldName === "group_name") {
         message += handleGroupname(newValue, adminName);
       }
     }
@@ -154,7 +154,7 @@ export async function handler(context: HandlerContext) {
           const messages = handleGroupname(name, "bot");
           context.reply(messages);
         } catch (error) {
-          context.reply("No admin priviliges");
+          context.reply("No admin privileges");
           console.error(error);
         }
         break;
@@ -167,7 +167,7 @@ export async function handler(context: HandlerContext) {
           const messages = handleRemoveMembers("bot");
           context.reply(messages);
         } catch (error) {
-          context.reply("User doesnt exist or admin priviliges");
+          context.reply("User doesn't exist or lacks admin privileges");
           console.error(error);
         }
         break;
@@ -187,7 +187,7 @@ export async function handler(context: HandlerContext) {
           );
           context.reply(messages);
         } catch (error) {
-          context.reply("User already exists or admin priviliges");
+          context.reply("User already exists or lacks admin privileges");
           console.error(error);
         }
         break;

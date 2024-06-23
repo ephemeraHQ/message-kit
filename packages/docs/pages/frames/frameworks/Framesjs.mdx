@@ -2,7 +2,7 @@
 
 Discover how Frog seamlessly incorporates XMTP payloads
 
-- [Frames.js](https://framesjs.org/reference/js/xmtp): Official Framesjs Documentation.
+- [Frames.js](https://framesjs.org/reference/js/xmtp): Official Frames.js Documentation.
 - [Quickstart](https://github.com/framesjs/frames.js/tree/main/templates/next-starter-with-examples/): OnchainKit quickstart that integrates XMTP.
 
 ## Metadata
@@ -41,7 +41,7 @@ async function getResponse(req: any): Promise<NextResponse> {
   const body: FrameRequest = await req.json();
   if (isXmtpFrameRequest(body)) {
     const { isValid, message } = await getXmtpFrameMessage(body);
-    walletAddress = frameMessage?.verifiedWalletAddress;
+    walletAddress = message?.verifiedWalletAddress;
   } else {
     // ...
   }

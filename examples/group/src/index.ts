@@ -18,7 +18,7 @@ run(async (context: HandlerContext) => {
   switch (typeId) {
     case "reaction":
       const { action, content: emoji } = content;
-      if ((emoji == "degen" || emoji == "🎩") && action == "added") {
+      if ((emoji === "degen" || emoji === "🎩") && action === "added") {
         await tipping(context);
       }
       break;

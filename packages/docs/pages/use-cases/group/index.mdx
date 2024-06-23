@@ -1,6 +1,6 @@
 # Group
 
-This is a reference app that will allow you to understand the potential and all of its features. Through many handlers you will be able to understand different use case:
+This is a reference app that will allow you to understand the potential and all of its features. Through many handlers, you will be able to understand different use cases:
 
 - [AI](/use-cases/group/ai): Reply with GPT when called by `@bot`.
 - [Tipping](/use-cases/group/tipping): Tip when a user reacts with the `🎩` emoji, replies `10 $degen` and `/tip`.
@@ -33,7 +33,7 @@ group/
 ```
 
 ::::note[Commands]
-To declare this commands you need to add them first. Learn more about commands [here](/concepts/commands).
+To declare these commands you need to add them first. Learn more about commands [here](/concepts/commands).
 :::details[Snippet]
 
 ```tsx [src/commands.ts]
@@ -80,7 +80,7 @@ export const commands: CommandGroup[] = [
   {
     name: "Base Transactions",
     icon: "🖼️",
-    description: "Multipurpose transaction frame built onbase.",
+    description: "Multipurpose transaction frame built on base.",
     commands: [
       {
         command: "/send [amount] [token] [@username]",
@@ -245,7 +245,7 @@ run(async (context: HandlerContext) => {
   switch (typeId) {
     case "reaction":
       const { action, content: emoji } = content;
-      if ((emoji == "degen" || emoji == "🎩") && action == "added") {
+      if ((emoji === "degen" || emoji === "🎩") && action === "added") {
         await tipping(context);
       }
       break;
@@ -314,7 +314,7 @@ yarn start:watch
 
 ### Variables
 
-Set up this variables in your app to connect to redis and xmtp
+Set up these variables in your app to connect to redis and xmtp
 
 ```bash [cmd]
 KEY= # 0x... the private key of the app (with the 0x prefix)

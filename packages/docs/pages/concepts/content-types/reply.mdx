@@ -22,8 +22,8 @@ Now that you understand how replies are represented, you can receive them in you
 ```tsx
 const { content, typeId } = context.message;
 
-if (typeId == "reply") {
-  const { content: reply, receiver } = content;
+if (typeId === "reply") {
+  const { content: reply, referenceInboxId } = content;
   // Use reply...
 }
 ```

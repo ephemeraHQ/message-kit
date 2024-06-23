@@ -104,7 +104,7 @@ Next, let's add a `tsconfig.json` file to the root of our project.
 }
 ```
 
-### Create `index.ts`
+### Logic
 
 Add the following code to `src/index.ts`. This app will reply `gm` to every message it receives.
 
@@ -113,13 +113,12 @@ import "dotenv/config";
 import { run, HandlerContext } from "@xmtp/message-kit";
 
 run(async (context: HandlerContext) => {
-  // Get the message and the address from the sender
+  // Get the message and the sender's address
   const { content, senderAddress } = context.message;
 
   // To reply, just call `reply` on the HandlerContext.
   await context.reply(`gm`);
 });
-
 ```
 
 ::::
@@ -151,6 +150,6 @@ XMTP_ENV=production # or `dev`
 
 ### Test
 
-Send a message to the app, and will reply `gm`!
+Send a message to the app, and it will reply `gm`!
 
 ::::

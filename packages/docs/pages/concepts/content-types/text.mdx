@@ -19,7 +19,7 @@ Here's an example of how you can receive a `text` message in your app:
 ```tsx
 const { content, typeId, senderAddress } = context.message;
 
-if (typeId == "text") {
+if (typeId === "text") {
   const { content: text } = content;
   // Use text
 }
