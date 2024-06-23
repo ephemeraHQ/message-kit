@@ -12,7 +12,7 @@ Follow the steps below to run the app
 # Clone the repo
 git clone https://github.com/xmtp-labs/message-kit
 # Go to the example folder
-cd examples/subscription
+cd examples/one-to-one
 # Install the dependencies
 yarn install
 # Run the app

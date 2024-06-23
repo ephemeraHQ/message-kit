@@ -85,8 +85,8 @@ export default defineConfig({
           link: "/use-cases/group",
           items: [
             {
-              text: "GPT",
-              link: "/use-cases/group/gpt",
+              text: "AI",
+              link: "/use-cases/group/ai",
             },
             {
               text: "Tipping",
@@ -111,16 +111,16 @@ export default defineConfig({
           ],
         },
         {
-          text: "Subscription",
-          link: "/use-cases/subscription",
+          text: "One-to-one",
+          link: "/use-cases/one-to-one",
           items: [
             {
-              text: "Database",
-              link: "/use-cases/subscription/database",
+              text: "Subscribe",
+              link: "/use-cases/one-to-one/subscribe",
             },
             {
-              text: "Cron",
-              link: "/use-cases/subscription/cron",
+              text: "Broadcast",
+              link: "/use-cases/one-to-one/broadcast",
             },
           ],
         },

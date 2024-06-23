@@ -1,16 +1,16 @@
-# Subscription
+# One-to-one
 
 This is a simple yet powerful subscription app that will allow you to customize it to your needs.
 
-- [Redis](/use-cases/subscription/database): Integrate with Redis db to store the subscription status
-- [Cron](/use-cases/subscription/cron): Integrate with Cron to send the subscription message every day
+- [Redis](/use-cases/one-to-one/subscribe): Integrate with Redis db to store the subscription status
+- [Cron](/use-cases/one-to-one/broadcast): Integrate with Cron to send the subscription message every day
 
 ## Structure
 
-> Check out the [repository](https://github.com/xmtp-labs/message-kit/tree/main/examples/subscription) for the full code.
+> Check out the [repository](https://github.com/xmtp-labs/message-kit/tree/main/examples/one-to-one) for the full code.
 
 ```
-subscription/              # Your project's root directory.
+one-to-one/              # Your project's root directory.
 ├── src/
 │   ├── index.ts          # Conversational logic // [!code hl] // [!code focus]
 │   └── lib/
@@ -80,8 +80,8 @@ Follow the steps below to run the app
 ```bash [cmd]
 # Clone the repo
 git clone https://github.com/xmtp-labs/message-kit
-# Go to the examples/subscription folder
-cd examples/subscription
+# Go to the examples/one-to-one folder
+cd examples/one-to-one
 # Install the dependencies
 yarn install
 # Run the app

@@ -15,7 +15,7 @@ To learn more about MessageKit go to the [docs][https://message-kit.vercel.app]
 ### Examples
 
 - [`gm`](/examples/gm): A simple, customizable, and powerful conversational framework
-- [`subscription`](/examples/subscription): A simple, customizable, and powerful conversational framework
+- [`one-to-one`](/examples/one-to-one): A simple, customizable, and powerful conversational framework
 - [`group`](/examples/group): Groupchat app example.
 
 ## Contributing
