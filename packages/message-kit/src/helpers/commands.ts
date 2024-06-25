@@ -1,5 +1,38 @@
-import { CommandGroup, CommandConfig, User } from "./types";
+import {
+  CommandGroup,
+  CommandConfig,
+  User,
+  CommandHandlers,
+  AgentHandlers,
+} from "./types";
 import { mapUsernamesToInboxId } from "./usernames";
+
+export function parseIntent(
+  content: string,
+  commands: CommandGroup[],
+  members: User[],
+  commandHandlers?: CommandHandlers,
+  agentHandlers?: AgentHandlers,
+) {
+  let contentReturn;
+  if (content?.startsWith("/")) {
+    const extractedValues = extractCommandValues(
+      content,
+      commands ?? [],
+      members ?? [],
+    );
+
+    contentReturn = {
+      content: content,
+      ...extractedValues,
+    };
+  } else {
+    contentReturn = {
+      content: content,
+    };
+  }
+  return contentReturn;
+}
 
 export function extractCommandValues(
   content: string,

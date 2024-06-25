@@ -27,3 +27,31 @@ if (typeId === "text") {
   // Use params of the command
 }
 ```
+
+Let's say the user sends the command to the app.
+
+```bash [cmd]
+/send 10 usdc @bob
+```
+
+The helper function will extract the parameters from the command.
+
+```json [params]
+{
+  "command": "send",
+  "params": {
+    "amount": 10,
+    "token": "usdc",
+    "username": [
+      {
+        "address": "0xbob",
+        "inboxId": "0xbob",
+        "accountAddresses": ["0xbob"],
+        "name": "bob"
+      }
+    ]
+  }
+}
+```
+
+_See more details in the [commands](/concepts/commands) section._

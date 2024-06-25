@@ -1,4 +1,3 @@
-import "dotenv/config";
 import { run, HandlerContext } from "message-kit";
 
 run(async (context: HandlerContext) => {

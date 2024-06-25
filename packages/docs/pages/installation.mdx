@@ -33,9 +33,9 @@ Create a directory called `src`, and create 3 files:
 ```
 app-project/
 ├── src/
-│   └── index.ts          // [!code ++] // [!code focus]
-├── tsconfig.json         // [!code ++] // [!code focus]
-└── package.json          // [!code ++] // [!code focus]
+│   └── index.ts          //    [!code focus]
+├── tsconfig.json         //    [!code focus]
+└── package.json          //    [!code focus]
 ```
 
 ### Add scripts to `package.json`
@@ -66,7 +66,7 @@ After that, let's add some scripts to our `package.json`
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "message-kit": "latest"
+    "@xmtp/message-kit": "latest"
   },
   "devDependencies": {
     "@types/node": "^20.12.7",
@@ -109,7 +109,6 @@ Next, let's add a `tsconfig.json` file to the root of our project.
 Add the following code to `src/index.ts`. This app will reply `gm` to every message it receives.
 
 ```jsx [src/index.ts]
-import "dotenv/config";
 import { run, HandlerContext } from "message-kit";
 
 run(async (context: HandlerContext) => {

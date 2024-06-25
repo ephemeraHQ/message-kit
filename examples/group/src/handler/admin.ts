@@ -33,8 +33,6 @@ function handleAddMembers(
 }
 function handleRemoveMembers(adminName: string) {
   let messages = [
-    `See ya! 👋 Don't let the blockchain hit you on the way out, says @${adminName}.`,
-    `@${adminName} won't miss the buggy code!`,
     `🪦`,
     `☠️☠️☠️`,
     `💀`,
