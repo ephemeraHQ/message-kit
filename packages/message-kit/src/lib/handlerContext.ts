@@ -42,7 +42,6 @@ export default class HandlerContext {
     );
     this.commandHandlers = commandHandlers;
     this.agentHandlers = agentHandlers;
-    console.log(agentHandlers);
     let content = message.content;
     if (message.contentType.sameAs(ContentTypeText)) {
       content = parseIntent(
