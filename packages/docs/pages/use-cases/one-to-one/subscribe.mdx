@@ -46,7 +46,6 @@ export const getRedisConfig = async (redisClient: any) => {
 Import the redis config file and send it as parameter to the `run` function.
 
 ```jsx [src/index.ts]
-import "dotenv/config";
 import { getRedisClient, getRedisConfig } from "./lib/redis.js";
 import cron from "node-cron";
 import { ContentTypeText } from "@xmtp/content-type-text";

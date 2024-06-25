@@ -1,4 +1,3 @@
-import "dotenv/config";
 import { getRedisClient, getRedisConfig } from "./lib/redis.js";
 import cron from "node-cron";
 import { ContentTypeText } from "@xmtp/content-type-text";

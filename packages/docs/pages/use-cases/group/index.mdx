@@ -1,8 +1,8 @@
-# Group
+# Group chat
 
 This is a reference app that will allow you to understand the potential and all of its features. Through many handlers, you will be able to understand different use cases:
 
-- [AI](/use-cases/group/ai): Reply with GPT when called by `@bot`.
+- [AI](/use-cases/group/agents): Reply with GPT when called by `@agent`.
 - [Tipping](/use-cases/group/tipping): Tip when a user reacts with the `🎩` emoji, replies `10 $degen` and `/tip`.
 - [Betting](/use-cases/group/betting): Create a new group inside a group with `/bet`
 - [Games](/use-cases/group/games): Handle frame games like `/game slot`, `/game wordle`
@@ -19,14 +19,14 @@ group/
 │   ├── index.ts              # Index file of the app. // [!code hl] // [!code focus]
 │   ├── command.ts            # For handling commands. // [!code hl] // [!code focus]
 │   └── handler/
-│         └── gpt.ts          # Handles gpt. // [!code hl] // [!code focus]
-│         └── tipping.ts      # Handles tipping. // [!code hl] // [!code focus]
-│         └── betting.ts          # Handles betting. // [!code hl] // [!code focus]
-│         └── game.ts         # Handles game frames. // [!code hl] // [!code focus]
-│         └── admin.ts        # Handles moderation. // [!code hl] // [!code focus]
-│         └── frame.ts        # Handles the transaction frame. // [!code hl] // [!code focus]
+│         └── agent.ts          # Handles @agent ai agent. // [!code hl] // [!code focus]
+│         └── tipping.ts        # Handles tipping. // [!code hl] // [!code focus]
+│         └── betting.ts        # Handles betting. // [!code hl] // [!code focus]
+│         └── game.ts           # Handles game frames. // [!code hl] // [!code focus]
+│         └── admin.ts          # Handles moderation. // [!code hl] // [!code focus]
+│         └── frame.ts          # Handles the transaction frame. // [!code hl] // [!code focus]
 │   └── lib/
-│         └── gpt.ts          # Handles the openai logic. // [!code hl] // [!code focus]
+│         └── openai.ts          # Handles the openai logic. // [!code hl] // [!code focus]
 ├── package.json
 ├── tsconfig.json
 └── .env
@@ -37,23 +37,7 @@ To declare these commands you need to add them first. Learn more about commands 
 :::details[Snippet]
 
 ```tsx [src/commands.ts]
-interface CommandParamConfig {
-  default?: any;
-  type: "number" | "string" | "username" | "quoted" | "address";
-  values?: string[]; // Accepted values for the parameter
-}
-interface CommandConfig {
-  command: string;
-  description: string;
-  params: Record<string, CommandParamConfig>;
-}
-
-interface CommandGroup {
-  name: string;
-  icon: string;
-  description: string;
-  commands: CommandConfig[];
-}
+import type { CommandGroup } from "message-kit";
 
 export const commands: CommandGroup[] = [
   {
@@ -80,7 +64,7 @@ export const commands: CommandGroup[] = [
   {
     name: "Base Transactions",
     icon: "🖼️",
-    description: "Multipurpose transaction frame built on base.",
+    description: "Multipurpose transaction frame built onbase.",
     commands: [
       {
         command: "/send [amount] [token] [@username]",
@@ -225,71 +209,130 @@ export const commands: CommandGroup[] = [
 ## Main code
 
 ```tsx [src/index.ts]
-import "dotenv/config";
-import { run, HandlerContext } from "message-kit";
+import {
+  run,
+  HandlerContext,
+  AgentHandlers,
+  CommandHandlers,
+} from "message-kit";
 import { commands } from "./commands.js";
 import { handler as bet } from "./handler/betting.js";
 import { handler as tipping } from "./handler/tipping.js";
-import { handler as gpt } from "./handler/gpt.js";
-import { handler as frame } from "./handler/frame.js";
+import { handler as agent } from "./handler/agent.js";
+import { handler as transaction } from "./handler/transaction.js";
+import { handler as splitpayment } from "./handler/payments.js";
 import { handler as games } from "./handler/game.js";
 import { handler as admin } from "./handler/admin.js";
 
+// Define command handlers
+const commandHandlers: CommandHandlers = {
+  "/tip": tipping,
+  "/bet": bet,
+  "/send": transaction,
+  "/swap": transaction,
+  "/mint": transaction,
+  "/show": transaction,
+  "/game": games,
+  "/admin": admin,
+  "/help": async (context: HandlerContext) => {
+    const intro =
+      "Available experiences:\n" +
+      commands
+        .flatMap((app) => app.commands)
+        .map((command) => `${command.command} - ${command.description}`)
+        .join("\n") +
+      "\nUse these commands to interact with specific apps.";
+    context.reply(intro);
+  },
+};
+
+// Define agent handlers
+const agentHandlers: AgentHandlers = {
+  "@agent": agent,
+};
+
+// App configuration
 const appConfig = {
   commands: commands,
+  commandHandlers: commandHandlers,
+  agentHandlers: agentHandlers,
 };
 
 // Main function to run the app
 run(async (context: HandlerContext) => {
-  const { content, typeId } = context.message;
-  switch (typeId) {
-    case "reaction":
-      const { action, content: emoji } = content;
-      if ((emoji === "degen" || emoji === "🎩") && action === "added") {
-        await tipping(context);
-      }
-      break;
-    case "reply":
-      const { content: reply } = content;
-      if (reply.includes("$degen")) {
-        await tipping(context);
-      }
-      break;
-    case "group_updated":
-      await admin(context);
-      break;
-    case "text":
-      const { content: text } = content;
-      if (text.startsWith("/tip")) {
-        await tipping(context);
-      } else if (text.startsWith("@bot")) {
-        await gpt(context);
-      } else if (text.startsWith("/bet")) {
-        await bet(context);
-      } else if (
-        text.startsWith("/send") ||
-        text.startsWith("/swap") ||
-        text.startsWith("/mint") ||
-        text.startsWith("/show")
-      ) {
-        await frame(context);
-      } else if (text.startsWith("/game")) {
-        await games(context);
-      } else if (text.startsWith("/admin")) {
-        console.log(text);
+  const {
+    message: { typeId },
+  } = context;
+
+  try {
+    switch (typeId) {
+      case "reaction":
+        handleReaction(context);
+        break;
+      case "reply":
+        handleReply(context);
+        break;
+      case "group_updated":
         await admin(context);
-      } else if (text === "/help") {
-        const intro =
-          "Available experiences:\n" +
-          commands
-            .flatMap((app) => app.commands)
-            .map((command) => `${command.command} - ${command.description}`)
-            .join("\n") +
-          "\nUse these commands to interact with specific apps.";
-        context.reply(intro);
-      }
+        break;
+      case "remoteStaticAttachment":
+        await handleAttachment(context);
+        break;
+      case "text":
+        await handleTextMessage(context);
+        break;
+      default:
+        console.warn(`Unhandled message type: ${typeId}`);
+    }
+  } catch (error) {
+    console.error("Error handling message:", error);
   }
 }, appConfig);
+
+// Handle reaction messages
+async function handleReaction(context: HandlerContext) {
+  const {
+    content: { content: emoji, action },
+  } = context.message;
+
+  if (action === "added" && (emoji === "degen" || emoji === "🎩")) {
+    await tipping(context);
+  }
+}
+
+// Handle reply messages
+async function handleReply(context: HandlerContext) {
+  const {
+    content: { content: reply },
+  } = context.message;
+
+  if (reply.includes("$degen")) {
+    await tipping(context);
+  }
+}
+
+// Handle attachment messages
+async function handleAttachment(context: HandlerContext) {
+  const {
+    content: { url, filename },
+  } = context.message;
+  await splitpayment(context);
+  context.reply(`Image ${filename} has been uploaded to ${url}`);
+}
+
+// Handle text messages
+async function handleTextMessage(context: HandlerContext) {
+  const {
+    content: { content: text },
+  } = context.message;
+  if (text.startsWith("@")) {
+    await context.handleAgent(text);
+  } else if (text.startsWith("/")) {
+    await context.handleCommand(text);
+  } else {
+    console.log(`Text message: ${text}`);
+  }
+}
 ```
 
 ## Run the app

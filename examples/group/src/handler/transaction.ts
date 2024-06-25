@@ -1,13 +1,12 @@
 import { HandlerContext } from "message-kit";
 
 // Main handler function for processing commands
-export function handler(context: HandlerContext) {
+export async function handler(context: HandlerContext) {
   const {
     message: {
       content: { command, params },
     },
   } = context;
-
   const baseUrl = "https://base-frame-lyart.vercel.app/transaction";
 
   switch (command) {

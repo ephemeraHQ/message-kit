@@ -69,6 +69,10 @@ export default defineConfig({
           link: "/concepts/commands",
         },
         {
+          text: "Agents",
+          link: "/concepts/agents",
+        },
+        {
           text: "Conversations",
           link: "/concepts/conversations",
         },
@@ -89,8 +93,8 @@ export default defineConfig({
           link: "/use-cases/group",
           items: [
             {
-              text: "AI",
-              link: "/use-cases/group/ai",
+              text: "Agents",
+              link: "/use-cases/group/agents",
             },
             {
               text: "Tipping",

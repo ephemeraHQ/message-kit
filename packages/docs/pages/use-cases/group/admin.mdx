@@ -12,9 +12,8 @@ Here are the commands to block and unblock users:
 /admin name "New Group Name"
 ```
 
-::::note[Commands]
-_See how commands are defined in [`src/commands.ts`](https://github.com/xmtp-labs/message-kit/blob/main/examples/group/src/commands.ts)_
-:::details[Commands]
+::::note
+:::details[Command declaration]
 
 ```json
 {
@@ -133,9 +132,7 @@ export async function handler(context: HandlerContext) {
     if (addedInboxes.length > 0) {
       message += handleAddMembers(addedInboxes, members, adminName);
     } else if (removedInboxes.length > 0) {
-      console.log(removedInboxes);
       message += handleRemoveMembers(adminName);
-      console.log(message);
     } else if (metadataFieldChanges && metadataFieldChanges[0]) {
       const { fieldName, newValue } = metadataFieldChanges?.[0];
       if (fieldName === "group_name") {
@@ -162,7 +159,6 @@ export async function handler(context: HandlerContext) {
         try {
           const userArrays = username.map((user: any) => user.address);
           await conversation.sync();
-          console.log("userArrays", userArrays);
           await conversation.removeMembers(userArrays);
           const messages = handleRemoveMembers("bot");
           context.reply(messages);
@@ -176,7 +172,6 @@ export async function handler(context: HandlerContext) {
           const addedInboxes = username.map((user: any) =>
             user.inboxId.toLowerCase(),
           );
-          console.log(addedInboxes);
           await conversation.sync();
           await conversation.addMembersByInboxId(addedInboxes);
           await conversation.sync();

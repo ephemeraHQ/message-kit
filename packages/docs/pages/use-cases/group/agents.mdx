@@ -1,0 +1,125 @@
+# AI Agents
+
+Messages that start with `@agent` will trigger the GPT response.
+
+```bash [cmd]
+@agent send 1 eth to alice
+@agent lets play wordle
+@agent remove @bob from the group
+@agent add @alice to the group
+@agent help me swap 1 eth to usdc
+@agent create a bet with @alice and @bob about the next NBA Game for 20 bucks
+```
+
+## Main code
+
+In this case the app replies with context about the group like users and commands.
+
+```jsx [src/handler/agent.ts]
+import { HandlerContext } from "message-kit";
+import { openaiCall } from "../lib/openai.js";
+
+export async function handler(context: HandlerContext) {
+  if (!process.env.OPEN_AI_API_KEY) {
+    return context.reply("No OpenAI API key found");
+  }
+
+  const {
+    message: {
+      content: { content: text },
+      sender,
+    },
+  } = context;
+
+  const systemPrompt = generateSystemPrompt(context);
+
+  try {
+    let userPrompt = text.replace("@", "");
+    const { reply, history } = await openaiCall(userPrompt, systemPrompt);
+
+    if (reply.startsWith("/")) {
+      context.handleCommand(reply);
+    } else {
+      await context.reply(reply);
+    }
+  } catch (error) {
+    console.error("Error during OpenAI call:", error);
+    await context.reply("An error occurred while processing your request.");
+  }
+}
+
+function generateSystemPrompt(context: HandlerContext) {
+  const {
+    members,
+    commands,
+    message: { sender },
+  } = context;
+
+  return `You are a helpful agent that lives inside a web3 messaging group.\n
+  These are the users of the group: ${JSON.stringify(members?.map((member) => ({ ...member, username: `@${member.username}` })))}\n
+  This group app has many commands available: ${JSON.stringify(commands)}\n
+  If the user asks about performing an action and you can think of a command that would help, answer directly with the command and nothing else. Populate the command with the correct or random values. Don't return it with placeholder values.\n
+  If the user asks explicitly about commands, answer with the command from the list for the user to perform. Put this command in a new line.\n
+  The message was sent by @${sender?.username}`;
+}
+```
+
+## OpenAI middleware
+
+### Install dependency
+
+```bash [cmd]
+yarn add openai
+```
+
+Copy the following code into your `lib/openai.ts` file.
+
+```jsx [src/lib/openai.ts]
+import OpenAI from "openai";
+
+const openai = new OpenAI({
+  apiKey: "sk-proj-BZeFg03TnggnhTkyryXdT3BlbkFJO2UFQSDKdiKLFDxQAtQ2",
+});
+
+export async function openaiCall(userPrompt: string, systemPrompt: string) {
+  let messages = [
+    {
+      role: "system",
+      content: systemPrompt,
+    },
+  ];
+
+  try {
+    if (userPrompt.toLowerCase() === "stop") {
+      // Reset the conversation state
+      messages = [
+        {
+          role: "system",
+          content: systemPrompt,
+        },
+      ];
+    } else {
+      // Add the user's message to the conversation history
+      messages.push({
+        role: "user",
+        content: userPrompt,
+      });
+    }
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: messages as any,
+    });
+    const reply = response.choices[0].message.content;
+    // Add the assistant's reply to the conversation history
+    messages.push({
+      role: "assistant",
+      content: reply || "No response from OpenAI.",
+    });
+
+    return { reply: reply as string, history: messages };
+  } catch (error) {
+    console.error("Failed to fetch from OpenAI:", error);
+    throw error;
+  }
+}
+```

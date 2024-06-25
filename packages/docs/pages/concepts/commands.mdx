@@ -2,24 +2,40 @@
 
 Each app can have a `commands.ts` file that contains the commands that the app can execute. The commands are defined as an array of objects with the following keys:
 
-## Example command
+## Create a command
 
-First think of which command you want the app to respond to. For example
+First think of which command you want the app to respond to. For example:
 
 ```bash [cmd]
 /send [amount] [token] [@username]
 ```
 
-## Create commands
+**Properties**
+
+- **command**: The name of the command.
+- **description**: The description of the command.
+- **params**: Defines the parameters required for the command.
+  - **default**: The default value for the parameter. This can be any type.
+  - **type**: The type of the parameter. It can be one of the following:
+    - `number`: The parameter is a number.
+    - `string`: The parameter is a string.
+    - `username`: The parameter is a username.
+    - `quoted`: The parameter is a quoted string.
+    - `address`: The parameter is an address.
+  - **values**: `[]` An array of strings that defines the accepted values for the parameter.
+
+**Example**
 
 Create the command file `commands.ts` in your project root `src` folder.
 
 ```tsx [src/commands.ts]
-export const commands = [
+import type { CommandGroup } from "message-kit";
+
+export const commands: CommandGroup[] = [
   {
-    name: "BaseFrame",
-    icon: "🖼️",
-    description: "Multipurpose transaction frame.",
+    name: "Transactions",
+    icon: "💸",
+    description: "Multipurpose transaction command.",
     commands: [
       {
         command: "/send [amount] [token] [@username]",
@@ -27,12 +43,10 @@ export const commands = [
           "Send a specified amount of a cryptocurrency to a destination address.",
         params: {
           amount: {
-            // Amount field has special treatment
             default: 10, // Default value
             type: "number", // This will parse it to a number
           },
           token: {
-            // Arbitrary name
             default: "usdc", // Default value
             type: "string", // String field always need to specify accepted values
             values: ["eth", "dai", "usdc", "degen"], // Accepted values
@@ -48,15 +62,22 @@ export const commands = [
 ];
 ```
 
-## Declare commands
+## Handling commands
 
 To declare the access command in the app, you need to add the following code:
 
 ```tsx
+import { run, HandlerContext, CommandHandlers } from "message-kit";
 import { commands } from "./commands.js";
+import { transaction } from "./handler/transaction.js";
+
+const commandHandlers: CommandHandlers = {
+  "/send": transaction,
+};
 
 const appConfig = {
   commands: commands,
+  commandHandlers: commandHandlers,
 };
 
 run(async (context: HandlerContext) => {
@@ -64,23 +85,6 @@ run(async (context: HandlerContext) => {
 }, appConfig);
 ```
 
-## User sends command
+## Receive a command
 
-Finally, the user sends the command to the app.
-
-```bash [cmd]
-/send 10 usdc @bob
-```
-
-## Extract parameters
-
-The helper function will extract the parameters from the command. See more details in the [command](/concepts/content-types/command) type.
-
-```json [params]
-{
-  "command": "send",
-  "params": { "amount": 10, "token": "usdc", "username": ["bob"] }
-}
-```
-
-_Note: The [command helper](https://github.com/xmtp-labs/message-kit/blob/main/packages/message-kit/src/lib/helper.ts) is optional and has limitations in parameter extraction. Still, it's a good starting point. You could consider AI-driven methods that are more adaptable for various command._
+_See more details in the [commands](/concepts/content-types/command) section._

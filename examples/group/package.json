@@ -21,6 +21,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@xmtp/content-type-remote-attachment": "^1.1.9",
     "message-kit": "workspace:^",
     "openai": "^4.52.0"
   },
