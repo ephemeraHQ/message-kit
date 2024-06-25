@@ -1,18 +1,9 @@
 import { default as HandlerContext } from "./handlerContext.js";
-import { Client, ClientOptions } from "@xmtp/mls-client";
+import { Client } from "@xmtp/mls-client";
 import { default as xmtpClient } from "./client.js";
-import { ContentTypeSilent } from "../content-types/Silent.js";
 import { ContentTypeBotMessage } from "../content-types/BotMessage.js";
-import { AccessHandler, CommandGroup, User } from "../helpers/types.js";
-import { grantAccess, commands } from "../helpers/context.js";
+import { Config, Handler } from "../helpers/types.js";
 
-type Handler = (context: HandlerContext) => Promise<void>;
-
-type Config = {
-  commands?: CommandGroup[];
-  client?: ClientOptions;
-  accessHandler?: AccessHandler;
-};
 /**
  * Get a conversation by id
  *
@@ -50,11 +41,7 @@ export default async function run(handler: Handler, config?: Config) {
   for await (const message of stream) {
     if (message) {
       try {
-        const {
-          senderInboxId,
-          contentType,
-          content: { metadata },
-        } = message;
+        const { senderInboxId, contentType } = message;
 
         const conversation = await getConversationById(
           client,
@@ -67,26 +54,29 @@ export default async function run(handler: Handler, config?: Config) {
         } else if (contentType.sameAs(ContentTypeBotMessage)) {
           // if a bot speaks do nothing
           continue;
-        } else if (contentType.sameAs(ContentTypeSilent)) {
+        } /* ‼️ Soon to be deprecated
+        /*
+        If the app detects a user does not have access to the group, the app will send a SilentContentType to the group and this will be catched by the bot. The bot in case it has access will grant access to the user.*/
+        /*
           if (metadata?.type === "request_access" && config?.accessHandler) {
-            /*Still in prototype phase. If the app detects a user does not have access to the group, the app will send a SilentContentType to the group and this will be catched by the bot. The bot in case it has access will grant access to the user.*/
-            grantAccess(conversation, config?.accessHandler, {
+           grantAccess(conversation, config?.accessHandler, {
               sender: senderInboxId,
               conversationId: conversation.id,
             });
           } else if (metadata?.type === "ping") {
-            /*When opening a conversation or adding a member or arbitrarily the app can ping the bots and the bots can reply with their commands*/
+            //When opening a conversation or adding a member or arbitrarily the app can ping the bots and the bots can reply with their commands
             commands(conversation, config?.commands ?? []);
           }
           continue;
-        }
+        }*/
 
-        /* Abstract some of the concepts in the runner */
         const context = new HandlerContext(
           conversation,
           message,
           client,
           config?.commands ?? [],
+          config?.commandHandlers ?? {},
+          config?.agentHandlers ?? {},
         );
 
         await handler(context);
