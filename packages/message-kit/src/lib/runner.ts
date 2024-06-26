@@ -4,26 +4,6 @@ import { default as xmtpClient } from "./client.js";
 import { ContentTypeBotMessage } from "../content-types/BotMessage.js";
 import { Config, Handler } from "../helpers/types.js";
 
-/**
- * Get a conversation by id
- *
- * If not found, sync and list conversations to update the internal mapping
- * If still not found, throw an error
- */
-const getConversationById = async (client: Client, id: string) => {
-  const conversation = client.conversations.get(id);
-  if (!conversation) {
-    await client.conversations.sync();
-    await client.conversations.list();
-    const conversation = client.conversations.get(id);
-    if (!conversation) {
-      throw new Error(`Conversation not found: ${id}`);
-    }
-    return conversation;
-  }
-  return conversation;
-};
-
 export default async function run(handler: Handler, config?: Config) {
   const client = await xmtpClient(config?.client);
   const { inboxId: address } = client;
@@ -31,9 +11,6 @@ export default async function run(handler: Handler, config?: Config) {
   // sync and list conversations
   await client.conversations.sync();
   await client.conversations.list();
-
-  // start streaming groups so that they are added to the internal mapping
-  const groupStream = client.conversations.stream();
 
   // start streaming all messages from all groups
   const stream = await client.conversations.streamAllMessages();
@@ -43,12 +20,12 @@ export default async function run(handler: Handler, config?: Config) {
       try {
         const { senderInboxId, contentType } = message;
 
-        const conversation = await getConversationById(
-          client,
+        const conversation = await client.conversations.getConversationById(
           message.conversationId,
         );
 
-        if (senderInboxId === address) {
+        if (!conversation) continue;
+        else if (senderInboxId === address) {
           // if same address do nothing
           continue;
         } else if (contentType.sameAs(ContentTypeBotMessage)) {

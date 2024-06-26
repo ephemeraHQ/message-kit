@@ -25,6 +25,7 @@ export const fakeUsers: User[] = [
     inboxId: "0c85109d5242431e541c28c0f837cca4ce5b6129b5acae7e8b588c3ba5cba5e2",
     accountAddresses: ["0x460a92579DF57eb3E8786BA72B83e37E03831635"],
     installationIds: [],
+    fake: true,
   },
   {
     username: "eva",
@@ -32,6 +33,7 @@ export const fakeUsers: User[] = [
     inboxId: "3942e354e8cce5e9d550cf152749a795514adbe1c27d97b88b9fcc63a596c7e4",
     accountAddresses: ["0xeAc10D864802fCcfe897E3957776634D1AE006B2"],
     installationIds: [],
+    fake: true,
   },
   {
     username: "bob",
@@ -39,6 +41,7 @@ export const fakeUsers: User[] = [
     inboxId: "ba6c932e48826aafe413d49505531e0c12f5d1c185a2ffe5174c75e9d0692f32",
     accountAddresses: ["0x388547F774377C6BEA0844A3221B0Ae2B33F52A4"],
     installationIds: [],
+    fake: true,
   },
 ];
 export function populateUsernames(
@@ -47,6 +50,7 @@ export function populateUsernames(
   senderInboxId: string,
 ) {
   // Map existing members to the required format
+  console.log(members.length);
   const mappedMembers = members.map((member: any) => ({
     username: member.username?.toLowerCase(),
     accountAddresses: member.accountAddresses.map((address: string) =>
@@ -57,10 +61,15 @@ export function populateUsernames(
     permissionLevel: member.permissionLevel,
   }));
   for (let member of mappedMembers) {
-    if (member.inboxId === senderInboxId.toLowerCase()) {
+    if (member.inboxId.toLowerCase() === senderInboxId.toLowerCase()) {
       member.username = "me";
-    } else if (member.address === clientAddress.toLowerCase()) {
+    } else if (member.address.toLowerCase() === clientAddress.toLowerCase()) {
       member.username = "bot";
+    } else if (
+      member.address.toLowerCase() ===
+      "0xc16c47ea4a9f6ba81664f7623245b2c7429c71dc"
+    ) {
+      member.username = "fabridesktop";
     } else {
       const fakeUser = fakeUsers.find(
         (user) => user.address.toLowerCase() === member.address.toLowerCase(),
@@ -85,6 +94,7 @@ export function populateUsernames(
       address: user.address?.toLowerCase(),
       inboxId: user.inboxId?.toLowerCase(),
       permissionLevel: 0,
+      fake: user.fake,
     });
   });
   return mappedMembers as User[];

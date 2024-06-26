@@ -15,6 +15,7 @@ import {
 import { parseIntent } from "../helpers/commands.js";
 import { ContentTypeReply } from "@xmtp/content-type-reply";
 import { ContentTypeRemoteAttachment } from "@xmtp/content-type-remote-attachment";
+import { NapiCreateGroupOptions } from "@xmtp/mls-client-bindings-node";
 
 export default class HandlerContext {
   message: MessageAbstracted;
@@ -24,6 +25,11 @@ export default class HandlerContext {
   members?: User[];
   commandHandlers?: CommandHandlers;
   agentHandlers?: AgentHandlers;
+  getMessageById: (id: string) => DecodedMessage | null;
+  newConversation: (
+    accountAddresses: string[],
+    options?: NapiCreateGroupOptions,
+  ) => Promise<Conversation>;
 
   constructor(
     conversation: Conversation,
@@ -40,6 +46,14 @@ export default class HandlerContext {
       client.accountAddress,
       message.senderInboxId,
     );
+    this.newConversation = this.client.conversations.newConversation.bind(
+      this.client.conversations,
+    );
+
+    this.getMessageById = this.client.conversations.getMessageById.bind(
+      this.client.conversations,
+    );
+
     this.commandHandlers = commandHandlers;
     this.agentHandlers = agentHandlers;
     let content = message.content;

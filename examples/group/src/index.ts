@@ -52,7 +52,6 @@ run(async (context: HandlerContext) => {
   const {
     message: { typeId },
   } = context;
-
   try {
     switch (typeId) {
       case "reaction":
@@ -102,11 +101,7 @@ async function handleReply(context: HandlerContext) {
 
 // Handle attachment messages
 async function handleAttachment(context: HandlerContext) {
-  const {
-    content: { url, filename },
-  } = context.message;
   await splitpayment(context);
-  context.reply(`Image ${filename} has been uploaded to ${url}`);
 }
 
 // Handle text messages

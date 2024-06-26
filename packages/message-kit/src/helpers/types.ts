@@ -59,6 +59,7 @@ export interface User {
   address: string;
   accountAddresses: string[];
   installationIds: string[];
+  fake?: boolean;
 }
 
 export type MetadataValue = string | number | boolean;

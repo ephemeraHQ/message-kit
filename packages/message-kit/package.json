@@ -32,7 +32,7 @@
     "@xmtp/content-type-remote-attachment": "^1.1.9",
     "@xmtp/content-type-reply": "^1.1.11",
     "@xmtp/content-type-text": "^1.0.0",
-    "@xmtp/mls-client": "^0.0.10",
+    "@xmtp/mls-client": "^0.0.11",
     "dotenv": "^16.4.5",
     "viem": "^2.15.1"
   },

@@ -5,6 +5,7 @@ import type { User } from "message-kit";
 export async function handler(context: HandlerContext) {
   const {
     client,
+    newConversation,
     message: {
       content: {
         params: { amount, name, username },
@@ -27,7 +28,7 @@ export async function handler(context: HandlerContext) {
       .map((user: User) => user.address!),
   ];
 
-  const conv = await client.conversations.newConversation(addresses);
+  const conv = await newConversation(addresses);
   await conv.send(`Bet created!\n${name} for $${amount}`, ContentTypeText);
   await conv.send(
     `https://base-frame-lyart.vercel.app/transaction?transaction_type=send&amount=1&token=eth&receiver=0xA45020BdA714c3F43fECDC6e38F873fFF2Dec8ec`,
