@@ -14,18 +14,30 @@ import {
 } from "../helpers/types.js";
 import { parseIntent } from "../helpers/commands.js";
 import { ContentTypeReply } from "@xmtp/content-type-reply";
-import { ContentTypeRemoteAttachment } from "@xmtp/content-type-remote-attachment";
+import {
+  Attachment,
+  ContentTypeRemoteAttachment,
+  RemoteAttachment,
+  RemoteAttachmentCodec,
+} from "@xmtp/content-type-remote-attachment";
+
+import { NapiCreateGroupOptions } from "@xmtp/mls-client-bindings-node";
 
 export default class HandlerContext {
-  message: MessageAbstracted;
-  conversation: Conversation;
-  client: Client;
+  message!: MessageAbstracted;
+  conversation!: Conversation;
+  client!: Client;
   commands?: CommandGroup[];
   members?: User[];
   commandHandlers?: CommandHandlers;
   agentHandlers?: AgentHandlers;
+  getMessageById!: (id: string) => DecodedMessage | null;
+  newConversation!: (
+    accountAddresses: string[],
+    options?: NapiCreateGroupOptions,
+  ) => Promise<Conversation>;
 
-  constructor(
+  private constructor(
     conversation: Conversation,
     message: DecodedMessage,
     client: Client,
@@ -35,38 +47,77 @@ export default class HandlerContext {
   ) {
     this.client = client;
     this.conversation = conversation;
-    this.members = populateUsernames(
+    this.commandHandlers = commandHandlers;
+    this.agentHandlers = agentHandlers;
+    this.commands = commands;
+  }
+
+  static async create(
+    conversation: Conversation,
+    message: DecodedMessage,
+    client: Client,
+    commands?: CommandGroup[],
+    commandHandlers?: CommandHandlers,
+    agentHandlers?: AgentHandlers,
+  ): Promise<HandlerContext> {
+    const context = new HandlerContext(
+      conversation,
+      message,
+      client,
+      commands,
+      commandHandlers,
+      agentHandlers,
+    );
+
+    context.members = await populateUsernames(
       conversation.members,
       client.accountAddress,
       message.senderInboxId,
     );
-    this.commandHandlers = commandHandlers;
-    this.agentHandlers = agentHandlers;
+
+    context.newConversation = client.conversations.newConversation.bind(
+      client.conversations,
+    );
+
+    context.getMessageById = client.conversations.getMessageById.bind(
+      client.conversations,
+    );
+
     let content = message.content;
     if (message.contentType.sameAs(ContentTypeText)) {
       content = parseIntent(
         message?.content,
         commands ?? [],
-        this.members ?? [],
+        context.members ?? [],
       );
     } else if (message.contentType.sameAs(ContentTypeReply)) {
       content = {
         ...content,
         typeId: message.content.contentType.typeId,
       };
+    } else if (message.contentType.sameAs(ContentTypeRemoteAttachment)) {
+      const attachment = await RemoteAttachmentCodec.load(
+        message.content,
+        client,
+      );
+      content = {
+        ...content,
+        attachment: attachment,
+      };
     }
-    this.message = {
+
+    context.message = {
       id: message.id,
       content: content,
-      sender: this.members?.find(
+      sender: context.members?.find(
         (member) => member.inboxId === message.senderInboxId,
       ) as User,
       typeId: message.contentType.typeId,
       sent: message.sentAt,
     };
-    this.commands = commands;
-  }
 
+    return context;
+  }
   async reply(message: string, receivers?: string[]) {
     await this.conversation.send(message, ContentTypeText);
   }

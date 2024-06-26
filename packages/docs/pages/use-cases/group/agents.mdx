@@ -17,7 +17,7 @@ In this case the app replies with context about the group like users and command
 
 ```jsx [src/handler/agent.ts]
 import { HandlerContext } from "message-kit";
-import { openaiCall } from "../lib/openai.js";
+import { textGeneration } from "../lib/openai.js";
 
 export async function handler(context: HandlerContext) {
   if (!process.env.OPEN_AI_API_KEY) {
@@ -26,16 +26,14 @@ export async function handler(context: HandlerContext) {
 
   const {
     message: {
-      content: { content: text },
-      sender,
+      content: { content: prompt },
     },
   } = context;
 
   const systemPrompt = generateSystemPrompt(context);
-
   try {
-    let userPrompt = text.replace("@", "");
-    const { reply, history } = await openaiCall(userPrompt, systemPrompt);
+    let userPrompt = prompt.split(" ")[1];
+    const { reply, history } = await textGeneration(userPrompt, systemPrompt);
 
     if (reply.startsWith("/")) {
       context.handleCommand(reply);
@@ -81,7 +79,7 @@ const openai = new OpenAI({
   apiKey: "sk-proj-BZeFg03TnggnhTkyryXdT3BlbkFJO2UFQSDKdiKLFDxQAtQ2",
 });
 
-export async function openaiCall(userPrompt: string, systemPrompt: string) {
+export async function textGeneration(userPrompt: string, systemPrompt: string) {
   let messages = [
     {
       role: "system",

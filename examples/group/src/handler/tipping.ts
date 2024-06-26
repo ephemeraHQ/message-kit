@@ -1,35 +1,39 @@
 import { HandlerContext } from "message-kit";
 export async function handler(context: HandlerContext) {
   const {
-    message: {
-      content: { content, params, action, referenceInboxId: receiver },
-      sender,
-      typeId,
-    },
+    getMessageById,
+    message: { content, sender, typeId },
   } = context;
+
+  const msg = await getMessageById(content.reference);
 
   let amount: number = 0,
     receiverAddresses: string[] = [];
   // Handle different types of messages
   if (typeId === "reply") {
     // Process reply messages
-    receiverAddresses = [receiver];
-    if (content.includes("$degen")) {
-      const match = content.match(/(\d+)/);
+    const { content: reply } = content;
+    receiverAddresses = [msg?.senderInboxId ?? ""];
+    if (reply.includes("$degen")) {
+      const match = reply.match(/(\d+)/);
       if (match) amount = parseInt(match[0]); // Extract amount from reply
     }
   } else if (typeId === "text") {
     // Process text commands starting with "/tip"
-    if (content.startsWith("/tip")) {
-      const { amount: extractedAmount, username } = params;
+    const {
+      params: { amount: extractedAmount, username },
+      content: text,
+    } = content;
+    if (text.startsWith("/tip")) {
       amount = extractedAmount || 10; // Default amount if not specified
       receiverAddresses = username; // Extract receiver from parameters
     }
   } else if (typeId === "reaction") {
+    const { content: reaction, action } = content;
     // Process reactions, specifically tipping added reactions
-    if ((content === "🎩" || content === "degen") && action === "added") {
+    if ((reaction === "🎩" || reaction === "degen") && action === "added") {
       amount = 10; // Set a fixed amount for reactions
-      receiverAddresses = [receiver];
+      receiverAddresses = [msg?.senderInboxId ?? ""];
     }
   }
   if (!sender || receiverAddresses.length === 0 || amount === 0) {

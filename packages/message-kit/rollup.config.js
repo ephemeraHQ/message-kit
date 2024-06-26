@@ -14,7 +14,7 @@ const external = [
   "viem/accounts",
   "fs",
   "viem/chains",
-  "dotenv",
+  "dotenv/config",
 ];
 
 const plugins = [

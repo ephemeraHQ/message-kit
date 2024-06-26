@@ -1,5 +1,5 @@
 import { HandlerContext } from "message-kit";
-import { openaiCall } from "../lib/openai.js";
+import { textGeneration } from "../lib/openai.js";
 
 export async function handler(context: HandlerContext) {
   if (!process.env.OPEN_AI_API_KEY) {
@@ -8,14 +8,14 @@ export async function handler(context: HandlerContext) {
 
   const {
     message: {
-      content: { content: text },
+      content: { content: prompt },
     },
   } = context;
 
   const systemPrompt = generateSystemPrompt(context);
   try {
-    let userPrompt = text.replace("@", "");
-    const { reply, history } = await openaiCall(userPrompt, systemPrompt);
+    let userPrompt = prompt.split(" ")[1];
+    const { reply, history } = await textGeneration(userPrompt, systemPrompt);
 
     if (reply.startsWith("/")) {
       context.handleCommand(reply);

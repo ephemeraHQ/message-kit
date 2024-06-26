@@ -4,7 +4,10 @@ import { SilentCodec } from "../content-types/Silent.js";
 import { BotMessageCodec } from "../content-types/BotMessage.js";
 import { Client, ClientOptions, XmtpEnv } from "@xmtp/mls-client";
 import { TextCodec } from "@xmtp/content-type-text";
-import { RemoteAttachmentCodec } from "@xmtp/content-type-remote-attachment";
+import {
+  AttachmentCodec,
+  RemoteAttachmentCodec,
+} from "@xmtp/content-type-remote-attachment";
 import * as fs from "fs";
 import { createWalletClient, http, toBytes } from "viem";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
@@ -46,6 +49,7 @@ export default async function xmtpClient(
       new ReplyCodec(),
       new SilentCodec(),
       new RemoteAttachmentCodec(),
+      new AttachmentCodec(),
     ],
   };
   // Merge the default configuration with the provided config. Repeated fields in clientConfig will override the default values

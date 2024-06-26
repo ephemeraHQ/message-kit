@@ -4,7 +4,7 @@ const openai = new OpenAI({
   apiKey: "sk-proj-BZeFg03TnggnhTkyryXdT3BlbkFJO2UFQSDKdiKLFDxQAtQ2",
 });
 
-export async function openaiCall(userPrompt: string, systemPrompt: string) {
+export async function textGeneration(userPrompt: string, systemPrompt: string) {
   let messages = [
     {
       role: "system",
@@ -47,7 +47,10 @@ export async function openaiCall(userPrompt: string, systemPrompt: string) {
 }
 
 // New method to interpret an image
-export async function interpretImage(imageUrl: string) {
+export async function vision(imageData: Uint8Array, systemPrompt: string) {
+  const base64Image = Buffer.from(imageData).toString("base64");
+  const dataUrl = `data:image/jpeg;base64,${base64Image}`;
+
   try {
     const response = await openai.chat.completions.create({
       model: "gpt-4o",
@@ -55,18 +58,18 @@ export async function interpretImage(imageUrl: string) {
         {
           role: "user",
           content: [
-            { type: "text", text: "What’s in this image?" },
+            { type: "text", text: systemPrompt },
             {
               type: "image_url",
               image_url: {
-                url: imageUrl,
+                url: dataUrl,
               },
             },
           ],
         },
       ],
     });
-    return response.choices[0];
+    return response.choices[0].message.content;
   } catch (error) {
     console.error("Failed to interpret image with OpenAI:", error);
     throw error;

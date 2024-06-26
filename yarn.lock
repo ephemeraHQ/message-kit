@@ -3492,22 +3492,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@xmtp/mls-client-bindings-node@npm:^0.0.6":
-  version: 0.0.6
-  resolution: "@xmtp/mls-client-bindings-node@npm:0.0.6"
-  checksum: 10/8c7c555e518d497c90be553f60e7c0d01225dfa9250df20383cb92d2079a75ab30892b0e0ffd37c3e593e0215f9abf34fedccabf6cc10ffa6a9eb7723130e109
+"@xmtp/mls-client-bindings-node@npm:^0.0.7":
+  version: 0.0.7
+  resolution: "@xmtp/mls-client-bindings-node@npm:0.0.7"
+  checksum: 10/5730868ebac704b967cb0763affc38e2116db69568307d97d77eaf1301718a39c308be9b9aa5f3a2550123e0df8e9ff351a06d9f4bedcd4d4723e5764dfec786
   languageName: node
   linkType: hard
 
-"@xmtp/mls-client@npm:^0.0.10":
-  version: 0.0.10
-  resolution: "@xmtp/mls-client@npm:0.0.10"
+"@xmtp/mls-client@npm:^0.0.11":
+  version: 0.0.11
+  resolution: "@xmtp/mls-client@npm:0.0.11"
   dependencies:
     "@xmtp/content-type-primitives": "npm:^1.0.1"
     "@xmtp/content-type-text": "npm:^1.0.0"
-    "@xmtp/mls-client-bindings-node": "npm:^0.0.6"
+    "@xmtp/mls-client-bindings-node": "npm:^0.0.7"
     "@xmtp/proto": "npm:^3.61.1"
-  checksum: 10/cad1a3ca3f78dd73e9573d4b1a97b1dd2f917b0f7e1317f966472e53b560e859596e3a60edc71f61deed671e636244d60c5f0c587b71ae5ad65e7a252b4b33dc
+  checksum: 10/836287f615bb1fef0903de82c68131d0fe3e34e11a7d7216bdd9341cd29b2a2418c678cfba38309ac6b411df4d3aee26015f8589a9bf7541750a41f2653b8a26
   languageName: node
   linkType: hard
 
@@ -6099,7 +6099,6 @@ __metadata:
   resolution: "group@workspace:examples/group"
   dependencies:
     "@types/node": "npm:^20.14.2"
-    "@xmtp/content-type-remote-attachment": "npm:^1.1.9"
     message-kit: "workspace:^"
     nodemon: "npm:^3.1.3"
     openai: "npm:^4.52.0"
@@ -8128,7 +8127,7 @@ __metadata:
     "@xmtp/content-type-remote-attachment": "npm:^1.1.9"
     "@xmtp/content-type-reply": "npm:^1.1.11"
     "@xmtp/content-type-text": "npm:^1.0.0"
-    "@xmtp/mls-client": "npm:^0.0.10"
+    "@xmtp/mls-client": "npm:^0.0.11"
     dotenv: "npm:^16.4.5"
     jest: "npm:^29.7.0"
     nodemon: "npm:^3.1.3"
