@@ -22,7 +22,6 @@
   },
   "dependencies": {
     "@xmtp/content-type-remote-attachment": "^1.1.9",
-    "file-api": "^0.10.4",
     "message-kit": "workspace:^",
     "openai": "^4.52.0"
   },
