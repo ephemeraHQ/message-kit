@@ -4,7 +4,7 @@ const openai = new OpenAI({
   apiKey: "sk-proj-BZeFg03TnggnhTkyryXdT3BlbkFJO2UFQSDKdiKLFDxQAtQ2",
 });
 
-export async function text(userPrompt: string, systemPrompt: string) {
+export async function textGeneration(userPrompt: string, systemPrompt: string) {
   let messages = [
     {
       role: "system",

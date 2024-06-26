@@ -57,7 +57,7 @@ export default defineConfig({
             { text: "Reaction", link: "/concepts/content-types/reaction" },
             { text: "Reply", link: "/concepts/content-types/reply" },
             { text: "Command", link: "/concepts/content-types/command" },
-            { text: "Image", link: "/concepts/content-types/images" },
+            { text: "Attachment", link: "/concepts/content-types/attachment" },
             {
               text: "Group update",
               link: "/concepts/content-types/group-update",
@@ -111,6 +111,10 @@ export default defineConfig({
             {
               text: "Transactions",
               link: "/use-cases/group/transactions",
+            },
+            {
+              text: "Split Payments",
+              link: "/use-cases/group/payments",
             },
             {
               text: "Admin",

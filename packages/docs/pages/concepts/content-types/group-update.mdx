@@ -15,9 +15,14 @@ The `group_updated` type contains the following
 }
 ```
 
-## Receive a group membership updates
+## Receive an update
 
-When a member is added or removed from a group it will emit a `group_updated` event with a `removedInboxes` or `addedInboxes` array containing the addresses of the users removed or added.
+When a member is added or removed from a group it will emit a `group_updated` event with this properties:
+
+- `initiatedByInboxId`: Address of the user who initiated the update
+- `metadataFieldChanges`: Record of metadata fields that changed
+- `removedInboxes`: Array of addresses of users removed from the group
+- `addedInboxes`: Array of addresses of users added to the group
 
 ```tsx
 if (typeId === "group_updated") {
@@ -31,7 +36,23 @@ if (typeId === "group_updated") {
 }
 ```
 
-## Receive a group name update
+### Added member
+
+When a member is added to a group it will emit a `group_updated` event with a `addedInboxes` array containing the addresses of the users added.
+
+### Removed member
+
+When a member is removed from a group it will emit a `group_updated` event with a `removedInboxes` array containing the addresses of the users removed.
+
+### Admin changed
+
+When the admin is changed it will emit a `group_updated` event with a `metadataFieldChanges` array containing the new admin address.
+
+### Super admin
+
+When the super admin is changed it will emit a `group_updated` event with a `metadataFieldChanges` array containing the new super admin address.
+
+### Group name update
 
 When a group name is changed it will emit a `group_updated` event with a `metadataFieldChanges` array containing the new group name.
 

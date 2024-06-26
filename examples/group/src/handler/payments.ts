@@ -1,27 +1,24 @@
 import { HandlerContext } from "message-kit";
-import { vision, text } from "../lib/openai.js";
-import {
-  RemoteAttachmentCodec,
-  Attachment,
-} from "@xmtp/content-type-remote-attachment";
+import { vision, textGeneration } from "../lib/openai.js";
 
 export async function handler(context: HandlerContext) {
   if (!process.env.OPEN_AI_API_KEY) {
     return context.reply("No OpenAI API key found");
   }
   const {
-    client,
     members,
     commands,
-    message: { content: remoteAttachment, sender },
+    message: {
+      typeId,
+      content: { attachment },
+      sender,
+    },
   } = context;
-  const attachment: Attachment = await RemoteAttachmentCodec.load(
-    remoteAttachment,
-    client,
-  );
-  if (attachment && attachment.data) {
+
+  if (attachment && typeId === "remoteStaticAttachment") {
+    const { data, filename, mimeType } = attachment;
     const response = await vision(
-      attachment.data,
+      data,
       "This image is the bill of a restaurant dinner. Return the total. If you can't find the total, return 'undefined'.",
     );
     if (response?.includes("undefined")) {
@@ -32,7 +29,7 @@ export async function handler(context: HandlerContext) {
       );
     }
     if (response) {
-      const prompt = `You a split wise agent that splits the bill between the members of this group except for the sender.\n
+      const prompt = `You a split wise agent that splits the bill between the members of this group except for the sender and bot.\n
       These are the users of the group: ${JSON.stringify(members?.map((member) => ({ ...member, username: `@${member.username}` })))}\n 
       This group app has many commands available: ${JSON.stringify(commands)}\n
       
@@ -57,7 +54,7 @@ export async function handler(context: HandlerContext) {
       ]
       `;
 
-      const { reply: split } = await text(response, prompt);
+      const { reply: split } = await textGeneration(response, prompt);
       const splitMessages = JSON.parse(split);
       if (Array.isArray(splitMessages)) {
         for (const message of splitMessages) {
