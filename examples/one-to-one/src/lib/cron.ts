@@ -1,34 +1,6 @@
-# Broadcast
-
-Create a cron that sends daily messages to your **redis database** subscribers. This app can run daily or according to your code:
-
-## Main code
-
-Start the cron with the DB of subscribers
-
-```jsx [src/index.ts]
-const redisClient = await getRedisClient();
-startCron(redisClient); // [!code hl] // [!code focus]
-
-run(async (context: HandlerContext) => {
-  // Your logic
-});
-```
-
-## Cron middleware
-
-Install dependencies
-
-```bash [cmd]
-yarn add node-cron
-```
-
-Run a node cron daily to send message to users
-
-```jsx [src/lib/cron.ts]
 import cron from "node-cron";
 import { ContentTypeText } from "@xmtp/content-type-text";
-import { xmtpClient } from "message-kit";
+import { xmtpClient } from "@xmtp/message-kit";
 import { RedisClientType } from "@redis/client";
 
 export async function startCron(redisClient: RedisClientType) {
@@ -61,4 +33,3 @@ export async function startCron(redisClient: RedisClientType) {
     },
   );
 }
-```

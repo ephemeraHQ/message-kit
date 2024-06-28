@@ -15,9 +15,7 @@ import {
 import { parseIntent } from "../helpers/commands.js";
 import { ContentTypeReply } from "@xmtp/content-type-reply";
 import {
-  Attachment,
   ContentTypeRemoteAttachment,
-  RemoteAttachment,
   RemoteAttachmentCodec,
 } from "@xmtp/content-type-remote-attachment";
 

@@ -101,7 +101,7 @@ async function handleReply(context: HandlerContext) {
 
 // Handle attachment messages
 async function handleAttachment(context: HandlerContext) {
-  const response = await splitpayment(context);
+  await splitpayment(context);
 }
 
 // Handle text messages

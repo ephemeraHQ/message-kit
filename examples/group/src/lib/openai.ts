@@ -1,7 +1,7 @@
 import OpenAI from "openai";
 
 const openai = new OpenAI({
-  apiKey: "sk-proj-BZeFg03TnggnhTkyryXdT3BlbkFJO2UFQSDKdiKLFDxQAtQ2",
+  apiKey: process.env.OPEN_AI_API_KEY,
 });
 
 export async function textGeneration(userPrompt: string, systemPrompt: string) {

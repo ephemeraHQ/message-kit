@@ -1,0 +1,73 @@
+# Groups
+
+Included with the context you will get the `conversation` object and the `client` object.
+
+```tsx
+const { client, conversation } = context;
+```
+
+## Create a new group
+
+Using the client you can create a new group with an array of addresses.
+
+```tsx
+const group = await client.conversations.newGroup(addresses);
+```
+
+## Sync a group
+
+Each time you perform an action on a group you must sync it to get the latest state.
+
+```tsx
+await group.sync();
+```
+
+## Update a group name
+
+You can update the name of the group chat.
+
+> 🔒 You need admin privileges to update the name.
+
+```tsx
+// get the name
+const groupName = group.name;
+// update the name
+await group.updateName(name);
+```
+
+## Member management
+
+You can add or remove members from a group.
+
+> 🔒 You need admin privileges to manage members.
+
+### Remove members from a group
+
+```tsx
+//By address
+await group.removeMembers(userAddresses);
+//By inboxId
+await group.removeMembersByInboxId(removedInboxes);
+```
+
+### Add members to a group
+
+```tsx
+//By address
+await group.addMembers(userAddresses);
+//By inboxId
+await group.addMembersByInboxId(addedInboxes);
+```
+
+## Messages
+
+To get the message history in a group you can use the `messages` property.
+
+```tsx
+// sync group first
+await group.sync();
+// get messages
+const messages = group.messages();
+```
+
+To see the full extent of groups refer to XMTP's [Group documentation](https://xmtp.org/docs/build/group-chat).

@@ -1,17 +1,25 @@
 # Installation
 
-## CLI Quickstart
+## Get started
 
-You can use the `create-message-kit` CLI tool, which simplifies the creation and configuration of new apps.
+::::steps
+
+### CLI
+
+This tool simplifies the creation and configuration of new apps.
 
 :::code-group
 
-```bash [npm]
-npm init message-kit
-```
-
 ```bash [yarn]
 yarn create message-kit
+```
+
+```bash [bun]
+bun create message-kit
+```
+
+```bash [npm]
+npm init message-kit
 ```
 
 ```bash [pnpm]
@@ -20,115 +28,20 @@ pnpm create message-kit
 
 :::
 
-## Manual Installation
+_Refer to [structure](/concepts/structure) of the app so see the folder is created._
 
-You can also install it in an existing project, or start from scratch
+### Variables
 
-::::steps
+Create a `.env` file in the root of your project
 
-### Create files
-
-Create a directory called `src`, and create 3 files:
-
-```
-app-project/
-├── src/
-│   └── index.ts          //    [!code focus]
-├── tsconfig.json         //    [!code focus]
-└── package.json          //    [!code focus]
+```bash [cmd]
+KEY= # 0x... the private key of the app (with the 0x prefix)
+XMTP_ENV=dev # or `dev`
 ```
 
-### Add scripts to `package.json`
-
-After that, let's add some scripts to our `package.json`
-
-```json [package.json]
-{
-  "name": "app-project",
-  "version": "0.0.0",
-  "private": true,
-  "type": "module",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
-    }
-  },
-  "main": "dist/index.js",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "scripts": {
-    "build": "tsc",
-    "build:watch": "tsc -w",
-    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "start": "node dist/index.js",
-    "start:watch": "nodemon dist/index.js",
-    "typecheck": "tsc --noEmit"
-  },
-  "dependencies": {
-    "@xmtp/message-kit": "latest"
-  },
-  "devDependencies": {
-    "@types/node": "^20.12.7",
-    "nodemon": "^3.1.0",
-    "prettier": "^3.2.5",
-    "typescript": "^5.4.3"
-  }
-}
-```
-
-### Add typescript configuration
-
-Next, let's add a `tsconfig.json` file to the root of our project.
-
-```json [tsconfig.json]
-{
-  "include": ["src/**/*"],
-  "compilerOptions": {
-    "outDir": "./dist",
-    "allowJs": false,
-    "composite": false,
-    "declaration": true,
-    "declarationMap": true,
-    "forceConsistentCasingInFileNames": true,
-    "isolatedModules": true,
-    "lib": ["ESNext"],
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "resolveJsonModule": true,
-    "skipLibCheck": true,
-    "sourceMap": true,
-    "strict": true,
-    "target": "ESNext"
-  }
-}
-```
-
-### Main code
-
-Add the following code to `src/index.ts`. This app will reply `gm` to every message it receives.
-
-```jsx [src/index.ts]
-import { run, HandlerContext } from "@xmtp/message-kit";
-
-run(async (context: HandlerContext) => {
-  // Get the message and the address from the sender
-  const { content, sender } = context.message;
-
-  // To reply, just call `reply` on the HandlerContext.
-  await context.reply(`gm`);
-});
-```
-
-::::
-
-## Run the app
+### Run the app
 
 Follow the steps below to run the app
-
-::::steps
-
-### Setup
 
 ```bash [cmd]
 # Install the dependencies
@@ -138,17 +51,32 @@ yarn build:watch
 yarn start:watch
 ```
 
-### Variables
-
-Create a `.env` file in the root of your project
-
-```bash [cmd]
-KEY= # 0x... the private key of the app (with the 0x prefix)
-XMTP_ENV=production # or `dev`
-```
-
 ### Test
 
 Send a message to the app, and it will reply `gm`!
 
 ::::
+
+## Manual Installation
+
+You can also install the package manually using your preferred package manager.
+
+:::code-group
+
+```bash [yarn]
+yarn add @xmtp/message-kit
+```
+
+```bash [bun]
+bun install @xmtp/message-kit
+```
+
+```bash [npm]
+npm install @xmtp/message-kit
+```
+
+```bash [pnpm]
+pnpm install @xmtp/message-kit
+```
+
+:::
