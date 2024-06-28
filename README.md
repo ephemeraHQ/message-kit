@@ -20,4 +20,4 @@ This is the official repository for MessageKit and examples, powered by [Turbor
 
 ## Contributing
 
-See our [contribution guide](./CONTRIBUTING.md) to learn more about contributing to this project
+See our [contribution guide](./CONTRIBUTING.md) to learn more about contributing to this project.
