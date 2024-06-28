@@ -15,7 +15,6 @@
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc -w",
-    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "start": "node dist/index.js",
     "start:watch": "nodemon dist/index.js",
     "typecheck": "tsc --noEmit"

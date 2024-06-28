@@ -40,28 +40,69 @@ if (typeId === "group_updated") {
 
 When a member is added to a group it will emit a `group_updated` event with a `addedInboxes` array containing the addresses of the users added.
 
+```tsx
+if (typeId === "group_updated" && addedInboxes.length > 0) {
+  for (const inbox of addedInboxes) {
+    console.log(`User added: ${inbox.inboxId}`);
+    // await someAsyncOperation(inbox.inboxId);
+  }
+}
+```
+
 ### Removed member
 
 When a member is removed from a group it will emit a `group_updated` event with a `removedInboxes` array containing the addresses of the users removed.
+
+```tsx
+if (typeId === "group_updated" && removedInboxes.length > 0) {
+  for (const inbox of removedInboxes) {
+    console.log(`User removed: ${inbox.inboxId}`);
+    // await someAsyncOperation(inbox.inboxId);
+  }
+}
+```
 
 ### Admin changed
 
 When the admin is changed it will emit a `group_updated` event with a `metadataFieldChanges` array containing the new admin address.
 
+```tsx
+if (typeId === "group_updated" && metadataFieldChanges.length > 0) {
+  for (const change of metadataFieldChanges) {
+    if (change.fieldName === "admin") {
+      console.log(`New admin: ${change.newValue}`);
+      // Handle the new admin...
+    }
+  }
+}
+```
+
 ### Super admin
 
 When the super admin is changed it will emit a `group_updated` event with a `metadataFieldChanges` array containing the new super admin address.
+
+```tsx
+if (typeId === "group_updated" && metadataFieldChanges.length > 0) {
+  for (const change of metadataFieldChanges) {
+    if (change.fieldName === "super_admin") {
+      console.log(`New super admin: ${change.newValue}`);
+      // Handle the new super admin...
+    }
+  }
+}
+```
 
 ### Group name update
 
 When a group name is changed it will emit a `group_updated` event with a `metadataFieldChanges` array containing the new group name.
 
 ```tsx
-if (typeId === "group_updated") {
-  if (metadataFieldChanges && metadataFieldChanges[0]) {
-    const { fieldName, newValue } = metadataFieldChanges?.[0];
+if (typeId === "group_updated" && metadataFieldChanges.length > 0) {
+  for (const change of metadataFieldChanges) {
+    const { fieldName, newValue } = change;
     if (fieldName === "group_name") {
-      // Use the new group name...
+      console.log(`New group name: ${newValue}`);
+      // Handle the new group name...
     }
   }
 }

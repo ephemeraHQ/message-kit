@@ -67,8 +67,7 @@ export async function handler(context: HandlerContext) {
       const splitMessages = JSON.parse(split);
       if (Array.isArray(splitMessages)) {
         for (const message of splitMessages) {
-          //@ts-ignore
-          const msg = message.message;
+          const msg = message.message as any;
           if (msg.startsWith("/")) {
             context.handleCommand(msg);
           } else {
@@ -85,7 +84,7 @@ export async function handler(context: HandlerContext) {
 
 ## OpenAI middleware
 
-### Install dependency
+Install dependencies
 
 ```bash [cmd]
 yarn add openai
@@ -97,7 +96,7 @@ Copy the following code into your `lib/openai.ts` file.
 import OpenAI from "openai";
 
 const openai = new OpenAI({
-  apiKey: "sk-proj-BZeFg03TnggnhTkyryXdT3BlbkFJO2UFQSDKdiKLFDxQAtQ2",
+  apiKey: process.env.OPEN_AI_API_KEY,
 });
 
 export async function textGeneration(userPrompt: string, systemPrompt: string) {

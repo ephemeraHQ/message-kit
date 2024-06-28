@@ -49,9 +49,6 @@ export default defineConfig({
         {
           text: "Messages",
           link: "/concepts/messages",
-        },
-        {
-          text: "Types",
           items: [
             { text: "Text", link: "/concepts/content-types/text" },
             { text: "Reaction", link: "/concepts/content-types/reaction" },
@@ -73,14 +70,14 @@ export default defineConfig({
           link: "/concepts/agents",
         },
         {
-          text: "Conversations",
-          link: "/concepts/conversations",
+          text: "Groups",
+          link: "/concepts/groups",
         },
-
+        /*
         {
           text: "Access",
           link: "/concepts/access",
-        },
+        },*/
       ],
     },
 

@@ -58,8 +58,7 @@ export async function handler(context: HandlerContext) {
       const splitMessages = JSON.parse(split);
       if (Array.isArray(splitMessages)) {
         for (const message of splitMessages) {
-          //@ts-ignore
-          const msg = message.message;
+          const msg = message?.message as string;
           if (msg.startsWith("/")) {
             context.handleCommand(msg);
           } else {
