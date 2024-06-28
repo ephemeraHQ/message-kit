@@ -1,4 +1,4 @@
-import type { CommandGroup } from "message-kit";
+import type { CommandGroup } from "@xmtp/message-kit";
 
 export const commands: CommandGroup[] = [
   {

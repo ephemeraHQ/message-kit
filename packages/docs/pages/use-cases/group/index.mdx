@@ -38,7 +38,7 @@ To declare these commands you need to add them first. Learn more about commands 
 :::details[Snippet]
 
 ```tsx [src/commands.ts]
-import type { CommandGroup } from "message-kit";
+import type { CommandGroup } from "@xmtp/message-kit";
 
 export const commands: CommandGroup[] = [
   {
@@ -215,7 +215,7 @@ import {
   HandlerContext,
   AgentHandlers,
   CommandHandlers,
-} from "message-kit";
+} from "@xmtp/message-kit";
 import { commands } from "./commands.js";
 import { handler as bet } from "./handler/betting.js";
 import { handler as tipping } from "./handler/tipping.js";
