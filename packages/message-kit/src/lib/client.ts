@@ -58,7 +58,7 @@ export default async function xmtpClient(
   const client = await Client.create(account.address, finalConfig);
 
   //V2 Init
-  await V2Client.create(wallet as any, finalConfig);
+  await V2Client.create(wallet, finalConfig);
 
   // register identity
   if (!client.isRegistered && client.signatureText) {

@@ -16,6 +16,9 @@
     "publish": "yarn build && changeset publish",
     "typecheck": "FORCE_COLOR=1 turbo run typecheck"
   },
+  "resolutions": {
+    "viem": "^2.16.3"
+  },
   "dependencies": {
     "@changesets/changelog-git": "^0.2.0",
     "@changesets/cli": "^2.27.5"
