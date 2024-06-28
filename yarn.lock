@@ -3587,6 +3587,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@xmtp/xmtp-js@npm:^12.0.0":
+  version: 12.0.0
+  resolution: "@xmtp/xmtp-js@npm:12.0.0"
+  dependencies:
+    "@noble/secp256k1": "npm:1.7.1"
+    "@xmtp/consent-proof-signature": "npm:^0.1.3"
+    "@xmtp/content-type-primitives": "npm:^1.0.1"
+    "@xmtp/content-type-text": "npm:^1.0.0"
+    "@xmtp/proto": "npm:3.54.0"
+    "@xmtp/user-preferences-bindings-wasm": "npm:^0.3.6"
+    async-mutex: "npm:^0.5.0"
+    elliptic: "npm:^6.5.4"
+    long: "npm:^5.2.3"
+    viem: "npm:2.7.15"
+  checksum: 10/9adb40208f89dcc5450923b15cb23a4c0540676602ae313652b31ec05d1170e2ab4da7c041bcb3a7f0affbe1a6a7f8bff3451ffb5394fdd0f7b67a7dc36ce481
+  languageName: node
+  linkType: hard
+
 "abbrev@npm:1":
   version: 1.1.1
   resolution: "abbrev@npm:1.1.1"
@@ -8128,6 +8146,7 @@ __metadata:
     "@xmtp/content-type-reply": "npm:^1.1.11"
     "@xmtp/content-type-text": "npm:^1.0.0"
     "@xmtp/mls-client": "npm:^0.0.11"
+    "@xmtp/xmtp-js": "npm:^12.0.0"
     dotenv: "npm:^16.4.5"
     jest: "npm:^29.7.0"
     nodemon: "npm:^3.1.3"
