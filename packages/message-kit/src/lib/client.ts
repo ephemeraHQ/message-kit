@@ -1,5 +1,6 @@
 import { ReplyCodec } from "@xmtp/content-type-reply";
 import { ReactionCodec } from "@xmtp/content-type-reaction";
+import { Client as V2Client } from "@xmtp/xmtp-js";
 import { SilentCodec } from "../content-types/Silent.js";
 import { BotMessageCodec } from "../content-types/BotMessage.js";
 import { Client, ClientOptions, XmtpEnv } from "@xmtp/mls-client";
@@ -55,6 +56,9 @@ export default async function xmtpClient(
   // Merge the default configuration with the provided config. Repeated fields in clientConfig will override the default values
   const finalConfig = { ...defaultConfig, ...clientConfig };
   const client = await Client.create(account.address, finalConfig);
+
+  //V2 Init
+  await V2Client.create(wallet, finalConfig);
 
   // register identity
   if (!client.isRegistered && client.signatureText) {

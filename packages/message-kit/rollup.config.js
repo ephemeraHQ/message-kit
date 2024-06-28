@@ -9,6 +9,7 @@ const external = [
   "@xmtp/content-type-reply",
   "@xmtp/content-type-remote-attachment",
   "@xmtp/mls-client",
+  "@xmtp/xmtp-js",
   "@xmtp/proto",
   "viem",
   "viem/accounts",

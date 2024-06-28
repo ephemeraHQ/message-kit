@@ -63,6 +63,7 @@ export async function handler(context: HandlerContext) {
     members,
     message: { content, typeId, sender },
   } = context;
+  logGroupUpdates(content);
   if (typeId === "group_updated") {
     const {
       initiatedByInboxId,
@@ -70,6 +71,7 @@ export async function handler(context: HandlerContext) {
       removedInboxes,
       addedInboxes,
     } = content;
+
     // Fetch username from members array mapped by inboxId
     const adminName =
       members?.find((member) => member.inboxId === initiatedByInboxId)
@@ -89,7 +91,7 @@ export async function handler(context: HandlerContext) {
     context.reply(message);
   } else if (typeId === "text") {
     const {
-      params: { type, username, address, name },
+      params: { type, username, name },
     } = content;
     switch (type) {
       case "name":
@@ -136,4 +138,39 @@ export async function handler(context: HandlerContext) {
     }
   }
   return;
+}
+
+function logGroupUpdates(content: any) {
+  const {
+    initiatedByInboxId,
+    metadataFieldChanges,
+    removedInboxes,
+    addedInboxes,
+  } = content;
+  console.log(content);
+  if (addedInboxes.length > 0) {
+    for (const inbox of addedInboxes) {
+      console.log(`User added: ${inbox.inboxId}`);
+      // await someAsyncOperation(inbox.inboxId);
+    }
+  }
+
+  if (removedInboxes.length > 0) {
+    for (const inbox of removedInboxes) {
+      console.log(`User removed: ${inbox.inboxId}`);
+      // await someAsyncOperation(inbox.inboxId);
+    }
+  }
+
+  if (metadataFieldChanges.length > 0) {
+    for (const change of metadataFieldChanges) {
+      if (change.fieldName === "admin") {
+        console.log(`New admin: ${change.newValue}`);
+      } else if (change.fieldName === "super_admin") {
+        console.log(`New super admin: ${change.newValue}`);
+      } else if (change.fieldName === "group_name") {
+        console.log(`New group name: ${change.newValue}`);
+      }
+    }
+  }
 }

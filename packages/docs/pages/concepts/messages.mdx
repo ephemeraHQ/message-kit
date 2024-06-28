@@ -54,7 +54,9 @@ To get the message history in a conversation you can use the `messages` property
 
 ```tsx
 // sync group first
-await group.sync();
+await conversation.sync();
 // get messages
-const messages = group.messages();
+const messages = conversation.messages();
 ```
+
+_Refer to group messages [here](/concepts/groups)_

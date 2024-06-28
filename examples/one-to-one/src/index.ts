@@ -1,7 +1,7 @@
+import { xmtpClient, run, HandlerContext } from "@xmtp/message-kit";
 import { getRedisClient, getRedisConfig } from "./lib/redis.js";
 import cron from "node-cron";
 import { ContentTypeText } from "@xmtp/content-type-text";
-import { xmtpClient, run, HandlerContext } from "@xmtp/message-kit";
 
 //Tracks conversation steps
 const inMemoryCacheStep = new Map<string, number>();
