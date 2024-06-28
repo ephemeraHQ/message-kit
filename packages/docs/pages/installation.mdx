@@ -1,6 +1,6 @@
 # Installation
 
-## Get started
+Let's get started with MessageKit so you can start sending and receiving messages on Xmtp.
 
 ::::steps
 
@@ -29,6 +29,20 @@ pnpm create message-kit
 :::
 
 _Refer to [structure](/concepts/structure) of the app so see the folder is created._
+
+### Example
+
+Start with a simple app that replies with `gm`.
+
+```jsx [src/index.ts]
+run(async (context: HandlerContext) => {
+  // Get the message and the address from the sender
+  const { content, sender } = context.message;
+
+  // To reply, just call `reply` on the HandlerContext.
+  await context.reply(`gm`);
+});
+```
 
 ### Variables
 
