@@ -1,6 +1,6 @@
 import cron from "node-cron";
 import { ContentTypeText } from "@xmtp/content-type-text";
-import { xmtpClient } from "message-kit";
+import { xmtpClient } from "@xmtp/message-kit";
 import { RedisClientType } from "@redis/client";
 
 export async function startCron(redisClient: RedisClientType) {
