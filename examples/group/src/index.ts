@@ -3,7 +3,7 @@ import {
   HandlerContext,
   AgentHandlers,
   CommandHandlers,
-} from "message-kit";
+} from "@xmtp/message-kit";
 import { commands } from "./commands.js";
 import { handler as bet } from "./handler/betting.js";
 import { handler as tipping } from "./handler/tipping.js";

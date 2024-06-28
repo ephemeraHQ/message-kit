@@ -29,7 +29,7 @@ First think of which command you want the app to respond to. For example:
 Create the command file `commands.ts` in your project root `src` folder.
 
 ```tsx [src/commands.ts]
-import type { CommandGroup } from "message-kit";
+import type { CommandGroup } from "@xmtp/message-kit";
 
 export const commands: CommandGroup[] = [
   {
@@ -67,7 +67,7 @@ export const commands: CommandGroup[] = [
 To declare the access command in the app, you need to add the following code:
 
 ```tsx
-import { run, HandlerContext, CommandHandlers } from "message-kit";
+import { run, HandlerContext, CommandHandlers } from "@xmtp/message-kit";
 import { commands } from "./commands.js";
 import { transaction } from "./handler/transaction.js";
 

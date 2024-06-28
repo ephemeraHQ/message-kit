@@ -1,5 +1,5 @@
 import { getRedisClient } from "./lib/redis.js";
-import { run, HandlerContext } from "message-kit";
+import { run, HandlerContext } from "@xmtp/message-kit";
 import { startCron } from "./lib/cron.js";
 
 //Tracks conversation steps
