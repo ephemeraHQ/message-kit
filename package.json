@@ -14,6 +14,7 @@
     "format": "turbo run format",
     "format:check": "turbo run format:check",
     "publish": "yarn build && changeset publish",
+    "test": "FORCE_COLOR=1 turbo run test",
     "typecheck": "FORCE_COLOR=1 turbo run typecheck"
   },
   "dependencies": {
