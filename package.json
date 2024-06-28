@@ -13,7 +13,8 @@
     "clean": "turbo run clean && rm -rf node_modules && rm -rf .turbo && yarn cache clean",
     "format": "turbo run format",
     "format:check": "turbo run format:check",
-    "publish": "yarn build && changeset publish",
+    "publish": "turbo run build --filter='./packages/*' --filter='!./packages/docs' && changeset publish",
+    "test": "FORCE_COLOR=1 turbo run test",
     "typecheck": "FORCE_COLOR=1 turbo run typecheck"
   },
   "dependencies": {

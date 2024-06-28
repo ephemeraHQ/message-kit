@@ -1,4 +1,4 @@
-import { HandlerContext } from "message-kit";
+import { HandlerContext } from "@xmtp/message-kit";
 import { vision, textGeneration } from "../lib/openai.js";
 
 export async function handler(context: HandlerContext) {

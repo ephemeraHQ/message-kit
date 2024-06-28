@@ -16,7 +16,7 @@ Messages that start with `@agent` will trigger the GPT response.
 In this case the app replies with context about the group like users and commands.
 
 ```jsx [src/handler/agent.ts]
-import { HandlerContext } from "message-kit";
+import { HandlerContext } from "@xmtp/message-kit";
 import { textGeneration } from "../lib/openai.js";
 
 export async function handler(context: HandlerContext) {

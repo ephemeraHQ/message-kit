@@ -21,7 +21,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "message-kit": "workspace:*"
+    "@xmtp/message-kit": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^20.14.2",

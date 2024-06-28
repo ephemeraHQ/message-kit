@@ -1,4 +1,4 @@
-import { HandlerContext } from "message-kit";
+import { HandlerContext } from "@xmtp/message-kit";
 export async function handler(context: HandlerContext) {
   const {
     getMessageById,

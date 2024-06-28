@@ -1,6 +1,6 @@
-import { HandlerContext } from "message-kit";
+import { HandlerContext } from "@xmtp/message-kit";
 import { ContentTypeText } from "@xmtp/content-type-text";
-import type { User } from "message-kit";
+import type { User } from "@xmtp/message-kit";
 
 export async function handler(context: HandlerContext) {
   const {
