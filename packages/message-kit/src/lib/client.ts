@@ -10,7 +10,7 @@ import {
   RemoteAttachmentCodec,
 } from "@xmtp/content-type-remote-attachment";
 import * as fs from "fs";
-import { createWalletClient, http, toBytes } from "viem";
+import { createWalletClient, http, toBytes, isHex } from "viem";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { mainnet } from "viem/chains";
 
@@ -19,7 +19,7 @@ export default async function xmtpClient(
   privateKey: string | null = null,
 ): Promise<Client> {
   let key = privateKey ?? process.env.KEY;
-  if (!key) {
+  if (!key || !isHex(key)) {
     key = generatePrivateKey();
     console.error(
       "KEY not set. Using random one. For using your own wallet , set the KEY environment variable.",
@@ -35,6 +35,9 @@ export default async function xmtpClient(
   });
 
   let env = process.env.XMTP_ENV as XmtpEnv;
+  if (!env) {
+    env = "dev" as XmtpEnv;
+  }
 
   if (!fs.existsSync(`.cache`)) {
     fs.mkdirSync(`.cache`);
