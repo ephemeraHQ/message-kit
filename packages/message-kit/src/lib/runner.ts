@@ -45,7 +45,9 @@ export default async function run(handler: Handler, config?: Config) {
           }
           continue;
         }*/
-
+        if (process?.env?.DEBUG) {
+          console.log(`message:`, message.content);
+        }
         const context = await HandlerContext.create(
           conversation,
           message,
