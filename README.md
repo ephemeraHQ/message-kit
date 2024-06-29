@@ -18,10 +18,6 @@ This is the official repository for MessageKit and examples, powered by [Turbor
 - [`one-to-one`](/examples/one-to-one): A simple, customizable, and powerful conversational framework
 - [`group`](/examples/group): Group chat app example.
 
-## App directory
-
-Add your app by sumitting a PR to the App directory [page](/packages/docs/pages/directory.mdx)
-
 ## Contributing
 
 See our [contribution guide](./CONTRIBUTING.md) to learn more about contributing to this project.
