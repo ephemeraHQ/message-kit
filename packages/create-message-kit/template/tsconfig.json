@@ -2,8 +2,7 @@
   "include": ["src/**/*"],
   "compilerOptions": {
     "outDir": "./dist",
-    "allowJs": false,
-    "composite": false,
+    "esModuleInterop": true,
     "declaration": true,
     "declarationMap": true,
     "forceConsistentCasingInFileNames": true,
@@ -15,7 +14,6 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
-    "esModuleInterop": true,
     "target": "ESNext"
   }
 }
