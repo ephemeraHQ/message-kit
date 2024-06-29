@@ -20,7 +20,7 @@ This is the official repository for MessageKit and examples, powered by [Turbor
 
 ## App directory
 
-Add your app to the app directory by sumitting a PR to (/packages/docs/pages/directory.mdx)
+Add your app by sumitting a PR to the App directory [page](/packages/docs/pages/directory.mdx)
 
 ## Contributing
 
