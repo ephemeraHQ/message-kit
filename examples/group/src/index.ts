@@ -113,7 +113,5 @@ async function handleTextMessage(context: HandlerContext) {
     await context.handleAgent(text);
   } else if (text.startsWith("/")) {
     await context.handleCommand(text);
-  } else {
-    console.log(`Text message: ${text}`);
   }
 }
