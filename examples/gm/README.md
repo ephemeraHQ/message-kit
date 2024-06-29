@@ -27,4 +27,5 @@ Set up these variables in your app to connect to redis and xmtp
 ```bash [cmd]
 KEY= # 0x... the private key of the app (with the 0x prefix)
 XMTP_ENV=production # or dev
+DEBUG=false # logs the message on the console
 ```
