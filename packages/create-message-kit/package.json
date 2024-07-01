@@ -1,6 +1,6 @@
 {
   "name": "create-message-kit",
-  "version": "0.0.1",
+  "version": "0.0.9",
   "license": "MIT",
   "type": "module",
   "main": "index.js",
@@ -8,8 +8,7 @@
   "bin": "index.js",
   "files": [
     "index.js",
-    "template/**/*",
-    "examples/gm/**/*"
+    "template/**/*"
   ],
   "scripts": {
     "clean": "rm -rf .turbo && rm -rf node_modules",

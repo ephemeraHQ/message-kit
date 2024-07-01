@@ -2,8 +2,8 @@
 
 This is a simple yet powerful subscription app that will allow you to customize it to your needs.
 
-- [Redis](/use-cases/one-to-one/subscribe): Integrate with Redis db to store the subscription status
-- [Cron](/use-cases/one-to-one/broadcast): Integrate with Cron to send the subscription message every day
+- [Subscribe](/use-cases/one-to-one/subscribe): Integrate with Redis db to store the subscription status
+- [Broadcast](/use-cases/one-to-one/broadcast): Integrate with Cron to send the subscription message every day
 
 ## Structure
 
@@ -121,6 +121,7 @@ Set up these variables in your app to connect to redis and xmtp
 KEY= # 0x... the private key of the app (with the 0x prefix)
 XMTP_ENV=production # or `dev`
 REDIS_CONNECTION_STRING= # the connection string for the Redis database
+DEBUG=false # logs the message on the console
 ```
 
 ::::

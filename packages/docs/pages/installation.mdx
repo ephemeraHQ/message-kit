@@ -1,21 +1,21 @@
 # Installation
 
-## Get started
+Let's get started with MessageKit so you can start sending and receiving messages on [xmtp](https://xmtp.org).
 
 ::::steps
 
-### CLI
+### Cli
 
 This tool simplifies the creation and configuration of new apps.
 
 :::code-group
 
-```bash [yarn]
-yarn create message-kit
-```
-
 ```bash [bun]
 bun create message-kit
+```
+
+```bash [yarn]
+yarn create message-kit
 ```
 
 ```bash [npm]
@@ -30,6 +30,20 @@ pnpm create message-kit
 
 _Refer to [structure](/concepts/structure) of the app so see the folder is created._
 
+### Example
+
+Start with a simple app that replies with `gm`.
+
+```jsx [src/index.ts]
+run(async (context: HandlerContext) => {
+  // Get the message and the address from the sender
+  const { content, sender } = context.message;
+
+  // To reply, just call `reply` on the HandlerContext.
+  await context.reply(`gm`);
+});
+```
+
 ### Variables
 
 Create a `.env` file in the root of your project
@@ -37,13 +51,23 @@ Create a `.env` file in the root of your project
 ```bash [cmd]
 KEY= # 0x... the private key of the app (with the 0x prefix)
 XMTP_ENV=dev # or `dev`
+DEBUG=false # logs the message on the console
 ```
 
 ### Run the app
 
 Follow the steps below to run the app
 
-```bash [cmd]
+:::code-group
+
+```bash [bun]
+# Install the dependencies
+bun install
+# Run the app
+bun run dev
+```
+
+```bash [yarn]
 # Install the dependencies
 yarn install
 # Run the app
@@ -51,11 +75,34 @@ yarn build:watch
 yarn start:watch
 ```
 
+```bash [npm]
+# Install the dependencies
+npm install
+# Run the app
+npm run build:watch
+npm run start:watch
+```
+
+```bash [pnpm]
+# Install the dependencies
+pnpm install
+# Run the app
+pnpm run build:watch
+pnpm run start:watch
+```
+
+:::
+
 ### Test
 
 Send a message to the app, and it will reply `gm`!
 
 ::::
+
+## Examples
+
+- [`one-to-one`](/use-cases/one-to-one): A simple, customizable, and powerful conversational framework
+- [`group`](/use-cases/group): Group chat app example.
 
 ## Manual Installation
 
@@ -63,12 +110,12 @@ You can also install the package manually using your preferred package manager.
 
 :::code-group
 
-```bash [yarn]
-yarn add @xmtp/message-kit
-```
-
 ```bash [bun]
 bun install @xmtp/message-kit
+```
+
+```bash [yarn]
+yarn add @xmtp/message-kit
 ```
 
 ```bash [npm]

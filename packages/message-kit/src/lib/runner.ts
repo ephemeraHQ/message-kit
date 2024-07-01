@@ -1,5 +1,4 @@
 import { default as HandlerContext } from "./handlerContext.js";
-import { Client } from "@xmtp/mls-client";
 import { default as xmtpClient } from "./client.js";
 import { ContentTypeBotMessage } from "../content-types/BotMessage.js";
 import { Config, Handler } from "../helpers/types.js";
@@ -46,7 +45,9 @@ export default async function run(handler: Handler, config?: Config) {
           }
           continue;
         }*/
-
+        if (process?.env?.DEBUG) {
+          console.log(`message:`, message.content);
+        }
         const context = await HandlerContext.create(
           conversation,
           message,

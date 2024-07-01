@@ -28,4 +28,5 @@ Set up these variables in your app to connect to redis and xmtp
 KEY= # 0x... the private key of the app (with the 0x prefix)
 XMTP_ENV=production # or dev
 REDIS_CONNECTION_STRING= # redis db connection string
+DEBUG=false # logs the message on the console
 ```

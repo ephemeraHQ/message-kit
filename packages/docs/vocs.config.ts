@@ -27,11 +27,7 @@ export default defineConfig({
       link: "/installation",
     },
     {
-      text: "Quickstart",
-      link: "/quickstart",
-    },
-    {
-      text: "App Directory",
+      text: "App directory",
       link: "/directory",
     },
     {
