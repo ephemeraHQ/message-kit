@@ -45,16 +45,13 @@ program
     }
 
     //Git ignore
-    // Copy the .gitignore file from the template directory to the new project directory
-    const gitignoreSourcePath = path.join(templatePath, ".gitignore");
+    const npmignoreSourcePath = path.join(projectPath, ".npmignore");
     const gitignoreDestinationPath = path.join(projectPath, ".gitignore");
-    if (fs.existsSync(gitignoreSourcePath)) {
-      await fs.copy(gitignoreSourcePath, gitignoreDestinationPath);
-      console.log(".gitignore file copied.");
+    if (fs.existsSync(npmignoreSourcePath)) {
+      await fs.rename(npmignoreSourcePath, gitignoreDestinationPath);
+      console.log(".npmignore file renamed to .gitignore.");
     } else {
-      console.error(
-        ".gitignore file does not exist in the template directory.",
-      );
+      console.error(".npmignore file does not exist in the project directory.");
     }
 
     console.log("Your new project is ready!");

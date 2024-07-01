@@ -2,8 +2,6 @@
 
 This is the official repository for MessageKit and examples, powered by [Turborepo](https://turbo.build/repo).
 
-> To learn more about MessageKit go to the [docs](https://message-kit.vercel.app)
-
 ## What's inside?
 
 ### Packages

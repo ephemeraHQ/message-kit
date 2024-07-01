@@ -1,7 +1,5 @@
 # Group Example
 
-> To learn more about MessageKit go to the [docs](https://message-kit.vercel.app)
-
 ## Running locally
 
 Follow the steps below to run the app
