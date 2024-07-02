@@ -1,33 +1,5 @@
-# One-to-one
-
-This is a simple yet powerful subscription app that will allow you to customize it to your needs.
-
-- [Subscribe](/use-cases/one-to-one/subscribe): Integrate with Redis db to store the subscription status
-- [Broadcast](/use-cases/one-to-one/broadcast): Integrate with Cron to send the subscription message every day
-
-## Structure
-
-> Check out the [repository](https://github.com/xmtp-labs/message-kit/tree/main/examples/one-to-one) for the full code.
-
-```
-one-to-one/              # Your project's root directory.
-├── src/
-│   ├── index.ts          # Conversational logic // [!code hl] // [!code focus]
-│   └── lib/
-│       └── redis.ts      # Redis middleware // [!code hl] // [!code focus]
-│       └── cron.ts       # Cron middleware // [!code hl] // [!code focus]
-├── package.json
-├── tsconfig.json
-└── .env
-```
-
-## Main code
-
-With a simple conversational logic, steps and if statements create powerful subscription experiences:
-
-```tsx [src/index.ts]
 import { getRedisClient } from "./lib/redis.js";
-import { run, HandlerContext } from "message-kit";
+import { run, HandlerContext } from "@xmtp/message-kit";
 import { startCron } from "./lib/cron.js";
 
 //Tracks conversation steps
@@ -91,37 +63,3 @@ run(async (context: HandlerContext) => {
   //Send the message
   await context.reply(message);
 });
-```
-
-## Run the app
-
-Follow the steps below to run the app
-
-::::steps
-
-### Setup
-
-```bash [cmd]
-# Clone the repo
-git clone https://github.com/xmtp-labs/message-kit
-# Go to the examples/one-to-one folder
-cd examples/one-to-one
-# Install the dependencies
-yarn install
-# Run the app
-yarn build:watch
-yarn start:watch
-```
-
-### Variables
-
-Set up these variables in your app
-
-```bash [.env]
-KEY= # 0x... the private key of the app (with the 0x prefix)
-XMTP_ENV=production # or `dev`
-REDIS_CONNECTION_STRING= # the connection string for the Redis database
-DEBUG=false # logs the message on the console
-```
-
-::::
