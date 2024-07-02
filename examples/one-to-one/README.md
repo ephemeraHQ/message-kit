@@ -1,7 +1,5 @@
 # One-to-One Example
 
-> To learn more about MessageKit go to the [docs](https://message-kit.vercel.app)
-
 ## Running locally
 
 Follow the steps below to run the app
@@ -22,7 +20,7 @@ yarn start:watch
 
 ### Variables
 
-Set up these variables in your app to connect to redis and xmtp
+Set up these variables in your app
 
 ```bash [cmd]
 KEY= # 0x... the private key of the app (with the 0x prefix)

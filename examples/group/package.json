@@ -15,10 +15,9 @@
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc -w",
-    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "dev": "tsc -w & bun run --watch dist/index.js",
     "start": "node dist/index.js",
-    "start:watch": "nodemon dist/index.js",
-    "typecheck": "tsc --noEmit"
+    "start:watch": "nodemon dist/index.js"
   },
   "dependencies": {
     "@xmtp/message-kit": "workspace:^",
@@ -30,7 +29,6 @@
     "prettier": "^3.3.1",
     "typescript": "^5.4.5"
   },
-  "packageManager": "yarn@4.2.2",
   "engines": {
     "node": ">=20"
   }
