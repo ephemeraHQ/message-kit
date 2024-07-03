@@ -246,7 +246,7 @@ Follow these steps to set up and run the project:
 3. **Run the project:**
     - If using \`bun\`:
         \`\`\`sh
-        ${packageManager} dev
+        bun dev
         \`\`\`
     - If using other package managers:
         \`\`\`sh

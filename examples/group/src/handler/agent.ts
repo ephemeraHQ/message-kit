@@ -15,7 +15,7 @@ export async function handler(context: HandlerContext) {
   const systemPrompt = generateSystemPrompt(context);
   try {
     let userPrompt = prompt.split(" ").slice(1).join(" ");
-    if (process.env.MSG_LOG) {
+    if (process.env.MSG_LOG === "true") {
       console.log("userPrompt", userPrompt);
     }
     const { reply, history } = await textGeneration(userPrompt, systemPrompt);
@@ -44,7 +44,7 @@ function generateSystemPrompt(context: HandlerContext) {
   If the user asks about performing an action and you can think of a command that would help, answer directly with the command and nothing else. Populate the command with the correct or random values. Don't return it with placeholder values.\n
   If the user asks explicitly about commands, answer with the command from the list for the user to perform. Put this command in a new line.\n
   The message was sent by @${sender?.username}`;
-  if (process.env.MSG_LOG) {
+  if (process.env.MSG_LOG === "true") {
     // console.log("systemPrompt", systemPrompt);
   }
   return systemPrompt;

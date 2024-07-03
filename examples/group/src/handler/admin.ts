@@ -165,7 +165,7 @@ function logGroupUpdates(content: any) {
     removedInboxes,
     addedInboxes,
   } = content;
-  if (process.env.MSG_LOG) {
+  if (process.env.MSG_LOG === "true") {
     const adminName =
       members?.find((member: User) => member.inboxId === initiatedByInboxId)
         ?.username || "Admin";
