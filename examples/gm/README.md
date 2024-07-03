@@ -25,5 +25,5 @@ Set up these variables in your app
 ```bash [cmd]
 KEY= # 0x... the private key of the app (with the 0x prefix)
 XMTP_ENV=production # or dev
-DEBUG=false # logs the message on the console
+MSG_LOG=false # logs the message on the console
 ```

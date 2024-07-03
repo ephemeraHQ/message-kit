@@ -91,7 +91,7 @@ export const commands: CommandGroup[] = [
   {
     name: "Betting",
     icon: "🎰",
-    description: "Betting on basebet.",
+    description: "Create bets with friends.",
     commands: [
       {
         command: "/bet @users [Bet Name] [Bet Amount]",

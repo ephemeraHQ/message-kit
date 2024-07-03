@@ -1,5 +1,4 @@
 import cron from "node-cron";
-import { ContentTypeText } from "@xmtp/content-type-text";
 import { xmtpClient } from "@xmtp/message-kit";
 import { RedisClientType } from "@redis/client";
 
@@ -20,10 +19,7 @@ export async function startCron(redisClient: RedisClientType) {
           const conversation = await client?.conversations.newConversation([
             address,
           ]);
-          await conversation.send(
-            "Here is your daily update!",
-            ContentTypeText,
-          );
+          await conversation.send("Here is your daily update!");
         }
       }
     },

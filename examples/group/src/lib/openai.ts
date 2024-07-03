@@ -38,7 +38,9 @@ export async function textGeneration(userPrompt: string, systemPrompt: string) {
       role: "assistant",
       content: reply || "No response from OpenAI.",
     });
-
+    if (process.env.MSG_LOG) {
+      console.log("reply", reply);
+    }
     return { reply: reply as string, history: messages };
   } catch (error) {
     console.error("Failed to fetch from OpenAI:", error);

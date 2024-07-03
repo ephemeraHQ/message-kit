@@ -15,36 +15,22 @@ The `group_updated` type contains the following
 }
 ```
 
-## Receive an update
+## Membership update
 
-When a member is added or removed from a group it will emit a `group_updated` event with this properties:
-
-- `initiatedByInboxId`: Address of the user who initiated the update
-- `metadataFieldChanges`: Record of metadata fields that changed
-- `removedInboxes`: Array of addresses of users removed from the group
-- `addedInboxes`: Array of addresses of users added to the group
-
-```tsx
-if (typeId === "group_updated") {
-  const {
-    initiatedByInboxId,
-    metadataFieldChanges,
-    removedInboxes,
-    addedInboxes,
-  } = content;
-  // Use the update information...
-}
-```
+Receive a `group_updated` event when a group membership changes.
 
 ### Added member
 
 When a member is added to a group it will emit a `group_updated` event with a `addedInboxes` array containing the addresses of the users added.
 
 ```tsx
-if (typeId === "group_updated" && addedInboxes.length > 0) {
-  for (const inbox of addedInboxes) {
-    console.log(`User added: ${inbox.inboxId}`);
-    // await someAsyncOperation(inbox.inboxId);
+if (typeId === "group_updated") {
+  const { addedInboxes } = context.message.content;
+
+  if (addedInboxes?.length > 0) {
+    for (const inbox of addedInboxes) {
+      console.log(`User added: ${inbox.inboxId}`);
+    }
   }
 }
 ```
@@ -54,55 +40,34 @@ if (typeId === "group_updated" && addedInboxes.length > 0) {
 When a member is removed from a group it will emit a `group_updated` event with a `removedInboxes` array containing the addresses of the users removed.
 
 ```tsx
-if (typeId === "group_updated" && removedInboxes.length > 0) {
-  for (const inbox of removedInboxes) {
-    console.log(`User removed: ${inbox.inboxId}`);
-    // await someAsyncOperation(inbox.inboxId);
-  }
-}
-```
-
-### Admin changed
-
-When the admin is changed it will emit a `group_updated` event with a `metadataFieldChanges` array containing the new admin address.
-
-```tsx
-if (typeId === "group_updated" && metadataFieldChanges.length > 0) {
-  for (const change of metadataFieldChanges) {
-    if (change.fieldName === "admin") {
-      console.log(`New admin: ${change.newValue}`);
-      // Handle the new admin...
+if (typeId === "group_updated") {
+  const { removedInboxes } = context.message.content;
+  if (removedInboxes?.length > 0) {
+    for (const inbox of removedInboxes) {
+      console.log(`User removed: ${inbox.inboxId}`);
     }
   }
 }
 ```
 
-### Super admin
-
-When the super admin is changed it will emit a `group_updated` event with a `metadataFieldChanges` array containing the new super admin address.
-
-```tsx
-if (typeId === "group_updated" && metadataFieldChanges.length > 0) {
-  for (const change of metadataFieldChanges) {
-    if (change.fieldName === "super_admin") {
-      console.log(`New super admin: ${change.newValue}`);
-      // Handle the new super admin...
-    }
-  }
-}
-```
-
-### Group name update
+## Metadata update
 
 When a group name is changed it will emit a `group_updated` event with a `metadataFieldChanges` array containing the new group name.
 
+Metadata events:
+
+- `group_name`: The name of the group
+- `group_description`: The description of the group
+- `group_image_url_square`: The square image of the group
+
 ```tsx
-if (typeId === "group_updated" && metadataFieldChanges.length > 0) {
-  for (const change of metadataFieldChanges) {
-    const { fieldName, newValue } = change;
-    if (fieldName === "group_name") {
-      console.log(`New group name: ${newValue}`);
-      // Handle the new group name...
+if (typeId === "group_updated") {
+  const { metadataFieldChanges } = context.message.content;
+
+  if (metadataFieldChanges?.length > 0) {
+    for (const change of metadataFieldChanges) {
+      const { fieldName, oldValue, newValue } = change;
+      console.log(`Value ${fieldName} changed from ${oldValue} to ${newValue}`);
     }
   }
 }
