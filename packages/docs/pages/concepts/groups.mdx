@@ -22,11 +22,15 @@ Each time you perform an action on a group you must sync it to get the latest st
 await group.sync();
 ```
 
-## Update a group name
+## Group metadata
+
+> You need admin privileges to update the metadata.
+
+Groups have the following metadata:
+
+### Group name
 
 You can update the name of the group chat.
-
-> 🔒 You need admin privileges to update the name.
 
 ```tsx
 // get the name
@@ -35,11 +39,33 @@ const groupName = group.name;
 await group.updateName(name);
 ```
 
+### Group description
+
+You can update the description of the group chat.
+
+```tsx
+// get the description
+const groupDescription = group.description;
+// update the description
+await group.updateDescription(description);
+```
+
+### Group image
+
+You can update the image of the group chat.
+
+```tsx
+// get the image
+const groupImage = group.imageUrl;
+// update the image
+await group.updateImageUrl(imageUrl);
+```
+
 ## Member management
 
-You can add or remove members from a group.
+> You need admin privileges to manage members.
 
-> 🔒 You need admin privileges to manage members.
+You can add or remove members from a group.
 
 ### Remove members from a group
 

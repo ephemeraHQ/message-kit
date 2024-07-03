@@ -42,6 +42,18 @@ function handleRemoveMembers(adminName: string) {
   ];
   return messages[Math.floor(Math.random() * messages.length)];
 }
+const handleGroupDescription = (newValue: string, adminName: string) => {
+  let messages = [
+    `The group description was just updated to '${newValue}'! 📝 Now @${adminName} is scrambling to update the smart contracts!`,
+  ];
+  return messages[Math.floor(Math.random() * messages.length)];
+};
+const handleGroupImage = (newValue: string, adminName: string) => {
+  let messages = [
+    `The group image was just updated to '${newValue}'! 📝 Now @${adminName} is scrambling to update the smart contracts!`,
+  ];
+  return messages[Math.floor(Math.random() * messages.length)];
+};
 const handleGroupname = (newValue: string, adminName: string) => {
   let messages = [
     `The group name was just renamed to '${newValue}'! 📝 Now @${adminName} is scrambling to update the smart contracts!`,
@@ -78,14 +90,18 @@ export async function handler(context: HandlerContext) {
         ?.username || "Admin";
 
     let message: string = "";
-    if (addedInboxes.length > 0) {
+    if (addedInboxes && addedInboxes.length > 0) {
       message += handleAddMembers(addedInboxes, members!, adminName);
-    } else if (removedInboxes.length > 0) {
+    } else if (removedInboxes && removedInboxes.length > 0) {
       message += handleRemoveMembers(adminName);
     } else if (metadataFieldChanges && metadataFieldChanges[0]) {
       const { fieldName, newValue } = metadataFieldChanges?.[0];
       if (fieldName === "group_name") {
         message += handleGroupname(newValue, adminName);
+      } else if (fieldName === "group_description") {
+        message += handleGroupDescription(newValue, adminName);
+      } else if (fieldName === "group_image_url_square") {
+        message += handleGroupImage(newValue, adminName);
       }
     }
     context.reply(message);
@@ -142,35 +158,35 @@ export async function handler(context: HandlerContext) {
 
 function logGroupUpdates(content: any) {
   const {
+    members,
+    conversation,
     initiatedByInboxId,
     metadataFieldChanges,
     removedInboxes,
     addedInboxes,
   } = content;
-  console.log(content);
-  if (addedInboxes.length > 0) {
+  if (process.env.MSG_LOG === "true") {
+    const adminName =
+      members?.find((member: User) => member.inboxId === initiatedByInboxId)
+        ?.username || "Admin";
+    console.log(`${adminName} updated the group`, content);
+  }
+  if (addedInboxes?.length > 0) {
     for (const inbox of addedInboxes) {
       console.log(`User added: ${inbox.inboxId}`);
-      // await someAsyncOperation(inbox.inboxId);
     }
   }
 
-  if (removedInboxes.length > 0) {
+  if (removedInboxes?.length > 0) {
     for (const inbox of removedInboxes) {
       console.log(`User removed: ${inbox.inboxId}`);
-      // await someAsyncOperation(inbox.inboxId);
     }
   }
 
-  if (metadataFieldChanges.length > 0) {
+  if (metadataFieldChanges?.length > 0) {
     for (const change of metadataFieldChanges) {
-      if (change.fieldName === "admin") {
-        console.log(`New admin: ${change.newValue}`);
-      } else if (change.fieldName === "super_admin") {
-        console.log(`New super admin: ${change.newValue}`);
-      } else if (change.fieldName === "group_name") {
-        console.log(`New group name: ${change.newValue}`);
-      }
+      const { fieldName, oldValue, newValue } = change;
+      console.log(`Value ${fieldName} changed from ${oldValue} to ${newValue}`);
     }
   }
 }

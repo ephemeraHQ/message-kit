@@ -4,6 +4,7 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { intro, log, outro, text, select } from "@clack/prompts";
 import { default as fs } from "fs-extra";
+import { isCancel } from "@clack/prompts";
 import pc from "picocolors";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -12,48 +13,12 @@ program
   .name("byob")
   .description("CLI to initialize projects")
   .action(async () => {
-    intro("Welcome to MessageKit!");
+    intro(pc.red("Welcome to MessageKit!"));
 
-    const templateOptions = [
-      { value: "gm", label: "GM" },
-      { value: "one-to-one", label: "One-to-One" },
-      { value: "group", label: "Group" },
-    ];
+    const { templateType, displayName, destDir } = await gatherProjectInfo();
 
-    const templateType = await select({
-      message: "Select the type of template to initialize:",
-      options: templateOptions,
-    });
-
-    const templateDir = resolve(__dirname, `./examples/${templateType}`);
-
-    const displayName = await text({
-      message: "What is the name of the project to initialize?",
-      validate(value) {
-        if (!value) return "Please enter a name.";
-        return;
-      },
-    });
-    const name = kebabcase(displayName);
-    const destDir = resolve(process.cwd(), name);
-    console.log("Dest dir:", destDir);
-    // Ensure the template directory exists
-    if (!fs.existsSync(templateDir)) {
-      console.error("Template directory does not exist.");
-      process.exit(1);
-    }
-
-    // Copy template files
-    fs.copySync(templateDir, destDir);
-
-    // Replace dotfiles
-    for (const file of fs.readdirSync(destDir)) {
-      if (!file.startsWith("_")) continue;
-      fs.renameSync(
-        resolve(destDir, file),
-        resolve(destDir, `.${file.slice(1)}`),
-      );
-    }
+    // Replace dot files
+    //replaceDotfiles(destDir);
 
     // Create .gitignore
     createGitignore(destDir);
@@ -65,43 +30,68 @@ program
     createTsconfig(destDir);
 
     // Replace package.json properties
-    const pkgJson = fs.readJsonSync(resolve(destDir, "package.json"));
-    pkgJson.name = name;
-    updateDependenciesToLatest(pkgJson);
-    fs.writeJsonSync(resolve(destDir, "package.json"), pkgJson, { spaces: 2 });
+    updatePackageJson(destDir, displayName);
 
     // Wrap up
-    log.success(`Project successfully scaffolded in ${pc.blue(destDir)}!`);
+    log.success(`Project launched in ${pc.red(destDir)}!`);
 
     const pkgManager = detectPackageManager();
 
     // Create README.md file
-    const envExampleContent = fs.readFileSync(
-      resolve(destDir, ".env.example"),
-      "utf8",
-    );
-    createReadme(destDir, templateType, name, pkgManager, envExampleContent);
+    createReadme(destDir, templateType, displayName, pkgManager);
 
-    log.message("Next steps:");
-    log.step(`1. ${pc.blue(`cd ./${name}`)} - Navigate to project`);
-    log.step(`2. ${pc.blue(`${pkgManager} install`)} - Install dependencies`);
-    if (pkgManager === "bun") {
-      log.step(
-        `3. ${pc.blue(`${pkgManager} dev`)} - Build and start project in dev mode`,
-      );
-    } else {
-      log.step(
-        `3. ${pc.blue(`${pkgManager} build:watch`)} - Build project in watch mode`,
-      );
-      log.step(
-        `4. ${pc.blue(`${pkgManager} start:watch`)} - Start project in watch mode`,
-      );
-    }
+    // Log next steps
+    logNextSteps(displayName, pkgManager);
 
-    outro("Happy coding! 🤖");
+    outro(pc.red("Made with ❤️  by XMTP"));
   });
 
 program.parse(process.argv);
+
+async function gatherProjectInfo() {
+  const templateOptions = [
+    { value: "gm", label: "GM" },
+    { value: "one-to-one", label: "One-to-One" },
+    { value: "group", label: "Group" },
+  ];
+
+  const templateType = await select({
+    message: "Select the type of template to initialize:",
+    options: templateOptions,
+  });
+
+  if (isCancel(templateType)) {
+    process.exit(0);
+  }
+
+  const templateDir = resolve(__dirname, `./examples/${templateType}`);
+
+  // Ensure the template directory exists
+  if (!fs.existsSync(templateDir)) {
+    console.error("Template directory does not exist.");
+    process.exit(1);
+  }
+
+  const displayName = await text({
+    message: "What is the name of the project to initialize?",
+    validate(value) {
+      if (!value) return "Please enter a name.";
+      return;
+    },
+  });
+
+  if (isCancel(displayName)) {
+    process.exit(0);
+  }
+
+  const name = kebabcase(displayName);
+  const destDir = resolve(process.cwd(), name);
+
+  // Copy template files
+  fs.copySync(templateDir, destDir);
+
+  return { templateType, displayName, destDir, templateDir };
+}
 
 function updateDependenciesToLatest(pkgJson) {
   const updateToLatest = (deps) => {
@@ -146,7 +136,39 @@ function createTsconfig(destDir) {
     spaces: 2,
   });
 }
+function replaceDotfiles(destDir) {
+  for (const file of fs.readdirSync(destDir)) {
+    if (!file.startsWith("_")) continue;
+    fs.renameSync(
+      resolve(destDir, file),
+      resolve(destDir, `.${file.slice(1)}`),
+    );
+  }
+}
 
+function updatePackageJson(destDir, name) {
+  const pkgJson = fs.readJsonSync(resolve(destDir, "package.json"));
+  pkgJson.name = name;
+  updateDependenciesToLatest(pkgJson);
+  fs.writeJsonSync(resolve(destDir, "package.json"), pkgJson, { spaces: 2 });
+}
+
+function logNextSteps(name, pkgManager) {
+  log.message("Next steps:");
+  log.step(`1. ${pc.red(`cd ./${name}`)} - Navigate to project`);
+  log.step(`2. ${pc.red(`code .`)} - Open with your favorite editor`);
+  log.step(`3. ${pc.red(`${pkgManager} install`)} - Install dependencies`);
+  if (pkgManager === "bun") {
+    log.step(`4. ${pc.red(`${pkgManager} dev`)} - Build and start project`);
+  } else {
+    log.step(
+      `4. ${pc.red(`${pkgManager} build:watch`)} - Build project in watch mode`,
+    );
+    log.step(
+      `5. ${pc.red(`${pkgManager} start:watch`)} - Start project in watch mode`,
+    );
+  }
+}
 function createGitignore(destDir) {
   const gitignoreContent = `
 # Main
@@ -197,13 +219,12 @@ function createEnvFile(destDir) {
 }
 
 // Create README.md file
-function createReadme(
-  destDir,
-  templateType,
-  projectName,
-  packageManager,
-  envExampleContent,
-) {
+function createReadme(destDir, templateType, projectName, packageManager) {
+  const envExampleContent = fs.readFileSync(
+    resolve(destDir, ".env.example"),
+    "utf8",
+  );
+
   const readmeContent = `# ${projectName}
 
 This project is generated using the [MessageKit](https://message-kit.vercel.app) CLI and uses the \`${templateType}\` template. Below are the instructions to set up and run the project.
@@ -225,7 +246,7 @@ Follow these steps to set up and run the project:
 3. **Run the project:**
     - If using \`bun\`:
         \`\`\`sh
-        ${packageManager} dev
+        bun dev
         \`\`\`
     - If using other package managers:
         \`\`\`sh
@@ -243,7 +264,7 @@ ${envExampleContent}
 \`\`\`
 
 ---
-Made with ❤️ by [xmtp](https://xmtp.org)
+Made with ❤️ by [XMTP](https://xmtp.org)
 `;
 
   fs.writeFileSync(resolve(destDir, "README.md"), readmeContent.trim());

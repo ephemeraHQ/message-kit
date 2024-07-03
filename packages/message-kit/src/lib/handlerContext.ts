@@ -117,7 +117,7 @@ export default class HandlerContext {
     return context;
   }
   async reply(message: string, receivers?: string[]) {
-    await this.conversation.send(message, ContentTypeText);
+    await this.conversation.send(message);
   }
 
   async botReply(message: string, receivers?: string[]) {

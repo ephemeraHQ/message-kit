@@ -1,5 +1,4 @@
 import { HandlerContext } from "@xmtp/message-kit";
-import { ContentTypeText } from "@xmtp/content-type-text";
 import type { User } from "@xmtp/message-kit";
 
 export async function handler(context: HandlerContext) {
@@ -29,10 +28,9 @@ export async function handler(context: HandlerContext) {
   ];
 
   const conv = await newConversation(addresses);
-  await conv.send(`Bet created!\n${name} for $${amount}`, ContentTypeText);
+  await conv.send(`Bet created!\n${name} for $${amount}`);
   await conv.send(
     `https://base-frame-lyart.vercel.app/transaction?transaction_type=send&amount=1&token=eth&receiver=0xA45020BdA714c3F43fECDC6e38F873fFF2Dec8ec`,
-    ContentTypeText,
   );
   await conv.updateName(`${name} for $${amount}`);
 

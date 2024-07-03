@@ -3504,7 +3504,7 @@ __metadata:
     "@xmtp/content-type-remote-attachment": "npm:^1.1.9"
     "@xmtp/content-type-reply": "npm:^1.1.11"
     "@xmtp/content-type-text": "npm:^1.0.0"
-    "@xmtp/mls-client": "npm:^0.0.11"
+    "@xmtp/mls-client": "npm:^0.0.12"
     "@xmtp/xmtp-js": "npm:^12.0.0"
     dotenv: "npm:^16.4.5"
     jest: "npm:^29.7.0"
@@ -3519,22 +3519,22 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@xmtp/mls-client-bindings-node@npm:^0.0.7":
-  version: 0.0.7
-  resolution: "@xmtp/mls-client-bindings-node@npm:0.0.7"
-  checksum: 10/5730868ebac704b967cb0763affc38e2116db69568307d97d77eaf1301718a39c308be9b9aa5f3a2550123e0df8e9ff351a06d9f4bedcd4d4723e5764dfec786
+"@xmtp/mls-client-bindings-node@npm:^0.0.8":
+  version: 0.0.8
+  resolution: "@xmtp/mls-client-bindings-node@npm:0.0.8"
+  checksum: 10/58bbe484844e08ae1bd9d22388fb9081662ef96debd29fcb375c88de66d27da1dc94da465add6c54ab926f8b100b0c6e717f6b500706705c7b08ea1021e70e34
   languageName: node
   linkType: hard
 
-"@xmtp/mls-client@npm:^0.0.11":
-  version: 0.0.11
-  resolution: "@xmtp/mls-client@npm:0.0.11"
+"@xmtp/mls-client@npm:^0.0.12":
+  version: 0.0.12
+  resolution: "@xmtp/mls-client@npm:0.0.12"
   dependencies:
     "@xmtp/content-type-primitives": "npm:^1.0.1"
     "@xmtp/content-type-text": "npm:^1.0.0"
-    "@xmtp/mls-client-bindings-node": "npm:^0.0.7"
+    "@xmtp/mls-client-bindings-node": "npm:^0.0.8"
     "@xmtp/proto": "npm:^3.61.1"
-  checksum: 10/836287f615bb1fef0903de82c68131d0fe3e34e11a7d7216bdd9341cd29b2a2418c678cfba38309ac6b411df4d3aee26015f8589a9bf7541750a41f2653b8a26
+  checksum: 10/83ab98ba95f5e841bec376e028c380e2ae0a408a61683a2cf37cbc308c38cc001c11c515e4f6fddce88a959b7f0c07176ad05c85f46060dced77136956472297
   languageName: node
   linkType: hard
 
