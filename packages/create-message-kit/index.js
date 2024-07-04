@@ -159,14 +159,9 @@ function logNextSteps(name, pkgManager) {
   log.step(`2. ${pc.red(`code .`)} - Open with your favorite editor`);
   log.step(`3. ${pc.red(`${pkgManager} install`)} - Install dependencies`);
   if (pkgManager === "bun") {
-    log.step(`4. ${pc.red(`${pkgManager} dev`)} - Build and start project`);
+    log.step(`4. ${pc.red(`${pkgManager} dev:bun`)} - Build and start project`);
   } else {
-    log.step(
-      `4. ${pc.red(`${pkgManager} build:watch`)} - Build project in watch mode`,
-    );
-    log.step(
-      `5. ${pc.red(`${pkgManager} start:watch`)} - Start project in watch mode`,
-    );
+    log.step(`4. ${pc.red(`${pkgManager} dev`)} - Build and start project`);
   }
 }
 function createGitignore(destDir) {
@@ -244,15 +239,9 @@ Follow these steps to set up and run the project:
     \`\`\`
 
 3. **Run the project:**
-    - If using \`bun\`:
-        \`\`\`sh
-        bun dev
-        \`\`\`
-    - If using other package managers:
-        \`\`\`sh
-        ${packageManager} build:watch
-        ${packageManager} start:watch
-        \`\`\`
+    \`\`\`sh
+    ${packageManager} dev
+    \`\`\`
 
 
 ## Variables
