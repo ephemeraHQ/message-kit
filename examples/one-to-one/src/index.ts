@@ -19,7 +19,6 @@ run(async (context: HandlerContext) => {
       sender,
     },
   } = context;
-
   if (typeId !== "text") {
     /* If the input is not text do nothing */
     return;

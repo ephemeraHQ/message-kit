@@ -9,9 +9,6 @@
       "default": "./dist/index.js"
     }
   },
-  "main": "dist/index.js",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "dev": "tsc -w & sleep 1 && nodemon dist/index.js",
@@ -20,7 +17,6 @@
   },
   "dependencies": {
     "@redis/client": "^1.5.16",
-    "@xmtp/content-type-text": "^1.0.0",
     "@xmtp/message-kit": "workspace:*",
     "@xmtp/redis-persistence": "^0.0.4",
     "node-cron": "^3.0.3"

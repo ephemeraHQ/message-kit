@@ -1,7 +1,5 @@
 {
   "name": "group",
-  "version": "0.0.0",
-  "private": true,
   "type": "module",
   "exports": {
     ".": {
@@ -9,9 +7,6 @@
       "default": "./dist/index.js"
     }
   },
-  "main": "dist/index.js",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "dev": "tsc -w & sleep 1 && nodemon dist/index.js",

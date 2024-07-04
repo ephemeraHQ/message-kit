@@ -14,7 +14,7 @@
     "start": "node dist/index.js"
   },
   "dependencies": {
-    "@xmtp/message-kit": "latest"
+    "@xmtp/message-kit": "workspace:*"
   },
   "devDependencies": {
     "nodemon": "^3.1.3",
