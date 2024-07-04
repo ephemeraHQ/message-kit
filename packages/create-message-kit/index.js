@@ -43,7 +43,7 @@ program
     // Log next steps
     logNextSteps(displayName, pkgManager);
 
-    outro(pc.red("Made with ❤️  by XMTP"));
+    outro(pc.red("Made with ❤️  by Ephemera"));
   });
 
 program.parse(process.argv);
@@ -264,7 +264,7 @@ ${envExampleContent}
 \`\`\`
 
 ---
-Made with ❤️ by [XMTP](https://xmtp.org)
+Made with ❤️ by [Ephemera](https://ephemerahq.com)
 `;
 
   fs.writeFileSync(resolve(destDir, "README.md"), readmeContent.trim());
