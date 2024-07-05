@@ -18,6 +18,7 @@
     "format": "turbo run format",
     "format:check": "turbo run format:check",
     "publish": "turbo run build --filter='./packages/*' --filter='!./packages/docs' && changeset publish",
+    "start": "yarn dev:gm",
     "test": "FORCE_COLOR=1 turbo run test",
     "typecheck": "FORCE_COLOR=1 turbo run typecheck"
   },
