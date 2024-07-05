@@ -38,7 +38,7 @@ export async function textGeneration(userPrompt: string, systemPrompt: string) {
       role: "assistant",
       content: reply || "No response from OpenAI.",
     });
-    if (process.env.MSG_LOG === "true") {
+    if (process?.env?.MSG_LOG === "true") {
       console.log("reply", reply);
     }
     return { reply: reply as string, history: messages };

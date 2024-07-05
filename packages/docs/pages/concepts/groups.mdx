@@ -1,16 +1,17 @@
 # Groups
 
-Included with the context you will get the `conversation` object and the `client` object.
+Groups in XMTP enable communication among multiple participants. This guide covers creating groups, syncing states, managing metadata, and handling members.
 
-```tsx
-const { client, conversation } = context;
-```
+For more details, see XMTP's [Group documentation](https://xmtp.org/docs/build/group-chat).
 
 ## Create a new group
 
 Using the client you can create a new group with an array of addresses.
 
 ```tsx
+// get the client
+const { client } = context;
+// create a new group
 const group = await client.conversations.newGroup(addresses);
 ```
 
@@ -19,7 +20,10 @@ const group = await client.conversations.newGroup(addresses);
 Each time you perform an action on a group you must sync it to get the latest state.
 
 ```tsx
-await group.sync();
+// get the conversation
+const { conversation } = context;
+// sync the conversation
+await conversation.sync();
 ```
 
 ## Group metadata
@@ -33,10 +37,12 @@ Groups have the following metadata:
 You can update the name of the group chat.
 
 ```tsx
+// get the conversation
+const { conversation } = context;
 // get the name
-const groupName = group.name;
+const groupName = conversation.name;
 // update the name
-await group.updateName(name);
+await conversation.updateName(name);
 ```
 
 ### Group description
@@ -44,10 +50,12 @@ await group.updateName(name);
 You can update the description of the group chat.
 
 ```tsx
+// get the conversation
+const { conversation } = context;
 // get the description
-const groupDescription = group.description;
+const groupDescription = conversation.description;
 // update the description
-await group.updateDescription(description);
+await conversation.updateDescription(description);
 ```
 
 ### Group image
@@ -55,10 +63,12 @@ await group.updateDescription(description);
 You can update the image of the group chat.
 
 ```tsx
+// get the conversation
+const { conversation } = context;
 // get the image
-const groupImage = group.imageUrl;
+const groupImage = conversation.imageUrl;
 // update the image
-await group.updateImageUrl(imageUrl);
+await conversation.updateImageUrl(imageUrl);
 ```
 
 ## Member management
@@ -70,30 +80,34 @@ You can add or remove members from a group.
 ### Remove members from a group
 
 ```tsx
+// get the conversation
+const { conversation } = context;
 //By address
-await group.removeMembers(userAddresses);
+await conversation.removeMembers(userAddresses);
 //By inboxId
-await group.removeMembersByInboxId(removedInboxes);
+await conversation.removeMembersByInboxId(removedInboxes);
 ```
 
 ### Add members to a group
 
 ```tsx
+// get the conversation
+const { conversation } = context;
 //By address
-await group.addMembers(userAddresses);
+await conversation.addMembers(userAddresses);
 //By inboxId
-await group.addMembersByInboxId(addedInboxes);
+await conversation.addMembersByInboxId(addedInboxes);
 ```
 
-## Messages
+## Loading messages
 
 To get the message history in a group you can use the `messages` property.
 
 ```tsx
+// get the conversation
+const { conversation } = context;
 // sync group first
-await group.sync();
+await conversation.sync();
 // get messages
-const messages = group.messages();
+const messages = conversation.messages();
 ```
-
-To see the full extent of groups refer to XMTP's [Group documentation](https://xmtp.org/docs/build/group-chat).
