@@ -5,5 +5,5 @@ run(async (context: HandlerContext) => {
   const { content, sender } = context.message;
 
   // To reply, just call `reply` on the HandlerContext.
-  await context.reply(`gmdev`);
+  await context.reply(`gm`);
 });
