@@ -1,10 +1,8 @@
 import cron from "node-cron";
-import { xmtpClient } from "@xmtp/message-kit";
+import { Client } from "@xmtp/mls-client";
 import { RedisClientType } from "@redis/client";
 
-export async function startCron(redisClient: RedisClientType) {
-  // Daily task
-  const client = await xmtpClient();
+export async function startCron(redisClient: RedisClientType, client: Client) {
   console.log("Starting daily cron");
   cron.schedule(
     "0 0 * * *", // Daily or every 5 seconds in debug mode

@@ -9,16 +9,22 @@ const inMemoryCacheStep = new Map<string, number>();
 const stopWords = ["stop", "unsubscribe", "cancel", "list"];
 
 const redisClient = await getRedisClient();
-startCron(redisClient);
 
+let clientInitialized = false;
 run(async (context: HandlerContext) => {
   const {
+    client,
     message: {
       content: { content: text },
       typeId,
       sender,
     },
   } = context;
+
+  if (!clientInitialized) {
+    startCron(redisClient, client);
+    clientInitialized = true;
+  }
   if (typeId !== "text") {
     /* If the input is not text do nothing */
     return;
