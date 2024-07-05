@@ -18,7 +18,7 @@
     "format": "turbo run format",
     "format:check": "turbo run format:check",
     "publish": "turbo run build --filter='./packages/*' --filter='!./packages/docs' && changeset publish",
-    "start": "yarn dev:gm",
+    "start": "concurrently \"yarn dev:gm\" \"yarn dev:group\" \"yarn dev:one-to-one\"",
     "test": "FORCE_COLOR=1 turbo run test",
     "typecheck": "FORCE_COLOR=1 turbo run typecheck"
   },
@@ -27,7 +27,8 @@
   },
   "dependencies": {
     "@changesets/changelog-git": "^0.2.0",
-    "@changesets/cli": "^2.27.5"
+    "@changesets/cli": "^2.27.5",
+    "concurrently": "^8.2.2"
   },
   "devDependencies": {
     "prettier": "^3.3.1",
