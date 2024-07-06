@@ -157,7 +157,7 @@ function logNextSteps(name, pkgManager) {
   log.message("Next steps:");
   log.step(`1. ${pc.red(`cd ./${name}`)} - Navigate to project`);
   log.step(`2. ${pc.red(`code .`)} - Open with your favorite editor`);
-  log.step(`3. ${pc.red(`${pkgManager} install`)} - Install dependencies`);
+  log.step(`3. ${pc.red(`${pkgManager} i`)} - Install dependencies`);
   if (pkgManager === "bun") {
     log.step(`4. ${pc.red(`${pkgManager} dev:bun`)} - Build and start project`);
   } else {
