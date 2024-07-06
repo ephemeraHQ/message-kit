@@ -1,5 +1,6 @@
 {
   "name": "one-to-one",
+  "private": true,
   "type": "module",
   "scripts": {
     "build": "tsc",
