@@ -12,6 +12,7 @@
     "build": "yarn prebuild && turbo run build --filter='./packages/*'",
     "clean": "turbo run clean && rm -rf node_modules && rm -rf .turbo && yarn cache clean",
     "copy": "cd packages/create-message-kit && yarn copy",
+    "dev:docs": "cd packages/docs && yarn dev",
     "dev:gm": "cd examples/gm && yarn dev",
     "dev:group": "cd examples/group && yarn dev",
     "dev:one-to-one": "cd examples/one-to-one && yarn dev",
