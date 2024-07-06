@@ -1,6 +1,5 @@
 {
   "name": "message-kit-monorepo",
-  "version": "0.0.0",
   "private": true,
   "workspaces": [
     "examples/*",
