@@ -1,6 +1,6 @@
 {
   "name": "create-message-kit",
-  "version": "0.0.12",
+  "version": "0.0.16",
   "license": "MIT",
   "type": "module",
   "main": "index.js",
@@ -15,8 +15,7 @@
     "copy": "node copyTemplates.js",
     "format": "yarn format:base -w .",
     "format:base": "prettier --ignore-path ../../.gitignore",
-    "format:check": "yarn format:base -c .",
-    "publish": "node copyTemplates.js && yarn format && npm publish"
+    "format:check": "yarn format:base -c ."
   },
   "dependencies": {
     "@clack/prompts": "^0.7.0",

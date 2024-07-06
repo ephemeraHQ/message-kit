@@ -14,8 +14,7 @@ cd examples/group
 # Install the dependencies
 yarn install
 # Run the app
-yarn build:watch
-yarn start:watch
+yarn dev
 ```
 
 ### Variables

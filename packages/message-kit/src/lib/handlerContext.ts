@@ -117,6 +117,9 @@ export default class HandlerContext {
     return context;
   }
   async reply(message: string, receivers?: string[]) {
+    if (process?.env?.MSG_LOG === "true") {
+      console.log(`reply`, message);
+    }
     await this.conversation.send(message);
   }
 

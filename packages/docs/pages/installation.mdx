@@ -10,20 +10,20 @@ This tool simplifies the creation and configuration of new apps.
 
 :::code-group
 
-```bash [yarn]
-yarn create message-kit
-```
-
 ```bash [bun]
 bun create message-kit
+```
+
+```bash [yarn]
+yarn create message-kit
 ```
 
 ```bash [npm]
 npm init message-kit
 ```
 
-```bash [pnpm]
-pnpm create message-kit
+```bash [npx]
+npx create-message-kit
 ```
 
 :::
@@ -62,35 +62,25 @@ Follow the steps below to run the app
 
 :::code-group
 
-```bash [yarn]
-# Install the dependencies
-yarn install
-# Run the app
-yarn build:watch
-yarn start:watch
-```
-
 ```bash [bun]
 # Install the dependencies
 bun install
 # Run the app
-bun dev
+bun dev:bun
 ```
 
 ```bash [npm]
 # Install the dependencies
 npm install
 # Run the app
-npm run build:watch
-npm run start:watch
+npm run dev
 ```
 
-```bash [pnpm]
+```bash [yarn]
 # Install the dependencies
-pnpm install
+yarn install
 # Run the app
-pnpm run build:watch
-pnpm run start:watch
+yarn dev
 ```
 
 :::
@@ -112,10 +102,6 @@ You can also install the package manually using your preferred package manager.
 
 :::code-group
 
-```bash [yarn]
-yarn add @xmtp/message-kit
-```
-
 ```bash [bun]
 bun install @xmtp/message-kit
 ```
@@ -124,8 +110,8 @@ bun install @xmtp/message-kit
 npm install @xmtp/message-kit
 ```
 
-```bash [pnpm]
-pnpm install @xmtp/message-kit
+```bash [yarn]
+yarn add @xmtp/message-kit
 ```
 
 :::
