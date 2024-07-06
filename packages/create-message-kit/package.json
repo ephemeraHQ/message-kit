@@ -15,8 +15,7 @@
     "copy": "node copyTemplates.js",
     "format": "yarn format:base -w .",
     "format:base": "prettier --ignore-path ../../.gitignore",
-    "format:check": "yarn format:base -c .",
-    "publish": "node copyTemplates.js && sleep 5 && yarn format && npm publish"
+    "format:check": "yarn format:base -c ."
   },
   "dependencies": {
     "@clack/prompts": "^0.7.0",
