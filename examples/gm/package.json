@@ -1,12 +1,6 @@
 {
   "name": "gm",
-  "version": "0.0.1",
   "type": "module",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts"
-    }
-  },
   "scripts": {
     "build": "tsc",
     "dev": "tsc -w & sleep 1 && nodemon dist/index.js",
