@@ -24,7 +24,7 @@ export async function handler(context: HandlerContext) {
       context.reply(gameUrl);
       break;
     case "help":
-      context.reply("Available games: \n/game wordle\n/game slot\np");
+      context.reply("Available games: \n/game wordle\n/game slot\n");
       break;
     default:
       // Inform the user about unrecognized commands and provide available options
