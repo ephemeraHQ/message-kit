@@ -125,7 +125,7 @@ export const commands: CommandGroup[] = [
           type: {
             default: "",
             type: "string",
-            values: ["wordle", "slot"],
+            values: ["wordle", "slot", "help"],
           },
         },
       },

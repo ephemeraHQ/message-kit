@@ -55,14 +55,16 @@ export function populateUsernames(
     accountAddresses: member.accountAddresses.map((address: string) =>
       address.toLowerCase(),
     ),
-    address: member.accountAddresses?.[0].toLowerCase(),
-    inboxId: member.inboxId.toLowerCase(),
+    address: member?.accountAddresses?.[0].toLowerCase(),
+    inboxId: member?.inboxId?.toLowerCase(),
     permissionLevel: member.permissionLevel,
   }));
   for (let member of mappedMembers) {
-    if (member.inboxId.toLowerCase() === senderInboxId.toLowerCase()) {
+    if (member?.inboxId?.toLowerCase() === senderInboxId?.toLowerCase()) {
       member.username = "me";
-    } else if (member.address.toLowerCase() === clientAddress.toLowerCase()) {
+    } else if (
+      member?.address?.toLowerCase() === clientAddress?.toLowerCase()
+    ) {
       member.username = "bot";
     } else if (
       member.address.toLowerCase() ===

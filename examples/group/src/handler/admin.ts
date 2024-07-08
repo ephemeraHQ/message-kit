@@ -11,7 +11,7 @@ function handleAddMembers(
     ?.filter((member: User) =>
       addedInboxes.some(
         (added: { inboxId: string }) =>
-          added.inboxId.toLowerCase() === member?.inboxId?.toLowerCase(),
+          added?.inboxId?.toLowerCase() === member?.inboxId?.toLowerCase(),
       ),
     )
     .map((member: User) => `@${member.username}`)
@@ -20,26 +20,16 @@ function handleAddMembers(
 
   if (addedNames && addedNames.trim().length > 0) {
     let messages = [
-      `Welcome, ${addedNames}! 🎉 @${adminName} created a new token for you!`,
-      `Hey ${addedNames}! 👋 @${adminName} says you’re going to the moon with us!`,
-      `Welcome, ${addedNames}! 🛳️ @${adminName} added you to the whitelist!`,
-      `${addedNames}, welcome to the group! 😎 @${adminName} says it's fully decentralized!`,
-      `${addedNames}, you've joined the chat! 🚀 @${adminName} saved your place in the group!`,
-      `Hey ${addedNames}, welcome! 🎉 @${adminName} saved some gas fees for you!`,
+      `Yo, ${addedNames}! 🫡`,
+      `LFG ${addedNames}!`,
+      `${addedNames}🤝`,
     ];
     return messages[Math.floor(Math.random() * messages.length)];
   }
   return "";
 }
 function handleRemoveMembers(adminName: string) {
-  let messages = [
-    `🪦`,
-    `☠️☠️☠️`,
-    `💀`,
-    `👻`,
-    `hasta la vista, baby`,
-    `nuked ☠️💣, by @${adminName}`,
-  ];
+  let messages = [`🪦`, `☠️☠️☠️`, `👻`, `hasta la vista, baby`];
   return messages[Math.floor(Math.random() * messages.length)];
 }
 const handleGroupDescription = (newValue: string, adminName: string) => {
@@ -56,16 +46,8 @@ const handleGroupImage = (newValue: string, adminName: string) => {
 };
 const handleGroupname = (newValue: string, adminName: string) => {
   let messages = [
-    `The group name was just renamed to '${newValue}'! 📝 Now @${adminName} is scrambling to update the smart contracts!`,
-    `The group name has changed to '${newValue}'! 🎉 @${adminName} is now rewriting the blockchain in panic!`,
-    `A new group name has been decided to '${newValue}'! 🔄 @${adminName} is checking if it's hashable!`,
-    `Look out! The group name is now '${newValue}'! 🕵️‍♂️ @${adminName} is on a secret mission to encode it!`,
-    `It's official, '${newValue}' is the new group name! 🚀 @${adminName} is already launching it into the crypto space!`,
-    `Say hello to our new group name, '${newValue}'! 🎭 @${adminName} is preparing the disguise kits!`,
-    `We've updated our group name to '${newValue}'! 🧙‍♂️ Watch as @${adminName} casts a renaming spell!`,
-    `New group name alert: '${newValue}'! 🚨 @${adminName} is setting up the alarm systems!`,
-    `Welcome to the newly named '${newValue}'! 🌐 @${adminName} is spinning the globe for this one!`,
-    `The group has a fresh start as '${newValue}'! 🌱 @${adminName} is planting the seeds for growth!`,
+    `New name, new game '${newValue}'! 📝`,
+    `Nothing will be the same, all hail '${newValue}'!`,
   ];
   return messages[Math.floor(Math.random() * messages.length)];
 };
@@ -122,21 +104,29 @@ export async function handler(context: HandlerContext) {
         break;
       case "remove":
         try {
-          const userArrays = username.map((user: User) => user.address);
+          const removedInboxes = username.map((user: User) => user.inboxId);
+          if (!removedInboxes || removedInboxes.length === 0) {
+            context.reply("Wrong username");
+            return;
+          }
           await conversation.sync();
-          await conversation.removeMembers(userArrays);
+          await conversation.removeMembersByInboxId(removedInboxes);
           const messages = handleRemoveMembers(sender.username);
           context.reply(messages);
         } catch (error) {
-          context.reply("User doesnt exist or lacks admin privileges");
+          context.reply("Error: Check admin privileges");
           console.error(error);
         }
         break;
       case "add":
         try {
           const addedInboxes = username.map((user: User) =>
-            user.inboxId.toLowerCase(),
+            user?.inboxId?.toLowerCase(),
           );
+          if (!addedInboxes || addedInboxes.length === 0) {
+            context.reply("Wrong username");
+            return;
+          }
           await conversation.sync();
           await conversation.addMembersByInboxId(addedInboxes);
           await conversation.sync();
@@ -147,7 +137,7 @@ export async function handler(context: HandlerContext) {
           );
           context.reply(messages);
         } catch (error) {
-          context.reply("User already exists or lacks admin privileges");
+          context.reply("Error: Check admin privileges");
           console.error(error);
         }
         break;
