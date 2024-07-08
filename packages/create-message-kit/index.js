@@ -9,11 +9,17 @@ import pc from "picocolors";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
+// Read package.json to get the version
+const packageJson = JSON.parse(
+  fs.readFileSync(resolve(__dirname, "package.json"), "utf8"),
+);
+const version = packageJson.version;
+
 program
   .name("byob")
   .description("CLI to initialize projects")
   .action(async () => {
-    intro(pc.red("Welcome to MessageKit!"));
+    intro(pc.red(`Welcome to MessageKit v${version}!`));
 
     const { templateType, displayName, destDir } = await gatherProjectInfo();
 
@@ -123,7 +129,7 @@ function createTsconfig(destDir) {
       isolatedModules: true,
       lib: ["ESNext"],
       module: "ESNext",
-      moduleResolution: "Bundler",
+      moduleResolution: "node",
       resolveJsonModule: true,
       skipLibCheck: true,
       sourceMap: true,
@@ -157,7 +163,7 @@ function logNextSteps(name, pkgManager) {
   log.message("Next steps:");
   log.step(`1. ${pc.red(`cd ./${name}`)} - Navigate to project`);
   log.step(`2. ${pc.red(`code .`)} - Open with your favorite editor`);
-  log.step(`3. ${pc.red(`${pkgManager} install`)} - Install dependencies`);
+  log.step(`3. ${pc.red(`${pkgManager} i`)} - Install dependencies`);
   if (pkgManager === "bun") {
     log.step(`4. ${pc.red(`${pkgManager} dev:bun`)} - Build and start project`);
   } else {
