@@ -36,12 +36,11 @@ App messages are messages that are sent when you send a reply to a message and a
 
 ```tsx
 // Message to all users
-context.reply("Sender or receiver not found.");
+context.reply("Your message.");
 
 // Message to specific user/users
-context.reply("Sender or receiver not found.");
-(
-  `You received ${amount} DEGEN tokens from ${sender.username}. Your new balance is ${receiver.degen} DEGEN tokens.`,
+context.reply(
+  "Your message.", // Message to send
   addresses, // Array of addresses to send the message to
 );
 ```

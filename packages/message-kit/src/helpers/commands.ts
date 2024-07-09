@@ -131,7 +131,9 @@ export function extractCommandValues(
           if (type === "username") {
             const usernames = indices.map((idx) => parts[idx].slice(1));
             const mappedUsers = mapUsernamesToInboxId(usernames, members);
-            values.params[param] = mappedUsers; // Directly assign the array of mapped users
+            values.params[param] = mappedUsers.filter(
+              (user) => user !== undefined,
+            );
             indices.forEach((idx) => usedIndices.add(idx));
           } else {
             values.params[param] =

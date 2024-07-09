@@ -7,7 +7,7 @@ This is a reference app that will allow you to understand the potential and all 
 - [Betting](/use-cases/group/betting): Create a new group inside a group with `/bet`
 - [Games](/use-cases/group/games): Handle frame games like `/game slot`, `/game wordle`
 - [Transactions](/use-cases/group/transactions): Handle commands like `/send`, `/swap`, `/mint`, `/show`.
-- [Admin](/use-cases/group/admin): Handle admin commands like `/block`, `/unblock`
+- [Admin](/use-cases/group/admin): Handle admin commands like `/add`, `/remove`, `/name`
 
 ## Structure
 
@@ -25,7 +25,7 @@ group/
 │         └── game.ts           # Handles game frames. // [!code hl] // [!code focus]
 │         └── admin.ts          # Handles moderation. // [!code hl] // [!code focus]
 │         └── payment.ts        # Handles split payments. // [!code hl] // [!code focus]
-│         └── frame.ts          # Handles the transaction frame. // [!code hl] // [!code focus]
+│         └── transactions.ts   # Handles the transaction frame. // [!code hl] // [!code focus]
 │   └── lib/
 │         └── openai.ts          # Handles the openai logic. // [!code hl] // [!code focus]
 ├── package.json

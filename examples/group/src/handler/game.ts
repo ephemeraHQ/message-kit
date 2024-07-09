@@ -13,6 +13,7 @@ export async function handler(context: HandlerContext) {
     wordle: "https://openframedl.vercel.app/",
     slot: "https://slot-machine-frame.vercel.app/",
   };
+  console.log("params", params);
   // Respond with the appropriate game URL or an error message
   switch (params.type) {
     case "wordle":
@@ -21,6 +22,9 @@ export async function handler(context: HandlerContext) {
       const gameUrl = gameUrls[params.type];
       // Send the URL for the requested game
       context.reply(gameUrl);
+      break;
+    case "help":
+      context.reply("Available games: \n/game wordle\n/game slot\n");
       break;
     default:
       // Inform the user about unrecognized commands and provide available options
