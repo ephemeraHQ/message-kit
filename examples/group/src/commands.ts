@@ -134,7 +134,7 @@ export const commands: CommandGroup[] = [
   {
     name: "Admin",
     icon: "🔐",
-    description: "Moderate access to the group with admin commands.",
+    description: "Manage group members and metadata.",
     commands: [
       {
         command: "/admin [type]",
