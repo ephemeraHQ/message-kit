@@ -113,6 +113,10 @@ export default defineConfig({
               text: "Admin",
               link: "/use-cases/group/admin",
             },
+            {
+              text: "Loyalty",
+              link: "/use-cases/group/loyalty",
+            },
           ],
         },
         {
