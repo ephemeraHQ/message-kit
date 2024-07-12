@@ -1,9 +1,4 @@
-import {
-  run,
-  HandlerContext,
-  AgentHandlers,
-  CommandHandlers,
-} from "@xmtp/message-kit";
+import { run, HandlerContext, CommandHandlers } from "@xmtp/message-kit";
 import { commands } from "./commands.js";
 import { handler as bet } from "./handler/betting.js";
 import { handler as tipping } from "./handler/tipping.js";
@@ -17,6 +12,7 @@ import { handler as loyalty } from "./handler/loyalty.js";
 // Define command handlers
 const commandHandlers: CommandHandlers = {
   "/tip": tipping,
+  "/agent": agent,
   "/bet": bet,
   "/send": transaction,
   "/swap": transaction,
@@ -37,17 +33,10 @@ const commandHandlers: CommandHandlers = {
   },
 };
 
-// Define agent handlers
-const agentHandlers: AgentHandlers = {
-  "@bot": agent,
-  "@agent": agent,
-};
-
 // App configuration
 const appConfig = {
   commands: commands,
   commandHandlers: commandHandlers,
-  agentHandlers: agentHandlers,
 };
 
 // Main function to run the app
@@ -56,7 +45,6 @@ run(async (context: HandlerContext) => {
     message: { typeId },
   } = context;
   try {
-    console.log("typeId", typeId);
     switch (typeId) {
       case "reaction":
         loyalty(context);

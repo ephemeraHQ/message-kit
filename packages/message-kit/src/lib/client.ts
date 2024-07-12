@@ -45,7 +45,7 @@ export default async function xmtpClient(
 
   const defaultConfig: ClientOptions = {
     env: env,
-    dbPath: `.cache/${wallet.account?.address}-${process.env.XMTP_ENV}`,
+    dbPath: `.cache/${wallet.account?.address}-${env}`,
     codecs: [
       new TextCodec(),
       new ReactionCodec(),

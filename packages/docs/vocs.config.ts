@@ -62,10 +62,6 @@ export default defineConfig({
           link: "/concepts/commands",
         },
         {
-          text: "Agents",
-          link: "/concepts/agents",
-        },
-        {
           text: "Groups",
           link: "/concepts/groups",
         },

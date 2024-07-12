@@ -2,7 +2,7 @@
 
 This is a reference app that will allow you to understand the potential and all of its features. Through many handlers, you will be able to understand different use cases:
 
-- [AI](/use-cases/group/agents): Reply with GPT when called by `@agent`.
+- [AI](/use-cases/group/agents): Reply with GPT when called by `/agent`.
 - [Tipping](/use-cases/group/tipping): Tip when a user reacts with the `🎩` emoji, replies `10 $degen` and `/tip`.
 - [Betting](/use-cases/group/betting): Create a new group inside a group with `/bet`
 - [Games](/use-cases/group/games): Handle frame games like `/game slot`, `/game wordle`
@@ -19,7 +19,7 @@ group/
 │   ├── index.ts              # Index file of the app. // [!code hl] // [!code focus]
 │   ├── command.ts            # For handling commands. // [!code hl] // [!code focus]
 │   └── handler/
-│         └── agent.ts          # Handles @agent ai agent. // [!code hl] // [!code focus]
+│         └── agent.ts          # Handles gpt agent. // [!code hl] // [!code focus]
 │         └── tipping.ts        # Handles tipping. // [!code hl] // [!code focus]
 │         └── betting.ts        # Handles betting. // [!code hl] // [!code focus]
 │         └── game.ts           # Handles game frames. // [!code hl] // [!code focus]
@@ -247,16 +247,10 @@ const commandHandlers: CommandHandlers = {
   },
 };
 
-// Define agent handlers
-const agentHandlers: AgentHandlers = {
-  "@agent": agent,
-};
-
 // App configuration
 const appConfig = {
   commands: commands,
   commandHandlers: commandHandlers,
-  agentHandlers: agentHandlers,
 };
 
 // Main function to run the app
