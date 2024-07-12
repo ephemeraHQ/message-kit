@@ -122,7 +122,30 @@ export default class HandlerContext {
     }
     await this.conversation.send(message);
   }
+  async intent(messages: string, receivers?: string[]) {
+    console.log("intent", messages);
+    let splitMessages;
 
+    try {
+      splitMessages = JSON.parse(messages);
+      if (!Array.isArray(splitMessages)) {
+        splitMessages = [messages];
+      }
+    } catch (e) {
+      splitMessages = [messages];
+    }
+    console.log("splitMessages", splitMessages);
+
+    for (const message of splitMessages) {
+      const msg = message as string;
+      console.log("msg", msg);
+      if (msg.startsWith("/")) {
+        await this.handleCommand(msg);
+      } else {
+        await this.reply(msg);
+      }
+    }
+  }
   async botReply(message: string, receivers?: string[]) {
     const { typeId } = this.message;
     if (typeId === "silent") return;
@@ -151,6 +174,7 @@ export default class HandlerContext {
         },
         reply: this.reply.bind(this),
         botReply: this.botReply.bind(this),
+        intent: this.intent.bind(this),
         handleCommand: this.handleCommand.bind(this),
       };
       const handler =

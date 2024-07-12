@@ -18,16 +18,8 @@ export async function handler(context: HandlerContext) {
     if (process?.env?.MSG_LOG === "true") {
       console.log("userPrompt", userPrompt);
     }
-    const { reply, history } = await textGeneration(userPrompt, systemPrompt);
-
-    if (reply.startsWith("/") && !reply.slice(1).includes("/")) {
-      if (process?.env?.MSG_LOG === "true") {
-        console.log("reply", reply);
-      }
-      context.handleCommand(reply);
-    } else {
-      await context.reply(reply);
-    }
+    const { reply } = await textGeneration(userPrompt, systemPrompt);
+    context.intent(reply);
   } catch (error) {
     console.error("Error during OpenAI call:", error);
     await context.reply("An error occurred while processing your request.");
