@@ -315,13 +315,11 @@ async function handleAttachment(context: HandlerContext) {
 async function handleTextMessage(context: HandlerContext) {
   const {
     content: { content: text },
+    params: { command },
   } = context.message;
-  if (text.startsWith("@")) {
-    await context.handleAgent(text);
-  } else if (text.startsWith("/")) {
+  console.log("command", command);
+  if (command && text.startsWith("/")) {
     await context.handleCommand(text);
-  } else {
-    console.log(`Text message: ${text}`);
   }
 }
 ```

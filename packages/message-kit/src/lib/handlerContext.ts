@@ -134,25 +134,6 @@ export default class HandlerContext {
     await this.conversation.send(content, ContentTypeBotMessage);
   }
 
-  async handleAgent(text: string) {
-    if (text.startsWith("@")) {
-      const handler =
-        this.agentHandlers?.[
-          text.split(" ")[0] as keyof typeof this.agentHandlers
-        ];
-      if (handler) {
-        await handler(this);
-      } else {
-        this.reply(
-          "Unknown command. Type /help for a list of available commands.",
-        );
-      }
-    } else {
-      await this.reply(`${text}`);
-    }
-    return text;
-  }
-
   async handleCommand(text: string) {
     const {
       commands,
@@ -170,7 +151,6 @@ export default class HandlerContext {
         },
         reply: this.reply.bind(this),
         botReply: this.botReply.bind(this),
-        handleAgent: this.handleAgent.bind(this),
         handleCommand: this.handleCommand.bind(this),
       };
       const handler =

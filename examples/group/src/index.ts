@@ -103,9 +103,7 @@ async function handleTextMessage(context: HandlerContext) {
   const {
     content: { content: text },
   } = context.message;
-  if (text.startsWith("@")) {
-    await context.handleAgent(text);
-  } else if (text.startsWith("/")) {
+  if (text.startsWith("/")) {
     await context.handleCommand(text);
   }
 }

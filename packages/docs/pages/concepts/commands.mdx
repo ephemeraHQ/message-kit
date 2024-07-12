@@ -88,3 +88,11 @@ run(async (context: HandlerContext) => {
 ## Receive a command
 
 _See more details in the [receive commands](/concepts/content-types/command) section._
+
+## Overlapping commands
+
+If the group has overlapping commands, the command will need to specifiy the handle of the mini app bot.
+
+```tsx
+/command@bot
+```
