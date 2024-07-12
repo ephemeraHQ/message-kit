@@ -40,7 +40,6 @@ function generateSystemPrompt(context: HandlerContext) {
     commands,
     message: { sender },
   } = context;
-  console.log("members", members);
   const systemPrompt = `You are a helpful agent that lives inside a web3 messaging group.\n
   These are the users of the group: ${JSON.stringify(members?.map((member) => ({ ...member, username: `@${member.username}` })))}\n 
   This group app has many commands available: ${JSON.stringify(commands)}\n

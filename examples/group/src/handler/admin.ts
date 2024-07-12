@@ -5,7 +5,6 @@ import type { User } from "@xmtp/message-kit";
 function handleAddMembers(
   addedInboxes: { inboxId: string }[],
   members: User[],
-  adminName: string,
 ) {
   const addedNames = members
     ?.filter((member: User) =>
@@ -28,7 +27,7 @@ function handleAddMembers(
   }
   return "";
 }
-function handleRemoveMembers(adminName: string) {
+function handleRemoveMembers() {
   let messages = [`🪦`, `☠️☠️☠️`, `👻`, `hasta la vista, baby`];
   return messages[Math.floor(Math.random() * messages.length)];
 }
@@ -73,9 +72,9 @@ export async function handler(context: HandlerContext) {
 
     let message: string = "";
     if (addedInboxes && addedInboxes.length > 0) {
-      message += handleAddMembers(addedInboxes, members!, adminName);
+      message += handleAddMembers(addedInboxes, members!);
     } else if (removedInboxes && removedInboxes.length > 0) {
-      message += handleRemoveMembers(adminName);
+      message += handleRemoveMembers();
     } else if (metadataFieldChanges && metadataFieldChanges[0]) {
       const { fieldName, newValue } = metadataFieldChanges?.[0];
       if (fieldName === "group_name") {
@@ -86,7 +85,6 @@ export async function handler(context: HandlerContext) {
         message += handleGroupImage(newValue, adminName);
       }
     }
-    context.reply(message);
   } else if (typeId === "text") {
     const {
       params: { type, username, name },
@@ -111,7 +109,7 @@ export async function handler(context: HandlerContext) {
           }
           await conversation.sync();
           await conversation.removeMembersByInboxId(removedInboxes);
-          const messages = handleRemoveMembers(sender.username);
+          const messages = handleRemoveMembers();
           context.reply(messages);
         } catch (error) {
           context.reply("Error: Check admin privileges");
@@ -133,7 +131,6 @@ export async function handler(context: HandlerContext) {
           const messages = handleAddMembers(
             [{ inboxId: addedInboxes[0] }],
             members!,
-            sender.username,
           );
           context.reply(messages);
         } catch (error) {
@@ -149,7 +146,6 @@ export async function handler(context: HandlerContext) {
 function logGroupUpdates(content: any) {
   const {
     members,
-    conversation,
     initiatedByInboxId,
     metadataFieldChanges,
     removedInboxes,

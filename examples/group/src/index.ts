@@ -12,6 +12,7 @@ import { handler as transaction } from "./handler/transaction.js";
 import { handler as splitpayment } from "./handler/payment.js";
 import { handler as games } from "./handler/game.js";
 import { handler as admin } from "./handler/admin.js";
+import { handler as loyalty } from "./handler/loyalty.js";
 
 // Define command handlers
 const commandHandlers: CommandHandlers = {
@@ -21,6 +22,7 @@ const commandHandlers: CommandHandlers = {
   "/swap": transaction,
   "/mint": transaction,
   "/show": transaction,
+  "/points": loyalty,
   "/game": games,
   "/admin": admin,
   "/help": async (context: HandlerContext) => {
@@ -37,6 +39,7 @@ const commandHandlers: CommandHandlers = {
 
 // Define agent handlers
 const agentHandlers: AgentHandlers = {
+  "@bot": agent,
   "@agent": agent,
 };
 
@@ -53,21 +56,24 @@ run(async (context: HandlerContext) => {
     message: { typeId },
   } = context;
   try {
+    console.log("typeId", typeId);
     switch (typeId) {
       case "reaction":
+        loyalty(context);
         handleReaction(context);
         break;
       case "reply":
         handleReply(context);
         break;
       case "group_updated":
-        await admin(context);
+        loyalty(context);
+        admin(context);
         break;
       case "remoteStaticAttachment":
-        await handleAttachment(context);
+        handleAttachment(context);
         break;
       case "text":
-        await handleTextMessage(context);
+        handleTextMessage(context);
         break;
       default:
         console.warn(`Unhandled message type: ${typeId}`);

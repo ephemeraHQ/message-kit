@@ -36,7 +36,7 @@ export default async function xmtpClient(
 
   let env = process.env.XMTP_ENV as XmtpEnv;
   if (!env) {
-    env = "dev" as XmtpEnv;
+    env = "production" as XmtpEnv;
   }
 
   if (!fs.existsSync(`.cache`)) {

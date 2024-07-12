@@ -132,6 +132,29 @@ export const commands: CommandGroup[] = [
     ],
   },
   {
+    name: "Loyalty",
+    icon: "🔓",
+    description: "Manage group members and metadata.",
+    commands: [
+      {
+        command: "/points",
+        description: "Check your points.",
+        params: {
+          type: {
+            default: "",
+            type: "string",
+            values: ["me", "leaderboard"],
+          },
+        },
+      },
+      {
+        command: "/points leaderboard",
+        description: "Check the points of a user.",
+        params: {},
+      },
+    ],
+  },
+  {
     name: "Admin",
     icon: "🔐",
     description: "Manage group members and metadata.",

@@ -21,9 +21,11 @@ export async function handler(context: HandlerContext) {
   } else if (typeId === "text") {
     // Process text commands starting with "/tip"
     const {
+      params,
       params: { amount: extractedAmount, username },
       content: text,
     } = content;
+    console.log(params);
     if (text.startsWith("/tip")) {
       amount = extractedAmount || 10; // Default amount if not specified
       receiverAddresses = username; // Extract receiver from parameters
