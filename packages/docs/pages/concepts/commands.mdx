@@ -89,6 +89,25 @@ run(async (context: HandlerContext) => {
 
 _See more details in the [receive commands](/concepts/content-types/command) section._
 
+## Handle commands
+
+If you want to parse a string an execture a command handler you can do so with
+
+```jsx
+context.handleCommand(command);
+```
+
+## Handle intent
+
+When using responses from LLMs you may want to execute the intent of the generated commands. This method will parse commands or send chained messages if its an Array.
+
+```jsx
+// open ai call
+const { reply } = await textGeneration(response, prompt);
+// execute the intent
+context.intent(reply);
+```
+
 ## Overlapping commands
 
 If the group has overlapping commands, the command will need to specifiy the handle of the mini app bot.
@@ -96,3 +115,6 @@ If the group has overlapping commands, the command will need to specifiy the han
 ```tsx
 /command@bot
 ```
+
+import { commands } from "../../../../examples/group/dist/commands";
+import { jsx } from "react/jsx-runtime";jsx,
