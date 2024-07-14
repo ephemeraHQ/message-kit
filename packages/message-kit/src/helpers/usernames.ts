@@ -49,6 +49,7 @@ export function populateUsernames(
   clientAddress: string,
   senderInboxId: string,
 ) {
+  if (!members) return [];
   // Map existing members to the required format
   const mappedMembers = members.map((member: any) => ({
     username: member.username?.toLowerCase(),

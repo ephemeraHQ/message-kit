@@ -8,16 +8,17 @@ export async function handler(context: HandlerContext) {
 
   const {
     message: {
-      content: { content: prompt },
+      content: { content, params },
     },
   } = context;
 
   const systemPrompt = generateSystemPrompt(context);
   try {
-    let userPrompt = prompt.split(" ").slice(1).join(" ");
+    let userPrompt = params?.prompt ?? content;
     if (process?.env?.MSG_LOG === "true") {
       console.log("userPrompt", userPrompt);
     }
+
     const { reply } = await textGeneration(userPrompt, systemPrompt);
     context.intent(reply);
   } catch (error) {
@@ -32,6 +33,7 @@ function generateSystemPrompt(context: HandlerContext) {
     commands,
     message: { sender },
   } = context;
+
   const systemPrompt = `You are a helpful agent that lives inside a web3 messaging group.\n
   These are the users of the group: ${JSON.stringify(members?.map((member) => ({ ...member, username: `@${member.username}` })))}\n 
   This group app has many commands available: ${JSON.stringify(commands)}\n

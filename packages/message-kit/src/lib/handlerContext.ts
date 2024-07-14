@@ -1,4 +1,5 @@
 import { Conversation, DecodedMessage, Client } from "@xmtp/mls-client";
+import { DecodedMessage as DecodedMessageV2 } from "@xmtp/xmtp-js";
 import {
   BotMessage,
   ContentTypeBotMessage,
@@ -37,7 +38,7 @@ export default class HandlerContext {
 
   private constructor(
     conversation: Conversation,
-    message: DecodedMessage,
+    message: DecodedMessage | DecodedMessageV2,
     client: Client,
     commands?: CommandGroup[],
     commandHandlers?: CommandHandlers,
@@ -52,7 +53,7 @@ export default class HandlerContext {
 
   static async create(
     conversation: Conversation,
-    message: DecodedMessage,
+    message: DecodedMessage | DecodedMessageV2,
     client: Client,
     commands?: CommandGroup[],
     commandHandlers?: CommandHandlers,
@@ -67,17 +68,24 @@ export default class HandlerContext {
       agentHandlers,
     );
 
+    //v2
+    const senderAddress =
+      "senderAddress" in message
+        ? message.senderAddress
+        : message.senderInboxId;
+    const sentAt = "sentAt" in message ? message.sentAt : message.sent;
+
     context.members = await populateUsernames(
       conversation.members,
       client.accountAddress,
-      message.senderInboxId,
+      senderAddress,
     );
 
     context.newConversation = client.conversations.newConversation.bind(
       client.conversations,
     );
 
-    context.getMessageById = client.conversations.getMessageById.bind(
+    context.getMessageById = client.conversations?.getMessageById?.bind(
       client.conversations,
     );
 
@@ -104,14 +112,17 @@ export default class HandlerContext {
       };
     }
 
+    //v2
+    const sender =
+      context.members?.find((member) => member.inboxId === senderAddress) ||
+      ({ address: senderAddress, inboxId: senderAddress } as User);
+
     context.message = {
       id: message.id,
       content: content,
-      sender: context.members?.find(
-        (member) => member.inboxId === message.senderInboxId,
-      ) as User,
+      sender: sender,
       typeId: message.contentType.typeId,
-      sent: message.sentAt,
+      sent: sentAt,
     };
 
     return context;
@@ -158,11 +169,7 @@ export default class HandlerContext {
   }
 
   async handleCommand(text: string) {
-    const {
-      commands,
-      members,
-      message: { id, sender, sent },
-    } = this;
+    const { commands, members } = this;
     if (text.startsWith("/")) {
       let content = parseIntent(text, commands ?? [], members ?? []);
       // Mock context for command execution

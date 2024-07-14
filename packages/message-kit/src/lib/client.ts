@@ -17,7 +17,7 @@ import { mainnet } from "viem/chains";
 export default async function xmtpClient(
   clientConfig: ClientOptions = {},
   privateKey: string | null = null,
-): Promise<Client> {
+): Promise<{ client: Client; v2client: V2Client }> {
   let key = privateKey ?? process.env.KEY;
   if (!key || !isHex(key)) {
     key = generatePrivateKey();
@@ -67,8 +67,8 @@ export default async function xmtpClient(
       installationId: client.installationId,
     });
   }
-  //V2 Init
-  await V2Client.create(wallet, finalConfig);
+  //v2
+  const v2client = await V2Client.create(wallet, finalConfig);
 
   // register identity
   if (!client.isRegistered && client.signatureText) {
@@ -81,5 +81,6 @@ export default async function xmtpClient(
   }
 
   console.log(`Listening on ${client.accountAddress}`);
-  return client;
+  //v2
+  return { client, v2client };
 }

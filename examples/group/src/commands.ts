@@ -155,6 +155,23 @@ export const commands: CommandGroup[] = [
     ],
   },
   {
+    name: "Agent",
+    icon: "🤖",
+    description: "Manage agent commands.",
+    commands: [
+      {
+        command: "/agent [type]",
+        description: "Manage agent commands.",
+        params: {
+          prompt: {
+            default: "",
+            type: "string",
+          },
+        },
+      },
+    ],
+  },
+  {
     name: "Admin",
     icon: "🔐",
     description: "Manage group members and metadata.",
