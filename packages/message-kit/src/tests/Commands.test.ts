@@ -1,6 +1,6 @@
 import { commands } from "./commands";
-import { fakeUsers as users } from "../../helpers/usernames";
-import { extractCommandValues } from "../../helpers/commands";
+import { fakeUsers as users } from "../helpers/usernames";
+import { extractCommandValues } from "../helpers/commands";
 
 describe("Command extraction tests", () => {
   test("Extract values from /tip command", () => {
