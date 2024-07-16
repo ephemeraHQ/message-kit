@@ -1,4 +1,4 @@
-import { commands } from "../../../../../examples/group/src/commands";
+import { commands } from "./commands";
 import { fakeUsers as users } from "../../helpers/usernames";
 import { extractCommandValues } from "../../helpers/commands";
 
