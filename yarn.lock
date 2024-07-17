@@ -3814,6 +3814,7 @@ __metadata:
     dotenv: "npm:^16.4.5"
     jest: "npm:^29.7.0"
     nodemon: "npm:^3.1.3"
+    openai: "npm:^4.52.7"
     prettier: "npm:^3.3.1"
     rollup: "npm:^4.18.0"
     rollup-plugin-dts: "npm:^6.1.1"
@@ -9613,6 +9614,24 @@ __metadata:
   bin:
     openai: bin/cli
   checksum: 10/8a8ac0f53d589f86bf5ca47774028aedc09b5d098e8774b8ccdc4293c12ab0e7dbe412674130adeccb221c64c358d6f790de57643cc364f83f091a0968a454b9
+  languageName: node
+  linkType: hard
+
+"openai@npm:^4.52.7":
+  version: 4.52.7
+  resolution: "openai@npm:4.52.7"
+  dependencies:
+    "@types/node": "npm:^18.11.18"
+    "@types/node-fetch": "npm:^2.6.4"
+    abort-controller: "npm:^3.0.0"
+    agentkeepalive: "npm:^4.2.1"
+    form-data-encoder: "npm:1.7.2"
+    formdata-node: "npm:^4.3.2"
+    node-fetch: "npm:^2.6.7"
+    web-streams-polyfill: "npm:^3.2.1"
+  bin:
+    openai: bin/cli
+  checksum: 10/054103bd2e8eeb50cb796fb6045c5b95dedf5b9d85bf9d30319b2859314322f9616cf2bbdb2af2e6b90a3c7042e4f3d2b2a6250c62d06324dec78ff098adf4c0
   languageName: node
   linkType: hard
 
