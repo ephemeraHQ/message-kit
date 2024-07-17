@@ -56,17 +56,11 @@ In this example we used the following incentives:
 - 1 point for each reaction on a message
 
 ```jsx [src/handler/loyalty.ts]
-import { StackClient } from "@stackso/js-core";
 import { HandlerContext } from "@xmtp/message-kit";
-
-// Initialize the client
-const stack = new StackClient({
-  // Get your API key and point system id from the Stack dashboard (stack.so)
-  apiKey: process?.env?.STACKS_API_KEY as string,
-  pointSystemId: 2893,
-});
+import { getStackClient } from "../lib/stack.js";
 
 export async function handler(context: HandlerContext) {
+  const stack = getStackClient();
   const {
     members,
     getMessageById,
@@ -80,12 +74,11 @@ export async function handler(context: HandlerContext) {
     } = content;
     if (command === "points") {
       if (type === "me") {
-        const points = await stack.getPoints(sender.address);
+        const points = await stack?.getPoints(sender.address);
         await context.reply(`You have ${points} points`);
       } else if (type === "leaderboard") {
-        const leaderboard = await stack.getLeaderboard();
-        console.log(leaderboard);
-        const formattedLeaderboard = leaderboard.leaderboard
+        const leaderboard = await stack?.getLeaderboard();
+        const formattedLeaderboard = leaderboard?.leaderboard
           .map(
             (entry, index) =>
               `${index + 1}. Address: ${entry.address}, Points: ${entry.points}`,
@@ -93,40 +86,46 @@ export async function handler(context: HandlerContext) {
           .join("\n");
         await context.reply(`Leaderboard:\n${formattedLeaderboard}`);
       }
+    } else if (sender.username === "me") {
+      context.reply("");
     }
-  }
-
-  if (typeId === "group_updated") {
+  } else if (typeId === "group_updated") {
     const { initiatedByInboxId, addedInboxes } = content;
     const adminAddress = members?.find(
       (member) => member.inboxId === initiatedByInboxId,
     )?.address;
     if (addedInboxes && addedInboxes.length > 0) {
-      await stack.track("referral", {
+      //if add someone to the group
+      await stack?.track("referral", {
         points: 10,
         account: adminAddress ?? "",
       });
-      console.log("Referral tracked", initiatedByInboxId);
     }
   } else if (typeId === "reaction") {
-    console.log("loyalty handler", content);
+    const { content: emoji, action } = content;
     const msg = await getMessageById(content.reference);
-
-    const adminAddress = members?.find(
-      (member) => member.inboxId === msg?.senderInboxId,
-    )?.address;
-    await stack.track("reaction", {
-      points: 1,
-      account: adminAddress ?? "",
-    });
-    console.log("Reaction tracked", msg?.senderInboxId);
+    if (action === "added") {
+      const adminAddress = members?.find(
+        (member) => member.inboxId === msg?.senderInboxId,
+      )?.address;
+      let points = 1;
+      if (emoji === "👎") {
+        points = -10;
+      } else if (emoji === "🎩") {
+        points = 10;
+      }
+      await stack?.track("reaction", {
+        points,
+        account: adminAddress ?? "",
+      });
+    }
   }
 }
 ```
 
-## Stacks middleware
+## Stack.so middleware
 
-Connect to [Stacks](https://stack.so) for managing your loyalty program.
+Connect to [Stack.so](https://stack.so) for managing your loyalty program.
 
 ```bash [cmd]
 npm install @stackso/js-core
@@ -135,15 +134,26 @@ npm install @stackso/js-core
 Add your API key to environment variables.
 
 ```bash
-STACKS_API_KEY= #your api key
+STACK_API_KEY= #your api key
 ```
 
-Connect to Stacks
+Connect to Stack.so
 
-```jsx
-const stack = new StackClient({
-  // Get your API key and point system id from the Stack dashboard (stack.so)
-  apiKey: process?.env?.STACKS_API_KEY as string,
-  pointSystemId: /*Your points program id*/,
-});
+```jsx [src/lib/stack.ts]
+import { StackClient } from "@stackso/js-core";
+
+let stack: StackClient | null = null;
+
+export function getStackClient(): StackClient {
+  if (!stack) {
+    if (!process?.env?.STACK_API_KEY) {
+      throw new Error("STACK_API_KEY is not defined");
+    }
+    stack = new StackClient({
+      apiKey: process.env.STACK_API_KEY as string,
+      pointSystemId: 2893,
+    });
+  }
+  return stack;
+}
 ```

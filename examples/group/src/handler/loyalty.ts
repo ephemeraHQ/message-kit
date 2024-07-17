@@ -1,34 +1,17 @@
-import { StackClient } from "@stackso/js-core";
 import { HandlerContext } from "@xmtp/message-kit";
-
-// Initialize the client
-let stack: StackClient | null = null;
-
-if (process?.env?.STACKS_API_KEY) {
-  stack = new StackClient({
-    // Get your API key and point system id from the Stack dashboard (stack.so)
-    apiKey: process?.env?.STACKS_API_KEY as string,
-    pointSystemId: 2893,
-  });
-}
+import { getStackClient } from "../lib/stack.js";
 
 export async function handler(context: HandlerContext) {
-  if (!process?.env?.STACKS_API_KEY) {
-    return context.reply("No Stacks API key found");
-  }
-
+  const stack = getStackClient();
   const {
     members,
     getMessageById,
-    message: { content, sender, typeId },
+    message: { id, content, sender, typeId },
   } = context;
-
   if (typeId === "text") {
-    const {
-      command,
-      params: { type },
-    } = content;
-    if (command === "points") {
+    const { command, params } = content;
+    if (command === "points" && params) {
+      const { type } = params;
       if (type === "me") {
         const points = await stack?.getPoints(sender.address);
         await context.reply(`You have ${points} points`);
@@ -42,10 +25,15 @@ export async function handler(context: HandlerContext) {
           .join("\n");
         await context.reply(`Leaderboard:\n${formattedLeaderboard}`);
       }
+    } else if (sender.username === "me") {
+      if (Math.random() < 0.3) {
+        //Fake reactions
+        const emojis = ["😀", "👍", "👎", "🎩"];
+        const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+        context.sendReaction(randomEmoji, id);
+      }
     }
-  }
-
-  if (typeId === "group_updated") {
+  } else if (typeId === "group_updated") {
     const { initiatedByInboxId, addedInboxes } = content;
     const adminAddress = members?.find(
       (member) => member.inboxId === initiatedByInboxId,
@@ -65,14 +53,11 @@ export async function handler(context: HandlerContext) {
         (member) => member.inboxId === msg?.senderInboxId,
       )?.address;
       let points = 1;
-      console.log(emoji);
-      console.log(emoji === "👎");
       if (emoji === "👎") {
         points = -10;
       } else if (emoji === "🎩") {
         points = 10;
       }
-      console.log("points", points);
       await stack?.track("reaction", {
         points,
         account: adminAddress ?? "",

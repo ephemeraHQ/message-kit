@@ -49,7 +49,8 @@ export function populateUsernames(
   clientAddress: string,
   senderInboxId: string,
 ) {
-  if (!members) return [];
+  //v2
+  if (!members) members = fakeUsers;
   // Map existing members to the required format
   const mappedMembers = members.map((member: any) => ({
     username: member.username?.toLowerCase(),

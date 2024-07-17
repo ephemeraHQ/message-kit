@@ -15,7 +15,15 @@ export function parseIntent(
   agentHandlers?: AgentHandlers,
 ) {
   let contentReturn;
-  if (content?.startsWith("/")) {
+
+  const firstWord = content?.split(" ")[0];
+  //If is command of other bot
+  if (
+    (firstWord.startsWith("/") && !firstWord.includes("@")) ||
+    (firstWord.startsWith("/") &&
+      firstWord.includes("@") &&
+      firstWord.includes("@bot"))
+  ) {
     const extractedValues = extractCommandValues(
       content,
       commands ?? [],

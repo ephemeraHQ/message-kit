@@ -61,6 +61,7 @@ run(async (context: HandlerContext) => {
         handleAttachment(context);
         break;
       case "text":
+        loyalty(context);
         handleTextMessage(context);
         break;
       default:

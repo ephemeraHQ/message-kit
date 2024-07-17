@@ -1,5 +1,9 @@
 import { Conversation, DecodedMessage, Client } from "@xmtp/mls-client";
-import { DecodedMessage as DecodedMessageV2 } from "@xmtp/xmtp-js";
+import {
+  DecodedMessage as DecodedMessageV2,
+  Client as ClientV2,
+} from "@xmtp/xmtp-js";
+import { Reaction } from "@xmtp/content-type-reaction";
 import {
   BotMessage,
   ContentTypeBotMessage,
@@ -21,11 +25,13 @@ import {
 } from "@xmtp/content-type-remote-attachment";
 
 import { NapiCreateGroupOptions } from "@xmtp/mls-client-bindings-node";
+import { ContentTypeReaction } from "@xmtp/content-type-reaction";
 
 export default class HandlerContext {
   message!: MessageAbstracted;
   conversation!: Conversation;
   client!: Client;
+  v2client!: ClientV2;
   commands?: CommandGroup[];
   members?: User[];
   commandHandlers?: CommandHandlers;
@@ -39,12 +45,13 @@ export default class HandlerContext {
   private constructor(
     conversation: Conversation,
     message: DecodedMessage | DecodedMessageV2,
-    client: Client,
+    { client, v2client }: { client: Client; v2client: ClientV2 },
     commands?: CommandGroup[],
     commandHandlers?: CommandHandlers,
     agentHandlers?: AgentHandlers,
   ) {
     this.client = client;
+    this.v2client = v2client;
     this.conversation = conversation;
     this.commandHandlers = commandHandlers;
     this.agentHandlers = agentHandlers;
@@ -54,7 +61,7 @@ export default class HandlerContext {
   static async create(
     conversation: Conversation,
     message: DecodedMessage | DecodedMessageV2,
-    client: Client,
+    { client, v2client }: { client: Client; v2client: ClientV2 },
     commands?: CommandGroup[],
     commandHandlers?: CommandHandlers,
     agentHandlers?: AgentHandlers,
@@ -62,7 +69,7 @@ export default class HandlerContext {
     const context = new HandlerContext(
       conversation,
       message,
-      client,
+      { client, v2client },
       commands,
       commandHandlers,
       agentHandlers,
@@ -85,9 +92,9 @@ export default class HandlerContext {
       client.conversations,
     );
 
-    context.getMessageById = client.conversations?.getMessageById?.bind(
-      client.conversations,
-    );
+    context.getMessageById =
+      client.conversations?.getMessageById?.bind(client.conversations) ||
+      (() => null);
 
     let content = message.content;
     if (message.contentType.sameAs(ContentTypeText)) {
@@ -127,33 +134,56 @@ export default class HandlerContext {
 
     return context;
   }
-  async reply(message: string, receivers?: string[]) {
-    if (process?.env?.MSG_LOG === "true") {
-      console.log(`reply`, message);
-    }
-    await this.conversation.send(message);
+  async sendReaction(reaction: string, messageId: string) {
+    await this.reply(
+      {
+        content: reaction,
+        action: "added",
+        reference: messageId,
+        schema: "unicode",
+      },
+      { contentType: ContentTypeReaction },
+    );
   }
 
-  private async sendMessage(
-    message: string | BotMessage,
-    conversation?: Conversation,
-    contentType?: any,
+  async reply(
+    message: string | BotMessage | Reaction,
+    options?: {
+      conversation?: Conversation;
+      contentType?: any;
+      receivers?: string[];
+    },
   ) {
-    const targetConversation = conversation ?? this.conversation;
-    if (contentType) {
-      await targetConversation.send(message, contentType);
+    const { conversation, contentType, receivers } = options ?? {};
+    if (receivers) {
+      for (const receiver of receivers) {
+        const targetConversation =
+          await this.v2client.conversations.newConversation(receiver);
+        if (contentType) {
+          await targetConversation.send(message, contentType);
+        } else {
+          await targetConversation.send(message);
+        }
+      }
     } else {
-      await targetConversation.send(message);
+      const targetConversation = conversation ?? this.conversation;
+      if (contentType) {
+        await targetConversation.send(message, contentType);
+      } else {
+        await targetConversation.send(message);
+      }
     }
   }
 
   async intent(
     messages: string,
-    conversation?: Conversation,
-    receivers?: string[],
+    options?: {
+      conversation?: Conversation;
+      receivers?: string[];
+    },
   ) {
-    console.log("intent", messages);
     let splitMessages;
+    const { conversation, receivers } = options ?? {};
 
     try {
       splitMessages = JSON.parse(messages);
@@ -163,20 +193,28 @@ export default class HandlerContext {
     } catch (e) {
       splitMessages = [messages];
     }
-    console.log("splitMessages", splitMessages);
+    if (process?.env?.MSG_LOG === "true") {
+      console.log("splitMessages", splitMessages);
+    }
 
     for (const message of splitMessages) {
       const msg = message as string;
-      console.log("msg", msg);
       if (msg.startsWith("/")) {
-        await this.handleCommand(msg, conversation);
+        await this.handleCommand(msg, { conversation, receivers });
       } else {
-        await this.sendMessage(msg, conversation);
+        await this.reply(msg, { conversation, receivers });
       }
     }
   }
-  private async handleCommand(text: string, conversation?: Conversation) {
+  private async handleCommand(
+    text: string,
+    options?: {
+      conversation?: Conversation;
+      receivers?: string[];
+    },
+  ) {
     const { commands, members } = this;
+    const { conversation, receivers } = options ?? {};
     if (text.startsWith("/")) {
       let content = parseIntent(text, commands ?? [], members ?? []);
       // Mock context for command execution
@@ -187,9 +225,7 @@ export default class HandlerContext {
           ...this.message,
           content,
         },
-        reply: async (message: string) => {
-          await (conversation ?? this.conversation).send(message);
-        },
+        reply: this.reply.bind(this),
         intent: this.intent.bind(this),
       };
       const handler =
@@ -204,7 +240,7 @@ export default class HandlerContext {
         );
       }
     } else {
-      await this.reply(`${text}`);
+      await this.reply(`${text}`, { conversation, receivers });
     }
     return text;
   }

@@ -28,7 +28,7 @@ function handleAddMembers(
   return "";
 }
 function handleRemoveMembers() {
-  let messages = [`🪦`, `☠️☠️☠️`, `👻`, `hasta la vista, baby`];
+  let messages = [`🪦`, `👻`, `hasta la vista, baby`];
   return messages[Math.floor(Math.random() * messages.length)];
 }
 const handleGroupname = (newValue: string, adminName: string) => {
