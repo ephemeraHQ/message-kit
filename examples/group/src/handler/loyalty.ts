@@ -1,5 +1,5 @@
-import { HandlerContext } from "@xmtp/message-kit";
-import { getStackClient } from "../lib/stack.js";
+import { HandlerContext, User } from "@xmtp/message-kit";
+import { getStackClient, StackClient } from "../lib/stack.js";
 
 export async function handler(context: HandlerContext) {
   const stack = getStackClient();
@@ -25,14 +25,9 @@ export async function handler(context: HandlerContext) {
           .join("\n");
         await context.reply(`Leaderboard:\n${formattedLeaderboard}`);
       }
-    } else if (sender.username === "me") {
-      if (Math.random() < 0.3) {
-        //Fake reactions
-        const emojis = ["😀", "👍", "👎", "🎩"];
-        const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
-        context.sendReaction(randomEmoji, id);
-      }
     }
+    //for fake demo
+    fakeReaction(sender.username, sender.address, id, stack, context);
   } else if (typeId === "group_updated") {
     const { initiatedByInboxId, addedInboxes } = content;
     const adminAddress = members?.find(
@@ -61,6 +56,32 @@ export async function handler(context: HandlerContext) {
       await stack?.track("reaction", {
         points,
         account: adminAddress ?? "",
+      });
+    }
+  }
+}
+async function fakeReaction(
+  username: string,
+  address: string,
+  id: string,
+  stack: StackClient,
+  context: HandlerContext,
+) {
+  if (username === "me") {
+    if (Math.random() < 0.3) {
+      //Fake reactions
+      const emojis = ["😀", "👍", "👎", "🎩"];
+      const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+      context.sendReaction(randomEmoji, id);
+      let points = 1;
+      if (randomEmoji === "👎") {
+        points = -10;
+      } else if (randomEmoji === "🎩") {
+        points = 10;
+      }
+      await stack?.track("reaction", {
+        points,
+        account: address,
       });
     }
   }

@@ -14,3 +14,4 @@ export function getStackClient(): StackClient {
   }
   return stack;
 }
+export type { StackClient };
