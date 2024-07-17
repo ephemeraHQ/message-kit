@@ -30,7 +30,7 @@ export const fakeUsers: User[] = [
   {
     username: "eva",
     address: "0xeAc10D864802fCcfe897E3957776634D1AE006B2",
-    inboxId: "3942e354e8cce5e9d550cf152749a795514adbe1c27d97b88b9fcc63a596c7e4",
+    inboxId: "6196afe3fd16c276113b0e4fc913745c39af337ea869fb49a2835201874de49c",
     accountAddresses: ["0xeAc10D864802fCcfe897E3957776634D1AE006B2"],
     installationIds: [],
     fake: true,

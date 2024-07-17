@@ -44,7 +44,6 @@ export async function handler(context: HandlerContext) {
     members,
     message: { content, typeId, sender },
   } = context;
-
   if (typeId === "group_updated") {
     const {
       initiatedByInboxId,
@@ -74,6 +73,7 @@ export async function handler(context: HandlerContext) {
     const {
       params: { type, username, name },
     } = content;
+    console.log(type, username, name);
     switch (type) {
       case "name":
         try {
