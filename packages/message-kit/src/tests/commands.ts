@@ -119,10 +119,10 @@ export const commands: CommandGroup[] = [
     description: "Provides various gaming experiences.",
     commands: [
       {
-        command: "/game [type]",
+        command: "/game [game]",
         description: "Play a game.",
         params: {
-          type: {
+          game: {
             default: "",
             type: "string",
             values: ["wordle", "slot", "help"],
@@ -139,16 +139,10 @@ export const commands: CommandGroup[] = [
       {
         command: "/points",
         description: "Check your points.",
-        params: {
-          type: {
-            default: "",
-            type: "string",
-            values: ["me", "leaderboard"],
-          },
-        },
+        params: {},
       },
       {
-        command: "/points leaderboard",
+        command: "/leaderboard",
         description: "Check the points of a user.",
         params: {},
       },
@@ -177,22 +171,29 @@ export const commands: CommandGroup[] = [
     description: "Manage group members and metadata.",
     commands: [
       {
-        command: "/admin [type]",
-        description: "Add or remove a user.",
+        command: "/add [username]",
+        description: "Add a user.",
         params: {
-          type: {
-            default: "",
-            type: "string",
-            values: ["add", "remove", "name"],
-          },
           username: {
             default: "",
             type: "username",
           },
-          address: {
+        },
+      },
+      {
+        command: "/remove [username]",
+        description: "Remove a user.",
+        params: {
+          username: {
             default: "",
-            type: "address",
+            type: "username",
           },
+        },
+      },
+      {
+        command: "/name [name]",
+        description: "Set the name of the group.",
+        params: {
           name: {
             default: "",
             type: "quoted",

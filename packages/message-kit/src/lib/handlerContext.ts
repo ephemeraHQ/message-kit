@@ -157,6 +157,8 @@ export default class HandlerContext {
     const { conversation, contentType, receivers } = options ?? {};
     if (receivers) {
       for (const receiver of receivers) {
+        if (this.v2client.address.toLowerCase() === receiver.toLowerCase())
+          continue;
         const targetConversation =
           await this.v2client.conversations.newConversation(receiver);
         if (contentType) {
@@ -182,20 +184,15 @@ export default class HandlerContext {
       receivers?: string[];
     },
   ) {
-    let splitMessages;
+    let splitMessages = [messages];
     const { conversation, receivers } = options ?? {};
-
     try {
-      splitMessages = JSON.parse(messages);
-      if (!Array.isArray(splitMessages)) {
-        splitMessages = [messages];
+      if (Array.isArray(JSON.parse(messages)))
+        splitMessages = JSON.parse(messages);
+      if (process?.env?.MSG_LOG === "true") {
+        console.log("splitMessages", splitMessages);
       }
-    } catch (e) {
-      splitMessages = [messages];
-    }
-    if (process?.env?.MSG_LOG === "true") {
-      console.log("splitMessages", splitMessages);
-    }
+    } catch (e) {}
 
     for (const message of splitMessages) {
       const msg = message as string;
@@ -225,7 +222,13 @@ export default class HandlerContext {
           ...this.message,
           content,
         },
-        reply: this.reply.bind(this),
+        reply: (message, opts) => {
+          this.reply(message, {
+            ...opts,
+            conversation: conversation ?? this.conversation, // Ensure conversation is passed
+          });
+        },
+        sendReaction: this.sendReaction.bind(this),
         intent: this.intent.bind(this),
       };
       const handler =

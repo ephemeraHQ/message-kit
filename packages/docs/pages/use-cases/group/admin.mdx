@@ -7,9 +7,9 @@ This example shows how to manage your group metadata and members.
 Here are the commands to add and remove users:
 
 ```bash [cmd]
-/admin add @alix
-/admin remove @bo
-/admin name "New Group Name"
+/add @alix
+/remove @bo
+/name "New Group Name"
 ```
 
 ::::note
@@ -19,25 +19,32 @@ Here are the commands to add and remove users:
 {
   "name": "Admin",
   "icon": "🔐",
-  "description": "Moderate access to the group with admin commands.",
+  "description": "Manage group members and metadata.",
   "commands": [
     {
-      "command": "/admin [type]",
-      "description": "Add or remove a user.",
+      "command": "/add [username]",
+      "description": "Add a user.",
       "params": {
-        "type": {
-          "default": "",
-          "type": "string",
-          "values": ["add", "remove", "name"]
-        },
         "username": {
           "default": "",
           "type": "username"
-        },
-        "address": {
+        }
+      }
+    },
+    {
+      "command": "/remove [username]",
+      "description": "Remove a user.",
+      "params": {
+        "username": {
           "default": "",
-          "type": "address"
-        },
+          "type": "username"
+        }
+      }
+    },
+    {
+      "command": "/name [name]",
+      "description": "Set the name of the group.",
+      "params": {
         "name": {
           "default": "",
           "type": "quoted"

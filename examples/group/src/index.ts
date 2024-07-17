@@ -19,8 +19,11 @@ const commandHandlers: CommandHandlers = {
   "/mint": transaction,
   "/show": transaction,
   "/points": loyalty,
+  "/leaderboard": loyalty,
   "/game": games,
-  "/admin": admin,
+  "/add": admin,
+  "/remove": admin,
+  "/name": admin,
   "/help": async (context: HandlerContext) => {
     const intro =
       "Available experiences:\n" +
@@ -47,22 +50,22 @@ run(async (context: HandlerContext) => {
   try {
     switch (typeId) {
       case "reaction":
-        loyalty(context);
         handleReaction(context);
+        loyalty(context);
         break;
       case "reply":
         handleReply(context);
         break;
       case "group_updated":
-        loyalty(context);
         admin(context);
+        loyalty(context);
         break;
       case "remoteStaticAttachment":
         handleAttachment(context);
         break;
       case "text":
-        loyalty(context);
         handleTextMessage(context);
+        loyalty(context, true);
         break;
       default:
         console.warn(`Unhandled message type: ${typeId}`);
