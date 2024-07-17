@@ -4,68 +4,73 @@ import { ContentTypeBotMessage } from "../content-types/BotMessage.js";
 import { Config, Handler } from "../helpers/types.js";
 
 export default async function run(handler: Handler, config?: Config) {
-  const client = await xmtpClient(config?.client);
+  const { client, v2client } = await xmtpClient(config?.client);
   const { inboxId: address } = client;
+  const { address: addressV2 } = v2client;
 
   // sync and list conversations
   await client.conversations.sync();
   await client.conversations.list();
 
-  while (true) {
-    // start streaming all messages from all groups
-    const stream = await client.conversations.streamAllMessages();
-    try {
-      for await (const message of stream) {
-        if (message) {
-          try {
-            const { senderInboxId, contentType } = message;
+  const handleMessage = async (client: any, address: string, message: any) => {
+    if (message) {
+      try {
+        const { senderInboxId, contentType, senderAddress } = message;
 
-            const conversation = await client.conversations.getConversationById(
+        const conversation = client.conversations.getConversationById
+          ? await client.conversations.getConversationById(
               message.conversationId,
-            );
+            )
+          : message?.conversation;
 
-            if (!conversation) continue;
-            else if (senderInboxId === address) {
-              // if same address do nothing
-              continue;
-            } else if (contentType.sameAs(ContentTypeBotMessage)) {
-              // if a bot speaks do nothing
-              continue;
-            } /* ‼️ Soon to be deprecated
-        /*
-        If the app detects a user does not have access to the group, the app will send a SilentContentType to the group and this will be catched by the bot. The bot in case it has access will grant access to the user.*/
-            /*
-          if (metadata?.type === "request_access" && config?.accessHandler) {
-           grantAccess(conversation, config?.accessHandler, {
-              sender: senderInboxId,
-              conversationId: conversation.id,
-            });
-          } else if (metadata?.type === "ping") {
-            //When opening a conversation or adding a member or arbitrarily the app can ping the bots and the bots can reply with their commands
-            commands(conversation, config?.commands ?? []);
-          }
-          continue;
-        }*/
-            if (process?.env?.MSG_LOG) {
-              console.log(`message:`, message.content);
-            }
-            const context = await HandlerContext.create(
-              conversation,
-              message,
-              client,
-              config?.commands ?? [],
-              config?.commandHandlers ?? {},
-              config?.agentHandlers ?? {},
-            );
-
-            await handler(context);
-          } catch (e) {
-            console.log(`error`, e);
-          }
+        if (
+          //v2
+          !conversation ||
+          //If same address do nothin
+          senderAddress === addressV2 ||
+          //If same address do nothin
+          senderInboxId === address ||
+          //If is bot type nothing
+          contentType.sameAs(ContentTypeBotMessage)
+        ) {
+          return;
         }
+
+        const context = await HandlerContext.create(
+          conversation,
+          message,
+          client,
+          config?.commands ?? [],
+          config?.commandHandlers ?? {},
+          config?.agentHandlers ?? {},
+        );
+
+        await handler(context);
+      } catch (e) {
+        console.log(`error`, e);
       }
-    } catch (e) {
-      console.log(`Restart stream:`, e);
     }
-  }
+  };
+
+  const streamMessages = async (client: any, address: string) => {
+    while (true) {
+      const stream = await client.conversations.streamAllMessages();
+      try {
+        for await (const message of stream) {
+          if (process?.env?.MSG_LOG) {
+            console.log(`message:`, message.content);
+          }
+          await handleMessage(client, address, message);
+        }
+      } catch (e) {
+        console.log(`Restart stream:`, e);
+      }
+    }
+  };
+
+  // Run both clients' streams concurrently
+  await Promise.all([
+    streamMessages(v2client, addressV2),
+    streamMessages(client, address),
+  ]);
 }

@@ -1,4 +1,5 @@
 import { Conversation, DecodedMessage, Client } from "@xmtp/mls-client";
+import { DecodedMessage as DecodedMessageV2 } from "@xmtp/xmtp-js";
 import {
   BotMessage,
   ContentTypeBotMessage,
@@ -37,7 +38,7 @@ export default class HandlerContext {
 
   private constructor(
     conversation: Conversation,
-    message: DecodedMessage,
+    message: DecodedMessage | DecodedMessageV2,
     client: Client,
     commands?: CommandGroup[],
     commandHandlers?: CommandHandlers,
@@ -52,7 +53,7 @@ export default class HandlerContext {
 
   static async create(
     conversation: Conversation,
-    message: DecodedMessage,
+    message: DecodedMessage | DecodedMessageV2,
     client: Client,
     commands?: CommandGroup[],
     commandHandlers?: CommandHandlers,
@@ -67,17 +68,24 @@ export default class HandlerContext {
       agentHandlers,
     );
 
+    //v2
+    const senderAddress =
+      "senderAddress" in message
+        ? message.senderAddress
+        : message.senderInboxId;
+    const sentAt = "sentAt" in message ? message.sentAt : message.sent;
+
     context.members = await populateUsernames(
       conversation.members,
       client.accountAddress,
-      message.senderInboxId,
+      senderAddress,
     );
 
     context.newConversation = client.conversations.newConversation.bind(
       client.conversations,
     );
 
-    context.getMessageById = client.conversations.getMessageById.bind(
+    context.getMessageById = client.conversations?.getMessageById?.bind(
       client.conversations,
     );
 
@@ -104,14 +112,17 @@ export default class HandlerContext {
       };
     }
 
+    //v2
+    const sender =
+      context.members?.find((member) => member.inboxId === senderAddress) ||
+      ({ address: senderAddress, inboxId: senderAddress } as User);
+
     context.message = {
       id: message.id,
       content: content,
-      sender: context.members?.find(
-        (member) => member.inboxId === message.senderInboxId,
-      ) as User,
+      sender: sender,
       typeId: message.contentType.typeId,
-      sent: message.sentAt,
+      sent: sentAt,
     };
 
     return context;
@@ -123,55 +134,63 @@ export default class HandlerContext {
     await this.conversation.send(message);
   }
 
-  async botReply(message: string, receivers?: string[]) {
-    const { typeId } = this.message;
-    if (typeId === "silent") return;
-    const content: BotMessage = {
-      receivers: receivers ?? [],
-      content: message,
-    };
-
-    await this.conversation.send(content, ContentTypeBotMessage);
-  }
-
-  async handleAgent(text: string) {
-    if (text.startsWith("@")) {
-      const handler =
-        this.agentHandlers?.[
-          text.split(" ")[0] as keyof typeof this.agentHandlers
-        ];
-      if (handler) {
-        await handler(this);
-      } else {
-        this.reply(
-          "Unknown command. Type /help for a list of available commands.",
-        );
-      }
+  private async sendMessage(
+    message: string | BotMessage,
+    conversation?: Conversation,
+    contentType?: any,
+  ) {
+    const targetConversation = conversation ?? this.conversation;
+    if (contentType) {
+      await targetConversation.send(message, contentType);
     } else {
-      await this.reply(`${text}`);
+      await targetConversation.send(message);
     }
-    return text;
   }
 
-  async handleCommand(text: string) {
-    const {
-      commands,
-      members,
-      message: { id, sender, sent },
-    } = this;
+  async intent(
+    messages: string,
+    conversation?: Conversation,
+    receivers?: string[],
+  ) {
+    console.log("intent", messages);
+    let splitMessages;
+
+    try {
+      splitMessages = JSON.parse(messages);
+      if (!Array.isArray(splitMessages)) {
+        splitMessages = [messages];
+      }
+    } catch (e) {
+      splitMessages = [messages];
+    }
+    console.log("splitMessages", splitMessages);
+
+    for (const message of splitMessages) {
+      const msg = message as string;
+      console.log("msg", msg);
+      if (msg.startsWith("/")) {
+        await this.handleCommand(msg, conversation);
+      } else {
+        await this.sendMessage(msg, conversation);
+      }
+    }
+  }
+  private async handleCommand(text: string, conversation?: Conversation) {
+    const { commands, members } = this;
     if (text.startsWith("/")) {
       let content = parseIntent(text, commands ?? [], members ?? []);
       // Mock context for command execution
       const mockContext: HandlerContext = {
         ...this,
+        conversation: conversation ?? this.conversation,
         message: {
           ...this.message,
           content,
         },
-        reply: this.reply.bind(this),
-        botReply: this.botReply.bind(this),
-        handleAgent: this.handleAgent.bind(this),
-        handleCommand: this.handleCommand.bind(this),
+        reply: async (message: string) => {
+          await (conversation ?? this.conversation).send(message);
+        },
+        intent: this.intent.bind(this),
       };
       const handler =
         this.commandHandlers?.[
@@ -180,7 +199,7 @@ export default class HandlerContext {
       if (handler) {
         await handler(mockContext);
       } else {
-        this.reply(
+        await this.reply(
           "Unknown command. Type /help for a list of available commands.",
         );
       }

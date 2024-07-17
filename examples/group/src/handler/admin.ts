@@ -5,7 +5,6 @@ import type { User } from "@xmtp/message-kit";
 function handleAddMembers(
   addedInboxes: { inboxId: string }[],
   members: User[],
-  adminName: string,
 ) {
   const addedNames = members
     ?.filter((member: User) =>
@@ -28,22 +27,10 @@ function handleAddMembers(
   }
   return "";
 }
-function handleRemoveMembers(adminName: string) {
+function handleRemoveMembers() {
   let messages = [`🪦`, `☠️☠️☠️`, `👻`, `hasta la vista, baby`];
   return messages[Math.floor(Math.random() * messages.length)];
 }
-const handleGroupDescription = (newValue: string, adminName: string) => {
-  let messages = [
-    `The group description was just updated to '${newValue}'! 📝 Now @${adminName} is scrambling to update the smart contracts!`,
-  ];
-  return messages[Math.floor(Math.random() * messages.length)];
-};
-const handleGroupImage = (newValue: string, adminName: string) => {
-  let messages = [
-    `The group image was just updated to '${newValue}'! 📝 Now @${adminName} is scrambling to update the smart contracts!`,
-  ];
-  return messages[Math.floor(Math.random() * messages.length)];
-};
 const handleGroupname = (newValue: string, adminName: string) => {
   let messages = [
     `New name, new game '${newValue}'! 📝`,
@@ -57,7 +44,6 @@ export async function handler(context: HandlerContext) {
     members,
     message: { content, typeId, sender },
   } = context;
-  logGroupUpdates(content);
   if (typeId === "group_updated") {
     const {
       initiatedByInboxId,
@@ -73,24 +59,21 @@ export async function handler(context: HandlerContext) {
 
     let message: string = "";
     if (addedInboxes && addedInboxes.length > 0) {
-      message += handleAddMembers(addedInboxes, members!, adminName);
+      message += handleAddMembers(addedInboxes, members!);
     } else if (removedInboxes && removedInboxes.length > 0) {
-      message += handleRemoveMembers(adminName);
+      message += handleRemoveMembers();
     } else if (metadataFieldChanges && metadataFieldChanges[0]) {
       const { fieldName, newValue } = metadataFieldChanges?.[0];
       if (fieldName === "group_name") {
         message += handleGroupname(newValue, adminName);
-      } else if (fieldName === "group_description") {
-        message += handleGroupDescription(newValue, adminName);
-      } else if (fieldName === "group_image_url_square") {
-        message += handleGroupImage(newValue, adminName);
       }
     }
-    context.reply(message);
+    await context.reply(message);
   } else if (typeId === "text") {
     const {
       params: { type, username, name },
     } = content;
+    console.log(type, username, name);
     switch (type) {
       case "name":
         try {
@@ -111,7 +94,7 @@ export async function handler(context: HandlerContext) {
           }
           await conversation.sync();
           await conversation.removeMembersByInboxId(removedInboxes);
-          const messages = handleRemoveMembers(sender.username);
+          const messages = handleRemoveMembers();
           context.reply(messages);
         } catch (error) {
           context.reply("Error: Check admin privileges");
@@ -133,7 +116,6 @@ export async function handler(context: HandlerContext) {
           const messages = handleAddMembers(
             [{ inboxId: addedInboxes[0] }],
             members!,
-            sender.username,
           );
           context.reply(messages);
         } catch (error) {
@@ -144,39 +126,4 @@ export async function handler(context: HandlerContext) {
     }
   }
   return;
-}
-
-function logGroupUpdates(content: any) {
-  const {
-    members,
-    conversation,
-    initiatedByInboxId,
-    metadataFieldChanges,
-    removedInboxes,
-    addedInboxes,
-  } = content;
-  if (process?.env?.MSG_LOG === "true") {
-    const adminName =
-      members?.find((member: User) => member.inboxId === initiatedByInboxId)
-        ?.username || "Admin";
-    console.log(`${adminName} updated the group`, content);
-  }
-  if (addedInboxes?.length > 0) {
-    for (const inbox of addedInboxes) {
-      console.log(`User added: ${inbox.inboxId}`);
-    }
-  }
-
-  if (removedInboxes?.length > 0) {
-    for (const inbox of removedInboxes) {
-      console.log(`User removed: ${inbox.inboxId}`);
-    }
-  }
-
-  if (metadataFieldChanges?.length > 0) {
-    for (const change of metadataFieldChanges) {
-      const { fieldName, oldValue, newValue } = change;
-      console.log(`Value ${fieldName} changed from ${oldValue} to ${newValue}`);
-    }
-  }
 }

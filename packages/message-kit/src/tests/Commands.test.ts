@@ -1,6 +1,6 @@
 import { commands } from "./commands";
-import { fakeUsers as users } from "./usernames";
-import { extractCommandValues } from "../../helpers/commands";
+import { fakeUsers as users } from "../helpers/usernames";
+import { extractCommandValues } from "../helpers/commands";
 
 describe("Command extraction tests", () => {
   test("Extract values from /tip command", () => {
@@ -135,6 +135,18 @@ describe("Command extraction tests", () => {
       params: expect.objectContaining({
         type: "name",
         name: "New name",
+      }),
+    });
+  });
+
+  test("Extract values from /agent prompt command", () => {
+    const inputContent = "/agent Hello, how can I assist you today?";
+    const extractedValues = extractCommandValues(inputContent, commands, users);
+    console.log(extractedValues);
+    expect(extractedValues).toEqual({
+      command: "agent",
+      params: expect.objectContaining({
+        prompt: "Hello, how can I assist you today?",
       }),
     });
   });

@@ -2,7 +2,7 @@
 
 This is a reference app that will allow you to understand the potential and all of its features. Through many handlers, you will be able to understand different use cases:
 
-- [AI](/use-cases/group/agents): Reply with GPT when called by `@agent`.
+- [AI](/use-cases/group/agents): Reply with GPT when called by `/agent`.
 - [Tipping](/use-cases/group/tipping): Tip when a user reacts with the `🎩` emoji, replies `10 $degen` and `/tip`.
 - [Betting](/use-cases/group/betting): Create a new group inside a group with `/bet`
 - [Games](/use-cases/group/games): Handle frame games like `/game slot`, `/game wordle`
@@ -19,7 +19,7 @@ group/
 │   ├── index.ts              # Index file of the app. // [!code hl] // [!code focus]
 │   ├── command.ts            # For handling commands. // [!code hl] // [!code focus]
 │   └── handler/
-│         └── agent.ts          # Handles @agent ai agent. // [!code hl] // [!code focus]
+│         └── agent.ts          # Handles gpt agent. // [!code hl] // [!code focus]
 │         └── tipping.ts        # Handles tipping. // [!code hl] // [!code focus]
 │         └── betting.ts        # Handles betting. // [!code hl] // [!code focus]
 │         └── game.ts           # Handles game frames. // [!code hl] // [!code focus]
@@ -247,16 +247,10 @@ const commandHandlers: CommandHandlers = {
   },
 };
 
-// Define agent handlers
-const agentHandlers: AgentHandlers = {
-  "@agent": agent,
-};
-
 // App configuration
 const appConfig = {
   commands: commands,
   commandHandlers: commandHandlers,
-  agentHandlers: agentHandlers,
 };
 
 // Main function to run the app
@@ -322,12 +316,10 @@ async function handleTextMessage(context: HandlerContext) {
   const {
     content: { content: text },
   } = context.message;
-  if (text.startsWith("@")) {
-    await context.handleAgent(text);
-  } else if (text.startsWith("/")) {
-    await context.handleCommand(text);
-  } else {
-    console.log(`Text message: ${text}`);
+  if (text.startsWith("/")) {
+    await context.intent(text);
+  } else if (text.includes("@bot")) {
+    await agent(context);
   }
 }
 ```
@@ -357,9 +349,7 @@ Set up these variables in your app
 
 ```bash [cmd]
 KEY= # 0x... the private key of the app (with the 0x prefix)
-XMTP_ENV=production # or `dev`
 OPEN_AI_API_KEY= # your openai api key
-MSG_LOG=false # logs the message on the console
 ```
 
 ::::

@@ -1,4 +1,4 @@
-import type { CommandGroup } from "../../helpers/types.js";
+import type { CommandGroup } from "../helpers/types.js";
 
 export const commands: CommandGroup[] = [
   {
@@ -91,7 +91,7 @@ export const commands: CommandGroup[] = [
   {
     name: "Betting",
     icon: "🎰",
-    description: "Betting on basebet.",
+    description: "Create bets with friends.",
     commands: [
       {
         command: "/bet @users [Bet Name] [Bet Amount]",
@@ -125,7 +125,47 @@ export const commands: CommandGroup[] = [
           type: {
             default: "",
             type: "string",
-            values: ["wordle", "slot"],
+            values: ["wordle", "slot", "help"],
+          },
+        },
+      },
+    ],
+  },
+  {
+    name: "Loyalty",
+    icon: "🔓",
+    description: "Manage group members and metadata.",
+    commands: [
+      {
+        command: "/points",
+        description: "Check your points.",
+        params: {
+          type: {
+            default: "",
+            type: "string",
+            values: ["me", "leaderboard"],
+          },
+        },
+      },
+      {
+        command: "/points leaderboard",
+        description: "Check the points of a user.",
+        params: {},
+      },
+    ],
+  },
+  {
+    name: "Agent",
+    icon: "🤖",
+    description: "Manage agent commands.",
+    commands: [
+      {
+        command: "/agent [type]",
+        description: "Manage agent commands.",
+        params: {
+          prompt: {
+            default: "",
+            type: "string",
           },
         },
       },
@@ -134,7 +174,7 @@ export const commands: CommandGroup[] = [
   {
     name: "Admin",
     icon: "🔐",
-    description: "Moderate access to the group with admin commands.",
+    description: "Manage group members and metadata.",
     commands: [
       {
         command: "/admin [type]",

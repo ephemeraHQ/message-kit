@@ -105,6 +105,11 @@ export const commands: CommandGroup[] = [
             default: "",
             type: "quoted",
           },
+          token: {
+            default: "eth",
+            type: "string",
+            values: ["eth", "dai", "usdc", "degen"],
+          },
           amount: {
             default: 10,
             type: "number",
@@ -132,9 +137,49 @@ export const commands: CommandGroup[] = [
     ],
   },
   {
+    name: "Loyalty",
+    icon: "🔓",
+    description: "Manage group members and metadata.",
+    commands: [
+      {
+        command: "/points",
+        description: "Check your points.",
+        params: {
+          type: {
+            default: "",
+            type: "string",
+            values: ["me", "leaderboard"],
+          },
+        },
+      },
+      {
+        command: "/points leaderboard",
+        description: "Check the points of a user.",
+        params: {},
+      },
+    ],
+  },
+  {
+    name: "Agent",
+    icon: "🤖",
+    description: "Manage agent commands.",
+    commands: [
+      {
+        command: "/agent [type]",
+        description: "Manage agent commands.",
+        params: {
+          prompt: {
+            default: "",
+            type: "string",
+          },
+        },
+      },
+    ],
+  },
+  {
     name: "Admin",
     icon: "🔐",
-    description: "Moderate access to the group with admin commands.",
+    description: "Manage group members and metadata.",
     commands: [
       {
         command: "/admin [type]",

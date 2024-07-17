@@ -112,6 +112,10 @@ export function extractCommandValues(
           usedIndices.add(index);
           valueFound = true;
         }
+      } else if (param === "prompt") {
+        // Extract everything after the command as the prompt
+        values.params[param] = parts.slice(1).join(" ");
+        valueFound = true;
       } else {
         const indices = parts.reduce<number[]>((acc, part, idx) => {
           if (

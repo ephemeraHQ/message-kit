@@ -1,0 +1,149 @@
+# Loyalty
+
+Create incentives for users to interact with group chats.
+
+## Commands
+
+Here are the commands to manage loyalty:
+
+```bash [cmd]
+# Add a member
+/points me
+
+# Check the leaderboard
+/points leaderboard
+```
+
+::::note
+:::details[Command declaration]
+
+```json
+{
+  "name": "Loyalty",
+  "icon": "🔓",
+  "description": "Manage group members and metadata.",
+  "commands": [
+    {
+      "command": "/points",
+      "description": "Check your points.",
+      "params": {
+        "type": {
+          "default": "",
+          "type": "string",
+          "values": ["me", "leaderboard"]
+        }
+      }
+    },
+    {
+      "command": "/points leaderboard",
+      "description": "Check the points of a user.",
+      "params": {}
+    }
+  ]
+}
+```
+
+:::
+::::
+
+## Main code
+
+### Incentives
+
+In this example we used the following incentives:
+
+- 10 points for adding a member
+- 1 point for each reaction on a message
+
+```jsx [src/handler/loyalty.ts]
+import { StackClient } from "@stackso/js-core";
+import { HandlerContext } from "@xmtp/message-kit";
+
+// Initialize the client
+const stack = new StackClient({
+  // Get your API key and point system id from the Stack dashboard (stack.so)
+  apiKey: process?.env?.STACKS_API_KEY as string,
+  pointSystemId: 2893,
+});
+
+export async function handler(context: HandlerContext) {
+  const {
+    members,
+    getMessageById,
+    message: { content, sender, typeId },
+  } = context;
+
+  if (typeId === "text") {
+    const {
+      command,
+      params: { type },
+    } = content;
+    if (command === "points") {
+      if (type === "me") {
+        const points = await stack.getPoints(sender.address);
+        await context.reply(`You have ${points} points`);
+      } else if (type === "leaderboard") {
+        const leaderboard = await stack.getLeaderboard();
+        console.log(leaderboard);
+        const formattedLeaderboard = leaderboard.leaderboard
+          .map(
+            (entry, index) =>
+              `${index + 1}. Address: ${entry.address}, Points: ${entry.points}`,
+          )
+          .join("\n");
+        await context.reply(`Leaderboard:\n${formattedLeaderboard}`);
+      }
+    }
+  }
+
+  if (typeId === "group_updated") {
+    const { initiatedByInboxId, addedInboxes } = content;
+    const adminAddress = members?.find(
+      (member) => member.inboxId === initiatedByInboxId,
+    )?.address;
+    if (addedInboxes && addedInboxes.length > 0) {
+      await stack.track("referral", {
+        points: 10,
+        account: adminAddress ?? "",
+      });
+      console.log("Referral tracked", initiatedByInboxId);
+    }
+  } else if (typeId === "reaction") {
+    console.log("loyalty handler", content);
+    const msg = await getMessageById(content.reference);
+
+    const adminAddress = members?.find(
+      (member) => member.inboxId === msg?.senderInboxId,
+    )?.address;
+    await stack.track("reaction", {
+      points: 1,
+      account: adminAddress ?? "",
+    });
+    console.log("Reaction tracked", msg?.senderInboxId);
+  }
+}
+```
+
+## Stacks middleware
+
+Connect to [Stacks](https://stack.so) for managing your loyalty program.
+
+```bash [cmd]
+npm install @stackso/js-core
+```
+
+Add your API key to environment variables.
+
+```bash
+STACKS_API_KEY= #your api key
+```
+
+Connect to Stacks
+
+```jsx
+const stack = new StackClient({
+  // Get your API key and point system id from the Stack dashboard (stack.so)
+  apiKey: process?.env?.STACKS_API_KEY as string,
+  pointSystemId: /*Your points program id*/,
+});
+```

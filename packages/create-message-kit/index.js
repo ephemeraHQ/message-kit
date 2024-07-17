@@ -228,7 +228,7 @@ function createReadme(destDir, templateType, projectName, packageManager) {
 
   const readmeContent = `# ${projectName}
 
-This project is generated using the [MessageKit](https://message-kit.vercel.app) CLI and uses the \`${templateType}\` template. Below are the instructions to set up and run the project.
+This project is generated using the [MessageKit](https://message-kit.vercel.app) v${version} CLI and uses the \`${templateType}\` template. Below are the instructions to set up and run the project.
 
 ## Setup
 

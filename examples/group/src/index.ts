@@ -1,9 +1,4 @@
-import {
-  run,
-  HandlerContext,
-  AgentHandlers,
-  CommandHandlers,
-} from "@xmtp/message-kit";
+import { run, HandlerContext, CommandHandlers } from "@xmtp/message-kit";
 import { commands } from "./commands.js";
 import { handler as bet } from "./handler/betting.js";
 import { handler as tipping } from "./handler/tipping.js";
@@ -12,15 +7,18 @@ import { handler as transaction } from "./handler/transaction.js";
 import { handler as splitpayment } from "./handler/payment.js";
 import { handler as games } from "./handler/game.js";
 import { handler as admin } from "./handler/admin.js";
+import { handler as loyalty } from "./handler/loyalty.js";
 
 // Define command handlers
 const commandHandlers: CommandHandlers = {
   "/tip": tipping,
+  "/agent": agent,
   "/bet": bet,
   "/send": transaction,
   "/swap": transaction,
   "/mint": transaction,
   "/show": transaction,
+  "/points": loyalty,
   "/game": games,
   "/admin": admin,
   "/help": async (context: HandlerContext) => {
@@ -35,16 +33,10 @@ const commandHandlers: CommandHandlers = {
   },
 };
 
-// Define agent handlers
-const agentHandlers: AgentHandlers = {
-  "@agent": agent,
-};
-
 // App configuration
 const appConfig = {
   commands: commands,
   commandHandlers: commandHandlers,
-  agentHandlers: agentHandlers,
 };
 
 // Main function to run the app
@@ -55,19 +47,21 @@ run(async (context: HandlerContext) => {
   try {
     switch (typeId) {
       case "reaction":
+        loyalty(context);
         handleReaction(context);
         break;
       case "reply":
         handleReply(context);
         break;
       case "group_updated":
-        await admin(context);
+        loyalty(context);
+        admin(context);
         break;
       case "remoteStaticAttachment":
-        await handleAttachment(context);
+        handleAttachment(context);
         break;
       case "text":
-        await handleTextMessage(context);
+        handleTextMessage(context);
         break;
       default:
         console.warn(`Unhandled message type: ${typeId}`);
@@ -93,7 +87,6 @@ async function handleReply(context: HandlerContext) {
   const {
     content: { content: reply },
   } = context.message;
-
   if (reply.includes("$degen")) {
     await tipping(context);
   }
@@ -109,9 +102,9 @@ async function handleTextMessage(context: HandlerContext) {
   const {
     content: { content: text },
   } = context.message;
-  if (text.startsWith("@")) {
-    await context.handleAgent(text);
-  } else if (text.startsWith("/")) {
-    await context.handleCommand(text);
+  if (text.startsWith("/")) {
+    await context.intent(text);
+  } else if (text.includes("@bot")) {
+    await agent(context);
   }
 }

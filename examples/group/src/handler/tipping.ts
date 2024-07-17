@@ -1,4 +1,5 @@
 import { HandlerContext } from "@xmtp/message-kit";
+
 export async function handler(context: HandlerContext) {
   const {
     getMessageById,
@@ -21,9 +22,11 @@ export async function handler(context: HandlerContext) {
   } else if (typeId === "text") {
     // Process text commands starting with "/tip"
     const {
+      params,
       params: { amount: extractedAmount, username },
       content: text,
     } = content;
+    console.log(params);
     if (text.startsWith("/tip")) {
       amount = extractedAmount || 10; // Default amount if not specified
       receiverAddresses = username; // Extract receiver from parameters
@@ -51,6 +54,6 @@ export async function handler(context: HandlerContext) {
   // Notify sender of the transaction details
   context.reply(
     `You sent ${amount * receiverAddresses.length} tokens in total.`,
-    [sender.address], // Notify only 1 address //  [!code hl] // [!code focus]
+    [sender.address], // Notify only 1 address
   );
 }
