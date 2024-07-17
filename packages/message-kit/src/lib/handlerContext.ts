@@ -127,21 +127,32 @@ export default class HandlerContext {
 
     return context;
   }
-  async reply(
-    message: string,
-    conversation?: Conversation,
-    receivers?: string[],
-  ) {
+  async reply(message: string, receivers?: string[]) {
     if (process?.env?.MSG_LOG === "true") {
       console.log(`reply`, message);
     }
     await this.conversation.send(message);
   }
+
+  private async sendMessage(
+    message: string | BotMessage,
+    conversation?: Conversation,
+    contentType?: any,
+  ) {
+    const targetConversation = conversation ?? this.conversation;
+    if (contentType) {
+      await targetConversation.send(message, contentType);
+    } else {
+      await targetConversation.send(message);
+    }
+  }
+
   async intent(
     messages: string,
     conversation?: Conversation,
     receivers?: string[],
   ) {
+    console.log("intent", messages);
     let splitMessages;
 
     try {
@@ -152,33 +163,34 @@ export default class HandlerContext {
     } catch (e) {
       splitMessages = [messages];
     }
+    console.log("splitMessages", splitMessages);
 
     for (const message of splitMessages) {
       const msg = message as string;
       console.log("msg", msg);
       if (msg.startsWith("/")) {
-        await this.handleCommand(msg);
+        await this.handleCommand(msg, conversation);
       } else {
-        await this.reply(msg, conversation);
+        await this.sendMessage(msg, conversation);
       }
     }
   }
-
-  async handleCommand(text: string, conversation?: Conversation) {
+  private async handleCommand(text: string, conversation?: Conversation) {
     const { commands, members } = this;
     if (text.startsWith("/")) {
       let content = parseIntent(text, commands ?? [], members ?? []);
       // Mock context for command execution
       const mockContext: HandlerContext = {
         ...this,
+        conversation: conversation ?? this.conversation,
         message: {
           ...this.message,
           content,
         },
-        conversation: conversation ?? this.conversation,
-        reply: this.reply.bind(this),
+        reply: async (message: string) => {
+          await (conversation ?? this.conversation).send(message);
+        },
         intent: this.intent.bind(this),
-        handleCommand: this.handleCommand.bind(this),
       };
       const handler =
         this.commandHandlers?.[
@@ -187,12 +199,12 @@ export default class HandlerContext {
       if (handler) {
         await handler(mockContext);
       } else {
-        this.reply(
+        await this.reply(
           "Unknown command. Type /help for a list of available commands.",
         );
       }
     } else {
-      await this.reply(`${text}`, conversation);
+      await this.reply(`${text}`);
     }
     return text;
   }

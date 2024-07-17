@@ -319,7 +319,7 @@ async function handleTextMessage(context: HandlerContext) {
   } = context.message;
   console.log("command", command);
   if (command && text.startsWith("/")) {
-    await context.handleCommand(text);
+    await context.intent(text);
   }
 }
 ```

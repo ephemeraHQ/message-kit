@@ -103,7 +103,7 @@ async function handleTextMessage(context: HandlerContext) {
     content: { content: text },
   } = context.message;
   if (text.startsWith("/")) {
-    await context.handleCommand(text);
+    await context.intent(text);
   } else if (text.includes("@bot")) {
     await agent(context);
   }

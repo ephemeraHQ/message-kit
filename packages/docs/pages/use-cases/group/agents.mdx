@@ -41,7 +41,7 @@ export async function handler(context: HandlerContext) {
       if (process?.env?.MSG_LOG === "true") {
         console.log("reply", reply);
       }
-      context.handleCommand(reply);
+      context.intent(reply);
     } else {
       await context.reply(reply);
     }

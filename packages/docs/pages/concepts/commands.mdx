@@ -89,29 +89,23 @@ run(async (context: HandlerContext) => {
 
 _See more details in the [receive commands](/concepts/content-types/command) section._
 
-## Handle commands
-
-If you want to parse a string an execture a command handler you can do so with
-
-```jsx
-context.handleCommand(command);
-```
-
 ## Handle intent
 
-When using responses from LLMs you may want to execute the intent of the generated commands. This method will parse commands or send chained messages if its an Array.
+To parse a string and execute a command handler, you can use the following method. When using responses from LLMs, you may want to execute the intent of the generated commands. This method will parse commands or send chained messages if they are in an array.
 
 ```jsx
+//Sepcifify the conversation
+context.intent("/send 10 usdc to @alix", conv);
 // open ai call
 const { reply } = await textGeneration(response, prompt);
-// execute the intent
+//Process the intent or an array of intents
 context.intent(reply);
 ```
 
 ## Overlapping commands
 
-If the group has overlapping commands, the command will need to specifiy the handle of the mini app bot.
+If the group has overlapping commands, meaning, the command is repeated in more than one mini app bot, the command will need to specifiy the handle of the mini app bot.
 
-```tsx
-/command@bot
+```bash [cmd]
+/command@bot_handle
 ```

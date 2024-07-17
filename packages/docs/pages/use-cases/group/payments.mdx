@@ -66,14 +66,7 @@ export async function handler(context: HandlerContext) {
       const { reply: split } = await textGeneration(response, prompt);
       const splitMessages = JSON.parse(split);
       if (Array.isArray(splitMessages)) {
-        for (const message of splitMessages) {
-          const msg = message.message as any;
-          if (msg.startsWith("/")) {
-            context.handleCommand(msg);
-          } else {
-            await context.reply(msg);
-          }
-        }
+        context.intent(splitMessages);
       } else {
         await context.reply(split);
       }
