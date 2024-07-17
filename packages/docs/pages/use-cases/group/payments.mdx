@@ -51,25 +51,14 @@ export async function handler(context: HandlerContext) {
       Don't use markdown. Return messages in a json object The first message detailing the split. The second one you will send the command for the receiver to pay directly to the sender.
       Example:
       [
-        {
-          "message": "This are the details: Total: $49.52. Tip (20%): $9.90"
-        },
-        {
-          "message": "All users owe X USDC to @${sender?.username}. Pay here:"
-        },
-        {
-          "message": "/send @${sender?.username} $9.90"
-        }
+        "This are the details: Total: $49.52. Tip (20%): $9.90",
+        "All users owe X USDC to @${sender?.username}. Pay here:",
+        "/send @${sender?.username} $9.90"
       ]
       `;
 
-      const { reply: split } = await textGeneration(response, prompt);
-      const splitMessages = JSON.parse(split);
-      if (Array.isArray(splitMessages)) {
-        context.intent(splitMessages);
-      } else {
-        await context.reply(split);
-      }
+      const { reply } = await textGeneration(response, prompt);
+      context.intent(reply);
     }
   }
 }
