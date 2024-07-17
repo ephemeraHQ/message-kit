@@ -39,9 +39,8 @@ describe("Intent tests", () => {
       "/agent lets play a game",
       systemPrompt,
     );
-    console.log(reply);
-    expect(reply.toLowerCase()).toBe(
-      "/game slot".toLowerCase() || "/game wordle".toLowerCase(),
-    );
+    expect(
+      ["/game slot", "/game wordle"].map((cmd) => cmd.toLowerCase()),
+    ).toContain(reply.toLowerCase());
   });
 });
