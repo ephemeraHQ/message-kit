@@ -23,6 +23,8 @@ export default async function run(handler: Handler, config?: Config) {
             )
           : message?.conversation;
 
+        const firstWord = message.content.split(" ")[0];
+
         if (
           //v2
           !conversation ||
@@ -31,7 +33,11 @@ export default async function run(handler: Handler, config?: Config) {
           //If same address do nothin
           senderInboxId === address ||
           //If is bot type nothing
-          contentType.sameAs(ContentTypeBotMessage)
+          contentType.sameAs(ContentTypeBotMessage) ||
+          //If is command of other bot
+          (firstWord.startsWith("/") &&
+            firstWord.includes("@") &&
+            !firstWord.includes("@bot"))
         ) {
           return;
         }

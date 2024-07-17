@@ -32,10 +32,7 @@ function handleRemoveMembers() {
   return messages[Math.floor(Math.random() * messages.length)];
 }
 const handleGroupname = (newValue: string, adminName: string) => {
-  let messages = [
-    `New name, new game '${newValue}'! 📝`,
-    `Nothing will be the same, all hail '${newValue}'!`,
-  ];
+  let messages = [`LFG '${newValue}'! 🔥`, `all hail '${newValue}' 👏🏻`];
   return messages[Math.floor(Math.random() * messages.length)];
 };
 export async function handler(context: HandlerContext) {
