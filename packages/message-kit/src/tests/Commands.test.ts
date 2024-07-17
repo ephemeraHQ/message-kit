@@ -70,7 +70,7 @@ describe("Command extraction tests", () => {
     expect(extractedValues).toEqual({
       command: "game",
       params: {
-        type: "slot",
+        game: "slot",
       },
     });
   });
