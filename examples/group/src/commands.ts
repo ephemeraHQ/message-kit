@@ -105,6 +105,11 @@ export const commands: CommandGroup[] = [
             default: "",
             type: "quoted",
           },
+          token: {
+            default: "eth",
+            type: "string",
+            values: ["eth", "dai", "usdc", "degen"],
+          },
           amount: {
             default: 10,
             type: "number",

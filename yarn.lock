@@ -3514,7 +3514,7 @@ __metadata:
     "@xmtp/content-type-remote-attachment": "npm:^1.1.9"
     "@xmtp/content-type-reply": "npm:^1.1.11"
     "@xmtp/content-type-text": "npm:^1.0.0"
-    "@xmtp/mls-client": "npm:^0.0.12"
+    "@xmtp/mls-client": "npm:^0.0.13"
     "@xmtp/xmtp-js": "npm:^12.0.0"
     dotenv: "npm:^16.4.5"
     jest: "npm:^29.7.0"
@@ -3529,22 +3529,22 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@xmtp/mls-client-bindings-node@npm:^0.0.8":
-  version: 0.0.8
-  resolution: "@xmtp/mls-client-bindings-node@npm:0.0.8"
-  checksum: 10/58bbe484844e08ae1bd9d22388fb9081662ef96debd29fcb375c88de66d27da1dc94da465add6c54ab926f8b100b0c6e717f6b500706705c7b08ea1021e70e34
+"@xmtp/mls-client-bindings-node@npm:^0.0.9":
+  version: 0.0.9
+  resolution: "@xmtp/mls-client-bindings-node@npm:0.0.9"
+  checksum: 10/ca13010b542be6671c48115e38e8888bc725007bdfddd1fd3d7ee300ef0318e64cdca48cbe32f9240b2c8f5a9904f943b360af09abd7ce5cdeda3a3b62c6e7d2
   languageName: node
   linkType: hard
 
-"@xmtp/mls-client@npm:^0.0.12":
-  version: 0.0.12
-  resolution: "@xmtp/mls-client@npm:0.0.12"
+"@xmtp/mls-client@npm:^0.0.13":
+  version: 0.0.13
+  resolution: "@xmtp/mls-client@npm:0.0.13"
   dependencies:
     "@xmtp/content-type-primitives": "npm:^1.0.1"
     "@xmtp/content-type-text": "npm:^1.0.0"
-    "@xmtp/mls-client-bindings-node": "npm:^0.0.8"
-    "@xmtp/proto": "npm:^3.61.1"
-  checksum: 10/83ab98ba95f5e841bec376e028c380e2ae0a408a61683a2cf37cbc308c38cc001c11c515e4f6fddce88a959b7f0c07176ad05c85f46060dced77136956472297
+    "@xmtp/mls-client-bindings-node": "npm:^0.0.9"
+    "@xmtp/proto": "npm:^3.62.1"
+  checksum: 10/0a90c0261abc9a021499b5c9d422c528f07f444b66df44b0b26aa10e49068f0f8f3ce23f1de5488b6f293b82d1857ae2beeff82d384a6760d55efe6c00290baa
   languageName: node
   linkType: hard
 
@@ -3581,6 +3581,18 @@ __metadata:
     rxjs: "npm:^7.8.0"
     undici: "npm:^5.8.1"
   checksum: 10/c5acae46ad301a50652f30384be55a3389b4c11994652fa5386052c7ff4111fcb15c0e9d267898d6173cbcb6559b24bd7bef7470f020388f8610fecd3b8deea9
+  languageName: node
+  linkType: hard
+
+"@xmtp/proto@npm:^3.62.1":
+  version: 3.62.1
+  resolution: "@xmtp/proto@npm:3.62.1"
+  dependencies:
+    long: "npm:^5.2.0"
+    protobufjs: "npm:^7.0.0"
+    rxjs: "npm:^7.8.0"
+    undici: "npm:^5.8.1"
+  checksum: 10/7d6633f5ffb60725a6f3f128191944caf203fb3110a6076cdec31bc3cc6e5dca1b03170c6fa38b877125475ed3050031b93a47587c5e6bee6ebd91de53f8f0f2
   languageName: node
   linkType: hard
 

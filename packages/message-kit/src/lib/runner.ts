@@ -23,19 +23,19 @@ export default async function run(handler: Handler, config?: Config) {
             )
           : message?.conversation;
 
-        //v2
-        //If same address do nothin
-        if (!conversation) return;
-        else if (senderAddress === addressV2) return;
-        else if (senderInboxId === address) return;
-        else if (contentType.sameAs(ContentTypeBotMessage)) {
-          // if a bot speaks do nothing
+        if (
+          //v2
+          !conversation ||
+          //If same address do nothin
+          senderAddress === addressV2 ||
+          //If same address do nothin
+          senderInboxId === address ||
+          //If is bot type nothing
+          contentType.sameAs(ContentTypeBotMessage)
+        ) {
           return;
         }
 
-        if (process?.env?.MSG_LOG) {
-          console.log(`message:`, message.content);
-        }
         const context = await HandlerContext.create(
           conversation,
           message,
@@ -57,6 +57,9 @@ export default async function run(handler: Handler, config?: Config) {
       const stream = await client.conversations.streamAllMessages();
       try {
         for await (const message of stream) {
+          if (process?.env?.MSG_LOG) {
+            console.log(`message:`, message.content);
+          }
           await handleMessage(client, address, message);
         }
       } catch (e) {

@@ -3,11 +3,10 @@ import type { User } from "@xmtp/message-kit";
 
 export async function handler(context: HandlerContext) {
   const {
-    client,
     newConversation,
     message: {
       content: {
-        params: { amount, name, username },
+        params: { amount, name, username, token },
       },
       sender,
     },
@@ -28,15 +27,12 @@ export async function handler(context: HandlerContext) {
   ];
 
   const conv = await newConversation(addresses);
-  await conv.send(`Bet created!\n${name} for $${amount}`);
-  await conv.send(
-    `https://base-frame-lyart.vercel.app/transaction?transaction_type=send&amount=1&token=eth&receiver=0xA45020BdA714c3F43fECDC6e38F873fFF2Dec8ec`,
-  );
-  await conv.updateName(`${name} for $${amount}`);
+  await conv.updateName(`${name}`);
+  await conv.send(`Welcome to the ${name} bet!`);
+  await conv.send(`To confirm your bet, click the button below.`);
+  await context.intent(`/send ${amount} ${token} to @bot`);
 
-  let groupId = conv.id;
-  context.reply(
-    `Bet created!. Go to the new group: https://converse.xyz/${groupId}`,
-    addresses,
+  await context.reply(
+    `Bet created!. Go to the new group: https://converse.xyz/${conv.id}`,
   );
 }

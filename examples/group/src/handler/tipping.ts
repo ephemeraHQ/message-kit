@@ -54,6 +54,7 @@ export async function handler(context: HandlerContext) {
   // Notify sender of the transaction details
   context.reply(
     `You sent ${amount * receiverAddresses.length} tokens in total.`,
-    [sender.address], // Notify only 1 address //  [!code hl] // [!code focus]
+    undefined,
+    [sender.address], // Notify only 1 address
   );
 }

@@ -127,14 +127,21 @@ export default class HandlerContext {
 
     return context;
   }
-  async reply(message: string, receivers?: string[]) {
+  async reply(
+    message: string,
+    conversation?: Conversation,
+    receivers?: string[],
+  ) {
     if (process?.env?.MSG_LOG === "true") {
       console.log(`reply`, message);
     }
     await this.conversation.send(message);
   }
-  async intent(messages: string, receivers?: string[]) {
-    console.log("intent", messages);
+  async intent(
+    messages: string,
+    conversation?: Conversation,
+    receivers?: string[],
+  ) {
     let splitMessages;
 
     try {
@@ -145,7 +152,6 @@ export default class HandlerContext {
     } catch (e) {
       splitMessages = [messages];
     }
-    console.log("splitMessages", splitMessages);
 
     for (const message of splitMessages) {
       const msg = message as string;
@@ -153,22 +159,12 @@ export default class HandlerContext {
       if (msg.startsWith("/")) {
         await this.handleCommand(msg);
       } else {
-        await this.reply(msg);
+        await this.reply(msg, conversation);
       }
     }
   }
-  async botReply(message: string, receivers?: string[]) {
-    const { typeId } = this.message;
-    if (typeId === "silent") return;
-    const content: BotMessage = {
-      receivers: receivers ?? [],
-      content: message,
-    };
 
-    await this.conversation.send(content, ContentTypeBotMessage);
-  }
-
-  async handleCommand(text: string) {
+  async handleCommand(text: string, conversation?: Conversation) {
     const { commands, members } = this;
     if (text.startsWith("/")) {
       let content = parseIntent(text, commands ?? [], members ?? []);
@@ -179,8 +175,8 @@ export default class HandlerContext {
           ...this.message,
           content,
         },
+        conversation: conversation ?? this.conversation,
         reply: this.reply.bind(this),
-        botReply: this.botReply.bind(this),
         intent: this.intent.bind(this),
         handleCommand: this.handleCommand.bind(this),
       };
@@ -196,7 +192,7 @@ export default class HandlerContext {
         );
       }
     } else {
-      await this.reply(`${text}`);
+      await this.reply(`${text}`, conversation);
     }
     return text;
   }
