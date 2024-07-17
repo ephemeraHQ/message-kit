@@ -182,6 +182,7 @@ export default class HandlerContext {
     options?: {
       conversation?: Conversation;
       receivers?: string[];
+      return?: boolean;
     },
   ) {
     let splitMessages = [messages];
@@ -193,7 +194,9 @@ export default class HandlerContext {
         console.log("splitMessages", splitMessages);
       }
     } catch (e) {}
-
+    if (options?.return) {
+      return splitMessages;
+    }
     for (const message of splitMessages) {
       const msg = message as string;
       if (msg.startsWith("/")) {

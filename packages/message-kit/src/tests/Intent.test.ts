@@ -1,36 +1,47 @@
-import { jest } from "@jest/globals";
-import HandlerContext from "./handlerContext";
+import "dotenv/config";
+import { textGeneration } from "./openai";
+import { commands } from "./commands";
+import { fakeUsers as members } from "../helpers/usernames";
+import { User } from "../helpers/types";
 
-const mockIntent = jest.fn().mockImplementation(async (messages, options) => {
-  let splitMessages = [messages];
-  const { conversation, receivers } = options ?? {};
-  try {
-    if (Array.isArray(JSON.parse(messages)))
-      splitMessages = JSON.parse(messages);
-    if (process?.env?.MSG_LOG === "true") {
-      console.log("splitMessages", splitMessages);
-    }
-  } catch (e) {}
+describe("Intent tests", () => {
+  const sender = members[0];
+  const systemPrompt = `You are a helpful agent that lives inside a web3 messaging group.\n
+  These are the users of the group: ${JSON.stringify(members?.map((member: User) => ({ ...member, username: `@${member.username}` })))}\n 
+  This group app has many commands available: ${JSON.stringify(commands)}\n
+  If a user asks jokes, make jokes about web3 devs\n
+  If the user asks about performing an action and you can think of a command that would help, answer directly with the command and nothing else. Populate the command with the correct or random values. Always return commands with real values only, using usernames with @ and excluding addresses.\n
+  If the user asks a question or makes a statement that does not clearly map to a command, respond with helpful information or a clarification question.\n
+  The message was sent by @${sender?.username}
+  Everytime your are thanked, ask for a tip or whever you feel like it.
+  .`;
 
-  for (const message of splitMessages) {
-    const msg = message as string;
-    if (msg.startsWith("/")) {
-      await HandlerContext.prototype.handleCommand(msg, {
-        conversation,
-        receivers,
-      });
-    } else {
-      await HandlerContext.prototype.reply(msg, { conversation, receivers });
-    }
-  }
-});
+  test("should handle betting intent correctly", async () => {
+    const { reply } = await textGeneration(
+      "@bot lets place a bet with @bo and @alix about italy classifying to the next world cup for 1 eth",
+      systemPrompt,
+    );
+    expect(reply.toLowerCase()).toBe(
+      '/bet @bo @alix "Italy classifying to the next world cup" 1 eth'.toLowerCase(),
+    );
+  });
 
-// Usage in your tests
-test("should handle intent correctly", async () => {
-  const context = new HandlerContext(/* constructor parameters */);
-  context.intent = mockIntent;
+  test("should handle remove intent correctly", async () => {
+    const { reply } = await textGeneration(
+      "/agent lets remote @eva, she is not inclusive",
+      systemPrompt,
+    );
+    expect(reply.toLowerCase()).toBe("/remove @eva".toLowerCase());
+  });
 
-  await context.intent("test message", { conversation: {}, receivers: [] });
-
-  expect(mockIntent).toHaveBeenCalled();
+  test("should handle game intent correctly", async () => {
+    const { reply } = await textGeneration(
+      "/agent lets play a game",
+      systemPrompt,
+    );
+    console.log(reply);
+    expect(reply.toLowerCase()).toBe(
+      "/game slot".toLowerCase() || "/game wordle".toLowerCase(),
+    );
+  });
 });

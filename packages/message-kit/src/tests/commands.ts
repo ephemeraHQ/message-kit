@@ -94,7 +94,7 @@ export const commands: CommandGroup[] = [
     description: "Create bets with friends.",
     commands: [
       {
-        command: "/bet @users [Bet Name] [Bet Amount]",
+        command: "/bet @users [name] [amount] [token]",
         description: "Bet on basebet.",
         params: {
           username: {
@@ -108,6 +108,11 @@ export const commands: CommandGroup[] = [
           amount: {
             default: 10,
             type: "number",
+          },
+          token: {
+            default: "eth",
+            type: "string",
+            values: ["eth", "dai", "usdc", "degen"],
           },
         },
       },

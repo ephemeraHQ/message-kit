@@ -1,5 +1,7 @@
+import "dotenv/config";
 import { commands } from "./commands";
 import { fakeUsers as users } from "../helpers/usernames";
+import { textGeneration } from "./openai";
 import { extractCommandValues } from "../helpers/commands";
 
 describe("Command extraction tests", () => {
@@ -76,7 +78,7 @@ describe("Command extraction tests", () => {
   });
 
   test("Extract values from /bet command", () => {
-    const inputContent = "/bet @alix @bo 'NBA Game' 100";
+    const inputContent = "/bet @alix @bo 'NBA Game' 100 usdc";
     const extractedValues = extractCommandValues(inputContent, commands, users);
     expect(extractedValues).toEqual({
       command: "bet",
@@ -91,6 +93,7 @@ describe("Command extraction tests", () => {
         ]),
         name: "NBA Game",
         amount: 100,
+        token: "usdc",
       },
     });
   });
@@ -139,7 +142,6 @@ describe("Command extraction tests", () => {
   test("Extract values from /agent prompt command", () => {
     const inputContent = "/agent Hello, how can I assist you today?";
     const extractedValues = extractCommandValues(inputContent, commands, users);
-    console.log(extractedValues);
     expect(extractedValues).toEqual({
       command: "agent",
       params: expect.objectContaining({
