@@ -51,7 +51,9 @@ jobs:
         run: corepack enable
       - name: Install dependencies
         run: yarn
-      - name: Check types
+      - name: Test
+        env:
+          OPEN_AI_API_KEY: ${{ secrets.OPEN_AI_API_KEY }}
         run: yarn test
 
   build:

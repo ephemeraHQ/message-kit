@@ -1,5 +1,7 @@
+import "dotenv/config";
 import { commands } from "./commands";
 import { fakeUsers as users } from "../helpers/usernames";
+import { textGeneration } from "./openai";
 import { extractCommandValues } from "../helpers/commands";
 
 describe("Command extraction tests", () => {
@@ -70,13 +72,13 @@ describe("Command extraction tests", () => {
     expect(extractedValues).toEqual({
       command: "game",
       params: {
-        type: "slot",
+        game: "slot",
       },
     });
   });
 
   test("Extract values from /bet command", () => {
-    const inputContent = "/bet @alix @bo 'NBA Game' 100";
+    const inputContent = "/bet @alix @bo 'NBA Game' 100 usdc";
     const extractedValues = extractCommandValues(inputContent, commands, users);
     expect(extractedValues).toEqual({
       command: "bet",
@@ -91,17 +93,17 @@ describe("Command extraction tests", () => {
         ]),
         name: "NBA Game",
         amount: 100,
+        token: "usdc",
       },
     });
   });
 
-  test("Extract values from /admin add command", () => {
-    const inputContent = "/admin add @bo";
+  test("Extract values from /add command", () => {
+    const inputContent = "/add @bo";
     const extractedValues = extractCommandValues(inputContent, commands, users);
     expect(extractedValues).toEqual({
-      command: "admin",
+      command: "add",
       params: expect.objectContaining({
-        type: "add",
         username: expect.arrayContaining([
           expect.objectContaining({
             username: "bo",
@@ -111,29 +113,27 @@ describe("Command extraction tests", () => {
     });
   });
 
-  test("Extract values from /admin remove command", () => {
-    const inputContent = "/admin remove @bo";
+  test("Extract values from /remove command", () => {
+    const inputContent = "/remove @alix";
     const extractedValues = extractCommandValues(inputContent, commands, users);
     expect(extractedValues).toEqual({
-      command: "admin",
+      command: "remove",
       params: expect.objectContaining({
-        type: "remove",
         username: expect.arrayContaining([
           expect.objectContaining({
-            username: "bo",
+            username: "alix",
           }),
         ]),
       }),
     });
   });
 
-  test("Extract values from /admin name command", () => {
-    const inputContent = '/admin name "New name"';
+  test("Extract values from /name command", () => {
+    const inputContent = '/name "New name"';
     const extractedValues = extractCommandValues(inputContent, commands, users);
     expect(extractedValues).toEqual({
-      command: "admin",
+      command: "name",
       params: expect.objectContaining({
-        type: "name",
         name: "New name",
       }),
     });
@@ -142,7 +142,6 @@ describe("Command extraction tests", () => {
   test("Extract values from /agent prompt command", () => {
     const inputContent = "/agent Hello, how can I assist you today?";
     const extractedValues = extractCommandValues(inputContent, commands, users);
-    console.log(extractedValues);
     expect(extractedValues).toEqual({
       command: "agent",
       params: expect.objectContaining({

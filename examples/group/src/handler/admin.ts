@@ -28,14 +28,11 @@ function handleAddMembers(
   return "";
 }
 function handleRemoveMembers() {
-  let messages = [`🪦`, `☠️☠️☠️`, `👻`, `hasta la vista, baby`];
+  let messages = [`🪦`, `👻`, `hasta la vista, baby`];
   return messages[Math.floor(Math.random() * messages.length)];
 }
 const handleGroupname = (newValue: string, adminName: string) => {
-  let messages = [
-    `New name, new game '${newValue}'! 📝`,
-    `Nothing will be the same, all hail '${newValue}'!`,
-  ];
+  let messages = [`LFG ${newValue}! 🔥`, `all hail ${newValue} 👏🏻`];
   return messages[Math.floor(Math.random() * messages.length)];
 };
 export async function handler(context: HandlerContext) {
@@ -54,7 +51,7 @@ export async function handler(context: HandlerContext) {
 
     // Fetch username from members array mapped by inboxId
     const adminName =
-      members?.find((member) => member.inboxId === initiatedByInboxId)
+      members?.find((member: User) => member.inboxId === initiatedByInboxId)
         ?.username || "Admin";
 
     let message: string = "";
@@ -71,10 +68,10 @@ export async function handler(context: HandlerContext) {
     await context.reply(message);
   } else if (typeId === "text") {
     const {
-      params: { type, username, name },
+      command,
+      params: { username, name },
     } = content;
-    console.log(type, username, name);
-    switch (type) {
+    switch (command) {
       case "name":
         try {
           await conversation.updateName(name);

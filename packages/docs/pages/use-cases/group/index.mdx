@@ -159,13 +159,13 @@ export const commands: CommandGroup[] = [
     description: "Provides various gaming experiences.",
     commands: [
       {
-        command: "/game [type]",
+        command: "/game [game]",
         description: "Play a game.",
         params: {
-          type: {
+          game: {
             default: "",
             type: "string",
-            values: ["wordle", "slot"],
+            values: ["wordle", "slot", "help"],
           },
         },
       },
@@ -174,25 +174,32 @@ export const commands: CommandGroup[] = [
   {
     name: "Admin",
     icon: "🔐",
-    description: "Moderate access to the group with admin commands.",
+    description: "Manage group members and metadata.",
     commands: [
       {
-        command: "/admin [type]",
-        description: "Add or remove a user.",
+        command: "/add [username]",
+        description: "Add a user.",
         params: {
-          type: {
-            default: "",
-            type: "string",
-            values: ["add", "remove", "name"],
-          },
           username: {
             default: "",
             type: "username",
           },
-          address: {
+        },
+      },
+      {
+        command: "/remove [username]",
+        description: "Remove a user.",
+        params: {
+          username: {
             default: "",
-            type: "address",
+            type: "username",
           },
+        },
+      },
+      {
+        command: "/name [name]",
+        description: "Set the name of the group.",
+        params: {
           name: {
             default: "",
             type: "quoted",
@@ -234,7 +241,9 @@ const commandHandlers: CommandHandlers = {
   "/mint": transaction,
   "/show": transaction,
   "/game": games,
-  "/admin": admin,
+  "/add": admin,
+  "/remove": admin,
+  "/name": admin,
   "/help": async (context: HandlerContext) => {
     const intro =
       "Available experiences:\n" +

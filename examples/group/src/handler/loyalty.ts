@@ -1,60 +1,48 @@
-import { StackClient } from "@stackso/js-core";
-import { HandlerContext } from "@xmtp/message-kit";
+import { HandlerContext, User } from "@xmtp/message-kit";
+import { getStackClient, StackClient } from "../lib/stack.js";
 
-// Initialize the client
-let stack: StackClient | null = null;
-
-if (process?.env?.STACKS_API_KEY) {
-  stack = new StackClient({
-    // Get your API key and point system id from the Stack dashboard (stack.so)
-    apiKey: process?.env?.STACKS_API_KEY as string,
-    pointSystemId: 2893,
-  });
-}
-
-export async function handler(context: HandlerContext) {
-  if (!process?.env?.STACKS_API_KEY) {
-    return context.reply("No Stacks API key found");
-  }
-
+export async function handler(context: HandlerContext, fake?: boolean) {
+  const stack = getStackClient();
   const {
     members,
     getMessageById,
-    message: { content, sender, typeId },
+    message: { id, content, sender, typeId },
   } = context;
-
-  if (typeId === "text") {
-    const {
-      command,
-      params: { type },
-    } = content;
+  if (fake) {
+    //for fake demo
+    fakeReaction(sender.username, sender.address, id, stack, context);
+    return;
+  } else if (typeId === "text") {
+    const { command } = content;
     if (command === "points") {
-      if (type === "me") {
-        const points = await stack?.getPoints(sender.address);
-        await context.reply(`You have ${points} points`);
-      } else if (type === "leaderboard") {
-        const leaderboard = await stack?.getLeaderboard();
-        const formattedLeaderboard = leaderboard?.leaderboard
-          .map(
-            (entry, index) =>
-              `${index + 1}. Address: ${entry.address}, Points: ${entry.points}`,
-          )
-          .join("\n");
-        await context.reply(`Leaderboard:\n${formattedLeaderboard}`);
-      }
+      const points = await stack?.getPoints(sender.address);
+      context.reply(`You have ${points} points`);
+    } else if (command === "leaderboard") {
+      const leaderboard = await stack?.getLeaderboard();
+      const formattedLeaderboard = leaderboard?.leaderboard
+        .map(
+          (entry, index) =>
+            `${index + 1}. Address: ${`${entry.address.slice(
+              0,
+              6,
+            )}...${entry.address.slice(-4)}`}, Points: ${entry.points}`,
+        )
+        .join("\n");
+      context.reply(
+        `Leaderboard:\n\n${formattedLeaderboard}\n\nCheck out the public leaderboard\nhttps://www.stack.so/leaderboard/degen-group`,
+      );
     }
-  }
-
-  if (typeId === "group_updated") {
+  } else if (typeId === "group_updated") {
     const { initiatedByInboxId, addedInboxes } = content;
     const adminAddress = members?.find(
-      (member) => member.inboxId === initiatedByInboxId,
-    )?.address;
+      (member: User) => member.inboxId === initiatedByInboxId,
+    );
     if (addedInboxes && addedInboxes.length > 0) {
       //if add someone to the group
       await stack?.track("referral", {
         points: 10,
-        account: adminAddress ?? "",
+        account: adminAddress?.address ?? "",
+        uniqueId: adminAddress?.username ?? "",
       });
     }
   } else if (typeId === "reaction") {
@@ -62,20 +50,44 @@ export async function handler(context: HandlerContext) {
     const msg = await getMessageById(content.reference);
     if (action === "added") {
       const adminAddress = members?.find(
-        (member) => member.inboxId === msg?.senderInboxId,
-      )?.address;
+        (member: User) => member.inboxId === msg?.senderInboxId,
+      );
       let points = 1;
-      console.log(emoji);
-      console.log(emoji === "👎");
       if (emoji === "👎") {
         points = -10;
       } else if (emoji === "🎩") {
         points = 10;
       }
-      console.log("points", points);
       await stack?.track("reaction", {
         points,
-        account: adminAddress ?? "",
+        account: adminAddress?.address ?? "",
+        uniqueId: adminAddress?.username ?? "",
+      });
+    }
+  }
+}
+async function fakeReaction(
+  username: string,
+  address: string,
+  id: string,
+  stack: StackClient,
+  context: HandlerContext,
+) {
+  if (username === "me") {
+    if (Math.random() < 0.3) {
+      //Fake reactions
+      const emojis = ["😀", "👍", "🎩"];
+      const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+      context.sendReaction(randomEmoji, id);
+      let points = 1;
+      if (randomEmoji === "👎") {
+        points = -10;
+      } else if (randomEmoji === "🎩") {
+        points = 10;
+      }
+      await stack?.track("reaction", {
+        points,
+        account: address,
       });
     }
   }

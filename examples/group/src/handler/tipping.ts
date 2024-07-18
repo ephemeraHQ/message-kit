@@ -1,21 +1,27 @@
-import { HandlerContext } from "@xmtp/message-kit";
+import { HandlerContext, User } from "@xmtp/message-kit";
 
 export async function handler(context: HandlerContext) {
   const {
+    members,
     getMessageById,
     message: { content, sender, typeId },
   } = context;
 
   const msg = await getMessageById(content.reference);
+  const replyReceiver = members?.find(
+    (member) => member.inboxId === msg?.senderInboxId,
+  );
 
   let amount: number = 0,
-    receiverAddresses: string[] = [];
+    receivers: User[] = [];
+
   // Handle different types of messages
   if (typeId === "reply") {
     // Process reply messages
     const { content: reply } = content;
-    receiverAddresses = [msg?.senderInboxId ?? ""];
-    if (reply.includes("$degen")) {
+
+    if (reply.includes("$degen") && replyReceiver) {
+      receivers = [replyReceiver];
       const match = reply.match(/(\d+)/);
       if (match) amount = parseInt(match[0]); // Extract amount from reply
     }
@@ -29,31 +35,31 @@ export async function handler(context: HandlerContext) {
     console.log(params);
     if (text.startsWith("/tip")) {
       amount = extractedAmount || 10; // Default amount if not specified
-      receiverAddresses = username; // Extract receiver from parameters
+      receivers = username; // Extract receiver from parameters
     }
-  } else if (typeId === "reaction") {
+  } else if (typeId === "reaction" && replyReceiver) {
     const { content: reaction, action } = content;
     // Process reactions, specifically tipping added reactions
     if ((reaction === "🎩" || reaction === "degen") && action === "added") {
       amount = 10; // Set a fixed amount for reactions
-      receiverAddresses = [msg?.senderInboxId ?? ""];
+      receivers = [replyReceiver];
     }
   }
-  if (!sender || receiverAddresses.length === 0 || amount === 0) {
+  if (!sender || receivers.length === 0 || amount === 0) {
     context.reply("Sender or receiver or amount not found.");
     return;
   }
+  let receiverAddresses = receivers.map((receiver) => receiver.address);
 
   // Process sending tokens to each receiver
-  /*receiverAddresses.forEach(async (receiver: string) => {
-    context.reply(
-      `You received ${amount} tokens from ${senderUser.username}.`,
-      [receiver?.address], // Notify only 1 address
-    );
-  });*/
+  receiverAddresses.forEach(async (receiver: any) => {
+    context.reply(`You received ${amount} tokens from ${sender.username}.`, {
+      receivers: receiverAddresses,
+    });
+  });
   // Notify sender of the transaction details
   context.reply(
     `You sent ${amount * receiverAddresses.length} tokens in total.`,
-    [sender.address], // Notify only 1 address
+    { receivers: [sender.address] },
   );
 }

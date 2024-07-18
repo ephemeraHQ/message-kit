@@ -45,62 +45,69 @@ In this example you can tip using 3 primitives:
 ## Main code
 
 ```jsx [src/handler/tipping.ts]
-import { HandlerContext } from "@xmtp/message-kit";
+import { HandlerContext, User } from "@xmtp/message-kit";
+
 export async function handler(context: HandlerContext) {
   const {
     members,
-    message: {
-      content: { content, params, action, referenceInboxId: receiver },
-      senderInboxId,
-      typeId,
-    },
+    getMessageById,
+    message: { content, sender, typeId },
   } = context;
 
+  const msg = await getMessageById(content.reference);
+  const replyReceiver = members?.find(
+    (member) => member.inboxId === msg?.senderInboxId,
+  );
+
   let amount: number = 0,
-    receiverAddresses: string[] = [];
+    receivers: User[] = [];
+
   // Handle different types of messages
   if (typeId === "reply") {
     // Process reply messages
-    receiverAddresses = [receiver];
-    if (content.includes("$degen")) {
-      const match = content.match(/(\d+)/);
+    const { content: reply } = content;
+
+    if (reply.includes("$degen") && replyReceiver) {
+      receivers = [replyReceiver];
+      const match = reply.match(/(\d+)/);
       if (match) amount = parseInt(match[0]); // Extract amount from reply
     }
   } else if (typeId === "text") {
     // Process text commands starting with "/tip"
-    if (content.startsWith("/tip")) {
-      const { amount: extractedAmount, username } = params;
+    const {
+      params,
+      params: { amount: extractedAmount, username },
+      content: text,
+    } = content;
+    console.log(params);
+    if (text.startsWith("/tip")) {
       amount = extractedAmount || 10; // Default amount if not specified
-      receiverAddresses = username; // Extract receiver from parameters
+      receivers = username; // Extract receiver from parameters
     }
-  } else if (typeId === "reaction") {
+  } else if (typeId === "reaction" && replyReceiver) {
+    const { content: reaction, action } = content;
     // Process reactions, specifically tipping added reactions
-    if ((content === "🎩" || content === "degen") && action === "added") {
+    if ((reaction === "🎩" || reaction === "degen") && action === "added") {
       amount = 10; // Set a fixed amount for reactions
-      receiverAddresses = [receiver];
+      receivers = [replyReceiver];
     }
   }
-  // Find sender user details
-  const senderUser = members?.find(
-    (user: any) => user.inboxId === senderInboxId,
-  );
-
-  if (!senderUser || receiverAddresses.length === 0 || amount === 0) {
+  if (!sender || receivers.length === 0 || amount === 0) {
     context.reply("Sender or receiver or amount not found.");
     return;
   }
+  let receiverAddresses = receivers.map((receiver) => receiver.address);
 
   // Process sending tokens to each receiver
   receiverAddresses.forEach(async (receiver: any) => {
-    context.reply(
-      `You received ${amount} tokens from ${senderUser.username}.`,
-      [receiver?.address], // Notify only 1 address
-    );
+    context.reply(`You received ${amount} tokens from ${sender.username}.`, {
+      receivers: receiverAddresses,
+    });
   });
   // Notify sender of the transaction details
   context.reply(
     `You sent ${amount * receiverAddresses.length} tokens in total.`,
-    [senderInboxId!], // Notify only 1 address //  [!code hl] // [!code focus]
+    { receivers: [sender.address] },
   );
 }
 ```

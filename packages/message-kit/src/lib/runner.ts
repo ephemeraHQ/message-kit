@@ -39,7 +39,7 @@ export default async function run(handler: Handler, config?: Config) {
         const context = await HandlerContext.create(
           conversation,
           message,
-          client,
+          { client, v2client },
           config?.commands ?? [],
           config?.commandHandlers ?? {},
           config?.agentHandlers ?? {},
