@@ -8,7 +8,7 @@ export async function handler(context: HandlerContext, fake?: boolean) {
     getMessageById,
     message: { id, content, sender, typeId },
   } = context;
-  if (fake) {
+  if (fake && stack) {
     //for fake demo
     fakeReaction(sender.username, sender.address, id, stack, context);
     return;

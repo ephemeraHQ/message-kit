@@ -3,7 +3,8 @@ import { vision, textGeneration } from "../lib/openai.js";
 
 export async function handler(context: HandlerContext) {
   if (!process.env.OPEN_AI_API_KEY) {
-    return context.reply("No OpenAI API key found");
+    console.log("No OPEN_AI_API_KEY found in .env");
+    return;
   }
   const {
     members,
