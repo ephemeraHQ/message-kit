@@ -76,13 +76,11 @@ async function fakeReaction(
   if (username === "me") {
     if (Math.random() < 0.1) {
       //Fake reactions
-      const emojis = ["😀", "👍", "🎩"];
+      const emojis = ["😀", "👍", "🎩", "🐐", "🔥"];
       const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
       context.sendReaction(randomEmoji, id);
       let points = 1;
-      if (randomEmoji === "👎") {
-        points = -10;
-      } else if (randomEmoji === "🎩") {
+      if (randomEmoji === "🎩") {
         points = 10;
       }
       await stack?.track("reaction", {
