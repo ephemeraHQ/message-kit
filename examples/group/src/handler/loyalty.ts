@@ -74,7 +74,7 @@ async function fakeReaction(
   context: HandlerContext,
 ) {
   if (username === "me") {
-    if (Math.random() < 0.3) {
+    if (Math.random() < 0.1) {
       //Fake reactions
       const emojis = ["😀", "👍", "🎩"];
       const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
