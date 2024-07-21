@@ -10,7 +10,7 @@
   "scripts": {
     "prebuild": "cd packages/docs && yarn install && cd ..",
     "build": "yarn prebuild && turbo run build --filter='./packages/*'",
-    "bump:minor": "yarn changeset add --type minor && yarn changeset version && yarn changeset publish",
+    "bump:minor": "yarn changeset add --type minor && git add . && git commit -m 'Add changeset' && git push && yarn changeset version && git add . && git commit -m 'Version packages' && git push && yarn changeset publish",
     "changeset": "cd packages/create-message-kit && yarn copy && cd .. && cd .. && changeset add --type minor",
     "clean": "turbo run clean && rm -rf node_modules && rm -rf .turbo && yarn cache clean",
     "dev": "concurrently --kill-others \"cd packages/message-kit && yarn build:watch\" \"sleep 1 && cd packages/message-kit && yarn dev:group\"",
