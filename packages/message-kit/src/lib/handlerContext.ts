@@ -13,7 +13,7 @@ import {
   AgentHandlers,
   MessageAbstracted,
 } from "../helpers/types.js";
-import { parseIntent } from "../helpers/commands.js";
+import { parseCommand } from "../helpers/commands.js";
 import { ContentTypeReply } from "@xmtp/content-type-reply";
 import {
   ContentTypeRemoteAttachment,
@@ -24,6 +24,8 @@ import { NapiCreateGroupOptions } from "@xmtp/mls-client-bindings-node";
 import { ContentTypeReaction } from "@xmtp/content-type-reaction";
 
 export default class HandlerContext {
+  private refConv: Conversation | null = null;
+
   message!: MessageAbstracted;
   conversation!: Conversation;
   client!: Client;
@@ -94,7 +96,7 @@ export default class HandlerContext {
 
     let content = message.content;
     if (message.contentType.sameAs(ContentTypeText)) {
-      content = parseIntent(
+      content = parseCommand(
         message?.content,
         commands ?? [],
         context.members ?? [],
@@ -137,11 +139,13 @@ export default class HandlerContext {
       contentType: ContentTypeText,
       reference: this.message.id,
     };
-    await this.conversation.send(reply, ContentTypeReply);
+    if (this.refConv) await this.refConv.send(reply, ContentTypeReply);
+    else await this.conversation.send(reply, ContentTypeReply);
   }
 
   async send(message: string) {
-    await this.conversation.send(message);
+    if (this.refConv) await this.refConv.send(message);
+    else await this.conversation.send(message);
   }
 
   async react(emoji: string) {
@@ -152,7 +156,8 @@ export default class HandlerContext {
       content: emoji,
     };
 
-    await this.conversation.send(reaction, ContentTypeReaction);
+    if (this.refConv) await this.refConv.send(reaction, ContentTypeReaction);
+    else await this.conversation.send(reaction, ContentTypeReaction);
   }
 
   async sendTo(message: string, receivers: string[]) {
@@ -161,69 +166,42 @@ export default class HandlerContext {
         continue;
       const targetConversation =
         await this.v2client.conversations.newConversation(receiver);
-      await targetConversation.send(message);
+      if (this.refConv) await this.refConv.send(message);
+      else await targetConversation.send(message);
     }
   }
 
-  async intent(
-    messages: string,
-    options?: {
-      conversation?: Conversation;
-      receivers?: string[];
-      return?: boolean;
-    },
-  ) {
-    let splitMessages = [messages];
-    try {
-      if (Array.isArray(JSON.parse(messages)))
-        splitMessages = JSON.parse(messages);
-      if (process?.env?.MSG_LOG === "true") {
-        console.log("splitMessages", splitMessages);
-      }
-    } catch (e) {}
-    if (options?.return) {
-      return splitMessages;
-    }
-    for (const message of splitMessages) {
-      const msg = message as string;
-      if (msg.startsWith("/")) {
-        await this.handleCommand(msg);
-      } else {
-        await this.reply(msg);
-      }
-    }
-  }
-  private async handleCommand(text: string) {
+  async intent(text: string, conversation?: Conversation) {
     const { commands, members } = this;
-    if (text.startsWith("/")) {
-      let content = parseIntent(text, commands ?? [], members ?? []);
-      // Mock context for command execution
-      const mockContext: HandlerContext = {
-        ...this,
-        message: {
-          ...this.message,
-          content,
-        },
-        intent: this.intent.bind(this),
-        reply: this.reply.bind(this),
-        send: this.send.bind(this),
-        sendTo: this.sendTo.bind(this),
-        react: this.react.bind(this),
-      };
-      const handler =
-        this.commandHandlers?.[
-          text.split(" ")[0] as keyof typeof this.commandHandlers
-        ];
-      if (handler) {
-        await handler(mockContext);
-      } else {
-        await this.reply(
-          "Unknown command. Type /help for a list of available commands.",
-        );
-      }
-    } else {
-      await this.reply(`${text}`);
+    if (conversation) this.refConv = conversation;
+    try {
+      if (text.startsWith("/")) {
+        let content = parseCommand(text, commands ?? [], members ?? []);
+        // Mock context for command execution
+        const mockContext: HandlerContext = {
+          ...this,
+          conversation: conversation ?? this.conversation,
+          message: {
+            ...this.message,
+            content,
+          },
+          intent: this.intent.bind(this),
+          reply: this.reply.bind(this),
+          send: this.send.bind(this),
+          sendTo: this.sendTo.bind(this),
+          react: this.react.bind(this),
+        };
+        const handler =
+          this.commandHandlers?.[
+            text.split(" ")[0] as keyof typeof this.commandHandlers
+          ];
+        if (handler) await handler(mockContext);
+        this.refConv = null;
+      } else await this.reply(text);
+    } catch (e) {
+      console.log("error", e);
+    } finally {
+      this.refConv = null;
     }
-    return text;
   }
 }

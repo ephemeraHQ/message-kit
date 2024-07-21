@@ -1,23 +1,15 @@
-import {
-  CommandGroup,
-  CommandConfig,
-  User,
-  CommandHandlers,
-  AgentHandlers,
-} from "./types";
+import { CommandGroup, CommandConfig, User } from "./types";
 import { mapUsernamesToInboxId } from "./usernames";
 
-export function parseIntent(
+export function parseCommand(
   content: string,
   commands: CommandGroup[],
   members: User[],
-  commandHandlers?: CommandHandlers,
-  agentHandlers?: AgentHandlers,
 ) {
   let contentReturn;
 
+  //If is command of other bot. MULTIBOT
   const firstWord = content?.split(" ")[0];
-  //If is command of other bot
   if (
     (firstWord.startsWith("/") && !firstWord.includes("@")) ||
     (firstWord.startsWith("/") &&

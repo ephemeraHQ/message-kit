@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { commands } from "./commands";
 import { fakeUsers as users } from "../helpers/usernames";
-import { textGeneration } from "./openai";
+import { textGeneration } from "../helpers/openai";
 import { extractCommandValues } from "../helpers/commands";
 
 describe("Command extraction tests", () => {

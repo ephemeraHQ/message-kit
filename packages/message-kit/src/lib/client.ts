@@ -57,7 +57,7 @@ export default async function xmtpClient(
   const client = await Client.create(account.address, finalConfig);
 
   if (process.env.MSG_LOG) {
-    console.log("client", {
+    console.log("V3-client", {
       accountAddress: client.accountAddress,
       inboxId: client.inboxId,
       installationId: client.installationId,

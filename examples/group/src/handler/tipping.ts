@@ -14,26 +14,27 @@ export async function handler(context: HandlerContext) {
 
   let amount: number = 0,
     receivers: User[] = [];
-
   // Handle different types of messages
-  if (typeId === "reply") {
-    // Process reply messages
+  if (typeId === "reply" && replyReceiver) {
+    // Process reply messages/
+    //ha
     const { content: reply } = content;
 
-    if (reply.includes("$degen") && replyReceiver) {
+    if (reply.includes("degen")) {
       receivers = [replyReceiver];
       const match = reply.match(/(\d+)/);
-      if (match) amount = parseInt(match[0]); // Extract amount from reply
+      if (match)
+        amount = parseInt(match[0]); // Extract amount from reply
+      else amount = 10;
     }
   } else if (typeId === "text") {
-    // Process text commands starting with "/tip"
-    const {
-      params,
-      params: { amount: extractedAmount, username },
-      content: text,
-    } = content;
-    console.log(params);
-    if (text.startsWith("/tip")) {
+    const { content: text, params } = content;
+    if (text.startsWith("/tip") && params) {
+      // Process text commands starting with "/tip"
+      const {
+        params: { amount: extractedAmount, username },
+        content: text,
+      } = content;
       amount = extractedAmount || 10; // Default amount if not specified
       receivers = username; // Extract receiver from parameters
     }
@@ -49,17 +50,17 @@ export async function handler(context: HandlerContext) {
     context.reply("Sender or receiver or amount not found.");
     return;
   }
-  let receiverAddresses = receivers.map((receiver) => receiver.address);
+  const receiverAddresses = receivers.map((receiver) => receiver.address);
 
   // Process sending tokens to each receiver
-  receiverAddresses.forEach(async (receiver: any) => {
-    context.reply(`You received ${amount} tokens from ${sender.username}.`, {
-      receivers: receiverAddresses,
-    });
-  });
+  context.sendTo(
+    `You received ${amount} tokens from ${sender.username}.`,
+    receiverAddresses,
+  );
+
   // Notify sender of the transaction details
-  context.reply(
+  context.sendTo(
     `You sent ${amount * receiverAddresses.length} tokens in total.`,
-    { receivers: [sender.address] },
+    [sender.address],
   );
 }

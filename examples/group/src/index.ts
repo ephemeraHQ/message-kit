@@ -91,7 +91,7 @@ async function handleReply(context: HandlerContext) {
   const {
     content: { content: reply },
   } = context.message;
-  if (reply.includes("$degen")) {
+  if (reply.includes("degen")) {
     await tipping(context);
   }
 }
@@ -106,9 +106,9 @@ async function handleTextMessage(context: HandlerContext) {
   const {
     content: { content: text },
   } = context.message;
-  if (text.startsWith("/")) {
-    await context.intent(text);
-  } else if (text.includes("@bot")) {
+  if (text.includes("@bot")) {
     await agent(context);
+  } else if (text.startsWith("/")) {
+    await context.intent(text);
   }
 }
