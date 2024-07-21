@@ -13,6 +13,7 @@
     "bump:minor": "yarn changeset version && git add . && git commit -m 'Version packages' && git push && yarn changeset publish",
     "changeset": "cd packages/create-message-kit && yarn copy && cd .. && cd .. && changeset add --type minor",
     "clean": "turbo run clean && rm -rf node_modules && rm -rf .turbo && yarn cache clean",
+    "copy": "cd packages/create-message-kit && yarn copy && cd .. && cd ..",
     "dev": "concurrently --kill-others \"cd packages/message-kit && yarn build:watch\" \"sleep 1 && cd packages/message-kit && yarn dev:group\"",
     "dev:docs": "cd packages/docs && yarn dev",
     "dev:gm": "cd examples/gm && yarn dev",
