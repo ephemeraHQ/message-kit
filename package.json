@@ -1,5 +1,6 @@
 {
   "name": "message-kit-monorepo",
+  "version": "0.0.10",
   "private": true,
   "workspaces": [
     "examples/*",
@@ -38,6 +39,5 @@
   "packageManager": "yarn@4.2.2",
   "engines": {
     "node": ">=20"
-  },
-  "version": "0.0.1"
+  }
 }
