@@ -30,19 +30,19 @@ The `message` object contains the following
 
 To learn more about the types, see [types](/concepts/messages/text)
 
-## App message
+## Send message
 
 App messages are messages that are sent when you send a reply to a message and are highlighted differently by the apps.
 
 ```tsx
-// Message to all users
+// Reply to the last message
 context.reply("Your message.");
-
-// Message to specific user/users
-context.reply(
-  "Your message.", // Message to send
-  addresses, // Array of addresses to send the message to
-);
+// Send a message
+context.send("Your message.");
+// Send a message to specific users
+context.sendTo("Your message.", ["address1", "address2"]);
+// React to the last message with an emoji
+context.react("👍");
 ```
 
 > App messages are prevented from being sent to the app itself\_
