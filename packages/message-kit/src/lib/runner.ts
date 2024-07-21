@@ -1,6 +1,5 @@
 import { default as HandlerContext } from "./handlerContext.js";
 import { default as xmtpClient } from "./client.js";
-import { ContentTypeBotMessage } from "../content-types/BotMessage.js";
 import { Config, Handler } from "../helpers/types.js";
 
 export default async function run(handler: Handler, config?: Config) {
@@ -29,9 +28,7 @@ export default async function run(handler: Handler, config?: Config) {
           //If same address do nothin
           senderAddress === addressV2 ||
           //If same address do nothin
-          senderInboxId === address ||
-          //If is bot type nothing
-          contentType.sameAs(ContentTypeBotMessage)
+          senderInboxId === address
         ) {
           return;
         }

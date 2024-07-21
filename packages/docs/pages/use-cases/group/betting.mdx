@@ -7,7 +7,7 @@ This example shows how to create a bet that creates a new group and sends a mess
 This is the command to create a bet:
 
 ```bash [cmd]
-/bet @bo @alix 100 "bet name"
+/bet @bo @alix "bet name" 1 eth
 ```
 
 ::::note
@@ -17,10 +17,10 @@ This is the command to create a bet:
 {
   "name": "Betting",
   "icon": "🎰",
-  "description": "Betting on basebet.",
+  "description": "Create bets with friends.",
   "commands": [
     {
-      "command": "/bet @users [Bet Name] [Bet Amount]",
+      "command": "/bet @users [name] [amount] [token]",
       "description": "Bet on basebet.",
       "params": {
         "username": {
@@ -34,6 +34,11 @@ This is the command to create a bet:
         "amount": {
           "default": 10,
           "type": "number"
+        },
+        "token": {
+          "default": "eth",
+          "type": "string",
+          "values": ["eth", "dai", "usdc", "degen"]
         }
       }
     }
@@ -81,10 +86,7 @@ export async function handler(context: HandlerContext) {
   await conv.updateName(`${name}`);
   await conv.send(`Welcome to the ${name} bet!`);
   await conv.send(`To confirm your bet, click the button below.`);
-  await context.intent(`/send ${amount} ${token} to @bot`, {
-    conversation: conv,
-  });
-
+  await context.intent(`/send ${amount} ${token} to @bot`, conv);
   await context.reply(
     `Bet created!. Go to the new group: https://converse.xyz/${conv.id}`,
   );

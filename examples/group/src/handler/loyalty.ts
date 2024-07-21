@@ -8,7 +8,7 @@ export async function handler(context: HandlerContext, fake?: boolean) {
     getMessageById,
     message: { id, content, sender, typeId },
   } = context;
-  if (fake) {
+  if (fake && stack) {
     //for fake demo
     fakeReaction(sender.username, sender.address, id, stack, context);
     return;
@@ -74,15 +74,13 @@ async function fakeReaction(
   context: HandlerContext,
 ) {
   if (username === "me") {
-    if (Math.random() < 0.3) {
+    if (Math.random() < 0.1) {
       //Fake reactions
-      const emojis = ["😀", "👍", "🎩"];
+      const emojis = ["😀", "👍", "🎩", "🐐", "🔥"];
       const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
-      context.sendReaction(randomEmoji, id);
+      context.react(randomEmoji);
       let points = 1;
-      if (randomEmoji === "👎") {
-        points = -10;
-      } else if (randomEmoji === "🎩") {
+      if (randomEmoji === "🎩") {
         points = 10;
       }
       await stack?.track("reaction", {

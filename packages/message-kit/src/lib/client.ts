@@ -1,8 +1,6 @@
 import { ReplyCodec } from "@xmtp/content-type-reply";
 import { Client as V2Client } from "@xmtp/xmtp-js";
 import { ReactionCodec } from "@xmtp/content-type-reaction";
-import { SilentCodec } from "../content-types/Silent.js";
-import { BotMessageCodec } from "../content-types/BotMessage.js";
 import { Client, ClientOptions, XmtpEnv } from "@xmtp/mls-client";
 import { TextCodec } from "@xmtp/content-type-text";
 import {
@@ -49,9 +47,7 @@ export default async function xmtpClient(
     codecs: [
       new TextCodec(),
       new ReactionCodec(),
-      new BotMessageCodec(),
       new ReplyCodec(),
-      new SilentCodec(),
       new RemoteAttachmentCodec(),
       new AttachmentCodec(),
     ],
@@ -61,7 +57,7 @@ export default async function xmtpClient(
   const client = await Client.create(account.address, finalConfig);
 
   if (process.env.MSG_LOG) {
-    console.log("client", {
+    console.log("V3-client", {
       accountAddress: client.accountAddress,
       inboxId: client.inboxId,
       installationId: client.installationId,

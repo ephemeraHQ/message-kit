@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { textGeneration } from "./openai";
+import { textGeneration } from "../helpers/openai";
 import { commands } from "./commands";
 import { fakeUsers as members } from "../helpers/usernames";
 import { User } from "../helpers/types";
@@ -40,7 +40,13 @@ describe("Intent tests", () => {
       systemPrompt,
     );
     expect(
-      ["/game slot", "/game wordle"].map((cmd) => cmd.toLowerCase()),
+      [
+        "/game slot",
+        "/game wordle",
+        "/game guessr",
+        "/game rockpaperscissors",
+        "/game help",
+      ].map((cmd) => cmd.toLowerCase()),
     ).toContain(reply.toLowerCase());
   });
 });

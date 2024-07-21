@@ -1,5 +1,6 @@
 {
   "name": "message-kit-monorepo",
+  "version": "0.0.11",
   "private": true,
   "workspaces": [
     "examples/*",
@@ -9,8 +10,10 @@
   "scripts": {
     "prebuild": "cd packages/docs && yarn install && cd ..",
     "build": "yarn prebuild && turbo run build --filter='./packages/*'",
+    "bump:minor": "yarn changeset version && git add . && git commit -m 'Version packages' && git push && yarn changeset publish",
+    "changeset": "cd packages/create-message-kit && yarn copy && cd .. && cd .. && changeset add --type minor",
     "clean": "turbo run clean && rm -rf node_modules && rm -rf .turbo && yarn cache clean",
-    "copy": "cd packages/create-message-kit && yarn copy && npm link",
+    "dev": "concurrently --kill-others \"cd packages/message-kit && yarn build:watch\" \"sleep 1 && cd packages/message-kit && yarn dev:group\"",
     "dev:docs": "cd packages/docs && yarn dev",
     "dev:gm": "cd examples/gm && yarn dev",
     "dev:group": "cd examples/group && yarn dev",
@@ -18,8 +21,10 @@
     "format": "turbo run format",
     "format:check": "turbo run format:check",
     "publish": "turbo run build --filter='./packages/*' --filter='!./packages/docs' && changeset publish",
+    "publish-packages": "changeset publish",
     "test": "FORCE_COLOR=1 turbo run test",
-    "typecheck": "FORCE_COLOR=1 turbo run typecheck"
+    "typecheck": "FORCE_COLOR=1 turbo run typecheck",
+    "version-packages": "changeset version"
   },
   "resolutions": {
     "viem": "^2.16.3"
@@ -29,6 +34,7 @@
     "@changesets/cli": "^2.27.5"
   },
   "devDependencies": {
+    "concurrently": "^7.0.0",
     "prettier": "^3.3.1",
     "prettier-plugin-packagejson": "^2.5.0",
     "turbo": "^1.13.4"
