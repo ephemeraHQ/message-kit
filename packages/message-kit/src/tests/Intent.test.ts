@@ -40,7 +40,13 @@ describe("Intent tests", () => {
       systemPrompt,
     );
     expect(
-      ["/game slot", "/game wordle"].map((cmd) => cmd.toLowerCase()),
+      [
+        "/game slot",
+        "/game wordle",
+        "/game guessr",
+        "/game rockpaperscissors",
+        "/game help",
+      ].map((cmd) => cmd.toLowerCase()),
     ).toContain(reply.toLowerCase());
   });
 });
