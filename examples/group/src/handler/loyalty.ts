@@ -78,7 +78,7 @@ async function fakeReaction(
       //Fake reactions
       const emojis = ["😀", "👍", "🎩", "🐐", "🔥"];
       const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
-      context.sendReaction(randomEmoji, id);
+      context.react(randomEmoji);
       let points = 1;
       if (randomEmoji === "🎩") {
         points = 10;

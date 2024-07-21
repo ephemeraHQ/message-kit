@@ -130,7 +130,7 @@ export const commands: CommandGroup[] = [
           game: {
             default: "",
             type: "string",
-            values: ["wordle", "slot", "help"],
+            values: ["wordle", "slot", "guessr", "rockpaperscissors", "help"],
           },
         },
       },

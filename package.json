@@ -11,6 +11,7 @@
     "build": "yarn prebuild && turbo run build --filter='./packages/*'",
     "clean": "turbo run clean && rm -rf node_modules && rm -rf .turbo && yarn cache clean",
     "copy": "cd packages/create-message-kit && yarn copy && npm link",
+    "dev": "concurrently \"cd packages/message-kit && yarn build:watch\" \"sleep 1 && cd packages/message-kit && yarn dev:group\"",
     "dev:docs": "cd packages/docs && yarn dev",
     "dev:gm": "cd examples/gm && yarn dev",
     "dev:group": "cd examples/group && yarn dev",
@@ -29,6 +30,7 @@
     "@changesets/cli": "^2.27.5"
   },
   "devDependencies": {
+    "concurrently": "^7.0.0",
     "prettier": "^3.3.1",
     "prettier-plugin-packagejson": "^2.5.0",
     "turbo": "^1.13.4"
