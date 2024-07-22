@@ -1,4 +1,4 @@
-# create-message-kit-temp
+# @xmtp/message-kit
 
 ## 0.0.2
 
