@@ -8,8 +8,7 @@
     "shared/*"
   ],
   "scripts": {
-    "bump:patch": "yarn changeset version --patch && git add . && git commit -m 'Version packages' && git push && yarn changeset publish",
-    "changeset": "cd packages/create-message-kit && yarn copy && cd .. && cd .. && changeset add --type minor",
+    "changeset": "yarn copy && changeset add --type patch",
     "clean": "turbo run clean && rm -rf node_modules && rm -rf .turbo && yarn cache clean",
     "copy": "cd packages/create-message-kit && yarn copy && cd .. && cd ..",
     "dev": "concurrently --kill-others \"cd packages/message-kit && yarn build:watch\" \"sleep 1 && cd packages/message-kit && yarn dev:group\"",
@@ -20,11 +19,8 @@
     "format": "turbo run format",
     "format:check": "turbo run format:check",
     "prebuild": "cd packages/docs && yarn install && cd ..",
-    "publish": "turbo run build --filter='./packages/*' --filter='!./packages/docs' && changeset publish",
-    "publish-packages": "changeset publish",
     "test": "FORCE_COLOR=1 turbo run test",
-    "typecheck": "FORCE_COLOR=1 turbo run typecheck",
-    "version-packages": "changeset version"
+    "typecheck": "FORCE_COLOR=1 turbo run typecheck"
   },
   "resolutions": {
     "viem": "^2.16.3"
