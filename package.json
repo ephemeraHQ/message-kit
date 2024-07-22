@@ -1,6 +1,6 @@
 {
   "name": "message-kit-monorepo",
-  "version": "0.0.11",
+  "version": "0.0.1",
   "private": true,
   "workspaces": [
     "examples/*",
@@ -8,6 +8,8 @@
     "shared/*"
   ],
   "scripts": {
+    "prebuild": "cd packages/docs && yarn install && cd ..",
+    "build": "yarn prebuild && turbo run build --filter='./packages/*'",
     "changeset": "yarn copy && changeset add --type patch",
     "clean": "turbo run clean && rm -rf node_modules && rm -rf .turbo && yarn cache clean",
     "copy": "cd packages/create-message-kit && yarn copy && cd .. && cd ..",
@@ -18,7 +20,6 @@
     "dev:one-to-one": "cd examples/one-to-one && yarn dev",
     "format": "turbo run format",
     "format:check": "turbo run format:check",
-    "prebuild": "cd packages/docs && yarn install && cd ..",
     "publish": "turbo run build --filter='./packages/*' --filter='!./packages/docs' && changeset publish",
     "test": "FORCE_COLOR=1 turbo run test",
     "typecheck": "FORCE_COLOR=1 turbo run typecheck"
