@@ -8,9 +8,7 @@
     "shared/*"
   ],
   "scripts": {
-    "prebuild": "cd packages/docs && yarn install && cd ..",
-    "build": "yarn prebuild && turbo run build --filter='./packages/*'",
-    "bump:minor": "yarn changeset version && git add . && git commit -m 'Version packages' && git push && yarn changeset publish",
+    "bump:patch": "yarn changeset version --type patch && git add . && git commit -m 'Version packages' && git push && yarn changeset publish",
     "changeset": "cd packages/create-message-kit && yarn copy && cd .. && cd .. && changeset add --type minor",
     "clean": "turbo run clean && rm -rf node_modules && rm -rf .turbo && yarn cache clean",
     "copy": "cd packages/create-message-kit && yarn copy && cd .. && cd ..",
@@ -21,6 +19,7 @@
     "dev:one-to-one": "cd examples/one-to-one && yarn dev",
     "format": "turbo run format",
     "format:check": "turbo run format:check",
+    "prebuild": "cd packages/docs && yarn install && cd ..",
     "publish": "turbo run build --filter='./packages/*' --filter='!./packages/docs' && changeset publish",
     "publish-packages": "changeset publish",
     "test": "FORCE_COLOR=1 turbo run test",
