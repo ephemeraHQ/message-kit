@@ -69,3 +69,11 @@ jobs:
         run: yarn publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Auto-merge Changesets PR
+        if: github.event_name == 'push'
+        uses: peter-evans/merge-pull-request@v2
+        with:
+          pull-request: ${{ github.event.pull_request.number }}
+          merge-method: squash
+        env:
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
