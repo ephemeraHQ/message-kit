@@ -8,7 +8,7 @@
     "shared/*"
   ],
   "scripts": {
-    "bump:patch": "yarn changeset version --type patch && git add . && git commit -m 'Version packages' && git push && yarn changeset publish",
+    "bump:patch": "yarn changeset version --patch && git add . && git commit -m 'Version packages' && git push && yarn changeset publish",
     "changeset": "cd packages/create-message-kit && yarn copy && cd .. && cd .. && changeset add --type minor",
     "clean": "turbo run clean && rm -rf node_modules && rm -rf .turbo && yarn cache clean",
     "copy": "cd packages/create-message-kit && yarn copy && cd .. && cd ..",
