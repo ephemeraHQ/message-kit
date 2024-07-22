@@ -65,6 +65,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         continue-on-error: true
+      - name: Verify the integrity of provenance attestations and registry signatures for installed dependencies
+        run: npm audit signatures
+      - name: Add changeset
+        run: yarn changeset add --type patch # Add this step to create a changeset
       - name: Publish to npm
         if: github.event_name == 'push'
         run: yarn publish --access public
