@@ -53,6 +53,8 @@ jobs:
         run: yarn copy
       - name: Create release pull request
         if: github.event_name == 'push'
+        run: |
+          gh release create v$(jq -r '.version' < package.json) --notes "Automated release"
         uses: changesets/action@v1
         with:
           title: "release: version packages"
@@ -64,6 +66,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        continue-on-error: true
       - name: Publish to npm
         if: github.event_name == 'push'
         run: yarn publish --access public
