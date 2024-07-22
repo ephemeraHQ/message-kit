@@ -53,8 +53,6 @@ jobs:
         run: yarn copy
       - name: Create release pull request
         if: github.event_name == 'push'
-        run: |
-          gh release create v$(jq -r '.version' < package.json) --notes "Automated release"
         uses: changesets/action@v1
         with:
           title: "release: version packages"
