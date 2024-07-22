@@ -1,5 +1,11 @@
 # @xmtp/message-kit
 
+## 0.0.3
+
+### Patch Changes
+
+- 660775d: v0.0.3
+
 ## 0.0.2
 
 ### Patch Changes
