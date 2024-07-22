@@ -19,6 +19,7 @@
     "format": "turbo run format",
     "format:check": "turbo run format:check",
     "prebuild": "cd packages/docs && yarn install && cd ..",
+    "publish": "turbo run build --filter='./packages/*' --filter='!./packages/docs' && changeset publish",
     "test": "FORCE_COLOR=1 turbo run test",
     "typecheck": "FORCE_COLOR=1 turbo run typecheck"
   },
