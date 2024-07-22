@@ -28,7 +28,7 @@ describe("Intent tests", () => {
 
   test("should handle remove intent correctly", async () => {
     const { reply } = await textGeneration(
-      "/agent lets remote @eva, she is not inclusive",
+      "/agent lets remove @eva, she is not inclusive",
       systemPrompt,
     );
     expect(reply.toLowerCase()).toBe("/remove @eva".toLowerCase());
