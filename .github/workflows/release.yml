@@ -51,21 +51,19 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Copy files
         run: yarn copy
-      - name: Create release pull request
-        if: github.event_name == 'push'
-        uses: changesets/action@v1
-        with:
-          title: "release: version packages"
-          commit: "release: version packages"
-          publish: yarn publish
-          setupGitUser: true
-          createGithubReleases: true
-          bump: "patch"
-        env:
-          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Publish to npm
         if: github.event_name == 'push'
         run: yarn publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Create GitHub release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' # Ensure it runs only on push to main
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ github.sha }}
+          release_name: Release ${{ github.sha }}
+          body: |
+            Changes in this release:
+            - Description of changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
