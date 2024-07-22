@@ -1,5 +1,11 @@
 # create-message-kit-temp
 
+## 0.0.7
+
+### Patch Changes
+
+- c7a5e4d: test2
+
 ## 0.0.6
 
 ### Patch Changes
