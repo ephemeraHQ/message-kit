@@ -35,6 +35,17 @@ jobs:
         run: corepack enable
       - name: Install dependencies
         run: yarn
+           run: yarn
+      - name: Check npm version
+        run: npm --version
+      - name: Check Node.js version
+        run: node --version
+      - name: Check npm config
+        run: npm config list
+      - name: Check npm login status
+        run: npm whoami
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Copy files
         run: yarn copy
       - name: Create release pull request
