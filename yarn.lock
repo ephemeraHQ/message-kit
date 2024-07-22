@@ -5039,9 +5039,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"create-message-kit@workspace:packages/create-message-kit":
+"create-message-kit-temp@workspace:packages/create-message-kit":
   version: 0.0.0-use.local
-  resolution: "create-message-kit@workspace:packages/create-message-kit"
+  resolution: "create-message-kit-temp@workspace:packages/create-message-kit"
   dependencies:
     "@clack/prompts": "npm:^0.7.0"
     "@types/node": "npm:^20.14.2"
@@ -5053,7 +5053,7 @@ __metadata:
     picocolors: "npm:^1.0.0"
     prettier: "npm:^3.3.1"
   bin:
-    create-message-kit: index.js
+    create-message-kit-temp: index.js
   languageName: unknown
   linkType: soft
 
