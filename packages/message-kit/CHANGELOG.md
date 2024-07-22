@@ -1,5 +1,11 @@
 # @xmtp/message-kit
 
+## 0.0.6
+
+### Patch Changes
+
+- ea49d30: test
+
 ## 0.0.5
 
 ### Patch Changes
