@@ -2,6 +2,7 @@ import { Conversation, DecodedMessage, Client } from "@xmtp/mls-client";
 import {
   DecodedMessage as DecodedMessageV2,
   Client as ClientV2,
+  Conversation as ConversationV2,
 } from "@xmtp/xmtp-js";
 import type { Reaction } from "@xmtp/content-type-reaction";
 import { populateUsernames } from "../helpers/usernames.js";
@@ -24,10 +25,10 @@ import { NapiCreateGroupOptions } from "@xmtp/mls-client-bindings-node";
 import { ContentTypeReaction } from "@xmtp/content-type-reaction";
 
 export default class HandlerContext {
-  private refConv: Conversation | null = null;
+  private refConv: Conversation | ConversationV2 | null = null;
 
   message!: MessageAbstracted;
-  conversation!: Conversation;
+  conversation!: Conversation | ConversationV2;
   client!: Client;
   v2client!: ClientV2;
   commands?: CommandGroup[];
@@ -38,10 +39,10 @@ export default class HandlerContext {
   newConversation!: (
     accountAddresses: string[],
     options?: NapiCreateGroupOptions,
-  ) => Promise<Conversation>;
+  ) => Promise<Conversation | ConversationV2>;
 
   private constructor(
-    conversation: Conversation,
+    conversation: Conversation | ConversationV2,
     message: DecodedMessage | DecodedMessageV2,
     { client, v2client }: { client: Client; v2client: ClientV2 },
     commands?: CommandGroup[],
@@ -57,7 +58,7 @@ export default class HandlerContext {
   }
 
   static async create(
-    conversation: Conversation,
+    conversation: Conversation | ConversationV2,
     message: DecodedMessage | DecodedMessageV2,
     { client, v2client }: { client: Client; v2client: ClientV2 },
     commands?: CommandGroup[],
@@ -81,7 +82,7 @@ export default class HandlerContext {
     const sentAt = "sentAt" in message ? message.sentAt : message.sent;
 
     context.members = await populateUsernames(
-      conversation.members,
+      "members" in conversation ? conversation.members : [],
       client.accountAddress,
       senderAddress,
     );
@@ -139,8 +140,21 @@ export default class HandlerContext {
       contentType: ContentTypeText,
       reference: this.message.id,
     };
-    if (this.refConv) await this.refConv.send(reply, ContentTypeReply);
-    else await this.conversation.send(reply, ContentTypeReply);
+    if (this.v2client) {
+      if (this.refConv) {
+        await (this.refConv as ConversationV2).send(reply, {
+          contentType: ContentTypeReply,
+        });
+      } else {
+        await (this.conversation as ConversationV2).send(reply, {
+          contentType: ContentTypeReply,
+        });
+      }
+    } else {
+      //@ts-ignore
+      if (this.refConv) await this.refConv.send(reply, ContentTypeReply);
+      else await this.conversation.send(reply, ContentTypeReply);
+    }
   }
 
   async send(message: string) {

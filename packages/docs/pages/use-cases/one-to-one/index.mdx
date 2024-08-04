@@ -59,7 +59,7 @@ run(async (context: HandlerContext) => {
   if (stopWords.some((word) => lowerContent.includes(word))) {
     inMemoryCacheStep.set(sender.address, 0);
     await redisClient.del(sender.address);
-    await context.reply(
+    await context.send(
       "You are now unsubscribed. You will no longer receive updates!.",
     );
   }
@@ -89,7 +89,7 @@ run(async (context: HandlerContext) => {
   }
 
   //Send the message
-  await context.reply(message);
+  await context.send(message);
 });
 ```
 
