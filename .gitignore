@@ -65,6 +65,3 @@ next-env.d.ts
 
 packages/create-message-kit/examples
 packages/create-message-kit/examples/**
-
-packages/create-message-kit-temp/examples
-packages/create-message-kit-temp/examples/**

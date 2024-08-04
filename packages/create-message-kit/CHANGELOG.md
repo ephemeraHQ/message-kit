@@ -1,4 +1,4 @@
-# create-message-kit-temp
+# create-message-kit
 
 ## 0.0.6
 
