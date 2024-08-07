@@ -106,7 +106,7 @@ export default defineConfig({
               link: "/use-cases/group/payments",
             },
             {
-              text: "Admin",
+              text: "Moderation",
               link: "/use-cases/group/admin",
             },
             {
