@@ -55,7 +55,7 @@ export default async function run(handler: Handler, config?: Config) {
       try {
         for await (const message of stream) {
           if (process?.env?.MSG_LOG) {
-            console.log(`message:`, message.content);
+            console.log("incoming:", message.content);
           }
           await handleMessage(client, address, message);
         }

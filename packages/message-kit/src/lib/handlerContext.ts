@@ -135,26 +135,23 @@ export default class HandlerContext {
       contentType: ContentTypeText,
       reference: this.message.id,
     };
-    if (this.v2client) {
-      if (this.refConv) {
-        await (this.refConv as ConversationV2).send(reply, {
-          contentType: ContentTypeReply,
-        });
-      } else {
-        await (this.conversation as ConversationV2).send(reply, {
-          contentType: ContentTypeReply,
-        });
+    const conversation = this.refConv || this.conversation || this.group;
+    if (conversation) {
+      if (this.isConversationV2(conversation)) {
+        await conversation.send(reply, { contentType: ContentTypeReply });
+      } else if (conversation instanceof Conversation) {
+        await conversation.send(reply, ContentTypeReply);
       }
-    } else {
-      //@ts-ignore
-      if (this.refConv) await this.refConv.send(reply, ContentTypeReply);
-      else await this.group.send(reply, ContentTypeReply);
     }
   }
 
   async send(message: string) {
     if (this.refConv) await this.refConv.send(message);
     else await this.conversation.send(message);
+  }
+
+  isConversationV2(conversation: any): conversation is ConversationV2 {
+    return conversation?.conversationVersion === "v2";
   }
 
   async react(emoji: string) {
@@ -164,19 +161,13 @@ export default class HandlerContext {
       reference: this.message.id,
       content: emoji,
     };
-    if (this.v2client) {
-      if (this.refConv)
-        await (this.refConv as ConversationV2).send(reaction, {
-          contentType: ContentTypeReaction,
-        });
-      else
-        await (this.conversation as ConversationV2).send(reaction, {
-          contentType: ContentTypeReaction,
-        });
-    } else {
-      //@ts-ignore
-      if (this.refConv) await this.refConv.send(reaction, ContentTypeReaction);
-      else await this.group.send(reaction, ContentTypeReaction);
+    const conversation = this.refConv || this.conversation || this.group;
+    if (conversation) {
+      if (this.isConversationV2(conversation)) {
+        await conversation.send(reaction, { contentType: ContentTypeReaction });
+      } else if (conversation instanceof Conversation) {
+        await conversation.send(reaction, ContentTypeReaction);
+      }
     }
   }
 
