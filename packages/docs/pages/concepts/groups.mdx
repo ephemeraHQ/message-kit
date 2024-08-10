@@ -22,10 +22,10 @@ const group = await client.conversations.newConversation(addresses);
 Each time you perform an action on a group you must sync it to get the latest state.
 
 ```tsx
-// get the conversation
-const { conversation } = context;
-// sync the conversation
-await conversation.sync();
+// get the group
+const { group } = context;
+// sync the group
+await group.sync();
 ```
 
 ## Group metadata
@@ -39,7 +39,7 @@ Groups have the following metadata:
 You can update the name of the group chat.
 
 ```tsx
-// get the conversation
+// get the group
 const { group } = context;
 // get the name
 const groupName = group.name;
@@ -52,7 +52,7 @@ await group.updateName(name);
 You can update the description of the group chat.
 
 ```tsx
-// get the conversation
+// get the group
 const { group } = context;
 // get the description
 const groupDescription = group.description;
@@ -65,7 +65,7 @@ await group.updateDescription(description);
 You can update the image of the group chat.
 
 ```tsx
-// get the conversation
+// get the group
 const { group } = context;
 // get the image
 const groupImage = group.imageUrl;
@@ -82,7 +82,7 @@ You can add or remove members from a group.
 ### Remove members from a group
 
 ```tsx
-// get the conversation
+// get the group
 const { group } = context;
 //By address
 await group.removeMembers(userAddresses);
@@ -93,7 +93,7 @@ await group.removeMembersByInboxId(removedInboxes);
 ### Add members to a group
 
 ```tsx
-// get the conversation
+// get the group
 const { group } = context;
 //By address
 await group.addMembers(userAddresses);
@@ -106,7 +106,7 @@ await group.addMembersByInboxId(addedInboxes);
 To get the message history in a group you can use the `messages` property.
 
 ```tsx
-// get the conversation
+// get the group
 const { group } = context;
 // sync group first
 await group.sync();
