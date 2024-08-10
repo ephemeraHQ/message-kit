@@ -11,7 +11,6 @@ The `reply` type contains the following
   reference: someMessageID, //ID of the message being replied to
   contentType: ContentType, // type of the reply
   content: "I concur", //String representation of the reply
-  referenceInboxId: address, //Address of the user who received the reply
 };
 ```
 
@@ -20,10 +19,12 @@ The `reply` type contains the following
 Now that you understand how replies are represented, you can receive them in your app. Here's an example of how you can receive a reply in your app:
 
 ```tsx
-const { content, typeId } = context.message;
+const { content, typeId, getMessageById } = context;
 
 if (typeId === "reply") {
-  const { content: reply, referenceInboxId } = content;
+  //Get the message that was replied to
+  const msg = await getMessageById(content.reference);
   // Use reply...
+  const { content: reply } = content;
 }
 ```

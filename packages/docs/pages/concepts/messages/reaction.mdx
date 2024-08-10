@@ -12,7 +12,6 @@ The `reaction` type contains the following
   schema: "unicode", //Schema of the reaction (Unicode, shortcode, or custom)
   action: action, //Action of the reaction (added or removed)
   content: emoji, //String representation of the reaction (smile, for example) to be interpreted by clients
-  referenceInboxId: address, //Address of the user who received the reaction
 };
 ```
 
@@ -21,10 +20,12 @@ The `reaction` type contains the following
 Now that you understand how reactions are represented, you can receive them in your app. Here's an example of how you can receive a reaction in your app:
 
 ```tsx
-const { content, typeId } = context.message;
+const { content, typeId, getMessageById } = context;
 
 if (typeId === "reaction") {
-  const { action, content: emoji, referenceInboxId } = content;
+  //Get the message that was reacted to
+  const msg = await getMessageById(content.reference);
   // Use reaction...
+  const { action, content: emoji } = content;
 }
 ```
