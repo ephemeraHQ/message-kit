@@ -59,13 +59,10 @@ export default async function xmtpClient(
   const v2client = await V2Client.create(wallet, finalConfig);
 
   if (process.env.MSG_LOG) {
-    console.log("V3-client", {
+    console.log("XMTP Client:", {
       accountAddress: client.accountAddress,
       inboxId: client.inboxId,
       installationId: client.installationId,
-    });
-    console.log("V2-client", {
-      address: v2client.address,
     });
   }
 

@@ -11,10 +11,15 @@ export default async function run(handler: Handler, config?: Config) {
   await client.conversations.sync();
   await client.conversations.list();
 
-  const handleMessage = async (client: any, address: string, message: any) => {
+  const handleMessage = async (
+    client: any,
+    address: string,
+    version: "v3" | "v2",
+    message: any,
+  ) => {
     if (message) {
       try {
-        const { senderInboxId, contentType, senderAddress } = message;
+        const { senderInboxId, senderAddress } = message;
 
         const conversation = client.conversations.getConversationById
           ? await client.conversations.getConversationById(
@@ -32,7 +37,9 @@ export default async function run(handler: Handler, config?: Config) {
         ) {
           return;
         }
-
+        if (process?.env?.MSG_LOG) {
+          console.log(`incoming_${version}:`, message.content);
+        }
         const context = await HandlerContext.create(
           conversation,
           message,
@@ -49,15 +56,16 @@ export default async function run(handler: Handler, config?: Config) {
     }
   };
 
-  const streamMessages = async (client: any, address: string) => {
+  const streamMessages = async (
+    client: any,
+    address: string,
+    version: "v3" | "v2",
+  ) => {
     while (true) {
       const stream = await client.conversations.streamAllMessages();
       try {
         for await (const message of stream) {
-          if (process?.env?.MSG_LOG) {
-            console.log("incoming:", message.content);
-          }
-          await handleMessage(client, address, message);
+          await handleMessage(client, address, version, message);
         }
       } catch (e) {
         console.log(`Restart stream:`, e);
@@ -67,7 +75,7 @@ export default async function run(handler: Handler, config?: Config) {
 
   // Run both clients' streams concurrently
   await Promise.all([
-    streamMessages(v2client, addressV2),
-    streamMessages(client, address),
+    streamMessages(v2client, addressV2, "v2"),
+    streamMessages(client, address, "v3"),
   ]);
 }

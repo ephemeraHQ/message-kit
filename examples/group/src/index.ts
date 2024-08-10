@@ -45,7 +45,7 @@ const commandHandlers: CommandHandlers = {
       "- 🎰 betbot - 0x3c4784a8dcc73ac41bd8bf7a118e68e01e2aa0bb : Create bets with your friends.\n\n\n" +
       "To learn how to build your own app, visit MessageKit: https://message-kit.vercel.app/\n\n" +
       "To publish your app, visit Directory: https://message-kit.vercel.app/directory\n\n" +
-      "You are currently inside Message Kit Group Starter. You can type /help command to see available commands and /apps to trigger the directory.";
+      "You are currently inside Message Kit Group Starter. You can type:\n/help command to see available commands\n/apps to trigger the directory.";
 
     context.reply(intro);
   },
