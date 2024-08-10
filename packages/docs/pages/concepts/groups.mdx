@@ -2,6 +2,10 @@
 
 Groups in XMTP enable secure and private communication among multiple members. For more details, see XMTP's [Groups documentation](https://xmtp.org/docs/build/group-chat).
 
+:::warning
+Join Converse Beta to experience groups. [Learn more](https://paragraph.xyz/@ephemera/converse)
+:::
+
 ## Create a new group
 
 Using the client you can create a new group with an array of addresses.
@@ -10,7 +14,7 @@ Using the client you can create a new group with an array of addresses.
 // get the client
 const { client } = context;
 // create a new group
-const group = await client.conversations.newGroup(addresses);
+const group = await client.conversations.newConversation(addresses);
 ```
 
 ## Sync a group

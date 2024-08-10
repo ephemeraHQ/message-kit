@@ -38,6 +38,7 @@ const handleGroupname = (newValue: string, adminName: string) => {
 export async function handler(context: HandlerContext) {
   const {
     conversation,
+    group,
     members,
     message: { content, typeId, sender },
   } = context;
@@ -74,7 +75,7 @@ export async function handler(context: HandlerContext) {
     switch (command) {
       case "name":
         try {
-          await conversation.updateName(name);
+          await group.updateName(name);
           const messages = handleGroupname(name, sender.username);
           context.reply(messages);
         } catch (error) {
@@ -89,8 +90,8 @@ export async function handler(context: HandlerContext) {
             context.reply("Wrong username");
             return;
           }
-          await conversation.sync();
-          await conversation.removeMembersByInboxId(removedInboxes);
+          await group.sync();
+          await group.removeMembersByInboxId(removedInboxes);
           const messages = handleRemoveMembers();
           context.reply(messages);
         } catch (error) {
@@ -107,9 +108,9 @@ export async function handler(context: HandlerContext) {
             context.reply("Wrong username");
             return;
           }
-          await conversation.sync();
-          await conversation.addMembersByInboxId(addedInboxes);
-          await conversation.sync();
+          await group.sync();
+          await group.addMembersByInboxId(addedInboxes);
+          await group.sync();
           const messages = handleAddMembers(
             [{ inboxId: addedInboxes[0] }],
             members!,
