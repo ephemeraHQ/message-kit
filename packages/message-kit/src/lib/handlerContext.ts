@@ -20,15 +20,14 @@ import {
   ContentTypeRemoteAttachment,
   RemoteAttachmentCodec,
 } from "@xmtp/content-type-remote-attachment";
-
-import { NapiCreateGroupOptions } from "@xmtp/mls-client-bindings-node";
 import { ContentTypeReaction } from "@xmtp/content-type-reaction";
 
 export default class HandlerContext {
   private refConv: Conversation | ConversationV2 | null = null;
 
   message!: MessageAbstracted;
-  conversation!: Conversation | ConversationV2;
+  group!: Conversation;
+  conversation!: ConversationV2;
   client!: Client;
   v2client!: ClientV2;
   commands?: CommandGroup[];
@@ -36,10 +35,6 @@ export default class HandlerContext {
   commandHandlers?: CommandHandlers;
   agentHandlers?: AgentHandlers;
   getMessageById!: (id: string) => DecodedMessage | null;
-  newConversation!: (
-    accountAddresses: string[],
-    options?: NapiCreateGroupOptions,
-  ) => Promise<Conversation | ConversationV2>;
 
   private constructor(
     conversation: Conversation | ConversationV2,
@@ -51,7 +46,11 @@ export default class HandlerContext {
   ) {
     this.client = client;
     this.v2client = v2client;
-    this.conversation = conversation;
+    if (conversation instanceof Conversation) {
+      this.group = conversation;
+    } else {
+      this.conversation = conversation;
+    }
     this.commandHandlers = commandHandlers;
     this.agentHandlers = agentHandlers;
     this.commands = commands;
@@ -85,10 +84,6 @@ export default class HandlerContext {
       "members" in conversation ? conversation.members : [],
       client.accountAddress,
       senderAddress,
-    );
-
-    context.newConversation = client.conversations.newConversation.bind(
-      client.conversations,
     );
 
     context.getMessageById =
@@ -153,7 +148,7 @@ export default class HandlerContext {
     } else {
       //@ts-ignore
       if (this.refConv) await this.refConv.send(reply, ContentTypeReply);
-      else await this.conversation.send(reply, ContentTypeReply);
+      else await this.group.send(reply, ContentTypeReply);
     }
   }
 
@@ -169,12 +164,24 @@ export default class HandlerContext {
       reference: this.message.id,
       content: emoji,
     };
-
-    if (this.refConv) await this.refConv.send(reaction, ContentTypeReaction);
-    else await this.conversation.send(reaction, ContentTypeReaction);
+    if (this.v2client) {
+      if (this.refConv)
+        await (this.refConv as ConversationV2).send(reaction, {
+          contentType: ContentTypeReaction,
+        });
+      else
+        await (this.conversation as ConversationV2).send(reaction, {
+          contentType: ContentTypeReaction,
+        });
+    } else {
+      //@ts-ignore
+      if (this.refConv) await this.refConv.send(reaction, ContentTypeReaction);
+      else await this.group.send(reaction, ContentTypeReaction);
+    }
   }
 
   async sendTo(message: string, receivers: string[]) {
+    //Sends a 1 to 1 to multiple users
     for (const receiver of receivers) {
       if (this.v2client.address.toLowerCase() === receiver.toLowerCase())
         continue;
