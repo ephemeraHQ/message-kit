@@ -136,13 +136,14 @@ export default class HandlerContext {
       reference: this.message.id,
     };
     const conversation = this.refConv || this.conversation || this.group;
-    console.log(
+    console.log("ha");
+    /*console.log(
       "isv2",
       this.isConversationV2(conversation),
       this.refConv,
       this.conversation,
       this.group,
-    );
+    );*/
     if (conversation) {
       if (this.isConversationV2(conversation)) {
         await conversation.send(reply, { contentType: ContentTypeReply });

@@ -8,11 +8,11 @@ Have a question about how to build with XMTP? Ask your question and learn with t
 
 ## 🐞 Bugs
 
-Report a bug using [GitHub Issues](https://github.com/xmtp-labs/message-kit/issues).
+Report a bug using [GitHub Issues](https://github.com/ephemeraHQ/message-kit/issues).
 
 ## ✨ Feature requests
 
-Request a feature using [GitHub Issues](https://github.com/xmtp-labs/message-kit/issues).
+Request a feature using [GitHub Issues](https://github.com/ephemeraHQ/message-kit/issues).
 
 ## 🔀 Pull requests
 
