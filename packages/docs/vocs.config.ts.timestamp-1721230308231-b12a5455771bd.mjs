@@ -13,12 +13,12 @@ var vocs_config_default = defineConfig({
   socials: [
     {
       icon: "github",
-      link: "https://github.com/xmtp-labs/message-kit",
+      link: "https://github.com/ephemeraHQ/message-kit",
     },
   ],
   editLink: {
     pattern:
-      "https://github.com/xmtp-labs/message-kit/packages/docs/main/:path",
+      "https://github.com/ephemeraHQ/message-kit/packages/docs/main/:path",
     text: "Suggest changes to this page",
   },
   sidebar: [

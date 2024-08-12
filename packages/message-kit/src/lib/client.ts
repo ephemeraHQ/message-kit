@@ -55,16 +55,16 @@ export default async function xmtpClient(
   // Merge the default configuration with the provided config. Repeated fields in clientConfig will override the default values
   const finalConfig = { ...defaultConfig, ...clientConfig };
   const client = await Client.create(account.address, finalConfig);
+  //v2
+  const v2client = await V2Client.create(wallet, finalConfig);
 
   if (process.env.MSG_LOG) {
-    console.log("V3-client", {
+    console.log("XMTP Client:", {
       accountAddress: client.accountAddress,
       inboxId: client.inboxId,
       installationId: client.installationId,
     });
   }
-  //v2
-  const v2client = await V2Client.create(wallet, finalConfig);
 
   // register identity
   if (!client.isRegistered && client.signatureText) {

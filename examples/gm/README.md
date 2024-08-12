@@ -8,7 +8,7 @@ Follow the steps below to run the app
 
 ```bash [cmd]
 # Clone the repo
-git clone https://github.com/xmtp-labs/message-kit
+git clone https://github.com/ephemeraHQ/message-kit
 # Go to the example folder
 cd examples/gm
 # Install the dependencies

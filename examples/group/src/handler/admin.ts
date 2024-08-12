@@ -37,7 +37,6 @@ const handleGroupname = (newValue: string, adminName: string) => {
 };
 export async function handler(context: HandlerContext) {
   const {
-    conversation,
     group,
     members,
     message: { content, typeId, sender },

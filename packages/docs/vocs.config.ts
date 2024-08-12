@@ -13,12 +13,19 @@ export default defineConfig({
   socials: [
     {
       icon: "github",
-      link: "https://github.com/xmtp-labs/message-kit",
+      link: "https://github.com/ephemeraHQ/message-kit",
     },
+  ],
+  topNav: [
+    {
+      text: "Converse app",
+      link: "https://github.com/ephemeraHQ/converse-app",
+    },
+    { text: "XMTP Docs", link: "https://docs.xmtp.org/" },
   ],
   editLink: {
     pattern:
-      "https://github.com/xmtp-labs/message-kit/packages/docs/main/:path",
+      "https://github.com/ephemeraHQ/message-kit/packages/docs/main/:path",
     text: "Suggest changes to this page",
   },
   sidebar: [

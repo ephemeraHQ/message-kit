@@ -45,17 +45,4 @@ context.sendTo("Your message.", ["address1", "address2"]);
 context.react("👍");
 ```
 
-> App messages are prevented from being sent to the app itself\_
-
-## Message history
-
-To get the message history in a conversation you can use the `messages` property.
-
-```tsx
-// sync group first
-await conversation.sync();
-// get messages
-const messages = conversation.messages();
-```
-
-_Refer to group messages [here](/concepts/groups)_
+> App messages are prevented from being sent to the app itself

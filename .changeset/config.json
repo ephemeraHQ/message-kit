@@ -3,7 +3,7 @@
   "changelog": [
     "@changesets/changelog-git",
     {
-      "repo": "xmtp-labs/message-kit"
+      "repo": "ephemeraHQ/message-kit"
     }
   ],
   "commit": false,
