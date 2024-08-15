@@ -1,0 +1,49 @@
+# Frames.js
+
+Discover how Frog seamlessly incorporates XMTP payloads
+
+- [Frames.js](https://framesjs.org/reference/js/xmtp): Official Frames.js Documentation.
+- [Quickstart](https://github.com/ephemeraHQ/open-frames-starter-framesjs/): OnchainKit quickstart that integrates XMTP.
+
+## Metadata
+
+First add the metadata indicating which protocols you support.
+
+```jsx
+const acceptedProtocols: ClientProtocolId[] = [
+  {
+    id: "xmtp",
+    version: "vNext",
+  },
+  {
+    id: "farcaster",
+    version: "vNext",
+  },
+];
+```
+
+## Validate incoming messages
+
+Now validate the incoming message.
+
+```jsx
+let fid: number | undefined;
+let walletAddress: string | undefined;
+
+import {
+  isXmtpFrameRequest,
+  getXmtpFrameMessage,
+} from "@coinbase/onchainkit/xmtp";
+import { NextResponse } from "next/server";
+import type { FrameRequest } from "@coinbase/onchainkit";
+
+async function getResponse(req: any): Promise<NextResponse> {
+  const body: FrameRequest = await req.json();
+  if (isXmtpFrameRequest(body)) {
+    const { isValid, message } = await getXmtpFrameMessage(body);
+    walletAddress = message?.verifiedWalletAddress;
+  } else {
+    // ...
+  }
+}
+```
