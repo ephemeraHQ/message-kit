@@ -34,7 +34,7 @@ export default defineConfig({
       link: "/installation",
     },
     {
-      text: "App directory",
+      text: "Examples",
       link: "/directory",
     },
     {
