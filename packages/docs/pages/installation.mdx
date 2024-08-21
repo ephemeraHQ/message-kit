@@ -48,7 +48,6 @@ Create a `.env` file in the root of your project
 
 ```bash [cmd]
 KEY= # 0x... the private key of the app (with the 0x prefix)
-XMTP_ENV=production # or `dev` (optional)
 MSG_LOG=false # logs the message on the console (optional)
 ```
 
@@ -62,6 +61,8 @@ Follow the steps below to run the app
 # Install the dependencies
 bun install
 # Run the app
+bun dev
+# or if you are in bun you don't need nodemon
 bun dev:bun
 ```
 
