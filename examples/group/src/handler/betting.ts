@@ -32,6 +32,6 @@ export async function handler(context: HandlerContext) {
   await group.send(`To confirm your bet, click the button below.`);
   await context.intent(`/send ${amount} ${token} to @bot`, group);
   await context.reply(
-    `Bet created!. Go to the new group: https://converse.xyz/${group.id}`,
+    `Bet created!. Go to the new group: https://converse.xyz/group-invite/${group.id}`,
   );
 }
