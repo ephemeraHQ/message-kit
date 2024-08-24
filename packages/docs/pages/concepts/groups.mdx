@@ -17,6 +17,14 @@ const { client } = context;
 const group = await client.conversations.newConversation(addresses);
 ```
 
+### Group links
+
+You can get the group link by using the converse url and group id
+
+```tsx
+https://converse.xyz/group-invite/${group.id}
+```
+
 ## Sync a group
 
 Each time you perform an action on a group you must sync it to get the latest state.
