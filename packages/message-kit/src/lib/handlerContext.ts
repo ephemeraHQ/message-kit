@@ -136,7 +136,7 @@ export default class HandlerContext {
       reference: this.message.id,
     };
     const conversation = this.refConv || this.conversation || this.group;
-    console.log("ha");
+
     /*console.log(
       "isv2",
       this.isConversationV2(conversation),
@@ -196,6 +196,7 @@ export default class HandlerContext {
     if (conversation) this.refConv = conversation;
     try {
       if (text.startsWith("/")) {
+        console.log("intent", text);
         let content = parseCommand(text, commands ?? [], members ?? []);
         // Mock context for command execution
         const mockContext: HandlerContext = {

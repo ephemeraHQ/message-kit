@@ -76,7 +76,7 @@ export default async function xmtpClient(
     await client.registerIdentity();
   }
 
-  console.log(`Listening on ${client.accountAddress}`);
+  console.log(`Listening on ${client.accountAddress}`, client);
   //v2
   return { client, v2client };
 }
