@@ -1,6 +1,12 @@
 import { getRedisClient } from "./lib/redis.js";
 import { run, HandlerContext } from "@xmtp/message-kit";
 import { startCron } from "./lib/cron.js";
+import {
+  RedisClientType,
+  RedisModules,
+  RedisFunctions,
+  RedisScripts,
+} from "@redis/client";
 
 //Tracks conversation steps
 const inMemoryCacheStep = new Map<string, number>();
@@ -8,12 +14,13 @@ const inMemoryCacheStep = new Map<string, number>();
 //List of words to stop or unsubscribe.
 const stopWords = ["stop", "unsubscribe", "cancel", "list"];
 
-const redisClient = await getRedisClient();
+const redisClient: RedisClientType<RedisModules, RedisFunctions, RedisScripts> =
+  await getRedisClient();
 
 let clientInitialized = false;
 run(async (context: HandlerContext) => {
   const {
-    client,
+    v2client,
     message: {
       content: { content: text },
       typeId,

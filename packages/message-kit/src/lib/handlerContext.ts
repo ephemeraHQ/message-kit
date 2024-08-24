@@ -189,8 +189,7 @@ export default class HandlerContext {
       if (this.refConv) await this.refConv.send(message);
 
       const targetConversation = conversations.find(
-        (conv) =>
-          conv.peerAddress === "0xDce2b51e3FAb3373081a03B6B36e1091e9fE427D",
+        (conv) => conv.peerAddress === receiver,
       );
       if (targetConversation) await targetConversation.send(message);
     }
