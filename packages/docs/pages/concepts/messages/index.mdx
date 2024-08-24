@@ -35,10 +35,10 @@ To learn more about the types, see [types](/concepts/messages/text)
 App messages are messages that are sent when you send a reply to a message and are highlighted differently by the apps.
 
 ```tsx
-// Reply to the last message
-context.reply("Your message.");
 // Send a message
 context.send("Your message.");
+// Reply to the last message
+context.reply("Your message.");
 // Send a message to specific users
 context.sendTo("Your message.", ["address1", "address2"]);
 // React to the last message with an emoji
