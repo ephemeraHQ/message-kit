@@ -22,7 +22,7 @@ run(async (context: HandlerContext) => {
   } = context;
 
   if (!clientInitialized) {
-    startCron(redisClient, client);
+    startCron(redisClient, v2client);
     clientInitialized = true;
   }
   if (typeId !== "text") {

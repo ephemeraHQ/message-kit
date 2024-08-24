@@ -10,6 +10,7 @@ export async function handler(context: HandlerContext) {
       sender,
     },
     client,
+    v2client,
   } = context;
 
   if (!amount || !name || !username) {

@@ -5,9 +5,11 @@ export async function handler(context: HandlerContext, fake?: boolean) {
   const stack = getStackClient();
   const {
     members,
+    group,
     getMessageById,
     message: { id, content, sender, typeId },
   } = context;
+  if (!group) return;
   if (fake && stack) {
     //for fake demo
     fakeReaction(sender.username, sender.address, id, stack, context);

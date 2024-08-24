@@ -11,7 +11,6 @@ import {
   CommandGroup,
   User,
   CommandHandlers,
-  AgentHandlers,
   MessageAbstracted,
 } from "../helpers/types.js";
 import { parseCommand } from "../helpers/commands.js";
@@ -29,11 +28,11 @@ export default class HandlerContext {
   group!: Conversation;
   conversation!: ConversationV2;
   client!: Client;
+  version!: "v2" | "v3";
   v2client!: ClientV2;
   commands?: CommandGroup[];
   members?: User[];
   commandHandlers?: CommandHandlers;
-  agentHandlers?: AgentHandlers;
   getMessageById!: (id: string) => DecodedMessage | null;
 
   private constructor(
@@ -42,17 +41,18 @@ export default class HandlerContext {
     { client, v2client }: { client: Client; v2client: ClientV2 },
     commands?: CommandGroup[],
     commandHandlers?: CommandHandlers,
-    agentHandlers?: AgentHandlers,
+    version?: "v2" | "v3",
   ) {
     this.client = client;
     this.v2client = v2client;
     if (conversation instanceof Conversation) {
       this.group = conversation;
+      this.version = "v3";
     } else {
       this.conversation = conversation;
+      this.version = "v2";
     }
     this.commandHandlers = commandHandlers;
-    this.agentHandlers = agentHandlers;
     this.commands = commands;
   }
 
@@ -62,7 +62,7 @@ export default class HandlerContext {
     { client, v2client }: { client: Client; v2client: ClientV2 },
     commands?: CommandGroup[],
     commandHandlers?: CommandHandlers,
-    agentHandlers?: AgentHandlers,
+    version?: "v2" | "v3",
   ): Promise<HandlerContext> {
     const context = new HandlerContext(
       conversation,
@@ -70,7 +70,7 @@ export default class HandlerContext {
       { client, v2client },
       commands,
       commandHandlers,
-      agentHandlers,
+      version,
     );
 
     //v2
@@ -180,14 +180,19 @@ export default class HandlerContext {
   }
 
   async sendTo(message: string, receivers: string[]) {
+    const conversations = await this.v2client.conversations.list();
     //Sends a 1 to 1 to multiple users
     for (const receiver of receivers) {
       if (this.v2client.address.toLowerCase() === receiver.toLowerCase())
         continue;
-      const targetConversation =
-        await this.v2client.conversations.newConversation(receiver);
+
       if (this.refConv) await this.refConv.send(message);
-      else await targetConversation.send(message);
+
+      const targetConversation = conversations.find(
+        (conv) =>
+          conv.peerAddress === "0xDce2b51e3FAb3373081a03B6B36e1091e9fE427D",
+      );
+      if (targetConversation) await targetConversation.send(message);
     }
   }
 
@@ -196,7 +201,6 @@ export default class HandlerContext {
     if (conversation) this.refConv = conversation;
     try {
       if (text.startsWith("/")) {
-        console.log("intent", text);
         let content = parseCommand(text, commands ?? [], members ?? []);
         // Mock context for command execution
         const mockContext: HandlerContext = {

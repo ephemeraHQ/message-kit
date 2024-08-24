@@ -37,10 +37,7 @@ export default async function run(handler: Handler, config?: Config) {
         } else {
           conversation = message?.conversation;
         }
-
         if (
-          //v2
-          !conversation ||
           //If same address do nothin
           senderAddress === addressV2 ||
           //If same address do nothin
@@ -48,7 +45,7 @@ export default async function run(handler: Handler, config?: Config) {
         ) {
           return;
         }
-        console.log("conversation", conversation);
+
         if (process?.env?.MSG_LOG) {
           console.log(`incoming_${version}:`, message.content);
         }
@@ -58,7 +55,7 @@ export default async function run(handler: Handler, config?: Config) {
           { client, v2client },
           config?.commands ?? [],
           config?.commandHandlers ?? {},
-          config?.agentHandlers ?? {},
+          version,
         );
 
         await handler(context);
@@ -74,7 +71,6 @@ export default async function run(handler: Handler, config?: Config) {
     version: "v3" | "v2",
   ) => {
     if (version === "v3") {
-      console.log("v3 stream");
       while (true) {
         const stream = await client.conversations.streamAllMessages();
         try {
@@ -94,7 +90,6 @@ export default async function run(handler: Handler, config?: Config) {
       while (true) {
         const stream = await v2client.conversations.streamAllMessages();
         try {
-          console.log("v2 stream");
           for await (const message of stream) {
             await handleMessage(
               { client, v2client },
