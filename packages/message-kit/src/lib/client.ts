@@ -59,6 +59,7 @@ export default async function xmtpClient(
   const v2client = await V2Client.create(wallet, finalConfig);
 
   if (process.env.MSG_LOG) {
+    // Log the version of the package
     console.log("XMTP Client:", {
       accountAddress: client.accountAddress,
       inboxId: client.inboxId,
