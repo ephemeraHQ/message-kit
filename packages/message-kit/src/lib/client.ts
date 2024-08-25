@@ -62,7 +62,7 @@ export default async function xmtpClient(
 
   if (process.env.MSG_LOG) {
     // Log the version of the package
-    console.log("XMTP Client v2:", {
+    console.log("XMTP Client:", {
       accountAddress: client.accountAddress,
       inboxId: client.inboxId,
       installationId: client.installationId,

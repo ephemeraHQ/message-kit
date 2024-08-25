@@ -137,13 +137,13 @@ export default class HandlerContext {
     };
     const conversation = this.refConv || this.conversation || this.group;
 
-    console.log(
+    /*console.log(
       this.version,
       this.isConversationV2(conversation),
       this.refConv,
       this.conversation,
       this.group,
-    );
+    );*/
     if (conversation) {
       if (this.isConversationV2(conversation)) {
         await conversation.send(reply, { contentType: ContentTypeReply });
@@ -182,7 +182,6 @@ export default class HandlerContext {
   async sendTo(message: string, receivers: string[]) {
     const conversations = await this.v2client.conversations.list();
     //Sends a 1 to 1 to multiple users
-    console.log("sendTo", conversations[0]);
     for (const receiver of receivers) {
       if (this.v2client.address.toLowerCase() === receiver.toLowerCase())
         continue;
