@@ -54,7 +54,7 @@ export async function handler(context: HandlerContext) {
 
   // Process sending tokens to each receiver
   context.sendTo(
-    `You received ${amount} tokens from ${sender.username}.`,
+    `You received ${amount} tokens from ${sender.address}.`,
     receiverAddresses,
   );
 

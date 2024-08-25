@@ -164,11 +164,7 @@ function logNextSteps(name, pkgManager) {
   log.step(`1. ${pc.red(`cd ./${name}`)} - Navigate to project`);
   log.step(`2. ${pc.red(`code .`)} - Open with your favorite editor`);
   log.step(`3. ${pc.red(`${pkgManager} i`)} - Install dependencies`);
-  if (pkgManager === "bun") {
-    log.step(`4. ${pc.red(`${pkgManager} dev:bun`)} - Build and start project`);
-  } else {
-    log.step(`4. ${pc.red(`${pkgManager} dev`)} - Build and start project`);
-  }
+  log.step(`4. ${pc.red(`${pkgManager} dev`)} - Build and start project`);
 }
 function createGitignore(destDir) {
   const gitignoreContent = `

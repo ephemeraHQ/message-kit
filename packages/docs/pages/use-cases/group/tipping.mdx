@@ -100,7 +100,7 @@ export async function handler(context: HandlerContext) {
 
   // Process sending tokens to each receiver
   receiverAddresses.forEach(async (receiver: any) => {
-    context.reply(`You received ${amount} tokens from ${sender.username}.`, {
+    context.reply(`You received ${amount} tokens from ${sender.address}.`, {
       receivers: receiverAddresses,
     });
   });

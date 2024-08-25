@@ -11,7 +11,6 @@ import {
   CommandGroup,
   User,
   CommandHandlers,
-  AgentHandlers,
   MessageAbstracted,
 } from "../helpers/types.js";
 import { parseCommand } from "../helpers/commands.js";
@@ -29,11 +28,11 @@ export default class HandlerContext {
   group!: Conversation;
   conversation!: ConversationV2;
   client!: Client;
+  version!: "v2" | "v3";
   v2client!: ClientV2;
   commands?: CommandGroup[];
   members?: User[];
   commandHandlers?: CommandHandlers;
-  agentHandlers?: AgentHandlers;
   getMessageById!: (id: string) => DecodedMessage | null;
 
   private constructor(
@@ -42,17 +41,18 @@ export default class HandlerContext {
     { client, v2client }: { client: Client; v2client: ClientV2 },
     commands?: CommandGroup[],
     commandHandlers?: CommandHandlers,
-    agentHandlers?: AgentHandlers,
+    version?: "v2" | "v3",
   ) {
     this.client = client;
     this.v2client = v2client;
     if (conversation instanceof Conversation) {
       this.group = conversation;
+      this.version = "v3";
     } else {
       this.conversation = conversation;
+      this.version = "v2";
     }
     this.commandHandlers = commandHandlers;
-    this.agentHandlers = agentHandlers;
     this.commands = commands;
   }
 
@@ -62,7 +62,7 @@ export default class HandlerContext {
     { client, v2client }: { client: Client; v2client: ClientV2 },
     commands?: CommandGroup[],
     commandHandlers?: CommandHandlers,
-    agentHandlers?: AgentHandlers,
+    version?: "v2" | "v3",
   ): Promise<HandlerContext> {
     const context = new HandlerContext(
       conversation,
@@ -70,7 +70,7 @@ export default class HandlerContext {
       { client, v2client },
       commands,
       commandHandlers,
-      agentHandlers,
+      version,
     );
 
     //v2
@@ -136,9 +136,9 @@ export default class HandlerContext {
       reference: this.message.id,
     };
     const conversation = this.refConv || this.conversation || this.group;
-    console.log("ha");
+
     /*console.log(
-      "isv2",
+      this.version,
       this.isConversationV2(conversation),
       this.refConv,
       this.conversation,
@@ -159,7 +159,7 @@ export default class HandlerContext {
   }
 
   isConversationV2(conversation: any): conversation is ConversationV2 {
-    return conversation?.conversationVersion === "v2";
+    return conversation?.topic !== undefined;
   }
 
   async react(emoji: string) {
@@ -180,14 +180,20 @@ export default class HandlerContext {
   }
 
   async sendTo(message: string, receivers: string[]) {
+    const conversations = await this.v2client.conversations.list();
     //Sends a 1 to 1 to multiple users
     for (const receiver of receivers) {
       if (this.v2client.address.toLowerCase() === receiver.toLowerCase())
         continue;
-      const targetConversation =
-        await this.v2client.conversations.newConversation(receiver);
       if (this.refConv) await this.refConv.send(message);
-      else await targetConversation.send(message);
+
+      let targetConversation = conversations.find(
+        (conv) => conv.peerAddress === receiver,
+      );
+      if (!targetConversation)
+        targetConversation =
+          await this.v2client.conversations.newConversation(receiver);
+      if (targetConversation) await targetConversation.send(message);
     }
   }
 

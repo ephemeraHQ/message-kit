@@ -2,9 +2,6 @@ import { default as HandlerContext } from "../lib/handlerContext.js";
 
 import { ClientOptions } from "@xmtp/mls-client";
 
-export type AgentHandlers = {
-  [key: string]: (context: HandlerContext) => Promise<void>;
-};
 // Define a type for the message that includes the conversation property
 export type MessageAbstracted = {
   id: string;
@@ -31,9 +28,7 @@ export type Handler = (context: HandlerContext) => Promise<void>;
 export type Config = {
   commands?: CommandGroup[];
   client?: ClientOptions;
-  accessHandler?: AccessHandler;
   commandHandlers?: CommandHandlers;
-  agentHandlers?: AgentHandlers;
 };
 export interface CommandParamConfig {
   default?: any;
@@ -64,5 +59,3 @@ export interface User {
 
 export type MetadataValue = string | number | boolean;
 export type Metadata = Record<string, MetadataValue | MetadataValue[]>;
-
-export type AccessHandler = (context: HandlerContext) => Promise<boolean>;

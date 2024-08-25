@@ -2,6 +2,7 @@ import { ReplyCodec } from "@xmtp/content-type-reply";
 import { Client as V2Client } from "@xmtp/xmtp-js";
 import { ReactionCodec } from "@xmtp/content-type-reaction";
 import { Client, ClientOptions, XmtpEnv } from "@xmtp/mls-client";
+import { Wallet } from "ethers";
 import { TextCodec } from "@xmtp/content-type-text";
 import {
   AttachmentCodec,
@@ -56,10 +57,12 @@ export default async function xmtpClient(
   const finalConfig = { ...defaultConfig, ...clientConfig };
   const client = await Client.create(account.address, finalConfig);
   //v2
-  const v2client = await V2Client.create(wallet, finalConfig);
+  const wallet2 = new Wallet(key);
+  const v2client = await V2Client.create(wallet2, finalConfig);
 
   if (process.env.MSG_LOG) {
-    console.log("XMTP Client:", {
+    // Log the version of the package
+    console.log("XMTP Client: ", {
       accountAddress: client.accountAddress,
       inboxId: client.inboxId,
       installationId: client.installationId,

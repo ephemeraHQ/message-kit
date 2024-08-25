@@ -2,6 +2,10 @@
 
 Each app can have a `commands.ts` file that contains the commands that the app can execute. The commands are defined as an array of objects with the following keys:
 
+## Receive a command
+
+_See more details in the [receive commands](/concepts/messages/command) section._
+
 ## Create a command
 
 First think of which command you want the app to respond to. For example:
@@ -61,33 +65,6 @@ export const commands: CommandGroup[] = [
   },
 ];
 ```
-
-## Handling commands
-
-To declare the access command in the app, you need to add the following code:
-
-```tsx
-import { run, HandlerContext, CommandHandlers } from "@xmtp/message-kit";
-import { commands } from "./commands.js";
-import { transaction } from "./handler/transaction.js";
-
-const commandHandlers: CommandHandlers = {
-  "/send": transaction,
-};
-
-const appConfig = {
-  commands: commands,
-  commandHandlers: commandHandlers,
-};
-
-run(async (context: HandlerContext) => {
-  //Your logic here
-}, appConfig);
-```
-
-## Receive a command
-
-_See more details in the [receive commands](/concepts/messages/command) section._
 
 ## Handle intent
 

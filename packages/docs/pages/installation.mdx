@@ -1,6 +1,6 @@
 # Installation
 
-MessageKit is a powerful framework that simplifies the process of building messaging bots on [xmtp](https://xmtp.org). With its robust set of tools and integrations, you can quickly create bots that can handle various tasks, from simple replies to complex interactions involving AI and transactions. Here’s a step-by-step guide to get you started.
+MessageKit is a powerful framework that simplifies the process of building messaging bots on [xmtp](https://docs.xmtp.org). Here’s a step-by-step guide to get you started.
 
 ::::steps
 
@@ -47,22 +47,28 @@ _You can also pick one of the 2 full [examples](#examples) available._
 Create a `.env` file in the root of your project
 
 ```bash [cmd]
-KEY= # 0x... the private key of the app (with the 0x prefix)
-XMTP_ENV=production # or `dev` (optional)
+KEY= # 0x... the private key of the bot wallet (with the 0x prefix)
 MSG_LOG=false # logs the message on the console (optional)
 ```
 
-### Run the app
+### Run the bot
 
-Follow the steps below to run the app
+Follow the steps below to run the bot
 
 :::code-group
+
+```bash [yarn]
+# Install the dependencies
+yarn install
+# Run the app
+yarn dev
+```
 
 ```bash [bun]
 # Install the dependencies
 bun install
-# Run the app
-bun dev:bun
+# run the app
+bun dev
 ```
 
 ```bash [npm]
@@ -70,13 +76,6 @@ bun dev:bun
 npm install
 # Run the app
 npm run dev
-```
-
-```bash [yarn]
-# Install the dependencies
-yarn install
-# Run the app
-yarn dev
 ```
 
 :::
