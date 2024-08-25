@@ -182,15 +182,18 @@ export default class HandlerContext {
   async sendTo(message: string, receivers: string[]) {
     const conversations = await this.v2client.conversations.list();
     //Sends a 1 to 1 to multiple users
+    console.log("sendTo", conversations[0]);
     for (const receiver of receivers) {
       if (this.v2client.address.toLowerCase() === receiver.toLowerCase())
         continue;
-
       if (this.refConv) await this.refConv.send(message);
 
-      const targetConversation = conversations.find(
+      let targetConversation = conversations.find(
         (conv) => conv.peerAddress === receiver,
       );
+      if (!targetConversation)
+        targetConversation =
+          await this.v2client.conversations.newConversation(receiver);
       if (targetConversation) await targetConversation.send(message);
     }
   }
