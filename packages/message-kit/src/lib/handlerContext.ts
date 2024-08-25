@@ -137,13 +137,13 @@ export default class HandlerContext {
     };
     const conversation = this.refConv || this.conversation || this.group;
 
-    /*console.log(
-      "isv2",
+    console.log(
+      this.version,
       this.isConversationV2(conversation),
       this.refConv,
       this.conversation,
       this.group,
-    );*/
+    );
     if (conversation) {
       if (this.isConversationV2(conversation)) {
         await conversation.send(reply, { contentType: ContentTypeReply });
@@ -159,7 +159,7 @@ export default class HandlerContext {
   }
 
   isConversationV2(conversation: any): conversation is ConversationV2 {
-    return conversation?.conversationVersion === "v2";
+    return conversation?.topic !== undefined;
   }
 
   async react(emoji: string) {
