@@ -1,25 +1,41 @@
 # Frames.js
 
-Discover how Frog seamlessly incorporates XMTP payloads
+Discover how Frames.js seamlessly incorporates XMTP payloads
 
-- [Frames.js](https://framesjs.org/reference/js/xmtp): Official Frames.js Documentation.
-- [Quickstart](https://github.com/ephemeraHQ/open-frames-starter-framesjs/): OnchainKit quickstart that integrates XMTP.
+- [Official Docs](https://framesjs.org/guides/open-frames): Official Frames.js Documentation.
+- [Frames.js quickstart](https://github.com/ephemeraHQ/open-frames-starter-framesjs/): OnchainKit quickstart that integrates XMTP.
 
 ## Metadata
 
 First add the metadata indicating which protocols you support.
 
 ```jsx
-const acceptedProtocols: ClientProtocolId[] = [
-  {
-    id: "xmtp",
-    version: "vNext",
-  },
-  {
-    id: "farcaster",
-    version: "vNext",
-  },
-];
+// ...
+import { openframes } from "frames.js/middleware";
+
+const frames = createFrames({
+  // ...
+  middleware: [
+    openframes({
+      clientProtocol: {
+        id: "my-protocol",
+        version: "1.0.0",
+      },
+      handler: {
+        isValidPayload: (body: JSON) => {
+          // Check if the request body is a valid Open Frames action
+          // ...
+          return isValid; // true or false
+        },
+        getFrameMessage: async (body: JSON) => {
+          // Parse the data in the request body and return a Frame message
+          // ...
+          return frameMessage;
+        },
+      },
+    }),
+  ],
+});
 ```
 
 ## Validate incoming messages
@@ -27,23 +43,32 @@ const acceptedProtocols: ClientProtocolId[] = [
 Now validate the incoming message.
 
 ```jsx
-let fid: number | undefined;
-let walletAddress: string | undefined;
+/* eslint-disable react/jsx-key */
+import { openframes } from "frames.js/middleware";
+import { createFrames } from "frames.js/next";
+import { getXmtpFrameMessage, isXmtpFrameActionPayload } from "frames.js/xmtp";
 
-import {
-  isXmtpFrameRequest,
-  getXmtpFrameMessage,
-} from "@coinbase/onchainkit/xmtp";
-import { NextResponse } from "next/server";
-import type { FrameRequest } from "@coinbase/onchainkit";
-
-async function getResponse(req: any): Promise<NextResponse> {
-  const body: FrameRequest = await req.json();
-  if (isXmtpFrameRequest(body)) {
-    const { isValid, message } = await getXmtpFrameMessage(body);
-    walletAddress = message?.verifiedWalletAddress;
-  } else {
-    // ...
-  }
-}
+export const frames = createFrames({
+  middleware: [
+    openframes({
+      clientProtocol: {
+        id: "xmtp",
+        version: "2024-02-09",
+      },
+      handler: {
+        isValidPayload: (body: JSON) => isXmtpFrameActionPayload(body),
+        getFrameMessage: async (body: JSON) => {
+          if (isXmtpFrameActionPayload(body)) {
+            return undefined;
+          }
+          // payload is an XMTP frame action payload
+          const result = await getXmtpFrameMessage(body);
+          // ... do something with the verifiedWalletAddress
+          const { verifiedWalletAddress } = result;
+          return { ...result };
+        },
+      },
+    }),
+  ],
+});
 ```
