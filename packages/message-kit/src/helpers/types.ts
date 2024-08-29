@@ -32,7 +32,7 @@ export type Config = {
 };
 export interface CommandParamConfig {
   default?: any;
-  type: "number" | "string" | "username" | "quoted" | "address";
+  type: "number" | "string" | "username" | "quoted" | "address" | "prompt";
   values?: string[]; // Accepted values for the parameter
 }
 
