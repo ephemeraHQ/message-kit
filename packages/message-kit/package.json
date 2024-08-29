@@ -14,7 +14,7 @@
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
-    "dist/**/*"
+    "dist"
   ],
   "scripts": {
     "build": "rollup -c",
@@ -32,7 +32,7 @@
     "@xmtp/content-type-remote-attachment": "^1.1.9",
     "@xmtp/content-type-reply": "^1.1.11",
     "@xmtp/content-type-text": "^1.0.0",
-    "@xmtp/mls-client": "^0.0.13",
+    "@xmtp/mls-client": "^0.0.14",
     "@xmtp/xmtp-js": "^9.4.1",
     "dotenv": "^16.4.5",
     "ethers": "^5.7.0",
