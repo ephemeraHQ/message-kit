@@ -181,6 +181,40 @@ export const commands: CommandGroup[] = [
     ],
   },
   {
+    name: "Loyalty",
+    icon: "🔓",
+    description: "Manage group members and metadata.",
+    commands: [
+      {
+        command: "/points",
+        description: "Check your points.",
+        params: {},
+      },
+      {
+        command: "/leaderboard",
+        description: "Check the points of a user.",
+        params: {},
+      },
+    ],
+  },
+  {
+    name: "Agent",
+    icon: "🤖",
+    description: "Manage agent commands.",
+    commands: [
+      {
+        command: "/agent [prompt]",
+        description: "Manage agent commands.",
+        params: {
+          prompt: {
+            default: "",
+            type: "string",
+          },
+        },
+      },
+    ],
+  },
+  {
     name: "Admin",
     icon: "🔐",
     description: "Manage group members and metadata.",
@@ -232,18 +266,22 @@ import { handler as bet } from "./handler/betting.js";
 import { handler as tipping } from "./handler/tipping.js";
 import { handler as agent } from "./handler/agent.js";
 import { handler as transaction } from "./handler/transaction.js";
-import { handler as splitpayment } from "./handler/payments.js";
+import { handler as splitpayment } from "./handler/payment.js";
 import { handler as games } from "./handler/game.js";
 import { handler as admin } from "./handler/admin.js";
+import { handler as loyalty } from "./handler/loyalty.js";
 
 // Define command handlers
 const commandHandlers: CommandHandlers = {
   "/tip": tipping,
+  "/agent": agent,
   "/bet": bet,
   "/send": transaction,
   "/swap": transaction,
   "/mint": transaction,
   "/show": transaction,
+  "/points": loyalty,
+  "/leaderboard": loyalty,
   "/game": games,
   "/add": admin,
   "/remove": admin,
@@ -286,23 +324,25 @@ run(async (context: HandlerContext) => {
   const {
     message: { typeId },
   } = context;
-
   try {
     switch (typeId) {
       case "reaction":
         handleReaction(context);
+        loyalty(context);
         break;
       case "reply":
         handleReply(context);
         break;
       case "group_updated":
-        await admin(context);
+        admin(context);
+        loyalty(context);
         break;
       case "remoteStaticAttachment":
-        await handleAttachment(context);
+        handleAttachment(context);
         break;
       case "text":
-        await handleTextMessage(context);
+        handleTextMessage(context);
+        loyalty(context, true);
         break;
       default:
         console.warn(`Unhandled message type: ${typeId}`);
@@ -328,8 +368,7 @@ async function handleReply(context: HandlerContext) {
   const {
     content: { content: reply },
   } = context.message;
-
-  if (reply.includes("$degen")) {
+  if (reply.includes("degen")) {
     await tipping(context);
   }
 }
