@@ -154,17 +154,34 @@ export const commands: CommandGroup[] = [
     ],
   },
   {
+    name: "General Commands",
+    icon: "🔧",
+    description: "Command for managing default behaviours.",
+    commands: [
+      {
+        command: "/help2 [cmd]",
+        description: "Manage agent commands.",
+        params: {
+          cmd: {
+            default: "",
+            type: "string",
+          },
+        },
+      },
+    ],
+  },
+  {
     name: "Agent",
     icon: "🤖",
     description: "Manage agent commands.",
     commands: [
       {
-        command: "/agent [type]",
+        command: "/agent [prompt]",
         description: "Manage agent commands.",
         params: {
           prompt: {
             default: "",
-            type: "string",
+            type: "prompt",
           },
         },
       },

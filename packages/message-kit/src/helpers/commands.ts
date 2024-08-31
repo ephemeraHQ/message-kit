@@ -82,7 +82,17 @@ export function extractCommandValues(
       } = expectedParams[param];
       let valueFound = false;
 
-      if (type === "quoted") {
+      // Handle string type with no possible values
+      if (type === "string" && possibleValues.length === 0) {
+        const stringIndex = parts.findIndex(
+          (part, idx) => !usedIndices.has(idx) && idx > 0,
+        );
+        if (stringIndex !== -1) {
+          values.params[param] = parts[stringIndex];
+          usedIndices.add(stringIndex);
+          valueFound = true;
+        }
+      } else if (type === "quoted") {
         const quotedIndex = parts.findIndex(
           (part, idx) => /^["'`].*["'`]$/.test(part) && !usedIndices.has(idx),
         );
@@ -91,6 +101,9 @@ export function extractCommandValues(
           usedIndices.add(quotedIndex);
           valueFound = true;
         }
+      } else if (type === "prompt") {
+        values.params[param] = parts.slice(1).join(" ");
+        valueFound = true;
       } else if (type === "address") {
         const addressIndex = parts.findIndex(
           (part, idx) =>
@@ -112,10 +125,6 @@ export function extractCommandValues(
           usedIndices.add(index);
           valueFound = true;
         }
-      } else if (param === "prompt") {
-        // Extract everything after the command as the prompt
-        values.params[param] = parts.slice(1).join(" ");
-        valueFound = true;
       } else {
         const indices = parts.reduce<number[]>((acc, part, idx) => {
           if (

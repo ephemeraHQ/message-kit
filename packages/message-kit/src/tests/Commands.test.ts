@@ -1,10 +1,19 @@
 import "dotenv/config";
 import { commands } from "./commands";
 import { fakeUsers as users } from "../helpers/usernames";
-import { textGeneration } from "../helpers/openai";
 import { extractCommandValues } from "../helpers/commands";
 
 describe("Command extraction tests", () => {
+  test("Extract values from /help2 command", () => {
+    const inputContent = "/help2 hey";
+    const extractedValues = extractCommandValues(inputContent, commands, users);
+    expect(extractedValues).toEqual({
+      command: "help2",
+      params: expect.objectContaining({
+        cmd: "hey",
+      }),
+    });
+  });
   test("Extract values from /tip command", () => {
     const inputContent = "/tip @bo @alix 15";
     const extractedValues = extractCommandValues(inputContent, commands, users);
