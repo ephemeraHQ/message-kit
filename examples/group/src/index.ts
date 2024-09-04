@@ -32,7 +32,8 @@ const commandHandlers: CommandHandlers = {
         .map((command) => `${command.command} - ${command.description}`)
         .join("\n") +
       "\nUse these commands to interact with specific apps.";
-    context.reply(intro);
+    console.log(context.send);
+    context.send(intro);
   },
   "/apps": async (context: HandlerContext) => {
     const intro =

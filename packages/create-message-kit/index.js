@@ -174,6 +174,7 @@ node_modules/
 .gitignore
 .cache/
 dist/
+.DS_Store
 
 # Logs
 logs/
