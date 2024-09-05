@@ -1,1 +1,3 @@
-*     @ephemeraHQ/Engineering
+# Global rule:
+*     @ephemeraHQ/engineering
+*.md  @ephemeraHQ/documentation
