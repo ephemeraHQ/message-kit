@@ -12,6 +12,7 @@ import * as fs from "fs";
 import { createWalletClient, http, toBytes, isHex } from "viem";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { mainnet } from "viem/chains";
+import { GrpcApiClient } from "@xmtp/grpc-api-client";
 
 export default async function xmtpClient(
   clientConfig: ClientOptions = {},
@@ -58,7 +59,12 @@ export default async function xmtpClient(
   const client = await Client.create(account.address, finalConfig);
   //v2
   const wallet2 = new Wallet(key);
-  const v2client = await V2Client.create(wallet2, finalConfig);
+  const v2client = await V2Client.create(wallet2, {
+    ...finalConfig,
+    apiUrl: undefined,
+    skipContactPublishing: false,
+    apiClientFactory: GrpcApiClient.fromOptions as any,
+  });
 
   if (process.env.MSG_LOG) {
     // Log the version of the package

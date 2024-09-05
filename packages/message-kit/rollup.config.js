@@ -12,6 +12,7 @@ const external = [
   "@xmtp/xmtp-js",
   "ethers",
   "@xmtp/proto",
+  "@xmtp/grpc-api-client",
   "viem",
   "viem/accounts",
   "fs",
