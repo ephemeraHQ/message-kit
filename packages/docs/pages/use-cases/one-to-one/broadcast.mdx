@@ -27,7 +27,7 @@ Run a node cron daily to send message to users
 
 ```jsx [src/lib/cron.ts]
 import cron from "node-cron";
-import { xmtpClient } from "message-kit";
+import { xmtpClient } from "@xmtp/message-kit";
 import { RedisClientType } from "@redis/client";
 
 export async function startCron(redisClient: RedisClientType) {
