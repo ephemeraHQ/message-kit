@@ -26,7 +26,7 @@ run(async (context: HandlerContext) => {
   const { content, sender } = context.message;
 
   // To reply, just call `reply` on the HandlerContext.
-  await context.reply(`gm`);
+  await context.send(`gm`);
 });
 ```
 

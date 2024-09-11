@@ -1,14 +1,9 @@
 import cron from "node-cron";
 import { Client } from "@xmtp/xmtp-js";
-import {
-  RedisClientType,
-  RedisModules,
-  RedisFunctions,
-  RedisScripts,
-} from "@redis/client";
+import { RedisClientType } from "@redis/client";
 
 export async function startCron(
-  redisClient: RedisClientType<RedisModules, RedisFunctions, RedisScripts>,
+  redisClient: RedisClientType,
   v2client: Client,
 ) {
   console.log("Starting daily cron");

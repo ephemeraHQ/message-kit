@@ -1,4 +1,5 @@
 import { createClient } from "@redis/client";
+import { RedisClientType } from "@redis/client";
 
 export const getRedisClient = async () => {
   const client = createClient({
@@ -10,5 +11,5 @@ export const getRedisClient = async () => {
   });
 
   await client.connect();
-  return client;
+  return client as RedisClientType;
 };
