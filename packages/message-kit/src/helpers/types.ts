@@ -28,6 +28,7 @@ export type Handler = (context: HandlerContext) => Promise<void>;
 export type Config = {
   commands?: CommandGroup[];
   client?: ClientOptions;
+  privateKey?: string;
   commandHandlers?: CommandHandlers;
 };
 export interface CommandParamConfig {

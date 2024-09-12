@@ -154,8 +154,8 @@ export default class HandlerContext {
   }
 
   async send(message: string) {
-    if (this.refConv) await this.refConv.send(message);
-    else await this.conversation.send(message);
+    const conversation = this.refConv || this.conversation || this.group;
+    if (conversation) await conversation.send(message);
   }
 
   isConversationV2(conversation: any): conversation is ConversationV2 {

@@ -1,16 +1,14 @@
 import { default as HandlerContext } from "./handlerContext.js";
 import { default as xmtpClient } from "./client.js";
 import { Config, Handler } from "../helpers/types.js";
-import { Conversation, DecodedMessage, Client } from "@xmtp/mls-client";
-import {
-  DecodedMessage as DecodedMessageV2,
-  Client as ClientV2,
-  Conversation as ConversationV2,
-} from "@xmtp/xmtp-js";
-import { send } from "process";
+import { Client } from "@xmtp/mls-client";
+import { Client as ClientV2 } from "@xmtp/xmtp-js";
 
 export default async function run(handler: Handler, config?: Config) {
-  const { client, v2client } = await xmtpClient(config?.client);
+  const { client, v2client } = await xmtpClient(
+    config?.client,
+    config?.privateKey,
+  );
   const { inboxId: address } = client;
   const { address: addressV2 } = v2client;
 
