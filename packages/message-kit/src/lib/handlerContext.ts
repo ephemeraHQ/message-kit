@@ -216,6 +216,7 @@ export default class HandlerContext {
           send: this.send.bind(this),
           sendTo: this.sendTo.bind(this),
           react: this.react.bind(this),
+          isGroup: this.group instanceof Conversation,
         };
         const handler =
           this.commandHandlers?.[
