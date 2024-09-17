@@ -37,7 +37,6 @@ export default class HandlerContext {
 
   private constructor(
     conversation: Conversation | ConversationV2,
-    message: DecodedMessage | DecodedMessageV2,
     { client, v2client }: { client: Client; v2client: ClientV2 },
     commands?: CommandGroup[],
     commandHandlers?: CommandHandlers,
@@ -66,7 +65,6 @@ export default class HandlerContext {
   ): Promise<HandlerContext> {
     const context = new HandlerContext(
       conversation,
-      message,
       { client, v2client },
       commands,
       commandHandlers,
@@ -90,7 +88,12 @@ export default class HandlerContext {
       client.conversations?.getMessageById?.bind(client.conversations) ||
       (() => null);
 
-    let content = message.content;
+    //trim spaces from text
+    let content =
+      typeof message.content === "string"
+        ? message.content.trim()
+        : message.content;
+
     if (message.contentType.sameAs(ContentTypeText)) {
       content = parseCommand(
         message?.content,
