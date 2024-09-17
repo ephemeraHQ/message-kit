@@ -23,7 +23,7 @@
     "format": "yarn format:base -w .",
     "format:base": "prettier --ignore-path ../../.gitignore",
     "format:check": "yarn format:base -c .",
-    "prepublishOnly": "yarn build",
+    "prepublishOnly": " cd ../../ && yarn copy && yarn build",
     "test": "jest",
     "typecheck": "tsc --noEmit"
   },
