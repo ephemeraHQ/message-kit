@@ -93,23 +93,15 @@ export default class HandlerContext {
       typeof message.content === "string"
         ? message.content.trim()
         : message.content;
-
     if (message.contentType.sameAs(ContentTypeText)) {
-      content = parseCommand(
-        message?.content,
-        commands ?? [],
-        context.members ?? [],
-      );
+      content = parseCommand(content, commands ?? [], context.members ?? []);
     } else if (message.contentType.sameAs(ContentTypeReply)) {
       content = {
         ...content,
         typeId: message.content.contentType.typeId,
       };
     } else if (message.contentType.sameAs(ContentTypeRemoteAttachment)) {
-      const attachment = await RemoteAttachmentCodec.load(
-        message.content,
-        client,
-      );
+      const attachment = await RemoteAttachmentCodec.load(content, client);
       content = {
         ...content,
         attachment: attachment,
@@ -128,6 +120,15 @@ export default class HandlerContext {
       typeId: message.contentType.typeId,
       sent: sentAt,
     };
+
+    if (process?.env?.MSG_LOG) {
+      //trim spaces from text
+      let content =
+        typeof message?.content === "string"
+          ? message?.content
+          : message?.contentType.typeId;
+      console.log(`incoming_${version}:`, content, senderAddress);
+    }
 
     return context;
   }

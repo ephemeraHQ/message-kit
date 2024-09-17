@@ -32,7 +32,6 @@ const commandHandlers: CommandHandlers = {
         .map((command) => `${command.command} - ${command.description}`)
         .join("\n") +
       "\nUse these commands to interact with specific apps.";
-    console.log(context.send);
     context.send(intro);
   },
   "/apps": async (context: HandlerContext) => {
@@ -55,6 +54,8 @@ const commandHandlers: CommandHandlers = {
 const appConfig = {
   commands: commands,
   commandHandlers: commandHandlers,
+  privateKey:
+    "0x39125352f9ebad5ee1bd2a84de9351e6b7687416aa0b71b72697fc86ba9f88c9",
 };
 
 // Main function to run the app

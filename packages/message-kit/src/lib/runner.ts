@@ -23,6 +23,13 @@ export default async function run(handler: Handler, config?: Config) {
     message: any,
   ) => {
     if (message) {
+      if (process?.env?.ISSUE_LOG) {
+        let content =
+          typeof message?.content === "string"
+            ? message?.content
+            : message?.contentType.typeId;
+        console.log(`stream:`, content, message?.conversationId);
+      }
       try {
         const { senderInboxId, senderAddress } = message;
         let conversation;
@@ -44,9 +51,6 @@ export default async function run(handler: Handler, config?: Config) {
           return;
         }
 
-        if (process?.env?.MSG_LOG) {
-          console.log(`incoming_${version}:`, message.content);
-        }
         const context = await HandlerContext.create(
           conversation,
           message,
