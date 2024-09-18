@@ -1,8 +1,12 @@
 import { default as HandlerContext } from "./handlerContext.js";
 import { default as xmtpClient } from "./client.js";
 import { Config, Handler } from "../helpers/types.js";
-import { Client } from "@xmtp/mls-client";
-import { Client as ClientV2 } from "@xmtp/xmtp-js";
+import { Conversation, DecodedMessage, Client } from "@xmtp/mls-client";
+import {
+  DecodedMessage as DecodedMessageV2,
+  Client as ClientV2,
+  Conversation as ConversationV2,
+} from "@xmtp/xmtp-js";
 
 export default async function run(handler: Handler, config?: Config) {
   const { client, v2client } = await xmtpClient(
@@ -16,12 +20,7 @@ export default async function run(handler: Handler, config?: Config) {
   await client.conversations.sync();
   await client.conversations.list();
 
-  const handleMessage = async (
-    { client, v2client }: { client: Client; v2client: ClientV2 },
-    address: string,
-    version: "v3" | "v2",
-    message: any,
-  ) => {
+  const handleMessage = async (version: "v3" | "v2", message: any) => {
     if (message) {
       if (process?.env?.ISSUE_LOG) {
         let content =
@@ -67,22 +66,13 @@ export default async function run(handler: Handler, config?: Config) {
     }
   };
 
-  const streamMessages = async (
-    { client, v2client }: { client: Client; v2client: ClientV2 },
-    address: string,
-    version: "v3" | "v2",
-  ) => {
+  const streamMessages = async (version: "v3" | "v2") => {
     if (version === "v3") {
       while (true) {
         const stream = await client.conversations.streamAllMessages();
         try {
           for await (const message of stream) {
-            await handleMessage(
-              { client, v2client },
-              address,
-              version,
-              message,
-            );
+            handleMessage(version, message);
           }
         } catch (e) {
           console.log(`Restart stream:`, e);
@@ -93,12 +83,7 @@ export default async function run(handler: Handler, config?: Config) {
         const stream = await v2client.conversations.streamAllMessages();
         try {
           for await (const message of stream) {
-            await handleMessage(
-              { client, v2client },
-              address,
-              version,
-              message,
-            );
+            handleMessage(version, message);
           }
         } catch (e) {
           console.log(`Restart stream:`, e);
@@ -107,9 +92,59 @@ export default async function run(handler: Handler, config?: Config) {
     }
   };
 
+  const streamConversations = async (version: "v3" | "v2") => {
+    if (version === "v3") {
+      while (true) {
+        const stream = await client.conversations.stream();
+        try {
+          for await (const conversation of stream) {
+            console.log(`New conversation:`, conversation);
+            handleConversation(version, conversation);
+          }
+        } catch (e) {
+          console.log(`Restart conversation stream:`, e);
+        }
+      }
+    } else if (version === "v2") {
+      while (true) {
+        const stream = await v2client.conversations.stream();
+        try {
+          for await (const conversation of stream) {
+            console.log(`New conversation:`, conversation);
+            handleConversation(version, conversation);
+          }
+        } catch (e) {
+          console.log(`Restart conversation stream:`, e);
+        }
+      }
+    }
+  };
+  const handleConversation = async (
+    version: "v3" | "v2",
+    conversation: any,
+  ) => {
+    if (conversation) {
+      try {
+        const context = await HandlerContext.create(
+          conversation,
+          null,
+          { client, v2client },
+          config?.commands ?? [],
+          config?.commandHandlers ?? {},
+          version,
+        );
+
+        await handler(context);
+      } catch (e) {
+        console.log(`error`, e);
+      }
+    }
+  };
   // Run both clients' streams concurrently
   await Promise.all([
-    streamMessages({ client, v2client }, address, "v2"),
-    streamMessages({ client, v2client }, address, "v3"),
+    streamMessages("v2"),
+    streamMessages("v3"),
+    streamConversations("v2"),
+    streamConversations("v3"),
   ]);
 }

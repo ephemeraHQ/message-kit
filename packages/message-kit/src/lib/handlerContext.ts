@@ -31,6 +31,7 @@ export default class HandlerContext {
   version!: "v2" | "v3";
   v2client!: ClientV2;
   commands?: CommandGroup[];
+  isGroup!: boolean;
   members?: User[];
   commandHandlers?: CommandHandlers;
   getMessageById!: (id: string) => DecodedMessage | null;
@@ -44,6 +45,7 @@ export default class HandlerContext {
   ) {
     this.client = client;
     this.v2client = v2client;
+    this.isGroup = version === "v3";
     if (conversation instanceof Conversation) {
       this.group = conversation;
       this.version = "v3";
@@ -57,7 +59,7 @@ export default class HandlerContext {
 
   static async create(
     conversation: Conversation | ConversationV2,
-    message: DecodedMessage | DecodedMessageV2,
+    message: DecodedMessage | DecodedMessageV2 | null,
     { client, v2client }: { client: Client; v2client: ClientV2 },
     commands?: CommandGroup[],
     commandHandlers?: CommandHandlers,
@@ -70,64 +72,80 @@ export default class HandlerContext {
       commandHandlers,
       version,
     );
+    if (message) {
+      //v2
+      const senderAddress =
+        "senderAddress" in message
+          ? message.senderAddress
+          : message.senderInboxId;
+      const sentAt = "sentAt" in message ? message.sentAt : message.sent;
 
-    //v2
-    const senderAddress =
-      "senderAddress" in message
-        ? message.senderAddress
-        : message.senderInboxId;
-    const sentAt = "sentAt" in message ? message.sentAt : message.sent;
+      context.members = await populateUsernames(
+        "members" in conversation ? conversation.members : [],
+        client.accountAddress,
+        senderAddress,
+      );
 
-    context.members = await populateUsernames(
-      "members" in conversation ? conversation.members : [],
-      client.accountAddress,
-      senderAddress,
-    );
+      context.getMessageById =
+        client.conversations?.getMessageById?.bind(client.conversations) ||
+        (() => null);
 
-    context.getMessageById =
-      client.conversations?.getMessageById?.bind(client.conversations) ||
-      (() => null);
-
-    //trim spaces from text
-    let content =
-      typeof message.content === "string"
-        ? message.content.trim()
-        : message.content;
-    if (message.contentType.sameAs(ContentTypeText)) {
-      content = parseCommand(content, commands ?? [], context.members ?? []);
-    } else if (message.contentType.sameAs(ContentTypeReply)) {
-      content = {
-        ...content,
-        typeId: message.content.contentType.typeId,
-      };
-    } else if (message.contentType.sameAs(ContentTypeRemoteAttachment)) {
-      const attachment = await RemoteAttachmentCodec.load(content, client);
-      content = {
-        ...content,
-        attachment: attachment,
-      };
-    }
-
-    //v2
-    const sender =
-      context.members?.find((member) => member.inboxId === senderAddress) ||
-      ({ address: senderAddress, inboxId: senderAddress } as User);
-
-    context.message = {
-      id: message.id,
-      content: content,
-      sender: sender,
-      typeId: message.contentType.typeId,
-      sent: sentAt,
-    };
-
-    if (process?.env?.MSG_LOG) {
       //trim spaces from text
       let content =
-        typeof message?.content === "string"
-          ? message?.content
-          : message?.contentType.typeId;
-      console.log(`incoming_${version}:`, content, senderAddress);
+        typeof message.content === "string"
+          ? message.content.trim()
+          : message.content;
+      if (message.contentType.sameAs(ContentTypeText)) {
+        content = parseCommand(content, commands ?? [], context.members ?? []);
+      } else if (message.contentType.sameAs(ContentTypeReply)) {
+        content = {
+          ...content,
+          typeId: message.content.contentType.typeId,
+        };
+      } else if (message.contentType.sameAs(ContentTypeRemoteAttachment)) {
+        const attachment = await RemoteAttachmentCodec.load(content, client);
+        content = {
+          ...content,
+          attachment: attachment,
+        };
+      }
+
+      //v2
+      const sender =
+        context.members?.find((member) => member.inboxId === senderAddress) ||
+        ({ address: senderAddress, inboxId: senderAddress } as User);
+
+      context.message = {
+        id: message.id,
+        content: content,
+        sender: sender,
+        typeId: message.contentType.typeId,
+        sent: sentAt,
+      };
+
+      if (process?.env?.MSG_LOG) {
+        //trim spaces from text
+        let content =
+          typeof message?.content === "string"
+            ? message?.content
+            : message?.contentType.typeId;
+        console.log(`incoming_${version}:`, content, senderAddress);
+      }
+
+      return context;
+    } else {
+      context.message = {
+        id: "",
+        content: "",
+        sender: {
+          inboxId: "",
+          address: "",
+          username: "",
+          accountAddresses: [],
+        },
+        typeId: "conversation",
+        sent: conversation.createdAt,
+      };
     }
 
     return context;
