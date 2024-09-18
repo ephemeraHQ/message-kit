@@ -6,6 +6,22 @@ Join Converse Beta to experience groups. [Learn more](https://paragraph.xyz/@eph
 
 > For more details, see XMTP's [Groups documentation](https://docs.xmtp.org/groups/build-group-chat).
 
+## Added to a group
+
+When a user is added to a group it will emit a `new_group` event.
+
+```tsx
+const {
+  message: { typeId, sender },
+  group,
+} = context;
+
+if (typeId == "new_group") {
+  // handle being added to a group
+  return;
+}
+```
+
 ## Group updated object
 
 The `group_updated` type contains the following
