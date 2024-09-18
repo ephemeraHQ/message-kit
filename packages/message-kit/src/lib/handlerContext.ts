@@ -129,7 +129,7 @@ export default class HandlerContext {
           typeof message?.content === "string"
             ? message?.content
             : message?.contentType.typeId;
-        console.log(`incoming_${version}:`, content, senderAddress);
+        console.log("content", content, senderAddress);
       }
 
       return context;
@@ -143,7 +143,7 @@ export default class HandlerContext {
           username: "",
           accountAddresses: [],
         },
-        typeId: "conversation",
+        typeId: "new_" + (context.isGroup ? "group" : "conversation"),
         sent: conversation.createdAt,
       };
     }
