@@ -129,6 +129,7 @@ export default class HandlerContext {
           typeof message?.content === "string"
             ? message?.content
             : message?.contentType.typeId;
+
         console.log("content", content, senderAddress);
       }
 
