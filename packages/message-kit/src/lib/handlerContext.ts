@@ -89,6 +89,8 @@ export default class HandlerContext {
       context.getMessageById =
         client.conversations?.getMessageById?.bind(client.conversations) ||
         (() => null);
+      // **Correct Binding:**
+      context.getReplyChain = context.getReplyChain.bind(context);
 
       //trim spaces from text
       let content =
@@ -152,6 +154,30 @@ export default class HandlerContext {
     return context;
   }
 
+  async getReplyChain(reference: string): Promise<{
+    messageChain: string;
+    receiverFromChain: string;
+  }> {
+    const msg = await this.getMessageById(reference);
+    let receiver = this.members?.find(
+      (member) => member.inboxId === msg?.senderInboxId,
+    );
+    if (!msg) return { messageChain: "", receiverFromChain: "" };
+    let chain = `${msg?.content?.content ?? msg?.content}\n\n`;
+    if (msg?.content?.reference) {
+      const { messageChain, receiverFromChain } = await this.getReplyChain(
+        msg?.content?.reference,
+      );
+      receiver = this.members?.find(
+        (member) => member.address === receiverFromChain,
+      );
+      chain = `${messageChain}\nUser:${chain}`;
+    }
+    return {
+      messageChain: chain,
+      receiverFromChain: receiver?.address ?? "",
+    };
+  }
   async reply(message: string) {
     const reply = {
       content: message,
@@ -239,6 +265,8 @@ export default class HandlerContext {
           send: this.send.bind(this),
           sendTo: this.sendTo.bind(this),
           react: this.react.bind(this),
+          getMessageById: this.getMessageById.bind(this),
+          getReplyChain: this.getReplyChain.bind(this),
           isGroup: this.group instanceof Conversation,
         };
         const handler =
