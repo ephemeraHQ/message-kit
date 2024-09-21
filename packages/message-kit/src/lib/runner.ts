@@ -1,8 +1,12 @@
 import { default as HandlerContext } from "./handlerContext.js";
 import { default as xmtpClient } from "./client.js";
 import { Config, Handler } from "../helpers/types.js";
-import { Client } from "@xmtp/mls-client";
-import { Client as ClientV2 } from "@xmtp/xmtp-js";
+import { Conversation, DecodedMessage, Client } from "@xmtp/mls-client";
+import {
+  DecodedMessage as DecodedMessageV2,
+  Client as ClientV2,
+  Conversation as ConversationV2,
+} from "@xmtp/xmtp-js";
 
 export default async function run(handler: Handler, config?: Config) {
   const { client, v2client } = await xmtpClient(
@@ -17,24 +21,14 @@ export default async function run(handler: Handler, config?: Config) {
   await client.conversations.list();
 
   const handleMessage = async (
-    { client, v2client }: { client: Client; v2client: ClientV2 },
-    address: string,
     version: "v3" | "v2",
     message: any,
+    conversation: any,
   ) => {
     if (message) {
       try {
         const { senderInboxId, senderAddress } = message;
-        let conversation;
-        if (version === "v3") {
-          conversation = client.conversations.getConversationById
-            ? await client.conversations.getConversationById(
-                message.conversationId,
-              )
-            : message?.conversation;
-        } else {
-          conversation = message?.conversation;
-        }
+
         if (
           //If same address do nothin
           senderAddress === addressV2 ||
@@ -44,9 +38,6 @@ export default async function run(handler: Handler, config?: Config) {
           return;
         }
 
-        if (process?.env?.MSG_LOG) {
-          console.log(`incoming_${version}:`, message.content);
-        }
         const context = await HandlerContext.create(
           conversation,
           message,
@@ -63,22 +54,25 @@ export default async function run(handler: Handler, config?: Config) {
     }
   };
 
-  const streamMessages = async (
-    { client, v2client }: { client: Client; v2client: ClientV2 },
-    address: string,
-    version: "v3" | "v2",
-  ) => {
+  const streamMessages = async (version: "v3" | "v2") => {
     if (version === "v3") {
       while (true) {
         const stream = await client.conversations.streamAllMessages();
         try {
           for await (const message of stream) {
-            await handleMessage(
-              { client, v2client },
-              address,
-              version,
-              message,
+            if (process?.env?.MSG_LOG) {
+              console.log(
+                `incoming_${version}:`,
+                typeof message?.content === "string"
+                  ? message?.content
+                  : message?.contentType.typeId,
+              );
+            }
+
+            const conversation = await client.conversations.getConversationById(
+              message?.conversationId ?? "",
             );
+            handleMessage(version, message, conversation);
           }
         } catch (e) {
           console.log(`Restart stream:`, e);
@@ -89,12 +83,16 @@ export default async function run(handler: Handler, config?: Config) {
         const stream = await v2client.conversations.streamAllMessages();
         try {
           for await (const message of stream) {
-            await handleMessage(
-              { client, v2client },
-              address,
-              version,
-              message,
-            );
+            if (process?.env?.MSG_LOG) {
+              console.log(
+                `incoming_${version}:`,
+                typeof message?.content === "string"
+                  ? message?.content
+                  : message?.contentType.typeId,
+              );
+            }
+
+            handleMessage(version, message, message.conversation);
           }
         } catch (e) {
           console.log(`Restart stream:`, e);
@@ -103,9 +101,61 @@ export default async function run(handler: Handler, config?: Config) {
     }
   };
 
+  const streamConversations = async (version: "v3" | "v2") => {
+    if (version === "v3") {
+      while (true) {
+        const stream = await client.conversations.stream();
+        try {
+          for await (const conversation of stream) {
+            if (process?.env?.MSG_LOG)
+              console.log(`incoming_${version}`, conversation?.id);
+            handleConversation(version, conversation);
+          }
+        } catch (e) {
+          console.log(`Restart conversation stream:`, e);
+        }
+      }
+    } else if (version === "v2") {
+      while (true) {
+        const stream = await v2client.conversations.stream();
+        try {
+          for await (const conversation of stream) {
+            if (process?.env?.MSG_LOG)
+              console.log(`incoming_${version}`, conversation?.topic);
+            handleConversation(version, conversation);
+          }
+        } catch (e) {
+          console.log(`Restart conversation stream:`, e);
+        }
+      }
+    }
+  };
+  const handleConversation = async (
+    version: "v3" | "v2",
+    conversation: any,
+  ) => {
+    if (conversation) {
+      try {
+        const context = await HandlerContext.create(
+          conversation,
+          null,
+          { client, v2client },
+          config?.commands ?? [],
+          config?.commandHandlers ?? {},
+          version,
+        );
+
+        await handler(context);
+      } catch (e) {
+        console.log(`error`, e);
+      }
+    }
+  };
   // Run both clients' streams concurrently
   await Promise.all([
-    streamMessages({ client, v2client }, address, "v2"),
-    streamMessages({ client, v2client }, address, "v3"),
+    streamMessages("v2"),
+    streamMessages("v3"),
+    streamConversations("v2"),
+    streamConversations("v3"),
   ]);
 }

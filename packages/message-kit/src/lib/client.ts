@@ -19,12 +19,9 @@ export default async function xmtpClient(
   privateKey: string | null = null,
 ): Promise<{ client: Client; v2client: V2Client }> {
   let key = privateKey ?? process.env.KEY;
-  if (!key || !isHex(key)) {
+  if (!isHex(key)) {
     key = generatePrivateKey();
-    console.error(
-      "KEY not set. Using random one. For using your own wallet , set the KEY environment variable.",
-    );
-    console.log("Random private key: ", key);
+    console.error(".env KEY not set. Using random one:\n", key);
   }
 
   const account = privateKeyToAccount(key as `0x${string}`);

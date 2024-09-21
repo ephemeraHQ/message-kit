@@ -32,14 +32,12 @@ const commandHandlers: CommandHandlers = {
         .map((command) => `${command.command} - ${command.description}`)
         .join("\n") +
       "\nUse these commands to interact with specific apps.";
-    console.log(context.send);
     context.send(intro);
   },
   "/apps": async (context: HandlerContext) => {
     const intro =
       "Decentralized secure messaging. Built for crypto.\n" +
       "Welcome to the Apps Directory\n\n" +
-      "- 🎰 betbot.eth : Create bets with your friends.\n\n\n" +
       "- 💧 faucetbot.eth : Delivers Faucet funds to devs on Testnet\n\n\n" +
       "- 🛍️ thegeneralstore.eth : Simple ecommerce storefront for hackathon goods\n\n\n" +
       "- 📅 wordlebot.eth : Play daily to the WORDLE game through messaging.\n\n\n" +

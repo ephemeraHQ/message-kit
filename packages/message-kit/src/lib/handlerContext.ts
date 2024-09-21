@@ -31,13 +31,13 @@ export default class HandlerContext {
   version!: "v2" | "v3";
   v2client!: ClientV2;
   commands?: CommandGroup[];
+  isGroup!: boolean;
   members?: User[];
   commandHandlers?: CommandHandlers;
   getMessageById!: (id: string) => DecodedMessage | null;
 
   private constructor(
     conversation: Conversation | ConversationV2,
-    message: DecodedMessage | DecodedMessageV2,
     { client, v2client }: { client: Client; v2client: ClientV2 },
     commands?: CommandGroup[],
     commandHandlers?: CommandHandlers,
@@ -45,6 +45,7 @@ export default class HandlerContext {
   ) {
     this.client = client;
     this.v2client = v2client;
+    this.isGroup = version === "v3";
     if (conversation instanceof Conversation) {
       this.group = conversation;
       this.version = "v3";
@@ -58,7 +59,7 @@ export default class HandlerContext {
 
   static async create(
     conversation: Conversation | ConversationV2,
-    message: DecodedMessage | DecodedMessageV2,
+    message: DecodedMessage | DecodedMessageV2 | null,
     { client, v2client }: { client: Client; v2client: ClientV2 },
     commands?: CommandGroup[],
     commandHandlers?: CommandHandlers,
@@ -66,69 +67,117 @@ export default class HandlerContext {
   ): Promise<HandlerContext> {
     const context = new HandlerContext(
       conversation,
-      message,
       { client, v2client },
       commands,
       commandHandlers,
       version,
     );
+    if (message) {
+      //v2
+      const senderAddress =
+        "senderAddress" in message
+          ? message.senderAddress
+          : message.senderInboxId;
+      const sentAt = "sentAt" in message ? message.sentAt : message.sent;
 
-    //v2
-    const senderAddress =
-      "senderAddress" in message
-        ? message.senderAddress
-        : message.senderInboxId;
-    const sentAt = "sentAt" in message ? message.sentAt : message.sent;
-
-    context.members = await populateUsernames(
-      "members" in conversation ? conversation.members : [],
-      client.accountAddress,
-      senderAddress,
-    );
-
-    context.getMessageById =
-      client.conversations?.getMessageById?.bind(client.conversations) ||
-      (() => null);
-
-    let content = message.content;
-    if (message.contentType.sameAs(ContentTypeText)) {
-      content = parseCommand(
-        message?.content,
-        commands ?? [],
-        context.members ?? [],
+      context.members = await populateUsernames(
+        "members" in conversation ? conversation.members : [],
+        client.accountAddress,
+        senderAddress,
       );
-    } else if (message.contentType.sameAs(ContentTypeReply)) {
-      content = {
-        ...content,
-        typeId: message.content.contentType.typeId,
+
+      context.getMessageById =
+        client.conversations?.getMessageById?.bind(client.conversations) ||
+        (() => null);
+      // **Correct Binding:**
+      context.getReplyChain = context.getReplyChain.bind(context);
+
+      //trim spaces from text
+      let content =
+        typeof message.content === "string"
+          ? message.content.trim()
+          : message.content;
+      if (message.contentType.sameAs(ContentTypeText)) {
+        content = parseCommand(content, commands ?? [], context.members ?? []);
+      } else if (message.contentType.sameAs(ContentTypeReply)) {
+        content = {
+          ...content,
+          typeId: message.content.contentType.typeId,
+        };
+      } else if (message.contentType.sameAs(ContentTypeRemoteAttachment)) {
+        const attachment = await RemoteAttachmentCodec.load(content, client);
+        content = {
+          ...content,
+          attachment: attachment,
+        };
+      }
+
+      //v2
+      const sender =
+        context.members?.find((member) => member.inboxId === senderAddress) ||
+        ({ address: senderAddress, inboxId: senderAddress } as User);
+
+      context.message = {
+        id: message.id,
+        content: content,
+        sender: sender,
+        typeId: message.contentType.typeId,
+        sent: sentAt,
       };
-    } else if (message.contentType.sameAs(ContentTypeRemoteAttachment)) {
-      const attachment = await RemoteAttachmentCodec.load(
-        message.content,
-        client,
-      );
-      content = {
-        ...content,
-        attachment: attachment,
+
+      if (process?.env?.MSG_LOG) {
+        //trim spaces from text
+        let content =
+          typeof message?.content === "string"
+            ? message?.content
+            : message?.contentType.typeId;
+
+        console.log("content", content, senderAddress);
+      }
+
+      return context;
+    } else {
+      context.message = {
+        id: "",
+        content: "",
+        sender: {
+          inboxId: "",
+          address: "",
+          username: "",
+          accountAddresses: [],
+        },
+        typeId: "new_" + (context.isGroup ? "group" : "conversation"),
+        sent: conversation.createdAt,
       };
     }
-
-    //v2
-    const sender =
-      context.members?.find((member) => member.inboxId === senderAddress) ||
-      ({ address: senderAddress, inboxId: senderAddress } as User);
-
-    context.message = {
-      id: message.id,
-      content: content,
-      sender: sender,
-      typeId: message.contentType.typeId,
-      sent: sentAt,
-    };
 
     return context;
   }
 
+  async getReplyChain(reference: string): Promise<{
+    messageChain: string;
+    receiverFromChain: string;
+  }> {
+    const msg = await this.getMessageById(reference);
+    let receiver = this.members?.find(
+      (member) => member.inboxId === msg?.senderInboxId,
+    );
+    if (!msg) return { messageChain: "", receiverFromChain: "" };
+    let chain = `${msg?.content?.content ?? msg?.content}\n\n`;
+    if (msg?.content?.reference) {
+      const { messageChain, receiverFromChain } = await this.getReplyChain(
+        msg?.content?.reference,
+      );
+      receiver = this.members?.find(
+        (member) => member.address === receiverFromChain,
+      );
+      chain = `${messageChain}\nUser:${chain}`;
+    }
+    return {
+      messageChain: chain,
+      receiverFromChain: receiver?.address ?? "",
+    };
+  }
   async reply(message: string) {
     const reply = {
       content: message,
@@ -216,6 +265,9 @@ export default class HandlerContext {
           send: this.send.bind(this),
           sendTo: this.sendTo.bind(this),
           react: this.react.bind(this),
+          getMessageById: this.getMessageById.bind(this),
+          getReplyChain: this.getReplyChain.bind(this),
+          isGroup: this.group instanceof Conversation,
         };
         const handler =
           this.commandHandlers?.[
