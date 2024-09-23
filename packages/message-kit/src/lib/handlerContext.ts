@@ -154,28 +154,45 @@ export default class HandlerContext {
     return context;
   }
 
-  async getReplyChain(reference: string): Promise<{
+  async getReplyChain(
+    reference: string,
+    botAddress: boolean,
+  ): Promise<{
     messageChain: string;
     receiverFromChain: string;
+    isReceiverInChain: boolean;
   }> {
     const msg = await this.getMessageById(reference);
     let receiver = this.members?.find(
       (member) => member.inboxId === msg?.senderInboxId,
     );
-    if (!msg) return { messageChain: "", receiverFromChain: "" };
+    if (!msg)
+      return {
+        messageChain: "",
+        receiverFromChain: "",
+        isReceiverInChain: false,
+      };
     let chain = `${msg?.content?.content ?? msg?.content}\n\n`;
+    let isReceiverInChainReturn = false;
     if (msg?.content?.reference) {
-      const { messageChain, receiverFromChain } = await this.getReplyChain(
-        msg?.content?.reference,
-      );
+      const {
+        messageChain,
+        receiverFromChain,
+        isReceiverInChain: isReceiverInChainBoolean,
+      } = await this.getReplyChain(msg?.content?.reference, botAddress);
       receiver = this.members?.find(
         (member) => member.address === receiverFromChain,
       );
+      isReceiverInChainReturn =
+        isReceiverInChainBoolean ??
+        receiver?.address.toString() === botAddress.toString();
+
       chain = `${messageChain}\nUser:${chain}`;
     }
     return {
       messageChain: chain,
       receiverFromChain: receiver?.address ?? "",
+      isReceiverInChain: isReceiverInChainReturn as boolean,
     };
   }
   async reply(message: string) {
