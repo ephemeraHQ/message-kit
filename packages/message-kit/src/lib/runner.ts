@@ -62,10 +62,11 @@ export default async function run(handler: Handler, config?: Config) {
           for await (const message of stream) {
             if (process?.env?.MSG_LOG) {
               console.log(
-                `incoming_${version}:`,
+                `msg_${version}:`,
                 typeof message?.content === "string"
-                  ? message?.content
-                  : message?.contentType.typeId,
+                  ? message?.content.substring(0, 100)
+                  : message?.contentType?.typeId ??
+                      message?.content?.contentType?.typeId,
               );
             }
 
@@ -85,10 +86,11 @@ export default async function run(handler: Handler, config?: Config) {
           for await (const message of stream) {
             if (process?.env?.MSG_LOG) {
               console.log(
-                `incoming_${version}:`,
+                `msg_${version}:`,
                 typeof message?.content === "string"
-                  ? message?.content
-                  : message?.contentType.typeId,
+                  ? message?.content.substring(0, 100)
+                  : message?.contentType?.typeId ??
+                      message?.content?.contentType?.typeId,
               );
             }
 
@@ -108,7 +110,7 @@ export default async function run(handler: Handler, config?: Config) {
         try {
           for await (const conversation of stream) {
             if (process?.env?.MSG_LOG)
-              console.log(`incoming_${version}`, conversation?.id);
+              console.log(`conv_${version}`, conversation?.id);
             handleConversation(version, conversation);
           }
         } catch (e) {
@@ -121,7 +123,7 @@ export default async function run(handler: Handler, config?: Config) {
         try {
           for await (const conversation of stream) {
             if (process?.env?.MSG_LOG)
-              console.log(`incoming_${version}`, conversation?.topic);
+              console.log(`conv_${version}`, conversation?.topic);
             handleConversation(version, conversation);
           }
         } catch (e) {

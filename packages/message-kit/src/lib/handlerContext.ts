@@ -125,16 +125,6 @@ export default class HandlerContext {
         sent: sentAt,
       };
 
-      if (process?.env?.MSG_LOG) {
-        //trim spaces from text
-        let content =
-          typeof message?.content === "string"
-            ? message?.content
-            : message?.contentType.typeId;
-
-        console.log("content", content, senderAddress);
-      }
-
       return context;
     } else {
       context.message = {
@@ -156,43 +146,42 @@ export default class HandlerContext {
 
   async getReplyChain(
     reference: string,
-    botAddress: boolean,
+    botAddress?: string,
   ): Promise<{
-    messageChain: string;
-    receiverFromChain: string;
-    isReceiverInChain: boolean;
+    chainPrompt: string;
+    arrayChain: Array<{ address: string; content: string }>;
+    isSenderInChain: boolean;
   }> {
     const msg = await this.getMessageById(reference);
-    let receiver = this.members?.find(
+    let sender = this.members?.find(
       (member) => member.inboxId === msg?.senderInboxId,
     );
     if (!msg)
       return {
-        messageChain: "",
-        receiverFromChain: "",
-        isReceiverInChain: false,
+        chainPrompt: "",
+        arrayChain: [],
+        isSenderInChain: false,
       };
-    let chain = `${msg?.content?.content ?? msg?.content}\n\n`;
-    let isReceiverInChainReturn = false;
+    let content = msg?.content?.content ?? msg?.content;
+    let chain = `${content}\n\n`;
+    let isSenderInChainReturn =
+      sender?.address.toLowerCase() === botAddress?.toLowerCase();
+    let arrayChain: Array<{ address: string; content: string }> = [];
     if (msg?.content?.reference) {
-      const {
-        messageChain,
-        receiverFromChain,
-        isReceiverInChain: isReceiverInChainBoolean,
-      } = await this.getReplyChain(msg?.content?.reference, botAddress);
-      receiver = this.members?.find(
-        (member) => member.address === receiverFromChain,
-      );
-      isReceiverInChainReturn =
-        isReceiverInChainBoolean ??
-        receiver?.address.toString() === botAddress.toString();
-
-      chain = `${messageChain}\nUser:${chain}`;
+      const { chainPrompt, arrayChain, isSenderInChain } =
+        await this.getReplyChain(msg?.content?.reference, botAddress);
+      isSenderInChainReturn = isSenderInChainReturn || isSenderInChain;
+      let userOrBot = sender?.address === botAddress ? "Bot" : "User";
+      chain = `${chainPrompt}\n${userOrBot}:${chain}`;
+      arrayChain.push({
+        address: sender?.address ?? "",
+        content: content,
+      });
     }
     return {
-      messageChain: chain,
-      receiverFromChain: receiver?.address ?? "",
-      isReceiverInChain: isReceiverInChainReturn as boolean,
+      chainPrompt: chain,
+      arrayChain: arrayChain,
+      isSenderInChain: isSenderInChainReturn,
     };
   }
   async reply(message: string) {
