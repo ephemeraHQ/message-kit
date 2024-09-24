@@ -38,6 +38,16 @@ export default async function run(handler: Handler, config?: Config) {
           return;
         }
 
+        if (process?.env?.MSG_LOG) {
+          console.log(
+            `msg_${version}:`,
+            typeof message?.content === "string"
+              ? message?.content.substring(0, 20) +
+                  (message?.content.length > 20 ? "..." : "")
+              : message?.contentType?.typeId ??
+                  message?.content?.contentType?.typeId,
+          );
+        }
         const context = await HandlerContext.create(
           conversation,
           message,
@@ -60,16 +70,6 @@ export default async function run(handler: Handler, config?: Config) {
         const stream = await client.conversations.streamAllMessages();
         try {
           for await (const message of stream) {
-            if (process?.env?.MSG_LOG) {
-              console.log(
-                `msg_${version}:`,
-                typeof message?.content === "string"
-                  ? message?.content.substring(0, 100)
-                  : message?.contentType?.typeId ??
-                      message?.content?.contentType?.typeId,
-              );
-            }
-
             const conversation = await client.conversations.getConversationById(
               message?.conversationId ?? "",
             );
@@ -84,16 +84,6 @@ export default async function run(handler: Handler, config?: Config) {
         const stream = await v2client.conversations.streamAllMessages();
         try {
           for await (const message of stream) {
-            if (process?.env?.MSG_LOG) {
-              console.log(
-                `msg_${version}:`,
-                typeof message?.content === "string"
-                  ? message?.content.substring(0, 100)
-                  : message?.contentType?.typeId ??
-                      message?.content?.contentType?.typeId,
-              );
-            }
-
             handleMessage(version, message, message.conversation);
           }
         } catch (e) {
@@ -109,8 +99,6 @@ export default async function run(handler: Handler, config?: Config) {
         const stream = await client.conversations.stream();
         try {
           for await (const conversation of stream) {
-            if (process?.env?.MSG_LOG)
-              console.log(`conv_${version}`, conversation?.id);
             handleConversation(version, conversation);
           }
         } catch (e) {
@@ -122,8 +110,6 @@ export default async function run(handler: Handler, config?: Config) {
         const stream = await v2client.conversations.stream();
         try {
           for await (const conversation of stream) {
-            if (process?.env?.MSG_LOG)
-              console.log(`conv_${version}`, conversation?.topic);
             handleConversation(version, conversation);
           }
         } catch (e) {
@@ -137,6 +123,13 @@ export default async function run(handler: Handler, config?: Config) {
     conversation: any,
   ) => {
     if (conversation) {
+      if (process?.env?.MSG_LOG)
+        console.log(
+          `conv_${version}`,
+          conversation?.id ?? conversation.topic,
+          conversation,
+        );
+
       try {
         const context = await HandlerContext.create(
           conversation,

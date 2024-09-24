@@ -4,6 +4,7 @@ import {
   Client as ClientV2,
   Conversation as ConversationV2,
 } from "@xmtp/xmtp-js";
+
 import type { Reaction } from "@xmtp/content-type-reaction";
 import { populateUsernames } from "../helpers/usernames.js";
 import { ContentTypeText } from "@xmtp/content-type-text";
@@ -123,6 +124,7 @@ export default class HandlerContext {
         sender: sender,
         typeId: message.contentType.typeId,
         sent: sentAt,
+        version: version as string,
       };
 
       return context;
@@ -138,6 +140,7 @@ export default class HandlerContext {
         },
         typeId: "new_" + (context.isGroup ? "group" : "conversation"),
         sent: conversation.createdAt,
+        version: version as string,
       };
     }
 
@@ -146,42 +149,61 @@ export default class HandlerContext {
 
   async getReplyChain(
     reference: string,
+    version: "v2" | "v3",
     botAddress?: string,
   ): Promise<{
-    chainPrompt: string;
     arrayChain: Array<{ address: string; content: string }>;
     isSenderInChain: boolean;
   }> {
-    const msg = await this.getMessageById(reference);
-    let sender = this.members?.find(
-      (member) => member.inboxId === msg?.senderInboxId,
-    );
-    if (!msg)
+    let msg: DecodedMessage | DecodedMessageV2 | null = null;
+    let senderAddress: string = "";
+    console.log(version);
+    if (version === "v3") {
+      msg = await this.getMessageById(reference);
+      let sender = this.members?.find(
+        (member) => member.inboxId === (msg as DecodedMessage).senderInboxId,
+      );
+      senderAddress = sender?.address ?? "";
+    } else if (version === "v2") {
+      const conversations = await this.v2client.conversations.list();
+      for (const conversation of conversations) {
+        const messages = await conversation.messages();
+        if (messages.find((m) => m.id === reference)) {
+          msg = messages.find((m) => m.id === reference) as DecodedMessageV2;
+          let sender = this.members?.find(
+            (member) =>
+              member.address === (msg as DecodedMessageV2).senderAddress,
+          );
+          senderAddress = sender?.address ?? "";
+          break;
+        }
+      }
+    }
+    if (!msg) {
       return {
-        chainPrompt: "",
         arrayChain: [],
         isSenderInChain: false,
       };
+    }
     let content = msg?.content?.content ?? msg?.content;
-    let chain = `${content}\n\n`;
-    let isSenderInChainReturn =
-      sender?.address.toLowerCase() === botAddress?.toLowerCase();
-    let arrayChain: Array<{ address: string; content: string }> = [];
-    if (msg?.content?.reference) {
-      const { chainPrompt, arrayChain, isSenderInChain } =
-        await this.getReplyChain(msg?.content?.reference, botAddress);
-      isSenderInChainReturn = isSenderInChainReturn || isSenderInChain;
-      let userOrBot = sender?.address === botAddress ? "Bot" : "User";
-      chain = `${chainPrompt}\n${userOrBot}:${chain}`;
+    let isSenderBot = senderAddress.toLowerCase() === botAddress?.toLowerCase();
+    let ref = msg?.content?.reference;
+    let arrayChain = [{ address: senderAddress, content: content }];
+    if (ref) {
+      const { arrayChain, isSenderInChain } = await this.getReplyChain(
+        ref,
+        version,
+        botAddress,
+      );
+      isSenderBot = isSenderBot || isSenderInChain;
       arrayChain.push({
-        address: sender?.address ?? "",
+        address: senderAddress,
         content: content,
       });
     }
     return {
-      chainPrompt: chain,
       arrayChain: arrayChain,
-      isSenderInChain: isSenderInChainReturn,
+      isSenderInChain: isSenderBot,
     };
   }
   async reply(message: string) {
