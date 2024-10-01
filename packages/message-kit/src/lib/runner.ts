@@ -38,7 +38,7 @@ export default async function run(handler: Handler, config?: Config) {
           return;
         }
 
-        if (process?.env?.MSG_LOG) {
+        if (process?.env?.MSG_LOG === "true") {
           console.log(
             `msg_${version}:`,
             typeof message?.content === "string"
@@ -123,12 +123,8 @@ export default async function run(handler: Handler, config?: Config) {
     conversation: any,
   ) => {
     if (conversation) {
-      if (process?.env?.MSG_LOG)
-        console.log(
-          `conv_${version}`,
-          conversation?.id ?? conversation.topic,
-          conversation,
-        );
+      if (process?.env?.MSG_LOG === "true")
+        console.log(`conv_${version}`, conversation?.id ?? conversation.topic);
 
       try {
         const context = await HandlerContext.create(

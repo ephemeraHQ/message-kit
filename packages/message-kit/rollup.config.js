@@ -13,6 +13,7 @@ const external = [
   "ethers",
   "@xmtp/proto",
   "@xmtp/grpc-api-client",
+  "path",
   "viem",
   "viem/accounts",
   "fs",

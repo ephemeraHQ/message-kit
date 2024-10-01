@@ -4,6 +4,7 @@ import {
   Client as ClientV2,
   Conversation as ConversationV2,
 } from "@xmtp/xmtp-js";
+import path from "path";
 
 import type { Reaction } from "@xmtp/content-type-reaction";
 import { populateUsernames } from "../helpers/usernames.js";
@@ -147,62 +148,64 @@ export default class HandlerContext {
     return context;
   }
 
+  async getV2MessageById(reference: string): Promise<DecodedMessageV2 | null> {
+    const conversations = await this.v2client.conversations.list();
+    for (const conversation of conversations) {
+      const messages = await conversation.messages();
+      if (messages.find((m) => m.id === reference)) {
+        return messages.find((m) => m.id === reference) as DecodedMessageV2;
+      }
+    }
+    return null;
+  }
+
   async getReplyChain(
     reference: string,
     version: "v2" | "v3",
     botAddress?: string,
   ): Promise<{
-    arrayChain: Array<{ address: string; content: string }>;
+    chain: Array<{ address: string; content: string }>;
     isSenderInChain: boolean;
   }> {
     let msg: DecodedMessage | DecodedMessageV2 | null = null;
     let senderAddress: string = "";
-    console.log(version);
-    if (version === "v3") {
-      msg = await this.getMessageById(reference);
-      let sender = this.members?.find(
-        (member) => member.inboxId === (msg as DecodedMessage).senderInboxId,
-      );
-      senderAddress = sender?.address ?? "";
-    } else if (version === "v2") {
-      const conversations = await this.v2client.conversations.list();
-      for (const conversation of conversations) {
-        const messages = await conversation.messages();
-        if (messages.find((m) => m.id === reference)) {
-          msg = messages.find((m) => m.id === reference) as DecodedMessageV2;
-          let sender = this.members?.find(
-            (member) =>
-              member.address === (msg as DecodedMessageV2).senderAddress,
-          );
-          senderAddress = sender?.address ?? "";
-          break;
-        }
-      }
-    }
+
+    if (version === "v3") msg = await this.getMessageById(reference);
+    else if (version === "v2") msg = await this.getV2MessageById(reference);
+
     if (!msg) {
       return {
-        arrayChain: [],
+        chain: [],
         isSenderInChain: false,
       };
     }
+
+    let sender = this.members?.find(
+      (member) =>
+        member.inboxId === (msg as DecodedMessage).senderInboxId ||
+        member.address === (msg as DecodedMessageV2).senderAddress,
+    );
+    senderAddress = sender?.address ?? "";
+
     let content = msg?.content?.content ?? msg?.content;
     let isSenderBot = senderAddress.toLowerCase() === botAddress?.toLowerCase();
-    let ref = msg?.content?.reference;
-    let arrayChain = [{ address: senderAddress, content: content }];
-    if (ref) {
-      const { arrayChain, isSenderInChain } = await this.getReplyChain(
-        ref,
+    let chain = [{ address: senderAddress, content: content }];
+    if (msg?.content?.reference) {
+      const { chain: replyChain, isSenderInChain } = await this.getReplyChain(
+        msg.content.reference,
         version,
         botAddress,
       );
+      chain = replyChain;
       isSenderBot = isSenderBot || isSenderInChain;
-      arrayChain.push({
+
+      chain.push({
         address: senderAddress,
         content: content,
       });
     }
     return {
-      arrayChain: arrayChain,
+      chain: chain,
       isSenderInChain: isSenderBot,
     };
   }

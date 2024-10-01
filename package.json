@@ -20,7 +20,7 @@
     "dev:one-to-one": "cd examples/one-to-one && yarn dev",
     "format": "turbo run format",
     "format:check": "turbo run format:check",
-    "publish": "turbo run build --filter='./packages/*' --filter='!./packages/docs' && changeset publish",
+    "publish": "turbo run build --filter='./packages/*' --filter='!./packages/docs' && yarn copy && changeset publish",
     "test": "FORCE_COLOR=1 turbo run test --force",
     "typecheck": "FORCE_COLOR=1 turbo run typecheck"
   },
