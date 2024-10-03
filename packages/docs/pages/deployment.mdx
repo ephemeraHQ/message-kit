@@ -40,3 +40,9 @@ REDIS_CONNECTION_STRING= # the connection string for the Redis database
 4. **Environment Variables**: Set up environment variables in Railway.
 
 ![](/img/railway/5.gif)
+
+5. **Cache**: The cache is stored in the `.cache` folder where the conversation history is stored. If deleted or restarted, the bot will not have access to previous messages.
+
+![](/img/railway/volume.png)
+
+- Railway allows to attach a volume to the container to preserve the cache between deployments.
