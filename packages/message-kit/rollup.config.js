@@ -16,6 +16,7 @@ const external = [
   "path",
   "viem",
   "viem/accounts",
+  "fs/promises",
   "fs",
   "viem/chains",
   "dotenv/config",

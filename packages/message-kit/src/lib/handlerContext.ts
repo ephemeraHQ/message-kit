@@ -4,7 +4,7 @@ import {
   Client as ClientV2,
   Conversation as ConversationV2,
 } from "@xmtp/xmtp-js";
-import path from "path";
+import fs from "fs/promises";
 
 import type { Reaction } from "@xmtp/content-type-reaction";
 import { populateUsernames } from "../helpers/usernames.js";
@@ -37,7 +37,6 @@ export default class HandlerContext {
   members?: User[];
   commandHandlers?: CommandHandlers;
   getMessageById!: (id: string) => DecodedMessage | null;
-
   private constructor(
     conversation: Conversation | ConversationV2,
     { client, v2client }: { client: Client; v2client: ClientV2 },
@@ -144,7 +143,6 @@ export default class HandlerContext {
         version: version as string,
       };
     }
-
     return context;
   }
 
@@ -259,6 +257,18 @@ export default class HandlerContext {
     }
   }
 
+  async getCacheCreationDate() {
+    //Gets the creation date of the cache folder
+    //Could be used to check if the cache is outdated
+    //Generally indicates the deployment date of the bot
+    try {
+      const stats = await fs.stat(".cache");
+      const cacheCreationDate = new Date(stats.birthtime);
+      return cacheCreationDate;
+    } catch (err) {
+      console.error(err);
+    }
+  }
   async sendTo(message: string, receivers: string[]) {
     const conversations = await this.v2client.conversations.list();
     //Sends a 1 to 1 to multiple users
