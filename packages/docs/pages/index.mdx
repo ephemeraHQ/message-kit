@@ -1,23 +1,25 @@
----
-layout: landing
----
+# MessageKit
 
-import { HomePage } from "vocs/components";
+MessageKit is a powerful framework that simplifies the process of building messaging bots on [xmtp](https://docs.xmtp.org). Here’s a step-by-step guide to get you started.
 
-<HomePage.Root>
-  <HomePage.Logo />
-  <HomePage.Tagline>SDK for building messaging mini apps</HomePage.Tagline>
-  <HomePage.InstallPackage name="message-kit" type="init" />
-  <HomePage.Description>
-    Build use cases on top of messaging apps powered by
-    [xmtp](https://docs.xmtp.org)
-  </HomePage.Description>
-  <HomePage.Buttons>
-    <HomePage.Button href="/installation" variant="accent">
-      Get started
-    </HomePage.Button>
-    <HomePage.Button href="https://github.com/ephemeraHQ/message-kit">
-      GitHub
-    </HomePage.Button>
-  </HomePage.Buttons>
-</HomePage.Root>
+### CLI
+
+This tool simplifies the creation and configuration of new apps.
+
+:::code-group
+
+```bash [bun]
+bun create message-kit
+```
+
+```bash [yarn]
+yarn create message-kit
+```
+
+```bash [npm]
+npm init message-kit
+```
+
+:::
+
+_Refer to [structure](/concepts/structure) of the app so see the folder is created._
