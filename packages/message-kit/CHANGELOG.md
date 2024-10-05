@@ -1,5 +1,11 @@
 # @xmtp/message-kit
 
+## 0.0.20
+
+### Patch Changes
+
+- c71d797: Upgrade MLS client
+
 ## 0.0.6
 
 ### Patch Changes
