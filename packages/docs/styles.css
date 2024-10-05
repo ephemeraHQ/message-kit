@@ -12,7 +12,7 @@
 
 .custom-homepage-headline {
   margin-bottom: 1rem;
-  text-align: left;
+  text-align: center;
   max-width: 800px;
   margin-left: auto;
   margin-right: auto;
@@ -41,7 +41,7 @@
 
 .custom-homepage-subhead {
   margin-bottom: 1rem;
-  text-align: left;
+  text-align: center;
   max-width: 800px;
   margin-left: auto;
   margin-right: auto;
@@ -99,11 +99,21 @@
 }
 
 :root {
-  --tile-external-icon-color: rgba(76, 76, 76, 0.7); /* Default color for light mode */
+  --tile-external-icon-color: rgba(
+    76,
+    76,
+    76,
+    0.7
+  ); /* Default color for light mode */
 }
 
 .dark {
-  --tile-external-icon-color: rgba(207, 207, 207, 0.7); /* Use the text color in dark mode */
+  --tile-external-icon-color: rgba(
+    207,
+    207,
+    207,
+    0.7
+  ); /* Use the text color in dark mode */
 }
 
 .custom-homepage-tile-external-icon {
@@ -113,13 +123,17 @@
   width: 0.75rem;
   height: 0.75rem;
   opacity: 0.7;
-  transition: opacity 0.3s ease, filter 0.3s ease;
-  filter: invert(0%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(0%) contrast(100%);
+  transition:
+    opacity 0.3s ease,
+    filter 0.3s ease;
+  filter: invert(0%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(0%)
+    contrast(100%);
   display: block; /* Add this line */
 }
 
 .dark .custom-homepage-tile-external-icon {
-  filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%);
+  filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%)
+    contrast(100%);
 }
 
 .custom-homepage-tile-title {
@@ -137,7 +151,12 @@
 
 /* Dark mode adjustments */
 .dark .custom-homepage-tile {
-  background-color: rgba(255, 255, 255, 0.01); /* Slightly lighter than the background */
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.01
+  ); /* Slightly lighter than the background */
   border-color: rgba(255, 255, 255, 0.1);
   box-shadow: 0 1px 3px rgba(255, 255, 255, 0.05);
 }
@@ -147,4 +166,10 @@
   background-color: rgba(255, 255, 255, 0.01); /* Slightly lighter on hover */
   box-shadow: 0 4px 12px rgba(255, 255, 255, 0.02);
   border-color: var(--vocs-color-primary);
+}
+
+.custom-homepage-tile-grid-container .vocs_Tabs_list {
+  display: flex;
+  justify-content: center;
+  outline: none; /* Keep existing style */
 }

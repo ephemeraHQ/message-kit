@@ -7,6 +7,7 @@ export type MessageAbstracted = {
   id: string;
   sent: Date;
   content: any;
+  version: string;
   sender: {
     inboxId: string;
     username: string;

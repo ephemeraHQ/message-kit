@@ -4,6 +4,8 @@ import {
   Client as ClientV2,
   Conversation as ConversationV2,
 } from "@xmtp/xmtp-js";
+import fs from "fs/promises";
+
 import type { Reaction } from "@xmtp/content-type-reaction";
 import { populateUsernames } from "../helpers/usernames.js";
 import { ContentTypeText } from "@xmtp/content-type-text";
@@ -35,7 +37,6 @@ export default class HandlerContext {
   members?: User[];
   commandHandlers?: CommandHandlers;
   getMessageById!: (id: string) => DecodedMessage | null;
-
   private constructor(
     conversation: Conversation | ConversationV2,
     { client, v2client }: { client: Client; v2client: ClientV2 },
@@ -123,17 +124,8 @@ export default class HandlerContext {
         sender: sender,
         typeId: message.contentType.typeId,
         sent: sentAt,
+        version: version as string,
       };
-
-      if (process?.env?.MSG_LOG) {
-        //trim spaces from text
-        let content =
-          typeof message?.content === "string"
-            ? message?.content
-            : message?.contentType.typeId;
-
-        console.log("content", content, senderAddress);
-      }
 
       return context;
     } else {
@@ -148,34 +140,71 @@ export default class HandlerContext {
         },
         typeId: "new_" + (context.isGroup ? "group" : "conversation"),
         sent: conversation.createdAt,
+        version: version as string,
       };
     }
-
     return context;
   }
 
-  async getReplyChain(reference: string): Promise<{
-    messageChain: string;
-    receiverFromChain: string;
+  async getV2MessageById(reference: string): Promise<DecodedMessageV2 | null> {
+    const conversations = await this.v2client.conversations.list();
+    for (const conversation of conversations) {
+      const messages = await conversation.messages();
+      if (messages.find((m) => m.id === reference)) {
+        return messages.find((m) => m.id === reference) as DecodedMessageV2;
+      }
+    }
+    return null;
+  }
+
+  async getReplyChain(
+    reference: string,
+    version: "v2" | "v3",
+    botAddress?: string,
+  ): Promise<{
+    chain: Array<{ address: string; content: string }>;
+    isSenderInChain: boolean;
   }> {
-    const msg = await this.getMessageById(reference);
-    let receiver = this.members?.find(
-      (member) => member.inboxId === msg?.senderInboxId,
+    let msg: DecodedMessage | DecodedMessageV2 | null = null;
+    let senderAddress: string = "";
+
+    if (version === "v3") msg = await this.getMessageById(reference);
+    else if (version === "v2") msg = await this.getV2MessageById(reference);
+
+    if (!msg) {
+      return {
+        chain: [],
+        isSenderInChain: false,
+      };
+    }
+
+    let sender = this.members?.find(
+      (member) =>
+        member.inboxId === (msg as DecodedMessage).senderInboxId ||
+        member.address === (msg as DecodedMessageV2).senderAddress,
     );
-    if (!msg) return { messageChain: "", receiverFromChain: "" };
-    let chain = `${msg?.content?.content ?? msg?.content}\n\n`;
+    senderAddress = sender?.address ?? "";
+
+    let content = msg?.content?.content ?? msg?.content;
+    let isSenderBot = senderAddress.toLowerCase() === botAddress?.toLowerCase();
+    let chain = [{ address: senderAddress, content: content }];
     if (msg?.content?.reference) {
-      const { messageChain, receiverFromChain } = await this.getReplyChain(
-        msg?.content?.reference,
+      const { chain: replyChain, isSenderInChain } = await this.getReplyChain(
+        msg.content.reference,
+        version,
+        botAddress,
       );
-      receiver = this.members?.find(
-        (member) => member.address === receiverFromChain,
-      );
-      chain = `${messageChain}\nUser:${chain}`;
+      chain = replyChain;
+      isSenderBot = isSenderBot || isSenderInChain;
+
+      chain.push({
+        address: senderAddress,
+        content: content,
+      });
     }
     return {
-      messageChain: chain,
-      receiverFromChain: receiver?.address ?? "",
+      chain: chain,
+      isSenderInChain: isSenderBot,
     };
   }
   async reply(message: string) {
@@ -228,6 +257,18 @@ export default class HandlerContext {
     }
   }
 
+  async getCacheCreationDate() {
+    //Gets the creation date of the cache folder
+    //Could be used to check if the cache is outdated
+    //Generally indicates the deployment date of the bot
+    try {
+      const stats = await fs.stat(".cache");
+      const cacheCreationDate = new Date(stats.birthtime);
+      return cacheCreationDate;
+    } catch (err) {
+      console.error(err);
+    }
+  }
   async sendTo(message: string, receivers: string[]) {
     const conversations = await this.v2client.conversations.list();
     //Sends a 1 to 1 to multiple users

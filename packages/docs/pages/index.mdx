@@ -1,20 +1,21 @@
 import { HomePage } from "vocs/components";
-import { CustomHomePage } from '../components/CustomHomePage'
+import { CustomHomePage } from "../components/CustomHomePage";
 
 <CustomHomePage.Root>
-  <CustomHomePage.Headline>
-   Build with MessageKit
-  </CustomHomePage.Headline>
+<CustomHomePage.Headline>
+  {typeof window !== 'undefined' ? "Build with MessageKit" : ""}
+</CustomHomePage.Headline>
   <HomePage.Description>
     An open SDK for building messaging mini-apps that run in apps built with [XMTP](https://docs.xmtp.org) 
   </HomePage.Description>
 
-<div style={{ 
+<div className="custom-homepage-tile-grid-container" style={{ 
   marginTop: '2rem', 
   marginBottom: '2rem', 
   width: '75%', 
   maxWidth: '400px', 
-  margin: '2rem auto' 
+  margin: '2rem auto',
+  textAlign: 'center'
 }}>
 :::code-group
 
@@ -29,7 +30,9 @@ yarn create message-kit
 ```bash [npm]
 npm init message-kit
 ```
+
 :::
+
 </div>
   <CustomHomePage.TileGrid>
     <CustomHomePage.Tile
