@@ -2,12 +2,13 @@ import { defineConfig } from "vocs";
 
 export default defineConfig({
   title: "MessageKit",
+  iconUrl: "/messagekit-logo.png",
   rootDir: ".",
   theme: {
     colorScheme: "dark",
     accentColor: {
-      light: "#F04D23",
-      dark: "#F04D23",
+      light: "#FA6977",
+      dark: "#FA6977",
     },
   },
   socials: [
