@@ -13,6 +13,10 @@ export default defineConfig({
       </>
     );
   },
+  ogImageUrl: {
+    "/": "/hero.jpg",
+    "/docs": "/hero.jpg",
+  },
   title: "MessageKit",
   iconUrl: "/messagekit-logo.png",
   rootDir: ".",
