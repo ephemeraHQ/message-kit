@@ -6,8 +6,8 @@ export default defineConfig({
     return (
       <>
         <script
-          src="https://plausible.io/js/script.js"
-          data-domain="docs.xmtp.org"
+          src="https://plausible.io/js/script.outbound-links.js"
+          data-domain="messagekit.ephemerahq.com"
           defer
         />
       </>
