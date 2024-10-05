@@ -1,6 +1,18 @@
 import { defineConfig } from "vocs";
 
 export default defineConfig({
+  head: () => {
+    // console.log(`Generating head content... ${new Date().toISOString()}`)
+    return (
+      <>
+        <script
+          src="https://plausible.io/js/script.js"
+          data-domain="docs.xmtp.org"
+          defer
+        />
+      </>
+    );
+  },
   title: "MessageKit",
   iconUrl: "/messagekit-logo.png",
   rootDir: ".",
