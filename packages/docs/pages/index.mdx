@@ -1,72 +1,23 @@
+---
+layout: landing
+---
+
 import { HomePage } from "vocs/components";
-import { CustomHomePage } from '../components/CustomHomePage'
 
-<CustomHomePage.Root>
-  <CustomHomePage.Headline>
-   Build with MessageKit
-  </CustomHomePage.Headline>
+<HomePage.Root>
+  <HomePage.Logo />
+  <HomePage.Tagline>SDK for building messaging mini apps</HomePage.Tagline>
+  <HomePage.InstallPackage name="message-kit" type="init" />
   <HomePage.Description>
-    An open SDK for building messaging mini-apps that run in apps built with [XMTP](https://docs.xmtp.org) 
+    Build use cases on top of messaging apps powered by
+    [xmtp](https://docs.xmtp.org)
   </HomePage.Description>
-
-<div style={{ 
-  marginTop: '2rem', 
-  marginBottom: '2rem', 
-  width: '75%', 
-  maxWidth: '400px', 
-  margin: '2rem auto' 
-}}>
-:::code-group
-
-```bash [bun]
-bun create message-kit
-```
-
-```bash [yarn]
-yarn create message-kit
-```
-
-```bash [npm]
-npm init message-kit
-```
-:::
-</div>
-  <CustomHomePage.TileGrid>
-    <CustomHomePage.Tile
-      href="/installation"
-      title="Get started"
-      description="Get you started with this step-by-step guide"
-      icon="⚡️"
-    />
-    <CustomHomePage.Tile
-      href="/directory"
-      title="Examples"
-      description="Discover some of the most popular Apps built with MessageKit"
-      icon="💬"
-    />
-    <CustomHomePage.Tile
-      href="/deployment"
-      title="Deploy"
-      description="Deploy your mini-app with this step-by-step guide"
-      icon="🤖"
-    />
-    <CustomHomePage.Tile
-      href="/concepts/structure"
-      title="Concepts"
-      description="Learn about key MessageKit concepts"
-      icon="📚"
-    />
-    <CustomHomePage.Tile
-      href="/use-cases/group"
-      title="Use cases"
-      description="Learn about use cases for MessageKit"
-      icon="💡"
-    />
-    <CustomHomePage.Tile
-      href="/frames"
-      title="Frames"
-      description="Create Open Frames using MessageKit"
-      icon="🖼️"
-    />
-  </CustomHomePage.TileGrid>
-</CustomHomePage.Root>
+  <HomePage.Buttons>
+    <HomePage.Button href="/installation" variant="accent">
+      Get started
+    </HomePage.Button>
+    <HomePage.Button href="https://github.com/ephemeraHQ/message-kit">
+      GitHub
+    </HomePage.Button>
+  </HomePage.Buttons>
+</HomePage.Root>
