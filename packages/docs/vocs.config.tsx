@@ -122,10 +122,6 @@ export default defineConfig({
               link: "/use-cases/group/splitpayments",
             },
             {
-              text: "Moderation",
-              link: "/use-cases/group/moderation",
-            },
-            {
               text: "Loyalty",
               link: "/use-cases/group/loyalty",
             },
