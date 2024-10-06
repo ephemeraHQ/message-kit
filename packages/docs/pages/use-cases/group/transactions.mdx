@@ -13,57 +13,61 @@ _The frame used in this example is [BaseFrame](https://base-frame-lyart.vercel.a
 ::::note
 :::details[Command declaration]
 
-```json
+```tsx [src/commands.ts]
 {
-  "name": "Transactions",
-  "icon": "🖼️",
-  "description": "Multipurpose transaction frame built onbase.",
-  "commands": [
+  name: "Transactions",
+  triggers: ["@send", "/send", "@swap", "/swap", "/show"],
+  description: "Multipurpose transaction frame built onbase.",
+  commands: [
     {
-      "command": "/send [amount] [token] [@username]",
-      "description": "Send a specified amount of a cryptocurrency to a destination address.",
-      "params": {
-        "amount": {
-          "default": 10,
-          "type": "number"
+      command: "/send [amount] [token] [@username]",
+      description:
+        "Send a specified amount of a cryptocurrency to a destination address.",
+      handler: transaction,
+      params: {
+        amount: {
+          default: 10,
+          type: "number",
         },
-        "token": {
-          "default": "usdc",
-          "type": "string",
-          "values": ["eth", "dai", "usdc", "degen"] // Accepted tokens
+        token: {
+          default: "usdc",
+          type: "string",
+          values: ["eth", "dai", "usdc", "degen"], // Accepted tokens
         },
-        "username": {
-          "default": "",
-          "type": "username"
-        }
-      }
+        username: {
+          default: "",
+          type: "username",
+        },
+      },
     },
     {
-      "command": "/swap [amount] [token_from] [token_to]",
-      "description": "Exchange one type of cryptocurrency for another.",
-      "params": {
-        "amount": {
-          "default": 10,
-          "type": "number"
+      command: "/swap [amount] [token_from] [token_to]",
+      description: "Exchange one type of cryptocurrency for another.",
+      handler: transaction,
+      params: {
+        amount: {
+          default: 10,
+          type: "number",
         },
-        "token_from": {
-          "default": "usdc",
-          "type": "string",
-          "values": ["eth", "dai", "usdc", "degen"] // Accepted tokens
+        token_from: {
+          default: "usdc",
+          type: "string",
+          values: ["eth", "dai", "usdc", "degen"], // Accepted tokens
         },
-        "token_to": {
-          "default": "eth",
-          "type": "string",
-          "values": ["eth", "dai", "usdc", "degen"] // Accepted tokens
-        }
-      }
+        token_to: {
+          default: "eth",
+          type: "string",
+          values: ["eth", "dai", "usdc", "degen"], // Accepted tokenss
+        },
+      },
     },
     {
-      "command": "/show",
-      "description": "Show the whole frame.",
-      "params": {}
-    }
-  ]
+      command: "/show",
+      handler: transaction,
+      description: "Show the whole frame.",
+      params: {},
+    },
+  ],
 }
 ```
 
@@ -72,17 +76,16 @@ _The frame used in this example is [BaseFrame](https://base-frame-lyart.vercel.a
 
 ## Main code
 
-```jsx [src/handler/frames.ts]
+```tsx [src/handler/transactions.ts]
 import { HandlerContext } from "@xmtp/message-kit";
 
 // Main handler function for processing commands
-export function handler(context: HandlerContext) {
+export async function handler(context: HandlerContext) {
   const {
     message: {
       content: { command, params },
     },
   } = context;
-
   const baseUrl = "https://base-frame-lyart.vercel.app/transaction";
 
   switch (command) {

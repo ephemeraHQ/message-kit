@@ -17,23 +17,25 @@ Here are the commands to manage loyalty:
 ::::note
 :::details[Command declaration]
 
-```json
+```tsx
 {
-  "name": "Loyalty",
-  "icon": "🔓",
-  "description": "Manage group members and metadata.",
-  "commands": [
+  name: "Loyalty",
+  triggers: ["/points", "@points", "/leaderboard", "@leaderboard"],
+  description: "Manage group members and metadata.",
+  commands: [
     {
-      "command": "/points",
-      "description": "Check your points.",
-      "params": {}
+      command: "/points",
+      handler: loyalty,
+      description: "Check your points.",
+      params: {},
     },
     {
-      "command": "/leaderboard",
-      "description": "Check the points of a user.",
-      "params": {}
-    }
-  ]
+      command: "/leaderboard",
+      handler: loyalty,
+      description: "Check the points of a user.",
+      params: {},
+    },
+  ],
 }
 ```
 
@@ -49,22 +51,30 @@ In this example we used the following incentives:
 - 10 points for adding a member
 - 1 point for each reaction on a message
 
-```jsx [src/handler/loyalty.ts]
+```tsx [src/handler/loyalty.ts]
 import { HandlerContext, User } from "@xmtp/message-kit";
-import { getStackClient, StackClient } from "../lib/stack.js";
+import { getStackClient } from "../lib/stack.js";
 
-export async function handler(context: HandlerContext) {
+export async function handler(context: HandlerContext, fake?: boolean) {
   const stack = getStackClient();
   const {
     members,
+    group,
     getMessageById,
-    message: { id, content, sender, typeId },
+    message: {
+      content,
+      content: { command },
+      sender,
+      typeId,
+    },
   } = context;
-  if (typeId === "text") {
+  console.log(command);
+  if (typeId === "text" && group) {
     const { command } = content;
     if (command === "points") {
       const points = await stack?.getPoints(sender.address);
       context.reply(`You have ${points} points`);
+      return;
     } else if (command === "leaderboard") {
       const leaderboard = await stack?.getLeaderboard();
       const formattedLeaderboard = leaderboard?.leaderboard
@@ -79,8 +89,9 @@ export async function handler(context: HandlerContext) {
       context.reply(
         `Leaderboard:\n\n${formattedLeaderboard}\n\nCheck out the public leaderboard\nhttps://www.stack.so/leaderboard/degen-group`,
       );
+      return;
     }
-  } else if (typeId === "group_updated") {
+  } else if (typeId === "group_updated" && group) {
     const { initiatedByInboxId, addedInboxes } = content;
     const adminAddress = members?.find(
       (member: User) => member.inboxId === initiatedByInboxId,
@@ -93,7 +104,7 @@ export async function handler(context: HandlerContext) {
         uniqueId: adminAddress?.username ?? "",
       });
     }
-  } else if (typeId === "reaction") {
+  } else if (typeId === "reaction" && group) {
     const { content: emoji, action } = content;
     const msg = await getMessageById(content.reference);
     if (action === "added") {
@@ -132,7 +143,7 @@ STACK_API_KEY= #your api key
 
 Connect to Stack.so
 
-```jsx [src/lib/stack.ts]
+```tsx [src/lib/stack.ts]
 import { StackClient } from "@stackso/js-core";
 
 let stack: StackClient | null = null;

@@ -4,7 +4,7 @@
 
 When you start the app, you can listen for incoming messages in the conversation using the `run` function.
 
-```jsx [src/index.ts]
+```tsx [src/index.ts]
 run(async (context: HandlerContext) => {
   // Get the message and the address from the sender
   const { content, sender } = context.message;

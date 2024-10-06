@@ -142,7 +142,7 @@ export const commands: CommandGroup[] = [
   },
   {
     name: "Admin",
-    triggers: ["/admin", "@admin", "/add", "@add", "/remove", "@remove"],
+    triggers: ["/add", "@add", "/remove", "@remove"],
     description: "Manage group members and metadata.",
     commands: [
       {

@@ -6,7 +6,7 @@ This is a reference app that will allow you to understand the potential and all 
 - [Tipping](/use-cases/group/tipping): Tip when a user reacts with the `🎩` emoji, replies `10 $degen` and `/tip`.
 - [Games](/use-cases/group/games): Handle frame games like `/game slot`, `/game wordle`
 - [Transactions](/use-cases/group/transactions): Handle commands like `/send`, `/swap`, `/show`.
-- [Admin](/use-cases/group/admin): Handle admin commands like `/add`, `/remove`, `/name`
+- [Moderation](/use-cases/group/moderation): Handle admin commands like `/add`, `/remove`, `/name`
 - [Loyalty](/use-cases/group/loyalty): Handle loyalty commands like `/points`, `/leaderboard`.
 
 ## Structure
@@ -24,7 +24,7 @@ group/
 │         └── game.ts           # Handles game frames. // [!code hl] // [!code focus]
 │         └── moderation.ts     # Handles moderation. // [!code hl] // [!code focus]
 │         └── loyalty.ts        # Handles loyalty. // [!code hl] // [!code focus]
-│         └── payment.ts        # Handles split payments. // [!code hl] // [!code focus]
+│         └── splitpayments.ts   # Handles split payments. // [!code hl] // [!code focus]
 │         └── transactions.ts   # Handles the transaction frame. // [!code hl] // [!code focus]
 │   └── lib/
 │         └── openai.ts          # Handles the openai logic. // [!code hl] // [!code focus]

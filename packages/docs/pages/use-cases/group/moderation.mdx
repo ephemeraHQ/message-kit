@@ -17,7 +17,7 @@ Here are the commands to add and remove users:
 ```tsx [src/commands.ts]
 {
   name: "Admin",
-  triggers: ["/admin", "@admin", "/add", "@add", "/remove", "@remove"],
+  triggers: ["/add", "@add", "/remove", "@remove"],
   description: "Manage group members and metadata.",
   commands: [
     {
@@ -51,7 +51,7 @@ Here are the commands to add and remove users:
 
 ## Main code
 
-```jsx [src/handler/moderation.ts]
+```tsx [src/handler/moderation.ts]
 import { HandlerContext } from "@xmtp/message-kit";
 import type { User } from "@xmtp/message-kit";
 
