@@ -147,6 +147,20 @@ export default class HandlerContext {
         sent: sentAt,
         version: version as string,
       };
+    } else {
+      context.message = {
+        id: "",
+        content: "",
+        sender: {
+          inboxId: "",
+          address: "",
+          username: "",
+          accountAddresses: [],
+        },
+        typeId: "new_" + (context.isGroup ? "group" : "conversation"),
+        sent: conversation.createdAt,
+        version: version as string,
+      };
     }
     return context;
   }

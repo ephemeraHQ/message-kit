@@ -13,7 +13,7 @@ export async function handler(context: HandlerContext) {
 
   // URLs for each game type
   const gameUrls: { [key: string]: string } = {
-    wordle: "https://openframedl.vercel.app/",
+    wordle: "https://framedl.xyz/",
     slot: "https://slot-machine-frame.vercel.app/",
   };
 
