@@ -41,6 +41,7 @@ export async function handler(context: HandlerContext) {
     members,
     message: { content, typeId, sender },
   } = context;
+  console.log(typeId === "text", group);
 
   if (typeId === "group_updated") {
     const {
@@ -72,6 +73,8 @@ export async function handler(context: HandlerContext) {
       command,
       params: { username, name },
     } = content;
+
+    console.log(command);
     switch (command) {
       case "name":
         try {
@@ -85,7 +88,11 @@ export async function handler(context: HandlerContext) {
         break;
       case "remove":
         try {
-          const removedInboxes = username.map((user: User) => user.inboxId);
+          if (!Array.isArray(username)) {
+            context.reply("Wrong username");
+            return;
+          }
+          const removedInboxes = username?.map((user: User) => user.inboxId);
           if (!removedInboxes || removedInboxes.length === 0) {
             context.reply("Wrong username");
             return;
@@ -101,7 +108,11 @@ export async function handler(context: HandlerContext) {
         break;
       case "add":
         try {
-          const addedInboxes = username.map((user: User) =>
+          if (!Array.isArray(username)) {
+            context.reply("Wrong username");
+            return;
+          }
+          const addedInboxes = username?.map((user: User) =>
             user?.inboxId?.toLowerCase(),
           );
           if (!addedInboxes || addedInboxes.length === 0) {

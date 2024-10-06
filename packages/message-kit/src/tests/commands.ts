@@ -1,14 +1,16 @@
-import type { CommandGroup } from "../helpers/types.js";
+import type { CommandGroup } from "@xmtp/message-kit";
 
 export const commands: CommandGroup[] = [
   {
     name: "Tipping",
     icon: "🎩",
     description: "Tip tokens via emoji, replies or command.",
+    triggers: ["/tip", "🎩", "@tip"],
     commands: [
       {
         command: "/tip [@users] [amount] [token]",
         description: "Tip users in a specified token.",
+        handler: undefined,
         params: {
           username: {
             default: "",
@@ -25,12 +27,14 @@ export const commands: CommandGroup[] = [
   {
     name: "Base Transactions",
     icon: "🖼️",
+    triggers: ["@send", "/send", "@swap", "/swap", "/show"],
     description: "Multipurpose transaction frame built onbase.",
     commands: [
       {
         command: "/send [amount] [token] [@username]",
         description:
           "Send a specified amount of a cryptocurrency to a destination address.",
+        handler: undefined,
         params: {
           amount: {
             default: 10,
@@ -50,6 +54,7 @@ export const commands: CommandGroup[] = [
       {
         command: "/swap [amount] [token_from] [token_to]",
         description: "Exchange one type of cryptocurrency for another.",
+        handler: undefined,
         params: {
           amount: {
             default: 10,
@@ -68,21 +73,8 @@ export const commands: CommandGroup[] = [
         },
       },
       {
-        command: "/mint [collection_address] [token_id]",
-        description: "Create (mint) a new token or NFT.",
-        params: {
-          collection: {
-            default: "0x73a333cb82862d4f66f0154229755b184fb4f5b0",
-            type: "address",
-          },
-          tokenId: {
-            default: 1,
-            type: "number",
-          },
-        },
-      },
-      {
         command: "/show",
+        handler: undefined,
         description: "Show the whole frame.",
         params: {},
       },
@@ -91,16 +83,18 @@ export const commands: CommandGroup[] = [
   {
     name: "Games",
     icon: "🕹️",
+    triggers: ["/game", "@game"],
     description: "Provides various gaming experiences.",
     commands: [
       {
         command: "/game [game]",
+        handler: undefined,
         description: "Play a game.",
         params: {
           game: {
             default: "",
             type: "string",
-            values: ["wordle", "slot", "guessr", "rockpaperscissors", "help"],
+            values: ["wordle", "slot", "help"],
           },
         },
       },
@@ -109,30 +103,35 @@ export const commands: CommandGroup[] = [
   {
     name: "Loyalty",
     icon: "🔓",
+    triggers: ["/points", "@points"],
     description: "Manage group members and metadata.",
     commands: [
       {
         command: "/points",
+        handler: undefined,
         description: "Check your points.",
         params: {},
       },
       {
         command: "/leaderboard",
+        handler: undefined,
         description: "Check the points of a user.",
         params: {},
       },
     ],
   },
   {
-    name: "General Commands",
-    icon: "🔧",
-    description: "Command for managing default behaviours.",
+    name: "Agent",
+    icon: "🤖",
+    triggers: ["/ai", "@ai"],
+    description: "Manage agent commands.",
     commands: [
       {
-        command: "/help2 [cmd]",
+        command: "/ai [prompt]",
+        handler: undefined,
         description: "Manage agent commands.",
         params: {
-          cmd: {
+          prompt: {
             default: "",
             type: "string",
           },
@@ -141,29 +140,23 @@ export const commands: CommandGroup[] = [
     ],
   },
   {
-    name: "Agent",
-    icon: "🤖",
-    description: "Manage agent commands.",
-    commands: [
-      {
-        command: "/agent [prompt]",
-        description: "Manage agent commands.",
-        params: {
-          prompt: {
-            default: "",
-            type: "prompt",
-          },
-        },
-      },
-    ],
-  },
-  {
     name: "Admin",
     icon: "🔐",
+    triggers: [
+      "/admin",
+      "@admin",
+      "/add",
+      "@add",
+      "/remove",
+      "@remove",
+      "/name",
+      "@name",
+    ],
     description: "Manage group members and metadata.",
     commands: [
       {
         command: "/add [username]",
+        handler: undefined,
         description: "Add a user.",
         params: {
           username: {
@@ -174,6 +167,7 @@ export const commands: CommandGroup[] = [
       },
       {
         command: "/remove [username]",
+        handler: undefined,
         description: "Remove a user.",
         params: {
           username: {
@@ -184,6 +178,7 @@ export const commands: CommandGroup[] = [
       },
       {
         command: "/name [name]",
+        handler: undefined,
         description: "Set the name of the group.",
         params: {
           name: {
@@ -191,6 +186,21 @@ export const commands: CommandGroup[] = [
             type: "quoted",
           },
         },
+      },
+    ],
+  },
+  {
+    name: "Help",
+    icon: "🆘",
+    triggers: ["/help"],
+
+    description: "Get help    with the bot.",
+    commands: [
+      {
+        command: "/help",
+        handler: undefined,
+        description: "Get help with the bot.",
+        params: {},
       },
     ],
   },

@@ -42,15 +42,22 @@ export default async function run(handler: Handler, config?: Config) {
         );
         // Check if the message content triggers a command
         const commandTriggered = context.commands?.some((commandGroup) =>
-          commandGroup.commands.some(
-            (command) =>
-              message.content.startsWith(command.root) ||
-              message.content.startsWith(command.tag),
+          commandGroup.triggers.some((trigger) =>
+            message?.content?.toLowerCase().startsWith(trigger?.toLowerCase()),
           ),
         );
 
         if (commandTriggered) {
           if (process?.env?.MSG_LOG === "true") {
+            console.log(
+              `msg_${version}:`,
+              typeof message?.content === "string"
+                ? message?.content.substring(0, 20) +
+                    (message?.content.length > 20 ? "..." : "")
+                : message?.contentType?.typeId ??
+                    message?.content?.contentType?.typeId,
+            );
+          } else if (process?.env?.NODE_ENV !== "production") {
             console.log(
               `msg_${version}:`,
               typeof message?.content === "string"

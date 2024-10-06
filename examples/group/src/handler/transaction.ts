@@ -46,23 +46,6 @@ export async function handler(context: HandlerContext) {
       });
       context.reply(`${url_swap}`);
       break;
-    case "mint":
-      // Destructure and provide default values for the mint command
-      const { collection, tokenId } = params; // [!code hl] // [!code focus]
-
-      if (!collection || !tokenId) {
-        context.reply(
-          "Missing required parameters. Please provide collection address and token id.",
-        );
-        return;
-      }
-      // Generate URL for the mint transaction
-      let url_mint = generateFrameURL(baseUrl, "mint", {
-        collection,
-        token_id: tokenId,
-      });
-      context.reply(`${url_mint}`);
-      break;
     case "show": // [!code hl] // [!code focus]
       // Show the base URL without the transaction path
       context.reply(`${baseUrl.replace("/transaction", "")}`);

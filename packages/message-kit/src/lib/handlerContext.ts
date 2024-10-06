@@ -321,7 +321,7 @@ export default class HandlerContext {
           ];
         */
         const handler = this.commands?.find((command) =>
-          command.commands.find((c) => c.root === text.split(" ")[0]),
+          command.triggers?.includes(text.split(" ")[0]),
         );
         if (handler) await handler.commands[0].handler?.(mockContext);
         this.refConv = null;

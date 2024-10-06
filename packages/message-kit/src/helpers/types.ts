@@ -41,7 +41,7 @@ export interface CommandParamConfig {
 export interface CommandGroup {
   name: string;
   icon: string;
-  tag?: string;
+  triggers: string[];
   description: string;
   commands: CommandConfig[];
 }
@@ -49,8 +49,6 @@ export interface CommandGroup {
 export interface CommandConfig {
   command: string;
   handler?: CommandHandler;
-  tag?: string;
-  root?: string;
   description: string;
   params: Record<string, CommandParamConfig>;
 }

@@ -5,7 +5,6 @@ This example demonstrates how to generate frame URLs for different types of tran
 ```bash [cmd]
 /send 1 eth to @bo
 /swap 1 DAI to USDC
-/mint 0x73a333cb82862d4f66f0154229755b184fb4f5b0 1
 /show
 ```
 
@@ -56,20 +55,6 @@ _The frame used in this example is [BaseFrame](https://base-frame-lyart.vercel.a
           "default": "eth",
           "type": "string",
           "values": ["eth", "dai", "usdc", "degen"] // Accepted tokens
-        }
-      }
-    },
-    {
-      "command": "/mint [collection] [token_id]",
-      "description": "Create (mint) a new token or NFT.",
-      "params": {
-        "collection": {
-          "default": "0x73a333cb82862d4f66f0154229755b184fb4f5b0",
-          "type": "address"
-        },
-        "tokenId": {
-          "default": 1,
-          "type": "number"
         }
       }
     },
@@ -136,23 +121,6 @@ export function handler(context: HandlerContext) {
         token_to,
       });
       context.reply(`${url_swap}`);
-      break;
-    case "mint":
-      // Destructure and provide default values for the mint command
-      const { collection, tokenId } = params; // [!code hl] // [!code focus]
-
-      if (!collection || !tokenId) {
-        context.reply(
-          "Missing required parameters. Please provide collection address and token id.",
-        );
-        return;
-      }
-      // Generate URL for the mint transaction
-      let url_mint = generateFrameURL(baseUrl, "mint", {
-        collection,
-        token_id: tokenId,
-      });
-      context.reply(`${url_mint}`);
       break;
     case "show": // [!code hl] // [!code focus]
       // Show the base URL without the transaction path
