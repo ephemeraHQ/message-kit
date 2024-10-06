@@ -71,10 +71,7 @@ export default class HandlerContext {
 
       return commandConfig;
     } catch (error) {
-      console.error(
-        `Failed to load command configuration from ${resolvedPath}:`,
-        error,
-      );
+      console.error(`No commands.ts file found`);
       return [];
     }
   }
@@ -312,7 +309,7 @@ export default class HandlerContext {
   }
 
   async intent(text: string, conversation?: Conversation) {
-    const { commands, members } = this;
+    const { commands, members, version } = this;
     if (conversation) this.refConv = conversation;
     try {
       const handler = this.commands?.find((command) =>
@@ -342,7 +339,8 @@ export default class HandlerContext {
             text.split(" ")[0] as keyof typeof this.commandHandlers
           ];
         */
-        await handler.commands[0].handler?.(mockContext);
+        console.log("entra");
+        await handler?.commands[0].handler?.(mockContext);
         this.refConv = null;
       } else await this.reply(text);
     } catch (e) {

@@ -1,5 +1,4 @@
 import { run, HandlerContext } from "@xmtp/message-kit";
-import { commands } from "./commands.js";
 import { handler as tipping } from "./handler/tipping.js";
 import { handler as agent } from "./handler/agent.js";
 import { handler as transaction } from "./handler/transaction.js";
@@ -81,6 +80,7 @@ async function handleTextMessage(context: HandlerContext) {
 }
 
 async function helpHandler(context: HandlerContext) {
+  const { commands = [] } = context;
   const intro =
     "Available experiences:\n" +
     commands
