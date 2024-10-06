@@ -36,8 +36,7 @@ export default async function run(handler: Handler, config?: Config) {
           conversation,
           message,
           { client, v2client },
-          config?.commandsConfigPath ?? "commands.js",
-          config?.commandHandlers ?? {},
+          config?.commandsConfigPath,
           version,
         );
         // Check if the message content triggers a command
@@ -49,15 +48,6 @@ export default async function run(handler: Handler, config?: Config) {
 
         if (commandTriggered) {
           if (process?.env?.MSG_LOG === "true") {
-            console.log(
-              `msg_${version}:`,
-              typeof message?.content === "string"
-                ? message?.content.substring(0, 20) +
-                    (message?.content.length > 20 ? "..." : "")
-                : message?.contentType?.typeId ??
-                    message?.content?.contentType?.typeId,
-            );
-          } else if (process?.env?.NODE_ENV !== "production") {
             console.log(
               `msg_${version}:`,
               typeof message?.content === "string"
@@ -142,8 +132,7 @@ export default async function run(handler: Handler, config?: Config) {
           conversation,
           null,
           { client, v2client },
-          config?.commandsConfigPath ?? "commands.js",
-          config?.commandHandlers ?? {},
+          config?.commandsConfigPath,
           version,
         );
 

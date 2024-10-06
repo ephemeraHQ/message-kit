@@ -1,4 +1,4 @@
-import { run, HandlerContext, CommandHandlers } from "@xmtp/message-kit";
+import { run, HandlerContext } from "@xmtp/message-kit";
 import { commands } from "./commands.js";
 import { handler as tipping } from "./handler/tipping.js";
 import { handler as agent } from "./handler/agent.js";

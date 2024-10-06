@@ -59,23 +59,5 @@ The helper function will extract the parameters from the command.
 An easier way to declare how to handle and respond to commands is to use handlers. Handlers help you orgaize the code being useful when you are managing multiple bots
 
 ```tsx
-import { run, HandlerContext, CommandHandlers } from "@xmtp/message-kit";
-import { commands } from "./commands.js";
-import { transaction } from "./handler/transaction.js";
 
-const commandHandlers: CommandHandlers = {
-  "/send": transaction,
-};
-
-const appConfig = {
-  commands: commands,
-  commandHandlers: commandHandlers,
-};
-
-run(async (context: HandlerContext) => {
-  //Your logic here
-  if (text.startsWith("/")) {
-    await context.intent(text);
-  }
-}, appConfig);
 ```

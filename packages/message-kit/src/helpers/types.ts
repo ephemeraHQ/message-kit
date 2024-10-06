@@ -19,18 +19,12 @@ export type MessageAbstracted = {
 
 export type CommandHandler = (context: HandlerContext) => Promise<void>;
 
-// Define a new type for the command handlers object
-export type CommandHandlers = {
-  [command: string]: CommandHandler;
-};
-
 export type Handler = (context: HandlerContext) => Promise<void>;
 
 export type Config = {
   client?: ClientOptions;
   privateKey?: string;
   commandsConfigPath?: string;
-  commandHandlers?: CommandHandlers;
 };
 export interface CommandParamConfig {
   default?: any;

@@ -9,12 +9,7 @@ import path from "path";
 import type { Reaction } from "@xmtp/content-type-reaction";
 import { populateUsernames } from "../helpers/usernames.js";
 import { ContentTypeText } from "@xmtp/content-type-text";
-import {
-  CommandGroup,
-  User,
-  CommandHandlers,
-  MessageAbstracted,
-} from "../helpers/types.js";
+import { CommandGroup, User, MessageAbstracted } from "../helpers/types.js";
 import { parseCommand } from "../helpers/commands.js";
 import { ContentTypeReply } from "@xmtp/content-type-reply";
 import {
@@ -33,7 +28,6 @@ export default class HandlerContext {
   version!: "v2" | "v3";
   v2client!: ClientV2;
   commands?: CommandGroup[];
-  commandHandlers?: CommandHandlers;
   isGroup!: boolean;
   members?: User[];
   getMessageById!: (id: string) => DecodedMessage | null;
@@ -76,7 +70,6 @@ export default class HandlerContext {
     message: DecodedMessage | DecodedMessageV2 | null,
     { client, v2client }: { client: Client; v2client: ClientV2 },
     commandsConfigPath?: string,
-    commandHandlers?: CommandHandlers,
     version?: "v2" | "v3",
   ): Promise<HandlerContext> {
     const context = new HandlerContext(
@@ -93,7 +86,6 @@ export default class HandlerContext {
       const sentAt = "sentAt" in message ? message.sentAt : message.sent;
 
       //commands
-      context.commandHandlers = commandHandlers;
       context.commands =
         await HandlerContext.loadCommandConfig(commandsConfigPath);
 
