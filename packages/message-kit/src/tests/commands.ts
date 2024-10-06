@@ -3,7 +3,6 @@ import type { CommandGroup } from "../helpers/types";
 export const commands: CommandGroup[] = [
   {
     name: "Tipping",
-    icon: "🎩",
     description: "Tip tokens via emoji, replies or command.",
     triggers: ["/tip", "🎩", "@tip"],
     commands: [
@@ -25,8 +24,7 @@ export const commands: CommandGroup[] = [
     ],
   },
   {
-    name: "Base Transactions",
-    icon: "🖼️",
+    name: "Transactions",
     triggers: ["@send", "/send", "@swap", "/swap", "/show"],
     description: "Multipurpose transaction frame built onbase.",
     commands: [
@@ -82,7 +80,6 @@ export const commands: CommandGroup[] = [
   },
   {
     name: "Games",
-    icon: "🕹️",
     triggers: ["/game", "@game", "🔎", "🔍"],
     description: "Provides various gaming experiences.",
     commands: [
@@ -102,7 +99,6 @@ export const commands: CommandGroup[] = [
   },
   {
     name: "Loyalty",
-    icon: "🔓",
     triggers: ["/points", "@points", "/leaderboard", "@leaderboard"],
     description: "Manage group members and metadata.",
     commands: [
@@ -122,7 +118,6 @@ export const commands: CommandGroup[] = [
   },
   {
     name: "Agent",
-    icon: "🤖",
     triggers: ["/agent", "@agent"],
     description: "Manage agent commands.",
     commands: [
@@ -141,7 +136,6 @@ export const commands: CommandGroup[] = [
   },
   {
     name: "Admin",
-    icon: "🔐",
     triggers: ["/admin", "@admin", "/add", "@add", "/remove", "@remove"],
     description: "Manage group members and metadata.",
     commands: [
@@ -171,7 +165,6 @@ export const commands: CommandGroup[] = [
   },
   {
     name: "Split Payments",
-    icon: "🧰",
     image: true,
     triggers: [],
     description: "Split payments between users.",
@@ -179,7 +172,6 @@ export const commands: CommandGroup[] = [
   },
   {
     name: "Help",
-    icon: "🆘",
     triggers: ["/help"],
 
     description: "Get help    with the bot.",

@@ -43,7 +43,6 @@ export interface CommandParamConfig {
 
 export interface CommandGroup {
   name: string;
-  icon: string;
   triggers: string[];
   image?: boolean;
   description: string;

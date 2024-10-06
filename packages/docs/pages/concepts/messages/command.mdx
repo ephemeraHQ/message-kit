@@ -9,6 +9,7 @@ The command object is a `text` type contains the following extra property:
 ```tsx
 {
   content: string, // The raw content of the message
+  command: string, // The command root "send"  // [!code hl] // [!code focus]
   params: params // The value of the parameters of the command // [!code hl] // [!code focus]
 }
 ```
@@ -23,8 +24,8 @@ Here's an example of how you can receive a `text` message in your app:
 const { content, typeId } = context.message;
 
 if (typeId === "text") {
-  const { params } = content;
-  // Use params of the command
+  const { command, params } = content;
+  // Use the extracted command and params
 }
 ```
 
@@ -58,6 +59,37 @@ The helper function will extract the parameters from the command.
 
 An easier way to declare how to handle and respond to commands is to use handlers. Handlers help you orgaize the code being useful when you are managing multiple bots
 
-```tsx
+```js [src/commands.ts]
+import { handler as transaction } from "./handler/transaction.js"; // [!code hl] // [!code focus]
 
+export const commands: CommandGroup[] = [
+  {
+    name: "Transactions",
+    triggers: ["@send", "/send"],  // [!code hl] // [!code focus]
+    description: "Multipurpose transaction frame built onbase.",
+    commands: [
+      {
+        command: "/send [amount] [token] [@username]",
+        description:
+          "Send a specified amount of a cryptocurrency to a destination address.",
+        handler: transaction,  // [!code hl] // [!code focus]
+        params: {
+          amount: {
+            default: 10,
+            type: "number",
+          },
+          token: {
+            default: "usdc",
+            type: "string",
+            values: ["eth", "dai", "usdc", "degen"],
+          },
+          username: {
+            default: "",
+            type: "username",
+          },
+        },
+      },
+    ],
+  },
+];
 ```
