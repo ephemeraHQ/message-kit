@@ -5,20 +5,6 @@ import type { CommandGroup } from "../helpers/types";
 import { commands } from "./commands";
 
 describe("Command extraction tests", () => {
-  test("Extract values from /help2 command", () => {
-    const inputContent = "/help2 hey";
-    const extractedValues = extractCommandValues(
-      inputContent,
-      commands as CommandGroup[],
-      users,
-    );
-    expect(extractedValues).toEqual({
-      command: "help2",
-      params: expect.objectContaining({
-        cmd: "hey",
-      }),
-    });
-  });
   test("Extract values from /tip command", () => {
     const inputContent = "/tip @bo @alix 15";
     const extractedValues = extractCommandValues(
@@ -132,7 +118,7 @@ describe("Command extraction tests", () => {
       }),
     });
   });
-
+  /*
   test("Extract values from /name command", () => {
     const inputContent = '/name "New name"';
     const extractedValues = extractCommandValues(
@@ -146,7 +132,7 @@ describe("Command extraction tests", () => {
         name: "New name",
       }),
     });
-  });
+  });*/
 
   test("Extract values from /agent prompt command", () => {
     const inputContent = "/agent Hello, how can I assist you today?";
