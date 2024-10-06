@@ -48,6 +48,8 @@ export default class HandlerContext {
       this.group = {
         sync: conversation.sync.bind(conversation),
         addMembers: conversation.addMembers.bind(conversation),
+        send: conversation.send.bind(conversation),
+        createdAt: conversation.createdAt,
         addMembersByInboxId:
           conversation.addMembersByInboxId.bind(conversation),
         removeMembers: conversation.removeMembers.bind(conversation),
@@ -246,7 +248,8 @@ export default class HandlerContext {
     if (conversation) {
       if (this.isConversationV2(conversation)) {
         await conversation.send(reply, { contentType: ContentTypeReply });
-      } else if (conversation instanceof Conversation) {
+      } else {
+        console.log("reply", reply);
         await conversation.send(reply, ContentTypeReply);
       }
     }
@@ -294,17 +297,21 @@ export default class HandlerContext {
     const conversations = await this.v2client.conversations.list();
     //Sends a 1 to 1 to multiple users
     for (const receiver of receivers) {
-      if (this.v2client.address.toLowerCase() === receiver.toLowerCase())
+      if (this.v2client.address.toLowerCase() === receiver.toLowerCase()) {
         continue;
-      if (this.refConv) await this.refConv.send(message);
+      }
 
       let targetConversation = conversations.find(
-        (conv) => conv.peerAddress === receiver,
+        (conv) => conv.peerAddress.toLowerCase() === receiver.toLowerCase(),
       );
-      if (!targetConversation)
+
+      if (!targetConversation) {
         targetConversation =
           await this.v2client.conversations.newConversation(receiver);
-      if (targetConversation) await targetConversation.send(message);
+      }
+
+      // Send the message only once per receiver
+      await targetConversation.send(message);
     }
   }
 
@@ -339,10 +346,9 @@ export default class HandlerContext {
             text.split(" ")[0] as keyof typeof this.commandHandlers
           ];
         */
-        console.log("entra");
         await handler?.commands[0].handler?.(mockContext);
         this.refConv = null;
-      } else await this.reply(text);
+      } else this.reply(text);
     } catch (e) {
       console.log("error", e);
     } finally {

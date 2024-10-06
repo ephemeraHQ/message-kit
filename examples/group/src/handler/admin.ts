@@ -13,11 +13,12 @@ function handleAddMembers(
           added?.inboxId?.toLowerCase() === member?.inboxId?.toLowerCase(),
       ),
     )
-    .map((member: User) => `@${member.username}`)
-    .filter((name: string) => name.trim() !== "@") // Filter out empty or undefined usernames
+    .map((member: User) => member.username)
+    .filter((username: string) => username && username.trim() !== "")
+    .map((username: string) => `@${username}`)
     .join(", "); // Join names for message formatting
 
-  if (addedNames && addedNames.trim().length > 0) {
+  if (addedNames) {
     let messages = [
       `Yo, ${addedNames}! 🫡`,
       `LFG ${addedNames}!`,
@@ -31,47 +32,30 @@ function handleRemoveMembers() {
   let messages = [`🪦`, `👻`, `hasta la vista, baby`];
   return messages[Math.floor(Math.random() * messages.length)];
 }
-const handleGroupname = (newValue: string, adminName: string) => {
-  let messages = [`LFG ${newValue}! 🔥`, `all hail ${newValue} 👏🏻`];
-  return messages[Math.floor(Math.random() * messages.length)];
-};
+
 export async function handler(context: HandlerContext) {
   const {
     group,
     members,
     message: { content, typeId },
   } = context;
-
-  if (typeId === "group_updated") {
-    const {
-      initiatedByInboxId,
-      metadataFieldChanges,
-      removedInboxes,
-      addedInboxes,
-    } = content;
-
-    // Fetch username from members array mapped by inboxId
-    const adminName =
-      members?.find((member: User) => member.inboxId === initiatedByInboxId)
-        ?.username || "Admin";
-
+  if (typeId === "group_updated" && group) {
+    const { removedInboxes, addedInboxes } = content;
     let message: string = "";
     if (addedInboxes && addedInboxes.length > 0) {
       message += handleAddMembers(addedInboxes, members!);
     } else if (removedInboxes && removedInboxes.length > 0) {
       message += handleRemoveMembers();
-    } else if (metadataFieldChanges && metadataFieldChanges[0]) {
-      const { fieldName, newValue } = metadataFieldChanges?.[0];
-      if (fieldName === "group_name") {
-        message += handleGroupname(newValue, adminName);
-      }
     }
-    await context.reply(message);
+    await context.send(message);
   } else if (typeId === "text" && group) {
     const {
       command,
       params: { username, name },
+      params,
     } = content;
+
+    console.log("removedInboxes", command, params);
 
     switch (command) {
       case "remove":

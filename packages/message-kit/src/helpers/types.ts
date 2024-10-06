@@ -1,7 +1,7 @@
 import { default as HandlerContext } from "../lib/handlerContext.js";
 
 import { ClientOptions } from "@xmtp/mls-client";
-
+import { ContentTypeId } from "@xmtp/content-type-primitives";
 // Define a type for the message that includes the conversation property
 export type MessageAbstracted = {
   id: string;
@@ -22,6 +22,8 @@ export type GroupAbstracted = {
   addMembersByInboxId: (inboxIds: string[]) => Promise<void>;
   removeMembers: (addresses: string[]) => Promise<void>;
   removeMembersByInboxId: (inboxIds: string[]) => Promise<void>;
+  send: (content: any, contentType?: ContentTypeId) => Promise<string>;
+  createdAt: Date;
 };
 
 export type CommandHandler = (context: HandlerContext) => Promise<void>;

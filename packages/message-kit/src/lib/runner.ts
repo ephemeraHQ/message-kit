@@ -21,13 +21,15 @@ export default async function run(handler: Handler, config?: Config) {
   ) => {
     if (message) {
       try {
-        const { senderInboxId, senderAddress } = message;
+        const { senderInboxId, senderAddress, kind } = message;
 
         if (
           //If same address do nothin
-          senderAddress === addressV2 ||
+          senderAddress?.toLowerCase() === addressV2?.toLowerCase() ||
           //If same address do nothin
-          senderInboxId === address
+          // Filter out membership_change messages
+          (senderInboxId?.toLowerCase() === address?.toLowerCase() &&
+            kind !== "membership_change")
         ) {
           return;
         }
@@ -40,37 +42,47 @@ export default async function run(handler: Handler, config?: Config) {
           version,
         );
         // Check if the message content triggers a command
-        const commandTriggered =
-          version == "v2"
-            ? true
-            : context.commands?.some((commandGroup) =>
-                commandGroup.triggers.some((trigger) =>
-                  typeof message?.content === "string"
-                    ? message?.content
-                        ?.toLowerCase()
-                        .startsWith(trigger?.toLowerCase())
-                    : message?.content?.content
-                        ?.toLowerCase()
-                        .startsWith(trigger?.toLowerCase()),
-                ),
-              );
-        if (commandTriggered) {
-          console.log(
-            `msg_${version}:`,
-            typeof message?.content === "string"
-              ? message?.content.substring(0, 20) +
-                  (message?.content.length > 20 ? "..." : "")
-              : message?.contentType?.typeId ??
-                  message?.content?.contentType?.typeId,
-          );
-          await handler(context);
-        }
+        if (!commandTriggered(version, context, message)) return;
+        await handler(context);
       } catch (e) {
         console.log(`error`, e);
       }
     }
   };
 
+  const commandTriggered = (
+    version: "v3" | "v2",
+    context: HandlerContext,
+    message: any,
+  ) => {
+    const commandTriggered =
+      message?.contentType?.typeId == "group_updated"
+        ? true
+        : version == "v2"
+          ? true
+          : context.commands?.some((commandGroup) =>
+              commandGroup.triggers.some((trigger) =>
+                typeof message?.content === "string"
+                  ? message?.content
+                      ?.toLowerCase()
+                      .startsWith(trigger?.toLowerCase())
+                  : message?.content?.content
+                      ?.toLowerCase()
+                      .startsWith(trigger?.toLowerCase()),
+              ),
+            );
+    if (commandTriggered) {
+      console.log(
+        `msg_${version}:`,
+        typeof message?.content === "string"
+          ? message?.content.substring(0, 20) +
+              (message?.content.length > 20 ? "..." : "")
+          : message?.contentType?.typeId ??
+              message?.content?.contentType?.typeId,
+      );
+    }
+    return commandTriggered;
+  };
   const streamMessages = async (version: "v3" | "v2") => {
     if (version === "v3") {
       while (true) {

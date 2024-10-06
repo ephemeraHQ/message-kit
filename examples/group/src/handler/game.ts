@@ -11,7 +11,7 @@ export async function handler(context: HandlerContext) {
     const { content: text } = context?.message?.content;
     if (text === "🔎" || text === "🔍") {
       // Send the URL for the requested game
-      context.send("https://framedl.xyz/");
+      context.reply("https://framedl.xyz/");
     }
     return;
   }

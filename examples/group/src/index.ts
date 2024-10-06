@@ -1,11 +1,8 @@
 import { run, HandlerContext } from "@xmtp/message-kit";
 import { handler as tipping } from "./handler/tipping.js";
 import { handler as agent } from "./handler/agent.js";
-import { handler as transaction } from "./handler/transaction.js";
 import { handler as splitpayment } from "./handler/payment.js";
-import { handler as games } from "./handler/game.js";
 import { handler as admin } from "./handler/admin.js";
-import { handler as loyalty } from "./handler/loyalty.js";
 
 // Main function to run the app
 run(async (context: HandlerContext) => {
@@ -13,24 +10,22 @@ run(async (context: HandlerContext) => {
     message: { typeId },
   } = context;
   try {
+    console.log("typeId", typeId);
     switch (typeId) {
       case "reaction":
         handleReaction(context);
-        loyalty(context);
         break;
       case "reply":
         handleReply(context);
         break;
       case "group_updated":
         admin(context);
-        loyalty(context);
         break;
       case "remoteStaticAttachment":
         handleAttachment(context);
         break;
       case "text":
         handleTextMessage(context);
-        loyalty(context, true);
         break;
       default:
         console.warn(`Unhandled message type: ${typeId}`);
@@ -75,10 +70,8 @@ async function handleTextMessage(context: HandlerContext) {
     await helpHandler(context);
   } else if (text.startsWith("@agent")) {
     await agent(context);
-  }
-  await context.intent(text);
+  } else await context.intent(text);
 }
-
 async function helpHandler(context: HandlerContext) {
   const { commands = [] } = context;
   const intro =

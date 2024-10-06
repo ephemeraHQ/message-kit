@@ -110,7 +110,7 @@ export const commands: CommandGroup[] = [
   {
     name: "Loyalty",
     icon: "🔓",
-    triggers: ["/points", "@points"],
+    triggers: ["/points", "@points", "/leaderboard", "@leaderboard"],
     description: "Manage group members and metadata.",
     commands: [
       {
@@ -149,16 +149,7 @@ export const commands: CommandGroup[] = [
   {
     name: "Admin",
     icon: "🔐",
-    triggers: [
-      "/admin",
-      "@admin",
-      "/add",
-      "@add",
-      "/remove",
-      "@remove",
-      "/name",
-      "@name",
-    ],
+    triggers: ["/admin", "@admin", "/add", "@add", "/remove", "@remove"],
     description: "Manage group members and metadata.",
     commands: [
       {
@@ -180,17 +171,6 @@ export const commands: CommandGroup[] = [
           username: {
             default: "",
             type: "username",
-          },
-        },
-      },
-      {
-        command: "/name [name]",
-        handler: admin,
-        description: "Set the name of the group.",
-        params: {
-          name: {
-            default: "",
-            type: "quoted",
           },
         },
       },
