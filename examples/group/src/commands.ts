@@ -3,7 +3,6 @@ import { handler as tipping } from "./handler/tipping.js";
 import { handler as agent } from "./handler/agent.js";
 import { handler as transaction } from "./handler/transaction.js";
 import { handler as games } from "./handler/game.js";
-import { handler as admin } from "./handler/moderation.js";
 import { handler as loyalty } from "./handler/loyalty.js";
 
 export const commands: CommandGroup[] = [
@@ -135,35 +134,6 @@ export const commands: CommandGroup[] = [
           prompt: {
             default: "",
             type: "prompt",
-          },
-        },
-      },
-    ],
-  },
-  {
-    name: "Admin",
-    triggers: ["/add", "@add", "/remove", "@remove"],
-    description: "Manage group members and metadata.",
-    commands: [
-      {
-        command: "/add [username]",
-        handler: admin,
-        description: "Add a user.",
-        params: {
-          username: {
-            default: "",
-            type: "username",
-          },
-        },
-      },
-      {
-        command: "/remove [username]",
-        handler: admin,
-        description: "Remove a user.",
-        params: {
-          username: {
-            default: "",
-            type: "username",
           },
         },
       },

@@ -135,35 +135,6 @@ export const commands: CommandGroup[] = [
     ],
   },
   {
-    name: "Admin",
-    triggers: ["/add", "@add", "/remove", "@remove"],
-    description: "Manage group members and metadata.",
-    commands: [
-      {
-        command: "/add [username]",
-        handler: undefined,
-        description: "Add a user.",
-        params: {
-          username: {
-            default: "",
-            type: "username",
-          },
-        },
-      },
-      {
-        command: "/remove [username]",
-        handler: undefined,
-        description: "Remove a user.",
-        params: {
-          username: {
-            default: "",
-            type: "username",
-          },
-        },
-      },
-    ],
-  },
-  {
     name: "Split Payments",
     image: true,
     triggers: [],

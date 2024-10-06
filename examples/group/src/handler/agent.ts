@@ -44,10 +44,7 @@ function generateSystemPrompt(context: HandlerContext) {
   ${JSON.stringify(commands)}\n
   The message was sent by @${sender?.username}
   
-  ### Example s
-  prompt: /agent lets add @user
-  reply: /add @user
-
+  ### Examples
   prompt /agent tip alix and bo
   reply /tip @alix @bo 10
 

@@ -6,7 +6,6 @@ This is a reference app that will allow you to understand the potential and all 
 - [Tipping](/use-cases/group/tipping): Tip when a user reacts with the `🎩` emoji, replies `10 $degen` and `/tip`.
 - [Games](/use-cases/group/games): Handle frame games like `/game slot`, `/game wordle`
 - [Transactions](/use-cases/group/transactions): Handle commands like `/send`, `/swap`, `/show`.
-- [Moderation](/use-cases/group/moderation): Handle admin commands like `/add`, `/remove`, `/name`
 - [Loyalty](/use-cases/group/loyalty): Handle loyalty commands like `/points`, `/leaderboard`.
 
 ## Structure
@@ -22,7 +21,6 @@ group/
 │         └── agent.ts          # Handles gpt agent. // [!code hl] // [!code focus]
 │         └── tipping.ts        # Handles tipping. // [!code hl] // [!code focus]
 │         └── game.ts           # Handles game frames. // [!code hl] // [!code focus]
-│         └── moderation.ts     # Handles moderation. // [!code hl] // [!code focus]
 │         └── loyalty.ts        # Handles loyalty. // [!code hl] // [!code focus]
 │         └── splitpayments.ts   # Handles split payments. // [!code hl] // [!code focus]
 │         └── transactions.ts   # Handles the transaction frame. // [!code hl] // [!code focus]
@@ -156,32 +154,6 @@ export const commands: CommandGroup[] = [
           prompt: {
             default: "",
             type: "prompt",
-          },
-        },
-      },
-    ],
-  },
-  {
-    name: "Admin",
-    description: "Manage group members and metadata.",
-    commands: [
-      {
-        command: "/add [username]",
-        description: "Add a user.",
-        params: {
-          username: {
-            default: "",
-            type: "username",
-          },
-        },
-      },
-      {
-        command: "/remove [username]",
-        description: "Remove a user.",
-        params: {
-          username: {
-            default: "",
-            type: "username",
           },
         },
       },
