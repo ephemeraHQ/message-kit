@@ -1,4 +1,11 @@
-import type { CommandGroup } from "@xmtp/message-kit";
+import type { CommandGroup, CommandConfig } from "@xmtp/message-kit";
+import { handler as tipping } from "./handler/tipping.js";
+import { handler as agent } from "./handler/agent.js";
+import { handler as transaction } from "./handler/transaction.js";
+import { handler as splitpayment } from "./handler/payment.js";
+import { handler as games } from "./handler/game.js";
+import { handler as admin } from "./handler/admin.js";
+import { handler as loyalty } from "./handler/loyalty.js";
 
 export const commands: CommandGroup[] = [
   {
@@ -7,8 +14,11 @@ export const commands: CommandGroup[] = [
     description: "Tip tokens via emoji, replies or command.",
     commands: [
       {
+        root: "/tip",
+        tag: "@tip",
         command: "/tip [@users] [amount] [token]",
         description: "Tip users in a specified token.",
+        handler: tipping,
         params: {
           username: {
             default: "",
@@ -25,12 +35,16 @@ export const commands: CommandGroup[] = [
   {
     name: "Base Transactions",
     icon: "🖼️",
+    tag: "@base",
     description: "Multipurpose transaction frame built onbase.",
     commands: [
       {
         command: "/send [amount] [token] [@username]",
         description:
           "Send a specified amount of a cryptocurrency to a destination address.",
+        root: "/send",
+        handler: transaction,
+        tag: "@send",
         params: {
           amount: {
             default: 10,
@@ -70,6 +84,9 @@ export const commands: CommandGroup[] = [
       {
         command: "/mint [collection_address] [token_id]",
         description: "Create (mint) a new token or NFT.",
+        root: "/mint",
+        handler: transaction,
+        tag: "@mint",
         params: {
           collection: {
             default: "0x73a333cb82862d4f66f0154229755b184fb4f5b0",
@@ -89,36 +106,6 @@ export const commands: CommandGroup[] = [
     ],
   },
   {
-    name: "Betting",
-    icon: "🎰",
-    description: "Create bets with friends.",
-    commands: [
-      {
-        command: "/bet @users [name] [amount] [token]",
-        description: "Bet on basebet.",
-        params: {
-          username: {
-            default: "",
-            type: "username",
-          },
-          name: {
-            default: "",
-            type: "quoted",
-          },
-          amount: {
-            default: 10,
-            type: "number",
-          },
-          token: {
-            default: "eth",
-            type: "string",
-            values: ["eth", "dai", "usdc", "degen"],
-          },
-        },
-      },
-    ],
-  },
-  {
     name: "Games",
     icon: "🕹️",
     description: "Provides various gaming experiences.",
@@ -130,7 +117,7 @@ export const commands: CommandGroup[] = [
           game: {
             default: "",
             type: "string",
-            values: ["wordle", "slot", "guessr", "rockpaperscissors", "help"],
+            values: ["wordle", "slot", "help"],
           },
         },
       },

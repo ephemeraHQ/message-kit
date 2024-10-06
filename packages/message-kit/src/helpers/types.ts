@@ -27,9 +27,9 @@ export type CommandHandlers = {
 export type Handler = (context: HandlerContext) => Promise<void>;
 
 export type Config = {
-  commands?: CommandGroup[];
   client?: ClientOptions;
   privateKey?: string;
+  commandsConfigPath?: string;
   commandHandlers?: CommandHandlers;
 };
 export interface CommandParamConfig {
@@ -38,18 +38,23 @@ export interface CommandParamConfig {
   values?: string[]; // Accepted values for the parameter
 }
 
+export interface CommandGroup {
+  name: string;
+  icon: string;
+  tag?: string;
+  description: string;
+  commands: CommandConfig[];
+}
+
 export interface CommandConfig {
   command: string;
+  handler?: CommandHandler;
+  tag?: string;
+  root?: string;
   description: string;
   params: Record<string, CommandParamConfig>;
 }
 
-export interface CommandGroup {
-  name: string;
-  icon: string;
-  description: string;
-  commands: CommandConfig[];
-}
 export interface User {
   inboxId: string; // Ensure this is always a string
   username: string;

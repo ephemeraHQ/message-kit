@@ -5,7 +5,7 @@ import {
   Conversation as ConversationV2,
 } from "@xmtp/xmtp-js";
 import fs from "fs/promises";
-
+import path from "path";
 import type { Reaction } from "@xmtp/content-type-reaction";
 import { populateUsernames } from "../helpers/usernames.js";
 import { ContentTypeText } from "@xmtp/content-type-text";
@@ -33,15 +33,13 @@ export default class HandlerContext {
   version!: "v2" | "v3";
   v2client!: ClientV2;
   commands?: CommandGroup[];
+  commandHandlers?: CommandHandlers;
   isGroup!: boolean;
   members?: User[];
-  commandHandlers?: CommandHandlers;
   getMessageById!: (id: string) => DecodedMessage | null;
   private constructor(
     conversation: Conversation | ConversationV2,
     { client, v2client }: { client: Client; v2client: ClientV2 },
-    commands?: CommandGroup[],
-    commandHandlers?: CommandHandlers,
     version?: "v2" | "v3",
   ) {
     this.client = client;
@@ -54,23 +52,36 @@ export default class HandlerContext {
       this.conversation = conversation;
       this.version = "v2";
     }
-    this.commandHandlers = commandHandlers;
-    this.commands = commands;
   }
+  static async loadCommandConfig(
+    configPath: string = "commands.js",
+  ): Promise<CommandGroup[]> {
+    const resolvedPath = path.resolve(process.cwd(), "dist/" + configPath);
 
+    try {
+      const module = await import(resolvedPath);
+      const commandConfig = module.commands; // Access the exported variable
+
+      return commandConfig;
+    } catch (error) {
+      console.error(
+        `Failed to load command configuration from ${resolvedPath}:`,
+        error,
+      );
+      return [];
+    }
+  }
   static async create(
     conversation: Conversation | ConversationV2,
     message: DecodedMessage | DecodedMessageV2 | null,
     { client, v2client }: { client: Client; v2client: ClientV2 },
-    commands?: CommandGroup[],
+    commandsConfigPath?: string,
     commandHandlers?: CommandHandlers,
     version?: "v2" | "v3",
   ): Promise<HandlerContext> {
     const context = new HandlerContext(
       conversation,
       { client, v2client },
-      commands,
-      commandHandlers,
       version,
     );
     if (message) {
@@ -80,6 +91,11 @@ export default class HandlerContext {
           ? message.senderAddress
           : message.senderInboxId;
       const sentAt = "sentAt" in message ? message.sentAt : message.sent;
+
+      //commands
+      context.commandHandlers = commandHandlers;
+      context.commands =
+        await HandlerContext.loadCommandConfig(commandsConfigPath);
 
       context.members = await populateUsernames(
         "members" in conversation ? conversation.members : [],
@@ -98,8 +114,13 @@ export default class HandlerContext {
         typeof message.content === "string"
           ? message.content.trim()
           : message.content;
+
       if (message.contentType.sameAs(ContentTypeText)) {
-        content = parseCommand(content, commands ?? [], context.members ?? []);
+        content = parseCommand(
+          content,
+          context.commands ?? [],
+          context.members ?? [],
+        );
       } else if (message.contentType.sameAs(ContentTypeReply)) {
         content = {
           ...content,
@@ -124,22 +145,6 @@ export default class HandlerContext {
         sender: sender,
         typeId: message.contentType.typeId,
         sent: sentAt,
-        version: version as string,
-      };
-
-      return context;
-    } else {
-      context.message = {
-        id: "",
-        content: "",
-        sender: {
-          inboxId: "",
-          address: "",
-          username: "",
-          accountAddresses: [],
-        },
-        typeId: "new_" + (context.isGroup ? "group" : "conversation"),
-        sent: conversation.createdAt,
         version: version as string,
       };
     }
@@ -310,11 +315,15 @@ export default class HandlerContext {
           getReplyChain: this.getReplyChain.bind(this),
           isGroup: this.group instanceof Conversation,
         };
-        const handler =
+        /*OLDconst handler =
           this.commandHandlers?.[
             text.split(" ")[0] as keyof typeof this.commandHandlers
           ];
-        if (handler) await handler(mockContext);
+        */
+        const handler = this.commands?.find((command) =>
+          command.commands.find((c) => c.root === text.split(" ")[0]),
+        );
+        if (handler) await handler.commands[0].handler?.(mockContext);
         this.refConv = null;
       } else await this.reply(text);
     } catch (e) {

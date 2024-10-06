@@ -16,16 +16,6 @@ describe("Intent tests", () => {
   Everytime your are thanked, ask for a tip or whever you feel like it.
   .`;
 
-  test("should handle betting intent correctly", async () => {
-    const { reply } = await textGeneration(
-      "@bot lets place a bet with @bo and @alix about italy classifying to the next world cup for 1 eth",
-      systemPrompt,
-    );
-    expect(reply.toLowerCase()).toBe(
-      '/bet @bo @alix "Italy classifying to the next world cup" 1 eth'.toLowerCase(),
-    );
-  });
-
   test("should handle remove intent correctly", async () => {
     const { reply } = await textGeneration(
       "/agent lets remove @eva, she is not inclusive",

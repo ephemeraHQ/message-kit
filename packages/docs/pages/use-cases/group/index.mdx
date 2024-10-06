@@ -4,7 +4,6 @@ This is a reference app that will allow you to understand the potential and all 
 
 - [AI](/use-cases/group/agents): Reply with GPT when called by `/agent`.
 - [Tipping](/use-cases/group/tipping): Tip when a user reacts with the `🎩` emoji, replies `10 $degen` and `/tip`.
-- [Betting](/use-cases/group/betting): Create a new group inside a group with `/bet`
 - [Games](/use-cases/group/games): Handle frame games like `/game slot`, `/game wordle`
 - [Transactions](/use-cases/group/transactions): Handle commands like `/send`, `/swap`, `/mint`, `/show`.
 - [Admin](/use-cases/group/admin): Handle admin commands like `/add`, `/remove`, `/name`
@@ -25,7 +24,6 @@ group/
 │   └── handler/
 │         └── agent.ts          # Handles gpt agent. // [!code hl] // [!code focus]
 │         └── tipping.ts        # Handles tipping. // [!code hl] // [!code focus]
-│         └── betting.ts        # Handles betting. // [!code hl] // [!code focus]
 │         └── game.ts           # Handles game frames. // [!code hl] // [!code focus]
 │         └── admin.ts          # Handles moderation. // [!code hl] // [!code focus]
 │         └── payment.ts        # Handles split payments. // [!code hl] // [!code focus]
@@ -133,36 +131,6 @@ export const commands: CommandGroup[] = [
     ],
   },
   {
-    name: "Betting",
-    icon: "🎰",
-    description: "Create bets with friends.",
-    commands: [
-      {
-        command: "/bet @users [name] [amount] [token]",
-        description: "Bet on basebet.",
-        params: {
-          username: {
-            default: "",
-            type: "username",
-          },
-          name: {
-            default: "",
-            type: "quoted",
-          },
-          amount: {
-            default: 10,
-            type: "number",
-          },
-          token: {
-            default: "eth",
-            type: "string",
-            values: ["eth", "dai", "usdc", "degen"],
-          },
-        },
-      },
-    ],
-  },
-  {
     name: "Games",
     icon: "🕹️",
     description: "Provides various gaming experiences.",
@@ -262,7 +230,6 @@ export const commands: CommandGroup[] = [
 ```tsx [src/index.ts]
 import { run, HandlerContext, CommandHandlers } from "@xmtp/message-kit";
 import { commands } from "./commands.js";
-import { handler as bet } from "./handler/betting.js";
 import { handler as tipping } from "./handler/tipping.js";
 import { handler as agent } from "./handler/agent.js";
 import { handler as transaction } from "./handler/transaction.js";

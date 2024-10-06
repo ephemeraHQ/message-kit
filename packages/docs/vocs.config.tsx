@@ -114,10 +114,6 @@ export default defineConfig({
               link: "/use-cases/group/tipping",
             },
             {
-              text: "Betting",
-              link: "/use-cases/group/betting",
-            },
-            {
               text: "Games",
               link: "/use-cases/group/games",
             },

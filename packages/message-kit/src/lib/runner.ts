@@ -1,12 +1,6 @@
 import { default as HandlerContext } from "./handlerContext.js";
 import { default as xmtpClient } from "./client.js";
 import { Config, Handler } from "../helpers/types.js";
-import { Conversation, DecodedMessage, Client } from "@xmtp/mls-client";
-import {
-  DecodedMessage as DecodedMessageV2,
-  Client as ClientV2,
-  Conversation as ConversationV2,
-} from "@xmtp/xmtp-js";
 
 export default async function run(handler: Handler, config?: Config) {
   const { client, v2client } = await xmtpClient(
@@ -38,26 +32,36 @@ export default async function run(handler: Handler, config?: Config) {
           return;
         }
 
-        if (process?.env?.MSG_LOG === "true") {
-          console.log(
-            `msg_${version}:`,
-            typeof message?.content === "string"
-              ? message?.content.substring(0, 20) +
-                  (message?.content.length > 20 ? "..." : "")
-              : message?.contentType?.typeId ??
-                  message?.content?.contentType?.typeId,
-          );
-        }
         const context = await HandlerContext.create(
           conversation,
           message,
           { client, v2client },
-          config?.commands ?? [],
+          config?.commandsConfigPath ?? "commands.js",
           config?.commandHandlers ?? {},
           version,
         );
+        // Check if the message content triggers a command
+        const commandTriggered = context.commands?.some((commandGroup) =>
+          commandGroup.commands.some(
+            (command) =>
+              message.content.startsWith(command.root) ||
+              message.content.startsWith(command.tag),
+          ),
+        );
 
-        await handler(context);
+        if (commandTriggered) {
+          if (process?.env?.MSG_LOG === "true") {
+            console.log(
+              `msg_${version}:`,
+              typeof message?.content === "string"
+                ? message?.content.substring(0, 20) +
+                    (message?.content.length > 20 ? "..." : "")
+                : message?.contentType?.typeId ??
+                    message?.content?.contentType?.typeId,
+            );
+          }
+          await handler(context);
+        }
       } catch (e) {
         console.log(`error`, e);
       }
@@ -131,7 +135,7 @@ export default async function run(handler: Handler, config?: Config) {
           conversation,
           null,
           { client, v2client },
-          config?.commands ?? [],
+          config?.commandsConfigPath ?? "commands.js",
           config?.commandHandlers ?? {},
           version,
         );
@@ -146,7 +150,7 @@ export default async function run(handler: Handler, config?: Config) {
   await Promise.all([
     streamMessages("v2"),
     streamMessages("v3"),
-    streamConversations("v2"),
-    streamConversations("v3"),
+    //streamConversations("v2"),
+    //streamConversations("v3"),
   ]);
 }
