@@ -6,7 +6,7 @@ Each app can have a `commands.ts` file that contains the commands that the app c
 
 _See more details in the [receive commands](/concepts/messages/command) section._
 
-## Create a command
+## Declare a command
 
 First think of which command you want the app to respond to. For example:
 
@@ -26,37 +26,40 @@ First think of which command you want the app to respond to. For example:
     - `username`: The parameter is a username.
     - `quoted`: The parameter is a quoted string.
     - `address`: The parameter is an address.
+    - `prompt`: The parameter is a prompt.
   - **values**: `[]` An array of strings that defines the accepted values for the parameter.
 
 **Example**
 
 Create the command file `commands.ts` in your project root `src` folder.
 
-```tsx [src/commands.ts]
-import type { CommandGroup } from "@xmtp/message-kit";
+```js [src/commands.ts]
+import { handler as transaction } from "./handler/transaction.js"; // [!code hl] // [!code focus]
 
 export const commands: CommandGroup[] = [
   {
     name: "Transactions",
-    description: "Multipurpose transaction command.",
+    triggers: ["@send", "/send"],  // [!code hl] // [!code focus]
+    description: "Multipurpose transaction frame built onbase.",
     commands: [
       {
-        command: "/send [amount] [token] [@username]",
+        command: "/send [amount] [token] [@username]",  // Important for the AI agent to understand the command // [!code hl] // [!code focus]
         description:
           "Send a specified amount of a cryptocurrency to a destination address.",
-        params: {
+        handler: transaction, // The handler that will execute the command // [!code hl] // [!code focus]
+        params: { // To declare the parameters  // [!code hl] // [!code focus]
           amount: {
-            default: 10, // Default value
-            type: "number", // This will parse it to a number
+            default: 10,
+            type: "number",
           },
           token: {
-            default: "usdc", // Default value
-            type: "string", // String field always need to specify accepted values
-            values: ["eth", "dai", "usdc", "degen"], // Accepted values
+            default: "usdc",
+            type: "string",
+            values: ["eth", "dai", "usdc", "degen"],
           },
           username: {
-            default: "", // No default username
-            type: "username", // This will parse it to a username array
+            default: "",
+            type: "username",
           },
         },
       },
@@ -76,12 +79,4 @@ context.intent("/send 10 usdc to @alix", conv);
 const { reply } = await textGeneration(response, prompt);
 //Process the intent or an array of intents
 context.intent(reply);
-```
-
-## Overlapping commands
-
-If the group has overlapping commands, meaning, the command is repeated in more than one mini app bot, the command will need to specifiy the handle of the mini app bot.
-
-```bash [cmd]
-/command@bot_handle
 ```
