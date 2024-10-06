@@ -103,7 +103,7 @@ export const commands: CommandGroup[] = [
   {
     name: "Loyalty",
     icon: "🔓",
-    triggers: ["/points", "@points"],
+    triggers: ["/points", "@points", "/leaderboard", "@leaderboard"],
     description: "Manage group members and metadata.",
     commands: [
       {
@@ -123,17 +123,17 @@ export const commands: CommandGroup[] = [
   {
     name: "Agent",
     icon: "🤖",
-    triggers: ["/ai", "@ai"],
+    triggers: ["/agent", "@agent"],
     description: "Manage agent commands.",
     commands: [
       {
-        command: "/ai [prompt]",
+        command: "/agent [prompt]",
         handler: undefined,
         description: "Manage agent commands.",
         params: {
           prompt: {
             default: "",
-            type: "string",
+            type: "prompt",
           },
         },
       },

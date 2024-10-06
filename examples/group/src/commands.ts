@@ -134,13 +134,13 @@ export const commands: CommandGroup[] = [
     description: "Manage agent commands.",
     commands: [
       {
-        command: "/ai [prompt]",
+        command: "/agent [prompt]",
         handler: agent,
         description: "Manage agent commands.",
         params: {
           prompt: {
             default: "",
-            type: "string",
+            type: "prompt",
           },
         },
       },

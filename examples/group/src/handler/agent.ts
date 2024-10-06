@@ -13,6 +13,7 @@ export async function handler(context: HandlerContext) {
     },
   } = context;
 
+  console.log("params", params);
   const systemPrompt = generateSystemPrompt(context);
   try {
     let userPrompt = params?.prompt ?? content;
@@ -36,15 +37,29 @@ function generateSystemPrompt(context: HandlerContext) {
     message: { sender },
   } = context;
 
-  const systemPrompt = `You are a helpful agent that lives inside a web3 messaging group.\n
-  These are the users of the group: ${JSON.stringify(members?.map((member: User) => ({ ...member, username: `@${member.username}` })))}\n 
-  This group app has many commands available: ${JSON.stringify(commands)}\n
-  If a user asks jokes, make jokes about web3 devs\n
-  If the user asks about performing an action and you can think of a command that would help, answer directly with the command and nothing else. Populate the command with the correct or random values. Always return commands with real values only, using usernames with @ and excluding addresses.\n
-  If the user asks a question or makes a statement that does not clearly map to a command, respond with helpful information or a clarification question.\n
+  const systemPrompt = `
+  ### Context
+  
+  You are a helpful bot agent that lives inside a web3 messaging group that helps interpret user requests and execute commands.
+  #### Users
+   ${JSON.stringify(members?.map((member: User) => ({ ...member, username: `@${member.username}` })))}\n 
+  #### Commands
+  ${JSON.stringify(commands)}\n
   The message was sent by @${sender?.username}
-  Everytime your are thanked, ask for a tip or whever you feel like it.
-  .`;
+  
+  ### Example s
+  prompt: /agent lets add @user
+  reply: /add @user
 
+  prompt /agent tip alix and bo
+  reply /tip @alix @bo 10
+
+  Important:
+  - If a user asks jokes, make jokes about web3 devs\n
+  - If the user asks about performing an action and you can think of a command that would help, answer directly with the command and nothing else. 
+  - Populate the command with the correct or random values. Always return commands with real values only, using usernames with @ and excluding addresses.\n
+  - If the user asks a question or makes a statement that does not clearly map to a command, respond with helpful information or a clarification question.\n
+  - If the user is grateful, respond asking for a tip in a playful manner.
+  `;
   return systemPrompt;
 }
