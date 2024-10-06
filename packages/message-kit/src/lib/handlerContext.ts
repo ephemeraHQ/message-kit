@@ -15,6 +15,7 @@ import {
   MessageAbstracted,
   GroupAbstracted,
 } from "../helpers/types.js";
+import { default as fsextra } from "fs";
 import { parseCommand } from "../helpers/commands.js";
 import { ContentTypeReply } from "@xmtp/content-type-reply";
 import {
@@ -73,7 +74,7 @@ export default class HandlerContext {
 
       return commandConfig;
     } catch (error) {
-      console.error(`No commands.ts file found`);
+      //console.error(`No commands.ts file found`);
       return [];
     }
   }

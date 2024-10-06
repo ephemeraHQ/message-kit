@@ -3,6 +3,8 @@ import { Client as V2Client } from "@xmtp/xmtp-js";
 import { ReactionCodec } from "@xmtp/content-type-reaction";
 import { Client, ClientOptions, XmtpEnv } from "@xmtp/mls-client";
 import { Wallet } from "ethers";
+import * as path from "path";
+
 import { TextCodec } from "@xmtp/content-type-text";
 import {
   AttachmentCodec,
@@ -79,6 +81,12 @@ export default async function xmtpClient(
     await client.registerIdentity();
   }
 
-  //v2
+  //commands
+  // check if file exists
+  const resolvedPath = path.resolve(process.cwd(), "src/" + "commands.ts");
+  if (!fs.existsSync(resolvedPath)) {
+    console.error(`No commands.ts file found`);
+  }
+
   return { client, v2client };
 }
