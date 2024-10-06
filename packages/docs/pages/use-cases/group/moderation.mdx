@@ -9,39 +9,40 @@ Here are the commands to add and remove users:
 ```bash [cmd]
 /add @alix
 /remove @bo
-/name "New Group Name"
 ```
 
 ::::note
 :::details[Command declaration]
 
-```json
+```tsx [src/commands.ts]
 {
-  "name": "Admin",
-  "icon": "🔐",
-  "description": "Manage group members and metadata.",
-  "commands": [
+  name: "Admin",
+  triggers: ["/admin", "@admin", "/add", "@add", "/remove", "@remove"],
+  description: "Manage group members and metadata.",
+  commands: [
     {
-      "command": "/add [username]",
-      "description": "Add a user.",
-      "params": {
-        "username": {
-          "default": "",
-          "type": "username"
-        }
-      }
+      command: "/add [username]",
+      handler: admin,
+      description: "Add a user.",
+      params: {
+        username: {
+          default: "",
+          type: "username",
+        },
+      },
     },
     {
-      "command": "/remove [username]",
-      "description": "Remove a user.",
-      "params": {
-        "username": {
-          "default": "",
-          "type": "username"
-        }
-      }
-    }
-  ]
+      command: "/remove [username]",
+      handler: admin,
+      description: "Remove a user.",
+      params: {
+        username: {
+          default: "",
+          type: "username",
+        },
+      },
+    },
+  ],
 }
 ```
 
@@ -50,7 +51,7 @@ Here are the commands to add and remove users:
 
 ## Main code
 
-```jsx [src/handler/admin.ts]
+```jsx [src/handler/moderation.ts]
 import { HandlerContext } from "@xmtp/message-kit";
 import type { User } from "@xmtp/message-kit";
 
@@ -66,11 +67,12 @@ function handleAddMembers(
           added?.inboxId?.toLowerCase() === member?.inboxId?.toLowerCase(),
       ),
     )
-    .map((member: User) => `@${member.username}`)
-    .filter((name: string) => name.trim() !== "@") // Filter out empty or undefined usernames
+    .map((member: User) => member.username)
+    .filter((username: string) => username && username.trim() !== "")
+    .map((username: string) => `@${username}`)
     .join(", "); // Join names for message formatting
 
-  if (addedNames && addedNames.trim().length > 0) {
+  if (addedNames) {
     let messages = [
       `Yo, ${addedNames}! 🫡`,
       `LFG ${addedNames}!`,
@@ -84,50 +86,39 @@ function handleRemoveMembers() {
   let messages = [`🪦`, `👻`, `hasta la vista, baby`];
   return messages[Math.floor(Math.random() * messages.length)];
 }
-const handleGroupname = (newValue: string, adminName: string) => {
-  let messages = [`LFG '${newValue}'! 🔥`, `all hail '${newValue}' 👏🏻`];
-  return messages[Math.floor(Math.random() * messages.length)];
-};
+
 export async function handler(context: HandlerContext) {
   const {
     group,
     members,
-    message: { content, typeId, sender },
+    message: { content, typeId },
   } = context;
-
-  if (typeId === "group_updated") {
-    const {
-      initiatedByInboxId,
-      metadataFieldChanges,
-      removedInboxes,
-      addedInboxes,
-    } = content;
-
-    // Fetch username from members array mapped by inboxId
-    const adminName =
-      members?.find((member) => member.inboxId === initiatedByInboxId)
-        ?.username || "Admin";
-
+  if (typeId === "group_updated" && group) {
+    const { removedInboxes, addedInboxes } = content;
     let message: string = "";
     if (addedInboxes && addedInboxes.length > 0) {
       message += handleAddMembers(addedInboxes, members!);
     } else if (removedInboxes && removedInboxes.length > 0) {
       message += handleRemoveMembers();
-    } else if (metadataFieldChanges && metadataFieldChanges[0]) {
-      const { fieldName, newValue } = metadataFieldChanges?.[0];
-      if (fieldName === "group_name") {
-        message += handleGroupname(newValue, adminName);
-      }
     }
-    await context.reply(message);
-  } else if (typeId === "text") {
+    await context.send(message);
+  } else if (typeId === "text" && group) {
     const {
-      params: { type, username, name },
+      command,
+      params: { username, name },
+      params,
     } = content;
-    switch (type) {
+
+    console.log("removedInboxes", command, params);
+
+    switch (command) {
       case "remove":
         try {
-          const removedInboxes = username.map((user: User) => user.inboxId);
+          if (!Array.isArray(username)) {
+            context.reply("Wrong username");
+            return;
+          }
+          const removedInboxes = username?.map((user: User) => user.inboxId);
           if (!removedInboxes || removedInboxes.length === 0) {
             context.reply("Wrong username");
             return;
@@ -143,7 +134,11 @@ export async function handler(context: HandlerContext) {
         break;
       case "add":
         try {
-          const addedInboxes = username.map((user: User) =>
+          if (!Array.isArray(username)) {
+            context.reply("Wrong username");
+            return;
+          }
+          const addedInboxes = username?.map((user: User) =>
             user?.inboxId?.toLowerCase(),
           );
           if (!addedInboxes || addedInboxes.length === 0) {
@@ -152,7 +147,8 @@ export async function handler(context: HandlerContext) {
           }
           await group.sync();
           await group.addMembersByInboxId(addedInboxes);
-         const messages = handleAddMembers(
+          await group.sync();
+          const messages = handleAddMembers(
             [{ inboxId: addedInboxes[0] }],
             members!,
           );
