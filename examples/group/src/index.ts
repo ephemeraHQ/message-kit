@@ -72,9 +72,22 @@ async function handleTextMessage(context: HandlerContext) {
   const {
     content: { content: text },
   } = context.message;
-  if (text.includes("@bot")) {
+  if (text.includes("/help")) {
+    await helpHandler(context);
+  } else if (text.includes("@bot")) {
     await agent(context);
   } else if (text.startsWith("/")) {
     await context.intent(text);
   }
+}
+
+async function helpHandler(context: HandlerContext) {
+  const intro =
+    "Available experiences:\n" +
+    commands
+      .flatMap((app) => app.commands)
+      .map((command) => `${command.command} - ${command.description}`)
+      .join("\n") +
+    "\nUse these commands to interact with specific apps.";
+  context.send(intro);
 }

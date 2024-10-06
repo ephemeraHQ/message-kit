@@ -194,4 +194,17 @@ export const commands: CommandGroup[] = [
       },
     ],
   },
+  {
+    name: "Help",
+    icon: "🆘",
+    description: "Get help    with the bot.",
+    commands: [
+      {
+        command: "/help",
+        root: "/help",
+        description: "Get help with the bot.",
+        params: {},
+      },
+    ],
+  },
 ];

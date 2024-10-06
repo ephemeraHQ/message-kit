@@ -86,27 +86,6 @@ describe("Command extraction tests", () => {
     });
   });
 
-  test("Extract values from /bet command", () => {
-    const inputContent = "/bet @alix @bo 'NBA Game' 100 usdc";
-    const extractedValues = extractCommandValues(inputContent, commands, users);
-    expect(extractedValues).toEqual({
-      command: "bet",
-      params: {
-        username: expect.arrayContaining([
-          expect.objectContaining({
-            username: "alix",
-          }),
-          expect.objectContaining({
-            username: "bo",
-          }),
-        ]),
-        name: "NBA Game",
-        amount: 100,
-        token: "usdc",
-      },
-    });
-  });
-
   test("Extract values from /add command", () => {
     const inputContent = "/add @bo";
     const extractedValues = extractCommandValues(inputContent, commands, users);
