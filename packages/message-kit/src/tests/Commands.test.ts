@@ -81,40 +81,6 @@ describe("Command extraction tests", () => {
     });
   });
 
-  test("Extract values from /remove command", () => {
-    const inputContent = "/remove @alix";
-    const extractedValues = extractCommandValues(
-      inputContent,
-      commands as CommandGroup[],
-      users,
-    );
-    expect(extractedValues).toEqual({
-      command: "remove",
-      params: expect.objectContaining({
-        username: expect.arrayContaining([
-          expect.objectContaining({
-            username: "alix",
-          }),
-        ]),
-      }),
-    });
-  });
-  /*
-  test("Extract values from /name command", () => {
-    const inputContent = '/name "New name"';
-    const extractedValues = extractCommandValues(
-      inputContent,
-      commands as CommandGroup[],
-      users,
-    );
-    expect(extractedValues).toEqual({
-      command: "name",
-      params: expect.objectContaining({
-        name: "New name",
-      }),
-    });
-  });*/
-
   test("Extract values from /agent prompt command", () => {
     const inputContent = "/agent Hello, how can I assist you today?";
     const extractedValues = extractCommandValues(

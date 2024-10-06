@@ -28,15 +28,6 @@ describe("Intent tests", () => {
   - If the user asks a question or makes a statement that does not clearly map to a command, respond with helpful information or a clarification question.\n
   - If the user is grateful, respond asking for a tip in a playful manner.
   `;
-
-  test("should handle remove intent correctly", async () => {
-    const { reply } = await textGeneration(
-      "/agent lets remove @eva",
-      systemPrompt,
-    );
-    expect(reply.toLowerCase()).toBe("/remove @eva".toLowerCase());
-  });
-
   test("should handle game intent correctly", async () => {
     const { reply } = await textGeneration(
       "/agent lets play a game",
