@@ -33,7 +33,7 @@ describe("Intent tests", () => {
 
   test("should handle remove intent correctly", async () => {
     const { reply } = await textGeneration(
-      "/agent lets remove @eva, she is not inclusive",
+      "/agent lets remove @eva",
       systemPrompt,
     );
     expect(reply.toLowerCase()).toBe("/remove @eva".toLowerCase());

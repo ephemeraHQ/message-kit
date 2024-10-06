@@ -83,7 +83,7 @@ export const commands: CommandGroup[] = [
   {
     name: "Games",
     icon: "🕹️",
-    triggers: ["/game", "@game"],
+    triggers: ["/game", "@game", "🔎", "🔍"],
     description: "Provides various gaming experiences.",
     commands: [
       {
@@ -168,6 +168,14 @@ export const commands: CommandGroup[] = [
         },
       },
     ],
+  },
+  {
+    name: "Split Payments",
+    icon: "🧰",
+    image: true,
+    triggers: [],
+    description: "Split payments between users.",
+    commands: [],
   },
   {
     name: "Help",

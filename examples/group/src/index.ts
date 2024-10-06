@@ -10,7 +10,6 @@ run(async (context: HandlerContext) => {
     message: { typeId },
   } = context;
   try {
-    console.log("typeId", typeId);
     switch (typeId) {
       case "reaction":
         handleReaction(context);

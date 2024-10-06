@@ -61,15 +61,18 @@ export default async function run(handler: Handler, config?: Config) {
         : version == "v2"
           ? true
           : context.commands?.some((commandGroup) =>
-              commandGroup.triggers.some((trigger) =>
-                typeof message?.content === "string"
-                  ? message?.content
-                      ?.toLowerCase()
-                      .startsWith(trigger?.toLowerCase())
-                  : message?.content?.content
-                      ?.toLowerCase()
-                      .startsWith(trigger?.toLowerCase()),
-              ),
+              message?.contentType?.typeId == "remoteStaticAttachment" &&
+              commandGroup.image
+                ? true
+                : commandGroup.triggers.some((trigger) =>
+                    typeof message?.content === "string"
+                      ? message?.content
+                          ?.toLowerCase()
+                          .startsWith(trigger?.toLowerCase())
+                      : message?.content?.content
+                          ?.toLowerCase()
+                          .startsWith(trigger?.toLowerCase()),
+                  ),
             );
     if (commandTriggered) {
       console.log(

@@ -249,7 +249,6 @@ export default class HandlerContext {
       if (this.isConversationV2(conversation)) {
         await conversation.send(reply, { contentType: ContentTypeReply });
       } else {
-        console.log("reply", reply);
         await conversation.send(reply, ContentTypeReply);
       }
     }

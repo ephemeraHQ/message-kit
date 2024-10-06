@@ -177,6 +177,14 @@ export const commands: CommandGroup[] = [
     ],
   },
   {
+    name: "Split Payments",
+    icon: "🧰",
+    image: true,
+    triggers: [],
+    description: "Split payments between users.",
+    commands: [],
+  },
+  {
     name: "Help",
     icon: "🆘",
     triggers: ["/help"],
