@@ -2,7 +2,6 @@ import { run, HandlerContext } from "@xmtp/message-kit";
 import { handler as tipping } from "./handler/tipping.js";
 import { handler as agent } from "./handler/agent.js";
 import { handler as splitpayment } from "./handler/splitpayment.js";
-import { handler as admin } from "./handler/moderation.js";
 
 // Main function to run the app
 run(async (context: HandlerContext) => {
@@ -16,9 +15,6 @@ run(async (context: HandlerContext) => {
         break;
       case "reply":
         handleReply(context);
-        break;
-      case "group_updated":
-        admin(context);
         break;
       case "remoteStaticAttachment":
         handleAttachment(context);
