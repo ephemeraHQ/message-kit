@@ -2,7 +2,6 @@ import type { CommandGroup } from "@xmtp/message-kit";
 import { handler as tipping } from "./handler/tipping.js";
 import { handler as agent } from "./handler/agent.js";
 import { handler as transaction } from "./handler/transaction.js";
-import { handler as help } from "./handler/payment.js";
 import { handler as games } from "./handler/game.js";
 import { handler as admin } from "./handler/admin.js";
 import { handler as loyalty } from "./handler/loyalty.js";
@@ -193,7 +192,7 @@ export const commands: CommandGroup[] = [
     commands: [
       {
         command: "/help",
-        handler: help,
+        handler: undefined,
         description: "Get help with the bot.",
         params: {},
       },
