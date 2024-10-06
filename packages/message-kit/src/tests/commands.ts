@@ -176,17 +176,6 @@ export const commands: CommandGroup[] = [
           },
         },
       },
-      {
-        command: "/name [name]",
-        handler: undefined,
-        description: "Set the name of the group.",
-        params: {
-          name: {
-            default: "",
-            type: "quoted",
-          },
-        },
-      },
     ],
   },
   {

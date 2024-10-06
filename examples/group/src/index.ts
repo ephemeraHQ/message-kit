@@ -76,9 +76,8 @@ async function handleTextMessage(context: HandlerContext) {
     await helpHandler(context);
   } else if (text.startsWith("@agent")) {
     await agent(context);
-  } else if (text.startsWith("/")) {
-    await context.intent(text);
   }
+  await context.intent(text);
 }
 
 async function helpHandler(context: HandlerContext) {

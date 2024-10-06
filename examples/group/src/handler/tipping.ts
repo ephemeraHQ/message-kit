@@ -10,7 +10,6 @@ export async function handler(context: HandlerContext) {
   const replyReceiver = members?.find(
     (member) => member.inboxId === msg?.senderInboxId,
   );
-
   let amount: number = 0,
     receivers: User[] = [];
   // Handle different types of messages

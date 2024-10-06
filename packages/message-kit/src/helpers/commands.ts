@@ -79,7 +79,6 @@ export function extractCommandValues(
         type = "string",
       } = expectedParams[param];
       let valueFound = false;
-      console.log(type);
       // Handle string type with no possible values
       if (type === "string" && possibleValues.length === 0) {
         const stringIndex = parts.findIndex(

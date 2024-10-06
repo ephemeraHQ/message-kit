@@ -90,7 +90,7 @@ export const commands: CommandGroup[] = [
   {
     name: "Games",
     icon: "🕹️",
-    triggers: ["/game", "@game"],
+    triggers: ["/game", "@game", "🔎", "🔍"],
     description: "Provides various gaming experiences.",
     commands: [
       {

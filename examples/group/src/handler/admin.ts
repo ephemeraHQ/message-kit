@@ -39,9 +39,8 @@ export async function handler(context: HandlerContext) {
   const {
     group,
     members,
-    message: { content, typeId, sender },
+    message: { content, typeId },
   } = context;
-  console.log(typeId === "text", group);
 
   if (typeId === "group_updated") {
     const {
@@ -74,18 +73,7 @@ export async function handler(context: HandlerContext) {
       params: { username, name },
     } = content;
 
-    console.log(command);
     switch (command) {
-      case "name":
-        try {
-          await group.updateName(name);
-          const messages = handleGroupname(name, sender.username);
-          context.reply(messages);
-        } catch (error) {
-          context.reply("No admin privileges");
-          console.error(error);
-        }
-        break;
       case "remove":
         try {
           if (!Array.isArray(username)) {

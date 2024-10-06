@@ -75,10 +75,6 @@ export default defineConfig({
             { text: "Reply", link: "/concepts/messages/reply" },
             { text: "Command", link: "/concepts/messages/command" },
             { text: "Attachment", link: "/concepts/messages/attachment" },
-            {
-              text: "Group update",
-              link: "/concepts/messages/group-update",
-            },
           ],
         },
         {

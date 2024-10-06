@@ -63,14 +63,11 @@ export default async function xmtpClient(
     apiClientFactory: GrpcApiClient.fromOptions as any,
   });
 
-  if (process.env.MSG_LOG) {
-    // Log the version of the package
-    console.log("XMTP Client: ", {
-      accountAddress: client.accountAddress,
-      inboxId: client.inboxId,
-      installationId: client.installationId,
-    });
-  }
+  console.log("Listening on client: ", {
+    accountAddress: client.accountAddress,
+    inboxId: client.inboxId,
+    installationId: client.installationId,
+  });
 
   // register identity
   if (!client.isRegistered && client.signatureText) {
@@ -82,7 +79,6 @@ export default async function xmtpClient(
     await client.registerIdentity();
   }
 
-  console.log(`Listening on ${client.accountAddress}`);
   //v2
   return { client, v2client };
 }

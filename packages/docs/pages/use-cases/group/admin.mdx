@@ -40,16 +40,6 @@ Here are the commands to add and remove users:
           "type": "username"
         }
       }
-    },
-    {
-      "command": "/name [name]",
-      "description": "Set the name of the group.",
-      "params": {
-        "name": {
-          "default": "",
-          "type": "quoted"
-        }
-      }
     }
   ]
 }
@@ -135,16 +125,6 @@ export async function handler(context: HandlerContext) {
       params: { type, username, name },
     } = content;
     switch (type) {
-      case "name":
-        try {
-          await group.updateName(name);
-          const messages = handleGroupname(name, sender.username);
-          context.reply(messages);
-        } catch (error) {
-          context.reply("No admin privileges");
-          console.error(error);
-        }
-        break;
       case "remove":
         try {
           const removedInboxes = username.map((user: User) => user.inboxId);
@@ -172,8 +152,7 @@ export async function handler(context: HandlerContext) {
           }
           await group.sync();
           await group.addMembersByInboxId(addedInboxes);
-          await group.sync();
-          const messages = handleAddMembers(
+         const messages = handleAddMembers(
             [{ inboxId: addedInboxes[0] }],
             members!,
           );

@@ -9,7 +9,12 @@ import path from "path";
 import type { Reaction } from "@xmtp/content-type-reaction";
 import { populateUsernames } from "../helpers/usernames.js";
 import { ContentTypeText } from "@xmtp/content-type-text";
-import { CommandGroup, User, MessageAbstracted } from "../helpers/types.js";
+import {
+  CommandGroup,
+  User,
+  MessageAbstracted,
+  GroupAbstracted,
+} from "../helpers/types.js";
 import { parseCommand } from "../helpers/commands.js";
 import { ContentTypeReply } from "@xmtp/content-type-reply";
 import {
@@ -22,7 +27,7 @@ export default class HandlerContext {
   private refConv: Conversation | ConversationV2 | null = null;
 
   message!: MessageAbstracted;
-  group!: Conversation;
+  group!: GroupAbstracted;
   conversation!: ConversationV2;
   client!: Client;
   version!: "v2" | "v3";
@@ -40,7 +45,15 @@ export default class HandlerContext {
     this.v2client = v2client;
     this.isGroup = version === "v3";
     if (conversation instanceof Conversation) {
-      this.group = conversation;
+      this.group = {
+        sync: conversation.sync.bind(conversation),
+        addMembers: conversation.addMembers.bind(conversation),
+        addMembersByInboxId:
+          conversation.addMembersByInboxId.bind(conversation),
+        removeMembers: conversation.removeMembers.bind(conversation),
+        removeMembersByInboxId:
+          conversation.removeMembersByInboxId.bind(conversation),
+      };
       this.version = "v3";
     } else {
       this.conversation = conversation;
@@ -85,15 +98,15 @@ export default class HandlerContext {
           : message.senderInboxId;
       const sentAt = "sentAt" in message ? message.sentAt : message.sent;
 
-      //commands
-      context.commands =
-        await HandlerContext.loadCommandConfig(commandsConfigPath);
-
       context.members = await populateUsernames(
         "members" in conversation ? conversation.members : [],
         client.accountAddress,
         senderAddress,
       );
+
+      //commands
+      context.commands =
+        await HandlerContext.loadCommandConfig(commandsConfigPath);
 
       context.getMessageById =
         client.conversations?.getMessageById?.bind(client.conversations) ||
@@ -302,7 +315,10 @@ export default class HandlerContext {
     const { commands, members } = this;
     if (conversation) this.refConv = conversation;
     try {
-      if (text.startsWith("/")) {
+      const handler = this.commands?.find((command) =>
+        command.triggers?.includes(text.split(" ")[0]),
+      );
+      if (handler) {
         let content = parseCommand(text, commands ?? [], members ?? []);
         // Mock context for command execution
         const mockContext: HandlerContext = {
@@ -326,10 +342,7 @@ export default class HandlerContext {
             text.split(" ")[0] as keyof typeof this.commandHandlers
           ];
         */
-        const handler = this.commands?.find((command) =>
-          command.triggers?.includes(text.split(" ")[0]),
-        );
-        if (handler) await handler.commands[0].handler?.(mockContext);
+        await handler.commands[0].handler?.(mockContext);
         this.refConv = null;
       } else await this.reply(text);
     } catch (e) {

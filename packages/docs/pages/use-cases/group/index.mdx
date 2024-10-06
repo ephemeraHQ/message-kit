@@ -7,10 +7,7 @@ This is a reference app that will allow you to understand the potential and all 
 - [Games](/use-cases/group/games): Handle frame games like `/game slot`, `/game wordle`
 - [Transactions](/use-cases/group/transactions): Handle commands like `/send`, `/swap`, `/show`.
 - [Admin](/use-cases/group/admin): Handle admin commands like `/add`, `/remove`, `/name`
-
-:::warning
-Join Converse Beta to experience groups. [Learn more](https://paragraph.xyz/@ephemera/converse)
-:::
+- [Loyalty](/use-cases/group/loyalty): Handle loyalty commands like `/points`, `/leaderboard`.
 
 ## Structure
 
@@ -26,6 +23,7 @@ group/
 │         └── tipping.ts        # Handles tipping. // [!code hl] // [!code focus]
 │         └── game.ts           # Handles game frames. // [!code hl] // [!code focus]
 │         └── admin.ts          # Handles moderation. // [!code hl] // [!code focus]
+│         └── loyalty.ts        # Handles loyalty. // [!code hl] // [!code focus]
 │         └── payment.ts        # Handles split payments. // [!code hl] // [!code focus]
 │         └── transactions.ts   # Handles the transaction frame. // [!code hl] // [!code focus]
 │   └── lib/
@@ -193,16 +191,6 @@ export const commands: CommandGroup[] = [
           },
         },
       },
-      {
-        command: "/name [name]",
-        description: "Set the name of the group.",
-        params: {
-          name: {
-            default: "",
-            type: "quoted",
-          },
-        },
-      },
     ],
   },
 ];
@@ -336,7 +324,6 @@ Set up these variables in your app
 KEY= # 0x... the private key of the bot wallet (with the 0x prefix)
 OPEN_AI_API_KEY= # your openai api key
 STACK_API_KEY= # stack api key
-MSG_LOG= # true to log all messages
 ```
 
 ::::

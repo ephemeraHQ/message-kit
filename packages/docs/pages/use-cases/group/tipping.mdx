@@ -79,7 +79,6 @@ export async function handler(context: HandlerContext) {
       params: { amount: extractedAmount, username },
       content: text,
     } = content;
-    console.log(params);
     if (text.startsWith("/tip")) {
       amount = extractedAmount || 10; // Default amount if not specified
       receivers = username; // Extract receiver from parameters

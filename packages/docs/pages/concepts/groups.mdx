@@ -1,89 +1,14 @@
 # Groups
 
 :::warning
-Join Converse Beta to experience groups. [Learn more](https://paragraph.xyz/@ephemera/converse)
+Groups are currently in beta and are subject to change.
 :::
-
-> For more details, see XMTP's [Groups documentation](https://docs.xmtp.org/groups/build-group-chat).
-
-## Create a new group
-
-Using the client you can create a new group with an array of addresses.
-
-```tsx
-// get the client
-const { client } = context;
-// create a new group
-const group = await client.conversations.newConversation(addresses);
-```
-
-### Group links
-
-You can get the group link by using the converse url and group id
-
-```tsx
-https://converse.xyz/group-invite/${group.id}
-```
-
-## Sync a group
-
-Each time you perform an action on a group you must sync it to get the latest state.
-
-```tsx
-// get the group
-const { group } = context;
-// sync the group
-await group.sync();
-```
-
-## Group metadata
-
-> You need admin privileges to update the metadata.
-
-Groups have the following metadata:
-
-### Group name
-
-You can update the name of the group chat.
-
-```tsx
-// get the group
-const { group } = context;
-// get the name
-const groupName = group.name;
-// update the name
-await group.updateName(name);
-```
-
-### Group description
-
-You can update the description of the group chat.
-
-```tsx
-// get the group
-const { group } = context;
-// get the description
-const groupDescription = group.description;
-// update the description
-await group.updateDescription(description);
-```
-
-### Group image
-
-You can update the image of the group chat.
-
-```tsx
-// get the group
-const { group } = context;
-// get the image
-const groupImage = group.imageUrl;
-// update the image
-await group.updateImageUrl(imageUrl);
-```
 
 ## Member management
 
-> You need admin privileges to manage members.
+:::info
+You need admin privileges to manage members.
+:::
 
 You can add or remove members from a group.
 
@@ -92,10 +17,26 @@ You can add or remove members from a group.
 ```tsx
 // get the group
 const { group } = context;
+await group.sync();
 //By address
 await group.removeMembers(userAddresses);
 //By inboxId
 await group.removeMembersByInboxId(removedInboxes);
+```
+
+### Removed member
+
+When a member is removed from a group it will emit a `group_updated` event with a `removedInboxes` array containing the addresses of the users removed.
+
+```tsx
+if (typeId === "group_updated") {
+  const { removedInboxes } = context.message.content;
+  if (removedInboxes?.length > 0) {
+    for (const inbox of removedInboxes) {
+      console.log(`User removed: ${inbox.inboxId}`);
+    }
+  }
+}
 ```
 
 ### Add members to a group
@@ -103,21 +44,27 @@ await group.removeMembersByInboxId(removedInboxes);
 ```tsx
 // get the group
 const { group } = context;
+await group.sync();
 //By address
 await group.addMembers(userAddresses);
 //By inboxId
 await group.addMembersByInboxId(addedInboxes);
 ```
 
-## Messages
+### Added member
 
-To get the message history in a group you can use the `messages` property.
+When a member is added to a group it will emit a `group_updated` event with a `addedInboxes` array containing the addresses of the users added.
 
 ```tsx
-// get the group
-const { group } = context;
-// sync group first
-await group.sync();
-// get messages
-const messages = group.messages();
+if (typeId === "group_updated") {
+  const { addedInboxes } = context.message.content;
+
+  if (addedInboxes?.length > 0) {
+    for (const inbox of addedInboxes) {
+      console.log(`User added: ${inbox.inboxId}`);
+    }
+  }
+}
 ```
+
+> For more details, see XMTP's [Groups documentation](https://docs.xmtp.org/groups/build-group-chat).

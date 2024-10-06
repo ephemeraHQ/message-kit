@@ -42,21 +42,24 @@ export default async function run(handler: Handler, config?: Config) {
         // Check if the message content triggers a command
         const commandTriggered = context.commands?.some((commandGroup) =>
           commandGroup.triggers.some((trigger) =>
-            message?.content?.toLowerCase().startsWith(trigger?.toLowerCase()),
+            typeof message?.content === "string"
+              ? message?.content
+                  ?.toLowerCase()
+                  .startsWith(trigger?.toLowerCase())
+              : message?.content?.content
+                  ?.toLowerCase()
+                  .startsWith(trigger?.toLowerCase()),
           ),
         );
-
         if (commandTriggered) {
-          if (process?.env?.MSG_LOG === "true") {
-            console.log(
-              `msg_${version}:`,
-              typeof message?.content === "string"
-                ? message?.content.substring(0, 20) +
-                    (message?.content.length > 20 ? "..." : "")
-                : message?.contentType?.typeId ??
-                    message?.content?.contentType?.typeId,
-            );
-          }
+          console.log(
+            `msg_${version}:`,
+            typeof message?.content === "string"
+              ? message?.content.substring(0, 20) +
+                  (message?.content.length > 20 ? "..." : "")
+              : message?.contentType?.typeId ??
+                  message?.content?.contentType?.typeId,
+          );
           await handler(context);
         }
       } catch (e) {
@@ -124,9 +127,6 @@ export default async function run(handler: Handler, config?: Config) {
     conversation: any,
   ) => {
     if (conversation) {
-      if (process?.env?.MSG_LOG === "true")
-        console.log(`conv_${version}`, conversation?.id ?? conversation.topic);
-
       try {
         const context = await HandlerContext.create(
           conversation,

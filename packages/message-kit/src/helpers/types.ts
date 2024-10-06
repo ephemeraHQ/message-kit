@@ -16,6 +16,13 @@ export type MessageAbstracted = {
   };
   typeId: string;
 };
+export type GroupAbstracted = {
+  sync: () => Promise<void>;
+  addMembers: (addresses: string[]) => Promise<void>;
+  addMembersByInboxId: (inboxIds: string[]) => Promise<void>;
+  removeMembers: (addresses: string[]) => Promise<void>;
+  removeMembersByInboxId: (inboxIds: string[]) => Promise<void>;
+};
 
 export type CommandHandler = (context: HandlerContext) => Promise<void>;
 
