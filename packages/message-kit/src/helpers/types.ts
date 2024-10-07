@@ -17,6 +17,7 @@ export type MessageAbstracted = {
   typeId: string;
 };
 export type GroupAbstracted = {
+  id: string;
   sync: () => Promise<void>;
   addMembers: (addresses: string[]) => Promise<void>;
   addMembersByInboxId: (inboxIds: string[]) => Promise<void>;

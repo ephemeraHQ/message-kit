@@ -47,6 +47,7 @@ export default class HandlerContext {
     this.isGroup = version === "v3";
     if (conversation instanceof Conversation) {
       this.group = {
+        id: conversation.id,
         sync: conversation.sync.bind(conversation),
         addMembers: conversation.addMembers.bind(conversation),
         send: conversation.send.bind(conversation),
@@ -316,7 +317,8 @@ export default class HandlerContext {
   }
 
   async intent(text: string, conversation?: Conversation) {
-    const { commands, members, version } = this;
+    const { commands, members } = this;
+
     if (conversation) this.refConv = conversation;
     try {
       const handler = this.commands?.find((command) =>
@@ -341,7 +343,8 @@ export default class HandlerContext {
           getReplyChain: this.getReplyChain.bind(this),
           isGroup: this.group instanceof Conversation,
         };
-        /*OLDconst handler =
+        /*OLD
+        const handler =
           this.commandHandlers?.[
             text.split(" ")[0] as keyof typeof this.commandHandlers
           ];
