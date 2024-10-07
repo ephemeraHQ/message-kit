@@ -73,11 +73,17 @@ export default async function xmtpClient(
 
   // register identity
   if (!client.isRegistered && client.signatureText) {
-    const signature = await wallet.signMessage({
-      message: client.signatureText,
-    });
-    const signatureBytes = toBytes(signature);
-    client.addEcdsaSignature(signatureBytes);
+    const signatureText = await client.signatureText();
+    if (signatureText) {
+      const signature = await wallet.signMessage({
+        message: signatureText,
+      });
+      const signatureBytes = toBytes(signature);
+      if (signatureBytes) {
+        client.addSignature(signatureBytes);
+      }
+    }
+
     await client.registerIdentity();
   }
 

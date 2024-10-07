@@ -100,7 +100,7 @@ export default class HandlerContext {
       const sentAt = "sentAt" in message ? message.sentAt : message.sent;
 
       context.members = await populateUsernames(
-        "members" in conversation ? conversation.members : [],
+        "members" in conversation ? await conversation.members() : [],
         client.accountAddress,
         senderAddress,
       );
