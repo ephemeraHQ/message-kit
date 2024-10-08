@@ -5,6 +5,33 @@ export default defineConfig({
     // console.log(`Generating head content... ${new Date().toISOString()}`)
     return (
       <>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width" />
+        <meta property="og:title" content="FC Dev Call" />
+        <meta
+          property="og:image"
+          content="https://messagekit.ephemerahq.com/hero.jpg"
+        />
+        <meta property="fc:frame" content="vNext" />
+        <meta
+          property="fc:frame:image"
+          content="https://messagekit.ephemerahq.com/hero.jpg"
+        />
+
+        <meta property="fc:frame:button:1" content="Docs" />
+        <meta property="fc:frame:button:1:action" content="link" />
+        <meta
+          property="fc:frame:button:1:target"
+          content="https://messagekit.ephemerahq.com/"
+        />
+
+        <meta property="fc:frame:button:2" content="Examples" />
+        <meta property="fc:frame:button:2:action" content="link" />
+        <meta
+          property="fc:frame:button:2:target"
+          content="https://messagekit.ephemerahq.com/"
+        />
+
         <script
           src="https://plausible.io/js/script.outbound-links.js"
           data-domain="messagekit.ephemerahq.com"
