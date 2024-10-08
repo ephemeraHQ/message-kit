@@ -81,6 +81,10 @@ export default defineConfig({
           text: "Commands",
           link: "/concepts/commands",
         },
+        {
+          text: "Groups",
+          link: "/concepts/groups",
+        },
       ],
     },
 

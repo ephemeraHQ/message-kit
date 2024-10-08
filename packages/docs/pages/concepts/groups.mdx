@@ -1,0 +1,43 @@
+# Groups
+
+:::warning
+
+- Group features are currently in beta and are subject to change. See XMTP's [Groups documentation](https://docs.xmtp.org/groups/build-group-chat).
+
+- We don't encourage using the XMTP SDK to manage groups in non-inbox applications.
+
+:::
+
+## Add members to a group
+
+:::info
+
+- You need admin privileges to manage members.
+
+:::
+
+```tsx
+// get the group
+const { group } = context;
+await group.sync();
+//By address
+await group.addMembers(userAddresses);
+//By inboxId
+await group.addMembersByInboxId(addedInboxes);
+```
+
+## Added member
+
+When a member is added to a group it will emit a `group_updated` event with a `addedInboxes` array containing the addresses of the users added.
+
+```tsx
+if (typeId === "group_updated") {
+  const { addedInboxes } = context.message.content;
+
+  if (addedInboxes?.length > 0) {
+    for (const inbox of addedInboxes) {
+      console.log(`User added: ${inbox.inboxId}`);
+    }
+  }
+}
+```
