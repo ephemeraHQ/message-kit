@@ -7,12 +7,18 @@ export default defineConfig({
       <>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width" />
-        <meta property="og:title" content="FC Dev Call" />
+        <meta property="og:title" content="MessageKit" />
         <meta
           property="og:image"
           content="https://messagekit.ephemerahq.com/hero.jpg"
         />
         <meta property="fc:frame" content="vNext" />
+        <meta property="of:version" content="vNext" />
+        <meta property="of:accepts:xmtp" content="vNext" />
+        <meta
+          property="of:image"
+          content="https://messagekit.ephemerahq.com/hero.jpg"
+        />
         <meta
           property="fc:frame:image"
           content="https://messagekit.ephemerahq.com/hero.jpg"
