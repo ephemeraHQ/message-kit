@@ -68,10 +68,10 @@ export default async function run(handler: Handler, config?: Config) {
                     typeof message?.content === "string"
                       ? message?.content
                           ?.toLowerCase()
-                          .startsWith(trigger?.toLowerCase())
+                          .includes(trigger?.toLowerCase())
                       : message?.content?.content
                           ?.toLowerCase()
-                          .startsWith(trigger?.toLowerCase()),
+                          .includes(trigger?.toLowerCase()),
                   ),
             );
     if (commandTriggered) {
