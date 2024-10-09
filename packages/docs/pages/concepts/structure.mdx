@@ -18,7 +18,7 @@ app-project/              # Optional middleware files
 
 The `index.ts` file is the entry point for your app. It should contain something like the following:
 
-```jsx [src/index.ts]
+```tsx [src/index.ts]
 import { run, HandlerContext } from "@xmtp/message-kit";
 
 run(async (context: HandlerContext) => {
@@ -38,11 +38,12 @@ Each app can have a `commands.ts` file that contains the available commands for 
 export const commands = [
   {
     name: "General Commands",
-    icon: "🔧",
+    triggers: ["/help"],
     description: "Command for managing default behaviours.",
     commands: [
       {
         command: "/help",
+        handler: undefined,
         description: "Get help with the app.",
       },
     ],
@@ -58,6 +59,4 @@ Each app should have an `.env` file that contains the following:
 
 ```bash [.env]
 KEY= # 0x... the private key of the bot wallet, like any normal wallet private key. (with the 0x prefix)
-MSG_LOG=false # logs the message on the console (optional)
-XMTP_ENV=production # dev or production (optional)
 ```

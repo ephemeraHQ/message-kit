@@ -6,7 +6,7 @@ Create a cron that sends daily messages to your **redis database** subscribers. 
 
 Start the cron with the DB of subscribers
 
-```jsx [src/index.ts]
+```tsx [src/index.ts]
 const redisClient = await getRedisClient();
 startCron(redisClient); // [!code hl] // [!code focus]
 
@@ -25,7 +25,7 @@ yarn add node-cron
 
 Run a node cron daily to send message to users
 
-```jsx [src/lib/cron.ts]
+```tsx [src/lib/cron.ts]
 import cron from "node-cron";
 import { xmtpClient } from "@xmtp/message-kit";
 import { RedisClientType } from "@redis/client";

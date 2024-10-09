@@ -1,5 +1,5 @@
 import { HandlerContext, User } from "@xmtp/message-kit";
-import { getStackClient, StackClient } from "../lib/stack.js";
+import { getStackClient } from "../lib/stack.js";
 
 export async function handler(context: HandlerContext, fake?: boolean) {
   const stack = getStackClient();
@@ -7,18 +7,20 @@ export async function handler(context: HandlerContext, fake?: boolean) {
     members,
     group,
     getMessageById,
-    message: { id, content, sender, typeId },
+    message: {
+      content,
+      content: { command },
+      sender,
+      typeId,
+    },
   } = context;
-  if (!group) return;
-  if (fake && stack) {
-    //for fake demo
-    fakeReaction(sender.username, sender.address, id, stack, context);
-    return;
-  } else if (typeId === "text") {
+  console.log(command);
+  if (typeId === "text" && group) {
     const { command } = content;
     if (command === "points") {
       const points = await stack?.getPoints(sender.address);
       context.reply(`You have ${points} points`);
+      return;
     } else if (command === "leaderboard") {
       const leaderboard = await stack?.getLeaderboard();
       const formattedLeaderboard = leaderboard?.leaderboard
@@ -33,8 +35,9 @@ export async function handler(context: HandlerContext, fake?: boolean) {
       context.reply(
         `Leaderboard:\n\n${formattedLeaderboard}\n\nCheck out the public leaderboard\nhttps://www.stack.so/leaderboard/degen-group`,
       );
+      return;
     }
-  } else if (typeId === "group_updated") {
+  } else if (typeId === "group_updated" && group) {
     const { initiatedByInboxId, addedInboxes } = content;
     const adminAddress = members?.find(
       (member: User) => member.inboxId === initiatedByInboxId,
@@ -47,7 +50,7 @@ export async function handler(context: HandlerContext, fake?: boolean) {
         uniqueId: adminAddress?.username ?? "",
       });
     }
-  } else if (typeId === "reaction") {
+  } else if (typeId === "reaction" && group) {
     const { content: emoji, action } = content;
     const msg = await getMessageById(content.reference);
     if (action === "added") {
@@ -64,30 +67,6 @@ export async function handler(context: HandlerContext, fake?: boolean) {
         points,
         account: adminAddress?.address ?? "",
         uniqueId: adminAddress?.username ?? "",
-      });
-    }
-  }
-}
-async function fakeReaction(
-  username: string,
-  address: string,
-  id: string,
-  stack: StackClient,
-  context: HandlerContext,
-) {
-  if (username === "me") {
-    if (Math.random() < 0.1) {
-      //Fake reactions
-      const emojis = ["😀", "👍", "🎩", "🐐", "🔥"];
-      const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
-      context.react(randomEmoji);
-      let points = 1;
-      if (randomEmoji === "🎩") {
-        points = 10;
-      }
-      await stack?.track("reaction", {
-        points,
-        account: address,
       });
     }
   }

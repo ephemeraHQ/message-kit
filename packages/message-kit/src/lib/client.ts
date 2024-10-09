@@ -3,6 +3,8 @@ import { Client as V2Client } from "@xmtp/xmtp-js";
 import { ReactionCodec } from "@xmtp/content-type-reaction";
 import { Client, ClientOptions, XmtpEnv } from "@xmtp/mls-client";
 import { Wallet } from "ethers";
+import * as path from "path";
+
 import { TextCodec } from "@xmtp/content-type-text";
 import {
   AttachmentCodec,
@@ -63,26 +65,34 @@ export default async function xmtpClient(
     apiClientFactory: GrpcApiClient.fromOptions as any,
   });
 
-  if (process.env.MSG_LOG) {
-    // Log the version of the package
-    console.log("XMTP Client: ", {
-      accountAddress: client.accountAddress,
-      inboxId: client.inboxId,
-      installationId: client.installationId,
-    });
-  }
+  console.log("Listening on client: ", {
+    accountAddress: client.accountAddress,
+    inboxId: client.inboxId,
+    installationId: client.installationId,
+  });
 
   // register identity
   if (!client.isRegistered && client.signatureText) {
-    const signature = await wallet.signMessage({
-      message: client.signatureText,
-    });
-    const signatureBytes = toBytes(signature);
-    client.addEcdsaSignature(signatureBytes);
+    const signatureText = await client.signatureText();
+    if (signatureText) {
+      const signature = await wallet.signMessage({
+        message: signatureText,
+      });
+      const signatureBytes = toBytes(signature);
+      if (signatureBytes) {
+        client.addSignature(signatureBytes);
+      }
+    }
+
     await client.registerIdentity();
   }
 
-  console.log(`Listening on ${client.accountAddress}`);
-  //v2
+  //commands
+  // check if file exists
+  const resolvedPath = path.resolve(process.cwd(), "src/" + "commands.ts");
+  if (!fs.existsSync(resolvedPath)) {
+    console.error(`No commands.ts file found`);
+  }
+
   return { client, v2client };
 }

@@ -40,6 +40,7 @@ run(async (context: HandlerContext) => {
     await context.reply(
       "You are now unsubscribed. You will no longer receive updates!.",
     );
+    return;
   }
 
   const cacheStep = inMemoryCacheStep.get(sender.address) || 0;

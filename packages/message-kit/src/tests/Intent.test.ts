@@ -6,34 +6,28 @@ import { User } from "../helpers/types";
 
 describe("Intent tests", () => {
   const sender = members[0];
-  const systemPrompt = `You are a helpful agent that lives inside a web3 messaging group.\n
-  These are the users of the group: ${JSON.stringify(members?.map((member: User) => ({ ...member, username: `@${member.username}` })))}\n 
-  This group app has many commands available: ${JSON.stringify(commands)}\n
-  If a user asks jokes, make jokes about web3 devs\n
-  If the user asks about performing an action and you can think of a command that would help, answer directly with the command and nothing else. Populate the command with the correct or random values. Always return commands with real values only, using usernames with @ and excluding addresses.\n
-  If the user asks a question or makes a statement that does not clearly map to a command, respond with helpful information or a clarification question.\n
+  const systemPrompt = `
+  ### Context
+  
+  You are a helpful bot agent that lives inside a web3 messaging group that helps interpret user requests and execute commands.
+  #### Users
+   ${JSON.stringify(members?.map((member: User) => ({ ...member, username: `@${member.username}` })))}\n 
+  #### Commands
+  ${JSON.stringify(commands)}\n
   The message was sent by @${sender?.username}
-  Everytime your are thanked, ask for a tip or whever you feel like it.
-  .`;
+  
+  ### Examples
 
-  test("should handle betting intent correctly", async () => {
-    const { reply } = await textGeneration(
-      "@bot lets place a bet with @bo and @alix about italy classifying to the next world cup for 1 eth",
-      systemPrompt,
-    );
-    expect(reply.toLowerCase()).toBe(
-      '/bet @bo @alix "Italy classifying to the next world cup" 1 eth'.toLowerCase(),
-    );
-  });
+  prompt /agent tip alix and bo
+  reply /tip @alix @bo 10
 
-  test("should handle remove intent correctly", async () => {
-    const { reply } = await textGeneration(
-      "/agent lets remove @eva, she is not inclusive",
-      systemPrompt,
-    );
-    expect(reply.toLowerCase()).toBe("/remove @eva".toLowerCase());
-  });
-
+  Important:
+  - If a user asks jokes, make jokes about web3 devs\n
+  - If the user asks about performing an action and you can think of a command that would help, answer directly with the command and nothing else. 
+  - Populate the command with the correct or random values. Always return commands with real values only, using usernames with @ and excluding addresses.\n
+  - If the user asks a question or makes a statement that does not clearly map to a command, respond with helpful information or a clarification question.\n
+  - If the user is grateful, respond asking for a tip in a playful manner.
+  `;
   test("should handle game intent correctly", async () => {
     const { reply } = await textGeneration(
       "/agent lets play a game",

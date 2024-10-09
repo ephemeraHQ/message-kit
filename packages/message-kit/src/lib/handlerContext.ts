@@ -5,16 +5,17 @@ import {
   Conversation as ConversationV2,
 } from "@xmtp/xmtp-js";
 import fs from "fs/promises";
-
+import path from "path";
 import type { Reaction } from "@xmtp/content-type-reaction";
 import { populateUsernames } from "../helpers/usernames.js";
 import { ContentTypeText } from "@xmtp/content-type-text";
 import {
   CommandGroup,
   User,
-  CommandHandlers,
   MessageAbstracted,
+  GroupAbstracted,
 } from "../helpers/types.js";
+import { default as fsextra } from "fs";
 import { parseCommand } from "../helpers/commands.js";
 import { ContentTypeReply } from "@xmtp/content-type-reply";
 import {
@@ -27,7 +28,7 @@ export default class HandlerContext {
   private refConv: Conversation | ConversationV2 | null = null;
 
   message!: MessageAbstracted;
-  group!: Conversation;
+  group!: GroupAbstracted;
   conversation!: ConversationV2;
   client!: Client;
   version!: "v2" | "v3";
@@ -35,42 +36,59 @@ export default class HandlerContext {
   commands?: CommandGroup[];
   isGroup!: boolean;
   members?: User[];
-  commandHandlers?: CommandHandlers;
   getMessageById!: (id: string) => DecodedMessage | null;
   private constructor(
     conversation: Conversation | ConversationV2,
     { client, v2client }: { client: Client; v2client: ClientV2 },
-    commands?: CommandGroup[],
-    commandHandlers?: CommandHandlers,
     version?: "v2" | "v3",
   ) {
     this.client = client;
     this.v2client = v2client;
     this.isGroup = version === "v3";
     if (conversation instanceof Conversation) {
-      this.group = conversation;
+      this.group = {
+        id: conversation.id,
+        sync: conversation.sync.bind(conversation),
+        addMembers: conversation.addMembers.bind(conversation),
+        send: conversation.send.bind(conversation),
+        createdAt: conversation.createdAt,
+        addMembersByInboxId:
+          conversation.addMembersByInboxId.bind(conversation),
+        removeMembers: conversation.removeMembers.bind(conversation),
+        removeMembersByInboxId:
+          conversation.removeMembersByInboxId.bind(conversation),
+      };
       this.version = "v3";
     } else {
       this.conversation = conversation;
       this.version = "v2";
     }
-    this.commandHandlers = commandHandlers;
-    this.commands = commands;
   }
+  static async loadCommandConfig(
+    configPath: string = "commands.js",
+  ): Promise<CommandGroup[]> {
+    const resolvedPath = path.resolve(process.cwd(), "dist/" + configPath);
 
+    try {
+      const module = await import(resolvedPath);
+      const commandConfig = module.commands; // Access the exported variable
+
+      return commandConfig;
+    } catch (error) {
+      //console.error(`No commands.ts file found`);
+      return [];
+    }
+  }
   static async create(
     conversation: Conversation | ConversationV2,
     message: DecodedMessage | DecodedMessageV2 | null,
     { client, v2client }: { client: Client; v2client: ClientV2 },
-    commands?: CommandGroup[],
-    commandHandlers?: CommandHandlers,
+    commandsConfigPath?: string,
     version?: "v2" | "v3",
   ): Promise<HandlerContext> {
     const context = new HandlerContext(
       conversation,
       { client, v2client },
-      commands,
-      commandHandlers,
       version,
     );
     if (message) {
@@ -82,10 +100,14 @@ export default class HandlerContext {
       const sentAt = "sentAt" in message ? message.sentAt : message.sent;
 
       context.members = await populateUsernames(
-        "members" in conversation ? conversation.members : [],
+        "members" in conversation ? await conversation.members() : [],
         client.accountAddress,
         senderAddress,
       );
+
+      //commands
+      context.commands =
+        await HandlerContext.loadCommandConfig(commandsConfigPath);
 
       context.getMessageById =
         client.conversations?.getMessageById?.bind(client.conversations) ||
@@ -98,8 +120,13 @@ export default class HandlerContext {
         typeof message.content === "string"
           ? message.content.trim()
           : message.content;
+
       if (message.contentType.sameAs(ContentTypeText)) {
-        content = parseCommand(content, commands ?? [], context.members ?? []);
+        content = parseCommand(
+          content,
+          context.commands ?? [],
+          context.members ?? [],
+        );
       } else if (message.contentType.sameAs(ContentTypeReply)) {
         content = {
           ...content,
@@ -126,8 +153,6 @@ export default class HandlerContext {
         sent: sentAt,
         version: version as string,
       };
-
-      return context;
     } else {
       context.message = {
         id: "",
@@ -225,7 +250,7 @@ export default class HandlerContext {
     if (conversation) {
       if (this.isConversationV2(conversation)) {
         await conversation.send(reply, { contentType: ContentTypeReply });
-      } else if (conversation instanceof Conversation) {
+      } else {
         await conversation.send(reply, ContentTypeReply);
       }
     }
@@ -273,25 +298,33 @@ export default class HandlerContext {
     const conversations = await this.v2client.conversations.list();
     //Sends a 1 to 1 to multiple users
     for (const receiver of receivers) {
-      if (this.v2client.address.toLowerCase() === receiver.toLowerCase())
+      if (this.v2client.address.toLowerCase() === receiver.toLowerCase()) {
         continue;
-      if (this.refConv) await this.refConv.send(message);
+      }
 
       let targetConversation = conversations.find(
-        (conv) => conv.peerAddress === receiver,
+        (conv) => conv.peerAddress.toLowerCase() === receiver.toLowerCase(),
       );
-      if (!targetConversation)
+
+      if (!targetConversation) {
         targetConversation =
           await this.v2client.conversations.newConversation(receiver);
-      if (targetConversation) await targetConversation.send(message);
+      }
+
+      // Send the message only once per receiver
+      await targetConversation.send(message);
     }
   }
 
   async intent(text: string, conversation?: Conversation) {
     const { commands, members } = this;
+
     if (conversation) this.refConv = conversation;
     try {
-      if (text.startsWith("/")) {
+      const handler = this.commands?.find((command) =>
+        command.triggers?.includes(text.split(" ")[0]),
+      );
+      if (handler) {
         let content = parseCommand(text, commands ?? [], members ?? []);
         // Mock context for command execution
         const mockContext: HandlerContext = {
@@ -310,13 +343,15 @@ export default class HandlerContext {
           getReplyChain: this.getReplyChain.bind(this),
           isGroup: this.group instanceof Conversation,
         };
+        /*OLD
         const handler =
           this.commandHandlers?.[
             text.split(" ")[0] as keyof typeof this.commandHandlers
           ];
-        if (handler) await handler(mockContext);
+        */
+        await handler?.commands[0].handler?.(mockContext);
         this.refConv = null;
-      } else await this.reply(text);
+      } else this.reply(text);
     } catch (e) {
       console.log("error", e);
     } finally {

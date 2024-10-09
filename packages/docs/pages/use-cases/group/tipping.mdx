@@ -2,40 +2,38 @@
 
 In this example you can tip using 3 primitives:
 
-- Emoji reaction `🎩`
-- Text message starting with `/tip @bo 10 degen`
-- Reply `10 $degen`
-
 ## Commands
 
 ```bash [cmd]
 /tip @bo @alix 15
+🎩 //Send emoji
 ```
 
 ::::note
 :::details[Command declaration]
 
-```json
+```tsx [src/commands.ts]
 {
-  "name": "Tipping",
-  "icon": "🎩",
-  "description": "Tip tokens via emoji, replies or command.",
-  "commands": [
+  name: "Tipping",
+  description: "Tip tokens via emoji, replies or command.",
+  triggers: ["/tip", "🎩", "@tip"],
+  commands: [
     {
-      "command": "/tip [@users] [amount] [token]",
-      "description": "Tip users in a specified token.",
-      "params": {
-        "username": {
-          "default": "",
-          "type": "username"
+      command: "/tip [@users] [amount] [token]",
+      description: "Tip users in a specified token.",
+      handler: tipping,
+      params: {
+        username: {
+          default: "",
+          type: "username",
         },
-        "amount": {
-          "default": 10,
-          "type": "number"
-        }
-      }
-    }
-  ]
+        amount: {
+          default: 10,
+          type: "number",
+        },
+      },
+    },
+  ],
 }
 ```
 
@@ -44,7 +42,7 @@ In this example you can tip using 3 primitives:
 
 ## Main code
 
-```jsx [src/handler/tipping.ts]
+```tsx [src/handler/tipping.ts]
 import { HandlerContext, User } from "@xmtp/message-kit";
 
 export async function handler(context: HandlerContext) {
@@ -53,34 +51,33 @@ export async function handler(context: HandlerContext) {
     getMessageById,
     message: { content, sender, typeId },
   } = context;
-
   const msg = await getMessageById(content.reference);
   const replyReceiver = members?.find(
     (member) => member.inboxId === msg?.senderInboxId,
   );
-
   let amount: number = 0,
     receivers: User[] = [];
-
   // Handle different types of messages
-  if (typeId === "reply") {
-    // Process reply messages
+  if (typeId === "reply" && replyReceiver) {
+    // Process reply messages/
+    //ha
     const { content: reply } = content;
 
-    if (reply.includes("$degen") && replyReceiver) {
+    if (reply.includes("degen")) {
       receivers = [replyReceiver];
       const match = reply.match(/(\d+)/);
-      if (match) amount = parseInt(match[0]); // Extract amount from reply
+      if (match)
+        amount = parseInt(match[0]); // Extract amount from reply
+      else amount = 10;
     }
   } else if (typeId === "text") {
-    // Process text commands starting with "/tip"
-    const {
-      params,
-      params: { amount: extractedAmount, username },
-      content: text,
-    } = content;
-    console.log(params);
-    if (text.startsWith("/tip")) {
+    const { content: text, params } = content;
+    if (text.startsWith("/tip") && params) {
+      // Process text commands starting with "/tip"
+      const {
+        params: { amount: extractedAmount, username },
+        content: text,
+      } = content;
       amount = extractedAmount || 10; // Default amount if not specified
       receivers = username; // Extract receiver from parameters
     }
@@ -96,18 +93,17 @@ export async function handler(context: HandlerContext) {
     context.reply("Sender or receiver or amount not found.");
     return;
   }
-  let receiverAddresses = receivers.map((receiver) => receiver.address);
-
+  const receiverAddresses = receivers.map((receiver) => receiver.address);
   // Process sending tokens to each receiver
-  receiverAddresses.forEach(async (receiver: any) => {
-    context.reply(`You received ${amount} tokens from ${sender.address}.`, {
-      receivers: receiverAddresses,
-    });
-  });
+  context.sendTo(
+    `You received ${amount} tokens from ${sender.address}.`,
+    receiverAddresses,
+  );
+
   // Notify sender of the transaction details
-  context.reply(
+  context.sendTo(
     `You sent ${amount * receiverAddresses.length} tokens in total.`,
-    { receivers: [sender.address] },
+    [sender.address],
   );
 }
 ```

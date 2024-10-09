@@ -4,14 +4,9 @@ This is a reference app that will allow you to understand the potential and all 
 
 - [AI](/use-cases/group/agents): Reply with GPT when called by `/agent`.
 - [Tipping](/use-cases/group/tipping): Tip when a user reacts with the `🎩` emoji, replies `10 $degen` and `/tip`.
-- [Betting](/use-cases/group/betting): Create a new group inside a group with `/bet`
 - [Games](/use-cases/group/games): Handle frame games like `/game slot`, `/game wordle`
-- [Transactions](/use-cases/group/transactions): Handle commands like `/send`, `/swap`, `/mint`, `/show`.
-- [Admin](/use-cases/group/admin): Handle admin commands like `/add`, `/remove`, `/name`
-
-:::warning
-Join Converse Beta to experience groups. [Learn more](https://paragraph.xyz/@ephemera/converse)
-:::
+- [Transactions](/use-cases/group/transactions): Handle commands like `/send`, `/swap`, `/show`.
+- [Loyalty](/use-cases/group/loyalty): Handle loyalty commands like `/points`, `/leaderboard`.
 
 ## Structure
 
@@ -25,10 +20,9 @@ group/
 │   └── handler/
 │         └── agent.ts          # Handles gpt agent. // [!code hl] // [!code focus]
 │         └── tipping.ts        # Handles tipping. // [!code hl] // [!code focus]
-│         └── betting.ts        # Handles betting. // [!code hl] // [!code focus]
 │         └── game.ts           # Handles game frames. // [!code hl] // [!code focus]
-│         └── admin.ts          # Handles moderation. // [!code hl] // [!code focus]
-│         └── payment.ts        # Handles split payments. // [!code hl] // [!code focus]
+│         └── loyalty.ts        # Handles loyalty. // [!code hl] // [!code focus]
+│         └── splitpayments.ts   # Handles split payments. // [!code hl] // [!code focus]
 │         └── transactions.ts   # Handles the transaction frame. // [!code hl] // [!code focus]
 │   └── lib/
 │         └── openai.ts          # Handles the openai logic. // [!code hl] // [!code focus]
@@ -43,16 +37,22 @@ To declare these commands you need to add them first. Learn more about commands 
 
 ```tsx [src/commands.ts]
 import type { CommandGroup } from "@xmtp/message-kit";
+import { handler as tipping } from "./handler/tipping.js";
+import { handler as agent } from "./handler/agent.js";
+import { handler as transaction } from "./handler/transaction.js";
+import { handler as games } from "./handler/game.js";
+import { handler as loyalty } from "./handler/loyalty.js";
 
 export const commands: CommandGroup[] = [
   {
     name: "Tipping",
-    icon: "🎩",
     description: "Tip tokens via emoji, replies or command.",
+    triggers: ["/tip", "🎩", "@tip"],
     commands: [
       {
         command: "/tip [@users] [amount] [token]",
         description: "Tip users in a specified token.",
+        handler: tipping,
         params: {
           username: {
             default: "",
@@ -67,14 +67,15 @@ export const commands: CommandGroup[] = [
     ],
   },
   {
-    name: "Base Transactions",
-    icon: "🖼️",
+    name: "Transactions",
+    triggers: ["@send", "/send", "@swap", "/swap", "/show"],
     description: "Multipurpose transaction frame built onbase.",
     commands: [
       {
         command: "/send [amount] [token] [@username]",
         description:
           "Send a specified amount of a cryptocurrency to a destination address.",
+        handler: transaction,
         params: {
           amount: {
             default: 10,
@@ -94,6 +95,7 @@ export const commands: CommandGroup[] = [
       {
         command: "/swap [amount] [token_from] [token_to]",
         description: "Exchange one type of cryptocurrency for another.",
+        handler: transaction,
         params: {
           amount: {
             default: 10,
@@ -112,69 +114,27 @@ export const commands: CommandGroup[] = [
         },
       },
       {
-        command: "/mint [collection_address] [token_id]",
-        description: "Create (mint) a new token or NFT.",
-        params: {
-          collection: {
-            default: "0x73a333cb82862d4f66f0154229755b184fb4f5b0",
-            type: "address",
-          },
-          tokenId: {
-            default: 1,
-            type: "number",
-          },
-        },
-      },
-      {
         command: "/show",
+        handler: transaction,
         description: "Show the whole frame.",
         params: {},
       },
     ],
   },
   {
-    name: "Betting",
-    icon: "🎰",
-    description: "Create bets with friends.",
-    commands: [
-      {
-        command: "/bet @users [name] [amount] [token]",
-        description: "Bet on basebet.",
-        params: {
-          username: {
-            default: "",
-            type: "username",
-          },
-          name: {
-            default: "",
-            type: "quoted",
-          },
-          amount: {
-            default: 10,
-            type: "number",
-          },
-          token: {
-            default: "eth",
-            type: "string",
-            values: ["eth", "dai", "usdc", "degen"],
-          },
-        },
-      },
-    ],
-  },
-  {
     name: "Games",
-    icon: "🕹️",
+    triggers: ["/game", "@game", "🔎", "🔍"],
     description: "Provides various gaming experiences.",
     commands: [
       {
         command: "/game [game]",
+        handler: games,
         description: "Play a game.",
         params: {
           game: {
             default: "",
             type: "string",
-            values: ["wordle", "slot", "guessr", "rockpaperscissors", "help"],
+            values: ["wordle", "slot", "help"],
           },
         },
       },
@@ -182,16 +142,18 @@ export const commands: CommandGroup[] = [
   },
   {
     name: "Loyalty",
-    icon: "🔓",
+    triggers: ["/points", "@points", "/leaderboard", "@leaderboard"],
     description: "Manage group members and metadata.",
     commands: [
       {
         command: "/points",
+        handler: loyalty,
         description: "Check your points.",
         params: {},
       },
       {
         command: "/leaderboard",
+        handler: loyalty,
         description: "Check the points of a user.",
         params: {},
       },
@@ -199,55 +161,40 @@ export const commands: CommandGroup[] = [
   },
   {
     name: "Agent",
-    icon: "🤖",
+    triggers: ["/agent", "@agent"],
     description: "Manage agent commands.",
     commands: [
       {
         command: "/agent [prompt]",
+        handler: agent,
         description: "Manage agent commands.",
         params: {
           prompt: {
             default: "",
-            type: "string",
+            type: "prompt",
           },
         },
       },
     ],
   },
   {
-    name: "Admin",
-    icon: "🔐",
-    description: "Manage group members and metadata.",
+    name: "Split Payments",
+    image: true,
+    triggers: [],
+    description: "Split payments between users.",
+    commands: [],
+  },
+  {
+    name: "Help",
+    triggers: ["/help"],
+
+    description: "Get help    with the bot.",
     commands: [
       {
-        command: "/add [username]",
-        description: "Add a user.",
-        params: {
-          username: {
-            default: "",
-            type: "username",
-          },
-        },
-      },
-      {
-        command: "/remove [username]",
-        description: "Remove a user.",
-        params: {
-          username: {
-            default: "",
-            type: "username",
-          },
-        },
-      },
-      {
-        command: "/name [name]",
-        description: "Set the name of the group.",
-        params: {
-          name: {
-            default: "",
-            type: "quoted",
-          },
-        },
+        command: "/help",
+        handler: undefined,
+        description: "Get help with the bot.",
+        params: {},
       },
     ],
   },
@@ -260,64 +207,10 @@ export const commands: CommandGroup[] = [
 ## Main code
 
 ```tsx [src/index.ts]
-import { run, HandlerContext, CommandHandlers } from "@xmtp/message-kit";
-import { commands } from "./commands.js";
-import { handler as bet } from "./handler/betting.js";
+import { run, HandlerContext } from "@xmtp/message-kit";
 import { handler as tipping } from "./handler/tipping.js";
 import { handler as agent } from "./handler/agent.js";
-import { handler as transaction } from "./handler/transaction.js";
-import { handler as splitpayment } from "./handler/payment.js";
-import { handler as games } from "./handler/game.js";
-import { handler as admin } from "./handler/admin.js";
-import { handler as loyalty } from "./handler/loyalty.js";
-
-// Define command handlers
-const commandHandlers: CommandHandlers = {
-  "/tip": tipping,
-  "/agent": agent,
-  "/bet": bet,
-  "/send": transaction,
-  "/swap": transaction,
-  "/mint": transaction,
-  "/show": transaction,
-  "/points": loyalty,
-  "/leaderboard": loyalty,
-  "/game": games,
-  "/add": admin,
-  "/remove": admin,
-  "/name": admin,
-  "/help": async (context: HandlerContext) => {
-    const intro =
-      "Available experiences:\n" +
-      commands
-        .flatMap((app) => app.commands)
-        .map((command) => `${command.command} - ${command.description}`)
-        .join("\n") +
-      "\nUse these commands to interact with specific apps.";
-    context.reply(intro);
-  },
-  "/apps": async (context: HandlerContext) => {
-    const intro =
-      "Decentralized secure messaging. Built for crypto.\n" +
-      "Welcome to the Apps Directory\n\n" +
-      "- 💧 faucetbot.eth : Delivers Faucet funds to devs on Testnet\n\n\n" +
-      "- 🛍️ thegeneralstore.eth : Simple ecommerce storefront for hackathon goods\n\n\n" +
-      "- 📅 wordlebot.eth : Play daily to the WORDLE game through messaging.\n\n\n" +
-      "- 💱 swapbot.converse.xyz : Swap tokens through messaging.\n\n\n" +
-      "- 🪨 urltomint.eth : Turn a Zora url into a mint frame.\n\n\n" +
-      "To learn how to build your own app, visit MessageKit: https://message-kit.vercel.app/\n\n" +
-      "To publish your app, visit Directory: https://message-kit.vercel.app/directory\n\n" +
-      "You are currently inside Message Kit Group Starter. You can type:\n/help command to see available commands\n/apps to trigger the directory.";
-
-    context.reply(intro);
-  },
-};
-
-// App configuration
-const appConfig = {
-  commands: commands,
-  commandHandlers: commandHandlers,
-};
+import { handler as splitpayment } from "./handler/splitpayment.js";
 
 // Main function to run the app
 run(async (context: HandlerContext) => {
@@ -328,21 +221,15 @@ run(async (context: HandlerContext) => {
     switch (typeId) {
       case "reaction":
         handleReaction(context);
-        loyalty(context);
         break;
       case "reply":
         handleReply(context);
-        break;
-      case "group_updated":
-        admin(context);
-        loyalty(context);
         break;
       case "remoteStaticAttachment":
         handleAttachment(context);
         break;
       case "text":
         handleTextMessage(context);
-        loyalty(context, true);
         break;
       default:
         console.warn(`Unhandled message type: ${typeId}`);
@@ -350,7 +237,7 @@ run(async (context: HandlerContext) => {
   } catch (error) {
     console.error("Error handling message:", error);
   }
-}, appConfig);
+});
 
 // Handle reaction messages
 async function handleReaction(context: HandlerContext) {
@@ -383,11 +270,22 @@ async function handleTextMessage(context: HandlerContext) {
   const {
     content: { content: text },
   } = context.message;
-  if (text.includes("@bot")) {
+  if (text.includes("/help")) {
+    await helpHandler(context);
+  } else if (text.startsWith("@agent")) {
     await agent(context);
-  } else if (text.startsWith("/")) {
-    await context.intent(text);
-  }
+  } else await context.intent(text);
+}
+async function helpHandler(context: HandlerContext) {
+  const { commands = [] } = context;
+  const intro =
+    "Available experiences:\n" +
+    commands
+      .flatMap((app) => app.commands)
+      .map((command) => `${command.command} - ${command.description}`)
+      .join("\n") +
+    "\nUse these commands to interact with specific apps.";
+  context.send(intro);
 }
 ```
 
@@ -418,7 +316,6 @@ Set up these variables in your app
 KEY= # 0x... the private key of the bot wallet (with the 0x prefix)
 OPEN_AI_API_KEY= # your openai api key
 STACK_API_KEY= # stack api key
-MSG_LOG= # true to log all messages
 ```
 
 ::::

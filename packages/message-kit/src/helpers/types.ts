@@ -1,7 +1,7 @@
 import { default as HandlerContext } from "../lib/handlerContext.js";
 
 import { ClientOptions } from "@xmtp/mls-client";
-
+import { ContentTypeId } from "@xmtp/content-type-primitives";
 // Define a type for the message that includes the conversation property
 export type MessageAbstracted = {
   id: string;
@@ -16,21 +16,25 @@ export type MessageAbstracted = {
   };
   typeId: string;
 };
+export type GroupAbstracted = {
+  id: string;
+  sync: () => Promise<void>;
+  addMembers: (addresses: string[]) => Promise<void>;
+  addMembersByInboxId: (inboxIds: string[]) => Promise<void>;
+  removeMembers: (addresses: string[]) => Promise<void>;
+  removeMembersByInboxId: (inboxIds: string[]) => Promise<void>;
+  send: (content: any, contentType?: ContentTypeId) => Promise<string>;
+  createdAt: Date;
+};
 
 export type CommandHandler = (context: HandlerContext) => Promise<void>;
-
-// Define a new type for the command handlers object
-export type CommandHandlers = {
-  [command: string]: CommandHandler;
-};
 
 export type Handler = (context: HandlerContext) => Promise<void>;
 
 export type Config = {
-  commands?: CommandGroup[];
   client?: ClientOptions;
   privateKey?: string;
-  commandHandlers?: CommandHandlers;
+  commandsConfigPath?: string;
 };
 export interface CommandParamConfig {
   default?: any;
@@ -38,18 +42,21 @@ export interface CommandParamConfig {
   values?: string[]; // Accepted values for the parameter
 }
 
+export interface CommandGroup {
+  name: string;
+  triggers: string[];
+  image?: boolean;
+  description: string;
+  commands: CommandConfig[];
+}
+
 export interface CommandConfig {
   command: string;
+  handler?: CommandHandler;
   description: string;
   params: Record<string, CommandParamConfig>;
 }
 
-export interface CommandGroup {
-  name: string;
-  icon: string;
-  description: string;
-  commands: CommandConfig[];
-}
 export interface User {
   inboxId: string; // Ensure this is always a string
   username: string;

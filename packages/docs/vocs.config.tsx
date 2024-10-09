@@ -5,6 +5,39 @@ export default defineConfig({
     // console.log(`Generating head content... ${new Date().toISOString()}`)
     return (
       <>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width" />
+        <meta property="og:title" content="MessageKit" />
+        <meta
+          property="og:image"
+          content="https://messagekit.ephemerahq.com/hero.jpg"
+        />
+        <meta property="fc:frame" content="vNext" />
+        <meta property="of:version" content="vNext" />
+        <meta property="of:accepts:xmtp" content="vNext" />
+        <meta
+          property="of:image"
+          content="https://messagekit.ephemerahq.com/hero.jpg"
+        />
+        <meta
+          property="fc:frame:image"
+          content="https://messagekit.ephemerahq.com/hero.jpg"
+        />
+
+        <meta property="fc:frame:button:1" content="Docs" />
+        <meta property="fc:frame:button:1:action" content="link" />
+        <meta
+          property="fc:frame:button:1:target"
+          content="https://messagekit.ephemerahq.com/"
+        />
+
+        <meta property="fc:frame:button:2" content="Examples" />
+        <meta property="fc:frame:button:2:action" content="link" />
+        <meta
+          property="fc:frame:button:2:target"
+          content="https://messagekit.ephemerahq.com/"
+        />
+
         <script
           src="https://plausible.io/js/script.outbound-links.js"
           data-domain="messagekit.ephemerahq.com"
@@ -75,10 +108,6 @@ export default defineConfig({
             { text: "Reply", link: "/concepts/messages/reply" },
             { text: "Command", link: "/concepts/messages/command" },
             { text: "Attachment", link: "/concepts/messages/attachment" },
-            {
-              text: "Group update",
-              link: "/concepts/messages/group-update",
-            },
           ],
         },
         {
@@ -89,11 +118,6 @@ export default defineConfig({
           text: "Groups",
           link: "/concepts/groups",
         },
-        /*
-        {
-          text: "Access",
-          link: "/concepts/access",
-        },*/
       ],
     },
 
@@ -114,10 +138,6 @@ export default defineConfig({
               link: "/use-cases/group/tipping",
             },
             {
-              text: "Betting",
-              link: "/use-cases/group/betting",
-            },
-            {
               text: "Games",
               link: "/use-cases/group/games",
             },
@@ -127,11 +147,7 @@ export default defineConfig({
             },
             {
               text: "Split Payments",
-              link: "/use-cases/group/payments",
-            },
-            {
-              text: "Moderation",
-              link: "/use-cases/group/admin",
+              link: "/use-cases/group/splitpayments",
             },
             {
               text: "Loyalty",

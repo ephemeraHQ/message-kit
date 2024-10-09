@@ -1,6 +1,6 @@
 {
   "name": "@xmtp/message-kit",
-  "version": "0.0.24-beta.0",
+  "version": "1.0.0-beta.4",
   "license": "MIT",
   "type": "module",
   "exports": {
@@ -34,7 +34,7 @@
     "@xmtp/content-type-reply": "^1.1.11",
     "@xmtp/content-type-text": "^1.0.0",
     "@xmtp/grpc-api-client": "^0.2.7",
-    "@xmtp/mls-client": "^0.0.15",
+    "@xmtp/mls-client": "^0.0.16",
     "@xmtp/xmtp-js": "^11.2.3",
     "dotenv": "^16.4.5",
     "ethers": "^5.7.0",

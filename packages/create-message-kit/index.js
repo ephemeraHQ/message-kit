@@ -19,7 +19,7 @@ program
   .name("byob")
   .description("CLI to initialize projects")
   .action(async () => {
-    intro(pc.red(`Welcome to MessageKit v${version}!`));
+    intro(pc.red(`Welcome to MessageKit CLI v${version}!`));
 
     const { templateType, displayName, destDir } = await gatherProjectInfo();
 

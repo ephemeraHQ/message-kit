@@ -30,7 +30,7 @@ _Refer to [structure](/concepts/structure) of the app so see the folder is creat
 
 Start with a simple app that replies with `gm`.
 
-```jsx [src/index.ts]
+```tsx [src/index.ts]
 run(async (context: HandlerContext) => {
   // Get the message and the address from the sender
   const { content, sender } = context.message;
@@ -48,7 +48,6 @@ Create a `.env` file in the root of your project
 
 ```bash [cmd]
 KEY= # 0x... the private key of the bot wallet (with the 0x prefix)
-MSG_LOG=false # logs the message on the console (optional)
 ```
 
 ### Run the bot

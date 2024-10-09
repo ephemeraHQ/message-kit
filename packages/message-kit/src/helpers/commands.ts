@@ -12,9 +12,7 @@ export function parseCommand(
   const firstWord = content?.split(" ")[0];
   if (
     (firstWord.startsWith("/") && !firstWord.includes("@")) ||
-    (firstWord.startsWith("/") &&
-      firstWord.includes("@") &&
-      firstWord.includes("@bot"))
+    (firstWord.startsWith("/") && firstWord.includes("@"))
   ) {
     const extractedValues = extractCommandValues(
       content,
@@ -81,7 +79,6 @@ export function extractCommandValues(
         type = "string",
       } = expectedParams[param];
       let valueFound = false;
-
       // Handle string type with no possible values
       if (type === "string" && possibleValues.length === 0) {
         const stringIndex = parts.findIndex(

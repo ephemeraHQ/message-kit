@@ -24,5 +24,5 @@ Set up these variables in your app
 ```bash [cmd]
 KEY= # 0x... the private key of the bot wallet (with the 0x prefix)
 OPEN_AI_API_KEY= # openai api key
-MSG_LOG=false # logs the message on the console
+STACK_API_KEY= # stack api key
 ```

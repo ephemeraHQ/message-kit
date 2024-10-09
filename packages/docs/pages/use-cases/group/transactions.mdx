@@ -5,7 +5,6 @@ This example demonstrates how to generate frame URLs for different types of tran
 ```bash [cmd]
 /send 1 eth to @bo
 /swap 1 DAI to USDC
-/mint 0x73a333cb82862d4f66f0154229755b184fb4f5b0 1
 /show
 ```
 
@@ -14,71 +13,61 @@ _The frame used in this example is [BaseFrame](https://base-frame-lyart.vercel.a
 ::::note
 :::details[Command declaration]
 
-```json
+```tsx [src/commands.ts]
 {
-  "name": "Base Transactions",
-  "icon": "🖼️",
-  "description": "Multipurpose transaction frame built onbase.",
-  "commands": [
+  name: "Transactions",
+  triggers: ["@send", "/send", "@swap", "/swap", "/show"],
+  description: "Multipurpose transaction frame built onbase.",
+  commands: [
     {
-      "command": "/send [amount] [token] [@username]",
-      "description": "Send a specified amount of a cryptocurrency to a destination address.",
-      "params": {
-        "amount": {
-          "default": 10,
-          "type": "number"
+      command: "/send [amount] [token] [@username]",
+      description:
+        "Send a specified amount of a cryptocurrency to a destination address.",
+      handler: transaction,
+      params: {
+        amount: {
+          default: 10,
+          type: "number",
         },
-        "token": {
-          "default": "usdc",
-          "type": "string",
-          "values": ["eth", "dai", "usdc", "degen"] // Accepted tokens
+        token: {
+          default: "usdc",
+          type: "string",
+          values: ["eth", "dai", "usdc", "degen"], // Accepted tokens
         },
-        "username": {
-          "default": "",
-          "type": "username"
-        }
-      }
+        username: {
+          default: "",
+          type: "username",
+        },
+      },
     },
     {
-      "command": "/swap [amount] [token_from] [token_to]",
-      "description": "Exchange one type of cryptocurrency for another.",
-      "params": {
-        "amount": {
-          "default": 10,
-          "type": "number"
+      command: "/swap [amount] [token_from] [token_to]",
+      description: "Exchange one type of cryptocurrency for another.",
+      handler: transaction,
+      params: {
+        amount: {
+          default: 10,
+          type: "number",
         },
-        "token_from": {
-          "default": "usdc",
-          "type": "string",
-          "values": ["eth", "dai", "usdc", "degen"] // Accepted tokens
+        token_from: {
+          default: "usdc",
+          type: "string",
+          values: ["eth", "dai", "usdc", "degen"], // Accepted tokens
         },
-        "token_to": {
-          "default": "eth",
-          "type": "string",
-          "values": ["eth", "dai", "usdc", "degen"] // Accepted tokens
-        }
-      }
+        token_to: {
+          default: "eth",
+          type: "string",
+          values: ["eth", "dai", "usdc", "degen"], // Accepted tokenss
+        },
+      },
     },
     {
-      "command": "/mint [collection] [token_id]",
-      "description": "Create (mint) a new token or NFT.",
-      "params": {
-        "collection": {
-          "default": "0x73a333cb82862d4f66f0154229755b184fb4f5b0",
-          "type": "address"
-        },
-        "tokenId": {
-          "default": 1,
-          "type": "number"
-        }
-      }
+      command: "/show",
+      handler: transaction,
+      description: "Show the whole frame.",
+      params: {},
     },
-    {
-      "command": "/show",
-      "description": "Show the whole frame.",
-      "params": {}
-    }
-  ]
+  ],
 }
 ```
 
@@ -87,17 +76,16 @@ _The frame used in this example is [BaseFrame](https://base-frame-lyart.vercel.a
 
 ## Main code
 
-```jsx [src/handler/frames.ts]
+```tsx [src/handler/transactions.ts]
 import { HandlerContext } from "@xmtp/message-kit";
 
 // Main handler function for processing commands
-export function handler(context: HandlerContext) {
+export async function handler(context: HandlerContext) {
   const {
     message: {
       content: { command, params },
     },
   } = context;
-
   const baseUrl = "https://base-frame-lyart.vercel.app/transaction";
 
   switch (command) {
@@ -136,23 +124,6 @@ export function handler(context: HandlerContext) {
         token_to,
       });
       context.reply(`${url_swap}`);
-      break;
-    case "mint":
-      // Destructure and provide default values for the mint command
-      const { collection, tokenId } = params; // [!code hl] // [!code focus]
-
-      if (!collection || !tokenId) {
-        context.reply(
-          "Missing required parameters. Please provide collection address and token id.",
-        );
-        return;
-      }
-      // Generate URL for the mint transaction
-      let url_mint = generateFrameURL(baseUrl, "mint", {
-        collection,
-        token_id: tokenId,
-      });
-      context.reply(`${url_mint}`);
       break;
     case "show": // [!code hl] // [!code focus]
       // Show the base URL without the transaction path
