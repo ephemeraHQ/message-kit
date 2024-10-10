@@ -55,25 +55,32 @@ export default async function run(handler: Handler, config?: Config) {
     context: HandlerContext,
     message: any,
   ) => {
-    const commandTriggered =
-      message?.contentType?.typeId == "group_updated"
+    if (process.env.MSG_LOG) {
+      //console.log("logs");
+      //console.log(message.content);
+    }
+    const isAddedMember =
+      message?.contentType?.typeId == "group_updated" &&
+      message?.content?.addedInboxes?.length > 0;
+
+    const commandTriggered = isAddedMember
+      ? true
+      : version == "v2"
         ? true
-        : version == "v2"
-          ? true
-          : context.commands?.some((commandGroup) =>
-              message?.contentType?.typeId == "remoteStaticAttachment" &&
-              commandGroup.image
-                ? true
-                : commandGroup.triggers.some((trigger) =>
-                    typeof message?.content === "string"
-                      ? message?.content
-                          ?.toLowerCase()
-                          .includes(trigger?.toLowerCase())
-                      : message?.content?.content
-                          ?.toLowerCase()
-                          .includes(trigger?.toLowerCase()),
-                  ),
-            );
+        : context.commands?.some((commandGroup) =>
+            message?.contentType?.typeId == "remoteStaticAttachment" &&
+            commandGroup.image
+              ? true
+              : commandGroup.triggers.some((trigger) =>
+                  typeof message?.content === "string"
+                    ? message?.content
+                        ?.toLowerCase()
+                        .includes(trigger?.toLowerCase())
+                    : message?.content?.content
+                        ?.toLowerCase()
+                        .includes(trigger?.toLowerCase()),
+                ),
+          );
     if (commandTriggered) {
       console.log(
         `msg_${version}:`,
