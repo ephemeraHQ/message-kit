@@ -41,8 +41,22 @@ REDIS_CONNECTION_STRING= # the connection string for the Redis database
 
 ![](/img/railway/5.gif)
 
-5. **Cache**: The cache is stored in the `.cache` folder where the conversation history is stored. If deleted or restarted, the bot will not have access to previous messages.
+5. **Why install cache**
+
+Installing a persistent cache is crucial for maintaining bot functionality and efficiency:
+
+- Preserves conversation history between deployments
+- Prevents creation of new installations on each restart
+- Ensures faster group additions by retaining past installations
+- Avoids the 256-installation limit, preventing bot failure
+- Reduces the risk of missing messages during redeployment
+
+To implement:
+
+- Use Railway's feature to attach a persistent volume to your container
+- Set the database path to a location on this volume
+- Ensure the `.cache` folder is stored on the persistent volume
 
 ![](/img/railway/volume.png)
 
-- Railway allows to attach a volume to the container to preserve the cache between deployments
+This approach creates a continuous installation, preventing message loss and maintaining bot functionality across redeployments.
