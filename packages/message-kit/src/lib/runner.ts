@@ -55,10 +55,6 @@ export default async function run(handler: Handler, config?: Config) {
     context: HandlerContext,
     message: any,
   ) => {
-    if (process.env.MSG_LOG) {
-      //console.log("logs");
-      //console.log(message.content);
-    }
     const isAddedMember =
       message?.contentType?.typeId == "group_updated" &&
       message?.content?.addedInboxes?.length > 0;
