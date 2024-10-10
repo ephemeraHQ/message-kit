@@ -45,7 +45,7 @@ REDIS_CONNECTION_STRING= # the connection string for the Redis database
 5. **Cache**:
 
 :::warning
-Installing a persistent cache is crucial for maintaining bot functionality and efficiency:
+Installing a persistent cache is crucial for maintaining bot functionality and efficiency
 :::
 
 - Preserves conversation history between deployments
@@ -58,7 +58,7 @@ To implement:
 
 - Use Railway's feature to attach a persistent volume to your container
 - Set the database path to a location on this volume
-- Ensure the `.cache` folder is stored on the persistent volume
+- Ensure the `.data` folder is stored on the persistent volume
 
 ![](/img/railway/volume.png)
 

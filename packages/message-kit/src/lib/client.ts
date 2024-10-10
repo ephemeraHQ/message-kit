@@ -39,13 +39,17 @@ export default async function xmtpClient(
     env = "production" as XmtpEnv;
   }
 
-  if (!fs.existsSync(`.cache`)) {
-    fs.mkdirSync(`.cache`);
+  if (!fs.existsSync(`.data`)) {
+    fs.mkdirSync(`.data`);
+  }
+  if (fs.existsSync(".cache")) {
+    fs.renameSync(".cache", ".data");
+    console.log("Renamed '.cache' directory to '.data'");
   }
 
   const defaultConfig: ClientOptions = {
     env: env,
-    dbPath: `.cache/${wallet.account?.address}-${env}`,
+    dbPath: `.data/${wallet.account?.address}-${env}`,
     codecs: [
       new TextCodec(),
       new ReactionCodec(),
