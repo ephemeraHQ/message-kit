@@ -23,24 +23,43 @@ run(async (context: HandlerContext) => {
       break;
   }
 });
+async function handleReply(context: HandlerContext) {
+  const {
+    v2client,
+    getReplyChain,
+    version,
+    message: {
+      content: { reference },
+    },
+  } = context;
 
+  const { chain, isSenderInChain } = await getReplyChain(
+    reference,
+    version,
+    v2client.address,
+  );
+  console.log(chain);
+  handleTextMessage(context);
+}
 // Handle reaction messages
 async function handleReaction(context: HandlerContext) {
   const {
-    content: { content: emoji, action },
-  } = context.message;
+    v2client,
+    getReplyChain,
+    version,
+    message: {
+      content: { content: emoji, action, reference },
+    },
+  } = context;
+
+  const { chain, isSenderInChain } = await getReplyChain(
+    reference,
+    version,
+    v2client.address,
+  );
+  console.log(chain);
 
   if (action === "added" && (emoji === "degen" || emoji === "🎩")) {
-    await tipping(context);
-  }
-}
-
-// Handle reply messages
-async function handleReply(context: HandlerContext) {
-  const {
-    content: { content: reply },
-  } = context.message;
-  if (reply.includes("degen")) {
     await tipping(context);
   }
 }

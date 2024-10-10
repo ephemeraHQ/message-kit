@@ -55,27 +55,42 @@ export default async function run(handler: Handler, config?: Config) {
     context: HandlerContext,
     message: any,
   ) => {
+    if (process.env.MSG_LOG) {
+      //console.log("logs");
+      //console.log(message.content);
+    }
+    const typeId = message?.contentType?.typeId;
     const isAddedMember =
-      message?.contentType?.typeId == "group_updated" &&
-      message?.content?.addedInboxes?.length > 0;
+      typeId == "group_updated" && message?.content?.addedInboxes?.length > 0;
 
+    const isRemoteAttachment =
+      message?.contentType?.typeId == "remoteStaticAttachment";
+
+    // Remote attachments work if image:true
+    // Replies only work with explicit mentions from triggers.
+    // Text only works with explicit mentions from triggers.
+    // Reactions dont work with triggers.
     const commandTriggered = isAddedMember
       ? true
       : version == "v2"
         ? true
         : context.commands?.some((commandGroup) =>
-            message?.contentType?.typeId == "remoteStaticAttachment" &&
-            commandGroup.image
+            isRemoteAttachment && commandGroup.image
               ? true
-              : commandGroup.triggers.some((trigger) =>
-                  typeof message?.content === "string"
-                    ? message?.content
+              : commandGroup.triggers.some((trigger) => {
+                  switch (typeId) {
+                    case "text":
+                      return message?.content
                         ?.toLowerCase()
-                        .includes(trigger?.toLowerCase())
-                    : message?.content?.content
+                        .includes(trigger?.toLowerCase());
+                    case "reply":
+                      return message?.content?.content
                         ?.toLowerCase()
-                        .includes(trigger?.toLowerCase()),
-                ),
+                        .includes(trigger?.toLowerCase());
+                    default:
+                      return false;
+                  }
+                }),
           );
     if (commandTriggered) {
       console.log(
