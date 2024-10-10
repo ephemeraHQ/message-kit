@@ -20,6 +20,7 @@ export default async function xmtpClient(
   clientConfig: ClientOptions = {},
   privateKey: string | null = null,
 ): Promise<{ client: Client; v2client: V2Client }> {
+  // Check if both clientConfig and privateKey are empty
   let key = privateKey ?? process.env.KEY;
   if (!isHex(key)) {
     key = generatePrivateKey();

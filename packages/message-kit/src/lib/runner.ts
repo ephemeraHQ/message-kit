@@ -57,7 +57,7 @@ export default async function run(handler: Handler, config?: Config) {
   ) => {
     if (process.env.MSG_LOG) {
       //console.log("logs");
-      //console.log(message.content);
+      //console.log(message);
     }
     const typeId = message?.contentType?.typeId;
     const isAddedMember =
