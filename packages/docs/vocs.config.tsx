@@ -92,6 +92,10 @@ export default defineConfig({
       link: "/deployment",
     },
     {
+      text: "Guidelines",
+      link: "/guidelines",
+    },
+    {
       text: "Concepts",
       collapsed: false,
       items: [
