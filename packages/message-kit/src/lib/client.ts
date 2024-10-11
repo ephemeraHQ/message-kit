@@ -42,10 +42,6 @@ export default async function xmtpClient(
   if (!fs.existsSync(`.data`)) {
     fs.mkdirSync(`.data`);
   }
-  if (fs.existsSync(".cache")) {
-    fs.renameSync(".cache", ".data");
-    console.log("Renamed '.cache' directory to '.data'");
-  }
 
   const defaultConfig: ClientOptions = {
     env: env,
