@@ -1,4 +1,4 @@
-import { Conversation, DecodedMessage, Client } from "@xmtp/mls-client";
+import { Conversation, DecodedMessage, Client } from "@xmtp/node-sdk";
 import {
   DecodedMessage as DecodedMessageV2,
   Client as ClientV2,
