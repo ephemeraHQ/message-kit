@@ -8,7 +8,7 @@ const external = [
   "@xmtp/content-type-reaction",
   "@xmtp/content-type-reply",
   "@xmtp/content-type-remote-attachment",
-  "@xmtp/mls-client",
+  "@xmtp/node-sdk",
   "@xmtp/xmtp-js",
   "ethers",
   "@xmtp/proto",

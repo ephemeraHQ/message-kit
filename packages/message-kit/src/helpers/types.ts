@@ -1,6 +1,6 @@
 import { default as HandlerContext } from "../lib/handlerContext.js";
 
-import { ClientOptions } from "@xmtp/mls-client";
+import { ClientOptions } from "@xmtp/node-sdk";
 import { ContentTypeId } from "@xmtp/content-type-primitives";
 // Define a type for the message that includes the conversation property
 export type MessageAbstracted = {

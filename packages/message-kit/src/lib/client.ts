@@ -1,7 +1,7 @@
 import { ReplyCodec } from "@xmtp/content-type-reply";
 import { Client as V2Client } from "@xmtp/xmtp-js";
 import { ReactionCodec } from "@xmtp/content-type-reaction";
-import { Client, ClientOptions, XmtpEnv } from "@xmtp/mls-client";
+import { Client, ClientOptions, XmtpEnv } from "@xmtp/node-sdk";
 import { Wallet } from "ethers";
 import * as path from "path";
 
