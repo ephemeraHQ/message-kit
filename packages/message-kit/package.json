@@ -1,6 +1,6 @@
 {
   "name": "@xmtp/message-kit",
-  "version": "1.0.0-beta.4",
+  "version": "1.0.0-beta.6",
   "license": "MIT",
   "type": "module",
   "exports": {

@@ -62,6 +62,7 @@ next-env.d.ts
 
 # remix
 .cache
+.data
 
 packages/create-message-kit/examples
 packages/create-message-kit/examples/**

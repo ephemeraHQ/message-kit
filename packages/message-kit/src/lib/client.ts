@@ -20,6 +20,7 @@ export default async function xmtpClient(
   clientConfig: ClientOptions = {},
   privateKey: string | null = null,
 ): Promise<{ client: Client; v2client: V2Client }> {
+  // Check if both clientConfig and privateKey are empty
   let key = privateKey ?? process.env.KEY;
   if (!isHex(key)) {
     key = generatePrivateKey();
@@ -38,13 +39,13 @@ export default async function xmtpClient(
     env = "production" as XmtpEnv;
   }
 
-  if (!fs.existsSync(`.cache`)) {
-    fs.mkdirSync(`.cache`);
+  if (!fs.existsSync(`.data`)) {
+    fs.mkdirSync(`.data`);
   }
 
   const defaultConfig: ClientOptions = {
     env: env,
-    dbPath: `.cache/${wallet.account?.address}-${env}`,
+    dbPath: `.data/${wallet.account?.address}-${env}`,
     codecs: [
       new TextCodec(),
       new ReactionCodec(),

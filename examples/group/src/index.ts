@@ -8,45 +8,58 @@ run(async (context: HandlerContext) => {
   const {
     message: { typeId },
   } = context;
-  try {
-    switch (typeId) {
-      case "reaction":
-        handleReaction(context);
-        break;
-      case "reply":
-        handleReply(context);
-        break;
-      case "remoteStaticAttachment":
-        handleAttachment(context);
-        break;
-      case "text":
-        handleTextMessage(context);
-        break;
-      default:
-        console.warn(`Unhandled message type: ${typeId}`);
-    }
-  } catch (error) {
-    console.error("Error handling message:", error);
+  switch (typeId) {
+    case "reaction":
+      handleReaction(context);
+      break;
+    case "reply":
+      handleReply(context);
+      break;
+    case "remoteStaticAttachment":
+      handleAttachment(context);
+      break;
+    case "text":
+      handleTextMessage(context);
+      break;
   }
 });
+async function handleReply(context: HandlerContext) {
+  const {
+    v2client,
+    getReplyChain,
+    version,
+    message: {
+      content: { reference },
+    },
+  } = context;
 
+  const { chain, isSenderInChain } = await getReplyChain(
+    reference,
+    version,
+    v2client.address,
+  );
+  console.log(chain);
+  handleTextMessage(context);
+}
 // Handle reaction messages
 async function handleReaction(context: HandlerContext) {
   const {
-    content: { content: emoji, action },
-  } = context.message;
+    v2client,
+    getReplyChain,
+    version,
+    message: {
+      content: { content: emoji, action, reference },
+    },
+  } = context;
+
+  const { chain, isSenderInChain } = await getReplyChain(
+    reference,
+    version,
+    v2client.address,
+  );
+  console.log(chain);
 
   if (action === "added" && (emoji === "degen" || emoji === "🎩")) {
-    await tipping(context);
-  }
-}
-
-// Handle reply messages
-async function handleReply(context: HandlerContext) {
-  const {
-    content: { content: reply },
-  } = context.message;
-  if (reply.includes("degen")) {
     await tipping(context);
   }
 }

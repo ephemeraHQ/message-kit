@@ -217,25 +217,20 @@ run(async (context: HandlerContext) => {
   const {
     message: { typeId },
   } = context;
-  try {
-    switch (typeId) {
-      case "reaction":
-        handleReaction(context);
-        break;
-      case "reply":
-        handleReply(context);
-        break;
-      case "remoteStaticAttachment":
-        handleAttachment(context);
-        break;
-      case "text":
-        handleTextMessage(context);
-        break;
-      default:
-        console.warn(`Unhandled message type: ${typeId}`);
-    }
-  } catch (error) {
-    console.error("Error handling message:", error);
+
+  switch (typeId) {
+    case "reaction":
+      handleReaction(context);
+      break;
+    case "reply":
+      handleReply(context);
+      break;
+    case "remoteStaticAttachment":
+      handleAttachment(context);
+      break;
+    case "text":
+      handleTextMessage(context);
+      break;
   }
 });
 
