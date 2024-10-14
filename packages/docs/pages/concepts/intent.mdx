@@ -1,0 +1,69 @@
+# Intent
+
+Intent is a way to recursively execute a command from an agent or bot and using the bot to show the reply ofthat exectution isntead of sending the raw commandt.
+
+```bash [cmd]
+/swap 1 usdc to eth please
+```
+
+Example prompt:
+
+```bash [cmd]
+You are a helpful and playful betting bot that lives inside a web3 messaging group.
+
+Users can start a swap by tagging you in a prompt like "@swap 1 eth to usdc"
+
+You then have an internal command to create a swap: "/swap [amount] [token_from] [token_to]"
+
+Format examples:
+/swap 1 eth usdc
+/swap 100 dai usdc
+/swap 0.1 eth usdt
+```
+
+Once you have executed the command, you can use the intent to recursively execute the command and show the reply of that execution instead of sending the raw command.
+
+```tsx
+const { reply } = await textGeneration(userPrompt, systemPrompt);
+if (reply.startsWith("/")) {
+  // Execute the command if its a slash command
+  context.intent(reply);
+}
+```
+
+This command was previously delared:
+
+```tsx [src/commands.ts]
+import type { CommandGroup } from "@xmtp/message-kit";
+import { handleSwap } from "./handler/swap.js";
+export const commands: CommandGroup[] = [
+  {
+    name: "Swap Bot",
+    description: "Swap bot for base.",
+    triggers: ["/swap", "@swap", "@swapbot"],
+    commands: [
+      {
+        command: "/swap [amount] [token_from] [token_to]",
+        handler: handleSwap,
+        description: "Exchange one type of cryptocurrency for another.",
+        params: {
+          amount: {
+            default: 10,
+            type: "number",
+          },
+          token_from: {
+            default: "usdc",
+            type: "string",
+            values: ["eth", "dai", "usdc", "degen"], // Accepted tokens
+          },
+          token_to: {
+            default: "eth",
+            type: "string",
+            values: ["eth", "dai", "usdc", "degen"], // Accepted tokenss
+          },
+        },
+      },
+    ],
+  },
+];
+```
