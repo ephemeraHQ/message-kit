@@ -60,8 +60,7 @@ export function populateUsernames(
     ),
     address: member?.accountAddresses?.[0].toLowerCase(),
     inboxId: member?.inboxId?.toLowerCase(),
-    permissionLevel: member.permissionLevel,
-  }));
+  })) as User[];
   for (let member of mappedMembers) {
     if (member?.inboxId?.toLowerCase() === senderInboxId?.toLowerCase()) {
       member.username = "me";
@@ -97,9 +96,8 @@ export function populateUsernames(
       accountAddresses: [user.address?.toLowerCase()],
       address: user.address?.toLowerCase(),
       inboxId: user.inboxId?.toLowerCase(),
-      permissionLevel: user.permissionLevel,
       fake: user.fake,
-    });
+    } as User);
   });
   return mappedMembers;
 }

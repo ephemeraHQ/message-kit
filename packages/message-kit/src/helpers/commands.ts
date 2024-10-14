@@ -144,6 +144,7 @@ export function extractCommandValues(
           if (type === "username") {
             const usernames = indices.map((idx) => parts[idx].slice(1));
             const mappedUsers = mapUsernamesToInboxId(usernames, members);
+            //@ts-ignore
             values.params[param] = mappedUsers.filter(
               (user) => user !== undefined,
             );
@@ -160,6 +161,7 @@ export function extractCommandValues(
       }
 
       if (!valueFound && defaultValue !== undefined) {
+        //@ts-ignore
         values.params[param] = defaultValue;
       }
     });

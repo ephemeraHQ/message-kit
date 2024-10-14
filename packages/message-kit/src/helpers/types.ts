@@ -9,7 +9,7 @@ import { ContentTypeId } from "@xmtp/content-type-primitives";
 export type MessageAbstracted = {
   id: string;
   sent: Date;
-  content: DecodedMessage | DecodedMessageV2 | string;
+  content: any;
   version: string;
   sender: {
     inboxId: string;
@@ -67,7 +67,6 @@ export interface User {
   accountAddresses: string[];
   installationIds?: string[];
   fake?: boolean;
-  permissionLevel?: string;
 }
 
 export type MetadataValue = string | number | boolean;
