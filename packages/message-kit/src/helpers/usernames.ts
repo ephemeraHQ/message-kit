@@ -33,6 +33,7 @@ export const fakeUsers: User[] = [
     inboxId: "6196afe3fd16c276113b0e4fc913745c39af337ea869fb49a2835201874de49c",
     accountAddresses: ["0xeAc10D864802fCcfe897E3957776634D1AE006B2"],
     installationIds: [],
+
     fake: true,
   },
   {
@@ -45,14 +46,14 @@ export const fakeUsers: User[] = [
   },
 ];
 export function populateUsernames(
-  members: any,
+  members: User[],
   clientAddress: string,
   senderInboxId: string,
 ) {
   //v2
   if (!members) members = fakeUsers;
   // Map existing members to the required format
-  const mappedMembers = members.map((member: any) => ({
+  const mappedMembers = members.map((member: User) => ({
     username: member.username?.toLowerCase(),
     accountAddresses: member.accountAddresses.map((address: string) =>
       address.toLowerCase(),
@@ -86,19 +87,19 @@ export function populateUsernames(
   const remainingUsers = fakeUsers.filter(
     (fakeUser) =>
       !mappedMembers.some(
-        (member: any) =>
+        (member: User) =>
           member.address.toLowerCase() === fakeUser.address.toLowerCase(),
       ),
   );
-  remainingUsers.forEach((user) => {
+  remainingUsers.forEach((user: User) => {
     mappedMembers.push({
       username: user.username?.toLowerCase(),
       accountAddresses: [user.address?.toLowerCase()],
       address: user.address?.toLowerCase(),
       inboxId: user.inboxId?.toLowerCase(),
-      permissionLevel: 0,
+      permissionLevel: user.permissionLevel,
       fake: user.fake,
     });
   });
-  return mappedMembers as User[];
+  return mappedMembers;
 }

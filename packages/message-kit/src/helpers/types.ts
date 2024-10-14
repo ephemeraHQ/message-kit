@@ -1,12 +1,15 @@
 import { default as HandlerContext } from "../lib/handlerContext.js";
-
-import { ClientOptions } from "@xmtp/node-sdk";
+import { DecodedMessage } from "@xmtp/xmtp-js";
+import {
+  ClientOptions,
+  DecodedMessage as DecodedMessageV2,
+} from "@xmtp/node-sdk";
 import { ContentTypeId } from "@xmtp/content-type-primitives";
 // Define a type for the message that includes the conversation property
 export type MessageAbstracted = {
   id: string;
   sent: Date;
-  content: any;
+  content: DecodedMessage | DecodedMessageV2 | string;
   version: string;
   sender: {
     inboxId: string;
@@ -23,7 +26,7 @@ export type GroupAbstracted = {
   addMembersByInboxId: (inboxIds: string[]) => Promise<void>;
   removeMembers: (addresses: string[]) => Promise<void>;
   removeMembersByInboxId: (inboxIds: string[]) => Promise<void>;
-  send: (content: any, contentType?: ContentTypeId) => Promise<string>;
+  send: (content: string, contentType?: ContentTypeId) => Promise<string>;
   createdAt: Date;
 };
 
@@ -37,7 +40,7 @@ export type Config = {
   commandsConfigPath?: string;
 };
 export interface CommandParamConfig {
-  default?: any;
+  default?: string | number | boolean;
   type: "number" | "string" | "username" | "quoted" | "address" | "prompt";
   values?: string[]; // Accepted values for the parameter
 }
@@ -62,8 +65,9 @@ export interface User {
   username: string;
   address: string;
   accountAddresses: string[];
-  installationIds: string[];
+  installationIds?: string[];
   fake?: boolean;
+  permissionLevel?: string;
 }
 
 export type MetadataValue = string | number | boolean;

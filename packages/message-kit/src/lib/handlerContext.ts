@@ -15,7 +15,6 @@ import {
   MessageAbstracted,
   GroupAbstracted,
 } from "../helpers/types.js";
-import { default as fsextra } from "fs";
 import { parseCommand } from "../helpers/commands.js";
 import { ContentTypeReply } from "@xmtp/content-type-reply";
 import {
@@ -100,7 +99,14 @@ export default class HandlerContext {
       const sentAt = "sentAt" in message ? message.sentAt : message.sent;
 
       context.members = await populateUsernames(
-        "members" in conversation ? await conversation.members() : [],
+        "members" in conversation
+          ? (await conversation.members()).map((member) => ({
+              inboxId: member.inboxId,
+              username: "",
+              address: member.accountAddresses[0] || "",
+              accountAddresses: member.accountAddresses,
+            }))
+          : [],
         client.accountAddress,
         senderAddress,
       );
@@ -261,8 +267,10 @@ export default class HandlerContext {
     if (conversation) await conversation.send(message);
   }
 
-  isConversationV2(conversation: any): conversation is ConversationV2 {
-    return conversation?.topic !== undefined;
+  isConversationV2(
+    conversation: Conversation | ConversationV2 | null,
+  ): conversation is ConversationV2 {
+    return (conversation as ConversationV2)?.topic !== undefined;
   }
 
   async react(emoji: string) {

@@ -139,10 +139,12 @@ export async function handler(context: HandlerContext) {
 function generateFrameURL(
   baseUrl: string,
   transaction_type: string,
-  params: any,
+  params: { [key: string]: string | number | string[] | undefined },
 ) {
   // Filter out undefined parameters
-  let filteredParams: { [key: string]: any } = {};
+  let filteredParams: {
+    [key: string]: string | number | string[] | undefined;
+  } = {};
 
   for (const key in params) {
     if (params[key] !== undefined) {
