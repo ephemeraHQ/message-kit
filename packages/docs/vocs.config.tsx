@@ -119,6 +119,10 @@ export default defineConfig({
           link: "/concepts/commands",
         },
         {
+          text: "Intent",
+          link: "/concepts/intent",
+        },
+        {
           text: "Groups",
           link: "/concepts/groups",
         },

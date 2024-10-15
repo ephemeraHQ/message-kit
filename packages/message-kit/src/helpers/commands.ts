@@ -38,11 +38,11 @@ export function extractCommandValues(
   members: User[],
 ): {
   command: string | undefined;
-  params: { [key: string]: any };
+  params: { [key: string]: string | number | string[] | undefined };
 } {
   const defaultResult = {
     command: undefined,
-    params: {} as { [key: string]: any },
+    params: {} as { [key: string]: string | number | string[] | undefined },
   };
   try {
     if (typeof content !== "string") return defaultResult;
@@ -65,7 +65,10 @@ export function extractCommandValues(
 
     if (!commandConfig) return defaultResult;
 
-    const values: { command: string; params: { [key: string]: any } } = {
+    const values: {
+      command: string;
+      params: { [key: string]: string | number | string[] | undefined };
+    } = {
       command: commandName,
       params: {},
     };
@@ -141,6 +144,7 @@ export function extractCommandValues(
           if (type === "username") {
             const usernames = indices.map((idx) => parts[idx].slice(1));
             const mappedUsers = mapUsernamesToInboxId(usernames, members);
+            //@ts-ignore
             values.params[param] = mappedUsers.filter(
               (user) => user !== undefined,
             );
@@ -157,6 +161,7 @@ export function extractCommandValues(
       }
 
       if (!valueFound && defaultValue !== undefined) {
+        //@ts-ignore
         values.params[param] = defaultValue;
       }
     });

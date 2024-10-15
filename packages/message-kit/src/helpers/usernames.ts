@@ -45,22 +45,21 @@ export const fakeUsers: User[] = [
   },
 ];
 export function populateUsernames(
-  members: any,
+  members: User[],
   clientAddress: string,
   senderInboxId: string,
 ) {
   //v2
   if (!members) members = fakeUsers;
   // Map existing members to the required format
-  const mappedMembers = members.map((member: any) => ({
+  const mappedMembers = members.map((member: User) => ({
     username: member.username?.toLowerCase(),
     accountAddresses: member.accountAddresses.map((address: string) =>
       address.toLowerCase(),
     ),
     address: member?.accountAddresses?.[0].toLowerCase(),
     inboxId: member?.inboxId?.toLowerCase(),
-    permissionLevel: member.permissionLevel,
-  }));
+  })) as User[];
   for (let member of mappedMembers) {
     if (member?.inboxId?.toLowerCase() === senderInboxId?.toLowerCase()) {
       member.username = "me";
@@ -86,19 +85,19 @@ export function populateUsernames(
   const remainingUsers = fakeUsers.filter(
     (fakeUser) =>
       !mappedMembers.some(
-        (member: any) =>
+        (member: User) =>
           member.address.toLowerCase() === fakeUser.address.toLowerCase(),
       ),
   );
-  remainingUsers.forEach((user) => {
+  remainingUsers.forEach((user: User) => {
     mappedMembers.push({
       username: user.username?.toLowerCase(),
       accountAddresses: [user.address?.toLowerCase()],
       address: user.address?.toLowerCase(),
       inboxId: user.inboxId?.toLowerCase(),
-      permissionLevel: 0,
+      installationIds: user.installationIds,
       fake: user.fake,
-    });
+    } as User);
   });
-  return mappedMembers as User[];
+  return mappedMembers;
 }

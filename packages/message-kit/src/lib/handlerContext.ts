@@ -15,7 +15,6 @@ import {
   MessageAbstracted,
   GroupAbstracted,
 } from "../helpers/types.js";
-import { default as fsextra } from "fs";
 import { parseCommand } from "../helpers/commands.js";
 import { ContentTypeReply } from "@xmtp/content-type-reply";
 import {
@@ -100,7 +99,14 @@ export default class HandlerContext {
       const sentAt = "sentAt" in message ? message.sentAt : message.sent;
 
       context.members = await populateUsernames(
-        "members" in conversation ? await conversation.members() : [],
+        "members" in conversation
+          ? (await conversation.members()).map((member) => ({
+              inboxId: member.inboxId,
+              username: "",
+              address: member.accountAddresses[0] || "",
+              accountAddresses: member.accountAddresses,
+            }))
+          : [],
         client.accountAddress,
         senderAddress,
       );
@@ -261,8 +267,10 @@ export default class HandlerContext {
     if (conversation) await conversation.send(message);
   }
 
-  isConversationV2(conversation: any): conversation is ConversationV2 {
-    return conversation?.topic !== undefined;
+  isConversationV2(
+    conversation: Conversation | ConversationV2 | null,
+  ): conversation is ConversationV2 {
+    return (conversation as ConversationV2)?.topic !== undefined;
   }
 
   async react(emoji: string) {
@@ -324,6 +332,7 @@ export default class HandlerContext {
       const handler = this.commands?.find((command) =>
         command.triggers?.includes(text.split(" ")[0]),
       );
+
       if (handler) {
         let content = parseCommand(text, commands ?? [], members ?? []);
         // Mock context for command execution
@@ -343,15 +352,10 @@ export default class HandlerContext {
           getReplyChain: this.getReplyChain.bind(this),
           isGroup: this.group instanceof Conversation,
         };
-        /*OLD
-        const handler =
-          this.commandHandlers?.[
-            text.split(" ")[0] as keyof typeof this.commandHandlers
-          ];
-        */
-        await handler?.commands[0].handler?.(mockContext);
+
         this.refConv = null;
-      } else this.reply(text);
+        return await handler?.commands[0].handler?.(mockContext);
+      } else this.send(text);
     } catch (e) {
       console.log("error", e);
     } finally {
