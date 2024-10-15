@@ -19,6 +19,7 @@ import { GrpcApiClient } from "@xmtp/grpc-api-client";
 export default async function xmtpClient(
   clientConfig: ClientOptions = {},
   privateKey: string | null = null,
+  logging: "debug" | "info" | "warn" | "error" | "off" = "off",
 ): Promise<{ client: Client; v2client: V2Client }> {
   // Check if both clientConfig and privateKey are empty
   let key = privateKey ?? process.env.KEY;
@@ -46,7 +47,7 @@ export default async function xmtpClient(
   const defaultConfig: ClientOptions = {
     env: env,
     dbPath: `.data/${wallet.account?.address}-${env}`,
-    logging: "debug",
+    logging: logging,
     codecs: [
       new TextCodec(),
       new ReactionCodec(),

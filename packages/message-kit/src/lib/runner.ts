@@ -12,6 +12,7 @@ export default async function run(handler: Handler, config?: Config) {
   const { client, v2client } = await xmtpClient(
     config?.client,
     config?.privateKey,
+    config?.logging,
   );
   const { inboxId: address } = client;
   const { address: addressV2 } = v2client;

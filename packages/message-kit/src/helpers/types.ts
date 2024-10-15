@@ -44,6 +44,7 @@ export type Config = {
   client?: ClientOptions;
   privateKey?: string;
   commandsConfigPath?: string;
+  logging?: "debug" | "info" | "warn" | "error" | "off";
 };
 export interface CommandParamConfig {
   default?: string | number | boolean;
