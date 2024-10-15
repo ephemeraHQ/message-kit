@@ -1,6 +1,14 @@
 # Intent
 
-Intent is a way to recursively execute a command from an agent or bot and using the bot to show the reply ofthat exectution isntead of sending the raw commandt.
+Intent is a mechanism that allows an agent or bot to recursively execute commands and display the results of those executions, rather than sending the raw commands directly. This is particularly useful in scenarios where the bot needs to process and respond to user requests internally.
+
+## How It Works
+
+When a user interacts with the bot using a specific command format, the bot interprets the command and executes it internally. The bot then uses the intent to recursively handle the command and provide a response based on the execution outcome.
+
+### Example Command
+
+Users can initiate a swap by tagging the bot in a prompt:
 
 ```bash [cmd]
 @swap 1 usdc to eth please
@@ -67,3 +75,96 @@ export const commands: CommandGroup[] = [
   },
 ];
 ```
+
+## Handling Multiple Messages and Command Responses
+
+Agents can send multiple messages and expect responses from commands. This is useful for complex interactions where multiple steps or confirmations are needed.
+
+### Example: ENS Domain Registration Bot
+
+The ENS domain registration bot can handle multiple commands and send multiple messages based on user interactions:
+
+```typescript
+import { HandlerContext, ApiResponse } from "@xmtp/message-kit";
+import { textGeneration } from "../lib/openai.js";
+
+const chatHistories: Record<string, any[]> = {};
+
+export async function ensAgent(context: HandlerContext) {
+  if (!process?.env?.OPEN_AI_API_KEY) {
+    console.log("No OPEN_AI_API_KEY found in .env");
+    return;
+  }
+
+  const {
+    message: {
+      content: { content, params },
+      sender,
+    },
+  } = context;
+
+  const systemPrompt = generateSystemPrompt(context);
+  try {
+    let userPrompt = params?.prompt ?? content;
+
+    const { reply, history } = await textGeneration(
+      userPrompt,
+      systemPrompt,
+      chatHistories[sender.address],
+    );
+    chatHistories[sender.address] = history; // Update chat history for the user
+
+    const messages = reply
+      .split("\n")
+      .filter((message) => message.trim() !== "");
+
+    for (const message of messages) {
+      if (message.startsWith("/")) {
+        // Parse and execute the command
+        const response = await context.intent(message);
+        // Send the message as a text response
+        // In this case the response is an ApiResponse with code and message
+        await context.send((response as ApiResponse).message);
+      } else {
+        // Send the message as a text response
+        await context.send(message);
+      }
+    }
+  } catch (error) {
+    console.error("Error during OpenAI call:", error);
+    await context.send("An error occurred while processing your request.");
+  }
+}
+
+function generateSystemPrompt(context: HandlerContext) {
+  const systemPrompt = `
+    You are a helpful and playful ens domain register bot that lives inside a web3 messaging app.\n
+    - Only provide answers based on verified information.
+    - Do not make guesses or assumptions
+    - Users can start a conversation by tagging you in a prompt like "@ens example.eth" or chatting 1:1
+    - You can respond with multiple messages if needed. Each message should be separated by a newline character.
+    - You can execute commands by sending the command as a message.
+
+    ## Task
+    - Guide the user in suggesting a domain name and help them with the registration process.  You can trigger commands by only sending the command as a message.
+    - To trigger registration mini-app: "/register [domain]".
+    - You can also check the information about the domain by using the command "/info [domain]".
+    - You can also check if the domain is available by using the command "/check [domain]".
+
+    ## Commands
+    - /help: Show the list of commands
+    - /check [domain]: Check if a domain is available
+    - /register [domain]: Register a domain
+
+    Format examples:
+    /register vitalik.eth 
+    /check vitalik.eth
+    /info vitalik.eth
+    /help
+  .`;
+
+  return systemPrompt;
+}
+```
+
+This section explains how agents can handle multiple messages and execute commands, providing a more interactive and responsive user experience.
