@@ -1,17 +1,23 @@
 import dotenv from "dotenv";
 dotenv.config();
-import OpenAI from "openai";
 
+import OpenAI from "openai";
 const openai = new OpenAI({
   apiKey: process.env.OPEN_AI_API_KEY,
 });
 
-export async function textGeneration(userPrompt: string, systemPrompt: string) {
-  let messages = [];
-  messages.push({
-    role: "system",
-    content: systemPrompt,
-  });
+export async function textGeneration(
+  userPrompt: string,
+  systemPrompt: string,
+  chatHistory?: any[],
+) {
+  let messages = chatHistory ? [...chatHistory] : []; // Start with existing chat history
+  if (messages.length === 0) {
+    messages.push({
+      role: "system",
+      content: systemPrompt,
+    });
+  }
   messages.push({
     role: "user",
     content: userPrompt,
