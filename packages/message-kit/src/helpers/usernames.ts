@@ -33,7 +33,6 @@ export const fakeUsers: User[] = [
     inboxId: "6196afe3fd16c276113b0e4fc913745c39af337ea869fb49a2835201874de49c",
     accountAddresses: ["0xeAc10D864802fCcfe897E3957776634D1AE006B2"],
     installationIds: [],
-
     fake: true,
   },
   {
@@ -96,6 +95,7 @@ export function populateUsernames(
       accountAddresses: [user.address?.toLowerCase()],
       address: user.address?.toLowerCase(),
       inboxId: user.inboxId?.toLowerCase(),
+      installationIds: user.installationIds,
       fake: user.fake,
     } as User);
   });

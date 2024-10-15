@@ -332,6 +332,7 @@ export default class HandlerContext {
       const handler = this.commands?.find((command) =>
         command.triggers?.includes(text.split(" ")[0]),
       );
+
       if (handler) {
         let content = parseCommand(text, commands ?? [], members ?? []);
         // Mock context for command execution
@@ -359,7 +360,7 @@ export default class HandlerContext {
         */
         await handler?.commands[0].handler?.(mockContext);
         this.refConv = null;
-      } else this.reply(text);
+      } else this.send(text);
     } catch (e) {
       console.log("error", e);
     } finally {
