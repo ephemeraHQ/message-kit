@@ -36,7 +36,7 @@ export type ApiResponse = {
 
 export type CommandHandler = (
   context: HandlerContext,
-) => Promise<string | void | ApiResponse>;
+) => Promise<void | ApiResponse>;
 
 export type Handler = (context: HandlerContext) => Promise<void>;
 
