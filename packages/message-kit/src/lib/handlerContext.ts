@@ -352,14 +352,9 @@ export default class HandlerContext {
           getReplyChain: this.getReplyChain.bind(this),
           isGroup: this.group instanceof Conversation,
         };
-        /*OLD
-        const handler =
-          this.commandHandlers?.[
-            text.split(" ")[0] as keyof typeof this.commandHandlers
-          ];
-        */
-        await handler?.commands[0].handler?.(mockContext);
+
         this.refConv = null;
+        return await handler?.commands[0].handler?.(mockContext);
       } else this.send(text);
     } catch (e) {
       console.log("error", e);

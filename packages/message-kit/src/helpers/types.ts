@@ -29,8 +29,14 @@ export type GroupAbstracted = {
   send: (content: string, contentType?: ContentTypeId) => Promise<string>;
   createdAt: Date;
 };
+export type ApiResponse = {
+  code: number;
+  message: string;
+};
 
-export type CommandHandler = (context: HandlerContext) => Promise<void>;
+export type CommandHandler = (
+  context: HandlerContext,
+) => Promise<string | void | ApiResponse>;
 
 export type Handler = (context: HandlerContext) => Promise<void>;
 
