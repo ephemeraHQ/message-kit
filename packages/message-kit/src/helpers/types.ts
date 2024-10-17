@@ -24,8 +24,6 @@ export type GroupAbstracted = {
   sync: () => Promise<void>;
   addMembers: (addresses: string[]) => Promise<void>;
   addMembersByInboxId: (inboxIds: string[]) => Promise<void>;
-  removeMembers: (addresses: string[]) => Promise<void>;
-  removeMembersByInboxId: (inboxIds: string[]) => Promise<void>;
   send: (content: string, contentType?: ContentTypeId) => Promise<string>;
   createdAt: Date;
 };
