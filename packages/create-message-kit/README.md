@@ -5,11 +5,11 @@ Is a command-line interface tool designed to help developers create and manage t
 To install it run the following command:
 
 ```bash
-npx create-message-kit@latest
+bun create message-kit
 ```
 
 ```bash
-bun create message-kit
+npx create-message-kit@latest
 ```
 
 ```bash

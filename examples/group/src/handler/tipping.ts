@@ -36,13 +36,6 @@ export async function handler(context: HandlerContext) {
       amount = extractedAmount || 10; // Default amount if not specified
       receivers = username; // Extract receiver from parameters
     }
-  } else if (typeId === "reaction" && replyReceiver) {
-    const { content: reaction, action } = content;
-    // Process reactions, specifically tipping added reactions
-    if ((reaction === "🎩" || reaction === "degen") && action === "added") {
-      amount = 10; // Set a fixed amount for reactions
-      receivers = [replyReceiver];
-    }
   }
   if (!sender || receivers.length === 0 || amount === 0) {
     context.reply("Sender or receiver or amount not found.");

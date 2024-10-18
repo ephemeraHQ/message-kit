@@ -24,7 +24,7 @@ The `message` object contains the following
   content: {}, // The content of the message depending on the  type
   sender: User, // The user object of the sender
   sent: Date, // The timestamp of the message
-  typeId: string; // The  type of the message (text, reply or reaction)
+  typeId: string; // The  type of the message (text, reply)
 }
 ```
 
@@ -41,8 +41,6 @@ context.send("Your message.");
 context.reply("Your message.");
 // Send a message to specific users
 context.sendTo("Your message.", ["address1", "address2"]);
-// React to the last message with an emoji
-context.react("👍");
 ```
 
 > App messages are prevented from being sent to the app itself

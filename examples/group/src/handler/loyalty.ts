@@ -50,24 +50,5 @@ export async function handler(context: HandlerContext, fake?: boolean) {
         uniqueId: adminAddress?.username ?? "",
       });
     }
-  } else if (typeId === "reaction" && group) {
-    const { content: emoji, action } = content;
-    const msg = await getMessageById(content.reference);
-    if (action === "added") {
-      const adminAddress = members?.find(
-        (member: User) => member.inboxId === msg?.senderInboxId,
-      );
-      let points = 1;
-      if (emoji === "👎") {
-        points = -10;
-      } else if (emoji === "🎩") {
-        points = 10;
-      }
-      await stack?.track("reaction", {
-        points,
-        account: adminAddress?.address ?? "",
-        uniqueId: adminAddress?.username ?? "",
-      });
-    }
   }
 }

@@ -108,7 +108,6 @@ export default defineConfig({
           link: "/concepts/messages",
           items: [
             { text: "Text", link: "/concepts/messages/text" },
-            { text: "Reaction", link: "/concepts/messages/reaction" },
             { text: "Reply", link: "/concepts/messages/reply" },
             { text: "Command", link: "/concepts/messages/command" },
             { text: "Attachment", link: "/concepts/messages/attachment" },

@@ -9,9 +9,6 @@ run(async (context: HandlerContext) => {
     message: { typeId },
   } = context;
   switch (typeId) {
-    case "reaction":
-      handleReaction(context);
-      break;
     case "reply":
       handleReply(context);
       break;
@@ -40,28 +37,6 @@ async function handleReply(context: HandlerContext) {
   );
   console.log(chain);
   handleTextMessage(context);
-}
-// Handle reaction messages
-async function handleReaction(context: HandlerContext) {
-  const {
-    v2client,
-    getReplyChain,
-    version,
-    message: {
-      content: { content: emoji, action, reference },
-    },
-  } = context;
-
-  const { chain, isSenderInChain } = await getReplyChain(
-    reference,
-    version,
-    v2client.address,
-  );
-  console.log(chain);
-
-  if (action === "added" && (emoji === "degen" || emoji === "🎩")) {
-    await tipping(context);
-  }
 }
 
 // Handle attachment messages

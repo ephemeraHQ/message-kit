@@ -6,7 +6,7 @@ In this example you can tip using 3 primitives:
 
 ```bash [cmd]
 /tip @bo @alix 15
-🎩 //Send emoji
+🎩 (emoji)
 ```
 
 ::::note
@@ -80,13 +80,6 @@ export async function handler(context: HandlerContext) {
       } = content;
       amount = extractedAmount || 10; // Default amount if not specified
       receivers = username; // Extract receiver from parameters
-    }
-  } else if (typeId === "reaction" && replyReceiver) {
-    const { content: reaction, action } = content;
-    // Process reactions, specifically tipping added reactions
-    if ((reaction === "🎩" || reaction === "degen") && action === "added") {
-      amount = 10; // Set a fixed amount for reactions
-      receivers = [replyReceiver];
     }
   }
   if (!sender || receivers.length === 0 || amount === 0) {

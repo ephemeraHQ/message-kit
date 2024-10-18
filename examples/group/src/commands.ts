@@ -123,7 +123,7 @@ export const commands: CommandGroup[] = [
   },
   {
     name: "Agent",
-    triggers: ["/agent", "@agent"],
+    triggers: ["/agent", "@agent", "@bot"],
     description: "Manage agent commands.",
     commands: [
       {
