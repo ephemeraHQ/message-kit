@@ -53,9 +53,6 @@ export default class HandlerContext {
         createdAt: conversation.createdAt,
         addMembersByInboxId:
           conversation.addMembersByInboxId.bind(conversation),
-        removeMembers: conversation.removeMembers.bind(conversation),
-        removeMembersByInboxId:
-          conversation.removeMembersByInboxId.bind(conversation),
       };
       this.version = "v3";
     } else {

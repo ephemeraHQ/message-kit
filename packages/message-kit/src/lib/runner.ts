@@ -79,7 +79,10 @@ export default async function run(handler: Handler, config?: Config) {
     // Reactions dont work with triggers.
     const commandTriggered = isAddedMember
       ? true
-      : version == "v2"
+      : version == "v2" &&
+          (typeId === "text" ||
+            typeId === "remoteStaticAttachment" ||
+            typeId === "reply")
         ? true
         : context.commands?.some((commandGroup) =>
             isRemoteAttachment && commandGroup.image

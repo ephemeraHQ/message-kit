@@ -5,9 +5,13 @@ Is a command-line interface tool designed to help developers create and manage t
 To install it run the following command:
 
 ```bash
-npm init message-kit
+npx create-message-kit@latest
 ```
 
 ```bash
 bun create message-kit
+```
+
+```bash
+yarn create message-kit
 ```
