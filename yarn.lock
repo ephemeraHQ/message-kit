@@ -4207,25 +4207,32 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@xmtp/content-type-reaction@npm:^1.1.9":
-  version: 1.1.9
-  resolution: "@xmtp/content-type-reaction@npm:1.1.9"
+"@xmtp/content-type-primitives@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "@xmtp/content-type-primitives@npm:1.0.2"
   dependencies:
-    "@xmtp/content-type-primitives": "npm:^1.0.1"
-  checksum: 10/08cb7e67ddd49ae4a3366808488dcd6c27951fdf4cab17c043f9de1b7de5029c75fd074ff67b6c53549f76d12a7f164914f69772b251f13aa3c8891bec5b9e31
+    "@xmtp/proto": "npm:^3.61.1"
+  checksum: 10/5b54ec02752cf12fc13f1e90ae064608a4e6370932ea13a052c9515d5e8c46186011de62f9b04e0429790ec08ecc7d5913cce85d46e7b60c6bfb2b20db98a8d7
   languageName: node
   linkType: hard
 
-"@xmtp/content-type-remote-attachment@npm:1.1.8":
-  version: 1.1.8
-  resolution: "@xmtp/content-type-remote-attachment@npm:1.1.8"
+"@xmtp/content-type-reaction@npm:^1.1.10":
+  version: 1.1.10
+  resolution: "@xmtp/content-type-reaction@npm:1.1.10"
+  dependencies:
+    "@xmtp/content-type-primitives": "npm:^1.0.2"
+  checksum: 10/38583dddc52d8f9c892305b3099026092f07da994b8e41ffd682ad3a574f9cffe094f91fb18740fc2e500f73c6b33176cf55f7eb2fa9dac5c7fc0d9444e5a308
+  languageName: node
+  linkType: hard
+
+"@xmtp/content-type-remote-attachment@npm:1.1.11":
+  version: 1.1.11
+  resolution: "@xmtp/content-type-remote-attachment@npm:1.1.11"
   dependencies:
     "@noble/secp256k1": "npm:^1.7.1"
-    "@xmtp/proto": "npm:^3.29.0"
-    "@xmtp/xmtp-js": "npm:^11.3.12"
-  peerDependencies:
-    "@xmtp/xmtp-js": ^11.1.1
-  checksum: 10/3c48d2f4d761bddf12bfbb97422db54a9b5e100ad56c67f1411ef091535b62f9e0dc93bc64fccbabeacb39de6e66dafe4e433339fa1320045b2e396f3767e1ce
+    "@xmtp/content-type-primitives": "npm:^1.0.2"
+    "@xmtp/proto": "npm:^3.61.1"
+  checksum: 10/6be916da3265d2e7ae90f226f4f72681e1798f6f1627661e3c425a19192a1531d5f1a5f0f9c2e5028c38ec846abe4313d7a10be414c8ac2f7e9e7730ed4c79a5
   languageName: node
   linkType: hard
 
@@ -4270,14 +4277,14 @@ __metadata:
     "@rollup/plugin-typescript": "npm:^11.1.6"
     "@types/jest": "npm:^29.5.12"
     "@types/node": "npm:^20.14.2"
-    "@xmtp/content-type-primitives": "npm:^1.0.1"
-    "@xmtp/content-type-reaction": "npm:^1.1.9"
-    "@xmtp/content-type-remote-attachment": "npm:1.1.8"
+    "@xmtp/content-type-primitives": "npm:^1.0.2"
+    "@xmtp/content-type-reaction": "npm:^1.1.10"
+    "@xmtp/content-type-remote-attachment": "npm:1.1.11"
     "@xmtp/content-type-reply": "npm:^1.1.11"
     "@xmtp/content-type-text": "npm:^1.0.0"
     "@xmtp/grpc-api-client": "npm:^0.2.7"
     "@xmtp/node-sdk": "npm:^0.0.17"
-    "@xmtp/xmtp-js": "npm:^11.2.3"
+    "@xmtp/xmtp-js": "npm:^13.0.2"
     dotenv: "npm:^16.4.5"
     ethers: "npm:^5.7.0"
     jest: "npm:^29.7.0"
@@ -4336,18 +4343,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@xmtp/proto@npm:^3.29.0":
-  version: 3.71.0
-  resolution: "@xmtp/proto@npm:3.71.0"
-  dependencies:
-    long: "npm:^5.2.0"
-    protobufjs: "npm:^7.0.0"
-    rxjs: "npm:^7.8.0"
-    undici: "npm:^5.8.1"
-  checksum: 10/db633ccbe1bc4015494daa4b788f51e672ab3afa5bb54bb82839fae5101a918c6bc6b0aaf14080c8f6d5873ec42fe8f67a47621bfc023b946432a2d9bf18f7b9
-  languageName: node
-  linkType: hard
-
 "@xmtp/proto@npm:^3.52.0":
   version: 3.68.0
   resolution: "@xmtp/proto@npm:3.68.0"
@@ -4384,6 +4379,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@xmtp/proto@npm:^3.68.0":
+  version: 3.71.0
+  resolution: "@xmtp/proto@npm:3.71.0"
+  dependencies:
+    long: "npm:^5.2.0"
+    protobufjs: "npm:^7.0.0"
+    rxjs: "npm:^7.8.0"
+    undici: "npm:^5.8.1"
+  checksum: 10/db633ccbe1bc4015494daa4b788f51e672ab3afa5bb54bb82839fae5101a918c6bc6b0aaf14080c8f6d5873ec42fe8f67a47621bfc023b946432a2d9bf18f7b9
+  languageName: node
+  linkType: hard
+
 "@xmtp/tsconfig@workspace:shared/tsconfig":
   version: 0.0.0-use.local
   resolution: "@xmtp/tsconfig@workspace:shared/tsconfig"
@@ -4399,7 +4406,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@xmtp/xmtp-js@npm:^11.2.3, @xmtp/xmtp-js@npm:^11.3.12":
+"@xmtp/xmtp-js@npm:^11.3.12":
   version: 11.6.3
   resolution: "@xmtp/xmtp-js@npm:11.6.3"
   dependencies:
@@ -4412,6 +4419,24 @@ __metadata:
     long: "npm:^5.2.3"
     viem: "npm:2.7.15"
   checksum: 10/0e211e532dca04a54f52b9b698e7903b65babc2625d5a6c6e1e83be065d148bb40cba27b9fbd7ad420fcca5266d45433fbfbc554ef79e9892a14327f9b4e9f37
+  languageName: node
+  linkType: hard
+
+"@xmtp/xmtp-js@npm:^13.0.2":
+  version: 13.0.2
+  resolution: "@xmtp/xmtp-js@npm:13.0.2"
+  dependencies:
+    "@noble/secp256k1": "npm:1.7.1"
+    "@xmtp/consent-proof-signature": "npm:^0.1.3"
+    "@xmtp/content-type-primitives": "npm:^1.0.1"
+    "@xmtp/content-type-text": "npm:^1.0.0"
+    "@xmtp/proto": "npm:^3.68.0"
+    "@xmtp/user-preferences-bindings-wasm": "npm:^0.3.6"
+    async-mutex: "npm:^0.5.0"
+    elliptic: "npm:^6.5.7"
+    long: "npm:^5.2.3"
+    viem: "npm:2.7.15"
+  checksum: 10/3ef560d55eafcbdff750fb4351593e581f33235eb14bc2aa310deca0d7237169814a0d89b2cd726b4257be813ad6fb95aa1206c786f3e7d5eb030d090a933c07
   languageName: node
   linkType: hard
 
@@ -5966,6 +5991,21 @@ __metadata:
     minimalistic-assert: "npm:^1.0.1"
     minimalistic-crypto-utils: "npm:^1.0.1"
   checksum: 10/5444b4f18e0c0fdfa14de26f69f7dbc44c78a211e91825823d698dcc91071ef1a3954d87730f364183fc83b0a86d8affed864e347da2e549bdcead3b46de126f
+  languageName: node
+  linkType: hard
+
+"elliptic@npm:^6.5.7":
+  version: 6.5.7
+  resolution: "elliptic@npm:6.5.7"
+  dependencies:
+    bn.js: "npm:^4.11.9"
+    brorand: "npm:^1.1.0"
+    hash.js: "npm:^1.0.0"
+    hmac-drbg: "npm:^1.0.1"
+    inherits: "npm:^2.0.4"
+    minimalistic-assert: "npm:^1.0.1"
+    minimalistic-crypto-utils: "npm:^1.0.1"
+  checksum: 10/fbad1fad0a5cc07df83f80cc1f7a784247ef59075194d3e340eaeb2f4dd594825ee24c7e9b0cf279c9f1982efe610503bb3139737926428c4821d4fca1bcf348
   languageName: node
   linkType: hard
 
