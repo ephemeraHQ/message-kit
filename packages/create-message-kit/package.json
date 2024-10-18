@@ -1,6 +1,6 @@
 {
   "name": "create-message-kit",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "license": "MIT",
   "type": "module",
   "main": "index.js",
