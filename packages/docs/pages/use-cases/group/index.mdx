@@ -231,17 +231,6 @@ run(async (context: HandlerContext) => {
   }
 });
 
-// Handle reaction messages
-async function handleReaction(context: HandlerContext) {
-  const {
-    content: { content: emoji, action },
-  } = context.message;
-
-  if (action === "added" && (emoji === "degen" || emoji === "🎩")) {
-    await tipping(context);
-  }
-}
-
 // Handle reply messages
 async function handleReply(context: HandlerContext) {
   const {
