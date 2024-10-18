@@ -4216,15 +4216,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@xmtp/content-type-remote-attachment@npm:^1.1.9":
-  version: 1.1.9
-  resolution: "@xmtp/content-type-remote-attachment@npm:1.1.9"
+"@xmtp/content-type-remote-attachment@npm:1.1.8":
+  version: 1.1.8
+  resolution: "@xmtp/content-type-remote-attachment@npm:1.1.8"
   dependencies:
     "@noble/secp256k1": "npm:^1.7.1"
-    "@xmtp/content-type-primitives": "npm:^1.0.1"
-    "@xmtp/proto": "npm:^3.61.1"
-    "@xmtp/xmtp-js": "npm:^11.6.3"
-  checksum: 10/f9856acbde7e32e1c9ab8dbe3f770fba81944c96f6401697cb81b01143e8ccf6ffb74bd2847fe13c7e9ec85cae00625afe0c2bcb0bbeadeff1dfd30049615376
+    "@xmtp/proto": "npm:^3.29.0"
+    "@xmtp/xmtp-js": "npm:^11.3.12"
+  peerDependencies:
+    "@xmtp/xmtp-js": ^11.1.1
+  checksum: 10/3c48d2f4d761bddf12bfbb97422db54a9b5e100ad56c67f1411ef091535b62f9e0dc93bc64fccbabeacb39de6e66dafe4e433339fa1320045b2e396f3767e1ce
   languageName: node
   linkType: hard
 
@@ -4271,7 +4272,7 @@ __metadata:
     "@types/node": "npm:^20.14.2"
     "@xmtp/content-type-primitives": "npm:^1.0.1"
     "@xmtp/content-type-reaction": "npm:^1.1.9"
-    "@xmtp/content-type-remote-attachment": "npm:^1.1.9"
+    "@xmtp/content-type-remote-attachment": "npm:1.1.8"
     "@xmtp/content-type-reply": "npm:^1.1.11"
     "@xmtp/content-type-text": "npm:^1.0.0"
     "@xmtp/grpc-api-client": "npm:^0.2.7"
@@ -4335,6 +4336,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@xmtp/proto@npm:^3.29.0":
+  version: 3.71.0
+  resolution: "@xmtp/proto@npm:3.71.0"
+  dependencies:
+    long: "npm:^5.2.0"
+    protobufjs: "npm:^7.0.0"
+    rxjs: "npm:^7.8.0"
+    undici: "npm:^5.8.1"
+  checksum: 10/db633ccbe1bc4015494daa4b788f51e672ab3afa5bb54bb82839fae5101a918c6bc6b0aaf14080c8f6d5873ec42fe8f67a47621bfc023b946432a2d9bf18f7b9
+  languageName: node
+  linkType: hard
+
 "@xmtp/proto@npm:^3.52.0":
   version: 3.68.0
   resolution: "@xmtp/proto@npm:3.68.0"
@@ -4386,7 +4399,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@xmtp/xmtp-js@npm:^11.2.3, @xmtp/xmtp-js@npm:^11.3.12, @xmtp/xmtp-js@npm:^11.6.3":
+"@xmtp/xmtp-js@npm:^11.2.3, @xmtp/xmtp-js@npm:^11.3.12":
   version: 11.6.3
   resolution: "@xmtp/xmtp-js@npm:11.6.3"
   dependencies:
