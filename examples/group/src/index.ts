@@ -9,9 +9,6 @@ run(async (context: HandlerContext) => {
     message: { typeId },
   } = context;
   switch (typeId) {
-    case "reaction":
-      handleReaction(context);
-      break;
     case "reply":
       handleReply(context);
       break;
