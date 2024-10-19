@@ -60,3 +60,16 @@ Each app should have an `.env` file that contains the following:
 ```bash [.env]
 KEY= # 0x... the private key of the bot wallet, like any normal wallet private key. (with the 0x prefix)
 ```
+
+## Config parameters
+
+MessageKit uses by default the ENV private key, but you can send messageKit a private key as a parameter.
+
+```jsx
+run(
+  async (context) => {
+    // Your code here
+  },
+  { privateKey: "your_private_key" },
+);
+```
