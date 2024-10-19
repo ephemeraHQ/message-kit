@@ -92,7 +92,7 @@ export default async function xmtpClient(
   // check if file exists
   const resolvedPath = path.resolve(process.cwd(), "src/" + "commands.ts");
   if (!fs.existsSync(resolvedPath)) {
-    console.error(`No commands.ts file found`);
+    console.warn(`\x1b[33m⚠️  WARNING: No commands.ts file found\x1b[0m\n`);
   }
   if (config?.experimental) {
     console.warn(
