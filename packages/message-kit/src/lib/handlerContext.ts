@@ -292,7 +292,7 @@ export default class HandlerContext {
     //Could be used to check if the cache is outdated
     //Generally indicates the deployment date of the bot
     try {
-      const stats = await fs.stat(".cache");
+      const stats = await fs.stat(".data");
       const cacheCreationDate = new Date(stats.birthtime);
       return cacheCreationDate;
     } catch (err) {

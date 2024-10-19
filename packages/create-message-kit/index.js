@@ -172,7 +172,6 @@ function createGitignore(destDir) {
 .env
 node_modules/
 .gitignore
-.cache/
 .data/
 dist/
 .DS_Store

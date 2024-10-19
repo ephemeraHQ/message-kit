@@ -9,10 +9,9 @@ import {
 } from "@xmtp/xmtp-js";
 
 export default async function run(handler: Handler, config?: Config) {
-  const { client, v2client } = await xmtpClient(
-    config?.client,
-    config?.privateKey,
-  );
+  const { client, v2client } = await xmtpClient({
+    ...config,
+  });
   const { inboxId: address } = client;
   const { address: addressV2 } = v2client;
 
@@ -73,6 +72,7 @@ export default async function run(handler: Handler, config?: Config) {
     const isRemoteAttachment =
       message?.contentType?.typeId == "remoteStaticAttachment";
 
+    const isExperimental = config?.experimental;
     // Remote attachments work if image:true
     // Replies only work with explicit mentions from triggers.
     // Text only works with explicit mentions from triggers.
@@ -84,24 +84,27 @@ export default async function run(handler: Handler, config?: Config) {
             typeId === "remoteStaticAttachment" ||
             typeId === "reply")
         ? true
-        : context.commands?.some((commandGroup) =>
-            isRemoteAttachment && commandGroup.image
-              ? true
-              : commandGroup.triggers.some((trigger) => {
-                  switch (typeId) {
-                    case "text":
-                      return message?.content
-                        ?.toLowerCase()
-                        .includes(trigger?.toLowerCase());
-                    case "reply":
-                      return message?.content?.content
-                        ?.toLowerCase()
-                        .includes(trigger?.toLowerCase());
-                    default:
-                      return false;
-                  }
-                }),
-          );
+        : isExperimental
+          ? true
+          : context.commands?.some((commandGroup) =>
+              isRemoteAttachment && commandGroup.image
+                ? true
+                : commandGroup.triggers.some((trigger) => {
+                    switch (typeId) {
+                      case "text":
+                        return message?.content
+                          ?.toLowerCase()
+                          .includes(trigger?.toLowerCase());
+                      case "reply":
+                        return message?.content?.content
+                          ?.toLowerCase()
+                          .includes(trigger?.toLowerCase());
+                      default:
+                        return false;
+                    }
+                  }),
+            );
+    console.log(commandTriggered);
     if (commandTriggered) {
       console.log(
         `msg_${version}:`,
