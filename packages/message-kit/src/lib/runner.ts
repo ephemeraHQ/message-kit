@@ -9,9 +9,7 @@ import {
 } from "@xmtp/xmtp-js";
 
 export default async function run(handler: Handler, config?: Config) {
-  const { client, v2client } = await xmtpClient({
-    ...config,
-  });
+  const { client, v2client } = await xmtpClient(config ?? {});
   const { inboxId: address } = client;
   const { address: addressV2 } = v2client;
 
@@ -104,7 +102,7 @@ export default async function run(handler: Handler, config?: Config) {
                     }
                   }),
             );
-    console.log(commandTriggered);
+
     if (commandTriggered) {
       console.log(
         `msg_${version}:`,
