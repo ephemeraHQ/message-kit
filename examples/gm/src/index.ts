@@ -1,29 +1,8 @@
-import { run, HandlerContext, xmtpClient } from "@xmtp/message-kit";
-
-const appConfig_BITTU = {
-  privateKey: process.env.KEY_BITTU,
-  name: "bittu",
-};
-
-const { v2client: bittu, client: bittu3 } = await xmtpClient({privateKey:appConfig_BITTU);
+import { run, HandlerContext } from "@xmtp/message-kit";
 
 run(async (context: HandlerContext) => {
+  // Get the message and the address from the sender
+  const { content, sender } = context.message;
+  // To reply, just call `reply` on the HandlerContext.
   await context.send(`gm`);
-
-  const { address } = params;
-
-  await bittu3.conversations?.sync();
-  const conversations = await bittu.conversations.list();
-  let targetConversation = conversations.find(
-    (conv) => conv.peerAddress.toLowerCase() === address.toLowerCase(),
-  );
-
-  if (!targetConversation) {
-    targetConversation = await bittu.conversations.newConversation(
-      address.toLowerCase(),
-    );
-  }
-
-  // Send the message only once per receiver
-  const msg = await targetConversation.send("Here is your POAP");
 });
