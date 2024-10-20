@@ -253,15 +253,20 @@ export default class HandlerContext {
     if (conversation) {
       if (this.isConversationV2(conversation)) {
         await conversation.send(reply, { contentType: ContentTypeReply });
+        console.log("sent", reply);
       } else {
         await conversation.send(reply, ContentTypeReply);
+        console.log("sent", reply);
       }
     }
   }
 
   async send(message: string) {
     const conversation = this.refConv || this.conversation || this.group;
-    if (conversation) await conversation.send(message);
+    if (conversation) {
+      await conversation.send(message);
+      console.log("sent", message);
+    }
   }
 
   isConversationV2(
@@ -318,6 +323,7 @@ export default class HandlerContext {
 
       // Send the message only once per receiver
       await targetConversation.send(message);
+      console.log("sent", message);
     }
   }
 
@@ -352,7 +358,10 @@ export default class HandlerContext {
 
         this.refConv = null;
         return await handler?.commands[0].handler?.(mockContext);
-      } else this.send(text);
+      } else {
+        this.send(text);
+        console.log("sent", text);
+      }
     } catch (e) {
       console.log("error", e);
     } finally {
