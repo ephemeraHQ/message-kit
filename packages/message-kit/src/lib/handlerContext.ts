@@ -9,13 +9,14 @@ import path from "path";
 import type { Reaction } from "@xmtp/content-type-reaction";
 import { populateUsernames } from "../helpers/usernames.js";
 import { ContentTypeText } from "@xmtp/content-type-text";
+import { logMessage, shorterLogMessage } from "../helpers/helpers.js";
 import {
   CommandGroup,
   User,
   MessageAbstracted,
   GroupAbstracted,
 } from "../helpers/types.js";
-import { parseCommand } from "../helpers/commands.js";
+import { parseCommand } from "../helpers/helpers.js";
 import { ContentTypeReply } from "@xmtp/content-type-reply";
 import {
   ContentTypeRemoteAttachment,
@@ -253,10 +254,10 @@ export default class HandlerContext {
     if (conversation) {
       if (this.isConversationV2(conversation)) {
         await conversation.send(reply, { contentType: ContentTypeReply });
-        console.log("sent", reply);
+        logMessage("sent:" + reply.content);
       } else {
         await conversation.send(reply, ContentTypeReply);
-        console.log("sent", reply);
+        logMessage("sent:" + reply.content);
       }
     }
   }
@@ -265,7 +266,7 @@ export default class HandlerContext {
     const conversation = this.refConv || this.conversation || this.group;
     if (conversation) {
       await conversation.send(message);
-      console.log("sent", message);
+      logMessage("sent:" + message);
     }
   }
 
@@ -323,7 +324,7 @@ export default class HandlerContext {
 
       // Send the message only once per receiver
       await targetConversation.send(message);
-      console.log("sent", message);
+      logMessage("sent:" + message);
     }
   }
 
@@ -360,7 +361,7 @@ export default class HandlerContext {
         return await handler?.commands[0].handler?.(mockContext);
       } else {
         this.send(text);
-        console.log("sent", text);
+        logMessage("sent:" + text);
       }
     } catch (e) {
       console.log("error", e);

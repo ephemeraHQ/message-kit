@@ -2,6 +2,7 @@ import { default as HandlerContext } from "./handlerContext.js";
 import { default as xmtpClient } from "./client.js";
 import { Config, Handler } from "../helpers/types.js";
 import { Conversation, DecodedMessage, Client } from "@xmtp/node-sdk";
+import { logMessage } from "../helpers/helpers.js";
 import {
   DecodedMessage as DecodedMessageV2,
   Client as ClientV2,
@@ -59,9 +60,9 @@ export default async function run(handler: Handler, config?: Config) {
     context: HandlerContext,
     message: DecodedMessage | DecodedMessageV2 | undefined,
   ) => {
-    if (process.env.MSG_LOG) {
-      //console.log("logs");
-      //console.log(message);
+    const isExperimental = config?.experimental;
+    if (process.env.MSG_LOG !== "false" && isExperimental) {
+      console.log(message);
     }
     const typeId = message?.contentType?.typeId;
     const isAddedMember =
@@ -70,7 +71,6 @@ export default async function run(handler: Handler, config?: Config) {
     const isRemoteAttachment =
       message?.contentType?.typeId == "remoteStaticAttachment";
 
-    const isExperimental = config?.experimental;
     // Remote attachments work if image:true
     // Replies only work with explicit mentions from triggers.
     // Text only works with explicit mentions from triggers.
@@ -104,14 +104,13 @@ export default async function run(handler: Handler, config?: Config) {
             );
 
     if (commandTriggered) {
-      console.log(
-        `msg_${version}:`,
-        typeof message?.content === "string"
-          ? message?.content.substring(0, 20) +
-              (message?.content.length > 20 ? "..." : "")
-          : message?.contentType?.typeId ??
-              message?.content?.contentType?.typeId,
-      );
+      typeof message?.content === "string"
+        ? logMessage(`msg_${version}:` + message?.content)
+        : logMessage(
+            `msg_${version}:` +
+              (message?.contentType?.typeId ??
+                message?.content?.contentType?.typeId),
+          );
     }
     return commandTriggered;
   };
