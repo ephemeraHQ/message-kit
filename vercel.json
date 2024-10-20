@@ -1,14 +1,14 @@
-{
-  "builds": [
-    {
-      "src": "packages/doc/**/*",
-      "use": "@vercel/node"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "packages/doc/$1"
-    }
-  ]
-}
+// {
+//   "builds": [
+//     {
+//       "src": "packages/doc/**/*",
+//       "use": "@vercel/node"
+//     }
+//   ],
+//   "routes": [
+//     {
+//       "src": "/(.*)",
+//       "dest": "packages/doc/$1"
+//     }
+//   ]
+// }
