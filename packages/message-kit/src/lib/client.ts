@@ -24,7 +24,7 @@ export default async function xmtpClient(
   let key = config?.privateKey ?? process.env.KEY;
   if (!isHex(key)) {
     key = generatePrivateKey();
-    console.error(".env KEY not set. Using random one:\n", key);
+    console.warn("⚠️🔒 .env KEY not set. Using random one:\n", key);
   }
 
   const account = privateKeyToAccount(key as `0x${string}`);
@@ -99,9 +99,6 @@ export default async function xmtpClient(
       "\x1b[33m⚠️  WARNING: Experimental mode enabled ⚠️\x1b[0m\n" +
         "\x1b[33m🔍 All group messages will be exposed\x1b[0m\n" +
         "\x1b[33m⚠️  Use with extreme caution. ⚠️\n",
-    );
-
-    console.info(
       "Read the guidelines at https://messagekit.ephemerahq.com/guidelines\x1b[0m",
     );
   }
