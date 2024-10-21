@@ -41,6 +41,7 @@ export type Handler = (context: HandlerContext) => Promise<void>;
 export type Config = {
   client?: ClientOptions;
   privateKey?: string;
+  experimental?: boolean;
   commandsConfigPath?: string;
 };
 export interface CommandParamConfig {

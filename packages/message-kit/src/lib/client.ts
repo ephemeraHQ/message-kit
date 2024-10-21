@@ -15,16 +15,16 @@ import { createWalletClient, http, toBytes, isHex } from "viem";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { mainnet } from "viem/chains";
 import { GrpcApiClient } from "@xmtp/grpc-api-client";
+import { Config } from "../helpers/types";
 
 export default async function xmtpClient(
-  clientConfig: ClientOptions = {},
-  privateKey: string | null = null,
+  config: Config,
 ): Promise<{ client: Client; v2client: V2Client }> {
   // Check if both clientConfig and privateKey are empty
-  let key = privateKey ?? process.env.KEY;
+  let key = config?.privateKey ?? process.env.KEY;
   if (!isHex(key)) {
     key = generatePrivateKey();
-    console.error(".env KEY not set. Using random one:\n", key);
+    console.warn("⚠️🔒 .env KEY not set. Using random one:\n", key);
   }
 
   const account = privateKeyToAccount(key as `0x${string}`);
@@ -55,7 +55,7 @@ export default async function xmtpClient(
     ],
   };
   // Merge the default configuration with the provided config. Repeated fields in clientConfig will override the default values
-  const finalConfig = { ...defaultConfig, ...clientConfig };
+  const finalConfig = { ...defaultConfig, ...config?.client };
   const client = await Client.create(account.address, finalConfig);
   //v2
   const wallet2 = new Wallet(key);
@@ -92,7 +92,15 @@ export default async function xmtpClient(
   // check if file exists
   const resolvedPath = path.resolve(process.cwd(), "src/" + "commands.ts");
   if (!fs.existsSync(resolvedPath)) {
-    console.error(`No commands.ts file found`);
+    console.warn(`\x1b[33m⚠️  WARNING: No commands.ts file found\x1b[0m\n`);
+  }
+  if (config?.experimental) {
+    console.warn(
+      "\x1b[33m⚠️  WARNING: Experimental mode enabled ⚠️\x1b[0m\n" +
+        "\x1b[33m🔍 All group messages will be exposed\x1b[0m\n" +
+        "\x1b[33m⚠️  Use with extreme caution. ⚠️\n",
+      "Read the guidelines at https://messagekit.ephemerahq.com/guidelines\x1b[0m",
+    );
   }
 
   return { client, v2client };
