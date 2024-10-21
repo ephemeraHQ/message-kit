@@ -243,7 +243,7 @@ Follow these steps to set up and run the project:
 
 3. **Run the project:**
     \`\`\`sh
-    ${packageManager} dev
+    ${packageManager === "npm" ? "npm run" : packageManager} dev
     \`\`\`
 
 
