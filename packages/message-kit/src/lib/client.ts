@@ -20,16 +20,24 @@ import { Config } from "../helpers/types";
 export default async function xmtpClient(
   config: Config,
 ): Promise<{ client: Client; v2client: V2Client }> {
+  // check if file exists
+
   // Check if both clientConfig and privateKey are empty
   let key = config?.privateKey ?? process.env.KEY;
-  if (!key?.startsWith("0x")) key = "0x" + key;
-
-  if (process.env.KEY === undefined) {
-    console.warn("⚠️🔒 .env KEY not set. Using random one:\n", key);
+  if (key === undefined) {
+    console.error("⚠️🔒 .env KEY not set.");
   }
-  if (!isHex(key)) {
+  if (key === undefined || !isHex(key)) {
+    console.warn("⚠️🔒 Invalid private key. Generating a random one.");
     key = generatePrivateKey();
-    console.warn("⚠️🔒 .env KEY not valid. Using random one:\n", key);
+    console.warn("Generated key: " + key);
+  }
+
+  if (!key.startsWith("0x")) key = "0x" + key;
+
+  const resolvedPath = path.resolve(process.cwd(), "src/" + "commands.ts");
+  if (!fs.existsSync(resolvedPath)) {
+    console.warn(`⚠️ No commands.ts file found`);
   }
 
   const account = privateKeyToAccount(key as `0x${string}`);
@@ -63,7 +71,7 @@ export default async function xmtpClient(
   const finalConfig = { ...defaultConfig, ...config?.client };
   const client = await Client.create(account.address, finalConfig);
   //v2
-  const wallet2 = new Wallet(key);
+  const wallet2 = new Wallet(key as `0x${string}`);
   const v2client = await V2Client.create(wallet2, {
     ...finalConfig,
     apiUrl: undefined,
@@ -93,18 +101,12 @@ export default async function xmtpClient(
     await client.registerIdentity();
   }
 
-  //commands
-  // check if file exists
-  const resolvedPath = path.resolve(process.cwd(), "src/" + "commands.ts");
-  if (!fs.existsSync(resolvedPath)) {
-    console.warn(`\x1b[33m⚠️  WARNING: No commands.ts file found\x1b[0m\n`);
-  }
   if (config?.experimental) {
     console.warn(
-      "\x1b[33m⚠️  WARNING: Experimental mode enabled ⚠️\x1b[0m\n" +
-        "\x1b[33m🔍 All group messages will be exposed\x1b[0m\n" +
-        "\x1b[33m⚠️  Use with extreme caution. ⚠️\n",
-      "Read the guidelines at https://messagekit.ephemerahq.com/guidelines\x1b[0m",
+      "⚠️ Experimental mode enabled\n" +
+        "🔍 All group messages will be exposed\n" +
+        "⚠️ Use with extreme caution.\n" +
+        "Read the guidelines at https://messagekit.ephemerahq.com/guidelines",
     );
   }
 
