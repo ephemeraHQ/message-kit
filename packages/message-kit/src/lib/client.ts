@@ -22,9 +22,14 @@ export default async function xmtpClient(
 ): Promise<{ client: Client; v2client: V2Client }> {
   // Check if both clientConfig and privateKey are empty
   let key = config?.privateKey ?? process.env.KEY;
+  if (!key?.startsWith("0x")) key = "0x" + key;
+
+  if (process.env.KEY === undefined) {
+    console.warn("⚠️🔒 .env KEY not set. Using random one:\n", key);
+  }
   if (!isHex(key)) {
     key = generatePrivateKey();
-    console.warn("⚠️🔒 .env KEY not set. Using random one:\n", key);
+    console.warn("⚠️🔒 .env KEY not valid. Using random one:\n", key);
   }
 
   const account = privateKeyToAccount(key as `0x${string}`);
