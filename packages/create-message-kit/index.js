@@ -47,7 +47,7 @@ program
     createReadme(destDir, templateType, displayName, pkgManager);
 
     // Log next steps
-    logNextSteps(displayName, pkgManager);
+    logNextSteps(displayName);
 
     outro(pc.red("Made with ❤️  by Ephemera"));
   });
@@ -159,12 +159,11 @@ function updatePackageJson(destDir, name) {
   fs.writeJsonSync(resolve(destDir, "package.json"), pkgJson, { spaces: 2 });
 }
 
-function logNextSteps(name, pkgManager) {
+function logNextSteps(name) {
   log.message("Next steps:");
   log.step(`1. ${pc.red(`cd ./${name}`)} - Navigate to project`);
   log.step(`2. ${pc.red(`code .`)} - Open with your favorite editor`);
-  log.step(`3. ${pc.red(`${pkgManager} i`)} - Install dependencies`);
-  log.step(`4. ${pc.red(`${pkgManager} dev`)} - Build and start project`);
+  log.step(`3. ${pc.green("Start building!")}`);
 }
 function createGitignore(destDir) {
   const gitignoreContent = `
@@ -225,38 +224,39 @@ function createReadme(destDir, templateType, projectName, packageManager) {
 
   const readmeContent = `# ${projectName}
 
-This project is generated using the [MessageKit](https://message-kit.vercel.app) v${version} CLI and uses the \`${templateType}\` template. Below are the instructions to set up and run the project.
+This project is powered by [MessageKit](https://messagekit.ephemerahq.com/) 
 
 ## Setup
 
 Follow these steps to set up and run the project:
 
 1. **Navigate to the project directory:**
-    \`\`\`sh
-    cd ./${projectName}
-    \`\`\`
 
-2. **Install dependencies:**
-    \`\`\`sh
-    ${packageManager} install
-    \`\`\`
+\`\`\`sh
+cd ./${projectName}
+\`\`\`
 
-3. **Run the project:**
-    \`\`\`sh
-    ${packageManager === "npm" ? "npm run" : packageManager} dev
-    \`\`\`
-
-
-## Variables
-
-Set up these variables in your app
+2. **Set up your environment variables:**
 
 \`\`\`sh
 ${envExampleContent}
 \`\`\`
 
+3. **Install dependencies:**
+
+\`\`\`sh
+${packageManager} install
+\`\`\`
+
+4. **Run the project:**
+
+\`\`\`sh
+${packageManager === "npm" ? "npm run" : packageManager} dev
+\`\`\`
+
+5. Enjoy!
 ---
-Made with ❤️ by [Ephemera](https://ephemerahq.com)
+Made with ❤️ by [XMTP](https://xmtp.org)
 `;
 
   fs.writeFileSync(resolve(destDir, "README.md"), readmeContent.trim());
