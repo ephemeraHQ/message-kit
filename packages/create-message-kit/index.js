@@ -47,7 +47,7 @@ program
     createReadme(destDir, templateType, displayName, pkgManager);
 
     // Log next steps
-    logNextSteps(displayName, pkgManager);
+    logNextSteps(displayName);
 
     outro(pc.red("Made with ❤️  by Ephemera"));
   });
@@ -159,7 +159,7 @@ function updatePackageJson(destDir, name) {
   fs.writeJsonSync(resolve(destDir, "package.json"), pkgJson, { spaces: 2 });
 }
 
-function logNextSteps(name, pkgManager) {
+function logNextSteps(name) {
   log.message("Next steps:");
   log.step(`1. ${pc.red(`cd ./${name}`)} - Navigate to project`);
   log.step(`2. ${pc.red(`code .`)} - Open with your favorite editor`);
@@ -224,7 +224,7 @@ function createReadme(destDir, templateType, projectName, packageManager) {
 
   const readmeContent = `# ${projectName}
 
-This project is powered by the [MessageKit](https://messagekit.ephemerahq.com/) 
+This project is powered by [MessageKit](https://messagekit.ephemerahq.com/) 
 
 ## Setup
 
@@ -256,7 +256,7 @@ ${packageManager === "npm" ? "npm run" : packageManager} dev
 
 5. Enjoy!
 ---
-Made with ❤️ by [Ephemera](https://ephemerahq.com)
+Made with ❤️ by [XMTP](https://xmtp.org)
 `;
 
   fs.writeFileSync(resolve(destDir, "README.md"), readmeContent.trim());
