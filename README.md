@@ -1,6 +1,6 @@
 # MessageKit
 
-This is the official repository for [MessageKit](https://message-kit.vercel.app/), powered by [Turborepo](https://turbo.build/repo).
+This is the official repository for [MessageKit](https://messagekit.ephemerahq.com/), powered by [Turborepo](https://turbo.build/repo).
 
 ## What's inside?
 

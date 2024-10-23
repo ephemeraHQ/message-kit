@@ -163,8 +163,7 @@ function logNextSteps(name, pkgManager) {
   log.message("Next steps:");
   log.step(`1. ${pc.red(`cd ./${name}`)} - Navigate to project`);
   log.step(`2. ${pc.red(`code .`)} - Open with your favorite editor`);
-  log.step(`3. ${pc.red(`${pkgManager} i`)} - Install dependencies`);
-  log.step(`4. ${pc.red(`${pkgManager} dev`)} - Build and start project`);
+  log.step(`3. ${pc.green("Start building!")}`);
 }
 function createGitignore(destDir) {
   const gitignoreContent = `
@@ -225,7 +224,7 @@ function createReadme(destDir, templateType, projectName, packageManager) {
 
   const readmeContent = `# ${projectName}
 
-This project is generated using the [MessageKit](https://message-kit.vercel.app) v${version} CLI and uses the \`${templateType}\` template. Below are the instructions to set up and run the project.
+This project is powered by the [MessageKit](https://messagekit.ephemerahq.com/) 
 
 ## Setup
 
