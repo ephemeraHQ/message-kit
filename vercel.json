@@ -1,13 +1,10 @@
 {
-  "rewrites": [
+  "redirects": [
     {
-      "source": "/:match*.html",
-      "destination": "/:match"
+      "source": "/(.*)",
+      "destination": "https://messagekit.ephemerahq.com/$1",
+      "permanent": true,
+      "has": [{ "type": "host", "value": "message-kit.vercel.app" }]
     }
-  ],
-  "build": {
-    "env": {
-      "VERCEL_BUILD_CACHE": "false"
-    }
-  }
+  ]
 }
