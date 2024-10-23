@@ -232,29 +232,30 @@ This project is generated using the [MessageKit](https://message-kit.vercel.app)
 Follow these steps to set up and run the project:
 
 1. **Navigate to the project directory:**
-    \`\`\`sh
-    cd ./${projectName}
-    \`\`\`
 
-2. **Install dependencies:**
-    \`\`\`sh
-    ${packageManager} install
-    \`\`\`
+\`\`\`sh
+cd ./${projectName}
+\`\`\`
 
-3. **Run the project:**
-    \`\`\`sh
-    ${packageManager === "npm" ? "npm run" : packageManager} dev
-    \`\`\`
-
-
-## Variables
-
-Set up these variables in your app
+2. **Set up your environment variables:**
 
 \`\`\`sh
 ${envExampleContent}
 \`\`\`
 
+3. **Install dependencies:**
+
+\`\`\`sh
+${packageManager} install
+\`\`\`
+
+4. **Run the project:**
+
+\`\`\`sh
+${packageManager === "npm" ? "npm run" : packageManager} dev
+\`\`\`
+
+5. Enjoy!
 ---
 Made with ❤️ by [Ephemera](https://ephemerahq.com)
 `;
