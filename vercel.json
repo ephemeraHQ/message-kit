@@ -1,14 +1,13 @@
 {
-  "builds": [
+  "rewrites": [
     {
-      "src": "packages/doc/**/*",
-      "use": "@vercel/node"
+      "source": "/:match*.html",
+      "destination": "/:match"
     }
   ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "packages/doc/$1"
+  "build": {
+    "env": {
+      "VERCEL_BUILD_CACHE": "false"
     }
-  ]
+  }
 }
