@@ -172,3 +172,12 @@ export function extractCommandValues(
     return defaultResult;
   }
 }
+
+export const shorterLogMessage = (message: string) => {
+  return message?.substring(0, 20) + (message?.length > 20 ? "..." : "");
+};
+
+export const logMessage = (message: string) => {
+  if (process.env.MSG_LOG === "false") return;
+  console.log(shorterLogMessage(message));
+};

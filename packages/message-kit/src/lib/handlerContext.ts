@@ -9,13 +9,14 @@ import path from "path";
 import type { Reaction } from "@xmtp/content-type-reaction";
 import { populateUsernames } from "../helpers/usernames.js";
 import { ContentTypeText } from "@xmtp/content-type-text";
+import { logMessage, shorterLogMessage } from "../helpers/helpers.js";
 import {
   CommandGroup,
   User,
   MessageAbstracted,
   GroupAbstracted,
 } from "../helpers/types.js";
-import { parseCommand } from "../helpers/commands.js";
+import { parseCommand } from "../helpers/helpers.js";
 import { ContentTypeReply } from "@xmtp/content-type-reply";
 import {
   ContentTypeRemoteAttachment,
@@ -253,15 +254,20 @@ export default class HandlerContext {
     if (conversation) {
       if (this.isConversationV2(conversation)) {
         await conversation.send(reply, { contentType: ContentTypeReply });
+        logMessage("sent:" + reply.content);
       } else {
         await conversation.send(reply, ContentTypeReply);
+        logMessage("sent:" + reply.content);
       }
     }
   }
 
   async send(message: string) {
     const conversation = this.refConv || this.conversation || this.group;
-    if (conversation) await conversation.send(message);
+    if (conversation) {
+      await conversation.send(message);
+      logMessage("sent:" + message);
+    }
   }
 
   isConversationV2(
@@ -292,7 +298,7 @@ export default class HandlerContext {
     //Could be used to check if the cache is outdated
     //Generally indicates the deployment date of the bot
     try {
-      const stats = await fs.stat(".cache");
+      const stats = await fs.stat(".data");
       const cacheCreationDate = new Date(stats.birthtime);
       return cacheCreationDate;
     } catch (err) {
@@ -318,6 +324,7 @@ export default class HandlerContext {
 
       // Send the message only once per receiver
       await targetConversation.send(message);
+      logMessage("sent:" + message);
     }
   }
 
@@ -352,7 +359,10 @@ export default class HandlerContext {
 
         this.refConv = null;
         return await handler?.commands[0].handler?.(mockContext);
-      } else this.send(text);
+      } else {
+        this.send(text);
+        logMessage("sent:" + text);
+      }
     } catch (e) {
       console.log("error", e);
     } finally {

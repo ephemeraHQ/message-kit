@@ -2,6 +2,7 @@ import { default as HandlerContext } from "./handlerContext.js";
 import { default as xmtpClient } from "./client.js";
 import { Config, Handler } from "../helpers/types.js";
 import { Conversation, DecodedMessage, Client } from "@xmtp/node-sdk";
+import { logMessage } from "../helpers/helpers.js";
 import {
   DecodedMessage as DecodedMessageV2,
   Client as ClientV2,
@@ -9,10 +10,7 @@ import {
 } from "@xmtp/xmtp-js";
 
 export default async function run(handler: Handler, config?: Config) {
-  const { client, v2client } = await xmtpClient(
-    config?.client,
-    config?.privateKey,
-  );
+  const { client, v2client } = await xmtpClient(config ?? {});
   const { inboxId: address } = client;
   const { address: addressV2 } = v2client;
 
@@ -62,9 +60,9 @@ export default async function run(handler: Handler, config?: Config) {
     context: HandlerContext,
     message: DecodedMessage | DecodedMessageV2 | undefined,
   ) => {
-    if (process.env.MSG_LOG) {
-      //console.log("logs");
-      //console.log(message);
+    const isExperimental = config?.experimental;
+    if (process.env.MSG_LOG !== "false" && isExperimental) {
+      console.log(message);
     }
     const typeId = message?.contentType?.typeId;
     const isAddedMember =
@@ -84,33 +82,35 @@ export default async function run(handler: Handler, config?: Config) {
             typeId === "remoteStaticAttachment" ||
             typeId === "reply")
         ? true
-        : context.commands?.some((commandGroup) =>
-            isRemoteAttachment && commandGroup.image
-              ? true
-              : commandGroup.triggers.some((trigger) => {
-                  switch (typeId) {
-                    case "text":
-                      return message?.content
-                        ?.toLowerCase()
-                        .includes(trigger?.toLowerCase());
-                    case "reply":
-                      return message?.content?.content
-                        ?.toLowerCase()
-                        .includes(trigger?.toLowerCase());
-                    default:
-                      return false;
-                  }
-                }),
-          );
+        : isExperimental
+          ? true
+          : context.commands?.some((commandGroup) =>
+              isRemoteAttachment && commandGroup.image
+                ? true
+                : commandGroup.triggers.some((trigger) => {
+                    switch (typeId) {
+                      case "text":
+                        return message?.content
+                          ?.toLowerCase()
+                          .includes(trigger?.toLowerCase());
+                      case "reply":
+                        return message?.content?.content
+                          ?.toLowerCase()
+                          .includes(trigger?.toLowerCase());
+                      default:
+                        return false;
+                    }
+                  }),
+            );
+
     if (commandTriggered) {
-      console.log(
-        `msg_${version}:`,
-        typeof message?.content === "string"
-          ? message?.content.substring(0, 20) +
-              (message?.content.length > 20 ? "..." : "")
-          : message?.contentType?.typeId ??
-              message?.content?.contentType?.typeId,
-      );
+      typeof message?.content === "string"
+        ? logMessage(`msg_${version}:` + message?.content)
+        : logMessage(
+            `msg_${version}:` +
+              (message?.contentType?.typeId ??
+                message?.content?.contentType?.typeId),
+          );
     }
     return commandTriggered;
   };

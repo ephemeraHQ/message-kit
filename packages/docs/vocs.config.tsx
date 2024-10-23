@@ -69,7 +69,7 @@ export default defineConfig({
   topNav: [
     {
       text: "Converse app",
-      link: "https://github.com/ephemeraHQ/converse-app",
+      link: "https://converse.xyz",
     },
     { text: "XMTP Docs", link: "https://docs.xmtp.org/" },
   ],
