@@ -174,7 +174,7 @@ export function extractCommandValues(
 }
 
 export const shorterLogMessage = (message: string) => {
-  return message?.substring(0, 20) + (message?.length > 20 ? "..." : "");
+  return message?.substring(0, 60) + (message?.length > 60 ? "..." : "");
 };
 
 export const logMessage = (message: string) => {
