@@ -79,7 +79,7 @@ export default async function xmtpClient(
     apiClientFactory: GrpcApiClient.fromOptions as any,
   });
 
-  console.log("Listening on client: ", {
+  console.log("Listening on XMTP client: ", {
     accountAddress: client.accountAddress,
     inboxId: client.inboxId,
     installationId: client.installationId,
