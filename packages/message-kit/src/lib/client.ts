@@ -116,12 +116,10 @@ function logInitMessage(client: Client, config: Config) {
       console.warn(`\x1b[33m
     Warnings:
     ${!fs.existsSync(resolvedPath) ? `- ⚠️ No commands.ts file found` : ""}
-    - ☣️ EXPERIMENTAL MODE ENABLED
-    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    ⚠️   All group messages will be exposed — proceed with caution.
-    ℹ   Guidelines: https://messagekit.ephemerahq.com/guidelines
-    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-        \x1b[0m`);
+    - ☣️ EXPERIMENTAL MODE ENABLED:
+        ⚠️ All group messages will be exposed — proceed with caution.
+        ℹ Guidelines: https://messagekit.ephemerahq.com/guidelines
+    \x1b[0m`);
     }
     console.log(`
 Logging new messages to console:
