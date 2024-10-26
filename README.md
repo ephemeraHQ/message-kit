@@ -12,8 +12,8 @@ This is the official repository for [MessageKit](https://messagekit.ephemerahq.c
 
 ### Examples
 
-- [`gm`](/examples/gm): A simple bot that replies GM
-- [`group`](/examples/group): Group chat app example with commands and use-cases.
+- [`gm`](/examples/gm): A simple bot that replies Gm
+- [`group`](/examples/group): Group chat bot example with commands and use-cases.
 - [`agent`](/examples/agent): A simple, customizable, and powerful conversational agent
 
 ## Contributing
