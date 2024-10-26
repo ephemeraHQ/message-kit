@@ -1,5 +1,9 @@
 import { CommandGroup, CommandConfig, User } from "./types";
 import { mapUsernamesToInboxId } from "./usernames";
+import path from "path";
+import fs from "fs";
+import { Client } from "@xmtp/node-sdk";
+import { Config } from "./types";
 
 export function parseCommand(
   content: string,
@@ -181,3 +185,37 @@ export const logMessage = (message: string) => {
   if (process.env.MSG_LOG === "false") return;
   console.log(shorterLogMessage(message));
 };
+
+export function logInitMessage(client: Client, config: Config) {
+  const resolvedPath = path.resolve(process.cwd(), "src/" + "commands.ts");
+
+  if (process.env.XMTP_ENV !== "production") {
+    const coolLogo = `\x1b[38;2;250;105;119m\
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+███╗   ███╗███████╗███████╗███████╗ █████╗  ██████╗ ███████╗██╗  ██╗██╗████████╗
+████╗ ████║██╔════╝██╔════╝██╔════╝██╔══██╗██╔════╝ ██╔════╝██║ ██╔╝██║╚══██╔══╝
+██╔████╔██║█████╗  ███████╗███████╗███████║██║  ███╗█████╗  █████╔╝ ██║   ██║   
+██║╚██╔╝██║██╔══╝  ╚════██║╚════██║██╔══██║██║   ██║██╔══╝  ██╔═██╗ ██║   ██║   
+██║ ╚═╝ ██║███████╗███████║███████║██║  ██║╚██████╔╝███████╗██║  ██╗██║   ██║   
+╚═╝     ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝╚═╝   ╚═╝   
+powered by XMTP \x1b[0m`;
+    console.log(coolLogo);
+    console.log(`
+    Send a message to this account on Converse:                              
+    🔗 https://converse.xyz/dm/${client.accountAddress}`);
+
+    if (config?.experimental) {
+      console.warn(`\x1b[33m
+    Warnings:
+    ${!fs.existsSync(resolvedPath) ? `- ⚠️ No commands.ts file found` : ""}
+    - ☣️ EXPERIMENTAL MODE ENABLED:
+        ⚠️ All group messages will be exposed — proceed with caution.
+        ℹ Guidelines: https://messagekit.ephemerahq.com/guidelines
+    \x1b[0m`);
+    }
+    console.log(`
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Logging new messages to console ↴`);
+  }
+}

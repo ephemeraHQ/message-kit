@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { textGeneration } from "../helpers/openai";
+import { textGeneration } from "./openai";
 import { commands } from "./commands";
 import { fakeUsers as members } from "../helpers/usernames";
 import { User } from "../helpers/types";
