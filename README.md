@@ -16,12 +16,10 @@ This is the official repository for [MessageKit](https://messagekit.ephemerahq.c
 - [`agent`](/examples/agent): A simple, customizable, and powerful conversational agent
 - [`group`](/examples/group): Group chat app example.
 
-### Frames
-
-MessageKit extends Frames through the Open Frames [standard](https://www.openframes.xyz) which are URLs that can render interactive buttons and images to allow users to perform actins like transactions and more.
-
-- [Introduction](/packages/docs/pages/frames/index.mdx) - [Frames.js](/packages/docs/pages/frames/frameworks/Framesjs.mdx) - [OnchainKit](/packages/docs/pages/frames/frameworks/OnchainKit.mdx) - [Frog](/packages/docs/pages/frames/frameworks/Frog.mdx)
-
 ## Contributing
 
 See our [contribution guide](./CONTRIBUTING.md) to learn more about contributing to this project.
+
+### Open Frames
+
+XMTP contributes to the development of the Open Frames [standard](https://www.openframes.xyz).
