@@ -60,6 +60,7 @@ export interface CommandGroup {
 
 export interface CommandConfig {
   command: string;
+  adminOnly?: boolean;
   handler?: CommandHandler;
   description: string;
   params: Record<string, CommandParamConfig>;
