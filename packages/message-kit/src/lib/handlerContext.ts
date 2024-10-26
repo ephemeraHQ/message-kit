@@ -4,13 +4,12 @@ import {
   Client as ClientV2,
   Conversation as ConversationV2,
 } from "@xmtp/xmtp-js";
-import { CommandConfig } from "../helpers/types.js";
 import fs from "fs/promises";
 import path from "path";
 import type { Reaction } from "@xmtp/content-type-reaction";
 import { populateUsernames } from "../helpers/usernames.js";
 import { ContentTypeText } from "@xmtp/content-type-text";
-import { logMessage, shorterLogMessage } from "../helpers/helpers.js";
+import { logMessage } from "../helpers/helpers.js";
 import {
   CommandGroup,
   User,
@@ -247,13 +246,6 @@ export default class HandlerContext {
     };
     const conversation = this.refConv || this.conversation || this.group;
 
-    /*console.log(
-      this.version,
-      this.isConversationV2(conversation),
-      this.refConv,
-      this.conversation,
-      this.group,
-    );*/
     if (conversation) {
       if (this.isConversationV2(conversation)) {
         await conversation.send(reply, { contentType: ContentTypeReply });
@@ -371,14 +363,10 @@ export default class HandlerContext {
     commands: CommandGroup[],
   ): CommandGroup | undefined {
     for (const commandGroup of commands) {
-      const handler = commandGroup.commands.find(
-        (c) => c.command.split(" ")[0] === text.split(" ")[0],
-      );
-      if (handler && handler.command.split(" ")[0] === text.split(" ")[0])
-        return {
-          ...commandGroup,
-          commands: [handler],
-        };
+      const handler = commandGroup.commands.find((command) => {
+        return command.triggers.includes(text.split(" ")[0].toLowerCase());
+      });
+      if (handler) return { ...commandGroup, commands: [handler] };
     }
 
     return undefined;

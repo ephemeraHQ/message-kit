@@ -50,7 +50,6 @@ export interface CommandParamConfig {
 
 export interface CommandGroup {
   name: string;
-  triggers: string[];
   image?: boolean;
   description: string;
   commands: CommandConfig[];
@@ -59,6 +58,7 @@ export interface CommandGroup {
 export interface CommandConfig {
   command: string;
   handler?: CommandHandler;
+  triggers: string[];
   adminOnly?: boolean;
   description: string;
   params: Record<string, CommandParamConfig>;

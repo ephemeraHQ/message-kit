@@ -15,9 +15,6 @@ run(async (context: HandlerContext) => {
     case "remoteStaticAttachment":
       handleAttachment(context);
       break;
-    case "text":
-      handleTextMessage(context);
-      break;
   }
 });
 async function handleReply(context: HandlerContext) {
@@ -35,8 +32,7 @@ async function handleReply(context: HandlerContext) {
     version,
     v2client.address,
   );
-  console.log(chain);
-  handleTextMessage(context);
+  //await context.intent(chain);
 }
 
 // Handle attachment messages
@@ -44,18 +40,7 @@ async function handleAttachment(context: HandlerContext) {
   await splitpayment(context);
 }
 
-// Handle text messages
-async function handleTextMessage(context: HandlerContext) {
-  const {
-    content: { content: text },
-  } = context.message;
-  if (text.includes("/help")) {
-    await helpHandler(context);
-  } else if (text.startsWith("@agent")) {
-    await agent(context);
-  } else await context.intent(text);
-}
-async function helpHandler(context: HandlerContext) {
+export async function helpHandler(context: HandlerContext) {
   const { commands = [] } = context;
   const intro =
     "Available experiences:\n" +

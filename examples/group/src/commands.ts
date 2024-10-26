@@ -4,15 +4,16 @@ import { handler as agent } from "./handler/agent.js";
 import { handler as transaction } from "./handler/transaction.js";
 import { handler as games } from "./handler/game.js";
 import { handler as loyalty } from "./handler/loyalty.js";
+import { helpHandler } from "./index.js";
 
 export const commands: CommandGroup[] = [
   {
     name: "Tipping",
     description: "Tip tokens via emoji, replies or command.",
-    triggers: ["/tip", "🎩", "@tip"],
     commands: [
       {
         command: "/tip [@users] [amount] [token]",
+        triggers: ["/tip", "🎩", "@tip"],
         description: "Tip users in a specified token.",
         handler: tipping,
         params: {
@@ -30,11 +31,11 @@ export const commands: CommandGroup[] = [
   },
   {
     name: "Transactions",
-    triggers: ["@send", "/send", "@swap", "/swap", "/show"],
     description: "Multipurpose transaction frame built onbase.",
     commands: [
       {
         command: "/send [amount] [token] [@username]",
+        triggers: ["@send", "/send"],
         description:
           "Send a specified amount of a cryptocurrency to a destination address.",
         handler: transaction,
@@ -56,6 +57,7 @@ export const commands: CommandGroup[] = [
       },
       {
         command: "/swap [amount] [token_from] [token_to]",
+        triggers: ["@swap", "/swap"],
         description: "Exchange one type of cryptocurrency for another.",
         handler: transaction,
         params: {
@@ -77,6 +79,7 @@ export const commands: CommandGroup[] = [
       },
       {
         command: "/show",
+        triggers: ["/show"],
         handler: transaction,
         description: "Show the whole frame.",
         params: {},
@@ -85,11 +88,11 @@ export const commands: CommandGroup[] = [
   },
   {
     name: "Games",
-    triggers: ["/game", "@game", "🔎", "🔍"],
     description: "Provides various gaming experiences.",
     commands: [
       {
         command: "/game [game]",
+        triggers: ["/game", "@game", "🔎", "🔍"],
         handler: games,
         description: "Play a game.",
         params: {
@@ -104,17 +107,18 @@ export const commands: CommandGroup[] = [
   },
   {
     name: "Loyalty",
-    triggers: ["/points", "@points", "/leaderboard", "@leaderboard"],
     description: "Manage group members and metadata.",
     commands: [
       {
         command: "/points",
+        triggers: ["/points", "@points"],
         handler: loyalty,
         description: "Check your points.",
         params: {},
       },
       {
         command: "/leaderboard",
+        triggers: ["/leaderboard", "@leaderboard"],
         adminOnly: true,
         handler: loyalty,
         description: "Check the points of a user.",
@@ -124,11 +128,11 @@ export const commands: CommandGroup[] = [
   },
   {
     name: "Agent",
-    triggers: ["/agent", "@agent", "@bot", "/agent2", "@agent2"],
     description: "Manage agent commands.",
     commands: [
       {
         command: "/agent [prompt]",
+        triggers: ["/agent", "@agent", "@bot"],
         handler: agent,
         description: "Manage agent commands.",
         params: {
@@ -138,36 +142,22 @@ export const commands: CommandGroup[] = [
           },
         },
       },
-      {
-        command: "/agent2 [name]",
-        handler: agent,
-        description: "Manage agent commands.",
-        adminOnly: true,
-        params: {
-          name: {
-            default: "",
-            type: "quoted",
-          },
-        },
-      },
     ],
   },
   {
     name: "Split Payments",
     image: true,
-    triggers: [],
     description: "Split payments between users.",
     commands: [],
   },
   {
     name: "Help",
-    triggers: ["/help"],
-
-    description: "Get help    with the bot.",
+    description: "Get help with the bot.",
     commands: [
       {
         command: "/help",
-        handler: undefined,
+        triggers: ["/help"],
+        handler: helpHandler,
         description: "Get help with the bot.",
         params: {},
       },

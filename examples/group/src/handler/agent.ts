@@ -14,6 +14,7 @@ export async function handler(context: HandlerContext) {
   } = context;
 
   const systemPrompt = generateSystemPrompt(context);
+  console.log("systemPrompt", systemPrompt);
   try {
     let userPrompt = params?.prompt ?? content;
     console.log("userPrompt", userPrompt);

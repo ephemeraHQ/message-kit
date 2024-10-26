@@ -45,9 +45,12 @@ export default async function run(handler: Handler, config?: Config) {
           config?.commandsConfigPath,
           version,
         );
+
         // Check if the message content triggers a command
-        if (!commandTriggered(context)) return;
-        await handler(context);
+        const { isMessageValid, handler: customHandler } =
+          commandTriggered(context);
+        if (isMessageValid && customHandler) await customHandler(context);
+        else await handler(context);
       } catch (e) {
         console.log(`error`, e);
       }
@@ -65,6 +68,7 @@ export default async function run(handler: Handler, config?: Config) {
       group,
     } = context;
     let handler = context.findHandler(content, context.commands ?? []);
+    const isCommandTriggered = handler?.commands[0]?.command;
     const isExperimental = config?.experimental ?? false;
     const isAddedMemberOrPass =
       group && typeId == "group_updated" && content?.addedInboxes?.length == 0
@@ -88,18 +92,7 @@ export default async function run(handler: Handler, config?: Config) {
     // Reactions dont work with triggers.
 
     const isImageValid = isRemoteAttachment && handler?.image;
-    const isCommandTriggered = handler?.triggers.some((trigger) => {
-      switch (typeId) {
-        case "text":
-          return content?.toLowerCase().includes(trigger?.toLowerCase());
-        case "reply":
-          return content?.content
-            ?.toLowerCase()
-            .includes(trigger?.toLowerCase());
-        default:
-          return false;
-      }
-    });
+
     const acceptedType = ["text", "remoteStaticAttachment", "reply"].includes(
       typeId ?? "",
     );
@@ -124,7 +117,7 @@ export default async function run(handler: Handler, config?: Config) {
                   : false;
 
     if (process.env.MSG_LOG === "true") {
-      console.log("isMessageValid:", isMessageValid, {
+      console.log("isMessageValid-->", isMessageValid, ":", {
         content,
         version,
         typeId,
@@ -141,7 +134,10 @@ export default async function run(handler: Handler, config?: Config) {
     if (isMessageValid)
       logMessage(`msg_${version}: ` + (typeId == "text" ? content : typeId));
 
-    return isMessageValid;
+    return {
+      isMessageValid,
+      handler: handler?.commands[0]?.handler,
+    };
   };
   const streamMessages = async (version: "v3" | "v2") => {
     if (version === "v3") {
