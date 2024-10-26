@@ -199,7 +199,7 @@ export function logInitMessage(client: Client, config: Config) {
 ██║╚██╔╝██║██╔══╝  ╚════██║╚════██║██╔══██║██║   ██║██╔══╝  ██╔═██╗ ██║   ██║   
 ██║ ╚═╝ ██║███████╗███████║███████║██║  ██║╚██████╔╝███████╗██║  ██╗██║   ██║   
 ╚═╝     ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝╚═╝   ╚═╝   
-powered by XMTP \x1b[0m`;
+Powered by XMTP \x1b[0m`;
     console.log(coolLogo);
     console.log(`
     Send a message to this account on Converse:                              
@@ -212,10 +212,9 @@ powered by XMTP \x1b[0m`;
     - ☣️ EXPERIMENTAL MODE ENABLED:
         ⚠️ All group messages will be exposed — proceed with caution.
         ℹ Guidelines: https://messagekit.ephemerahq.com/guidelines
-    \x1b[0m`);
+        \x1b[0m`);
     }
-    console.log(`
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Logging new messages to console ↴`);
   }
 }
