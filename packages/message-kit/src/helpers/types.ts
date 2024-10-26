@@ -41,6 +41,7 @@ export type Config = {
   privateKey?: string;
   experimental?: boolean;
   commandsConfigPath?: string;
+  hideLog?: boolean;
 };
 export interface CommandParamConfig {
   default?: string | number | boolean;
