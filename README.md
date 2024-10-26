@@ -12,9 +12,9 @@ This is the official repository for [MessageKit](https://messagekit.ephemerahq.c
 
 ### Examples
 
-- [`gm`](/examples/gm): A simple, customizable, and powerful conversational framework
+- [`gm`](/examples/gm): A simple bot that replies GM
+- [`group`](/examples/group): Group chat app example with commands and use-cases.
 - [`agent`](/examples/agent): A simple, customizable, and powerful conversational agent
-- [`group`](/examples/group): Group chat app example.
 
 ## Contributing
 
