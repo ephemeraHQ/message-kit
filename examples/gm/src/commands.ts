@@ -26,11 +26,9 @@ export const commands: CommandGroup[] = [
       {
         command: "/prompt [prompt]",
         description: "Customize the agent's system prompt.",
-        handler: function (context) {
-          console.log("set prompt");
-        },
+        handler:
         params: {
-          prompt: { type: "string" },
+          prompt: { type: "prompt" },
         },
       },
       {
