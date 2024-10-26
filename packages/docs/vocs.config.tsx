@@ -163,16 +163,16 @@ export default defineConfig({
           ],
         },
         {
-          text: "One-to-one",
-          link: "/use-cases/one-to-one",
+          text: "Agent",
+          link: "/use-cases/agent",
           items: [
             {
               text: "Subscribe",
-              link: "/use-cases/one-to-one/subscribe",
+              link: "/use-cases/agent/subscribe",
             },
             {
               text: "Broadcast",
-              link: "/use-cases/one-to-one/broadcast",
+              link: "/use-cases/agent/broadcast",
             },
           ],
         },

@@ -57,7 +57,7 @@ program.parse(process.argv);
 async function gatherProjectInfo() {
   const templateOptions = [
     { value: "gm", label: "GM" },
-    { value: "one-to-one", label: "One-to-One" },
+    { value: "agent", label: "Agent" },
     { value: "group", label: "Group" },
   ];
 

@@ -13,7 +13,7 @@ This is the official repository for [MessageKit](https://messagekit.ephemerahq.c
 ### Examples
 
 - [`gm`](/examples/gm): A simple, customizable, and powerful conversational framework
-- [`one-to-one`](/examples/one-to-one): A simple, customizable, and powerful conversational framework
+- [`agent`](/examples/agent): A simple, customizable, and powerful conversational agent
 - [`group`](/examples/group): Group chat app example.
 
 ## Contributing

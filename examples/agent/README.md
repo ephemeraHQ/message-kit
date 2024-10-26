@@ -1,4 +1,4 @@
-# One-to-One Example
+# Agent example
 
 ## Running locally
 
@@ -10,7 +10,7 @@ Follow the steps below to run the app
 # Clone the repo
 git clone https://github.com/ephemeraHQ/message-kit
 # Go to the example folder
-cd examples/one-to-one
+cd examples/agent
 # Install the dependencies
 yarn install
 # Run the app
