@@ -100,6 +100,7 @@ function logInitMessage(client: Client, config: Config) {
 
   if (process.env.XMTP_ENV !== "production") {
     const coolLogo = `\x1b[38;2;250;105;119m\
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ███╗   ███╗███████╗███████╗███████╗ █████╗  ██████╗ ███████╗██╗  ██╗██╗████████╗
 ████╗ ████║██╔════╝██╔════╝██╔════╝██╔══██╗██╔════╝ ██╔════╝██║ ██╔╝██║╚══██╔══╝
@@ -122,8 +123,7 @@ function logInitMessage(client: Client, config: Config) {
     \x1b[0m`);
     }
     console.log(`
-Logging new messages to console:
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    `);
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Logging new messages to console ↴`);
   }
 }

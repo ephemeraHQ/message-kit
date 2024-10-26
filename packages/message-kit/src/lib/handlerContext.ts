@@ -4,6 +4,7 @@ import {
   Client as ClientV2,
   Conversation as ConversationV2,
 } from "@xmtp/xmtp-js";
+import { CommandConfig } from "../helpers/types.js";
 import fs from "fs/promises";
 import path from "path";
 import type { Reaction } from "@xmtp/content-type-reaction";
@@ -54,6 +55,8 @@ export default class HandlerContext {
         createdAt: conversation.createdAt,
         addMembersByInboxId:
           conversation.addMembersByInboxId.bind(conversation),
+        isAdmin: () => false,
+        isSuperAdmin: () => false,
       };
       this.version = "v3";
     } else {
@@ -333,10 +336,7 @@ export default class HandlerContext {
 
     if (conversation) this.refConv = conversation;
     try {
-      const handler = this.commands?.find((command) =>
-        command.triggers?.includes(text.split(" ")[0]),
-      );
-
+      let handler = await this.findHandler(text, commands ?? []);
       if (handler) {
         let content = parseCommand(text, commands ?? [], members ?? []);
         // Mock context for command execution
@@ -358,15 +358,29 @@ export default class HandlerContext {
         };
 
         this.refConv = null;
-        return await handler?.commands[0].handler?.(mockContext);
-      } else {
-        this.send(text);
-        logMessage("sent: " + text);
-      }
+        return await handler.commands[0].handler?.(mockContext);
+      } else return this.send(text);
     } catch (e) {
       console.log("error", e);
     } finally {
       this.refConv = null;
     }
+  }
+  findHandler(
+    text: string,
+    commands: CommandGroup[],
+  ): CommandGroup | undefined {
+    for (const commandGroup of commands) {
+      const handler = commandGroup.commands.find(
+        (c) => c.command.split(" ")[0] === text.split(" ")[0],
+      );
+      if (handler && handler.command.split(" ")[0] === text.split(" ")[0])
+        return {
+          ...commandGroup,
+          commands: [handler],
+        };
+    }
+
+    return undefined;
   }
 }

@@ -115,6 +115,7 @@ export const commands: CommandGroup[] = [
       },
       {
         command: "/leaderboard",
+        adminOnly: true,
         handler: loyalty,
         description: "Check the points of a user.",
         params: {},
@@ -123,7 +124,7 @@ export const commands: CommandGroup[] = [
   },
   {
     name: "Agent",
-    triggers: ["/agent", "@agent", "@bot"],
+    triggers: ["/agent", "@agent", "@bot", "/agent2", "@agent2"],
     description: "Manage agent commands.",
     commands: [
       {
@@ -134,6 +135,18 @@ export const commands: CommandGroup[] = [
           prompt: {
             default: "",
             type: "prompt",
+          },
+        },
+      },
+      {
+        command: "/agent2 [name]",
+        handler: agent,
+        description: "Manage agent commands.",
+        adminOnly: true,
+        params: {
+          name: {
+            default: "",
+            type: "quoted",
           },
         },
       },

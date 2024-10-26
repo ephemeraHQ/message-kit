@@ -54,7 +54,7 @@ export function extractCommandValues(
     if (!parts) return defaultResult;
 
     let commandName = parts[0].startsWith("/") ? parts[0].slice(1) : parts[0];
-    let commandConfig: CommandConfig | undefined;
+    let commandConfig: CommandConfig | undefined = undefined;
 
     for (const group of commands) {
       commandConfig = group.commands.find((cmd) =>

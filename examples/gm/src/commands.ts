@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { CommandGroup } from "@xmtp/message-kit";
 
 export const commands: CommandGroup[] = [
@@ -9,19 +10,25 @@ export const commands: CommandGroup[] = [
       {
         command: "/activate",
         description: "Activate the agent for your account.",
-        handler: undefined,
+        handler: function (context) {
+          console.log("activate");
+        },
         params: {},
       },
       {
         command: "/deactivate",
         description: "Deactivate the agent.",
-        handler: undefined,
+        handler: function (context) {
+          console.log("deactivate");
+        },
         params: {},
       },
       {
         command: "/prompt [prompt]",
         description: "Customize the agent's system prompt.",
-        handler: undefined,
+        handler: function (context) {
+          console.log("set prompt");
+        },
         params: {
           prompt: { type: "string" },
         },
@@ -29,13 +36,17 @@ export const commands: CommandGroup[] = [
       {
         command: "/enable",
         description: "Enable the agent to respond on your behalf.",
-        handler: undefined,
+        handler: function (context) {
+          console.log("enable");
+        },
         params: {},
       },
       {
         command: "/disable",
         description: "Disable the agent from responding on your behalf.",
-        handler: undefined,
+        handler: function (context) {
+          console.log("disable");
+        },
         params: {},
       },
     ],

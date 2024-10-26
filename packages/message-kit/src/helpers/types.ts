@@ -1,11 +1,7 @@
 import { default as HandlerContext } from "../lib/handlerContext.js";
-import { DecodedMessage } from "@xmtp/xmtp-js";
-import {
-  ClientOptions,
-  DecodedMessage as DecodedMessageV2,
-} from "@xmtp/node-sdk";
+import { ClientOptions } from "@xmtp/node-sdk";
 import { ContentTypeId } from "@xmtp/content-type-primitives";
-// Define a type for the message that includes the conversation property
+
 export type MessageAbstracted = {
   id: string;
   sent: Date;
@@ -25,6 +21,8 @@ export type GroupAbstracted = {
   addMembers: (addresses: string[]) => Promise<void>;
   addMembersByInboxId: (inboxIds: string[]) => Promise<void>;
   send: (content: string, contentType?: ContentTypeId) => Promise<string>;
+  isAdmin: (inboxId: string) => boolean;
+  isSuperAdmin: (inboxId: string) => boolean;
   createdAt: Date;
 };
 export type ApiResponse = {
@@ -60,8 +58,8 @@ export interface CommandGroup {
 
 export interface CommandConfig {
   command: string;
-  adminOnly?: boolean;
   handler?: CommandHandler;
+  adminOnly?: boolean;
   description: string;
   params: Record<string, CommandParamConfig>;
 }

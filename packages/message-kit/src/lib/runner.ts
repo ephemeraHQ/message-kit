@@ -1,11 +1,10 @@
 import { default as HandlerContext } from "./handlerContext.js";
 import { default as xmtpClient } from "./client.js";
 import { Config, Handler } from "../helpers/types.js";
-import { Conversation, DecodedMessage, Client } from "@xmtp/node-sdk";
+import { Conversation, DecodedMessage } from "@xmtp/node-sdk";
 import { logMessage } from "../helpers/helpers.js";
 import {
   DecodedMessage as DecodedMessageV2,
-  Client as ClientV2,
   Conversation as ConversationV2,
 } from "@xmtp/xmtp-js";
 
@@ -47,7 +46,7 @@ export default async function run(handler: Handler, config?: Config) {
           version,
         );
         // Check if the message content triggers a command
-        if (!commandTriggered(version, context, message)) return;
+        if (!commandTriggered(context)) return;
         await handler(context);
       } catch (e) {
         console.log(`error`, e);
@@ -55,64 +54,93 @@ export default async function run(handler: Handler, config?: Config) {
     }
   };
 
-  const commandTriggered = (
-    version: "v3" | "v2",
-    context: HandlerContext,
-    message: DecodedMessage | DecodedMessageV2 | undefined,
-  ) => {
-    const isExperimental = config?.experimental;
-    if (process.env.MSG_LOG !== "false" && isExperimental) {
-      console.log(message);
-    }
-    const typeId = message?.contentType?.typeId;
-    const isAddedMember =
-      typeId == "group_updated" && message?.content?.addedInboxes?.length > 0;
+  const commandTriggered = (context: HandlerContext) => {
+    const {
+      message: {
+        content: { content },
+        typeId,
+        sender,
+      },
+      version,
+      group,
+    } = context;
+    let handler = context.findHandler(content, context.commands ?? []);
+    const isExperimental = config?.experimental ?? false;
+    const isAddedMemberOrPass =
+      group && typeId == "group_updated" && content?.addedInboxes?.length == 0
+        ? false
+        : true;
 
     const isRemoteAttachment =
-      message?.contentType?.typeId == "remoteStaticAttachment";
+      content?.contentType?.typeId == "remoteStaticAttachment";
+
+    const isAdminOrPass =
+      handler?.commands[0]?.adminOnly &&
+      group &&
+      !group?.isAdmin(sender.inboxId) &&
+      !group?.isSuperAdmin(sender.inboxId)
+        ? false
+        : true;
 
     // Remote attachments work if image:true
     // Replies only work with explicit mentions from triggers.
     // Text only works with explicit mentions from triggers.
     // Reactions dont work with triggers.
-    const commandTriggered = isAddedMember
-      ? true
-      : version == "v2" &&
-          (typeId === "text" ||
-            typeId === "remoteStaticAttachment" ||
-            typeId === "reply")
-        ? true
-        : isExperimental
-          ? true
-          : context.commands?.some((commandGroup) =>
-              isRemoteAttachment && commandGroup.image
-                ? true
-                : commandGroup.triggers.some((trigger) => {
-                    switch (typeId) {
-                      case "text":
-                        return message?.content
-                          ?.toLowerCase()
-                          .includes(trigger?.toLowerCase());
-                      case "reply":
-                        return message?.content?.content
-                          ?.toLowerCase()
-                          .includes(trigger?.toLowerCase());
-                      default:
-                        return false;
-                    }
-                  }),
-            );
 
-    if (commandTriggered) {
-      typeof message?.content === "string"
-        ? logMessage(`msg_${version}:` + message?.content)
-        : logMessage(
-            `msg_${version}:` +
-              (message?.contentType?.typeId ??
-                message?.content?.contentType?.typeId),
-          );
+    const isImageValid = isRemoteAttachment && handler?.image;
+    const isCommandTriggered = handler?.triggers.some((trigger) => {
+      switch (typeId) {
+        case "text":
+          return content?.toLowerCase().includes(trigger?.toLowerCase());
+        case "reply":
+          return content?.content
+            ?.toLowerCase()
+            .includes(trigger?.toLowerCase());
+        default:
+          return false;
+      }
+    });
+    const acceptedType = ["text", "remoteStaticAttachment", "reply"].includes(
+      typeId ?? "",
+    );
+    const isMessageValid =
+      // v2 only accepts text, remoteStaticAttachment, reply
+      version == "v2" && acceptedType
+        ? true
+        : //If its image is also good, if it has a command image:true
+          isImageValid
+          ? true
+          : //If its not an admin, nope
+            !isAdminOrPass
+            ? false
+            : isExperimental
+              ? true
+              : //If its a group update but its not an added member, nope
+                !isAddedMemberOrPass
+                ? false
+                : //If it has a command trigger, good
+                  isCommandTriggered
+                  ? true
+                  : false;
+
+    if (process.env.MSG_LOG === "true") {
+      console.log("isMessageValid:", isMessageValid, {
+        version,
+        typeId,
+        acceptedType,
+        isImageValid,
+        isAdminOrPass,
+        isExperimental,
+        isAddedMemberOrPass,
+        isCommandTriggered,
+        handlerName: handler?.name,
+        handlerCommand: handler?.commands[0]?.command,
+      });
     }
-    return commandTriggered;
+    if (isMessageValid)
+      logMessage(`msg_${version}: ` + (typeId == "text" ? content : typeId));
+
+    return isMessageValid;
   };
   const streamMessages = async (version: "v3" | "v2") => {
     if (version === "v3") {
