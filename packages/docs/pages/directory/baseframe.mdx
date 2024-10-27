@@ -4,7 +4,7 @@ layout: landing
 
 # Base Frame
 
-> BaseFrame [home](https://base-frame-lyart.vercel.app) | [source code](https://github.com/fabriguespe/base-frame)
+> BaseFrame [home](https://base-tx.ephemerahq.com) | [source code](https://github.com/fabriguespe/base-tx-frame)
 
 ## Usage
 
@@ -31,11 +31,6 @@ let swapUrl = generateTransactionUrl("swap", {
   token_from: "ETH",
   token_to: "DAI",
 });
-let mintUrl = generateTransactionUrl("mint", {
-  buttonName: "Mint",
-  collection: "0x123456789ABCDEF",
-  token_id: 1023,
-});
 ```
 
 1. **Send Transaction:**
@@ -54,12 +49,5 @@ let mintUrl = generateTransactionUrl("mint", {
      - `amount=100` specifies the amount of ETH to be exchanged.
      - `token_from=ETH` indicates that Ethereum is the currency being swapped.
      - `token_to=DAI` specifies DAI as the currency to receive in the swap.
-3. **Mint Transaction:**
-   - **Purpose**: To create (mint) a new token or NFT.
-   - **Example URL**: `http://localhost:3001/?transaction_type=mint&buttonName=Mint&collection=0x123456789ABCDEF&token_id=1023`
-   - **Parameters**:
-     - `transaction_type=mint` indicates the minting of a new NFT.
-     - `collection=0x...` specifies the NFT collection.
-     - `token_id=1023` specifies the unique identifier of the NFT within the collection.
 
 This is a frame following the [frames.js OpenFrames](https://framesjs.org/middleware/openframes) standard, working on Base mainnet.
