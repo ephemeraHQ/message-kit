@@ -117,7 +117,7 @@ export default async function run(handler: Handler, config?: Config) {
                   : false;
 
     if (process.env.MSG_LOG === "true") {
-      console.log("isMessageValid-->", isMessageValid, ":", {
+      console.log("isMessageValid", {
         content,
         version,
         typeId,
@@ -129,6 +129,7 @@ export default async function run(handler: Handler, config?: Config) {
         isCommandTriggered,
         handlerName: handler?.name,
         handlerCommand: handler?.commands[0]?.command,
+        isMessageValid,
       });
     }
     if (isMessageValid)
