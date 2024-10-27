@@ -19,21 +19,18 @@ import { Config } from "../helpers/types";
 export default async function xmtpClient(
   config?: Config,
 ): Promise<{ client: Client; v2client: V2Client }> {
-  // check if file exists
-
   // Check if both clientConfig and privateKey are empty
   let key = config?.privateKey ?? process.env.KEY;
+  if (key !== undefined && !key.startsWith("0x")) key = "0x" + key;
   if (key === undefined) {
-    console.error("⚠️🔒 .env KEY not set.");
-  }
-  if (key === undefined || !isHex(key)) {
-    console.warn("⚠️🔒 Invalid private key. Generating a random one.");
+    console.warn("⚠️🔒 .env KEY not set. Generating a random one:");
     key = generatePrivateKey();
-    console.warn("Generated key: " + key);
+    console.warn(key + "\nCopy and paste it in your .env file as KEY=YOUR_KEY");
+  } else if (!isHex(key)) {
+    console.warn("⚠️🔒 Invalid private key. Generating a random one:");
+    key = generatePrivateKey();
+    console.info(key + "\nCopy and paste it in your .env file as KEY=YOUR_KEY");
   }
-
-  if (!key.startsWith("0x")) key = "0x" + key;
-
   const account = privateKeyToAccount(key as `0x${string}`);
   const wallet = createWalletClient({
     account,
