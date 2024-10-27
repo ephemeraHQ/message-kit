@@ -186,7 +186,7 @@ export const logMessage = (message: string) => {
   console.log(shorterLogMessage(message));
 };
 
-export function logInitMessage(client: Client, config: Config) {
+export function logInitMessage(client: Client, config?: Config) {
   const resolvedPath = path.resolve(process.cwd(), "src/" + "commands.ts");
 
   if (process.env.XMTP_ENV !== "production") {

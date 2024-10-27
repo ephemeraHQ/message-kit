@@ -9,7 +9,7 @@ import {
 } from "@xmtp/xmtp-js";
 
 export default async function run(handler: Handler, config?: Config) {
-  const { client, v2client } = await xmtpClient(config ?? {});
+  const { client, v2client } = await xmtpClient(config);
   const { inboxId: address } = client;
   const { address: addressV2 } = v2client;
 
