@@ -17,7 +17,7 @@ import { GrpcApiClient } from "@xmtp/grpc-api-client";
 import { Config } from "../helpers/types";
 
 export default async function xmtpClient(
-  config: Config,
+  config?: Config,
 ): Promise<{ client: Client; v2client: V2Client }> {
   // check if file exists
 
