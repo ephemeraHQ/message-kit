@@ -364,7 +364,7 @@ export default class HandlerContext {
   ): CommandGroup | undefined {
     for (const commandGroup of commands) {
       const handler = commandGroup.commands.find((command) => {
-        return command?.triggers?.includes(text.split(" ")[0].toLowerCase());
+        return command?.triggers?.includes(text?.split(" ")[0].toLowerCase());
       });
       if (handler) return { ...commandGroup, commands: [handler] };
     }

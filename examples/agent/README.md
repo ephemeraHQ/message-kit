@@ -22,6 +22,6 @@ yarn dev
 Set up these variables in your app
 
 ```bash [cmd]
-KEY= # 0x... the private key of the bot wallet (with the 0x prefix)
+KEY= # 0x... the private key of the bot wallet
 REDIS_CONNECTION_STRING= # redis db connection string
 ```
