@@ -3,7 +3,7 @@ import { Client as V2Client } from "@xmtp/xmtp-js";
 import { ReactionCodec } from "@xmtp/content-type-reaction";
 import { Client, ClientOptions, XmtpEnv } from "@xmtp/node-sdk";
 import { Wallet } from "ethers";
-import { logInitMessage } from "../helpers/helpers";
+import { logInitMessage } from "../helpers/utils";
 import { TextCodec } from "@xmtp/content-type-text";
 import {
   AttachmentCodec,

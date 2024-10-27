@@ -9,14 +9,14 @@ import path from "path";
 import type { Reaction } from "@xmtp/content-type-reaction";
 import { populateUsernames } from "../helpers/usernames.js";
 import { ContentTypeText } from "@xmtp/content-type-text";
-import { logMessage } from "../helpers/helpers.js";
+import { logMessage } from "../helpers/utils.js";
 import {
   CommandGroup,
   User,
   MessageAbstracted,
   GroupAbstracted,
 } from "../helpers/types.js";
-import { parseCommand } from "../helpers/helpers.js";
+import { parseCommand } from "../helpers/utils.js";
 import { ContentTypeReply } from "@xmtp/content-type-reply";
 import {
   ContentTypeRemoteAttachment,

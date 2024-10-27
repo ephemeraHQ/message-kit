@@ -1,6 +1,6 @@
 import "dotenv/config";
 import { fakeUsers as users } from "../helpers/usernames";
-import { extractCommandValues } from "../helpers/helpers";
+import { extractCommandValues } from "../helpers/utils";
 import type { CommandGroup } from "../helpers/types";
 import { commands } from "./commands";
 

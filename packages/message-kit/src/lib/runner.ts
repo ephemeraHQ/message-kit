@@ -2,7 +2,7 @@ import { default as HandlerContext } from "./handlerContext.js";
 import { default as xmtpClient } from "./client.js";
 import { Config, Handler } from "../helpers/types.js";
 import { Conversation, DecodedMessage } from "@xmtp/node-sdk";
-import { logMessage } from "../helpers/helpers.js";
+import { logMessage } from "../helpers/utils.js";
 import {
   DecodedMessage as DecodedMessageV2,
   Conversation as ConversationV2,
