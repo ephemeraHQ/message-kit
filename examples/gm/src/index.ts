@@ -8,5 +8,9 @@ run(
     // To reply, just call `reply` on the HandlerContext
     await context.send(`gm`);
   },
-  { client: { logging: "debug" } },
+  {
+    memberChange: true,
+    attachments: true,
+    client: { logging: "debug" },
+  },
 );

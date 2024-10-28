@@ -139,12 +139,6 @@ export const commands: CommandGroup[] = [
     ],
   },
   {
-    name: "Split Payments",
-    image: true,
-    description: "Split payments between users.",
-    commands: [],
-  },
-  {
     name: "Help",
     description: "Get help with the bot.",
     commands: [

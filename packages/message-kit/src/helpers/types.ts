@@ -42,6 +42,8 @@ export type Config = {
   experimental?: boolean;
   commandsConfigPath?: string;
   hideLog?: boolean;
+  attachments?: boolean;
+  memberChange?: boolean;
 };
 export interface CommandParamConfig {
   default?: string | number | boolean;
@@ -61,7 +63,6 @@ export interface CommandConfig {
   handler?: CommandHandler;
   triggers: string[];
   adminOnly?: boolean;
-  memberChange?: boolean;
   description: string;
   params: Record<string, CommandParamConfig>;
 }

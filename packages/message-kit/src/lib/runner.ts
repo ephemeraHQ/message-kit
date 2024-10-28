@@ -71,13 +71,21 @@ export default async function run(handler: Handler, config?: Config) {
     let handler = context.findHandler(content, context.commands ?? []);
     const isCommandTriggered = handler?.commands[0]?.command;
     const isExperimental = config?.experimental ?? false;
+
     const isAddedMemberOrPass =
-      group &&
-      typeId == "group_updated" &&
-      handler?.commands[0]?.memberChange &&
-      content?.addedInboxes?.length == 0
+      typeId === "group_updated" &&
+      config?.memberChange &&
+      content?.addedInboxes?.length === 0
         ? false
         : true;
+
+    console.log(
+      "group_updated",
+      content?.addedInboxes?.length,
+      config?.memberChange,
+    );
+
+    console.log(typeId, content?.addedInboxes?.length, config?.memberChange);
 
     const isRemoteAttachment =
       content?.contentType?.typeId == "remoteStaticAttachment";
@@ -90,12 +98,12 @@ export default async function run(handler: Handler, config?: Config) {
         ? false
         : true;
 
-    // Remote attachments work if image:true
+    // Remote attachments work if image:true in runner config
     // Replies only work with explicit mentions from triggers.
     // Text only works with explicit mentions from triggers.
     // Reactions dont work with triggers.
 
-    const isImageValid = isRemoteAttachment && handler?.image;
+    const isImageValid = isRemoteAttachment && config?.attachments;
 
     const acceptedType = ["text", "remoteStaticAttachment", "reply"].includes(
       typeId ?? "",

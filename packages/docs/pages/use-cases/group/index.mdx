@@ -22,7 +22,7 @@ group/
 │         └── tipping.ts        # Handles tipping. // [!code hl] // [!code focus]
 │         └── game.ts           # Handles game frames. // [!code hl] // [!code focus]
 │         └── loyalty.ts        # Handles loyalty. // [!code hl] // [!code focus]
-│         └── splitpayments.ts   # Handles split payments. // [!code hl] // [!code focus]
+│         └── splitpayments.ts  # Handles split payments. // [!code hl] // [!code focus]
 │         └── transactions.ts   # Handles the transaction frame. // [!code hl] // [!code focus]
 │   └── lib/
 │         └── openai.ts          # Handles the openai logic. // [!code hl] // [!code focus]
@@ -176,13 +176,6 @@ export const commands: CommandGroup[] = [
         },
       },
     ],
-  },
-  {
-    name: "Split Payments",
-    image: true,
-    triggers: [],
-    description: "Split payments between users.",
-    commands: [],
   },
   {
     name: "Help",

@@ -8,7 +8,6 @@ export const commands: CommandGroup[] = [
     commands: [
       {
         command: "/gm",
-        memberChange: true,
         triggers: ["/gm"],
         description: "Send a gm.",
         handler: handlerAll,
