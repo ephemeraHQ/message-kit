@@ -4283,7 +4283,7 @@ __metadata:
     "@xmtp/content-type-reply": "npm:^1.1.11"
     "@xmtp/content-type-text": "npm:^1.0.0"
     "@xmtp/grpc-api-client": "npm:^0.2.7"
-    "@xmtp/node-sdk": "npm:^0.0.17"
+    "@xmtp/node-sdk": "npm:^0.0.18"
     "@xmtp/xmtp-js": "npm:^13.0.2"
     dotenv: "npm:^16.4.5"
     ethers: "npm:^5.7.0"
@@ -4300,22 +4300,22 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@xmtp/node-bindings@npm:^0.0.13":
-  version: 0.0.13
-  resolution: "@xmtp/node-bindings@npm:0.0.13"
-  checksum: 10/98c8a26cdc56c9b0dab794ca933a0be002bdf8d7e7ebdf1ad7ed33c015eeb7ffa5773185b077dd68e6f53509b12e30971a3963e611a8f42693fd11493fe4d802
+"@xmtp/node-bindings@npm:^0.0.14":
+  version: 0.0.14
+  resolution: "@xmtp/node-bindings@npm:0.0.14"
+  checksum: 10/1c2186418fc3c3066f3a63f91b547b23a0165b2b7ca162e9032a19e575fe9f1fc4922ca4ee4af332d898d98c03ecdec7d954aec3dbed065f8893cf06689a7475
   languageName: node
   linkType: hard
 
-"@xmtp/node-sdk@npm:^0.0.17":
-  version: 0.0.17
-  resolution: "@xmtp/node-sdk@npm:0.0.17"
+"@xmtp/node-sdk@npm:^0.0.18":
+  version: 0.0.18
+  resolution: "@xmtp/node-sdk@npm:0.0.18"
   dependencies:
-    "@xmtp/content-type-primitives": "npm:^1.0.1"
+    "@xmtp/content-type-primitives": "npm:^1.0.2"
     "@xmtp/content-type-text": "npm:^1.0.0"
-    "@xmtp/node-bindings": "npm:^0.0.13"
+    "@xmtp/node-bindings": "npm:^0.0.14"
     "@xmtp/proto": "npm:^3.62.1"
-  checksum: 10/b8b24bb4c534443eaa1925ce23b70ac95f1a0faf6247c09d77664b87a81cb3a4846e7f505f852ac193f6a0404a111df894e3143048b38f928370fc9005c975ff
+  checksum: 10/21628af524eb3340fbefbaca167f0934faba66ff0f4fe4b4eb63b02b1d946cf875c49788e722a2751665a9eb02d33ca7a1e64f18be0840d62517b6bba1276fad
   languageName: node
   linkType: hard
 

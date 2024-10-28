@@ -67,16 +67,15 @@ export default class HandlerContext {
     configPath: string = "commands.js",
   ): Promise<CommandGroup[]> {
     const resolvedPath = path.resolve(process.cwd(), "dist/" + configPath);
-
+    let commands: CommandGroup[] = [];
     try {
       const module = await import(resolvedPath);
-      const commandConfig = module.commands; // Access the exported variable
-
-      return commandConfig;
+      commands = module?.commands ?? [];
     } catch (error) {
-      //console.error(`No commands.ts file found`);
-      return [];
+      console.error(error);
     }
+    console.log("fguespe", commands);
+    return commands;
   }
   static async create(
     conversation: Conversation | ConversationV2,
@@ -328,6 +327,7 @@ export default class HandlerContext {
 
     if (conversation) this.refConv = conversation;
     try {
+      console.log("gma", commands);
       let handler = await this.findHandler(text, commands ?? []);
       if (handler) {
         let content = parseCommand(text, commands ?? [], members ?? []);
@@ -362,9 +362,12 @@ export default class HandlerContext {
     text: string,
     commands: CommandGroup[],
   ): CommandGroup | undefined {
+    const trigger = text?.split(" ")[0].toLowerCase();
+    console.log(trigger, commands);
     for (const commandGroup of commands) {
+      console.log(commandGroup);
       const handler = commandGroup.commands.find((command) => {
-        return command?.triggers?.includes(text?.split(" ")[0].toLowerCase());
+        return command?.triggers?.includes(trigger);
       });
       if (handler) return { ...commandGroup, commands: [handler] };
     }

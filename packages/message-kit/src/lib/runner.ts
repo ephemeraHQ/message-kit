@@ -3,6 +3,7 @@ import { default as xmtpClient } from "./client.js";
 import { Config, Handler } from "../helpers/types.js";
 import { Conversation, DecodedMessage } from "@xmtp/node-sdk";
 import { logMessage } from "../helpers/utils.js";
+import { OnConnectionLostCallback } from "@xmtp/xmtp-js";
 import {
   DecodedMessage as DecodedMessageV2,
   Conversation as ConversationV2,
@@ -126,6 +127,7 @@ export default async function run(handler: Handler, config?: Config) {
         isAdminOrPass,
         isExperimental,
         isAddedMemberOrPass,
+        commandsParsed: context.commands?.length,
         isCommandTriggered,
         handlerName: handler?.name,
         handlerCommand: handler?.commands[0]?.command,
@@ -140,31 +142,48 @@ export default async function run(handler: Handler, config?: Config) {
       handler: handler?.commands[0]?.handler,
     };
   };
+
+  // ... existing code ...
+  const handleConnectionLostV3: OnConnectionLostCallback = (error?: Error) => {
+    if (error) {
+      console.log(`Error in stream_v3:`, error);
+    }
+  };
+  const handleConnectionLostV2: OnConnectionLostCallback = (error?: Error) => {
+    if (error) {
+      console.log(`Error in stream_v2:`, error);
+    }
+  };
   const streamMessages = async (version: "v3" | "v2") => {
-    if (version === "v3") {
-      while (true) {
-        const stream = await client.conversations.streamAllMessages();
-        try {
-          for await (const message of stream) {
-            const conversation = await client.conversations.getConversationById(
-              message?.conversationId ?? "",
-            );
-            handleMessage(version, message, conversation);
-          }
-        } catch (e) {
-          console.log(`Restart stream:`, e);
+    const clientToUse = version === "v3" ? client : v2client;
+
+    while (true) {
+      try {
+        const stream = await clientToUse.conversations.streamAllMessages(
+          version === "v3" ? handleConnectionLostV3 : handleConnectionLostV2,
+        );
+        for await (const message of stream) {
+          const conversation =
+            version === "v3"
+              ? await client.conversations.getConversationById(
+                  (message as DecodedMessage)?.conversationId ?? "",
+                )
+              : (message as DecodedMessageV2)?.conversation;
+          handleMessage(version, message, conversation);
         }
-      }
-    } else if (version === "v2") {
-      while (true) {
-        const stream = await v2client.conversations.streamAllMessages();
-        try {
-          for await (const message of stream) {
-            handleMessage(version, message, message.conversation);
-          }
-        } catch (e) {
-          console.log(`Restart stream:`, e);
+      } catch (e) {
+        console.log(`Stream error:`, e);
+        // Check if the error is a stream disconnected error or similar
+        if ((e as Error).message.includes("stream disconnected")) {
+          console.log(`Restarting stream due to disconnection...`);
+        } else {
+          console.log(`Unexpected error, restarting stream...`);
         }
+        // Add delay before retry
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+        // After 5 seconds, the while loop continues
+        // which means it will try to create a new stream
+        continue;
       }
     }
   };

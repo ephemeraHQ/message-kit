@@ -2,7 +2,6 @@ import { ReplyCodec } from "@xmtp/content-type-reply";
 import { Client as V2Client } from "@xmtp/xmtp-js";
 import { ReactionCodec } from "@xmtp/content-type-reaction";
 import { Client, ClientOptions, XmtpEnv } from "@xmtp/node-sdk";
-import { Wallet } from "ethers";
 import { logInitMessage } from "../helpers/utils";
 import { TextCodec } from "@xmtp/content-type-text";
 import {
@@ -52,7 +51,12 @@ export default async function xmtpClient(
   const finalConfig = { ...defaultConfig, ...config?.client };
   const client = await Client.create(account.address, finalConfig);
   //v2
-  const wallet2 = new Wallet(key as `0x${string}`);
+  const account2 = privateKeyToAccount(key as `0x${string}`);
+  const wallet2 = createWalletClient({
+    account: account2,
+    chain: mainnet,
+    transport: http(),
+  });
   const v2client = await V2Client.create(wallet2, {
     ...finalConfig,
     apiUrl: undefined,
@@ -83,14 +87,19 @@ export default async function xmtpClient(
 
 function getKey(key: string): string {
   if (key !== undefined && !key.startsWith("0x")) key = "0x" + key;
+
   if (key === undefined) {
     console.warn("⚠️🔒 .env KEY not set. Generating a random one:");
     key = generatePrivateKey();
     console.warn(key + "\nCopy and paste it in your .env file as KEY=YOUR_KEY");
-  } else if (!isHex(key)) {
+  } else if (!isPrivateKey(key)) {
     console.warn("⚠️🔒 Invalid private key. Generating a random one:");
     key = generatePrivateKey();
     console.info(key + "\nCopy and paste it in your .env file as KEY=YOUR_KEY");
   }
   return key;
+}
+function isPrivateKey(key: string): boolean {
+  if (key.length !== 66) return false;
+  return privateKeyToAccount(key as `0x${string}`).address !== undefined;
 }
