@@ -11,6 +11,6 @@ run(
   {
     memberChange: true,
     attachments: true,
-    client: { logging: "debug" },
+    experimental: true,
   },
 );

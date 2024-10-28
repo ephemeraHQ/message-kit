@@ -79,14 +79,6 @@ export default async function run(handler: Handler, config?: Config) {
         ? false
         : true;
 
-    console.log(
-      "group_updated",
-      content?.addedInboxes?.length,
-      config?.memberChange,
-    );
-
-    console.log(typeId, content?.addedInboxes?.length, config?.memberChange);
-
     const isRemoteAttachment =
       content?.contentType?.typeId == "remoteStaticAttachment";
 

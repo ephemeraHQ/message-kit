@@ -205,13 +205,24 @@ Powered by XMTP \x1b[0m`;
     Send a message to this account on Converse:                              
     🔗 https://converse.xyz/dm/${client.accountAddress}`);
 
-    if (config?.experimental) {
+    if (
+      config?.experimental ||
+      config?.attachments ||
+      config?.memberChange ||
+      !fs.existsSync(resolvedPath)
+    ) {
       console.warn(`\x1b[33m
     Warnings:
+    ${config?.attachments ? `- ⚠️ Attachments are enabled` : ""}
+    ${config?.memberChange ? `- ⚠️ Member changes are enabled` : ""}
     ${!fs.existsSync(resolvedPath) ? `- ⚠️ No commands.ts file found` : ""}
-    - ☣️ EXPERIMENTAL MODE ENABLED:
+    ${
+      config?.experimental
+        ? `- ☣️ EXPERIMENTAL MODE ENABLED:
         ⚠️ All group messages will be exposed — proceed with caution.
-        ℹ Guidelines: https://messagekit.ephemerahq.com/guidelines
+        ℹ Guidelines: https://messagekit.ephemerahq.com/guidelines`
+        : ""
+    }
         \x1b[0m`);
     }
     console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
