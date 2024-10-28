@@ -189,7 +189,7 @@ export const logMessage = (message: string) => {
 export function logInitMessage(client: Client, config?: Config) {
   const resolvedPath = path.resolve(process.cwd(), "src/" + "commands.ts");
 
-  if (process.env.XMTP_ENV !== "production") {
+  if (process.env.NODE_ENV !== "production") {
     const coolLogo = `\x1b[38;2;250;105;119m\
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
