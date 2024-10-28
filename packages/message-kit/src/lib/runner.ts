@@ -72,7 +72,10 @@ export default async function run(handler: Handler, config?: Config) {
     const isCommandTriggered = handler?.commands[0]?.command;
     const isExperimental = config?.experimental ?? false;
     const isAddedMemberOrPass =
-      group && typeId == "group_updated" && content?.addedInboxes?.length == 0
+      group &&
+      typeId == "group_updated" &&
+      handler?.commands[0]?.memberChange &&
+      content?.addedInboxes?.length == 0
         ? false
         : true;
 
@@ -143,22 +146,31 @@ export default async function run(handler: Handler, config?: Config) {
     };
   };
 
-  // ... existing code ...
   const handleConnectionLostV3: OnConnectionLostCallback = (error?: Error) => {
     if (error) {
       console.log(`Error in stream_v3:`, error);
+      console.log(`Timestamp: ${new Date().toISOString()}`);
     }
   };
   const handleConnectionLostV2: OnConnectionLostCallback = (error?: Error) => {
     if (error) {
       console.log(`Error in stream_v2:`, error);
+      console.log(`Timestamp: ${new Date().toISOString()}`);
     }
   };
   const streamMessages = async (version: "v3" | "v2") => {
     const clientToUse = version === "v3" ? client : v2client;
+    let retryCount = 0;
+    const MAX_RETRY_DELAY = 30000; // max 30 seconds
 
     while (true) {
       try {
+        // Reset retry count on successful connection
+        if (retryCount > 0) {
+          console.log(`Successfully reconnected after ${retryCount} retries`);
+          retryCount = 0;
+        }
+
         const stream = await clientToUse.conversations.streamAllMessages(
           version === "v3" ? handleConnectionLostV3 : handleConnectionLostV2,
         );
@@ -172,6 +184,12 @@ export default async function run(handler: Handler, config?: Config) {
           handleMessage(version, message, conversation);
         }
       } catch (e) {
+        retryCount++;
+        const delay = Math.min(
+          5000 * Math.pow(1.5, retryCount - 1),
+          MAX_RETRY_DELAY,
+        );
+
         console.log(`Stream error:`, e);
         // Check if the error is a stream disconnected error or similar
         if ((e as Error).message.includes("stream disconnected")) {
@@ -180,10 +198,7 @@ export default async function run(handler: Handler, config?: Config) {
           console.log(`Unexpected error, restarting stream...`);
         }
         // Add delay before retry
-        await new Promise((resolve) => setTimeout(resolve, 5000));
-        // After 5 seconds, the while loop continues
-        // which means it will try to create a new stream
-        continue;
+        await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }
   };

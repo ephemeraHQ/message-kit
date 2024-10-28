@@ -74,7 +74,7 @@ export default class HandlerContext {
     } catch (error) {
       console.error(error);
     }
-    console.log("fguespe", commands);
+
     return commands;
   }
   static async create(
@@ -327,7 +327,6 @@ export default class HandlerContext {
 
     if (conversation) this.refConv = conversation;
     try {
-      console.log("gma", commands);
       let handler = await this.findHandler(text, commands ?? []);
       if (handler) {
         let content = parseCommand(text, commands ?? [], members ?? []);
@@ -363,9 +362,7 @@ export default class HandlerContext {
     commands: CommandGroup[],
   ): CommandGroup | undefined {
     const trigger = text?.split(" ")[0].toLowerCase();
-    console.log(trigger, commands);
     for (const commandGroup of commands) {
-      console.log(commandGroup);
       const handler = commandGroup.commands.find((command) => {
         return command?.triggers?.includes(trigger);
       });

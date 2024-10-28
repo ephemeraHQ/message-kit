@@ -61,6 +61,7 @@ export interface CommandConfig {
   handler?: CommandHandler;
   triggers: string[];
   adminOnly?: boolean;
+  memberChange?: boolean;
   description: string;
   params: Record<string, CommandParamConfig>;
 }
