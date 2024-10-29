@@ -1,0 +1,118 @@
+## Cron middleware
+
+Install dependencies
+
+```bash [cmd]
+yarn add @notionhq/client
+```
+
+Instructions
+
+- Set the `NOTION_API_KEY` in the `.env` file.
+- Add the bot you created to your notion page
+
+## Code
+
+This is a generic middleware to interact with Notion API.
+
+```tsx [src/lib/notion.ts]
+import dotenv from "dotenv";
+dotenv.config();
+import { Client } from "@notionhq/client";
+
+const notion = new Client({
+  auth: process.env.NOTION_API_KEY,
+});
+const poapsID = process.env.NOTION_POAP_DB;
+const subscribedID = process.env.NOTION_SUBSCRIBED_DB;
+export async function downloadPoapTable() {
+  const response = await notion.databases.query({
+    database_id: poapsID as string,
+  });
+
+  const poapTable = response.results.map((page: any) => {
+    const url = page.properties.Url.url;
+    const address = page.properties.Address.title[0]?.plain_text;
+    const id = page.id;
+    return { url, address, id };
+  });
+  return poapTable as { url: string; address: string; id: string }[];
+}
+export async function subscribeToNotion(address: string, subscribed: boolean) {
+  // Check if the address already exists in the database
+  const existingPages = await notion.databases.query({
+    database_id: subscribedID as string,
+    filter: {
+      property: "Address",
+      title: {
+        equals: address,
+      },
+    },
+  });
+
+  if (existingPages?.results?.length > 0) {
+    const existingPage = existingPages.results[0];
+
+    // @ts-ignore
+    const currentStatus = existingPage?.properties?.Status?.select?.name;
+    const newStatus = subscribed ? "Subscribed" : "Unsubscribed";
+
+    // Only update if the status has changed
+    if (currentStatus !== newStatus) {
+      await notion.pages.update({
+        page_id: existingPage.id,
+        properties: {
+          Status: {
+            type: "select",
+            select: {
+              name: newStatus,
+            },
+          },
+        },
+      });
+    }
+    return existingPage.id;
+  } else {
+    // If the address doesn't exist, create a new page
+    const page = await notion.pages.create({
+      parent: {
+        database_id: subscribedID as string,
+      },
+      properties: {
+        Address: {
+          type: "title",
+          title: [
+            {
+              text: { content: address },
+            },
+          ],
+        },
+        Status: {
+          type: "select",
+          select: {
+            name: subscribed ? "Subscribed" : "Unsubscribed",
+          },
+        },
+      },
+    });
+    return page.id;
+  }
+}
+
+export async function updatePoapAddress(dbRowId: string, address: string) {
+  await notion.pages.update({
+    page_id: dbRowId as string,
+    properties: {
+      Address: {
+        type: "title",
+        title: [
+          {
+            type: "text",
+            text: { content: address },
+          },
+        ],
+      },
+    },
+  });
+}
+```

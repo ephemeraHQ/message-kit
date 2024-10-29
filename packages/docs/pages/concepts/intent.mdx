@@ -26,11 +26,11 @@ export const commands: CommandGroup[] = [
   {
     name: "Swap Bot",
     description: "Swap bot for base.",
-    triggers: ["/swap", "@swap", "@swapbot"],
     commands: [
       {
         command: "/swap [amount] [token_from] [token_to]",
         handler: handleSwap,
+        triggers: ["/swap", "@swap", "@swapbot"],
         description: "Exchange one cryptocurrency for another.",
         params: {
           amount: { type: "number", default: 1 },

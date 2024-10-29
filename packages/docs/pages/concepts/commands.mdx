@@ -39,16 +39,15 @@ import { handler as transaction } from "./handler/transaction.js"; // [!code hl]
 export const commands: CommandGroup[] = [
   {
     name: "Transactions",
-    triggers: ["@send", "/send"], // [!code hl] // [!code focus]
     description: "Multipurpose transaction frame built onbase.",
     commands: [
       {
-        command: "/send [amount] [token] [@username]", // Important for the AI agent to understand the command // [!code hl] // [!code focus]
+        command: "/send [amount] [token] [@username]",
+        triggers: ["@send", "/send"],
         description:
           "Send a specified amount of a cryptocurrency to a destination address.",
-        handler: transaction, // The handler that will execute the command // [!code hl] // [!code focus]
+        handler: transaction,
         params: {
-          // To declare the parameters  // [!code hl] // [!code focus]
           amount: {
             default: 10,
             type: "number",
@@ -56,13 +55,42 @@ export const commands: CommandGroup[] = [
           token: {
             default: "usdc",
             type: "string",
-            values: ["eth", "dai", "usdc", "degen"],
+            values: ["eth", "dai", "usdc", "degen"], // Accepted tokens
           },
           username: {
             default: "",
             type: "username",
           },
         },
+      },
+      {
+        command: "/swap [amount] [token_from] [token_to]",
+        triggers: ["@swap", "/swap"],
+        description: "Exchange one type of cryptocurrency for another.",
+        handler: transaction,
+        params: {
+          amount: {
+            default: 10,
+            type: "number",
+          },
+          token_from: {
+            default: "usdc",
+            type: "string",
+            values: ["eth", "dai", "usdc", "degen"], // Accepted tokens
+          },
+          token_to: {
+            default: "eth",
+            type: "string",
+            values: ["eth", "dai", "usdc", "degen"], // Accepted tokenss
+          },
+        },
+      },
+      {
+        command: "/show",
+        triggers: ["/show"],
+        handler: transaction,
+        description: "Show the whole frame.",
+        params: {},
       },
     ],
   },

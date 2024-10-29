@@ -189,6 +189,10 @@ export default defineConfig({
           text: "Stackso",
           link: "/middlewares/stackso",
         },
+        {
+          text: "Notion",
+          link: "/middlewares/notion",
+        },
       ],
     },
     {

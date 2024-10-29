@@ -17,26 +17,30 @@ Here are the commands to manage loyalty:
 ::::note
 :::details[Command declaration]
 
-```tsx
-{
-  name: "Loyalty",
-  triggers: ["/points", "@points", "/leaderboard", "@leaderboard"],
-  description: "Manage group members and metadata.",
-  commands: [
-    {
-      command: "/points",
-      handler: loyalty,
-      description: "Check your points.",
-      params: {},
-    },
-    {
-      command: "/leaderboard",
-      handler: loyalty,
-      description: "Check the points of a user.",
-      params: {},
-    },
-  ],
-}
+```tsx [src/commands.ts]
+export const commands: CommandGroup[] = [
+  {
+    name: "Loyalty",
+    description: "Manage group members and metadata.",
+    commands: [
+      {
+        command: "/points",
+        triggers: ["/points", "@points"],
+        handler: loyalty,
+        description: "Check your points.",
+        params: {},
+      },
+      {
+        command: "/leaderboard",
+        triggers: ["/leaderboard", "@leaderboard"],
+        adminOnly: true,
+        handler: loyalty,
+        description: "Check the points of a user.",
+        params: {},
+      },
+    ],
+  },
+];
 ```
 
 :::

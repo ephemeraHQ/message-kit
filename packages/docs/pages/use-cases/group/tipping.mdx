@@ -13,28 +13,30 @@ In this example you can tip using 3 primitives:
 :::details[Command declaration]
 
 ```tsx [src/commands.ts]
-{
-  name: "Tipping",
-  description: "Tip tokens via emoji, replies or command.",
-  triggers: ["/tip", "🎩", "@tip"],
-  commands: [
-    {
-      command: "/tip [@users] [amount] [token]",
-      description: "Tip users in a specified token.",
-      handler: tipping,
-      params: {
-        username: {
-          default: "",
-          type: "username",
-        },
-        amount: {
-          default: 10,
-          type: "number",
+export const commands: CommandGroup[] = [
+  {
+    name: "Tipping",
+    description: "Tip tokens via emoji, replies or command.",
+    commands: [
+      {
+        command: "/tip [@users] [amount] [token]",
+        triggers: ["/tip", "🎩", "@tip"],
+        description: "Tip users in a specified token.",
+        handler: tipping,
+        params: {
+          username: {
+            default: "",
+            type: "username",
+          },
+          amount: {
+            default: 10,
+            type: "number",
+          },
         },
       },
-    },
-  ],
-}
+    ],
+  },
+];
 ```
 
 :::

@@ -35,14 +35,14 @@ run(async (context: HandlerContext) => {
 Each app can have a `commands.ts` file that contains the available commands for the users. The commands are defined as an array of objects with the following structure:
 
 ```tsx [src/commands.ts]
-export const commands = [
+export const commands: CommandGroup[] = [
   {
     name: "General Commands",
-    triggers: ["/help"],
     description: "Command for managing default behaviours.",
     commands: [
       {
         command: "/help",
+        triggers: ["/help"],
         handler: undefined,
         description: "Get help with the app.",
       },
@@ -70,9 +70,10 @@ run(
   async (context) => {
     // Your code here
   },
-  { privateKey: "your_private_key", experimental: true },
+  { privateKey: "your_private_key", experimental: true, attachments: true },
 );
 ```
 
 - `privateKey`: the private key of the bot wallet, like any normal wallet private key.
-- `experimental`: experimental features like logging all group messages
+- `experimental`: experimental features like logging all group messages. Default is `false`.
+- `attachments`: to receive attachments. Default is `false`.
