@@ -34,7 +34,6 @@ export default class HandlerContext {
   version!: "v2" | "v3";
   v2client!: ClientV2;
   commands?: CommandGroup[];
-  isGroup!: boolean;
   members?: User[];
   getMessageById!: (id: string) => DecodedMessage | null;
   private constructor(
@@ -44,7 +43,6 @@ export default class HandlerContext {
   ) {
     this.client = client;
     this.v2client = v2client;
-    this.isGroup = version === "v3";
     if (conversation instanceof Conversation) {
       this.group = {
         id: conversation.id,
@@ -168,7 +166,7 @@ export default class HandlerContext {
           username: "",
           accountAddresses: [],
         },
-        typeId: "new_" + (context.isGroup ? "group" : "conversation"),
+        typeId: "new_" + (version === "v3" ? "group" : "conversation"),
         sent: conversation.createdAt,
         version: version as string,
       };
@@ -324,7 +322,7 @@ export default class HandlerContext {
 
   async intent(text: string, conversation?: Conversation) {
     const { commands, members } = this;
-
+    if (process.env.MSG_LOG) console.log("intent", text);
     if (conversation) this.refConv = conversation;
     try {
       let handler = await this.findHandler(text, commands ?? []);
@@ -345,11 +343,12 @@ export default class HandlerContext {
           react: this.react.bind(this),
           getMessageById: this.getMessageById.bind(this),
           getReplyChain: this.getReplyChain.bind(this),
-          isGroup: this.group instanceof Conversation,
         };
 
         this.refConv = null;
         return await handler.commands[0].handler?.(mockContext);
+      } else if (!text.startsWith("/") || !text.startsWith("@")) {
+        console.warn("Command not valid", text);
       } else return this.send(text);
     } catch (e) {
       console.log("error", e);
