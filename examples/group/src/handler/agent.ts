@@ -3,7 +3,7 @@ import { textGeneration } from "../lib/openai.js";
 
 export async function handler(context: HandlerContext) {
   if (!process?.env?.OPEN_AI_API_KEY) {
-    console.log("No OPEN_AI_API_KEY found in .env");
+    console.warn("No OPEN_AI_API_KEY found in .env");
     return;
   }
 

@@ -1,0 +1,36 @@
+## Stack.so middleware
+
+Connect to [Stack.so](https://stack.so) for managing your loyalty program.
+
+```bash [cmd]
+npm install @stackso/js-core
+```
+
+Add your API key to environment variables.
+
+```bash
+STACK_API_KEY= #your api key
+```
+
+Connect to Stack.so
+
+```tsx [src/lib/stack.ts]
+import { StackClient } from "@stackso/js-core";
+
+let stack: StackClient | null = null;
+
+export function getStackClient(): StackClient | null {
+  if (!process?.env?.STACK_API_KEY) {
+    console.log("No STACK_API_KEY found in .env");
+    return null;
+  }
+  if (!stack) {
+    stack = new StackClient({
+      apiKey: process.env.STACK_API_KEY as string,
+      pointSystemId: 2893,
+    });
+  }
+  return stack;
+}
+export type { StackClient };
+```

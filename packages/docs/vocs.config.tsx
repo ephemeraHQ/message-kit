@@ -163,18 +163,31 @@ export default defineConfig({
           ],
         },
         {
-          text: "Agent",
-          link: "/use-cases/agent",
-          items: [
-            {
-              text: "Subscribe",
-              link: "/use-cases/agent/subscribe",
-            },
-            {
-              text: "Broadcast",
-              link: "/use-cases/agent/broadcast",
-            },
-          ],
+          text: "Ens agent",
+          link: "/use-cases/ens-agent",
+        },
+      ],
+    },
+
+    {
+      text: "Middlewares",
+      collapsed: false,
+      items: [
+        {
+          text: "OpenAI",
+          link: "/middlewares/openai",
+        },
+        {
+          text: "Cron",
+          link: "/middlewares/cron",
+        },
+        {
+          text: "Redis",
+          link: "/middlewares/redis",
+        },
+        {
+          text: "Stackso",
+          link: "/middlewares/stackso",
         },
       ],
     },

@@ -59,20 +59,20 @@ The helper function will extract the parameters from the command.
 
 An easier way to declare how to handle and respond to commands is to use handlers. Handlers help you orgaize the code being useful when you are managing multiple bots
 
-```js [src/commands.ts]
+```tsx [src/commands.ts]
 import { handler as transaction } from "./handler/transaction.js"; // [!code hl] // [!code focus]
 
 export const commands: CommandGroup[] = [
   {
     name: "Transactions",
-    triggers: ["@send", "/send"],  // [!code hl] // [!code focus]
+    triggers: ["@send", "/send"], // [!code hl] // [!code focus]
     description: "Multipurpose transaction frame built onbase.",
     commands: [
       {
         command: "/send [amount] [token] [@username]",
         description:
           "Send a specified amount of a cryptocurrency to a destination address.",
-        handler: transaction,  // [!code hl] // [!code focus]
+        handler: transaction, // [!code hl] // [!code focus]
         params: {
           amount: {
             default: 10,

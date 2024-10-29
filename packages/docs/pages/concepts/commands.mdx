@@ -33,21 +33,22 @@ First think of which command you want the app to respond to. For example:
 
 Create the command file `commands.ts` in your project root `src` folder.
 
-```js [src/commands.ts]
+```tsx [src/commands.ts]
 import { handler as transaction } from "./handler/transaction.js"; // [!code hl] // [!code focus]
 
 export const commands: CommandGroup[] = [
   {
     name: "Transactions",
-    triggers: ["@send", "/send"],  // [!code hl] // [!code focus]
+    triggers: ["@send", "/send"], // [!code hl] // [!code focus]
     description: "Multipurpose transaction frame built onbase.",
     commands: [
       {
-        command: "/send [amount] [token] [@username]",  // Important for the AI agent to understand the command // [!code hl] // [!code focus]
+        command: "/send [amount] [token] [@username]", // Important for the AI agent to understand the command // [!code hl] // [!code focus]
         description:
           "Send a specified amount of a cryptocurrency to a destination address.",
         handler: transaction, // The handler that will execute the command // [!code hl] // [!code focus]
-        params: { // To declare the parameters  // [!code hl] // [!code focus]
+        params: {
+          // To declare the parameters  // [!code hl] // [!code focus]
           amount: {
             default: 10,
             type: "number",

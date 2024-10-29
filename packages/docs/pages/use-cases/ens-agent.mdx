@@ -1,3 +1,40 @@
+# Ens agent
+
+This is a simple yet powerful agent that will help users interact with ENS.
+
+## Structure
+
+> Check out the [repository](https://github.com/ephemeraHQ/message-kit/tree/main/examples/agent) for the full code.
+
+```
+agent/
+├── src/
+│   ├── index.ts           # Conversational logic // [!code hl] // [!code focus]
+│   └── handler/
+│       └── ens.ts         # ENS agent // [!code hl] // [!code focus]
+│   └── lib/
+│       └── openai.ts      # OpenAI middleware // [!code hl] // [!code focus]
+├── package.json
+├── tsconfig.json
+└── .env
+```
+
+## Main code
+
+With a simple conversational logic, steps and if statements create powerful subscription experiences:
+
+```tsx [src/index.ts]
+import { run, HandlerContext } from "@xmtp/message-kit";
+import { ensAgent } from "./handler/ens.js";
+
+run(async (context: HandlerContext) => {
+  await ensAgent(context);
+});
+```
+
+## Agent handler
+
+```tsx [src/handler/ens.ts]
 import { HandlerContext } from "@xmtp/message-kit";
 
 import { textGeneration } from "../lib/openai.js";
@@ -224,3 +261,34 @@ Examples:
 export async function clearChatHistory() {
   chatHistories = {};
 }
+```
+
+## Run the app
+
+Follow the steps below to run the app
+
+::::steps
+
+### Setup
+
+```bash [cmd]
+# Clone the repo
+git clone https://github.com/ephemeraHQ/message-kit
+# Go to the examples/agent folder
+cd examples/agent
+# Install the dependencies
+yarn install
+# Run the app
+yarn dev
+```
+
+### Variables
+
+Set up these variables in your app
+
+```bash [.env]
+KEY= # 0x... the private key of the bot wallet
+REDIS_CONNECTION_STRING= # the connection string for the Redis database
+```
+
+::::
