@@ -22,6 +22,6 @@ yarn dev
 Set up these variables in your app
 
 ```bash [cmd]
-KEY= # the private key of the app
+KEY= # the private key of the wallet
 OPEN_AI_API_KEY= # sk-proj-...
 ```

@@ -46,7 +46,6 @@ export const getInfoCache = async (
       info: infoCache[key].info,
       infoCache: infoCache,
     };
-    console.log(data);
     return data;
   }
   try {
@@ -61,7 +60,6 @@ export const getInfoCache = async (
     if (domain) infoCache[domain as string] = { info: data };
     if (address) infoCache[address as string] = { info: data };
 
-    console.log(data);
     return { info: data, infoCache: infoCache, domain: domain as string };
   } catch (error) {
     console.error(error);

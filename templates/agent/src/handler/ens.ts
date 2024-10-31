@@ -108,6 +108,7 @@ export async function handleEns(context: HandlerContext) {
     }
     return { code: 200, message };
   } else if (command == "check") {
+    console.log(params);
     const { domain, cool_alternatives } = params;
 
     const cool_alternativesFormat = cool_alternatives
@@ -129,7 +130,6 @@ export async function handleEns(context: HandlerContext) {
       infoCache,
     );
     infoCache = retrievedInfoCache;
-    console.log(infoCache);
     let data = infoCache?.[domain]?.info;
     if (!data?.address) {
       let message = `Looks like ${domain} is available! Do you want to register it? ${ensUrl}${domain}`;
@@ -137,36 +137,36 @@ export async function handleEns(context: HandlerContext) {
         code: 200,
         message,
       };
-    } else if (!data?.address) {
+    } else {
       let message = `Looks like ${domain} is already registered! What about these cool alternatives?\n\n${cool_alternativesFormat}`;
       return {
         code: 404,
         message,
       };
-    } else if (command == "tip") {
-      // Destructure and validate parameters for the send command
-      const { address } = params;
+    }
+  } else if (command == "tip") {
+    // Destructure and validate parameters for the send command
+    const { address } = params;
 
-      const { infoCache: retrievedInfoCache } = await getInfoCache(
-        address,
-        infoCache,
-      );
-      infoCache = retrievedInfoCache;
-      let data = infoCache[address].info;
+    const { infoCache: retrievedInfoCache } = await getInfoCache(
+      address,
+      infoCache,
+    );
+    infoCache = retrievedInfoCache;
+    let data = infoCache[address].info;
 
-      tipAddress = data?.address;
-      tipDomain = data?.ens;
+    tipAddress = data?.address;
+    tipDomain = data?.ens;
 
-      if (!address || !tipAddress) {
-        context.reply("Missing required parameters. Please provide address.");
-        return;
-      }
-      let txUrl = `${baseTxUrl}/transaction/?transaction_type=send&buttonName=Tip%20${tipDomain}&amount=1&token=USDC&receiver=${tipAddress}`;
-      // Generate URL for the send transaction
-      context.send(`Here is the url to send the tip:\n${txUrl}`);
-    } else if (command == "cool") {
+    if (!address || !tipAddress) {
+      context.reply("Missing required parameters. Please provide address.");
       return;
     }
+    let txUrl = `${baseTxUrl}/transaction/?transaction_type=send&buttonName=Tip%20${tipDomain}&amount=1&token=USDC&receiver=${tipAddress}`;
+    // Generate URL for the send transaction
+    context.send(`Here is the url to send the tip:\n${txUrl}`);
+  } else if (command == "cool") {
+    return;
   }
 }
 
