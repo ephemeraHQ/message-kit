@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
+import type { ChatHistories, ChatHistoryEntry } from "./types.js";
 dotenv.config();
-
 import OpenAI from "openai";
 const openai = new OpenAI({
   apiKey: process.env.OPEN_AI_API_KEY,
@@ -9,9 +9,9 @@ const openai = new OpenAI({
 export async function textGeneration(
   userPrompt: string,
   systemPrompt: string,
-  chatHistory?: any[],
+  chatHistory: ChatHistoryEntry[] = [],
 ) {
-  let messages = chatHistory ? [...chatHistory] : []; // Start with existing chat history
+  let messages = chatHistory;
   if (messages.length === 0) {
     messages.push({
       role: "system",
@@ -78,6 +78,39 @@ export async function vision(imageData: Uint8Array, systemPrompt: string) {
   }
 }
 
+export async function processResponseWithIntent(
+  reply: string,
+  context: any,
+  chatHistory: ChatHistoryEntry[] = [],
+) {
+  if (process.env.MSG_LOG === "true") {
+    console.log(reply);
+  }
+  let messages = reply
+    .split("\n")
+    .map((message: string) => responseParser(message))
+    .filter((message): message is string => message.length > 0);
+
+  console.log(messages);
+  for (const message of messages) {
+    if (message.startsWith("/")) {
+      const response = await context.intent(message);
+      if (response && response.message) {
+        let msg = responseParser(response.message);
+
+        chatHistory.push({
+          role: "system",
+          content: msg,
+        });
+
+        await context.send(response.message);
+      }
+    } else {
+      await context.send(message);
+    }
+  }
+  return chatHistory;
+}
 export function responseParser(message: string) {
   let trimmedMessage = message;
   // Remove bold and underline markdown

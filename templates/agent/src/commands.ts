@@ -1,5 +1,5 @@
 import type { CommandGroup } from "@xmtp/message-kit";
-import { ensAgent, handleEns } from "./handler/ens.js";
+import { handleEns } from "./handler/ens.js";
 
 export const commands: CommandGroup[] = [
   {
@@ -54,10 +54,21 @@ export const commands: CommandGroup[] = [
         },
       },
       {
+        command: "/cool [domain]",
+        triggers: ["/cool"],
+        handler: handleEns,
+        description: "Get cool alternatives for a .eth domain.",
+        params: {
+          domain: {
+            type: "string",
+          },
+        },
+      },
+      {
         command: "/tip [address]",
         description: "Show a URL for tipping a domain owner.",
         triggers: ["/tip"],
-        handler: ensAgent,
+        handler: handleEns,
         params: {
           address: {
             type: "address",

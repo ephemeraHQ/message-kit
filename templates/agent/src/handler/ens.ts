@@ -1,23 +1,20 @@
 import { HandlerContext } from "@xmtp/message-kit";
-import { Client } from "@xmtp/xmtp-js";
+import { generateCoolAlternatives } from "../lib/resolver.js";
 import { getUserInfo, getInfoCache, isOnXMTP } from "../lib/resolver.js";
-import { textGeneration, responseParser } from "../lib/openai.js";
+import { textGeneration } from "../lib/openai.js";
+import { processResponseWithIntent } from "../lib/openai.js";
 import { ens_agent_prompt } from "../prompt.js";
 import type {
   ensDomain,
   converseUsername,
-  tipAddress,
-  chatHistories,
-  tipDomain,
+  ChatHistories,
 } from "../lib/types.js";
 import { frameUrl, ensUrl, baseTxUrl, InfoCache } from "../lib/types.js";
 
-let tipAddress: tipAddress = {};
-let tipDomain: tipDomain = {};
+let chatHistories: ChatHistories = {};
 let ensDomain: ensDomain = {};
 let infoCache: InfoCache = {};
 let converseUsername: converseUsername = {};
-let chatHistories: chatHistories = {};
 
 // URL for the send transaction
 export async function handleEns(context: HandlerContext) {
@@ -32,21 +29,19 @@ export async function handleEns(context: HandlerContext) {
     const { domain } = params;
     // Check if the user holds the domain
     if (!domain) {
-      context.reply("Missing required parameters. Please provide domain.");
-      return;
+      return {
+        code: 400,
+        message: "Missing required parameters. Please provide domain.",
+      };
     }
 
-    const { infoCache: retrievedInfoCache } = await getInfoCache(
-      domain,
-      infoCache,
-    );
-    infoCache = retrievedInfoCache;
-    let data = infoCache[domain].info;
+    const data = await keepInfoCache(domain);
 
-    if (data?.address !== sender?.address) {
+    if (!data || data?.address !== sender?.address) {
       return {
         code: 403,
-        message: "You do not hold this domain. Only the owner can renew it.",
+        message:
+          "Looks like this domain is not registered, or not registered to you. Only the owner can renew it.",
       };
     }
 
@@ -69,12 +64,13 @@ export async function handleEns(context: HandlerContext) {
   } else if (command == "info") {
     const { domain } = params;
 
-    const { infoCache: retrievedInfoCache } = await getInfoCache(
-      domain,
-      infoCache,
-    );
-    infoCache = retrievedInfoCache;
-    let data = infoCache[domain].info;
+    const data = await keepInfoCache(domain);
+    if (!data) {
+      return {
+        code: 404,
+        message: "Domain not found.",
+      };
+    }
 
     const formattedData = {
       Address: data?.address,
@@ -97,22 +93,13 @@ export async function handleEns(context: HandlerContext) {
     message += `\n\nWould you like to tip the domain owner for getting there first 🤣?`;
     message = message.trim();
     if (await isOnXMTP(context.v2client, data?.ens, data?.address)) {
-      context.send(
+      await context.send(
         `Ah, this domains is in XMTP, you can message it directly: https://converse.xyz/dm/${domain}`,
       );
     }
     return { code: 200, message };
   } else if (command == "check") {
-    console.log(params);
-    const { domain, cool_alternatives } = params;
-
-    const cool_alternativesFormat = cool_alternatives
-      ?.split(",")
-      .map(
-        (alternative: string, index: number) =>
-          `${index + 1}. ${alternative} ✨`,
-      )
-      .join("\n");
+    const { domain } = params;
 
     if (!domain) {
       return {
@@ -120,12 +107,14 @@ export async function handleEns(context: HandlerContext) {
         message: "Please provide a domain name to check.",
       };
     }
-    const { infoCache: retrievedInfoCache } = await getInfoCache(
-      domain,
-      infoCache,
-    );
-    infoCache = retrievedInfoCache;
-    let data = infoCache?.[domain]?.info;
+
+    const data = await keepInfoCache(domain);
+    if (!data) {
+      return {
+        code: 404,
+        message: "Domain not found.",
+      };
+    }
     if (!data?.address) {
       let message = `Looks like ${domain} is available! Do you want to register it? ${ensUrl}${domain}`;
       return {
@@ -133,7 +122,8 @@ export async function handleEns(context: HandlerContext) {
         message,
       };
     } else {
-      let message = `Looks like ${domain} is already registered! What about these cool alternatives?\n\n${cool_alternativesFormat}`;
+      let message = `Looks like ${domain} is already registered!`;
+      await context.intent("/cool " + domain);
       return {
         code: 404,
         message,
@@ -142,64 +132,51 @@ export async function handleEns(context: HandlerContext) {
   } else if (command == "tip") {
     // Destructure and validate parameters for the send command
     const { address } = params;
-
-    const { infoCache: retrievedInfoCache } = await getInfoCache(
-      address,
-      infoCache,
-    );
-    infoCache = retrievedInfoCache;
-    let data = infoCache[address].info;
-
-    tipAddress[sender.address] = data?.address;
-    tipDomain[sender.address] = data?.ens;
-
-    if (!address || !tipAddress[sender.address]) {
-      context.reply("Missing required parameters. Please provide address.");
-      return;
+    console.log("entra");
+    const data = await keepInfoCache(address);
+    if (!data) {
+      return {
+        code: 404,
+        message: "Domain not found.",
+      };
     }
-    let txUrl = `${baseTxUrl}/transaction/?transaction_type=send&buttonName=Tip%20${tipDomain[sender.address]}&amount=1&token=USDC&receiver=${tipAddress[sender.address]}`;
+    if (!address) {
+      return {
+        code: 400,
+        message: "Missing required parameters. Please provide address.",
+      };
+    }
+    let txUrl = `${baseTxUrl}/transaction/?transaction_type=send&buttonName=Tip%20${data?.address}&amount=1&token=USDC&receiver=${data?.ens}`;
     // Generate URL for the send transaction
-    context.send(`Here is the url to send the tip:\n${txUrl}`);
+    return {
+      code: 200,
+      message: txUrl,
+    };
   } else if (command == "cool") {
-    return;
+    const { domain } = params;
+    //What about these cool alternatives?\
+    return {
+      code: 200,
+      message: `${generateCoolAlternatives(domain)}`,
+    };
   }
+}
+
+async function keepInfoCache(domain: string) {
+  const retrievedInfoCache = await getInfoCache(domain, infoCache);
+  if (retrievedInfoCache == null || !retrievedInfoCache.info.address) {
+    return false;
+  }
+  infoCache = retrievedInfoCache.infoCache;
+  let data = retrievedInfoCache.info;
+  return data;
 }
 
 export async function clearChatHistory() {
   chatHistories = {};
-}
-
-async function processResponseWithIntent(
-  reply: string,
-  context: any,
-  senderAddress: string,
-) {
-  if (process.env.MSG_LOG === "true") {
-    console.log(reply);
-  }
-  let messages = reply
-    .split("\n")
-    .map((message: string) => responseParser(message))
-    .filter((message): message is string => message.length > 0);
-
-  console.log(messages);
-  for (const message of messages) {
-    if (message.startsWith("/")) {
-      const response = await context.intent(message);
-      if (response && response.message) {
-        let msg = responseParser(response.message);
-
-        chatHistories[senderAddress].push({
-          role: "system",
-          content: msg,
-        });
-
-        await context.send(response.message);
-      }
-    } else {
-      await context.send(message);
-    }
-  }
+  infoCache = {};
+  ensDomain = {};
+  converseUsername = {};
 }
 
 export async function ensAgent(context: HandlerContext) {
@@ -227,7 +204,6 @@ export async function ensAgent(context: HandlerContext) {
 
     ensDomain[sender.address] = newEnsDomain;
     converseUsername[sender.address] = newConverseUsername;
-    let txUrl = `${baseTxUrl}/transaction/?transaction_type=send&buttonName=Tip%20${tipDomain[sender.address]}&amount=1&token=USDC&receiver=${tipAddress[sender.address]}`;
 
     const { reply, history } = await textGeneration(
       userPrompt,
@@ -235,14 +211,16 @@ export async function ensAgent(context: HandlerContext) {
         sender.address,
         ensDomain[sender.address],
         converseUsername[sender.address],
-        tipAddress[sender.address],
-        txUrl,
       ),
       chatHistories[sender.address],
     );
     if (!group) chatHistories[sender.address] = history; // Update chat history for the user
 
-    await processResponseWithIntent(reply, context, sender.address);
+    chatHistories[sender.address] = await processResponseWithIntent(
+      reply,
+      context,
+      chatHistories[sender.address],
+    );
   } catch (error) {
     console.error("Error during OpenAI call:", error);
     await context.send("An error occurred while processing your request.");

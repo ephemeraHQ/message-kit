@@ -33,44 +33,63 @@ export async function getUserInfo(
   });
   return { converseUsername: converseUsername, ensDomain: ensDomain };
 }
-
 export const getInfoCache = async (
-  key: string, // This can be either domain or address
+  key: string,
   infoCache: InfoCache,
-): Promise<{ domain: string; info: EnsData; infoCache: InfoCache }> => {
-  if (infoCache[key]) {
-    let data = {
-      domain: key,
-      info: infoCache[key].info,
+): Promise<{ domain: string; info: EnsData; infoCache: InfoCache } | null> => {
+  try {
+    if (infoCache[key] && Object.keys(infoCache[key]).length > 0) {
+      const data = {
+        domain: key,
+        info: infoCache[key].info,
+        infoCache: infoCache,
+      };
+      console.log(data);
+      return data;
+    }
+    console.log("Fetching from ensdata.net");
+    const response = await fetch(`https://ensdata.net/${key}`);
+    const fetchedData: EnsData = (await response.json()) as EnsData;
+    if (!fetchedData?.address && !fetchedData?.ens) {
+      return null;
+    }
+    // Assuming the data contains both domain and address
+    const domain = fetchedData?.ens;
+    const address = fetchedData?.address;
+
+    // Store data in cache by both domain and address
+    if (domain) infoCache[domain as string] = { info: fetchedData };
+    if (address) infoCache[address as string] = { info: fetchedData };
+    const data = {
+      domain: domain || "",
+      info: fetchedData,
       infoCache: infoCache,
     };
     return data;
-  }
-  try {
-    const response = await fetch(`https://ensdata.net/${key}`);
-    const data: EnsData = (await response.json()) as EnsData;
-
-    // Assuming the data contains both domain and address
-    const domain = data?.ens;
-    const address = data?.address;
-
-    // Store data in cache by both domain and address
-    if (domain) infoCache[domain as string] = { info: data };
-    if (address) infoCache[address as string] = { info: data };
-
-    return { info: data, infoCache: infoCache, domain: domain as string };
   } catch (error) {
     console.error(error);
-    return { info: {}, infoCache: infoCache, domain: "" };
+    return null;
   }
 };
 export const generateCoolAlternatives = (domain: string) => {
   const suffixes = ["lfg", "cool", "degen", "moon", "base", "gm"];
-  const alternatives = suffixes.map((suffix) => {
+  const alternatives = [];
+  for (let i = 0; i < 5; i++) {
     const randomPosition = Math.random() < 0.5;
-    return randomPosition ? `${suffix}${domain}.eth` : `${domain}${suffix}.eth`;
-  });
-  return alternatives.join(",");
+    const baseDomain = domain.replace(/\.eth$/, ""); // Remove any existing .eth suffix
+    alternatives.push(
+      randomPosition
+        ? `${suffixes[i]}${baseDomain}.eth`
+        : `${baseDomain}${suffixes[i]}.eth`,
+    );
+  }
+
+  const cool_alternativesFormat = alternatives
+    .map(
+      (alternative: string, index: number) => `${index + 1}. ${alternative} ✨`,
+    )
+    .join("\n");
+  return cool_alternativesFormat;
 };
 export const isOnXMTP = async (
   client: Client,

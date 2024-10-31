@@ -1,8 +1,7 @@
-export type chatHistories = Record<string, any[]>;
+export type ChatHistoryEntry = { role: string; content: string };
+export type ChatHistories = Record<string, ChatHistoryEntry[]>;
 export type ensDomain = Record<string, string | undefined>;
 export type converseUsername = Record<string, string | undefined>;
-export type tipAddress = Record<string, string | undefined>;
-export type tipDomain = Record<string, string | undefined>;
 
 export type InfoCache = {
   [key: string]: { info: EnsData };
