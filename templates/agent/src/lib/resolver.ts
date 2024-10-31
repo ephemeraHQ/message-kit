@@ -1,10 +1,8 @@
 import type { EnsData } from "./types.js";
 import { endpointURL } from "./types.js";
 import { Client } from "@xmtp/xmtp-js";
+import { InfoCache } from "./types.js";
 
-export type InfoCache = {
-  [key: string]: { info: EnsData };
-};
 export async function getUserInfo(
   address: string,
   ensDomain: string | undefined,

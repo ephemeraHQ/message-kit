@@ -1,11 +1,6 @@
 import { HandlerContext } from "@xmtp/message-kit";
 import { Client } from "@xmtp/xmtp-js";
-import {
-  getUserInfo,
-  getInfoCache,
-  InfoCache,
-  isOnXMTP,
-} from "../lib/resolver.js";
+import { getUserInfo, getInfoCache, isOnXMTP } from "../lib/resolver.js";
 import { textGeneration, responseParser } from "../lib/openai.js";
 import { ens_agent_prompt } from "../prompt.js";
 import type {
@@ -15,14 +10,14 @@ import type {
   chatHistories,
   tipDomain,
 } from "../lib/types.js";
-import { frameUrl, ensUrl, baseTxUrl } from "../lib/types.js";
+import { frameUrl, ensUrl, baseTxUrl, InfoCache } from "../lib/types.js";
 
-let tipAddress: tipAddress = undefined;
-let tipDomain: tipDomain = undefined;
-let ensDomain: ensDomain = undefined;
-let converseUsername: converseUsername = undefined;
-let chatHistories: chatHistories = {};
+let tipAddress: tipAddress = {};
+let tipDomain: tipDomain = {};
+let ensDomain: ensDomain = {};
 let infoCache: InfoCache = {};
+let converseUsername: converseUsername = {};
+let chatHistories: chatHistories = {};
 
 // URL for the send transaction
 export async function handleEns(context: HandlerContext) {
@@ -101,7 +96,7 @@ export async function handleEns(context: HandlerContext) {
     }
     message += `\n\nWould you like to tip the domain owner for getting there first 🤣?`;
     message = message.trim();
-    if (await isOnXMTP(context.v2client as Client, data?.ens, data?.address)) {
+    if (await isOnXMTP(context.v2client, data?.ens, data?.address)) {
       context.send(
         `Ah, this domains is in XMTP, you can message it directly: https://converse.xyz/dm/${domain}`,
       );
@@ -155,14 +150,14 @@ export async function handleEns(context: HandlerContext) {
     infoCache = retrievedInfoCache;
     let data = infoCache[address].info;
 
-    tipAddress = data?.address;
-    tipDomain = data?.ens;
+    tipAddress[sender.address] = data?.address;
+    tipDomain[sender.address] = data?.ens;
 
-    if (!address || !tipAddress) {
+    if (!address || !tipAddress[sender.address]) {
       context.reply("Missing required parameters. Please provide address.");
       return;
     }
-    let txUrl = `${baseTxUrl}/transaction/?transaction_type=send&buttonName=Tip%20${tipDomain}&amount=1&token=USDC&receiver=${tipAddress}`;
+    let txUrl = `${baseTxUrl}/transaction/?transaction_type=send&buttonName=Tip%20${tipDomain[sender.address]}&amount=1&token=USDC&receiver=${tipAddress[sender.address]}`;
     // Generate URL for the send transaction
     context.send(`Here is the url to send the tip:\n${txUrl}`);
   } else if (command == "cool") {
@@ -191,7 +186,7 @@ async function processResponseWithIntent(
       if (response && response.message) {
         let msg = responseParser(response.message);
 
-        chatHistories[senderAddress]?.push({
+        chatHistories[senderAddress].push({
           role: "system",
           content: msg,
         });
@@ -221,19 +216,23 @@ export async function ensAgent(context: HandlerContext) {
   try {
     let userPrompt = params?.prompt ?? content;
     const { converseUsername: newConverseUsername, ensDomain: newEnsDomain } =
-      await getUserInfo(sender.address, ensDomain, converseUsername);
+      await getUserInfo(
+        sender.address,
+        ensDomain[sender.address],
+        converseUsername[sender.address],
+      );
 
-    ensDomain = newEnsDomain;
-    converseUsername = newConverseUsername;
-    let txUrl = `${baseTxUrl}/transaction/?transaction_type=send&buttonName=Tip%20${tipDomain}&amount=1&token=USDC&receiver=${tipAddress}`;
+    ensDomain[sender.address] = newEnsDomain;
+    converseUsername[sender.address] = newConverseUsername;
+    let txUrl = `${baseTxUrl}/transaction/?transaction_type=send&buttonName=Tip%20${tipDomain[sender.address]}&amount=1&token=USDC&receiver=${tipAddress[sender.address]}`;
 
     const { reply, history } = await textGeneration(
       userPrompt,
       await ens_agent_prompt(
         sender.address,
-        ensDomain,
-        converseUsername,
-        tipAddress,
+        ensDomain[sender.address],
+        converseUsername[sender.address],
+        tipAddress[sender.address],
         txUrl,
       ),
       chatHistories[sender.address],

@@ -1,8 +1,12 @@
 export type chatHistories = Record<string, any[]>;
-export type ensDomain = string | undefined;
-export type converseUsername = string | undefined;
-export type tipAddress = string | undefined;
-export type tipDomain = string | undefined;
+export type ensDomain = Record<string, string | undefined>;
+export type converseUsername = Record<string, string | undefined>;
+export type tipAddress = Record<string, string | undefined>;
+export type tipDomain = Record<string, string | undefined>;
+
+export type InfoCache = {
+  [key: string]: { info: EnsData };
+};
 export const frameUrl = "https://ens.steer.fun/";
 export const ensUrl = "https://app.ens.domains/";
 export const baseTxUrl = "https://base-tx-frame.vercel.app";
