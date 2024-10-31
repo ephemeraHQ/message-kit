@@ -71,7 +71,7 @@ export async function handleEns(context: HandlerContext) {
       };
     }
     // Generate URL for the ens
-    let url_ens = ensUrl + domain + "/register";
+    let url_ens = ensUrl + domain;
     return { code: 200, message: `${url_ens}` };
   } else if (command == "info") {
     const { domain } = params;
@@ -95,8 +95,7 @@ export async function handleEns(context: HandlerContext) {
         message += `${key}: ${value}\n`;
       }
     }
-    message +=
-      "\nWould you like a 1 USDC tip the owner for getting there first 🤣";
+
     message = message.trim();
     if (data?.address && (await context.client.canMessage([data.address]))) {
       context.send(
@@ -125,7 +124,7 @@ export async function handleEns(context: HandlerContext) {
     if (!data?.address) {
       let message = `Looks like ${domain} is available! Do you want to register it? ${ensUrl}${domain}`;
       if (cool_alternativesFormat) {
-        message += `\nOr I can suggest some cool alternatives:\n\n${cool_alternativesFormat}`;
+        message += `\n\nOr I can suggest some cool alternatives:\n${cool_alternativesFormat}`;
       }
       return {
         code: 200,
@@ -155,10 +154,6 @@ export async function handleEns(context: HandlerContext) {
     let url_send = `${baseTxUrl}/transaction/?transaction_type=send&buttonName=Tip%20${tipDomain}&amount=1&token=USDC&receiver=${tipAddress}`;
     console.log("tipAddress", url_send, tipDomain, tipAddress);
     context.send(`Here is the url to send the tip:\n${url_send}`);
-    return {
-      code: 200,
-      message: `${url_send}`,
-    };
   } else if (command == "cool") {
     return;
   }
@@ -221,7 +216,7 @@ Examples:
   Looks like vitalik.eth is available! Would you like to register it?\n/register vitalik.eth\n or I can suggest some cool alternatives? Le me know
 
 5. If the ENS domain is already registered, let me suggest 5 cool alternatives
-  Looks like vitalik.eth is already registered!\n What about these cool alternatives\n/check vitalik.eth "vitalikgm.eth, vitalikwagmi.eth, vitalikcookin.eth, vitalikren.eth, vitalikhiger.eth, vitalikdegen.eth, vitalikbased.eth, vitaliklgf.eth, and also suggest vitalik.base.eth."
+  Looks like vitalik.eth is already registered!\n What about these cool alternatives\n/check vitalik.eth "vitalikgm.eth,vitalikwagmi.eth,vitalikcookin.eth,vitalikhiger.eth,vitalikdegen.eth,vitalikbased.eth, vitaliklgf.eth, and also suggest vitalik.base.eth."
 
 6. If the user wants to register a ENS domain, use the command "/register [domain]"
   Looks like vitalik.eth is available! Let me help you register it\n/register vitalik.eth
