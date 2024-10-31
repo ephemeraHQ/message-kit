@@ -4101,9 +4101,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"agent@workspace:examples/agent":
+"agent@workspace:templates/agent":
   version: 0.0.0-use.local
-  resolution: "agent@workspace:examples/agent"
+  resolution: "agent@workspace:templates/agent"
   dependencies:
     "@types/node": "npm:^20.14.2"
     "@xmtp/message-kit": "workspace:*"
@@ -6657,9 +6657,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"gm@workspace:examples/gm":
+"gm@workspace:templates/gm":
   version: 0.0.0-use.local
-  resolution: "gm@workspace:examples/gm"
+  resolution: "gm@workspace:templates/gm"
   dependencies:
     "@types/node": "npm:^20.14.2"
     "@xmtp/message-kit": "workspace:*"
@@ -6691,9 +6691,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"group@workspace:examples/group":
+"group@workspace:templates/group":
   version: 0.0.0-use.local
-  resolution: "group@workspace:examples/group"
+  resolution: "group@workspace:templates/group"
   dependencies:
     "@stackso/js-core": "npm:^0.3.1"
     "@types/node": "npm:^20.14.2"

@@ -1,5 +1,4 @@
 import { CommandGroup, CommandConfig, User } from "./types";
-import { mapUsernamesToInboxId } from "./usernames";
 import path from "path";
 import fs from "fs";
 import { Client } from "@xmtp/node-sdk";
@@ -228,4 +227,15 @@ Powered by XMTP \x1b[0m`;
     console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Logging new messages to console ↴`);
   }
+}
+
+export function mapUsernamesToInboxId(
+  usernames: string[],
+  users: User[],
+): User[] {
+  return usernames
+    .map((username) => {
+      return users.find((user) => user.username === username.replace("@", ""));
+    })
+    .filter((user): user is User => user !== null);
 }

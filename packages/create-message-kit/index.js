@@ -79,7 +79,7 @@ async function gatherProjectInfo() {
     process.exit(0);
   }
 
-  const templateDir = resolve(__dirname, `./examples/${templateType}`);
+  const templateDir = resolve(__dirname, `./templates/${templateType}`);
 
   // Ensure the template directory exists
   if (!fs.existsSync(templateDir)) {

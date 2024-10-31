@@ -10,7 +10,7 @@ Follow the steps below to run the app
 # Clone the repo
 git clone https://github.com/ephemeraHQ/message-kit
 # Go to the example folder
-cd examples/gm
+cd templates/gm
 # Install the dependencies
 yarn install
 # Run the app

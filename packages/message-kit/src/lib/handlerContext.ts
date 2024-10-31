@@ -7,7 +7,6 @@ import {
 import fs from "fs/promises";
 import path from "path";
 import type { Reaction } from "@xmtp/content-type-reaction";
-import { populateUsernames } from "../helpers/usernames.js";
 import { ContentTypeText } from "@xmtp/content-type-text";
 import { logMessage } from "../helpers/utils.js";
 import {
@@ -94,19 +93,6 @@ export default class HandlerContext {
           ? message.senderAddress
           : message.senderInboxId;
       const sentAt = "sentAt" in message ? message.sentAt : message.sent;
-
-      context.members = await populateUsernames(
-        "members" in conversation
-          ? (await conversation.members()).map((member) => ({
-              inboxId: member.inboxId,
-              username: "",
-              address: member.accountAddresses[0] || "",
-              accountAddresses: member.accountAddresses,
-            }))
-          : [],
-        client.accountAddress,
-        senderAddress,
-      );
 
       //commands
       context.commands =

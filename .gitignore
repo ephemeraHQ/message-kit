@@ -63,5 +63,5 @@ next-env.d.ts
 # remix
 .data
 
-packages/create-message-kit/examples
-packages/create-message-kit/examples/**
+packages/create-message-kit/templates/**
+packages/create-message-kit/templates/**/*

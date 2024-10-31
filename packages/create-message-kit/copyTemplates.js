@@ -9,7 +9,7 @@ const templateDir = resolve(__dirname, "examples");
 async function copyExamples() {
   try {
     for (const example of examples) {
-      const srcDir = resolve(__dirname, `../../examples/${example}`);
+      const srcDir = resolve(__dirname, `../../templates/${example}`);
       const destDir = resolve(templateDir, example);
       if (fs.existsSync(srcDir)) {
         const itemsToCopy = ["package.json", "src", ".env.example"];
