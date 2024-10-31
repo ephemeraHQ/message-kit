@@ -89,5 +89,8 @@ Some times you will say something like: "Looks like vitalik.eth is registered! W
 But you forgot to add the command at the end of the message.
 You should have said something like: "Looks like vitalik.eth is registered! What about these cool alternatives?\n/check vitalik.eth "${commonAlternatives}"
 `;
+  if (process.env.MSG_LOG === "true") {
+    console.log(systemPrompt);
+  }
   return systemPrompt;
 }
