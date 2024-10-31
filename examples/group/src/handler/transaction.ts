@@ -7,7 +7,7 @@ export async function handler(context: HandlerContext) {
       content: { command, params },
     },
   } = context;
-  const baseUrl = "https://base-tx.ephemerahq.com/transaction";
+  const baseUrl = "https://base-tx-frame.vercel.app/transaction";
 
   switch (command) {
     case "send":

@@ -17,8 +17,8 @@ export async function handler(context: HandlerContext) {
   }
   // URLs for each game type
   const gameUrls: { [key: string]: string } = {
-    wordle: "https://framedl.xyz/",
-    slot: "https://slot-machine-frame.vercel.app/",
+    wordle: "https://framedl.xyz",
+    slot: "https://slot-machine-frame.vercel.app",
   };
   // Respond with the appropriate game URL or an error message
   switch (params.game) {

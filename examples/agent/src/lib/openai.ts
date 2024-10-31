@@ -9,7 +9,7 @@ const openai = new OpenAI({
 export async function textGeneration(
   userPrompt: string,
   systemPrompt: string,
-  chatHistory?: any[]
+  chatHistory?: any[],
 ) {
   let messages = chatHistory ? [...chatHistory] : []; // Start with existing chat history
   if (messages.length === 0) {
@@ -94,5 +94,30 @@ export function responseParser(message: string) {
   trimmedMessage = trimmedMessage?.replace(/^\s+|\s+$/g, "");
   // Remove any remaining leading or trailing whitespace
   trimmedMessage = trimmedMessage.trim();
+  return trimmedMessage;
+}
+
+// New method to interpret an image
+export function responseParser2(message: string | string[]): string | string[] {
+  // If message is an array, process each item individually
+  if (Array.isArray(message)) {
+    return message
+      .map((item) => responseParser(item))
+      .flat() // Flatten nested arrays
+      .filter((item: string) => item.length > 0)
+      .filter((item: string) => item !== "`");
+  }
+  let trimmedMessage = message;
+  // Remove bold and underline markdown
+  trimmedMessage = trimmedMessage?.replace(/(\*\*|__)(.*?)\1/g, "$2");
+  // Remove markdown links, keeping only the URL
+  trimmedMessage = trimmedMessage?.replace(/\[([^\]]+)\]\(([^)]+)\)/g, "$2");
+  // Remove markdown headers
+  trimmedMessage = trimmedMessage?.replace(/^#+\s*(.*)$/gm, "$1");
+  // Remove inline code formatting
+  trimmedMessage = trimmedMessage?.replace(/(`{1,3})(.*?)\1/g, "$2");
+  // Remove leading and trailing whitespace
+  trimmedMessage = trimmedMessage?.trim();
+
   return trimmedMessage;
 }
