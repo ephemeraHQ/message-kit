@@ -4108,6 +4108,7 @@ __metadata:
     "@types/node": "npm:^20.14.2"
     "@xmtp/message-kit": "workspace:*"
     nodemon: "npm:^3.1.3"
+    openai: "npm:^4.65.0"
     typescript: "npm:^5.4.5"
   languageName: unknown
   linkType: soft
@@ -9726,6 +9727,28 @@ __metadata:
   bin:
     openai: bin/cli
   checksum: 10/054103bd2e8eeb50cb796fb6045c5b95dedf5b9d85bf9d30319b2859314322f9616cf2bbdb2af2e6b90a3c7042e4f3d2b2a6250c62d06324dec78ff098adf4c0
+  languageName: node
+  linkType: hard
+
+"openai@npm:^4.65.0":
+  version: 4.69.0
+  resolution: "openai@npm:4.69.0"
+  dependencies:
+    "@types/node": "npm:^18.11.18"
+    "@types/node-fetch": "npm:^2.6.4"
+    abort-controller: "npm:^3.0.0"
+    agentkeepalive: "npm:^4.2.1"
+    form-data-encoder: "npm:1.7.2"
+    formdata-node: "npm:^4.3.2"
+    node-fetch: "npm:^2.6.7"
+  peerDependencies:
+    zod: ^3.23.8
+  peerDependenciesMeta:
+    zod:
+      optional: true
+  bin:
+    openai: bin/cli
+  checksum: 10/c9ce4fe2b31d75ce55853aa94939d7b74a73d40403b5abbdc37fadd918199279f81dc2e7fbebc8d078df084b6a7c7af4871387337ffc5b44b21ed7f8eae98adc
   languageName: node
   linkType: hard
 
