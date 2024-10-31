@@ -1,36 +1,19 @@
 import { HandlerContext } from "@xmtp/message-kit";
 import { textGeneration } from "../lib/openai.js";
+import type { EnsData } from "../lib/types.js";
 import { responseParser } from "../lib/openai.js";
+import type {
+  ensDomain,
+  converseUsername,
+  tipAddress,
+  tipDomain,
+} from "../lib/types.js";
+import { frameUrl, ensUrl, baseTxUrl } from "../lib/types.js";
 
-let chatHistories: Record<string, any[]> = {};
-let ensDomain: string | undefined;
-let converseUsername: string | undefined;
-let tipAddress: string | undefined;
-let tipDomain: string | undefined;
-
-const frameUrl = "https://ens.steer.fun/";
-const ensUrl = "https://app.ens.domains/";
-const baseTxUrl = "https://base-tx-frame.vercel.app";
-const endpointURL =
-  "https://converse-website-git-endpoit-ephemerahq.vercel.app";
-
-interface EnsData {
-  address?: string;
-  avatar?: string;
-  avatar_small?: string;
-  avatar_url?: string;
-  contentHash?: string;
-  description?: string;
-  ens?: string;
-  ens_primary?: string;
-  github?: string;
-  resolverAddress?: string;
-  twitter?: string;
-  url?: string;
-  wallets?: {
-    eth?: string;
-  };
-}
+let tipAddress: tipAddress = undefined;
+let tipDomain: tipDomain = undefined;
+let ensDomain: ensDomain = undefined;
+let converseUsername: converseUsername = undefined;
 
 export async function handleEns(context: HandlerContext) {
   const {
@@ -38,6 +21,7 @@ export async function handleEns(context: HandlerContext) {
       content: { command, params, sender },
     },
   } = context;
+
   if (command == "renew") {
     // Destructure and validate parameters for the ens command
     const { domain } = params;
@@ -145,14 +129,12 @@ export async function handleEns(context: HandlerContext) {
     const data: EnsData = (await response.json()) as EnsData;
     tipAddress = data?.address;
     tipDomain = data?.ens;
-    console.log("tipAddress", tipDomain, tipAddress);
     if (!address || !tipAddress) {
       context.reply("Missing required parameters. Please provide address.");
       return;
     }
     // Generate URL for the send transaction
     let url_send = `${baseTxUrl}/transaction/?transaction_type=send&buttonName=Tip%20${tipDomain}&amount=1&token=USDC&receiver=${tipAddress}`;
-    console.log("tipAddress", url_send, tipDomain, tipAddress);
     context.send(`Here is the url to send the tip:\n${url_send}`);
   } else if (command == "cool") {
     return;
@@ -248,7 +230,6 @@ async function processResponseWithIntent(
   context: any,
   senderAddress: string,
 ) {
-  console.log(reply);
   let messages = reply
     .split("\n")
     .map((message: string) => responseParser(message))
@@ -290,13 +271,12 @@ export async function ensAgent(context: HandlerContext) {
 
   try {
     let userPrompt = params?.prompt ?? content;
-    const { converseUsername, ensDomain } = await getUserInfo(sender.address);
-    console.log(
-      "Fetch profile for",
-      sender.address,
-      converseUsername,
-      ensDomain,
-    );
+    const { converseUsername: newConverseUsername, ensDomain: newEnsDomain } =
+      await getUserInfo(sender.address, ensDomain, converseUsername);
+
+    ensDomain = newEnsDomain;
+    converseUsername = newConverseUsername;
+
     const { reply, history } = await textGeneration(
       userPrompt,
       await ens_agent_prompt(sender.address, ensDomain, converseUsername),
@@ -309,26 +289,4 @@ export async function ensAgent(context: HandlerContext) {
     console.error("Error during OpenAI call:", error);
     await context.send("An error occurred while processing your request.");
   }
-}
-
-async function getUserInfo(address: string) {
-  if (!ensDomain) {
-    const response = await fetch(`https://ensdata.net/${address}`);
-    const data: EnsData = (await response.json()) as EnsData;
-    ensDomain = data?.ens;
-  }
-  if (!converseUsername) {
-    const response = await fetch(`${endpointURL}/profile/${address}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify({ address: address }),
-    });
-    const data = (await response.json()) as { name: string };
-    converseUsername = data?.name;
-    converseUsername = converseUsername.replace(".converse.xyz", "");
-  }
-  return { converseUsername: converseUsername, ensDomain: ensDomain };
 }

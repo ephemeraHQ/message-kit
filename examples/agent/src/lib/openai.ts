@@ -97,7 +97,7 @@ export function responseParser(message: string) {
   return trimmedMessage;
 }
 
-// New method to interpret an image
+// UNTESTED, recursive response parser
 export function responseParser2(message: string | string[]): string | string[] {
   // If message is an array, process each item individually
   if (Array.isArray(message)) {
