@@ -18,6 +18,9 @@
   margin-right: auto;
   line-height: 1.2;
 }
+.sup {
+  top: 0;
+}
 
 .custom-homepage-headline-text {
   font-size: 2.5rem;

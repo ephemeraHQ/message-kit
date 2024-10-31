@@ -88,6 +88,10 @@ export default defineConfig({
       link: "/directory",
     },
     {
+      text: "Quickstarts",
+      link: "/quickstarts",
+    },
+    {
       text: "Deployment",
       link: "/deployment",
     },
@@ -96,47 +100,43 @@ export default defineConfig({
       link: "/guidelines",
     },
     {
-      text: "Examples",
+      text: "Templates",
       items: [
         {
-          text: "Quickstarts",
-          link: "/examples/",
-        },
-        {
           text: "Gm bot",
-          link: "/examples/gm",
+          link: "/templates/gm",
         },
         {
           text: "Ens agent",
-          link: "/examples/ens-agent",
+          link: "/templates/ens-agent",
         },
         {
           text: "Group chat",
-          link: "/examples/group",
+          link: "/templates/group",
           items: [
             {
               text: "Agents",
-              link: "/examples/group/agents",
+              link: "/templates/group/agents",
             },
             {
               text: "Tipping",
-              link: "/examples/group/tipping",
+              link: "/templates/group/tipping",
             },
             {
               text: "Games",
-              link: "/examples/group/games",
+              link: "/templates/group/games",
             },
             {
               text: "Transactions",
-              link: "/examples/group/transactions",
+              link: "/templates/group/transactions",
             },
             {
               text: "Split Payments",
-              link: "/examples/group/splitpayments",
+              link: "/templates/group/splitpayments",
             },
             {
               text: "Loyalty",
-              link: "/examples/group/loyalty",
+              link: "/templates/group/loyalty",
             },
           ],
         },
