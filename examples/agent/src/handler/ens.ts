@@ -6,15 +6,17 @@ import type {
   ensDomain,
   converseUsername,
   tipAddress,
+  chatHistories,
   tipDomain,
 } from "../lib/types.js";
+import { getUserInfo } from "../lib/resolver.js";
 import { frameUrl, ensUrl, baseTxUrl } from "../lib/types.js";
 
 let tipAddress: tipAddress = undefined;
 let tipDomain: tipDomain = undefined;
 let ensDomain: ensDomain = undefined;
 let converseUsername: converseUsername = undefined;
-
+let chatHistories: chatHistories = {};
 export async function handleEns(context: HandlerContext) {
   const {
     message: {

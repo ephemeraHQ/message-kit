@@ -84,7 +84,7 @@ export default defineConfig({
       link: "/installation",
     },
     {
-      text: "Examples",
+      text: "Directory",
       link: "/directory",
     },
     {
@@ -96,42 +96,12 @@ export default defineConfig({
       link: "/guidelines",
     },
     {
-      text: "Concepts",
-      collapsed: false,
+      text: "Examples",
       items: [
         {
-          text: "Structure",
-          link: "/concepts/structure",
+          text: "Quickstarts",
+          link: "/examples/quickstarts",
         },
-        {
-          text: "Messages",
-          link: "/concepts/messages",
-          items: [
-            { text: "Text", link: "/concepts/messages/text" },
-            { text: "Reply", link: "/concepts/messages/reply" },
-            { text: "Command", link: "/concepts/messages/command" },
-            { text: "Attachment", link: "/concepts/messages/attachment" },
-          ],
-        },
-        {
-          text: "Commands",
-          link: "/concepts/commands",
-        },
-        {
-          text: "Intent",
-          link: "/concepts/intent",
-        },
-        {
-          text: "Groups",
-          link: "/concepts/groups",
-        },
-      ],
-    },
-
-    {
-      text: "Use cases",
-      collapsed: false,
-      items: [
         {
           text: "Group chat",
           link: "/use-cases/group",
@@ -168,6 +138,38 @@ export default defineConfig({
         },
       ],
     },
+    {
+      text: "Concepts",
+      collapsed: false,
+      items: [
+        {
+          text: "Structure",
+          link: "/concepts/structure",
+        },
+        {
+          text: "Messages",
+          link: "/concepts/messages",
+          items: [
+            { text: "Text", link: "/concepts/messages/text" },
+            { text: "Reply", link: "/concepts/messages/reply" },
+            { text: "Command", link: "/concepts/messages/command" },
+            { text: "Attachment", link: "/concepts/messages/attachment" },
+          ],
+        },
+        {
+          text: "Commands",
+          link: "/concepts/commands",
+        },
+        {
+          text: "Intent",
+          link: "/concepts/intent",
+        },
+        {
+          text: "Groups",
+          link: "/concepts/groups",
+        },
+      ],
+    },
 
     {
       text: "Middlewares",
@@ -192,6 +194,10 @@ export default defineConfig({
         {
           text: "Notion",
           link: "/middlewares/notion",
+        },
+        {
+          text: "Resolver",
+          link: "/middlewares/resolver",
         },
       ],
     },
