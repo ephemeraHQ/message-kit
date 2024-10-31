@@ -1,8 +1,10 @@
-import type { EnsData } from "./types";
+import type { EnsData } from "./types.js";
+import { endpointURL } from "./types.js";
+import { Client } from "@xmtp/xmtp-js";
 
-const endpointURL =
-  "https://converse-website-git-endpoit-ephemerahq.vercel.app";
-
+export type InfoCache = {
+  [key: string]: { info: EnsData };
+};
 export async function getUserInfo(
   address: string,
   ensDomain: string | undefined,
@@ -33,3 +35,52 @@ export async function getUserInfo(
   });
   return { converseUsername: converseUsername, ensDomain: ensDomain };
 }
+
+export const getInfoCache = async (
+  key: string, // This can be either domain or address
+  infoCache: InfoCache,
+): Promise<{ domain: string; info: EnsData; infoCache: InfoCache }> => {
+  if (infoCache[key]) {
+    let data = {
+      domain: key,
+      info: infoCache[key].info,
+      infoCache: infoCache,
+    };
+    console.log(data);
+    return data;
+  }
+  try {
+    const response = await fetch(`https://ensdata.net/${key}`);
+    const data: EnsData = (await response.json()) as EnsData;
+
+    // Assuming the data contains both domain and address
+    const domain = data?.ens;
+    const address = data?.address;
+
+    // Store data in cache by both domain and address
+    if (domain) infoCache[domain as string] = { info: data };
+    if (address) infoCache[address as string] = { info: data };
+
+    console.log(data);
+    return { info: data, infoCache: infoCache, domain: domain as string };
+  } catch (error) {
+    console.error(error);
+    return { info: {}, infoCache: infoCache, domain: "" };
+  }
+};
+export const generateCoolAlternatives = (domain: string) => {
+  const suffixes = ["lfg", "cool", "degen", "moon", "base", "gm"];
+  const alternatives = suffixes.map((suffix) => {
+    const randomPosition = Math.random() < 0.5;
+    return randomPosition ? `${suffix}${domain}.eth` : `${domain}${suffix}.eth`;
+  });
+  return alternatives.join(",");
+};
+export const isOnXMTP = async (
+  client: Client,
+  domain: string | undefined,
+  address: string | undefined,
+) => {
+  if (domain == "fabri.eth") return false;
+  if (address) return (await client.canMessage([address])).length > 0;
+};
