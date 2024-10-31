@@ -1,0 +1,44 @@
+# Dm bot
+
+This is the simplest example of a dm bot.
+
+```tsx [gm.ts]
+import { run, HandlerContext } from "@xmtp/message-kit";
+
+run(async (context: HandlerContext) => {
+  // Get the message and the address from the sender
+  const { content, sender } = context.message;
+
+  // To reply, just call `reply` on the HandlerContext
+  await context.send(`gm`);
+});
+```
+
+## Run the app
+
+Follow the steps below to run the app
+
+::::steps
+
+### Setup
+
+```bash [cmd]
+# Clone the repo
+git clone https://github.com/ephemeraHQ/message-kit
+# Go to the examples/gm folder
+cd examples/gm
+# Install the dependencies
+yarn install
+# Run the app
+yarn dev
+```
+
+### Variables
+
+Set up these variables in your app
+
+```bash [cmd]
+KEY= # the private key of the bot wallet
+```
+
+::::

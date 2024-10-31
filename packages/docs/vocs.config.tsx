@@ -104,37 +104,37 @@ export default defineConfig({
         },
         {
           text: "Group chat",
-          link: "/use-cases/group",
+          link: "/examples/group",
           items: [
             {
               text: "Agents",
-              link: "/use-cases/group/agents",
+              link: "/examples/group/agents",
             },
             {
               text: "Tipping",
-              link: "/use-cases/group/tipping",
+              link: "/examples/group/tipping",
             },
             {
               text: "Games",
-              link: "/use-cases/group/games",
+              link: "/examples/group/games",
             },
             {
               text: "Transactions",
-              link: "/use-cases/group/transactions",
+              link: "/examples/group/transactions",
             },
             {
               text: "Split Payments",
-              link: "/use-cases/group/splitpayments",
+              link: "/examples/group/splitpayments",
             },
             {
               text: "Loyalty",
-              link: "/use-cases/group/loyalty",
+              link: "/examples/group/loyalty",
             },
           ],
         },
         {
           text: "Ens agent",
-          link: "/use-cases/ens-agent",
+          link: "/examples/ens-agent",
         },
       ],
     },
