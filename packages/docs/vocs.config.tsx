@@ -103,6 +103,14 @@ export default defineConfig({
           link: "/examples/",
         },
         {
+          text: "Gm bot",
+          link: "/examples/gm",
+        },
+        {
+          text: "Ens agent",
+          link: "/examples/ens-agent",
+        },
+        {
           text: "Group chat",
           link: "/examples/group",
           items: [
@@ -131,10 +139,6 @@ export default defineConfig({
               link: "/examples/group/loyalty",
             },
           ],
-        },
-        {
-          text: "Ens agent",
-          link: "/examples/ens-agent",
         },
       ],
     },
