@@ -100,7 +100,7 @@ export default defineConfig({
       items: [
         {
           text: "Quickstarts",
-          link: "/examples/quickstarts",
+          link: "/examples/",
         },
         {
           text: "Group chat",
