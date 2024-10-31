@@ -4,6 +4,8 @@ export type converseUsername = string | undefined;
 export type tipAddress = string | undefined;
 export type tipDomain = string | undefined;
 
+export const commonAlternatives =
+  "vitalikwagmi.eth,vitalikcookin.eth,vitalikfren.eth,vitalikhiger.eth,vitalikdegen.eth,vitalikbased.eth,vitaliklgf.eth,vitalik.base.eth";
 export const frameUrl = "https://ens.steer.fun/";
 export const ensUrl = "https://app.ens.domains/";
 export const baseTxUrl = "https://base-tx-frame.vercel.app";

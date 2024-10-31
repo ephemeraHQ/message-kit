@@ -117,6 +117,8 @@ export function responseParser2(message: string | string[]): string | string[] {
   // Remove inline code formatting
   trimmedMessage = trimmedMessage?.replace(/(`{1,3})(.*?)\1/g, "$2");
   // Remove leading and trailing whitespace
+  trimmedMessage = trimmedMessage?.replace(/`/g, ""); // Remove single backticks
+  // Remove any remaining leading or trailing whitespace
   trimmedMessage = trimmedMessage?.trim();
 
   return trimmedMessage;

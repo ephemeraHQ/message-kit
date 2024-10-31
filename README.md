@@ -10,7 +10,7 @@ This is the official repository for [MessageKit](https://messagekit.ephemerahq.c
 - [`create-message-kit`](/packages/create-message-kit): A CLI for creating new apps easily
 - [`docs`](/packages/docs): Documentation for MessageKit
 
-### Examples
+### Templates
 
 - [`gm`](/templates/gm): A simple bot that replies Gm
 - [`group`](/templates/group): Group chat bot example with commands and use-cases.

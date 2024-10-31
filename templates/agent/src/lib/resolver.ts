@@ -26,5 +26,10 @@ export async function getUserInfo(
     converseUsername = data?.name;
     converseUsername = converseUsername.replace(".converse.xyz", "");
   }
+  console.log("User info fetched for", {
+    address,
+    converseUsername,
+    ensDomain,
+  });
   return { converseUsername: converseUsername, ensDomain: ensDomain };
 }

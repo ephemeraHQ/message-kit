@@ -4,13 +4,13 @@ import { default as fs } from "fs-extra";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-const examples = ["group", "gm", "agent"];
-const templateDir = resolve(__dirname, "examples");
-async function copyExamples() {
+const templates = ["group", "gm", "agent"];
+const templateDir = resolve(__dirname, "templates");
+async function copyTemplates() {
   try {
-    for (const example of examples) {
-      const srcDir = resolve(__dirname, `../../templates/${example}`);
-      const destDir = resolve(templateDir, example);
+    for (const template of templates) {
+      const srcDir = resolve(__dirname, `../../templates/${template}`);
+      const destDir = resolve(templateDir, template);
       if (fs.existsSync(srcDir)) {
         const itemsToCopy = ["package.json", "src", ".env.example"];
         for (const item of itemsToCopy) {
@@ -27,9 +27,9 @@ async function copyExamples() {
         console.warn(`Source directory ${srcDir} does not exist.`);
       }
     }
-    console.log("All examples copied successfully.");
+    console.log("All templates copied successfully.");
   } catch (error) {
-    console.error("Error copying examples:", error);
+    console.error("Error copying templates:", error);
   }
 }
-copyExamples();
+copyTemplates();
