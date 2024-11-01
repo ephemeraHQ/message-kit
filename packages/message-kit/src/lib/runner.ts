@@ -20,8 +20,8 @@ export default async function run(handler: Handler, config?: Config) {
   const handleMessage = async (
     version: "v3" | "v2",
     message: DecodedMessage | DecodedMessageV2 | undefined,
-    conversation: Conversation | ConversationV2 | null,
   ) => {
+    const conversation = await getConversation(message, version);
     if (message && conversation) {
       try {
         const { senderInboxId, kind } = message as DecodedMessage;
@@ -168,6 +168,9 @@ export default async function run(handler: Handler, config?: Config) {
       : (message as DecodedMessageV2)?.conversation;
   };
   const STREAM_LOG = process.env.STREAM_LOG === "true";
+
+  // ... existing code ...
+
   async function streamMessages(version: "v3" | "v2") {
     const clientToUse = version === "v3" ? client : v2client;
     let retryCount = 0;
@@ -175,53 +178,55 @@ export default async function run(handler: Handler, config?: Config) {
 
     while (true) {
       try {
-        // Log when attempting to establish the stream
-        if (STREAM_LOG)
-          console.log(`[${version}] Attempting to start client stream...`);
-
-        const stream = await clientToUse.conversations.streamAllMessages();
-
-        // Log successful connection or reconnection
-        if (retryCount > 0) {
-          if (STREAM_LOG)
-            console.log(
-              `[${version}] Successfully reconnected after ${retryCount} retries.`,
-            );
-          retryCount = 0;
-        } else {
-          if (STREAM_LOG)
-            console.log(`[${version}] Client stream started successfully.`);
+        if (STREAM_LOG) {
+          console.log(
+            `[${version}] Attempting to start client stream... (Attempt ${retryCount + 1})`,
+          );
         }
 
         try {
-          for await (const message of stream) {
-            const conversation = await getConversation(message, version);
-            await handleMessage(version, message, conversation);
-          }
-          // If the stream ends without errors, log it
-          if (STREAM_LOG)
-            console.warn(
-              `[${version}] Stream ended unexpectedly. Reconnecting...`,
+          const stream = await clientToUse.conversations.streamAllMessages();
+
+          if (STREAM_LOG) {
+            console.log(
+              retryCount > 0
+                ? `[${version}] Successfully reconnected after ${retryCount} retries.`
+                : `[${version}] Client stream started successfully.`,
             );
-          // Artificially throw an error to trigger reconnection
-          throw new Error("Stream ended unexpectedly");
-        } catch (e) {
-          // Log the stream error
-          if (STREAM_LOG) console.warn(`[${version}] Stream error:`, e);
-          // Re-throw the error to trigger the outer catch block
-          throw e;
+          }
+          retryCount = 0;
+          for await (const message of stream) {
+            await handleMessage(version, message);
+          }
+        } catch (streamError: any) {
+          if (STREAM_LOG) {
+            console.warn(
+              `[${version}] Stream error occurred:`,
+              streamError?.code || streamError,
+            );
+            console.warn(`[${version}] Attempting to reconnect...`);
+          }
+          throw streamError; // Propagate to outer catch block
         }
-      } catch (e) {
+      } catch (connectionError: any) {
         retryCount++;
-        if (STREAM_LOG)
+        const delay = Math.min(
+          MAX_RETRY_DELAY * Math.pow(1.5, retryCount - 1),
+          30000,
+        );
+
+        if (STREAM_LOG) {
           console.error(
-            `[${version}] Connection dropped. Attempting to reconnect in ${MAX_RETRY_DELAY / 1000} seconds...`,
+            `[${version}] Connection error (${connectionError?.code || "UNKNOWN"}). ` +
+              `Retry ${retryCount} - Reconnecting in ${delay / 1000} seconds...`,
           );
-        if (STREAM_LOG) console.error(`[${version}] Error details:`, e);
-        await new Promise((resolve) => setTimeout(resolve, MAX_RETRY_DELAY));
+        }
+
+        await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }
   }
+
   // Run both clients' streams concurrently
   await Promise.all([streamMessages("v2"), streamMessages("v3")]);
 }
