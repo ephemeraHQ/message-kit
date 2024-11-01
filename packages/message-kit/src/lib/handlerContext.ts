@@ -107,15 +107,22 @@ export default class HandlerContext {
       //trim spaces from text
       let content =
         typeof message.content === "string"
-          ? message.content.trim()
+          ? { content: message.content.trim() }
           : message.content;
 
       if (message.contentType.sameAs(ContentTypeText)) {
-        content = parseCommand(
-          content,
+        const extractedValues = parseCommand(
+          content.content,
           context.commands ?? [],
           context.members ?? [],
         );
+        if (extractedValues) {
+          content = {
+            ...content,
+            ...extractedValues,
+          };
+        }
+        //console.log("extractedValues2", content);
       } else if (message.contentType.sameAs(ContentTypeReply)) {
         content = {
           ...content,
@@ -312,15 +319,21 @@ export default class HandlerContext {
     if (conversation) this.refConv = conversation;
     try {
       let handler = await this.findHandler(text, commands ?? []);
-      if (handler) {
-        let content = parseCommand(text, commands ?? [], members ?? []);
+      const extractedValues = parseCommand(text, commands ?? [], members ?? []);
+      //console.log("extractedValues", extractedValues);
+      if ((text.startsWith("/") || text.startsWith("@")) && !extractedValues) {
+        console.warn("Command not valid", text);
+      } else if (handler) {
         // Mock context for command execution
         const mockContext: HandlerContext = {
           ...this,
           conversation: conversation ?? this.conversation,
           message: {
             ...this.message,
-            content,
+            content: {
+              ...this.message.content,
+              ...extractedValues,
+            },
           },
           intent: this.intent.bind(this),
           reply: this.reply.bind(this),

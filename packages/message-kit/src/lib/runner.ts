@@ -3,7 +3,6 @@ import { default as xmtpClient } from "./client.js";
 import { Config, Handler } from "../helpers/types.js";
 import { Conversation, DecodedMessage } from "@xmtp/node-sdk";
 import { logMessage } from "../helpers/utils.js";
-import { OnConnectionLostCallback } from "@xmtp/xmtp-js";
 import {
   DecodedMessage as DecodedMessageV2,
   Conversation as ConversationV2,
@@ -46,7 +45,6 @@ export default async function run(handler: Handler, config?: Config) {
           config?.commandsConfigPath,
           version,
         );
-
         // Check if the message content triggers a command
         const { isMessageValid, handler: customHandler } =
           commandTriggered(context);
@@ -66,9 +64,20 @@ export default async function run(handler: Handler, config?: Config) {
         sender,
       },
       version,
+      client,
+      v2client,
       group,
     } = context;
     let handler = context.findHandler(content, context.commands ?? []);
+
+    const { inboxId: senderInboxId } = client;
+    const { address: senderAddress } = v2client;
+
+    const isSameAddress =
+      sender.address?.toLowerCase() === senderAddress?.toLowerCase() ||
+      (sender.inboxId?.toLowerCase() === senderInboxId.toLowerCase() &&
+        typeId !== "group_updated");
+
     const isCommandTriggered = handler?.commands[0]?.command;
     const isExperimental = config?.experimental ?? false;
 
@@ -100,9 +109,11 @@ export default async function run(handler: Handler, config?: Config) {
     const acceptedType = ["text", "remoteStaticAttachment", "reply"].includes(
       typeId ?? "",
     );
-    const isMessageValid =
-      // v2 only accepts text, remoteStaticAttachment, reply
-      version == "v2" && acceptedType
+
+    const isMessageValid = !isSameAddress
+      ? false
+      : // v2 only accepts text, remoteStaticAttachment, reply
+        version == "v2" && acceptedType
         ? true
         : //If its image is also good, if it has a command image:true
           isImageValid
@@ -122,6 +133,7 @@ export default async function run(handler: Handler, config?: Config) {
 
     if (process.env.MSG_LOG === "true") {
       console.log("isMessageValid", {
+        isSameAddress,
         content,
         version,
         typeId,
@@ -145,69 +157,71 @@ export default async function run(handler: Handler, config?: Config) {
       handler: handler?.commands[0]?.handler,
     };
   };
-
-  const handleConnectionLostV3: OnConnectionLostCallback = (error?: Error) => {
-    if (error) {
-      console.log(`Error in stream_v3:`, error);
-      console.log(`Timestamp: ${new Date().toISOString()}`);
-    }
+  const getConversation = async (
+    message: DecodedMessage | DecodedMessageV2 | undefined,
+    version: "v3" | "v2",
+  ) => {
+    return version === "v3"
+      ? await client.conversations.getConversationById(
+          (message as DecodedMessage)?.conversationId ?? "",
+        )
+      : (message as DecodedMessageV2)?.conversation;
   };
-  const handleConnectionLostV2: OnConnectionLostCallback = (error?: Error) => {
-    if (error) {
-      console.log(`Error in stream_v2:`, error);
-      console.log(`Timestamp: ${new Date().toISOString()}`);
-    }
-  };
-  const streamMessages = async (version: "v3" | "v2") => {
+  const STREAM_LOG = process.env.STREAM_LOG === "true";
+  async function streamMessages(version: "v3" | "v2") {
     const clientToUse = version === "v3" ? client : v2client;
     let retryCount = 0;
-    const MAX_RETRY_DELAY = 30000; // max 30 seconds
+    const MAX_RETRY_DELAY = 5000; // max 5 seconds
 
     while (true) {
       try {
-        // Reset retry count on successful connection
+        // Log when attempting to establish the stream
+        if (STREAM_LOG)
+          console.log(`[${version}] Attempting to start client stream...`);
+
+        const stream = await clientToUse.conversations.streamAllMessages();
+
+        // Log successful connection or reconnection
         if (retryCount > 0) {
-          console.log(`Successfully reconnected after ${retryCount} retries`);
+          if (STREAM_LOG)
+            console.log(
+              `[${version}] Successfully reconnected after ${retryCount} retries.`,
+            );
           retryCount = 0;
+        } else {
+          if (STREAM_LOG)
+            console.log(`[${version}] Client stream started successfully.`);
         }
 
-        const stream = await clientToUse.conversations.streamAllMessages(
-          async (error) => {
-            if (error) {
-              console.warn(`Connection lost for ${version} client`);
-              throw error;
-            }
-          },
-        );
-        for await (const message of stream) {
-          const conversation =
-            version === "v3"
-              ? await client.conversations.getConversationById(
-                  (message as DecodedMessage)?.conversationId ?? "",
-                )
-              : (message as DecodedMessageV2)?.conversation;
-          handleMessage(version, message, conversation);
+        try {
+          for await (const message of stream) {
+            const conversation = await getConversation(message, version);
+            await handleMessage(version, message, conversation);
+          }
+          // If the stream ends without errors, log it
+          if (STREAM_LOG)
+            console.warn(
+              `[${version}] Stream ended unexpectedly. Reconnecting...`,
+            );
+          // Artificially throw an error to trigger reconnection
+          throw new Error("Stream ended unexpectedly");
+        } catch (e) {
+          // Log the stream error
+          if (STREAM_LOG) console.warn(`[${version}] Stream error:`, e);
+          // Re-throw the error to trigger the outer catch block
+          throw e;
         }
       } catch (e) {
         retryCount++;
-        const delay = Math.min(
-          5000 * Math.pow(1.5, retryCount - 1),
-          MAX_RETRY_DELAY,
-        );
-
-        console.log(`Stream error:`, e);
-        // Check if the error is a stream disconnected error or similar
-        if ((e as Error).message.includes("stream disconnected")) {
-          console.log(`Restarting stream due to disconnection...`);
-        } else {
-          console.log(`Unexpected error, restarting stream...`);
-        }
-        // Add delay before retry
-        await new Promise((resolve) => setTimeout(resolve, delay));
+        if (STREAM_LOG)
+          console.error(
+            `[${version}] Connection dropped. Attempting to reconnect in ${MAX_RETRY_DELAY / 1000} seconds...`,
+          );
+        if (STREAM_LOG) console.error(`[${version}] Error details:`, e);
+        await new Promise((resolve) => setTimeout(resolve, MAX_RETRY_DELAY));
       }
     }
-  };
-
+  }
   // Run both clients' streams concurrently
   await Promise.all([streamMessages("v2"), streamMessages("v3")]);
 }

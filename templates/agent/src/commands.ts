@@ -65,6 +65,13 @@ export const commands: CommandGroup[] = [
         },
       },
       {
+        command: "/reset",
+        triggers: ["/reset"],
+        handler: handleEns,
+        description: "Reset the conversation.",
+        params: {},
+      },
+      {
         command: "/tip [address]",
         description: "Show a URL for tipping a domain owner.",
         triggers: ["/tip"],

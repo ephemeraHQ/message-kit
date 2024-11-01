@@ -5,38 +5,23 @@ import { Client } from "@xmtp/node-sdk";
 import { Config } from "./types";
 
 export function parseCommand(
-  content: string,
+  text: string,
   commands: CommandGroup[],
   members: User[],
 ) {
-  let contentReturn;
-
   //If is command of other bot. MULTIBOT
-  const firstWord = content?.split(" ")[0];
+  const firstWord = text.split(" ")[0];
   if (
     (firstWord.startsWith("/") && !firstWord.includes("@")) ||
     (firstWord.startsWith("/") && firstWord.includes("@"))
   ) {
-    const extractedValues = extractCommandValues(
-      content,
-      commands ?? [],
-      members ?? [],
-    );
-
-    contentReturn = {
-      content: content,
-      ...extractedValues,
-    };
-  } else {
-    contentReturn = {
-      content: content,
-    };
+    return extractCommandValues(text, commands ?? [], members ?? []);
   }
-  return contentReturn;
+  return null;
 }
 
 export function extractCommandValues(
-  content: string,
+  text: string,
   commands: CommandGroup[],
   members: User[],
 ): {
@@ -48,12 +33,12 @@ export function extractCommandValues(
     params: {} as { [key: string]: string | number | string[] | undefined },
   };
   try {
-    if (typeof content !== "string") return defaultResult;
+    if (typeof text !== "string") return defaultResult;
 
     // Replace all "“" and "”" with "'" and '"'
-    content = content.replaceAll("“", '"').replaceAll("”", '"');
+    text = text.replaceAll("“", '"').replaceAll("”", '"');
 
-    const parts = content.match(/[^\s"']+|"([^"]*)"|'([^']*)'|`([^`]*)`/g);
+    const parts = text.match(/[^\s"']+|"([^"]*)"|'([^']*)'|`([^`]*)`/g);
     if (!parts) return defaultResult;
 
     let commandName = parts[0].startsWith("/") ? parts[0].slice(1) : parts[0];

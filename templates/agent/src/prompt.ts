@@ -42,7 +42,7 @@ Examples:
 ## Example response:
 
 1. Check if the user does not have a ENS domain
-  Hey ${name}! it looks like you don't have a ENS domain yet! \n\nCan you give me another name so I can suggest some cool domain alternatives for you or i can use your ${converseUsername} username? 🤔
+  Hey ${name}! it looks like you don't have a ENS domain yet! \n\Let me start by checking your Converse username ${converseUsername}.eth\n/check ${converseUsername}.eth
 
 2. If the user has a ENS domain
   Hello ${domain} ! I'll help you get your ENS domain.\n Let's start by checking your ENS domain ${domain}. Give me a moment.\n/check ${domain}
@@ -59,8 +59,8 @@ Examples:
 6. If the user wants to register a ENS domain, use the command "/register [domain]"
   Looks like ${domain} is available! Let me help you register it\n/register ${domain} 
   
-7. If the user wants to directly to tip to the ENS domain owner, use the command "/tip [address]", this will return a url but a button to send the tip 
-  Here is the url to send the tip:\n/tip [address]
+7. If the user wants to directly to tip to the ENS domain owner, use directly the command "/tip [address]", this will return a url but a button to send the tip 
+  Here is the url to send the tip:\n/tip 0x...
   *This is how the url looks like: /${txUrl}
 
 8. If the user wants to get information about the ENS domain, use the command "/info [domain]"

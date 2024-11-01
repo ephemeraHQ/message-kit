@@ -3,6 +3,7 @@ import { endpointURL } from "./types.js";
 import { Client } from "@xmtp/xmtp-js";
 import { InfoCache } from "./types.js";
 
+let infoCache: InfoCache = {};
 export async function getUserInfo(
   address: string,
   ensDomain: string | undefined,
@@ -33,10 +34,12 @@ export async function getUserInfo(
   });
   return { converseUsername: converseUsername, ensDomain: ensDomain };
 }
+export const clearInfoCache = () => {
+  infoCache = {};
+};
 export const getInfoCache = async (
   key: string,
-  infoCache: InfoCache,
-): Promise<{ domain: string; info: EnsData; infoCache: InfoCache } | null> => {
+): Promise<{ domain: string; info: EnsData } | null> => {
   try {
     if (infoCache[key] && Object.keys(infoCache[key]).length > 0) {
       const data = {
@@ -47,7 +50,7 @@ export const getInfoCache = async (
       console.log(data);
       return data;
     }
-    console.log("Fetching from ensdata.net");
+    console.log("Fetching from ensdata.net", key);
     const response = await fetch(`https://ensdata.net/${key}`);
     const fetchedData: EnsData = (await response.json()) as EnsData;
     if (!fetchedData?.address && !fetchedData?.ens) {
@@ -71,6 +74,7 @@ export const getInfoCache = async (
     return null;
   }
 };
+
 export const generateCoolAlternatives = (domain: string) => {
   const suffixes = ["lfg", "cool", "degen", "moon", "base", "gm"];
   const alternatives = [];
