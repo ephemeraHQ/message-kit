@@ -6,13 +6,8 @@ export type MessageAbstracted = {
   id: string;
   sent: Date;
   content: any;
-  version: string;
-  sender: {
-    inboxId: string;
-    username: string;
-    address: string;
-    accountAddresses: string[];
-  };
+  version: "v2" | "v3";
+  sender: any;
   typeId: string;
 };
 export type GroupAbstracted = {
@@ -68,13 +63,11 @@ export interface CommandConfig {
   params: Record<string, CommandParamConfig>;
 }
 
-export interface User {
-  inboxId: string; // Ensure this is always a string
-  username: string;
+export interface AbstractedMember {
+  inboxId: string;
   address: string;
   accountAddresses: string[];
   installationIds?: string[];
-  fake?: boolean;
 }
 
 export type MetadataValue = string | number | boolean;

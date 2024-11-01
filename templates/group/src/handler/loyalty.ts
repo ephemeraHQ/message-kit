@@ -1,4 +1,4 @@
-import { HandlerContext, User } from "@xmtp/message-kit";
+import { HandlerContext, AbstractedMember } from "@xmtp/message-kit";
 import { getStackClient } from "../lib/stack.js";
 
 export async function handler(context: HandlerContext, fake?: boolean) {
@@ -40,14 +40,13 @@ export async function handler(context: HandlerContext, fake?: boolean) {
   } else if (typeId === "group_updated" && group) {
     const { initiatedByInboxId, addedInboxes } = content;
     const adminAddress = members?.find(
-      (member: User) => member.inboxId === initiatedByInboxId,
+      (member: AbstractedMember) => member.inboxId === initiatedByInboxId,
     );
     if (addedInboxes && addedInboxes.length > 0) {
       //if add someone to the group
       await stack?.track("referral", {
         points: 10,
         account: adminAddress?.address ?? "",
-        uniqueId: adminAddress?.username ?? "",
       });
     }
   }

@@ -4,6 +4,7 @@ import {
   Client as ClientV2,
   Conversation as ConversationV2,
 } from "@xmtp/xmtp-js";
+import { NapiGroupMember } from "@xmtp/node-sdk";
 import fs from "fs/promises";
 import path from "path";
 import type { Reaction } from "@xmtp/content-type-reaction";
@@ -11,9 +12,9 @@ import { ContentTypeText } from "@xmtp/content-type-text";
 import { logMessage } from "../helpers/utils.js";
 import {
   AgentSkill,
-  User,
   MessageAbstracted,
   GroupAbstracted,
+  AbstractedMember,
 } from "../helpers/types.js";
 import { parseCommand } from "../helpers/utils.js";
 import { ContentTypeReply } from "@xmtp/content-type-reply";
@@ -33,12 +34,12 @@ export default class HandlerContext {
   version!: "v2" | "v3";
   v2client!: ClientV2;
   commands?: AgentSkill[];
-  members?: User[];
+  members?: AbstractedMember[];
+  sender?: any;
   getMessageById!: (id: string) => DecodedMessage | null;
   private constructor(
     conversation: Conversation | ConversationV2,
     { client, v2client }: { client: Client; v2client: ClientV2 },
-    version?: "v2" | "v3",
   ) {
     this.client = client;
     this.v2client = v2client;
@@ -54,10 +55,8 @@ export default class HandlerContext {
         isAdmin: () => false,
         isSuperAdmin: () => false,
       };
-      this.version = "v3";
     } else {
       this.conversation = conversation;
-      this.version = "v2";
     }
   }
   static async loadCommandConfig(
@@ -81,19 +80,39 @@ export default class HandlerContext {
     commandsConfigPath?: string,
     version?: "v2" | "v3",
   ): Promise<HandlerContext> {
-    const context = new HandlerContext(
-      conversation,
-      { client, v2client },
-      version,
-    );
+    const context = new HandlerContext(conversation, { client, v2client });
     if (message) {
       //v2
-      const senderAddress =
-        "senderAddress" in message
-          ? message.senderAddress
-          : message.senderInboxId;
       const sentAt = "sentAt" in message ? message.sentAt : message.sent;
+      let members: any;
+      if (version === "v2") {
+        context.sender = {
+          address: (message as DecodedMessageV2).senderAddress,
+          inboxId: (message as DecodedMessageV2).senderAddress,
+          installationIds: [],
+          accountAddresses: [(message as DecodedMessageV2).senderAddress],
+        } as AbstractedMember;
+      } else {
+        let members = await (conversation as Conversation).members();
+        context.members = members.map((member: NapiGroupMember) => ({
+          inboxId: member.inboxId,
+          address: member.accountAddresses[0],
+          accountAddresses: member.accountAddresses,
+          installationIds: member.installationIds,
+        })) as AbstractedMember[];
 
+        let MemberSender = members?.find(
+          (member: NapiGroupMember) =>
+            member.inboxId === (message as DecodedMessage).senderInboxId,
+        );
+
+        context.sender = {
+          address: MemberSender?.accountAddresses[0],
+          inboxId: MemberSender?.inboxId,
+          installationIds: [],
+          accountAddresses: MemberSender?.accountAddresses,
+        } as AbstractedMember;
+      }
       //commands
       context.commands =
         await HandlerContext.loadCommandConfig(commandsConfigPath);
@@ -132,18 +151,16 @@ export default class HandlerContext {
         };
       }
 
-      //v2
-      const sender =
-        context.members?.find((member) => member.inboxId === senderAddress) ||
-        ({ address: senderAddress, inboxId: senderAddress } as User);
-
+      console.log("sender", context.sender);
       context.message = {
         id: message.id,
         content: content,
-        sender: sender,
+        members: members ?? [],
+        sender: context.sender,
         typeId: message.contentType.typeId,
         sent: sentAt,
-        version: version as string,
+        //@ts-ignore
+        version: version,
       };
     }
     return context;
@@ -181,12 +198,14 @@ export default class HandlerContext {
       };
     }
 
-    let sender = this.members?.find(
-      (member) =>
+    let sender = (await (this.group as Conversation).members())?.find(
+      (member: NapiGroupMember) =>
         member.inboxId === (msg as DecodedMessage).senderInboxId ||
-        member.address === (msg as DecodedMessageV2).senderAddress,
+        member.accountAddresses.includes(
+          (msg as DecodedMessageV2).senderAddress,
+        ),
     );
-    senderAddress = sender?.address ?? "";
+    senderAddress = sender?.accountAddresses[0] ?? "";
 
     let content = msg?.content?.content ?? msg?.content;
     let isSenderBot = senderAddress.toLowerCase() === botAddress?.toLowerCase();
@@ -296,7 +315,7 @@ export default class HandlerContext {
   }
 
   async intent(text: string, conversation?: Conversation) {
-    const { commands, members } = this;
+    const { commands } = this;
     if (process.env.MSG_LOG) console.log("intent", text);
     if (conversation) this.refConv = conversation;
     try {

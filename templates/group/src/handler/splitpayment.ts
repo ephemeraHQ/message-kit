@@ -31,7 +31,7 @@ export async function handler(context: HandlerContext) {
     }
     if (response) {
       const prompt = `You a split wise agent that splits the bill between the members of this group except for the sender and bot.\n
-      These are the users of the group: ${JSON.stringify(members?.map((member) => ({ ...member, username: `@${member.username}` })))}\n 
+      These are the users of the group: ${JSON.stringify(members?.map((member) => ({ ...member, username: `@${member.address}` })))}\n 
       This group app has many commands available: ${JSON.stringify(commands)}\n
       
 
@@ -44,8 +44,8 @@ export async function handler(context: HandlerContext) {
       Example:
       [  
         "This are the details: Total: $49.52. Tip (20%): $9.90",
-        "All users owe X USDC to @${sender?.username}. Pay here:",
-        "/send @${sender?.username} $9.90"
+        "All users owe X USDC to @${sender?.address}. Pay here:",
+        "/send @${sender?.address} $9.90"
       ]
       `;
 

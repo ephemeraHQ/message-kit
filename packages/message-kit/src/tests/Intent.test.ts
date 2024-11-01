@@ -1,19 +1,17 @@
 import "dotenv/config";
 import { textGeneration } from "./openai";
 import { commands } from "./commands";
-import { User } from "../helpers/types";
+import { AbstractedMember } from "../helpers/types";
 
 describe("Intent tests", () => {
-  const sender: User = {
-    username: "alix",
+  const sender: AbstractedMember = {
     address: "0x3a044b218BaE80E5b9E16609443A192129A67BeA",
     inboxId: "da3750159ea7541dda1e271076a3663d8c14576ab85bbd3416d45c9f19e35cbc",
     accountAddresses: ["0x3a044b218BaE80E5b9E16609443A192129A67BeA"],
   };
-  const members: User[] = [sender];
+  const members: AbstractedMember[] = [sender];
   const fakeUsers = members.map((member) => ({
     ...member,
-    username: `@${member.username}`,
   }));
   const systemPrompt = `
   ### Context
@@ -23,7 +21,7 @@ describe("Intent tests", () => {
    ${JSON.stringify(fakeUsers)}\n 
   #### Commands
   ${JSON.stringify(commands)}\n
-  The message was sent by @${sender?.username}
+  The message was sent by @${sender?.address}
   
   ### Examples
 

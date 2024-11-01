@@ -46,26 +46,25 @@ export const getUserInfo = async (key: string): Promise<UserInfo | null> => {
   } else if (key.includes(".eth")) {
     ensDomain = key;
   } else if (key == "@alix") {
-    address = "0x0000000000000000000000000000000000000000";
+    address = "0x3a044b218BaE80E5b9E16609443A192129A67BeA";
     converseUsername = "alix";
   } else if (key == "@bo") {
-    address = "0x0000000000000000000000000000000000000000";
+    address = "0xbc3246461ab5e1682baE48fa95172CDf0689201a";
     converseUsername = "bo";
   } else if (key.startsWith("@")) {
     converseUsername = key;
   }
   let keyToUse = address || ensDomain || converseUsername;
-  console.log("Getting info cache", keyToUse);
+  //console.log("Getting info cache", keyToUse);
   if (
     infoCache[keyToUse as string] &&
     Object.keys(infoCache[keyToUse as string]).length > 0
   ) {
-    const data = {
+    const data: UserInfo = {
       ensDomain: keyToUse,
       address: address,
       converseUsername: converseUsername,
       info: infoCache[keyToUse as string].info,
-      infoCache: infoCache,
     };
     console.log(data);
     return data;

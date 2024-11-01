@@ -1,4 +1,4 @@
-import { HandlerContext, User } from "@xmtp/message-kit";
+import { HandlerContext, AbstractedMember } from "@xmtp/message-kit";
 import { textGeneration } from "../lib/openai.js";
 
 export async function handler(context: HandlerContext) {
@@ -40,10 +40,15 @@ function generateSystemPrompt(context: HandlerContext) {
   
   You are a helpful bot agent that lives inside a web3 messaging group that helps interpret user requests and execute commands.
   #### Users
-   ${JSON.stringify(members?.map((member: User) => ({ ...member, username: `@${member.username}` })))}\n 
+   ${JSON.stringify(
+     members?.map((member: AbstractedMember) => ({
+       ...member,
+       username: `@${member.accountAddresses[0]}`,
+     })),
+   )}\n
   #### Commands
   ${JSON.stringify(commands)}\n
-  The message was sent by @${sender?.username}
+  The message was sent by @${sender?.address}
   
   ### Examples
   prompt /agent tip alix and bo
