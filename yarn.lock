@@ -1662,13 +1662,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@grpc/grpc-js@npm:^1.10.6":
-  version: 1.11.1
-  resolution: "@grpc/grpc-js@npm:1.11.1"
+"@grpc/grpc-js@npm:^1.10.10":
+  version: 1.12.2
+  resolution: "@grpc/grpc-js@npm:1.12.2"
   dependencies:
     "@grpc/proto-loader": "npm:^0.7.13"
     "@js-sdsl/ordered-map": "npm:^4.4.2"
-  checksum: 10/28fb8d0bbccc0a8f9f73899e6f982e5e762e8f0c009eb9234d4067021f96896479be76463f8a02b80d13ecfd52817ae6d0a189f6cfe22fd32df0505bf577a720
+  checksum: 10/0d0556da8515704b5e722b86097e04693d8c71ba286a076270a96e1ac3a4950e87559c718cc2875d3fcaa6cb8e07d0cc6b1db2673b8940829dfe8b75197844dd
   languageName: node
   linkType: hard
 
@@ -3835,18 +3835,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@xmtp/grpc-api-client@npm:^0.2.7":
-  version: 0.2.7
-  resolution: "@xmtp/grpc-api-client@npm:0.2.7"
+"@xmtp/grpc-api-client@npm:^0.2.8":
+  version: 0.2.8
+  resolution: "@xmtp/grpc-api-client@npm:0.2.8"
   dependencies:
-    "@grpc/grpc-js": "npm:^1.10.6"
+    "@grpc/grpc-js": "npm:^1.10.10"
     "@protobuf-ts/grpc-transport": "npm:^2.9.1"
     "@protobuf-ts/runtime": "npm:^2.9.1"
     "@protobuf-ts/runtime-rpc": "npm:^2.9.1"
-    "@xmtp/proto": "npm:^3.52.0"
-    "@xmtp/xmtp-js": "npm:^11.3.12"
+    "@xmtp/proto": "npm:^3.61.1"
+    "@xmtp/xmtp-js": "npm:^13.0.3"
     pino: "npm:^8.18.0"
-  checksum: 10/872e79c6e63e3826c7357e81d10c00ca1756a1419d2362967106373f861b54584d628bb0be7fc0feaf1212a15d8a891929c21a87d3d15c2cef985dd640107df6
+  checksum: 10/a5ef742e718ad185b413fbcddcf48b607ce10318c916fa0d494b18c786042b1081d510fffd0531a1fb4c196ccbc727169dcd15306896e92076cf204ad59c2d8a
   languageName: node
   linkType: hard
 
@@ -3862,9 +3862,9 @@ __metadata:
     "@xmtp/content-type-remote-attachment": "npm:1.1.11"
     "@xmtp/content-type-reply": "npm:^1.1.11"
     "@xmtp/content-type-text": "npm:^1.0.0"
-    "@xmtp/grpc-api-client": "npm:^0.2.7"
+    "@xmtp/grpc-api-client": "npm:^0.2.8"
     "@xmtp/node-sdk": "npm:^0.0.18"
-    "@xmtp/xmtp-js": "npm:^13.0.2"
+    "@xmtp/xmtp-js": "npm:^13.0.3"
     dotenv: "npm:^16.4.5"
     jest: "npm:^29.7.0"
     nodemon: "npm:^3.1.3"
@@ -3898,18 +3898,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@xmtp/proto@npm:3.54.0":
-  version: 3.54.0
-  resolution: "@xmtp/proto@npm:3.54.0"
-  dependencies:
-    long: "npm:^5.2.0"
-    protobufjs: "npm:^7.0.0"
-    rxjs: "npm:^7.8.0"
-    undici: "npm:^5.8.1"
-  checksum: 10/536b846b234bdf49978716b232b6a25985a55bb0c10c825b090354cb43f0b071ee506e5a9765c69deb0e6a4b9aa4cd61abe2c9d2df563cfd6ec121197b591844
-  languageName: node
-  linkType: hard
-
 "@xmtp/proto@npm:3.56.0":
   version: 3.56.0
   resolution: "@xmtp/proto@npm:3.56.0"
@@ -3919,18 +3907,6 @@ __metadata:
     rxjs: "npm:^7.8.0"
     undici: "npm:^5.8.1"
   checksum: 10/f752e6858692464319d6f22861fe8f23c46d9bb0eb390fe2220e0b4932a4de84be2e9e1cbafc0200e1bfe2a0ed3a3fb6079941630e57fb80e6325bc2a52bf10d
-  languageName: node
-  linkType: hard
-
-"@xmtp/proto@npm:^3.52.0":
-  version: 3.68.0
-  resolution: "@xmtp/proto@npm:3.68.0"
-  dependencies:
-    long: "npm:^5.2.0"
-    protobufjs: "npm:^7.0.0"
-    rxjs: "npm:^7.8.0"
-    undici: "npm:^5.8.1"
-  checksum: 10/2cadf9d212ac01dc6a1d3a83e59ca559debff65ee83c7381e29e1a5e9dc2f0caa021a4c6df696957d77da8b5c1133fe02cbc8a4c3c7c4d2e45993366e309da63
   languageName: node
   linkType: hard
 
@@ -3985,25 +3961,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@xmtp/xmtp-js@npm:^11.3.12":
-  version: 11.6.3
-  resolution: "@xmtp/xmtp-js@npm:11.6.3"
-  dependencies:
-    "@noble/secp256k1": "npm:1.7.1"
-    "@xmtp/consent-proof-signature": "npm:^0.1.3"
-    "@xmtp/proto": "npm:3.54.0"
-    "@xmtp/user-preferences-bindings-wasm": "npm:^0.3.6"
-    async-mutex: "npm:^0.5.0"
-    elliptic: "npm:^6.5.4"
-    long: "npm:^5.2.3"
-    viem: "npm:2.7.15"
-  checksum: 10/0e211e532dca04a54f52b9b698e7903b65babc2625d5a6c6e1e83be065d148bb40cba27b9fbd7ad420fcca5266d45433fbfbc554ef79e9892a14327f9b4e9f37
-  languageName: node
-  linkType: hard
-
-"@xmtp/xmtp-js@npm:^13.0.2":
-  version: 13.0.2
-  resolution: "@xmtp/xmtp-js@npm:13.0.2"
+"@xmtp/xmtp-js@npm:^13.0.3":
+  version: 13.0.3
+  resolution: "@xmtp/xmtp-js@npm:13.0.3"
   dependencies:
     "@noble/secp256k1": "npm:1.7.1"
     "@xmtp/consent-proof-signature": "npm:^0.1.3"
@@ -4015,7 +3975,7 @@ __metadata:
     elliptic: "npm:^6.5.7"
     long: "npm:^5.2.3"
     viem: "npm:2.7.15"
-  checksum: 10/3ef560d55eafcbdff750fb4351593e581f33235eb14bc2aa310deca0d7237169814a0d89b2cd726b4257be813ad6fb95aa1206c786f3e7d5eb030d090a933c07
+  checksum: 10/77f8e5d8de5a9b75b7dabe5e8ff12fb71423857e33d1bf3b6c82e1ad47d5f71b5b7bb8a7f75bde339157b290a7d61225504729a1164a902f6423cc477fa03c76
   languageName: node
   linkType: hard
 
@@ -5524,21 +5484,6 @@ __metadata:
   version: 1.4.829
   resolution: "electron-to-chromium@npm:1.4.829"
   checksum: 10/43279561337582ff47bb3486439efbc7c1f2192455c76ebc7374754fca61334380025af9e5da7646b4d8c007d9dc6c25d8f6059dffb2207dc39d2f79287a296a
-  languageName: node
-  linkType: hard
-
-"elliptic@npm:^6.5.4":
-  version: 6.5.5
-  resolution: "elliptic@npm:6.5.5"
-  dependencies:
-    bn.js: "npm:^4.11.9"
-    brorand: "npm:^1.1.0"
-    hash.js: "npm:^1.0.0"
-    hmac-drbg: "npm:^1.0.1"
-    inherits: "npm:^2.0.4"
-    minimalistic-assert: "npm:^1.0.1"
-    minimalistic-crypto-utils: "npm:^1.0.1"
-  checksum: 10/5444b4f18e0c0fdfa14de26f69f7dbc44c78a211e91825823d698dcc91071ef1a3954d87730f364183fc83b0a86d8affed864e347da2e549bdcead3b46de126f
   languageName: node
   linkType: hard
 

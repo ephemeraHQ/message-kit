@@ -33,9 +33,9 @@
     "@xmtp/content-type-remote-attachment": "1.1.11",
     "@xmtp/content-type-reply": "^1.1.11",
     "@xmtp/content-type-text": "^1.0.0",
-    "@xmtp/grpc-api-client": "^0.2.7",
+    "@xmtp/grpc-api-client": "^0.2.8",
     "@xmtp/node-sdk": "^0.0.18",
-    "@xmtp/xmtp-js": "^13.0.2",
+    "@xmtp/xmtp-js": "^13.0.3",
     "dotenv": "^16.4.5",
     "viem": "^2.16.3"
   },
