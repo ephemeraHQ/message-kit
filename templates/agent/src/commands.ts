@@ -78,7 +78,7 @@ export const commands: CommandGroup[] = [
         handler: handleEns,
         params: {
           address: {
-            type: "address",
+            type: "string",
           },
         },
       },

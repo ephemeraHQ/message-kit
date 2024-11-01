@@ -8,6 +8,7 @@ import {
 } from "../lib/resolver.js";
 import { textGeneration } from "../lib/openai.js";
 import { processResponseWithIntent } from "../lib/openai.js";
+import { isAddress } from "viem";
 import { ens_agent_prompt } from "../prompt.js";
 import type {
   ensDomain,
@@ -130,24 +131,19 @@ export async function handleEns(context: HandlerContext) {
       };
     }
   } else if (command == "tip") {
-    // Destructure and validate parameters for the send command
     const { address } = params;
-    const data = await getInfoCache(address);
-    if (!data) {
-      return {
-        code: 404,
-        message: "Domain not found." + `${address}`,
-      };
-    }
     if (!address) {
       return {
         code: 400,
-        message: "Missing required parameters. Please provide address.",
+        message: "Please provide an address to tip.",
       };
     }
-    let txUrl = `${baseTxUrl}/transaction/?transaction_type=send&buttonName=Tip%20${data?.info.ens}&amount=1&token=USDC&receiver=${data?.info.address}`;
+    const data = await getInfoCache(address);
+    console.log(data?.info);
+    let txUrl = `${baseTxUrl}/transaction/?transaction_type=send&buttonName=Tip%20${data?.info.ens ?? ""}&amount=1&token=USDC&receiver=${
+      isAddress(address) ? address : data?.info.address
+    }`;
     console.log(txUrl);
-    // Generate URL for the send transaction
     return {
       code: 200,
       message: txUrl,
@@ -183,7 +179,6 @@ export async function ensAgent(context: HandlerContext) {
     group,
   } = context;
 
-  console.log("params", params, content);
   try {
     let userPrompt = params?.prompt ?? content;
     const { converseUsername: newConverseUsername, ensDomain: newEnsDomain } =

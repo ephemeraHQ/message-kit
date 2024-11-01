@@ -189,9 +189,7 @@ export default async function run(handler: Handler, config?: Config) {
 
           if (STREAM_LOG) {
             console.log(
-              retryCount > 0
-                ? `[${version}] Successfully reconnected after ${retryCount} retries.`
-                : `[${version}] Client stream started successfully.`,
+              `[${version}] Successfully reconnected after ${retryCount} retries.`,
             );
           }
           retryCount = 0;

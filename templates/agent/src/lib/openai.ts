@@ -127,6 +127,7 @@ export function responseParser(message: string) {
   trimmedMessage = trimmedMessage?.replace(/^\s+|\s+$/g, "");
   // Remove any remaining leading or trailing whitespace
   trimmedMessage = trimmedMessage.trim();
+
   return trimmedMessage;
 }
 

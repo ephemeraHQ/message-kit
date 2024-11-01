@@ -40,6 +40,7 @@ export const clearInfoCache = () => {
 export const getInfoCache = async (
   key: string,
 ): Promise<{ domain: string; info: EnsData } | null> => {
+  console.log("Getting info cache", key);
   try {
     if (infoCache[key] && Object.keys(infoCache[key]).length > 0) {
       const data = {
@@ -50,25 +51,28 @@ export const getInfoCache = async (
       console.log(data);
       return data;
     }
-    console.log("Fetching from ensdata.net", key);
-    const response = await fetch(`https://ensdata.net/${key}`);
-    const fetchedData: EnsData = (await response.json()) as EnsData;
-    if (!fetchedData?.address && !fetchedData?.ens) {
-      return null;
-    }
-    // Assuming the data contains both domain and address
-    const domain = fetchedData?.ens;
-    const address = fetchedData?.address;
+    if (key.includes(".eth")) {
+      console.log("Fetching from ensdata.net", key);
+      const response = await fetch(`https://ensdata.net/${key}`);
+      const fetchedData: EnsData = (await response.json()) as EnsData;
+      if (!fetchedData?.address && !fetchedData?.ens) {
+        return null;
+      }
+      // Assuming the data contains both domain and address
+      const domain = fetchedData?.ens;
+      const address = fetchedData?.address;
 
-    // Store data in cache by both domain and address
-    if (domain) infoCache[domain as string] = { info: fetchedData };
-    if (address) infoCache[address as string] = { info: fetchedData };
-    const data = {
-      domain: domain || "",
-      info: fetchedData,
-      infoCache: infoCache,
-    };
-    return data;
+      // Store data in cache by both domain and address
+      if (domain) infoCache[domain as string] = { info: fetchedData };
+      if (address) infoCache[address as string] = { info: fetchedData };
+      const data = {
+        domain: domain || "",
+        info: fetchedData,
+        infoCache: infoCache,
+      };
+      return data;
+    }
+    return null;
   } catch (error) {
     console.error(error);
     return null;
