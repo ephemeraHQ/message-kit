@@ -1,4 +1,5 @@
 import { HandlerContext, User } from "@xmtp/message-kit";
+import { getUserInfo } from "../lib/resolver.js";
 
 export async function handler(context: HandlerContext) {
   const {
@@ -33,8 +34,11 @@ export async function handler(context: HandlerContext) {
         params: { amount: extractedAmount, username },
         content: text,
       } = content;
+      console.log(username);
       amount = extractedAmount || 10; // Default amount if not specified
-      receivers = username; // Extract receiver from parameters
+      receivers = await Promise.all(
+        username.map((username: string) => getUserInfo(username)),
+      ); // Extract receiver from parameters
     }
   }
   if (!sender || receivers.length === 0 || amount === 0) {
@@ -43,6 +47,7 @@ export async function handler(context: HandlerContext) {
   }
   const receiverAddresses = receivers.map((receiver) => receiver.address);
   // Process sending tokens to each receiver
+  console.log(receivers, receiverAddresses);
   context.sendTo(
     `You received ${amount} tokens from ${sender.address}.`,
     receiverAddresses,

@@ -4,19 +4,25 @@ import { handler as agent } from "./handler/agent.js";
 import { handler as splitpayment } from "./handler/splitpayment.js";
 
 // Main function to run the app
-run(async (context: HandlerContext) => {
-  const {
-    message: { typeId },
-  } = context;
-  switch (typeId) {
-    case "reply":
-      handleReply(context);
-      break;
-    case "remoteStaticAttachment":
-      handleAttachment(context);
-      break;
-  }
-});
+run(
+  async (context: HandlerContext) => {
+    const {
+      message: { typeId },
+    } = context;
+    switch (typeId) {
+      case "reply":
+        handleReply(context);
+        break;
+      case "remoteStaticAttachment":
+        handleAttachment(context);
+        break;
+    }
+    if (!context.group) {
+      context.send("This is a group bot, add this address to a group");
+    }
+  },
+  { attachments: true },
+);
 async function handleReply(context: HandlerContext) {
   const {
     v2client,

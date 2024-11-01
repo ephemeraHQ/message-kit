@@ -1,7 +1,7 @@
-import type { CommandGroup } from "@xmtp/message-kit";
+import type { AgentSkill } from "@xmtp/message-kit";
 import { handleEns } from "./handler/ens.js";
 
-export const commands: CommandGroup[] = [
+export const commands: AgentSkill[] = [
   {
     name: "Ens Domain Bot",
     description: "Register ENS domains.",
@@ -10,7 +10,9 @@ export const commands: CommandGroup[] = [
         command: "/register [domain]",
         triggers: ["/register", "@ensbot"],
         handler: handleEns,
-        description: "Register a domain.",
+        description:
+          "Register a new ENS domain. Returns a URL to complete the registration process.",
+        example: "/register vitalik.eth",
         params: {
           domain: {
             type: "string",
@@ -21,7 +23,9 @@ export const commands: CommandGroup[] = [
         command: "/info [domain]",
         triggers: ["/info", "@ensbot"],
         handler: handleEns,
-        description: "Get information about a domain.",
+        description:
+          "Get detailed information about an ENS domain including owner, expiry date, and resolver.",
+        example: "/info nick.eth",
         params: {
           domain: {
             type: "string",
@@ -32,7 +36,9 @@ export const commands: CommandGroup[] = [
         command: "/renew [domain]",
         triggers: ["/renew", "@ensbot"],
         handler: handleEns,
-        description: "Renew a domain.",
+        description:
+          "Extend the registration period of your ENS domain. Returns a URL to complete the renewal.",
+        example: "/renew fabri.base.eth",
         params: {
           domain: {
             type: "string",

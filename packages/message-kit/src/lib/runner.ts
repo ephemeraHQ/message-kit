@@ -110,7 +110,7 @@ export default async function run(handler: Handler, config?: Config) {
       typeId ?? "",
     );
 
-    const isMessageValid = !isSameAddress
+    const isMessageValid = isSameAddress
       ? false
       : // v2 only accepts text, remoteStaticAttachment, reply
         version == "v2" && acceptedType
@@ -143,9 +143,15 @@ export default async function run(handler: Handler, config?: Config) {
         isExperimental,
         isAddedMemberOrPass,
         commandsParsed: context.commands?.length,
-        isCommandTriggered,
-        handlerName: handler?.name,
-        handlerCommand: handler?.commands[0]?.command,
+        isCommandTriggered: isCommandTriggered
+          ? {
+              name: handler?.name,
+              command: handler?.commands[0]?.command,
+              example: handler?.commands[0]?.example,
+              description: handler?.commands[0]?.description,
+              params: JSON.stringify(handler?.commands[0]?.params),
+            }
+          : false,
         isMessageValid,
       });
     }

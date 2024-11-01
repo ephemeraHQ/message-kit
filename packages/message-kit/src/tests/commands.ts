@@ -1,6 +1,6 @@
-import type { CommandGroup } from "../helpers/types";
+import type { AgentSkill } from "../helpers/types";
 
-export const commands: CommandGroup[] = [
+export const commands: AgentSkill[] = [
   {
     name: "Tipping",
     description: "Tip tokens via emoji, replies or command.",

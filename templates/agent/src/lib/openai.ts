@@ -1,17 +1,22 @@
 import dotenv from "dotenv";
-import type { ChatHistories, ChatHistoryEntry } from "./types.js";
 dotenv.config();
+
 import OpenAI from "openai";
 const openai = new OpenAI({
   apiKey: process.env.OPEN_AI_API_KEY,
 });
 
+export type ChatHistoryEntry = { role: string; content: string };
+export type ChatHistories = Record<string, ChatHistoryEntry[]>;
+
+let chatHistories: ChatHistories = {};
 export async function textGeneration(
+  address: string,
   userPrompt: string,
   systemPrompt: string,
-  chatHistory: ChatHistoryEntry[] = [],
+  isGroup: boolean = false,
 ) {
-  let messages = chatHistory;
+  let messages = chatHistories[address] || [];
   if (messages.length === 0) {
     messages.push({
       role: "system",
@@ -33,7 +38,7 @@ export async function textGeneration(
       content: reply || "No response from OpenAI.",
     });
     const cleanedReply = responseParser(reply as string);
-
+    if (!isGroup) chatHistories[address] = messages;
     return { reply: cleanedReply, history: messages };
   } catch (error) {
     console.error("Failed to fetch from OpenAI:", error);
@@ -79,9 +84,9 @@ export async function vision(imageData: Uint8Array, systemPrompt: string) {
 }
 
 export async function processResponseWithIntent(
+  address: string,
   reply: string,
   context: any,
-  chatHistory: ChatHistoryEntry[] = [],
 ) {
   if (process.env.MSG_LOG === "true") {
     console.log(reply);
@@ -98,7 +103,7 @@ export async function processResponseWithIntent(
       if (response && response.message) {
         let msg = responseParser(response.message);
 
-        chatHistory.push({
+        chatHistories[address].push({
           role: "system",
           content: msg,
         });
@@ -109,7 +114,6 @@ export async function processResponseWithIntent(
       await context.send(message);
     }
   }
-  return chatHistory;
 }
 export function responseParser(message: string) {
   let trimmedMessage = message;
@@ -131,29 +135,6 @@ export function responseParser(message: string) {
   return trimmedMessage;
 }
 
-// UNTESTED, recursive response parser
-export function responseParser2(message: string | string[]): string | string[] {
-  // If message is an array, process each item individually
-  if (Array.isArray(message)) {
-    return message
-      .map((item) => responseParser(item))
-      .flat() // Flatten nested arrays
-      .filter((item: string) => item.length > 0)
-      .filter((item: string) => item !== "`");
-  }
-  let trimmedMessage = message;
-  // Remove bold and underline markdown
-  trimmedMessage = trimmedMessage?.replace(/(\*\*|__)(.*?)\1/g, "$2");
-  // Remove markdown links, keeping only the URL
-  trimmedMessage = trimmedMessage?.replace(/\[([^\]]+)\]\(([^)]+)\)/g, "$2");
-  // Remove markdown headers
-  trimmedMessage = trimmedMessage?.replace(/^#+\s*(.*)$/gm, "$1");
-  // Remove inline code formatting
-  trimmedMessage = trimmedMessage?.replace(/(`{1,3})(.*?)\1/g, "$2");
-  // Remove leading and trailing whitespace
-  trimmedMessage = trimmedMessage?.replace(/`/g, ""); // Remove single backticks
-  // Remove any remaining leading or trailing whitespace
-  trimmedMessage = trimmedMessage?.trim();
-
-  return trimmedMessage;
-}
+export const clearChatHistories = () => {
+  chatHistories = {};
+};

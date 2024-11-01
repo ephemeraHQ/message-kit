@@ -1,6 +1,6 @@
 # Commands
 
-Each app can have a `commands.ts` file that contains the commands that the app can execute. The commands are defined as an array of objects with the following keys:
+Each app can have a `skills.ts` file that contains the commands that the app can execute. The commands are defined as an array of objects with the following keys:
 
 ## Receive a command
 
@@ -31,12 +31,12 @@ First think of which command you want the app to respond to. For example:
 
 **Example**
 
-Create the command file `commands.ts` in your project root `src` folder.
+Create the command file `skills.ts` in your project root `src` folder.
 
-```tsx [src/commands.ts]
+```tsx [src/skills.ts]
 import { handler as transaction } from "./handler/transaction.js"; // [!code hl] // [!code focus]
 
-export const commands: CommandGroup[] = [
+export const commands: AgentSkill[] = [
   {
     name: "Transactions",
     description: "Multipurpose transaction frame built onbase.",

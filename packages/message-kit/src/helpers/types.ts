@@ -51,7 +51,7 @@ export interface CommandParamConfig {
   values?: string[]; // Accepted values for the parameter
 }
 
-export interface CommandGroup {
+export interface AgentSkill {
   name: string;
   image?: boolean;
   description: string;
@@ -64,6 +64,7 @@ export interface CommandConfig {
   triggers: string[];
   adminOnly?: boolean;
   description: string;
+  example?: string;
   params: Record<string, CommandParamConfig>;
 }
 

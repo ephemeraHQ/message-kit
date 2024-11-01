@@ -1,27 +1,12 @@
 import { HandlerContext } from "@xmtp/message-kit";
-import { generateCoolAlternatives } from "../lib/resolver.js";
-import {
-  getUserInfo,
-  getInfoCache,
-  clearInfoCache,
-  isOnXMTP,
-} from "../lib/resolver.js";
+import { getUserInfo, clearInfoCache, isOnXMTP } from "../lib/resolver.js";
 import { textGeneration } from "../lib/openai.js";
 import { processResponseWithIntent } from "../lib/openai.js";
 import { isAddress } from "viem";
 import { ens_agent_prompt } from "../prompt.js";
-import type {
-  ensDomain,
-  converseUsername,
-  ChatHistories,
-} from "../lib/types.js";
-import { frameUrl, ensUrl, baseTxUrl, InfoCache } from "../lib/types.js";
+import { frameUrl, ensUrl, baseTxUrl } from "../index.js";
+import { clearChatHistories } from "../lib/openai.js";
 
-let chatHistories: ChatHistories = {};
-let ensDomain: ensDomain = {};
-let converseUsername: converseUsername = {};
-
-// URL for the send transaction
 export async function handleEns(context: HandlerContext) {
   const {
     message: {
@@ -29,7 +14,7 @@ export async function handleEns(context: HandlerContext) {
     },
   } = context;
   if (command == "reset") {
-    clearChatHistory();
+    clear();
     return { code: 200, message: "Conversation reset." };
   } else if (command == "renew") {
     // Destructure and validate parameters for the ens command
@@ -42,7 +27,7 @@ export async function handleEns(context: HandlerContext) {
       };
     }
 
-    const data = await getInfoCache(domain);
+    const data = await getUserInfo(domain);
 
     if (!data || data?.info.address !== sender?.address) {
       return {
@@ -71,7 +56,7 @@ export async function handleEns(context: HandlerContext) {
   } else if (command == "info") {
     const { domain } = params;
 
-    const data = await getInfoCache(domain);
+    const data = await getUserInfo(domain);
     if (!data) {
       return {
         code: 404,
@@ -115,7 +100,7 @@ export async function handleEns(context: HandlerContext) {
       };
     }
 
-    const data = await getInfoCache(domain);
+    const data = await getUserInfo(domain);
     if (!data?.info.address) {
       let message = `Looks like ${domain} is available! Do you want to register it? ${ensUrl}${domain} or would you like to see some cool alternatives?`;
       return {
@@ -138,7 +123,7 @@ export async function handleEns(context: HandlerContext) {
         message: "Please provide an address to tip.",
       };
     }
-    const data = await getInfoCache(address);
+    const data = await getUserInfo(address);
     console.log(data?.info);
     let txUrl = `${baseTxUrl}/transaction/?transaction_type=send&buttonName=Tip%20${data?.info.ens ?? ""}&amount=1&token=USDC&receiver=${
       isAddress(address) ? address : data?.info.address
@@ -158,13 +143,6 @@ export async function handleEns(context: HandlerContext) {
   }
 }
 
-export async function clearChatHistory() {
-  chatHistories = {};
-  clearInfoCache();
-  ensDomain = {};
-  converseUsername = {};
-}
-
 export async function ensAgent(context: HandlerContext) {
   if (!process?.env?.OPEN_AI_API_KEY) {
     console.warn("No OPEN_AI_API_KEY found in .env");
@@ -181,34 +159,48 @@ export async function ensAgent(context: HandlerContext) {
 
   try {
     let userPrompt = params?.prompt ?? content;
-    const { converseUsername: newConverseUsername, ensDomain: newEnsDomain } =
-      await getUserInfo(
-        sender.address,
-        ensDomain[sender.address],
-        converseUsername[sender.address],
-      );
+    const userInfo = await getUserInfo(sender.address);
+    if (!userInfo) {
+      console.log("User info not found");
+      return;
+    }
+    const { ensDomain, converseUsername } = userInfo;
 
-    ensDomain[sender.address] = newEnsDomain;
-    converseUsername[sender.address] = newConverseUsername;
-
-    const { reply, history } = await textGeneration(
+    const { reply } = await textGeneration(
+      sender.address,
       userPrompt,
-      await ens_agent_prompt(
-        sender.address,
-        ensDomain[sender.address],
-        converseUsername[sender.address],
-      ),
-      chatHistories[sender.address],
+      await ens_agent_prompt(sender.address, ensDomain, converseUsername),
+      group !== undefined,
     );
-    if (!group) chatHistories[sender.address] = history; // Update chat history for the user
-
-    chatHistories[sender.address] = await processResponseWithIntent(
-      reply,
-      context,
-      chatHistories[sender.address],
-    );
+    await processResponseWithIntent(sender.address, reply, context);
   } catch (error) {
     console.error("Error during OpenAI call:", error);
     await context.send("An error occurred while processing your request.");
   }
+}
+
+export const generateCoolAlternatives = (domain: string) => {
+  const suffixes = ["lfg", "cool", "degen", "moon", "base", "gm"];
+  const alternatives = [];
+  for (let i = 0; i < 5; i++) {
+    const randomPosition = Math.random() < 0.5;
+    const baseDomain = domain.replace(/\.eth$/, ""); // Remove any existing .eth suffix
+    alternatives.push(
+      randomPosition
+        ? `${suffixes[i]}${baseDomain}.eth`
+        : `${baseDomain}${suffixes[i]}.eth`,
+    );
+  }
+
+  const cool_alternativesFormat = alternatives
+    .map(
+      (alternative: string, index: number) => `${index + 1}. ${alternative} ✨`,
+    )
+    .join("\n");
+  return cool_alternativesFormat;
+};
+
+export async function clear() {
+  clearChatHistories();
+  clearInfoCache();
 }

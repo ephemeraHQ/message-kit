@@ -10,7 +10,7 @@ import type { Reaction } from "@xmtp/content-type-reaction";
 import { ContentTypeText } from "@xmtp/content-type-text";
 import { logMessage } from "../helpers/utils.js";
 import {
-  CommandGroup,
+  AgentSkill,
   User,
   MessageAbstracted,
   GroupAbstracted,
@@ -32,7 +32,7 @@ export default class HandlerContext {
   client!: Client;
   version!: "v2" | "v3";
   v2client!: ClientV2;
-  commands?: CommandGroup[];
+  commands?: AgentSkill[];
   members?: User[];
   getMessageById!: (id: string) => DecodedMessage | null;
   private constructor(
@@ -61,10 +61,10 @@ export default class HandlerContext {
     }
   }
   static async loadCommandConfig(
-    configPath: string = "commands.js",
-  ): Promise<CommandGroup[]> {
+    configPath: string = "skills.js",
+  ): Promise<AgentSkill[]> {
     const resolvedPath = path.resolve(process.cwd(), "dist/" + configPath);
-    let commands: CommandGroup[] = [];
+    let commands: AgentSkill[] = [];
     try {
       const module = await import(resolvedPath);
       commands = module?.commands ?? [];
@@ -111,11 +111,7 @@ export default class HandlerContext {
           : message.content;
 
       if (message.contentType.sameAs(ContentTypeText)) {
-        const extractedValues = parseCommand(
-          content.content,
-          context.commands ?? [],
-          context.members ?? [],
-        );
+        const extractedValues = parseCommand(content.content, context.commands);
         if (extractedValues) {
           content = {
             ...content,
@@ -147,20 +143,6 @@ export default class HandlerContext {
         sender: sender,
         typeId: message.contentType.typeId,
         sent: sentAt,
-        version: version as string,
-      };
-    } else {
-      context.message = {
-        id: "",
-        content: "",
-        sender: {
-          inboxId: "",
-          address: "",
-          username: "",
-          accountAddresses: [],
-        },
-        typeId: "new_" + (version === "v3" ? "group" : "conversation"),
-        sent: conversation.createdAt,
         version: version as string,
       };
     }
@@ -319,7 +301,7 @@ export default class HandlerContext {
     if (conversation) this.refConv = conversation;
     try {
       let handler = await this.findHandler(text, commands ?? []);
-      const extractedValues = parseCommand(text, commands ?? [], members ?? []);
+      const extractedValues = parseCommand(text, commands ?? []);
       //console.log("extractedValues", extractedValues);
       if ((text.startsWith("/") || text.startsWith("@")) && !extractedValues) {
         console.warn("Command not valid", text);
@@ -346,7 +328,7 @@ export default class HandlerContext {
 
         this.refConv = null;
         return await handler.commands[0].handler?.(mockContext);
-      } else if (!text.startsWith("/") || !text.startsWith("@")) {
+      } else if (text.startsWith("/") || text.startsWith("@")) {
         console.warn("Command not valid", text);
       } else return this.send(text);
     } catch (e) {
@@ -355,16 +337,13 @@ export default class HandlerContext {
       this.refConv = null;
     }
   }
-  findHandler(
-    text: string,
-    commands: CommandGroup[],
-  ): CommandGroup | undefined {
+  findHandler(text: string, commands: AgentSkill[]): AgentSkill | undefined {
     const trigger = text?.split(" ")[0].toLowerCase();
-    for (const commandGroup of commands) {
-      const handler = commandGroup.commands.find((command) => {
+    for (const AgentSkill of commands) {
+      const handler = AgentSkill.commands.find((command) => {
         return command?.triggers?.includes(trigger);
       });
-      if (handler) return { ...commandGroup, commands: [handler] };
+      if (handler) return { ...AgentSkill, commands: [handler] };
     }
 
     return undefined;

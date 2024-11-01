@@ -1,7 +1,7 @@
 import { handler as handlerAll } from "./handler.js";
-import type { CommandGroup } from "@xmtp/message-kit";
+import type { AgentSkill } from "@xmtp/message-kit";
 
-export const commands: CommandGroup[] = [
+export const commands: AgentSkill[] = [
   {
     name: "Gm Commands",
     description: "Commands to send a gm.",

@@ -1,29 +1,21 @@
-import { CommandGroup, CommandConfig, User } from "./types";
+import { AgentSkill, CommandConfig, User } from "./types";
 import path from "path";
 import fs from "fs";
 import { Client } from "@xmtp/node-sdk";
 import { Config } from "./types";
 
-export function parseCommand(
-  text: string,
-  commands: CommandGroup[],
-  members: User[],
-) {
+export function parseCommand(text: string, commands: AgentSkill[]) {
   //If is command of other bot. MULTIBOT
   const firstWord = text.split(" ")[0];
-  if (
-    (firstWord.startsWith("/") && !firstWord.includes("@")) ||
-    (firstWord.startsWith("/") && firstWord.includes("@"))
-  ) {
-    return extractCommandValues(text, commands ?? [], members ?? []);
+  if (firstWord.startsWith("/")) {
+    return extractCommandValues(text, commands ?? []);
   }
   return null;
 }
 
 export function extractCommandValues(
   text: string,
-  commands: CommandGroup[],
-  members: User[],
+  commands: AgentSkill[],
 ): {
   command: string | undefined;
   params: { [key: string]: string | number | string[] | undefined };
@@ -130,12 +122,8 @@ export function extractCommandValues(
 
         if (indices.length > 0) {
           if (type === "username") {
-            const usernames = indices.map((idx) => parts[idx].slice(1));
-            const mappedUsers = mapUsernamesToInboxId(usernames, members);
-            //@ts-ignore
-            values.params[param] = mappedUsers.filter(
-              (user) => user !== undefined,
-            );
+            // Simply collect the usernames without mapping
+            values.params[param] = indices.map((idx) => parts[idx]);
             indices.forEach((idx) => usedIndices.add(idx));
           } else {
             values.params[param] =
@@ -171,7 +159,7 @@ export const logMessage = (message: string) => {
 };
 
 export function logInitMessage(client: Client, config?: Config) {
-  const resolvedPath = path.resolve(process.cwd(), "src/" + "commands.ts");
+  const resolvedPath = path.resolve(process.cwd(), "src/" + "skills.ts");
 
   if (process.env.NODE_ENV !== "production") {
     const coolLogo = `\x1b[38;2;250;105;119m\
@@ -196,18 +184,23 @@ Powered by XMTP \x1b[0m`;
       !fs.existsSync(resolvedPath)
     ) {
       console.warn(`\x1b[33m
-    Warnings:
-    ${config?.attachments ? `- ⚠️ Attachments are enabled` : ""}
-    ${config?.memberChange ? `- ⚠️ Member changes are enabled` : ""}
-    ${!fs.existsSync(resolvedPath) ? `- ⚠️ No commands.ts file found` : ""}
-    ${
-      config?.experimental
-        ? `- ☣️ EXPERIMENTAL MODE ENABLED:
-        ⚠️ All group messages will be exposed — proceed with caution.
-        ℹ Guidelines: https://messagekit.ephemerahq.com/guidelines`
-        : ""
-    }
-        \x1b[0m`);
+    Warnings:`);
+      if (config?.attachments) {
+        console.warn("\t- ⚠️ Attachments are enabled");
+      }
+      if (config?.memberChange) {
+        console.warn("\t- ⚠️ Member changes are enabled");
+      }
+      if (!fs.existsSync(resolvedPath)) {
+        console.warn("\t- ⚠️ No skills.ts file found");
+      }
+      if (config?.experimental) {
+        console.warn(
+          `\t- ☣️ EXPERIMENTAL MODE ENABLED:
+        \t\t⚠️ All group messages will be exposed — proceed with caution.
+        \t\tℹ Guidelines: https://messagekit.ephemerahq.com/guidelines`,
+        );
+      }
     }
     console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Logging new messages to console ↴`);

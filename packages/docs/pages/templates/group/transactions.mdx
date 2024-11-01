@@ -13,9 +13,9 @@ _The frame used in this example is [Base Tx Frame](https://base-tx.ephemerahq.co
 ::::note
 :::details[Command declaration]
 
-```tsx [src/commands.ts]
+```tsx [src/skills.ts]
 import { handler as transaction } from "./handler/transaction.js";
-export const commands: CommandGroup[] = [
+export const commands: AgentSkill[] = [
   {
     name: "Transactions",
     description: "Multipurpose transaction frame built onbase.",

@@ -12,8 +12,8 @@ Messages that start with `/agent` will trigger the GPT response.
 ::::note
 :::details[Command declaration]
 
-```tsx [group/src/commands.ts]
-export const commands: CommandGroup[] = [
+```tsx [group/src/skills.ts]
+export const commands: AgentSkill[] = [
   {
     name: "Agent",
     description: "Manage agent commands.",
