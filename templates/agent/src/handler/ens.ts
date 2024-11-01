@@ -23,7 +23,6 @@ export async function handleEns(context: HandlerContext) {
       content: { command, params, sender },
     },
   } = context;
-
   if (command == "renew") {
     // Destructure and validate parameters for the ens command
     const { domain } = params;

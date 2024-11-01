@@ -146,12 +146,18 @@ export default async function run(handler: Handler, config?: Config) {
     };
   };
 
-  const onConnectionLost = (version: "v3" | "v2") => {
-    console.log(
-      `Connection lost for ${version} client, attempting to reconnect...`,
-    );
+  const handleConnectionLostV3: OnConnectionLostCallback = (error?: Error) => {
+    if (error) {
+      console.log(`Error in stream_v3:`, error);
+      console.log(`Timestamp: ${new Date().toISOString()}`);
+    }
   };
-
+  const handleConnectionLostV2: OnConnectionLostCallback = (error?: Error) => {
+    if (error) {
+      console.log(`Error in stream_v2:`, error);
+      console.log(`Timestamp: ${new Date().toISOString()}`);
+    }
+  };
   const streamMessages = async (version: "v3" | "v2") => {
     const clientToUse = version === "v3" ? client : v2client;
     let retryCount = 0;
@@ -164,8 +170,14 @@ export default async function run(handler: Handler, config?: Config) {
           console.log(`Successfully reconnected after ${retryCount} retries`);
           retryCount = 0;
         }
-        const stream = await clientToUse.conversations.streamAllMessages(() =>
-          onConnectionLost(version),
+
+        const stream = await clientToUse.conversations.streamAllMessages(
+          async (error) => {
+            if (error) {
+              console.warn(`Connection lost for ${version} client`);
+              throw error;
+            }
+          },
         );
         for await (const message of stream) {
           const conversation =
