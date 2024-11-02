@@ -33,7 +33,7 @@ export async function handler(context: HandlerContext) {
 function generateSystemPrompt(context: HandlerContext) {
   const {
     members,
-    commands,
+    skills,
     message: { sender },
   } = context;
 
@@ -49,7 +49,7 @@ function generateSystemPrompt(context: HandlerContext) {
      })),
    )}\n
   #### Commands
-  ${JSON.stringify(commands)}\n
+  ${JSON.stringify(skills)}\n
   The message was sent by @${sender?.address}
   
   ### Examples

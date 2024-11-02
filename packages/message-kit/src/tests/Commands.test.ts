@@ -1,15 +1,11 @@
 import "dotenv/config";
 import { extractCommandValues } from "../helpers/utils";
-import type { AgentSkill } from "../helpers/types";
-import { commands } from "./Commands_test";
+import { skills } from "./Test_skills";
 
 describe("Command extraction tests", () => {
   test("Extract values from /tip command", () => {
     const inputContent = "/tip @bo @alix 15";
-    const extractedValues = extractCommandValues(
-      inputContent,
-      commands as AgentSkill[],
-    );
+    const extractedValues = extractCommandValues(inputContent, skills);
     expect(extractedValues).toEqual({
       command: "tip",
       params: {
@@ -19,12 +15,23 @@ describe("Command extraction tests", () => {
     });
   });
 
+  // /send 1 to @bo
+  test("Extract values from /send command", () => {
+    const inputContent = "/send 1 to @bo";
+    const extractedValues = extractCommandValues(inputContent, skills);
+    expect(extractedValues).toEqual({
+      command: "send",
+      params: {
+        amount: 1,
+        token: "usdc",
+        username: "@bo",
+      },
+    });
+  });
+
   test("Extract values from /swap command", () => {
     const inputContent = "/swap 10 eth to usdc";
-    const extractedValues = extractCommandValues(
-      inputContent,
-      commands as AgentSkill[],
-    );
+    const extractedValues = extractCommandValues(inputContent, skills);
     expect(extractedValues).toEqual({
       command: "swap",
       params: {
@@ -36,12 +43,8 @@ describe("Command extraction tests", () => {
   });
 
   test("Extract values from /send command", () => {
-    const inputContent = "/send 10 usdc @bo";
-    const extractedValues = extractCommandValues(
-      inputContent,
-      commands as AgentSkill[],
-    );
-    console.log("Extracted values", extractedValues);
+    const inputContent = "/send 10 usdc to @bo";
+    const extractedValues = extractCommandValues(inputContent, skills);
     expect(extractedValues).toEqual({
       command: "send",
       params: {
@@ -52,30 +55,35 @@ describe("Command extraction tests", () => {
     });
   });
 
-  /*
   test("Extract values from /send command", () => {
-    const inputContent = "/send 10 usdc vitalik.eth";
-    const extractedValues = extractCommandValues(
-      inputContent,
-      commands as AgentSkill[],
-    );
-    console.log("Extracted values", extractedValues);
+    const inputContent = "/send 10 usdc to @fabri";
+    const extractedValues = extractCommandValues(inputContent, skills);
     expect(extractedValues).toEqual({
       command: "send",
       params: {
         amount: 10,
         token: "usdc",
-        ens: "vitalik.eth",
+        username: "@fabri",
       },
     });
-  });*/
+  });
+
+  test("Extract values from /send command", () => {
+    const inputContent = "/send 10 usdc vitalik.eth";
+    const extractedValues = extractCommandValues(inputContent, skills);
+    expect(extractedValues).toEqual({
+      command: "send",
+      params: {
+        amount: 10,
+        token: "usdc",
+        username: "vitalik.eth",
+      },
+    });
+  });
 
   test("Extract values from /game command", () => {
     const inputContent = "/game slot";
-    const extractedValues = extractCommandValues(
-      inputContent,
-      commands as AgentSkill[],
-    );
+    const extractedValues = extractCommandValues(inputContent, skills);
     expect(extractedValues).toEqual({
       command: "game",
       params: {
@@ -86,14 +94,11 @@ describe("Command extraction tests", () => {
 
   test("Extract values from /agent prompt command", () => {
     const inputContent = "/agent Hello, how can I assist you today?";
-    const extractedValues = extractCommandValues(
-      inputContent,
-      commands as AgentSkill[],
-    );
+    const extractedValues = extractCommandValues(inputContent, skills);
     expect(extractedValues).toEqual({
       command: "agent",
       params: expect.objectContaining({
-        prompt: "Hello, how can I assist you today?",
+        prompt: "Hello, how can I assist you today?".toLowerCase(),
       }),
     });
   });

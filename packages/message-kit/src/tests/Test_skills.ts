@@ -1,18 +1,25 @@
-import type { AgentSkill } from "../helpers/types";
+import type { SkillGroup } from "../helpers/types";
+let tipping = undefined;
+let transaction = undefined;
+let games = undefined;
+let loyalty = undefined;
+let agent = undefined;
+let helpHandler = undefined;
 
-export const commands: AgentSkill[] = [
+export const skills: SkillGroup[] = [
   {
     name: "Tipping",
     description: "Tip tokens via emoji, replies or command.",
-    commands: [
+    skills: [
       {
-        command: "/tip [@users] [amount] [token]",
-        triggers: ["/tip", "🎩", "@tip"],
+        command: "/tip [@usernames] [amount] [token]",
+        triggers: ["/tip"],
         description: "Tip users in a specified token.",
-        handler: undefined,
+        handler: tipping,
         params: {
           username: {
             default: "",
+            plural: true,
             type: "username",
           },
           amount: {
@@ -26,13 +33,13 @@ export const commands: AgentSkill[] = [
   {
     name: "Transactions",
     description: "Multipurpose transaction frame built onbase.",
-    commands: [
+    skills: [
       {
-        command: "/send [amount] [token] [@username]",
-        triggers: ["@send", "/send"],
+        command: "/send [amount] [token] [username]",
+        triggers: ["/send"],
         description:
           "Send a specified amount of a cryptocurrency to a destination address.",
-        handler: undefined,
+        handler: transaction,
         params: {
           amount: {
             default: 10,
@@ -51,9 +58,9 @@ export const commands: AgentSkill[] = [
       },
       {
         command: "/swap [amount] [token_from] [token_to]",
-        triggers: ["@swap", "/swap"],
+        triggers: ["/swap"],
         description: "Exchange one type of cryptocurrency for another.",
-        handler: undefined,
+        handler: transaction,
         params: {
           amount: {
             default: 10,
@@ -74,7 +81,7 @@ export const commands: AgentSkill[] = [
       {
         command: "/show",
         triggers: ["/show"],
-        handler: undefined,
+        handler: transaction,
         description: "Show the whole frame.",
         params: {},
       },
@@ -83,11 +90,11 @@ export const commands: AgentSkill[] = [
   {
     name: "Games",
     description: "Provides various gaming experiences.",
-    commands: [
+    skills: [
       {
         command: "/game [game]",
-        triggers: ["/game", "@game", "🔎", "🔍"],
-        handler: undefined,
+        triggers: ["/game", "🔎", "🔍"],
+        handler: games,
         description: "Play a game.",
         params: {
           game: {
@@ -102,19 +109,19 @@ export const commands: AgentSkill[] = [
   {
     name: "Loyalty",
     description: "Manage group members and metadata.",
-    commands: [
+    skills: [
       {
         command: "/points",
-        triggers: ["/points", "@points"],
-        handler: undefined,
+        triggers: ["/points"],
+        handler: loyalty,
         description: "Check your points.",
         params: {},
       },
       {
         command: "/leaderboard",
-        triggers: ["/leaderboard", "@leaderboard"],
+        triggers: ["/leaderboard"],
         adminOnly: true,
-        handler: undefined,
+        handler: loyalty,
         description: "Check the points of a user.",
         params: {},
       },
@@ -123,11 +130,11 @@ export const commands: AgentSkill[] = [
   {
     name: "Agent",
     description: "Manage agent commands.",
-    commands: [
+    skills: [
       {
         command: "/agent [prompt]",
         triggers: ["/agent", "@agent", "@bot"],
-        handler: undefined,
+        handler: agent,
         description: "Manage agent commands.",
         params: {
           prompt: {
@@ -141,11 +148,11 @@ export const commands: AgentSkill[] = [
   {
     name: "Help",
     description: "Get help with the bot.",
-    commands: [
+    skills: [
       {
         command: "/help",
         triggers: ["/help"],
-        handler: undefined,
+        handler: helpHandler,
         description: "Get help with the bot.",
         params: {},
       },

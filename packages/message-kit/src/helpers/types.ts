@@ -25,7 +25,7 @@ export type ApiResponse = {
   message: string;
 };
 
-export type CommandHandler = (
+export type SkillHandler = (
   context: HandlerContext,
 ) => Promise<void | ApiResponse>;
 
@@ -35,39 +35,33 @@ export type Config = {
   client?: ClientOptions;
   privateKey?: string;
   experimental?: boolean;
-  commandsConfigPath?: string;
+  skillsConfigPath?: string;
   hideLog?: boolean;
   attachments?: boolean;
   memberChange?: boolean;
 };
-export interface CommandParamConfig {
+export interface SkillParamConfig {
   default?: string | number | boolean;
-  type:
-    | "number"
-    | "string"
-    | "username"
-    | "ens"
-    | "quoted"
-    | "address"
-    | "prompt";
+  type: "number" | "string" | "username" | "quoted" | "address" | "prompt";
+  plural?: boolean;
   values?: string[]; // Accepted values for the parameter
 }
 
-export interface AgentSkill {
+export interface SkillGroup {
   name: string;
   image?: boolean;
   description: string;
-  commands: CommandConfig[];
+  skills: SkillCommand[];
 }
 
-export interface CommandConfig {
+export interface SkillCommand {
   command: string;
-  handler?: CommandHandler;
+  handler?: SkillHandler;
   triggers: string[];
   adminOnly?: boolean;
   description: string;
   example?: string;
-  params: Record<string, CommandParamConfig>;
+  params: Record<string, SkillParamConfig>;
 }
 
 export interface AbstractedMember {

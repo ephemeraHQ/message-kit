@@ -1,11 +1,11 @@
-import type { AgentSkill } from "@xmtp/message-kit";
+import type { SkillGroup } from "@xmtp/message-kit";
 import { handleEns } from "./handler/ens.js";
 
-export const commands: AgentSkill[] = [
+export const skills: SkillGroup[] = [
   {
     name: "Ens Domain Bot",
     description: "Register ENS domains.",
-    commands: [
+    skills: [
       {
         command: "/register [domain]",
         triggers: ["/register", "@ensbot"],

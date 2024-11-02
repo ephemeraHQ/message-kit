@@ -1,25 +1,18 @@
-import { AgentSkill, CommandConfig } from "./types";
+import { SkillGroup, SkillCommand } from "./types";
 import path from "path";
 import fs from "fs";
 import { Client } from "@xmtp/node-sdk";
 import { Config } from "./types";
 
-export function parseCommand(text: string, commands: AgentSkill[]) {
-  //If is command of other bot. MULTIBOT
-  const firstWord = text.split(" ")[0];
-  if (firstWord.startsWith("/")) {
-    return extractCommandValues(text, commands ?? []);
-  }
-  return null;
-}
-
 export function extractCommandValues(
   text: string,
-  commands: AgentSkill[],
+  commands: SkillGroup[],
 ): {
   command: string | undefined;
   params: { [key: string]: string | number | string[] | undefined };
 } {
+  if (!text.startsWith("/")) return { command: undefined, params: {} };
+
   const defaultResult = {
     command: undefined,
     params: {} as { [key: string]: string | number | string[] | undefined },
@@ -28,16 +21,16 @@ export function extractCommandValues(
     if (typeof text !== "string") return defaultResult;
 
     // Replace all "“" and "”" with "'" and '"'
-    text = text.replaceAll("“", '"').replaceAll("”", '"');
+    text = text.toLowerCase().replaceAll("“", '"').replaceAll("”", '"');
 
     const parts = text.match(/[^\s"']+|"([^"]*)"|'([^']*)'|`([^`]*)`/g);
     if (!parts) return defaultResult;
 
     let commandName = parts[0].startsWith("/") ? parts[0].slice(1) : parts[0];
-    let commandConfig: CommandConfig | undefined = undefined;
+    let commandConfig: SkillCommand | undefined = undefined;
 
     for (const group of commands) {
-      commandConfig = group.commands.find((cmd) =>
+      commandConfig = group.skills.find((cmd) =>
         cmd.command.startsWith(`/${commandName}`),
       );
       if (commandConfig) break;
@@ -56,7 +49,12 @@ export function extractCommandValues(
     const usedIndices = new Set();
 
     for (const [param, paramConfig] of Object.entries(expectedParams)) {
-      const { type, values: possibleValues = [] } = paramConfig;
+      const {
+        type,
+        values: possibleValues = [],
+        plural = false,
+        default: defaultValue,
+      } = paramConfig;
 
       let valueFound = false;
       // Handle string type with no possible values
@@ -82,14 +80,15 @@ export function extractCommandValues(
         values.params[param] = parts.slice(1).join(" ");
         valueFound = true;
       } else if (type === "username") {
-        // Updated regular expression to exclude numeric strings
+        // Updated regular expression to ensure usernames start with @
         const usernameParts = parts.reduce<string[]>((acc, part, idx) => {
           if (
             !usedIndices.has(idx) &&
-            /^@?[a-zA-Z][a-zA-Z0-9_-]*$/.test(part)
+            (/^@[a-zA-Z][a-zA-Z0-9_-]*$/.test(part) ||
+              /^[a-zA-Z0-9-]+\.eth$/.test(part)) // Ensure it starts with @ or is a .eth domain
           ) {
             usedIndices.add(idx);
-            // Remove @ prefix and handle potential comma-separated values
+            // Handle potential comma-separated values
             const usernames = part.split(",");
             acc.push(...usernames);
           }
@@ -97,23 +96,7 @@ export function extractCommandValues(
         }, []);
 
         if (usernameParts.length > 0) {
-          values.params[param] =
-            usernameParts.length === 1 ? usernameParts[0] : usernameParts;
-          valueFound = true;
-        }
-      } else if (type === "ens") {
-        // Handle comma-separated ENS domains
-        const ensParts = parts.reduce<string[]>((acc, part, idx) => {
-          if (!usedIndices.has(idx) && /^[a-zA-Z0-9-]+\.eth$/.test(part)) {
-            usedIndices.add(idx);
-            const domains = part.split(",").map((d) => d.trim());
-            acc.push(...domains);
-          }
-          return acc;
-        }, []);
-
-        if (ensParts.length > 0) {
-          values.params[param] = ensParts.length === 1 ? ensParts[0] : ensParts;
+          values.params[param] = plural ? usernameParts : usernameParts[0];
           valueFound = true;
         }
       } else if (type === "address") {
@@ -163,6 +146,11 @@ export function extractCommandValues(
           usedIndices.add(index);
           valueFound = true;
         }
+      }
+      // If no value was found, set the default value if it exists
+      if (!valueFound && defaultValue !== undefined) {
+        //@ts-ignore
+        values.params[param] = defaultValue;
       }
     }
 

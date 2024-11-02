@@ -6,7 +6,6 @@ In this example you can tip using 3 primitives:
 
 ```bash [cmd]
 /tip @bo @alix 15
-🎩 (emoji)
 ```
 
 ::::note
@@ -20,11 +19,12 @@ export const commands: AgentSkill[] = [
     commands: [
       {
         command: "/tip [@users] [amount] [token]",
-        triggers: ["/tip", "🎩", "@tip"],
+        triggers: ["/tip", "@tip"],
         description: "Tip users in a specified token.",
         handler: tipping,
         params: {
           username: {
+            plural: true,
             default: "",
             type: "username",
           },

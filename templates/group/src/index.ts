@@ -45,12 +45,12 @@ async function handleAttachment(context: HandlerContext) {
 }
 
 export async function helpHandler(context: HandlerContext) {
-  const { commands = [] } = context;
+  const { skills } = context;
   const intro =
     "Available experiences:\n" +
-    commands
-      .flatMap((app) => app.commands)
-      .map((command) => `${command.command} - ${command.description}`)
+    skills
+      ?.flatMap((app) => app.skills)
+      .map((skill) => `${skill.command} - ${skill.description}`)
       .join("\n") +
     "\nUse these commands to interact with specific apps.";
   context.send(intro);

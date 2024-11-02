@@ -42,7 +42,7 @@ export default async function run(handler: Handler, config?: Config) {
           conversation,
           message,
           { client, v2client },
-          config?.commandsConfigPath,
+          config?.skillsConfigPath,
           version,
         );
         // Check if the message content triggers a command
@@ -68,7 +68,7 @@ export default async function run(handler: Handler, config?: Config) {
       v2client,
       group,
     } = context;
-    let handler = context.findHandler(content, context.commands ?? []);
+    let handler = context.findHandler(content, context.skills ?? []);
 
     const { inboxId: senderInboxId } = client;
     const { address: senderAddress } = v2client;
@@ -78,7 +78,7 @@ export default async function run(handler: Handler, config?: Config) {
       (sender.inboxId?.toLowerCase() === senderInboxId.toLowerCase() &&
         typeId !== "group_updated");
 
-    const isCommandTriggered = handler?.commands[0]?.command;
+    const isCommandTriggered = handler?.skills[0]?.command;
     const isExperimental = config?.experimental ?? false;
 
     const isAddedMemberOrPass =
@@ -92,7 +92,7 @@ export default async function run(handler: Handler, config?: Config) {
       content?.contentType?.typeId == "remoteStaticAttachment";
 
     const isAdminOrPass =
-      handler?.commands[0]?.adminOnly &&
+      handler?.skills[0]?.adminOnly &&
       group &&
       !group?.isAdmin(sender.inboxId) &&
       !group?.isSuperAdmin(sender.inboxId)
@@ -142,14 +142,21 @@ export default async function run(handler: Handler, config?: Config) {
         isAdminOrPass,
         isExperimental,
         isAddedMemberOrPass,
-        commandsParsed: context.commands?.length,
+        skillsParsed: context.skills?.length,
         isCommandTriggered: isCommandTriggered
           ? {
               name: handler?.name,
-              command: handler?.commands[0]?.command,
-              example: handler?.commands[0]?.example,
-              description: handler?.commands[0]?.description,
-              params: JSON.stringify(handler?.commands[0]?.params),
+              command: handler?.skills[0]?.command,
+              example: handler?.skills[0]?.example,
+              description: handler?.skills[0]?.description,
+              params: handler?.skills[0]?.params
+                ? Object.entries(handler.skills[0].params).map(
+                    ([key, value]) => ({
+                      key,
+                      value,
+                    }),
+                  )
+                : undefined,
             }
           : false,
         isMessageValid,
@@ -160,7 +167,7 @@ export default async function run(handler: Handler, config?: Config) {
 
     return {
       isMessageValid,
-      handler: handler?.commands[0]?.handler,
+      handler: handler?.skills[0]?.handler,
     };
   };
   const getConversation = async (

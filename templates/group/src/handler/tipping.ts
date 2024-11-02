@@ -34,17 +34,9 @@ export async function handler(context: HandlerContext) {
       } = content;
       amount = extractedAmount || 10; // Default amount if not specified
 
-      receivers = Array.isArray(username)
-        ? (
-            await Promise.all(
-              username.map((username: string) => getUserInfo(username)),
-            )
-          ).filter(
-            (userInfo): userInfo is AbstractedMember => userInfo !== null,
-          )
-        : [await getUserInfo(username)].filter(
-            (userInfo): userInfo is AbstractedMember => userInfo !== null,
-          );
+      receivers = await Promise.all(
+        username.map((username: string) => getUserInfo(username)),
+      );
     }
   }
   if (!sender || receivers.length === 0 || amount === 0) {

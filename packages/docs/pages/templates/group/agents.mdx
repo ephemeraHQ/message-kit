@@ -6,7 +6,7 @@ Messages that start with `/agent` will trigger the GPT response.
 /agent send 1 eth to @alix
 /agent lets play a game
 /agent tell me a joke
-/agent help me swap 1 eth to usdc
+@agent lets swap 1 eth to usdc
 ```
 
 ::::note
@@ -17,7 +17,7 @@ export const commands: AgentSkill[] = [
   {
     name: "Agent",
     description: "Manage agent commands.",
-    commands: [
+    skills: [
       {
         command: "/agent [prompt]",
         triggers: ["/agent", "@agent", "@bot"],
@@ -43,7 +43,7 @@ export const commands: AgentSkill[] = [
 In this case the app replies with context about the group like users and commands.
 
 ```tsx [src/handler/agent.ts]
-import { HandlerContext, User } from "@xmtp/message-kit";
+import { HandlerContext, AbstractedMember } from "@xmtp/message-kit";
 import { textGeneration } from "../lib/openai.js";
 
 export async function handler(context: HandlerContext) {
@@ -54,6 +54,7 @@ export async function handler(context: HandlerContext) {
 
   const {
     message: {
+      sender,
       content: { content, params },
     },
   } = context;
@@ -61,10 +62,12 @@ export async function handler(context: HandlerContext) {
   const systemPrompt = generateSystemPrompt(context);
   try {
     let userPrompt = params?.prompt ?? content;
-    console.log("userPrompt", userPrompt);
 
-    const { reply } = await textGeneration(userPrompt, systemPrompt);
-    console.log("skill:", reply);
+    const { reply } = await textGeneration(
+      sender.address,
+      userPrompt,
+      systemPrompt,
+    );
     context.skill(reply);
   } catch (error) {
     console.error("Error during OpenAI call:", error);
@@ -75,28 +78,32 @@ export async function handler(context: HandlerContext) {
 function generateSystemPrompt(context: HandlerContext) {
   const {
     members,
-    commands,
+    skills,
     message: { sender },
   } = context;
 
   const systemPrompt = `
   ### Context
-
+  
   You are a helpful bot agent that lives inside a web3 messaging group that helps interpret user requests and execute commands.
   #### Users
-   ${JSON.stringify(members?.map((member: User) => ({ ...member, username: `@${member.username}` })))}\n
+   ${JSON.stringify(
+     members?.map((member: AbstractedMember) => ({
+       ...member,
+       username: `@${member.accountAddresses[0]}`,
+     })),
+   )}\n
   #### Commands
-  ${JSON.stringify(commands)}\n
-  The message was sent by @${sender?.username}
-
-  ### Example s
-
+  ${JSON.stringify(skills)}\n
+  The message was sent by @${sender?.address}
+  
+  ### Examples
   prompt /agent tip alix and bo
   reply /tip @alix @bo 10
 
   Important:
   - If a user asks jokes, make jokes about web3 devs\n
-  - If the user asks about performing an action and you can think of a command that would help, answer directly with the command and nothing else.
+  - If the user asks about performing an action and you can think of a command that would help, answer directly with the command and nothing else. 
   - Populate the command with the correct or random values. Always return commands with real values only, using usernames with @ and excluding addresses.\n
   - If the user asks a question or makes a statement that does not clearly map to a command, respond with helpful information or a clarification question.\n
   - If the user is grateful, respond asking for a tip in a playful manner.

@@ -3,10 +3,11 @@
 This is a reference app that will allow you to understand the potential and all of its features. Through many handlers, you will be able to understand different use cases:
 
 - [AI](/templates/group/agents): Reply with GPT when called by `/agent`.
-- [Tipping](/templates/group/tipping): Tip when a user reacts with the `🎩` emoji, replies `10 $degen` and `/tip`.
+- [Tipping](/templates/group/tipping): Tip when a user replies with `/tip`.
 - [Games](/templates/group/games): Handle frame games like `/game slot`, `/game wordle`
 - [Transactions](/templates/group/transactions): Handle commands like `/send`, `/swap`, `/show`.
 - [Loyalty](/templates/group/loyalty): Handle loyalty commands like `/points`, `/leaderboard`.
+- [Split payments](/templates/group/splitpayments): Handle split payments like `/split`.
 
 ## Structure
 
@@ -24,203 +25,39 @@ group/
 │         └── transactions.ts   # Handles the transaction frame. // [!code hl] // [!code focus]
 │   └── lib/
 │         └── openai.ts         # Open AI middleware. // [!code hl] // [!code focus]
+│         └── stack.ts          # Stack middleware. // [!code hl] // [!code focus]
+│         └── resolver.ts       # Resolver middleware. // [!code hl] // [!code focus]
 ├── package.json
 ├── tsconfig.json
 └── .env
 ```
 
-::::note[Commands]
-To declare these commands you need to add them first. Learn more about commands [here](/skills/commands).
-:::details[Snippet]
-
-```tsx [src/skills.ts]
-import type { AgentSkill } from "@xmtp/message-kit";
-import { handler as tipping } from "./handler/tipping.js";
-import { handler as agent } from "./handler/agent.js";
-import { handler as transaction } from "./handler/transaction.js";
-import { handler as games } from "./handler/game.js";
-import { handler as loyalty } from "./handler/loyalty.js";
-import { helpHandler } from "./index.js";
-
-export const commands: AgentSkill[] = [
-  {
-    name: "Tipping",
-    description: "Tip tokens via emoji, replies or command.",
-    commands: [
-      {
-        command: "/tip [@users] [amount] [token]",
-        triggers: ["/tip", "🎩", "@tip"],
-        description: "Tip users in a specified token.",
-        handler: tipping,
-        params: {
-          username: {
-            default: "",
-            type: "username",
-          },
-          amount: {
-            default: 10,
-            type: "number",
-          },
-        },
-      },
-    ],
-  },
-  {
-    name: "Transactions",
-    description: "Multipurpose transaction frame built onbase.",
-    commands: [
-      {
-        command: "/send [amount] [token] [@username]",
-        triggers: ["@send", "/send"],
-        description:
-          "Send a specified amount of a cryptocurrency to a destination address.",
-        handler: transaction,
-        params: {
-          amount: {
-            default: 10,
-            type: "number",
-          },
-          token: {
-            default: "usdc",
-            type: "string",
-            values: ["eth", "dai", "usdc", "degen"], // Accepted tokens
-          },
-          username: {
-            default: "",
-            type: "username",
-          },
-        },
-      },
-      {
-        command: "/swap [amount] [token_from] [token_to]",
-        triggers: ["@swap", "/swap"],
-        description: "Exchange one type of cryptocurrency for another.",
-        handler: transaction,
-        params: {
-          amount: {
-            default: 10,
-            type: "number",
-          },
-          token_from: {
-            default: "usdc",
-            type: "string",
-            values: ["eth", "dai", "usdc", "degen"], // Accepted tokens
-          },
-          token_to: {
-            default: "eth",
-            type: "string",
-            values: ["eth", "dai", "usdc", "degen"], // Accepted tokenss
-          },
-        },
-      },
-      {
-        command: "/show",
-        triggers: ["/show"],
-        handler: transaction,
-        description: "Show the whole frame.",
-        params: {},
-      },
-    ],
-  },
-  {
-    name: "Games",
-    description: "Provides various gaming experiences.",
-    commands: [
-      {
-        command: "/game [game]",
-        triggers: ["/game", "@game", "🔎", "🔍"],
-        handler: games,
-        description: "Play a game.",
-        params: {
-          game: {
-            default: "",
-            type: "string",
-            values: ["wordle", "slot", "help"],
-          },
-        },
-      },
-    ],
-  },
-  {
-    name: "Loyalty",
-    description: "Manage group members and metadata.",
-    commands: [
-      {
-        command: "/points",
-        triggers: ["/points", "@points"],
-        handler: loyalty,
-        description: "Check your points.",
-        params: {},
-      },
-      {
-        command: "/leaderboard",
-        triggers: ["/leaderboard", "@leaderboard"],
-        adminOnly: true,
-        handler: loyalty,
-        description: "Check the points of a user.",
-        params: {},
-      },
-    ],
-  },
-  {
-    name: "Agent",
-    description: "Manage agent commands.",
-    commands: [
-      {
-        command: "/agent [prompt]",
-        triggers: ["/agent", "@agent", "@bot"],
-        handler: agent,
-        description: "Manage agent commands.",
-        params: {
-          prompt: {
-            default: "",
-            type: "prompt",
-          },
-        },
-      },
-    ],
-  },
-  {
-    name: "Help",
-    description: "Get help with the bot.",
-    commands: [
-      {
-        command: "/help",
-        triggers: ["/help"],
-        handler: helpHandler,
-        description: "Get help with the bot.",
-        params: {},
-      },
-    ],
-  },
-];
-```
-
-:::
-::::
-
 ## Main code
 
 ```tsx [src/index.ts]
 import { run, HandlerContext } from "@xmtp/message-kit";
-import { handler as tipping } from "./handler/tipping.js";
-import { handler as agent } from "./handler/agent.js";
 import { handler as splitpayment } from "./handler/splitpayment.js";
 
 // Main function to run the app
-run(async (context: HandlerContext) => {
-  const {
-    message: { typeId },
-  } = context;
-  switch (typeId) {
-    case "reply":
-      handleReply(context);
-      break;
-    case "remoteStaticAttachment":
-      handleAttachment(context);
-      break;
-  }
-});
+run(
+  async (context: HandlerContext) => {
+    const {
+      message: { typeId },
+    } = context;
+    switch (typeId) {
+      case "reply":
+        handleReply(context);
+        break;
+      case "remoteStaticAttachment":
+        handleAttachment(context);
+        break;
+    }
+    if (!context.group) {
+      context.send("This is a group bot, add this address to a group");
+    }
+  },
+  { attachments: true },
+);
 async function handleReply(context: HandlerContext) {
   const {
     v2client,
@@ -245,12 +82,12 @@ async function handleAttachment(context: HandlerContext) {
 }
 
 export async function helpHandler(context: HandlerContext) {
-  const { commands = [] } = context;
+  const { skills } = context;
   const intro =
     "Available experiences:\n" +
-    commands
-      .flatMap((app) => app.commands)
-      .map((command) => `${command.command} - ${command.description}`)
+    skills
+      ?.flatMap((app) => app.skills)
+      .map((skill) => `${skill.command} - ${skill.description}`)
       .join("\n") +
     "\nUse these commands to interact with specific apps.";
   context.send(intro);

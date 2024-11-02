@@ -9,7 +9,7 @@ export async function handler(context: HandlerContext) {
   }
   const {
     members,
-    commands,
+    skills,
     message: {
       typeId,
       content: { attachment },
@@ -52,7 +52,12 @@ export async function handler(context: HandlerContext) {
       `;
 
       //I want the reply to be an array of messages so the bot feels like is sending multuple ones
-      const { reply } = await textGeneration(response, prompt);
+      const { reply } = await textGeneration(
+        sender.address,
+        response,
+        prompt,
+        true,
+      );
       let splitMessages = JSON.parse(reply);
       for (const message of splitMessages) {
         let msg = message as string;

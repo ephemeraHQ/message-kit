@@ -11,12 +11,12 @@ import type { Reaction } from "@xmtp/content-type-reaction";
 import { ContentTypeText } from "@xmtp/content-type-text";
 import { logMessage } from "../helpers/utils.js";
 import {
-  AgentSkill,
+  SkillGroup,
   MessageAbstracted,
   GroupAbstracted,
   AbstractedMember,
 } from "../helpers/types.js";
-import { parseCommand } from "../helpers/utils.js";
+import { extractCommandValues } from "../helpers/utils.js";
 import { ContentTypeReply } from "@xmtp/content-type-reply";
 import {
   ContentTypeRemoteAttachment,
@@ -33,7 +33,7 @@ export default class HandlerContext {
   client!: Client;
   version!: "v2" | "v3";
   v2client!: ClientV2;
-  commands?: AgentSkill[];
+  skills?: SkillGroup[];
   members?: AbstractedMember[];
   sender?: any;
   getMessageById!: (id: string) => DecodedMessage | null;
@@ -63,12 +63,12 @@ export default class HandlerContext {
   }
   static async loadCommandConfig(
     configPath: string = "skills.js",
-  ): Promise<AgentSkill[]> {
+  ): Promise<SkillGroup[]> {
     const resolvedPath = path.resolve(process.cwd(), "dist/" + configPath);
-    let commands: AgentSkill[] = [];
+    let skills: SkillGroup[] = [];
     try {
       const module = await import(resolvedPath);
-      commands = module?.commands ?? [];
+      skills = module?.skills ?? [];
     } catch (error) {
       /*if (process.env.MSG_LOG === "true")
         console.error(
@@ -76,13 +76,13 @@ export default class HandlerContext {
           error,
         );*/
     }
-    return commands;
+    return skills;
   }
   static async create(
     conversation: Conversation | ConversationV2,
     message: DecodedMessage | DecodedMessageV2 | null,
     { client, v2client }: { client: Client; v2client: ClientV2 },
-    commandsConfigPath?: string,
+    skillsConfigPath?: string,
     version?: "v2" | "v3",
   ): Promise<HandlerContext> {
     const context = new HandlerContext(conversation, { client, v2client });
@@ -119,8 +119,7 @@ export default class HandlerContext {
         } as AbstractedMember;
       }
       //commands
-      context.commands =
-        await HandlerContext.loadCommandConfig(commandsConfigPath);
+      context.skills = await HandlerContext.loadCommandConfig(skillsConfigPath);
 
       context.getMessageById =
         client.conversations?.getMessageById?.bind(client.conversations) ||
@@ -135,12 +134,16 @@ export default class HandlerContext {
           : message.content;
 
       if (message.contentType.sameAs(ContentTypeText)) {
-        const extractedValues = parseCommand(content.content, context.commands);
+        const extractedValues = extractCommandValues(
+          content.content,
+          context.skills,
+        );
         if (extractedValues) {
           content = {
             ...content,
             ...extractedValues,
           };
+          console.log("content", content);
         }
       } else if (message.contentType.sameAs(ContentTypeReply)) {
         content = {
@@ -316,12 +319,12 @@ export default class HandlerContext {
   }
 
   async skill(text: string, conversation?: Conversation) {
-    const { commands } = this;
+    const { skills } = this;
     if (process.env.MSG_LOG) console.log("skill", text);
     if (conversation) this.refConv = conversation;
     try {
-      let handler = await this.findHandler(text, commands ?? []);
-      const extractedValues = parseCommand(text, commands ?? []);
+      let handler = await this.findHandler(text, skills ?? []);
+      const extractedValues = extractCommandValues(text, skills ?? []);
       if ((text.startsWith("/") || text.startsWith("@")) && !extractedValues) {
         console.warn("Command not valid", text);
       } else if (handler) {
@@ -346,7 +349,7 @@ export default class HandlerContext {
         };
 
         this.refConv = null;
-        return await handler.commands[0].handler?.(mockContext);
+        return await handler.skills[0].handler?.(mockContext);
       } else if (text.startsWith("/") || text.startsWith("@")) {
         console.warn("Command not valid", text);
       } else return this.send(text);
@@ -356,13 +359,13 @@ export default class HandlerContext {
       this.refConv = null;
     }
   }
-  findHandler(text: string, commands: AgentSkill[]): AgentSkill | undefined {
+  findHandler(text: string, skills: SkillGroup[]): SkillGroup | undefined {
     const trigger = text?.split(" ")[0].toLowerCase();
-    for (const AgentSkill of commands) {
-      const handler = AgentSkill.commands.find((command) => {
-        return command?.triggers?.includes(trigger);
+    for (const skillGroup of skills) {
+      const handler = skillGroup.skills.find((skill) => {
+        return skill?.triggers?.includes(trigger);
       });
-      if (handler) return { ...AgentSkill, commands: [handler] };
+      if (handler) return { ...skillGroup, skills: [handler] };
     }
 
     return undefined;

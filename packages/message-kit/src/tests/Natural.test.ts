@@ -1,6 +1,6 @@
 import "dotenv/config";
-import { textGeneration } from "./openai";
-import { commands } from "./Commands_test";
+import { textGeneration } from "./lib/openai";
+import { skills } from "./Test_skills";
 import { AbstractedMember } from "../helpers/types";
 
 describe("Skill tests", () => {
@@ -20,7 +20,7 @@ describe("Skill tests", () => {
   #### Users
    ${JSON.stringify(fakeUsers)}\n 
   #### Commands
-  ${JSON.stringify(commands)}\n
+  ${JSON.stringify(skills)}\n
   The message was sent by @${sender?.address}
   
   ### Examples
@@ -37,6 +37,7 @@ describe("Skill tests", () => {
   `;
   test("should handle game skill correctly", async () => {
     const { reply } = await textGeneration(
+      sender.address,
       "/agent lets play a game",
       systemPrompt,
     );

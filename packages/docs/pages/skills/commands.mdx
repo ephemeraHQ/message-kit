@@ -7,7 +7,7 @@ Each app can have a `skills.ts` file that contains the commands that the app can
 First think of which command you want the app to respond to. For example:
 
 ```bash [cmd]
-/send [amount] [token] [@username]
+/send [amount] [token] [username]
 ```
 
 **Properties**
@@ -38,7 +38,7 @@ export const commands: AgentSkill[] = [
     description: "Multipurpose transaction frame built onbase.",
     commands: [
       {
-        command: "/send [amount] [token] [@username]",
+        command: "/send [amount] [token] [username]",
         triggers: ["@send", "/send"],
         description:
           "Send a specified amount of a cryptocurrency to a destination address.",

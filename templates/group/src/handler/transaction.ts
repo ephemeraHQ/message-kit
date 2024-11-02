@@ -7,7 +7,6 @@ export async function handler(context: HandlerContext) {
     message: {
       content: { command, params },
     },
-    sender,
   } = context;
   const baseUrl = "https://base-tx-frame.vercel.app/transaction";
 
@@ -16,7 +15,6 @@ export async function handler(context: HandlerContext) {
       // Destructure and validate parameters for the send command
       const { amount: amountSend, token: tokenSend, username } = params; // [!code hl] // [!code focus]
       let senderInfo = await getUserInfo(username);
-      console.log("Sender info", amountSend, tokenSend, senderInfo);
       if (!amountSend || !tokenSend || !senderInfo) {
         context.reply(
           "Missing required parameters. Please provide amount, token, and username.",
@@ -25,7 +23,7 @@ export async function handler(context: HandlerContext) {
       }
       let name = senderInfo.converseUsername || senderInfo.address;
 
-      let sendUrl = `${baseUrl}/transaction/?transaction_type=send&buttonName=${name}&amount=${amountSend}&token=${tokenSend}&receiver=${senderInfo.address}`;
+      let sendUrl = `${baseUrl}/?transaction_type=send&amount=${amountSend}&token=${tokenSend}&receiver=${senderInfo.address}`;
       context.send(`${sendUrl}`);
       break;
     case "swap":
@@ -39,7 +37,7 @@ export async function handler(context: HandlerContext) {
         return;
       }
 
-      let swapUrl = `${baseUrl}/transaction/?transaction_type=swap&token_from=${token_from}&token_to=${token_to}&amount=${amount}`;
+      let swapUrl = `${baseUrl}/?transaction_type=swap&token_from=${token_from}&token_to=${token_to}&amount=${amount}`;
       context.send(`${swapUrl}`);
       break;
     case "show": // [!code hl] // [!code focus]
