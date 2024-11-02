@@ -42,7 +42,14 @@ export type Config = {
 };
 export interface SkillParamConfig {
   default?: string | number | boolean;
-  type: "number" | "string" | "username" | "quoted" | "address" | "prompt";
+  type:
+    | "number"
+    | "string"
+    | "username"
+    | "quoted"
+    | "address"
+    | "prompt"
+    | "url";
   plural?: boolean;
   values?: string[]; // Accepted values for the parameter
 }

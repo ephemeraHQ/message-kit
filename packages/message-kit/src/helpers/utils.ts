@@ -76,6 +76,15 @@ export function extractCommandValues(
           usedIndices.add(quotedIndex);
           valueFound = true;
         }
+      } else if (type === "url") {
+        const urlIndex = parts.findIndex(
+          (part, idx) => /^https?:\/\//.test(part) && !usedIndices.has(idx),
+        );
+        if (urlIndex !== -1) {
+          values.params[param] = parts[urlIndex];
+          usedIndices.add(urlIndex);
+          valueFound = true;
+        }
       } else if (type === "prompt") {
         values.params[param] = parts.slice(1).join(" ");
         valueFound = true;
