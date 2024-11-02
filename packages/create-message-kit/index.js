@@ -2,7 +2,7 @@
 import { program } from "commander";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { intro, log, outro, text, select } from "@clack/prompts";
+import { log, outro, text, select } from "@clack/prompts";
 import { default as fs } from "fs-extra";
 import { isCancel } from "@clack/prompts";
 import pc from "picocolors";
@@ -14,21 +14,25 @@ const packageJson = JSON.parse(
   fs.readFileSync(resolve(__dirname, "package.json"), "utf8"),
 );
 const version = packageJson.version;
-
+const pckMessageKitLib = JSON.parse(
+  fs.readFileSync(resolve(__dirname, "../message-kit/package.json"), "utf8"),
+);
+const versionMessageKitLib = pckMessageKitLib.version;
 program
   .name("byob")
   .description("CLI to initialize projects")
   .action(async () => {
-    const coolLogo = `\x1b[38;2;250;105;119m\
-    
-    ███╗   ███╗███████╗███████╗███████╗ █████╗  ██████╗ ███████╗██╗  ██╗██╗████████╗
-    ████╗ ████║██╔════╝██╔════╝██╔════╝██╔══██╗██╔════╝ ██╔════╝██║ ██╔╝██║╚══██╔══╝
-    ██╔████╔██║█████╗  ███████╗███████╗███████║██║  ███╗█████╗  █████╔╝ ██║   ██║   
-    ██║╚██╔╝██║██╔══╝  ╚════██║╚════██║██╔══██║██║   ██║██╔══╝  ██╔═██╗ ██║   ██║   
-    ██║ ╚═╝ ██║███████╗███████║███████║██║  ██║╚██████╔╝███████╗██║  ██╗██║   ██║   
-    ╚═╝     ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝╚═╝   ╚═╝   
-    Powered by XMTP \x1b[0m`;
-    console.log(coolLogo);
+    log.info(pc.cyan(`Welcome to MessageKit v${versionMessageKitLib}!`));
+    const coolLogo = `
+███╗   ███╗███████╗███████╗███████╗ █████╗  ██████╗ ███████╗██╗  ██╗██╗████████╗
+████╗ ████║██╔════╝██╔════╝██╔════╝██╔══██╗██╔════╝ ██╔════╝██║ ██╔╝██║╚══██╔══╝
+██╔████╔██║█████╗  ███████╗███████╗███████║██║  ███╗█████╗  █████╔╝ ██║   ██║   
+██║╚██╔╝██║██╔══╝  ╚════██║╚════██║██╔══██║██║   ██║██╔══╝  ██╔═██╗ ██║   ██║   
+██║ ╚═╝ ██║███████╗███████║███████║██║  ██║╚██████╔╝███████╗██║  ██╗██║   ██║   
+╚═╝     ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝╚═╝   ╚═╝   
+Powered by XMTP`;
+
+    log.info(pc.red(coolLogo));
 
     const { templateType, displayName, destDir } = await gatherProjectInfo();
 
