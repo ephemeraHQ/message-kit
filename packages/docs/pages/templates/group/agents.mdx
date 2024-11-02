@@ -64,8 +64,8 @@ export async function handler(context: HandlerContext) {
     console.log("userPrompt", userPrompt);
 
     const { reply } = await textGeneration(userPrompt, systemPrompt);
-    console.log("intent:", reply);
-    context.intent(reply);
+    console.log("skill:", reply);
+    context.skill(reply);
   } catch (error) {
     console.error("Error during OpenAI call:", error);
     await context.reply("An error occurred while processing your request.");

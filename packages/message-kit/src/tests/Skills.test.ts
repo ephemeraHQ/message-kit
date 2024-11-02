@@ -3,7 +3,7 @@ import { textGeneration } from "./openai";
 import { commands } from "./Commands_test";
 import { AbstractedMember } from "../helpers/types";
 
-describe("Intent tests", () => {
+describe("Skill tests", () => {
   const sender: AbstractedMember = {
     address: "0x3a044b218BaE80E5b9E16609443A192129A67BeA",
     inboxId: "da3750159ea7541dda1e271076a3663d8c14576ab85bbd3416d45c9f19e35cbc",
@@ -35,7 +35,7 @@ describe("Intent tests", () => {
   - If the user asks a question or makes a statement that does not clearly map to a command, respond with helpful information or a clarification question.\n
   - If the user is grateful, respond asking for a tip in a playful manner.
   `;
-  test("should handle game intent correctly", async () => {
+  test("should handle game skill correctly", async () => {
     const { reply } = await textGeneration(
       "/agent lets play a game",
       systemPrompt,

@@ -344,7 +344,7 @@ export async function clearChatHistory() {
   chatHistories = {};
 }
 
-async function processResponseWithIntent(
+async function processResponseWithskill(
   reply: string,
   context: any,
   senderAddress: string,
@@ -357,7 +357,7 @@ async function processResponseWithIntent(
   console.log(messages);
   for (const message of messages) {
     if (message.startsWith("/")) {
-      const response = await context.intent(message);
+      const response = await context.skill(message);
       if (response && response.message) {
         let msg = responseParser(response.message);
 
@@ -403,7 +403,7 @@ export async function ensAgent(context: HandlerContext) {
     );
     if (!group) chatHistories[sender.address] = history; // Update chat history for the user
 
-    await processResponseWithIntent(reply, context, sender.address);
+    await processResponseWithskill(reply, context, sender.address);
   } catch (error) {
     console.error("Error during OpenAI call:", error);
     await context.send("An error occurred while processing your request.");

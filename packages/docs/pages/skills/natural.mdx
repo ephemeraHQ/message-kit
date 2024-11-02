@@ -31,12 +31,12 @@ The AI model will return this command:
 /swap 1 usdc eth
 ```
 
-And then the bot using `intent` will execute the command. Internally MessageKit will execute the handler `handleSwap` for the command as defined in the commands file seen before.
+And then the bot using `skill` will execute the command. Internally MessageKit will execute the handler `handleSwap` for the command as defined in the commands file seen before.
 
 ```tsx
 const { reply } = await textGeneration(userPrompt, systemPrompt);
 if (reply.startsWith("/")) {
   // Execute the command if it's a slash command
-  await context.intent(reply);
+  await context.skill(reply);
 }
 ```

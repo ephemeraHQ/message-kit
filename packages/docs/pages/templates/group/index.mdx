@@ -30,7 +30,7 @@ group/
 ```
 
 ::::note[Commands]
-To declare these commands you need to add them first. Learn more about commands [here](/intent/commands).
+To declare these commands you need to add them first. Learn more about commands [here](/skills/commands).
 :::details[Snippet]
 
 ```tsx [src/skills.ts]
@@ -236,7 +236,7 @@ async function handleReply(context: HandlerContext) {
     version,
     v2client.address,
   );
-  //await context.intent(chain);
+  //await context.skill(chain);
 }
 
 // Handle attachment messages

@@ -315,9 +315,9 @@ export default class HandlerContext {
     }
   }
 
-  async intent(text: string, conversation?: Conversation) {
+  async skill(text: string, conversation?: Conversation) {
     const { commands } = this;
-    if (process.env.MSG_LOG) console.log("intent", text);
+    if (process.env.MSG_LOG) console.log("skill", text);
     if (conversation) this.refConv = conversation;
     try {
       let handler = await this.findHandler(text, commands ?? []);
@@ -336,7 +336,7 @@ export default class HandlerContext {
               ...extractedValues,
             },
           },
-          intent: this.intent.bind(this),
+          skill: this.skill.bind(this),
           reply: this.reply.bind(this),
           send: this.send.bind(this),
           sendTo: this.sendTo.bind(this),

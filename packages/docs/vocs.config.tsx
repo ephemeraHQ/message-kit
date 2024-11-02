@@ -85,6 +85,7 @@ export default defineConfig({
       link: "https://converse.xyz",
     },
     { text: "XMTP Docs", link: "https://docs.xmtp.org/" },
+    { text: "Changelog", link: "/changelog" },
   ],
   editLink: {
     pattern:
@@ -122,7 +123,7 @@ export default defineConfig({
           link: "/concepts/structure",
         },
         {
-          text: "Receive messages",
+          text: "Messages",
           link: "/concepts/messages",
           items: [
             { text: "Text", link: "/concepts/messages/text" },
@@ -132,28 +133,28 @@ export default defineConfig({
           ],
         },
         {
-          text: "Intent",
-          link: "/intent",
+          text: "Skills",
+          link: "/skills",
           items: [
             {
               text: "Commands",
-              link: "/intent/commands",
+              link: "/skills/commands",
             },
             {
               text: "Natural Language",
-              link: "/intent/natural",
+              link: "/skills/natural",
             },
             {
               text: "Reasoning",
-              link: "/intent/reasoning",
+              link: "/skills/reasoning",
             },
             {
               text: "Memory",
-              link: "/intent/memory",
+              link: "/skills/memory",
             },
             {
               text: "Multi Agent",
-              link: "/intent/multi-agent",
+              link: "/skills/multi-agent",
             },
           ],
         },
@@ -278,10 +279,6 @@ export default defineConfig({
           ],
         },
       ],
-    },
-    {
-      text: "Changelog",
-      link: "/changelog",
     },
   ],
 });

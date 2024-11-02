@@ -1,7 +1,7 @@
 import { HandlerContext } from "@xmtp/message-kit";
 import { getUserInfo, clearInfoCache, isOnXMTP } from "../lib/resolver.js";
 import { textGeneration } from "../lib/openai.js";
-import { processResponseWithIntent } from "../lib/openai.js";
+import { processResponseWithSkill } from "../lib/openai.js";
 import { isAddress } from "viem";
 import { ens_agent_prompt } from "../prompt.js";
 import { frameUrl, ensUrl, baseTxUrl } from "../index.js";
@@ -109,7 +109,7 @@ export async function handleEns(context: HandlerContext) {
       };
     } else {
       let message = `Looks like ${domain} is already registered!`;
-      await context.intent("/cool " + domain);
+      await context.skill("/cool " + domain);
       return {
         code: 404,
         message,
@@ -172,7 +172,7 @@ export async function ensAgent(context: HandlerContext) {
       await ens_agent_prompt(sender.address, ensDomain, converseUsername),
       group !== undefined,
     );
-    await processResponseWithIntent(sender.address, reply, context);
+    await processResponseWithskill(sender.address, reply, context);
   } catch (error) {
     console.error("Error during OpenAI call:", error);
     await context.send("An error occurred while processing your request.");

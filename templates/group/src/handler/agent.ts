@@ -9,6 +9,7 @@ export async function handler(context: HandlerContext) {
 
   const {
     message: {
+      sender,
       content: { content, params },
     },
   } = context;
@@ -17,8 +18,12 @@ export async function handler(context: HandlerContext) {
   try {
     let userPrompt = params?.prompt ?? content;
 
-    const { reply } = await textGeneration(userPrompt, systemPrompt);
-    context.intent(reply);
+    const { reply } = await textGeneration(
+      sender.address,
+      userPrompt,
+      systemPrompt,
+    );
+    context.skill(reply);
   } catch (error) {
     console.error("Error during OpenAI call:", error);
     await context.reply("An error occurred while processing your request.");

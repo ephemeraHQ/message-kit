@@ -36,7 +36,7 @@ async function handleReply(context: HandlerContext) {
     version,
     v2client.address,
   );
-  //await context.intent(chain);
+  //await context.skill(chain);
 }
 
 // Handle attachment messages

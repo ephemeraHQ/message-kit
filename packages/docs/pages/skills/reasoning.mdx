@@ -36,7 +36,7 @@ We already have the commands defined:
 }
 ```
 
-Once the user types the agent will interpret the intent and create a command if needed.
+Once the user types the agent will interpret the skill and create a command if needed.
 
 ```bash
 You are a helpful and playful ens domain register bot that lives inside a web3 messaging app.
@@ -88,7 +88,7 @@ The agent now has 2 messages to reply to the user and a response to the command 
 for (const message of messages) {
   if (message.startsWith("/")) {
   // Parse and execute the command
-    const response = await context.intent(message);
+    const response = await context.skill(message);
     await context.send((response as ApiResponse)?.message);
   } else {
     // Send the message as a text response

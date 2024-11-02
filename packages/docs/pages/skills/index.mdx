@@ -1,0 +1,35 @@
+# Skills
+
+MessageKit **Skills** allows bots to interpret and execute commands internally, giving them the ability to process user requests in a conversational manner.
+
+## Handle skills
+
+To parse a string and execute a command handler, you can use the following method. When using responses from LLMs, you may want to execute the skill of the generated commands. This method will parse commands or send chained messages if they are in an array.
+
+```jsx
+//Sepcifify the command
+const { message } = await context.skill("/send 10 usdc to @alix", conv);
+context.send(message);
+```
+
+### Commands
+
+_See more details in the [commands](/skills/commands) section._
+
+- To learn more about how to handle commands, go to the [commands](/concepts/messages/command) section.
+
+### Natural language
+
+_See more details in the [natural language](/skills/natural) section._
+
+### Reasoning
+
+_See more details in the [reasoning](/skills/reasoning) section._
+
+### Memory
+
+_See more details in the [memory](/skills/memory) section._
+
+### Multi agent
+
+_See more details in the [multi agent](/skills/multi-agent) section._

@@ -83,7 +83,7 @@ export async function vision(imageData: Uint8Array, systemPrompt: string) {
   }
 }
 
-export async function processResponseWithIntent(
+export async function processResponseWithskill(
   address: string,
   reply: string,
   context: any,
@@ -96,7 +96,7 @@ export async function processResponseWithIntent(
   console.log(messages);
   for (const message of messages) {
     if (message.startsWith("/")) {
-      const response = await context.intent(message);
+      const response = await context.skill(message);
       if (response && response.message) {
         let msg = responseParser(response.message);
 
