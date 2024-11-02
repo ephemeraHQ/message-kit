@@ -88,6 +88,7 @@ export const getUserInfo = async (
     console.log("Getting info cache", data);
     return data;
   }
+  //jeje
 
   if (keyToUse?.includes(".eth")) {
     const response = await fetch(`https://ensdata.net/${keyToUse}`);
