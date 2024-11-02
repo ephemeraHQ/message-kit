@@ -70,9 +70,12 @@ export default class HandlerContext {
       const module = await import(resolvedPath);
       commands = module?.commands ?? [];
     } catch (error) {
-      console.error(error);
+      /*if (process.env.MSG_LOG === "true")
+        console.error(
+          `Error loading command config from ${resolvedPath}:`,
+          error,
+        );*/
     }
-
     return commands;
   }
   static async create(
@@ -139,7 +142,6 @@ export default class HandlerContext {
             ...extractedValues,
           };
         }
-        //console.log("extractedValues2", content);
       } else if (message.contentType.sameAs(ContentTypeReply)) {
         content = {
           ...content,
@@ -320,7 +322,6 @@ export default class HandlerContext {
     try {
       let handler = await this.findHandler(text, commands ?? []);
       const extractedValues = parseCommand(text, commands ?? []);
-      //console.log("extractedValues", extractedValues);
       if ((text.startsWith("/") || text.startsWith("@")) && !extractedValues) {
         console.warn("Command not valid", text);
       } else if (handler) {

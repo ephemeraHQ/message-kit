@@ -15,21 +15,18 @@ export async function handler(context: HandlerContext) {
     case "send":
       // Destructure and validate parameters for the send command
       const { amount: amountSend, token: tokenSend, username } = params; // [!code hl] // [!code focus]
-      let senderInfo = await getUserInfo(username[0]);
-
+      let senderInfo = await getUserInfo(username);
+      console.log("Sender info", amountSend, tokenSend, senderInfo);
       if (!amountSend || !tokenSend || !senderInfo) {
         context.reply(
           "Missing required parameters. Please provide amount, token, and username.",
         );
         return;
       }
-      // Generate URL for the send transaction
-      let url_send = generateFrameURL(baseUrl, "send", {
-        amount: amountSend,
-        token: tokenSend,
-        receiver: senderInfo.address,
-      });
-      context.reply(`${url_send}`);
+      let name = senderInfo.converseUsername || senderInfo.address;
+
+      let sendUrl = `${baseUrl}/transaction/?transaction_type=send&buttonName=${name}&amount=${amountSend}&token=${tokenSend}&receiver=${senderInfo.address}`;
+      context.send(`${sendUrl}`);
       break;
     case "swap":
       // Destructure and validate parameters for the swap command
@@ -41,13 +38,9 @@ export async function handler(context: HandlerContext) {
         );
         return;
       }
-      // Generate URL for the swap transaction
-      let url_swap = generateFrameURL(baseUrl, "swap", {
-        amount,
-        token_from,
-        token_to,
-      });
-      context.reply(`${url_swap}`);
+
+      let swapUrl = `${baseUrl}/transaction/?transaction_type=swap&token_from=${token_from}&token_to=${token_to}&amount=${amount}`;
+      context.send(`${swapUrl}`);
       break;
     case "show": // [!code hl] // [!code focus]
       // Show the base URL without the transaction path
@@ -57,27 +50,4 @@ export async function handler(context: HandlerContext) {
       // Handle unknown commands
       context.reply("Unknown command. Use help to see all available commands.");
   }
-}
-
-// Function to generate a URL with query parameters for transactions
-function generateFrameURL(
-  baseUrl: string,
-  transaction_type: string,
-  params: { [key: string]: string | number | string[] | undefined },
-) {
-  // Filter out undefined parameters
-  let filteredParams: {
-    [key: string]: string | number | string[] | undefined;
-  } = {};
-
-  for (const key in params) {
-    if (params[key] !== undefined) {
-      filteredParams[key] = params[key];
-    }
-  }
-  let queryParams = new URLSearchParams({
-    transaction_type,
-    ...filteredParams,
-  }).toString();
-  return `${baseUrl}?${queryParams}`;
 }

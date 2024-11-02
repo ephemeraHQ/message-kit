@@ -6,15 +6,8 @@ export async function handler(context: HandlerContext, fake?: boolean) {
   const {
     members,
     group,
-    getMessageById,
-    message: {
-      content,
-      content: { command },
-      sender,
-      typeId,
-    },
+    message: { sender, typeId, content },
   } = context;
-  console.log(command);
   if (typeId === "text" && group) {
     const { command } = content;
     if (command === "points") {

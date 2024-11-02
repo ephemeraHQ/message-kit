@@ -88,9 +88,6 @@ export async function processResponseWithIntent(
   reply: string,
   context: any,
 ) {
-  if (process.env.MSG_LOG === "true") {
-    console.log(reply);
-  }
   let messages = reply
     .split("\n")
     .map((message: string) => responseParser(message))

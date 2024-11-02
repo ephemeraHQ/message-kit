@@ -3,10 +3,9 @@ import { isAddress } from "viem";
 
 export const converseEndpointURL =
   "https://converse-website-git-endpoit-ephemerahq.vercel.app";
+//export const converseEndpointURL = "http://localhost:3000";
 
-export type InfoCache = {
-  [key: string]: { info: EnsData };
-};
+export type InfoCache = Map<string, UserInfo>;
 export type ConverseProfile = {
   address: string | null;
   onXmtp: boolean;
@@ -18,7 +17,7 @@ export type UserInfo = {
   ensDomain?: string | undefined;
   address?: string | undefined;
   converseUsername?: string | undefined;
-  info?: EnsData | undefined;
+  ensInfo?: EnsData | undefined;
   avatar?: string | undefined;
 };
 export interface EnsData {
@@ -40,24 +39,25 @@ export interface EnsData {
   };
 }
 
-let infoCache: InfoCache = {};
+let infoCache: InfoCache = new Map();
 
 export const clearInfoCache = () => {
-  infoCache = {};
+  infoCache.clear();
 };
 export const getUserInfo = async (
   key: string,
   clientAddress?: string,
 ): Promise<UserInfo | null> => {
-  let data: UserInfo = {
+  let data: UserInfo = infoCache.get(key) || {
     ensDomain: undefined,
     address: undefined,
     converseUsername: undefined,
-    info: undefined,
+    ensInfo: undefined,
   };
-  if (clientAddress) {
+  console.log("Getting user info", key, clientAddress);
+  if (isAddress(clientAddress || "")) {
     data.address = clientAddress;
-  } else if (isAddress(key)) {
+  } else if (isAddress(key || "")) {
     data.address = key;
   } else if (key.includes(".eth")) {
     data.ensDomain = key;
@@ -71,59 +71,48 @@ export const getUserInfo = async (
   } else if (key == "@bo") {
     data.address = "0xbc3246461ab5e1682baE48fa95172CDf0689201a";
     data.converseUsername = "bo";
-  } else if (key?.startsWith("@")) {
-    data.converseUsername = key.replace("@", "");
   } else {
-    return null;
+    data.converseUsername = key;
   }
+
   let keyToUse = data.address || data.ensDomain || data.converseUsername;
-  if (
-    infoCache[keyToUse as string] &&
-    Object.keys(infoCache[keyToUse as string]).length > 0
-  ) {
-    data = {
-      ensDomain: keyToUse,
-      address: data.address,
-      converseUsername: data.converseUsername,
-      info: infoCache[keyToUse as string]?.info || undefined,
-    };
-    console.log("Getting info cache", data);
-    return data;
+  let cacheData = keyToUse && infoCache.get(keyToUse);
+  if (cacheData) {
+    console.log("Getting user info", keyToUse, cacheData);
+    return cacheData;
+  } else {
+    console.log("Getting user info", keyToUse, data);
   }
 
   if (keyToUse?.includes(".eth")) {
     const response = await fetch(`https://ensdata.net/${keyToUse}`);
     const ensData: EnsData = (await response.json()) as EnsData;
-    data.ensDomain = ensData?.ens;
-    data.address = ensData?.address;
-    if (data.ensDomain) infoCache[data.ensDomain as string] = { info: data };
-    if (data.address) infoCache[data.address as string] = { info: data };
-  } else if (data.converseUsername || data.address) {
-    const response = await fetch(
-      `${converseEndpointURL}/profile/${data.converseUsername || data.address}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({ address: data.address }),
+    console.log("Ens data", ensData);
+    if (ensData) {
+      data.ensInfo = ensData;
+      data.ensDomain = ensData?.ens;
+      data.address = ensData?.address;
+    }
+  } else if (keyToUse) {
+    keyToUse = keyToUse.replace("@", "");
+    const response = await fetch(`${converseEndpointURL}/profile/${keyToUse}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
       },
-    );
+      body: JSON.stringify({
+        peer: keyToUse,
+      }),
+    });
     const converseData = (await response.json()) as ConverseProfile;
-    console.log("Converse data", converseData);
+    console.log("Converse data", keyToUse, converseData);
     data.converseUsername =
       converseData?.formattedName || converseData?.name || undefined;
     data.address = converseData?.address || undefined;
     data.avatar = converseData?.avatar || undefined;
   }
-  data = {
-    ensDomain: data.ensDomain || undefined,
-    address: data.address || undefined,
-    converseUsername: data.converseUsername || undefined,
-    info: infoCache[keyToUse as string]?.info || undefined,
-  };
-  console.log("User info", data);
+  if (data.address) infoCache.set(data.address, data);
   return data;
 };
 export const isOnXMTP = async (

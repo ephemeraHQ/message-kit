@@ -14,13 +14,10 @@ export async function handler(context: HandlerContext) {
   } = context;
 
   const systemPrompt = generateSystemPrompt(context);
-  console.log("systemPrompt", systemPrompt);
   try {
     let userPrompt = params?.prompt ?? content;
-    console.log("userPrompt", userPrompt);
 
     const { reply } = await textGeneration(userPrompt, systemPrompt);
-    console.log("intent:", reply);
     context.intent(reply);
   } catch (error) {
     console.error("Error during OpenAI call:", error);

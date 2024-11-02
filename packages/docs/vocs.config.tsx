@@ -2,7 +2,6 @@ import { defineConfig } from "vocs";
 
 export default defineConfig({
   head: () => {
-    // console.log(`Generating head content... ${new Date().toISOString()}`)
     return (
       <>
         <meta charSet="utf-8" />

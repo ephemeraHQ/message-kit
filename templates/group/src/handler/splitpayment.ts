@@ -17,7 +17,10 @@ export async function handler(context: HandlerContext) {
     },
   } = context;
 
-  let senderInfo = await getUserInfo(sender.address, sender.address);
+  if (!members) {
+    return;
+  }
+  let senderInfo = await getUserInfo(sender.address);
   if (attachment && typeId === "remoteStaticAttachment") {
     const { data } = attachment;
     const response = await vision(
@@ -33,11 +36,6 @@ export async function handler(context: HandlerContext) {
     }
     if (response) {
       const prompt = `You a split wise agent that splits the bill between the members of this group except for the sender and bot.\n
-      These are the users of the group: 
-      ${JSON.stringify(members?.map((member) => ({ ...member, username: `@${member.address}` })))}\n 
-      This group app has many commands available: 
-      ${JSON.stringify(commands)}\n
-      
 
       ## Instructions:
       When you receive the totals you should split the bill between the members of the group and send to each one a transaction frame

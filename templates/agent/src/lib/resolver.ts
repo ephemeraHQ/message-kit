@@ -66,7 +66,6 @@ export const getUserInfo = async (key: string): Promise<UserInfo | null> => {
       converseUsername: converseUsername,
       info: infoCache[keyToUse as string].info,
     };
-    console.log(data);
     return data;
   }
 
@@ -97,7 +96,6 @@ export const getUserInfo = async (key: string): Promise<UserInfo | null> => {
     converseUsername: converseUsername || "",
     info: infoCache[keyToUse as string]?.info || {},
   };
-  console.log(data);
   return data;
 };
 export const isOnXMTP = async (

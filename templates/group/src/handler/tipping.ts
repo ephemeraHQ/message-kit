@@ -33,15 +33,25 @@ export async function handler(context: HandlerContext) {
         params: { amount: extractedAmount, username },
       } = content;
       amount = extractedAmount || 10; // Default amount if not specified
-      receivers = await Promise.all(
-        username.map((username: string) => getUserInfo(username)),
-      ); // Extract receiver from parameters
+
+      receivers = Array.isArray(username)
+        ? (
+            await Promise.all(
+              username.map((username: string) => getUserInfo(username)),
+            )
+          ).filter(
+            (userInfo): userInfo is AbstractedMember => userInfo !== null,
+          )
+        : [await getUserInfo(username)].filter(
+            (userInfo): userInfo is AbstractedMember => userInfo !== null,
+          );
     }
   }
   if (!sender || receivers.length === 0 || amount === 0) {
     context.reply("Sender or receiver or amount not found.");
     return;
   }
+  console.log(receivers);
   const receiverAddresses = receivers.map((receiver) => receiver.address);
   // Process sending tokens to each receiver
 
