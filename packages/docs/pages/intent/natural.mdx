@@ -1,0 +1,42 @@
+## Natural language
+
+Bots can also understand natural language prompts, allowing users to interact with the bot more conversationally. The bot translates the user's natural language input into a command and executes it.
+
+### Example:
+
+A user types:
+
+```bash
+@swap 1 usdc to eth please
+```
+
+The message will trigger an AI text generation model to convert the natural language to a command.
+
+```bash
+You are a helpful and playful betting bot that lives inside a web3 messaging group.
+
+Users can start a swap by tagging you in a prompt like "@swap 1 eth to usdc"
+
+You then have an internal command to create a swap: "/swap [amount] [token_from] [token_to]"
+
+Format examples:
+/swap 1 eth usdc
+/swap 100 dai usdc
+/swap 0.1 eth usdt
+```
+
+The AI model will return this command:
+
+```bash
+/swap 1 usdc eth
+```
+
+And then the bot using `intent` will execute the command. Internally MessageKit will execute the handler `handleSwap` for the command as defined in the commands file seen before.
+
+```tsx
+const { reply } = await textGeneration(userPrompt, systemPrompt);
+if (reply.startsWith("/")) {
+  // Execute the command if it's a slash command
+  await context.intent(reply);
+}
+```

@@ -112,6 +112,58 @@ export default defineConfig({
       text: "Guidelines",
       link: "/guidelines",
     },
+
+    {
+      text: "Concepts",
+      collapsed: false,
+      items: [
+        {
+          text: "Structure",
+          link: "/concepts/structure",
+        },
+        {
+          text: "Receive messages",
+          link: "/concepts/messages",
+          items: [
+            { text: "Text", link: "/concepts/messages/text" },
+            { text: "Reply", link: "/concepts/messages/reply" },
+            { text: "Command", link: "/concepts/messages/command" },
+            { text: "Attachment", link: "/concepts/messages/attachment" },
+          ],
+        },
+        {
+          text: "Intent",
+          link: "/intent",
+          items: [
+            {
+              text: "Commands",
+              link: "/intent/commands",
+            },
+            {
+              text: "Natural Language",
+              link: "/intent/natural",
+            },
+            {
+              text: "Reasoning",
+              link: "/intent/reasoning",
+            },
+            {
+              text: "Memory",
+              link: "/intent/memory",
+            },
+            {
+              text: "Multi Agent",
+              link: "/intent/multi-agent",
+            },
+          ],
+        },
+        {
+          text: "Groups",
+          link: "/concepts/groups",
+        },
+      ],
+    },
+
     {
       text: "Templates",
       items: [
@@ -152,38 +204,6 @@ export default defineConfig({
               link: "/templates/group/loyalty",
             },
           ],
-        },
-      ],
-    },
-    {
-      text: "Concepts",
-      collapsed: false,
-      items: [
-        {
-          text: "Structure",
-          link: "/concepts/structure",
-        },
-        {
-          text: "Messages",
-          link: "/concepts/messages",
-          items: [
-            { text: "Text", link: "/concepts/messages/text" },
-            { text: "Reply", link: "/concepts/messages/reply" },
-            { text: "Command", link: "/concepts/messages/command" },
-            { text: "Attachment", link: "/concepts/messages/attachment" },
-          ],
-        },
-        {
-          text: "Commands",
-          link: "/concepts/commands",
-        },
-        {
-          text: "Intent",
-          link: "/concepts/intent",
-        },
-        {
-          text: "Groups",
-          link: "/concepts/groups",
         },
       ],
     },
@@ -258,6 +278,10 @@ export default defineConfig({
           ],
         },
       ],
+    },
+    {
+      text: "Changelog",
+      link: "/changelog",
     },
   ],
 });

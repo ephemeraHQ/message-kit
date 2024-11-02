@@ -2,10 +2,6 @@
 
 Each app can have a `skills.ts` file that contains the commands that the app can execute. The commands are defined as an array of objects with the following keys:
 
-## Receive a command
-
-_See more details in the [receive commands](/concepts/messages/command) section._
-
 ## Declare a command
 
 First think of which command you want the app to respond to. For example:
@@ -97,17 +93,75 @@ export const commands: AgentSkill[] = [
 ];
 ```
 
-## Handle intent
+### Example:
 
-To parse a string and execute a command handler, you can use the following method. When using responses from LLMs, you may want to execute the intent of the generated commands. This method will parse commands or send chained messages if they are in an array.
+A user wants to swap tokens:
 
-```jsx
-//Sepcifify the conversation
-context.intent("/send 10 usdc to @alix", conv);
-// open ai call
-const { reply } = await textGeneration(response, prompt);
-//Process the intent or an array of intents
-context.intent(reply);
+```bash
+/swap 1 eth usdc
 ```
 
-Learn more about [intent](/concepts/intent).
+MessageKit directly processes the parameters from the command and handles the parameters to return a Frame URL.
+
+### Declaring commands
+
+```tsx
+import { HandlerContext } from "@xmtp/message-kit";
+import { handleSwap } from "./handler/swap.js";
+
+export const commands: AgentSkill[] = [
+  {
+    name: "Swap Bot",
+    description: "Swap bot for base.",
+    commands: [
+      {
+        command: "/swap [amount] [token_from] [token_to]",
+        handler: handleSwap,
+        triggers: ["/swap", "@swap", "@swapbot"],
+        description: "Exchange one cryptocurrency for another.",
+        params: {
+          amount: { type: "number", default: 1 },
+          token_from: { type: "string", values: ["eth", "usdc", "dai"] },
+          token_to: { type: "string", values: ["eth", "usdc", "dai"] },
+        },
+      },
+    ],
+  },
+];
+```
+
+### Handling command responses
+
+MessageKit will automatically handle the command parameters allowing you to focus on handling the command logic.
+
+```tsx
+import { HandlerContext } from "@xmtp/message-kit";
+
+export async function handleSwap(context: HandlerContext) {
+  const {
+    message: {
+      content: { command, params }, // [!code hl] // [!code focus]
+    },
+  } = context;
+  const baseUrl = "https://{url}";
+
+  if (command === "swap") {
+    const { amount, token_from, token_to } = params; // [!code hl] // [!code focus]
+
+    if (!amount || !token_from || !token_to) {
+      context.reply(
+        "Missing required parameters. Please provide amount, token_from, and token_to.",
+      );
+      return;
+    }
+    // Generate URL for the swap transaction
+    context.reply(`${url_swap}`);
+  }
+}
+```
+
+The bot will reply with the URL to the swap transaction.
+
+```bash
+{baseUrl}/swap?amount=1&token_from=eth&token_to=usdc
+```

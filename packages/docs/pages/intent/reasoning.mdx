@@ -1,0 +1,98 @@
+## Reasoning (Multiple Commands)
+
+Bots can manage multiple commands or steps in a sequence and wait for the user response at each step, enabling them to process more complex user requests.
+
+### Example:
+
+A user interacts with the ENS bot:
+
+```bash
+lets register fabriethsf.eth
+```
+
+We already have the commands defined:
+
+```tsx
+{
+  name: "ENS Bot",
+  commands: [
+    {
+      command: "/check [domain]",
+      handler: handleEns,
+      description: "Check if a domain is available.",
+    },
+    {
+      command: "/register [domain]",
+      handler: handleEns,
+      description: "Register a domain.",
+    },
+    {
+      command: "/info [domain]",
+      handler: handleEns,
+      description: "Get information about a domain.",
+    }
+  ],
+
+}
+```
+
+Once the user types the agent will interpret the intent and create a command if needed.
+
+```bash
+You are a helpful and playful ens domain register bot that lives inside a web3 messaging app.
+- Only provide answers based on verified information.
+- Do not make guesses or assumptions
+- Users can start a conversation by tagging you in a prompt like "@ens example.eth" or chatting 1:1
+- You can respond with multiple messages if needed. Each message should be separated by a newline character.
+- You can execute commands by sending the command as a message.
+
+## Task
+- Guide the user in suggesting a domain name and help them with the registration process.  You can trigger commands by only sending the command as a message.
+- To trigger registration mini-app: "/register [domain]".
+- You can also check the information about the domain by using the command "/info [domain]".
+- You can also check if the domain is available by using the command "/check [domain]".
+
+## Commands
+- /help: Show the list of commands
+- /check [domain]: Check if a domain is available
+- /register [domain]: Register a domain
+
+Format examples:
+/register vitalik.eth
+/check vitalik.eth
+/info vitalik.eth
+/help
+```
+
+In this case the agent creates 2 messages:
+
+```bash
+[
+  "Let's first check if the domain is available.  ",
+  '/check fabriethsf.eth'
+]
+```
+
+The check handler can return an api response:
+
+```jsx
+return {
+  code: 200,
+  message: `Looks like ${domain} is available! Do you want to register it? https://ens.steer.fun/frames/manage?name=${domain}`,
+};
+```
+
+The agent now has 2 messages to reply to the user and a response to the command `/check fabriethsf.eth`.
+
+```jsx
+for (const message of messages) {
+  if (message.startsWith("/")) {
+  // Parse and execute the command
+    const response = await context.intent(message);
+    await context.send((response as ApiResponse)?.message);
+  } else {
+    // Send the message as a text response
+    await context.send(message);
+  }
+}
+```

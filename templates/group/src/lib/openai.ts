@@ -6,12 +6,17 @@ const openai = new OpenAI({
   apiKey: process.env.OPEN_AI_API_KEY,
 });
 
+export type ChatHistoryEntry = { role: string; content: string };
+export type ChatHistories = Record<string, ChatHistoryEntry[]>;
+
+let chatHistories: ChatHistories = {};
 export async function textGeneration(
+  address: string,
   userPrompt: string,
   systemPrompt: string,
-  chatHistory?: any[],
+  isGroup: boolean = false,
 ) {
-  let messages = chatHistory ? [...chatHistory] : []; // Start with existing chat history
+  let messages = chatHistories[address] || [];
   if (messages.length === 0) {
     messages.push({
       role: "system",
@@ -33,7 +38,7 @@ export async function textGeneration(
       content: reply || "No response from OpenAI.",
     });
     const cleanedReply = responseParser(reply as string);
-
+    if (!isGroup) chatHistories[address] = messages;
     return { reply: cleanedReply, history: messages };
   } catch (error) {
     console.error("Failed to fetch from OpenAI:", error);
@@ -78,6 +83,35 @@ export async function vision(imageData: Uint8Array, systemPrompt: string) {
   }
 }
 
+export async function processResponseWithIntent(
+  address: string,
+  reply: string,
+  context: any,
+) {
+  let messages = reply
+    .split("\n")
+    .map((message: string) => responseParser(message))
+    .filter((message): message is string => message.length > 0);
+
+  console.log(messages);
+  for (const message of messages) {
+    if (message.startsWith("/")) {
+      const response = await context.intent(message);
+      if (response && response.message) {
+        let msg = responseParser(response.message);
+
+        chatHistories[address].push({
+          role: "system",
+          content: msg,
+        });
+
+        await context.send(response.message);
+      }
+    } else {
+      await context.send(message);
+    }
+  }
+}
 export function responseParser(message: string) {
   let trimmedMessage = message;
   // Remove bold and underline markdown
@@ -94,5 +128,10 @@ export function responseParser(message: string) {
   trimmedMessage = trimmedMessage?.replace(/^\s+|\s+$/g, "");
   // Remove any remaining leading or trailing whitespace
   trimmedMessage = trimmedMessage.trim();
+
   return trimmedMessage;
 }
+
+export const clearChatHistories = () => {
+  chatHistories = {};
+};

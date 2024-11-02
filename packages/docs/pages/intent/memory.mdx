@@ -1,0 +1,18 @@
+## Short-Term Memory
+
+Bots can maintain short-term memory, which allows them to remember recent interactions. This feature helps bots continue conversations and complete actions based on previous inputs without needing the user to repeat information.
+
+```typescript
+const chatHistories: Record<string, any[]> = {};
+
+let userPrompt = params?.prompt ?? content;
+
+const { reply, history } = await textGeneration(
+  userPrompt,
+  systemPrompt,
+  chatHistories[sender.address],
+);
+chatHistories[sender.address] = history;
+```
+
+In summary, MessageKit provides a way to handle commands and natural language in a conversational manner allowing for infinite use cases. Can't wait to see what you build!
