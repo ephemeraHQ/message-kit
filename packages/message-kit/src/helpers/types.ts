@@ -42,7 +42,14 @@ export type Config = {
 };
 export interface CommandParamConfig {
   default?: string | number | boolean;
-  type: "number" | "string" | "username" | "quoted" | "address" | "prompt";
+  type:
+    | "number"
+    | "string"
+    | "username"
+    | "ens"
+    | "quoted"
+    | "address"
+    | "prompt";
   values?: string[]; // Accepted values for the parameter
 }
 

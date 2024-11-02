@@ -47,7 +47,7 @@ export const clearInfoCache = () => {
 };
 export const getUserInfo = async (
   key: string,
-  bot?: string,
+  clientAddress?: string,
 ): Promise<UserInfo | null> => {
   let data: UserInfo = {
     ensDomain: undefined,
@@ -55,12 +55,14 @@ export const getUserInfo = async (
     converseUsername: undefined,
     info: undefined,
   };
-  if (isAddress(key)) {
+  if (clientAddress) {
+    data.address = clientAddress;
+  } else if (isAddress(key)) {
     data.address = key;
   } else if (key.includes(".eth")) {
     data.ensDomain = key;
   } else if (key == "@user" || key == "@me" || key == "@bot") {
-    data.address = bot;
+    data.address = clientAddress;
     data.ensDomain = key.replace("@", "") + ".eth";
     data.converseUsername = key.replace("@", "");
   } else if (key == "@alix") {
@@ -83,12 +85,11 @@ export const getUserInfo = async (
       ensDomain: keyToUse,
       address: data.address,
       converseUsername: data.converseUsername,
-      info: infoCache[keyToUse as string].info,
+      info: infoCache[keyToUse as string]?.info || undefined,
     };
     console.log("Getting info cache", data);
     return data;
   }
-  //jeje
 
   if (keyToUse?.includes(".eth")) {
     const response = await fetch(`https://ensdata.net/${keyToUse}`);
@@ -97,9 +98,9 @@ export const getUserInfo = async (
     data.address = ensData?.address;
     if (data.ensDomain) infoCache[data.ensDomain as string] = { info: data };
     if (data.address) infoCache[data.address as string] = { info: data };
-  } else if (data.converseUsername) {
+  } else if (data.converseUsername || data.address) {
     const response = await fetch(
-      `${converseEndpointURL}/profile/${data.converseUsername}`,
+      `${converseEndpointURL}/profile/${data.converseUsername || data.address}`,
       {
         method: "POST",
         headers: {
@@ -117,10 +118,10 @@ export const getUserInfo = async (
     data.avatar = converseData?.avatar || undefined;
   }
   data = {
-    ensDomain: data.ensDomain || "",
-    address: data.address || "",
-    converseUsername: data.converseUsername || "",
-    info: infoCache[keyToUse as string]?.info || {},
+    ensDomain: data.ensDomain || undefined,
+    address: data.address || undefined,
+    converseUsername: data.converseUsername || undefined,
+    info: infoCache[keyToUse as string]?.info || undefined,
   };
   console.log("User info", data);
   return data;

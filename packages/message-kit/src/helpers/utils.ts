@@ -55,12 +55,9 @@ export function extractCommandValues(
     const expectedParams = commandConfig.params || {};
     const usedIndices = new Set();
 
-    Object.keys(expectedParams).forEach((param) => {
-      const {
-        values: possibleValues = [],
-        default: defaultValue,
-        type = "string",
-      } = expectedParams[param];
+    for (const [param, paramConfig] of Object.entries(expectedParams)) {
+      const { type, values: possibleValues = [] } = paramConfig;
+
       let valueFound = false;
       // Handle string type with no possible values
       if (type === "string" && possibleValues.length === 0) {
@@ -84,14 +81,75 @@ export function extractCommandValues(
       } else if (type === "prompt") {
         values.params[param] = parts.slice(1).join(" ");
         valueFound = true;
+      } else if (type === "username") {
+        // Updated regular expression to exclude numeric strings
+        const usernameParts = parts.reduce<string[]>((acc, part, idx) => {
+          if (
+            !usedIndices.has(idx) &&
+            /^@?[a-zA-Z][a-zA-Z0-9_-]*$/.test(part)
+          ) {
+            usedIndices.add(idx);
+            // Remove @ prefix and handle potential comma-separated values
+            const usernames = part.split(",");
+            acc.push(...usernames);
+          }
+          return acc;
+        }, []);
+
+        if (usernameParts.length > 0) {
+          values.params[param] =
+            usernameParts.length === 1 ? usernameParts[0] : usernameParts;
+          valueFound = true;
+        }
+      } else if (type === "ens") {
+        // Handle comma-separated ENS domains
+        const ensParts = parts.reduce<string[]>((acc, part, idx) => {
+          if (!usedIndices.has(idx) && /^[a-zA-Z0-9-]+\.eth$/.test(part)) {
+            usedIndices.add(idx);
+            const domains = part.split(",").map((d) => d.trim());
+            acc.push(...domains);
+          }
+          return acc;
+        }, []);
+
+        if (ensParts.length > 0) {
+          values.params[param] = ensParts.length === 1 ? ensParts[0] : ensParts;
+          valueFound = true;
+        }
       } else if (type === "address") {
-        const addressIndex = parts.findIndex(
-          (part, idx) =>
-            /^0x[a-fA-F0-9]{40}$/.test(part) && !usedIndices.has(idx),
-        );
-        if (addressIndex !== -1) {
-          values.params[param] = parts[addressIndex];
-          usedIndices.add(addressIndex);
+        // Handle comma-separated addresses
+        const addressParts = parts.reduce<string[]>((acc, part, idx) => {
+          if (!usedIndices.has(idx) && /^0x[a-fA-F0-9]{40}$/.test(part)) {
+            usedIndices.add(idx);
+            const addresses = part.split(",").map((a) => a.trim());
+            acc.push(...addresses);
+          }
+          return acc;
+        }, []);
+
+        if (addressParts.length > 0) {
+          values.params[param] =
+            addressParts.length === 1 ? addressParts[0] : addressParts;
+          valueFound = true;
+        }
+      } else if (type === "number") {
+        // Handle comma-separated numbers
+        const numberParts = parts.reduce<number[]>((acc, part, idx) => {
+          if (!usedIndices.has(idx) && !isNaN(parseFloat(part))) {
+            usedIndices.add(idx);
+            const numbers = part
+              .split(",")
+              .map((n) => parseFloat(n.trim()))
+              .filter((n) => !isNaN(n));
+            acc.push(...numbers);
+          }
+          return acc;
+        }, []);
+
+        if (numberParts.length > 0) {
+          //@ts-ignore
+          values.params[param] =
+            numberParts.length === 1 ? numberParts[0] : numberParts;
           valueFound = true;
         }
       } else if (possibleValues.length > 0) {
@@ -105,42 +163,8 @@ export function extractCommandValues(
           usedIndices.add(index);
           valueFound = true;
         }
-      } else {
-        const indices = parts.reduce<number[]>((acc, part, idx) => {
-          if (
-            !usedIndices.has(idx) &&
-            (type === "number"
-              ? !isNaN(parseFloat(part))
-              : type === "username"
-                ? part.startsWith("@")
-                : true)
-          ) {
-            acc.push(idx);
-          }
-          return acc;
-        }, []);
-
-        if (indices.length > 0) {
-          if (type === "username") {
-            // Simply collect the usernames without mapping
-            values.params[param] = indices.map((idx) => parts[idx]);
-            indices.forEach((idx) => usedIndices.add(idx));
-          } else {
-            values.params[param] =
-              type === "number"
-                ? parseFloat(parts[indices[0]])
-                : parts[indices[0]];
-            usedIndices.add(indices[0]);
-          }
-          valueFound = true;
-        }
       }
-
-      if (!valueFound && defaultValue !== undefined) {
-        //@ts-ignore
-        values.params[param] = defaultValue;
-      }
-    });
+    }
 
     return values;
   } catch (e) {

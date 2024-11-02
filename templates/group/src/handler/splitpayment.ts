@@ -15,10 +15,9 @@ export async function handler(context: HandlerContext) {
       content: { attachment },
       sender,
     },
-    v2client,
   } = context;
 
-  let senderInfo = await getUserInfo(sender.address, v2client.address);
+  let senderInfo = await getUserInfo(sender.address, sender.address);
   if (attachment && typeId === "remoteStaticAttachment") {
     const { data } = attachment;
     const response = await vision(

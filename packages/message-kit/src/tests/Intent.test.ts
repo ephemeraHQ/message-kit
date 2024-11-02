@@ -1,6 +1,6 @@
 import "dotenv/config";
 import { textGeneration } from "./openai";
-import { commands } from "./commands";
+import { commands } from "./Commands_test";
 import { AbstractedMember } from "../helpers/types";
 
 describe("Intent tests", () => {
