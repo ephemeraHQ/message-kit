@@ -38,7 +38,6 @@ export async function textGeneration(
     });
     const cleanedReply = responseParser(reply as string);
     chatHistories[address] = messages;
-    console.log("messages.length", messages.length);
     return { reply: cleanedReply, history: messages };
   } catch (error) {
     console.error("Failed to fetch from OpenAI:", error);
@@ -97,7 +96,7 @@ export async function processResponseWithSkill(
   for (const message of messages) {
     if (message.startsWith("/")) {
       const response = await context.skill(message);
-      if (response && response.message) {
+      if (response && typeof response.message === "string") {
         let msg = responseParser(response.message);
 
         if (!chatHistories[address]) {

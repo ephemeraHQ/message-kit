@@ -54,12 +54,12 @@ export const getUserInfo = async (
     converseUsername: undefined,
     ensInfo: undefined,
   };
-  //console.log("Getting user info", key, clientAddress);
+  console.log("Getting user info", key);
   if (isAddress(clientAddress || "")) {
     data.address = clientAddress;
   } else if (isAddress(key || "")) {
     data.address = key;
-  } else if (key.includes(".eth")) {
+  } else if (key?.includes(".eth")) {
     data.ensDomain = key;
   } else if (key == "@user" || key == "@me" || key == "@bot") {
     data.address = clientAddress;
@@ -81,7 +81,7 @@ export const getUserInfo = async (
     //console.log("Getting user info", keyToUse, cacheData);
     return cacheData;
   } else {
-    //console.log("Getting user info", keyToUse, data);
+    console.log("Getting user info", keyToUse, data);
   }
 
   if (keyToUse?.includes(".eth")) {
