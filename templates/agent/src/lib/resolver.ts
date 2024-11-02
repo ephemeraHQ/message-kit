@@ -54,7 +54,7 @@ export const getUserInfo = async (
     converseUsername: undefined,
     ensInfo: undefined,
   };
-  console.log("Getting user info", key, clientAddress);
+  //console.log("Getting user info", key, clientAddress);
   if (isAddress(clientAddress || "")) {
     data.address = clientAddress;
   } else if (isAddress(key || "")) {
@@ -78,16 +78,16 @@ export const getUserInfo = async (
   let keyToUse = data.address || data.ensDomain || data.converseUsername;
   let cacheData = keyToUse && infoCache.get(keyToUse);
   if (cacheData) {
-    console.log("Getting user info", keyToUse, cacheData);
+    //console.log("Getting user info", keyToUse, cacheData);
     return cacheData;
   } else {
-    console.log("Getting user info", keyToUse, data);
+    //console.log("Getting user info", keyToUse, data);
   }
 
   if (keyToUse?.includes(".eth")) {
     const response = await fetch(`https://ensdata.net/${keyToUse}`);
     const ensData: EnsData = (await response.json()) as EnsData;
-    console.log("Ens data", ensData);
+    //console.log("Ens data", ensData);
     if (ensData) {
       data.ensInfo = ensData;
       data.ensDomain = ensData?.ens;
@@ -106,7 +106,8 @@ export const getUserInfo = async (
       }),
     });
     const converseData = (await response.json()) as ConverseProfile;
-    console.log("Converse data", keyToUse, converseData);
+    if (process.env.MSG_LOG)
+      console.log("Converse data", keyToUse, converseData);
     data.converseUsername =
       converseData?.formattedName || converseData?.name || undefined;
     data.address = converseData?.address || undefined;

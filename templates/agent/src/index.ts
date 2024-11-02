@@ -10,9 +10,5 @@ run(async (context: HandlerContext) => {
   /*All the commands are handled through the commands file*/
   /* If its just text, it will be handled by the ensAgent*/
   /* If its a group message, it will be handled by the groupAgent*/
-  if (group) {
-    context.reply("alive");
-    return;
-  }
   await ensAgent(context);
 });

@@ -1,3 +1,8 @@
+# Ens Agent
+
+Here is the main code for the ENS agent.
+
+```tsx [src/handler/ens.ts]
 import { HandlerContext } from "@xmtp/message-kit";
 import { getUserInfo, clearInfoCache, isOnXMTP } from "../lib/resolver.js";
 import { textGeneration } from "../lib/openai.js";
@@ -209,3 +214,4 @@ export async function clear() {
   clearChatHistories();
   clearInfoCache();
 }
+```

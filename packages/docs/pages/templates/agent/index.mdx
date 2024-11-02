@@ -1,0 +1,62 @@
+# Ens agent
+
+This is a simple yet powerful agent that will help users interact with ENS.
+
+## Structure
+
+```
+agent/
+├── src/
+│   ├── index.ts           # Conversational logic // [!code hl] // [!code focus]
+│   ├── skills.ts          # Skills // [!code hl] // [!code focus]
+│   ├── prompt.ts          # Prompt // [!code hl] // [!code focus]
+│   └── handler/
+│       └── ens.ts         # ENS agent // [!code hl] // [!code focus]
+│   └── lib/
+│       └── openai.ts      # OpenAI middleware // [!code hl] // [!code focus]
+│       └── resolver.ts    # Resolver // [!code hl] // [!code focus]
+├── package.json
+├── tsconfig.json
+└── .env
+```
+
+## Main code
+
+```tsx [src/index.ts]
+import { run, HandlerContext } from "@xmtp/message-kit";
+import { ensAgent } from "./handler/ens.js";
+
+run(async (context: HandlerContext) => {
+  await ensAgent(context);
+});
+```
+
+## Run the app
+
+Follow the steps below to run the app
+
+::::steps
+
+### Setup
+
+```bash [cmd]
+# Clone the repo
+git clone https://github.com/ephemeraHQ/message-kit
+# Go to the templates/agent folder
+cd templates/agent
+# Install the dependencies
+yarn install
+# Run the app
+yarn dev
+```
+
+### Variables
+
+Set up these variables in your app
+
+```bash [.env]
+KEY= # the private key of the wallet
+OPEN_AI_API_KEY= # sk-proj-...
+```
+
+::::

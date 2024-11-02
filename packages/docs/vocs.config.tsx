@@ -173,8 +173,22 @@ export default defineConfig({
           link: "/templates/gm",
         },
         {
-          text: "Ens agent",
-          link: "/templates/ens-agent",
+          text: "Agent",
+          link: "/templates/agent",
+          items: [
+            {
+              text: "Skills",
+              link: "/templates/agent/skills",
+            },
+            {
+              text: "ENS Handler",
+              link: "/templates/agent/ens",
+            },
+            {
+              text: "Prompt",
+              link: "/templates/agent/prompt",
+            },
+          ],
         },
         {
           text: "Group chat",

@@ -143,7 +143,6 @@ export default class HandlerContext {
             ...content,
             ...extractedValues,
           };
-          console.log("content", content);
         }
       } else if (message.contentType.sameAs(ContentTypeReply)) {
         content = {
