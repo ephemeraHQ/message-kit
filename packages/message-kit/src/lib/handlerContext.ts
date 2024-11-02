@@ -55,7 +55,9 @@ export default class HandlerContext {
         isAdmin: () => false,
         isSuperAdmin: () => false,
       };
+      this.version = "v3";
     } else {
+      this.version = "v2";
       this.conversation = conversation;
     }
   }
@@ -151,16 +153,13 @@ export default class HandlerContext {
         };
       }
 
-      console.log("sender", context.sender);
       context.message = {
         id: message.id,
         content: content,
-        members: members ?? [],
         sender: context.sender,
         typeId: message.contentType.typeId,
         sent: sentAt,
-        //@ts-ignore
-        version: version,
+        version: version ?? "v2",
       };
     }
     return context;

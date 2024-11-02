@@ -1,5 +1,6 @@
 import { HandlerContext } from "@xmtp/message-kit";
 import { vision, textGeneration } from "../lib/openai.js";
+import { getUserInfo } from "../lib/resolver.js";
 
 export async function handler(context: HandlerContext) {
   if (!process?.env?.OPEN_AI_API_KEY) {
@@ -14,10 +15,12 @@ export async function handler(context: HandlerContext) {
       content: { attachment },
       sender,
     },
+    v2client,
   } = context;
 
+  let senderInfo = await getUserInfo(sender.address, v2client.address);
   if (attachment && typeId === "remoteStaticAttachment") {
-    const { data, filename, mimeType } = attachment;
+    const { data } = attachment;
     const response = await vision(
       data,
       "This image is the bill of a restaurant dinner. Return the total. If you can't find the total, return 'undefined'.",
@@ -31,8 +34,10 @@ export async function handler(context: HandlerContext) {
     }
     if (response) {
       const prompt = `You a split wise agent that splits the bill between the members of this group except for the sender and bot.\n
-      These are the users of the group: ${JSON.stringify(members?.map((member) => ({ ...member, username: `@${member.address}` })))}\n 
-      This group app has many commands available: ${JSON.stringify(commands)}\n
+      These are the users of the group: 
+      ${JSON.stringify(members?.map((member) => ({ ...member, username: `@${member.address}` })))}\n 
+      This group app has many commands available: 
+      ${JSON.stringify(commands)}\n
       
 
       ## Instructions:
@@ -44,8 +49,8 @@ export async function handler(context: HandlerContext) {
       Example:
       [  
         "This are the details: Total: $49.52. Tip (20%): $9.90",
-        "All users owe X USDC to @${sender?.address}. Pay here:",
-        "/send @${sender?.address} $9.90"
+        "All users owe X USDC to @${senderInfo?.converseUsername}. Pay here:",
+        "/send @${senderInfo?.converseUsername} $9.90"
       ]
       `;
 
@@ -55,7 +60,7 @@ export async function handler(context: HandlerContext) {
       for (const message of splitMessages) {
         let msg = message as string;
         if (msg.startsWith("/")) await context.intent(msg);
-        else await context.reply(msg);
+        else await context.send(msg);
       }
     }
   }

@@ -1,4 +1,5 @@
 import { HandlerContext } from "@xmtp/message-kit";
+import { getUserInfo } from "../lib/resolver.js";
 
 // Main handler function for processing commands
 export async function handler(context: HandlerContext) {
@@ -6,6 +7,7 @@ export async function handler(context: HandlerContext) {
     message: {
       content: { command, params },
     },
+    sender,
   } = context;
   const baseUrl = "https://base-tx-frame.vercel.app/transaction";
 
@@ -13,8 +15,9 @@ export async function handler(context: HandlerContext) {
     case "send":
       // Destructure and validate parameters for the send command
       const { amount: amountSend, token: tokenSend, username } = params; // [!code hl] // [!code focus]
+      let senderInfo = await getUserInfo(username[0]);
 
-      if (!amountSend || !tokenSend || !username) {
+      if (!amountSend || !tokenSend || !senderInfo) {
         context.reply(
           "Missing required parameters. Please provide amount, token, and username.",
         );
@@ -24,7 +27,7 @@ export async function handler(context: HandlerContext) {
       let url_send = generateFrameURL(baseUrl, "send", {
         amount: amountSend,
         token: tokenSend,
-        receiver: username[0]?.address,
+        receiver: senderInfo.address,
       });
       context.reply(`${url_send}`);
       break;

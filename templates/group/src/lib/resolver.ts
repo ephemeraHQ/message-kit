@@ -7,11 +7,19 @@ export const converseEndpointURL =
 export type InfoCache = {
   [key: string]: { info: EnsData };
 };
+export type ConverseProfile = {
+  address: string | null;
+  onXmtp: boolean;
+  avatar: string | null;
+  formattedName: string | null;
+  name: string | null;
+};
 export type UserInfo = {
-  ensDomain: string | undefined;
-  address: string | undefined;
-  converseUsername: string | undefined;
-  info: EnsData;
+  ensDomain?: string | undefined;
+  address?: string | undefined;
+  converseUsername?: string | undefined;
+  info?: EnsData | undefined;
+  avatar?: string | undefined;
 };
 export interface EnsData {
   address?: string;
@@ -37,67 +45,83 @@ let infoCache: InfoCache = {};
 export const clearInfoCache = () => {
   infoCache = {};
 };
-export const getUserInfo = async (key: string): Promise<UserInfo | null> => {
-  let ensDomain: string | undefined;
-  let converseUsername: string | undefined;
-  let address: string | undefined;
+export const getUserInfo = async (
+  key: string,
+  bot?: string,
+): Promise<UserInfo | null> => {
+  let data: UserInfo = {
+    ensDomain: undefined,
+    address: undefined,
+    converseUsername: undefined,
+    info: undefined,
+  };
   if (isAddress(key)) {
-    address = key;
+    data.address = key;
   } else if (key.includes(".eth")) {
-    ensDomain = key;
+    data.ensDomain = key;
+  } else if (key == "@user" || key == "@me" || key == "@bot") {
+    data.address = bot;
+    data.ensDomain = key.replace("@", "") + ".eth";
+    data.converseUsername = key.replace("@", "");
   } else if (key == "@alix") {
-    address = "0x3a044b218BaE80E5b9E16609443A192129A67BeA";
-    converseUsername = "alix";
+    data.address = "0x3a044b218BaE80E5b9E16609443A192129A67BeA";
+    data.converseUsername = "alix";
   } else if (key == "@bo") {
-    address = "0xbc3246461ab5e1682baE48fa95172CDf0689201a";
-    converseUsername = "bo";
-  } else if (key.startsWith("@")) {
-    converseUsername = key;
+    data.address = "0xbc3246461ab5e1682baE48fa95172CDf0689201a";
+    data.converseUsername = "bo";
+  } else if (key?.startsWith("@")) {
+    data.converseUsername = key.replace("@", "");
+  } else {
+    return null;
   }
-  let keyToUse = address || ensDomain || converseUsername;
-  //console.log("Getting info cache", keyToUse);
+  let keyToUse = data.address || data.ensDomain || data.converseUsername;
   if (
     infoCache[keyToUse as string] &&
     Object.keys(infoCache[keyToUse as string]).length > 0
   ) {
-    const data: UserInfo = {
+    data = {
       ensDomain: keyToUse,
-      address: address,
-      converseUsername: converseUsername,
+      address: data.address,
+      converseUsername: data.converseUsername,
       info: infoCache[keyToUse as string].info,
     };
-    //console.log(data);
+    console.log("Getting info cache", data);
     return data;
   }
 
   if (keyToUse?.includes(".eth")) {
     const response = await fetch(`https://ensdata.net/${keyToUse}`);
-    const data: EnsData = (await response.json()) as EnsData;
-    ensDomain = data?.ens;
-    address = data?.address;
-    if (ensDomain) infoCache[ensDomain as string] = { info: data };
-    if (address) infoCache[address as string] = { info: data };
-  }
-  if (!converseUsername) {
-    const response = await fetch(`${converseEndpointURL}/profile/${address}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
+    const ensData: EnsData = (await response.json()) as EnsData;
+    data.ensDomain = ensData?.ens;
+    data.address = ensData?.address;
+    if (data.ensDomain) infoCache[data.ensDomain as string] = { info: data };
+    if (data.address) infoCache[data.address as string] = { info: data };
+  } else if (data.converseUsername) {
+    const response = await fetch(
+      `${converseEndpointURL}/profile/${data.converseUsername}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({ address: data.address }),
       },
-      body: JSON.stringify({ address: address }),
-    });
-    const data = (await response.json()) as { name: string };
-    converseUsername = data?.name;
-    converseUsername = converseUsername?.replace(".converse.xyz", "");
+    );
+    const converseData = (await response.json()) as ConverseProfile;
+    console.log("Converse data", converseData);
+    data.converseUsername =
+      converseData?.formattedName || converseData?.name || undefined;
+    data.address = converseData?.address || undefined;
+    data.avatar = converseData?.avatar || undefined;
   }
-  const data: UserInfo = {
-    ensDomain: ensDomain || "",
-    address: address || "",
-    converseUsername: converseUsername || "",
+  data = {
+    ensDomain: data.ensDomain || "",
+    address: data.address || "",
+    converseUsername: data.converseUsername || "",
     info: infoCache[keyToUse as string]?.info || {},
   };
-  //console.log(data);
+  console.log("User info", data);
   return data;
 };
 export const isOnXMTP = async (
