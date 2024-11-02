@@ -1,12 +1,9 @@
 import { default as HandlerContext } from "./handlerContext.js";
 import { default as xmtpClient } from "./client.js";
-import { Config, Handler } from "../helpers/types.js";
-import { Conversation, DecodedMessage } from "@xmtp/node-sdk";
+import { Config, Handler, SkillHandler } from "../helpers/types.js";
+import { DecodedMessage } from "@xmtp/node-sdk";
 import { logMessage } from "../helpers/utils.js";
-import {
-  DecodedMessage as DecodedMessageV2,
-  Conversation as ConversationV2,
-} from "@xmtp/xmtp-js";
+import { DecodedMessage as DecodedMessageV2 } from "@xmtp/xmtp-js";
 
 export default async function run(handler: Handler, config?: Config) {
   const { client, v2client } = await xmtpClient(config);
@@ -46,17 +43,21 @@ export default async function run(handler: Handler, config?: Config) {
           version,
         );
         // Check if the message content triggers a command
-        const { isMessageValid, handler: customHandler } =
-          commandTriggered(context);
+        const { isMessageValid, customHandler } = commandTriggered(context);
         if (isMessageValid && customHandler) await customHandler(context);
-        else await handler(context);
+        else if (isMessageValid) await handler(context);
       } catch (e) {
         console.log(`error`, e);
       }
     }
   };
 
-  const commandTriggered = (context: HandlerContext) => {
+  const commandTriggered = (
+    context: HandlerContext,
+  ): {
+    isMessageValid: boolean;
+    customHandler: SkillHandler | undefined;
+  } => {
     const {
       message: {
         content: { content },
@@ -68,7 +69,7 @@ export default async function run(handler: Handler, config?: Config) {
       v2client,
       group,
     } = context;
-    let handler = context.findHandler(content, context.skills ?? []);
+    let skillCommand = context.findSkill(content, context.skills ?? []);
 
     const { inboxId: senderInboxId } = client;
     const { address: senderAddress } = v2client;
@@ -78,7 +79,7 @@ export default async function run(handler: Handler, config?: Config) {
       (sender.inboxId?.toLowerCase() === senderInboxId.toLowerCase() &&
         typeId !== "group_updated");
 
-    const isCommandTriggered = handler?.skills[0]?.command;
+    const isCommandTriggered = skillCommand?.command;
     const isExperimental = config?.experimental ?? false;
 
     const isAddedMemberOrPass =
@@ -92,7 +93,7 @@ export default async function run(handler: Handler, config?: Config) {
       content?.contentType?.typeId == "remoteStaticAttachment";
 
     const isAdminOrPass =
-      handler?.skills[0]?.adminOnly &&
+      skillCommand?.adminOnly &&
       group &&
       !group?.isAdmin(sender.inboxId) &&
       !group?.isSuperAdmin(sender.inboxId)
@@ -109,6 +110,10 @@ export default async function run(handler: Handler, config?: Config) {
     const acceptedType = ["text", "remoteStaticAttachment", "reply"].includes(
       typeId ?? "",
     );
+
+    const skillGroup = context.findSkillGroup(content, context.skills ?? []);
+    const isTagged =
+      group && content?.startsWith("@") && skillGroup ? true : false;
 
     const isMessageValid = isSameAddress
       ? false
@@ -129,7 +134,10 @@ export default async function run(handler: Handler, config?: Config) {
                 : //If it has a command trigger, good
                   isCommandTriggered
                   ? true
-                  : false;
+                  : //If it has a tag trigger, good
+                    isTagged
+                    ? true
+                    : false;
 
     if (process.env.MSG_LOG === "true") {
       console.log("isMessageValid", {
@@ -142,20 +150,24 @@ export default async function run(handler: Handler, config?: Config) {
         isAdminOrPass,
         isExperimental,
         isAddedMemberOrPass,
+
         skillsParsed: context.skills?.length,
+        isTagged: isTagged
+          ? {
+              tag: skillGroup?.tag,
+              tagHandler: skillGroup?.tagHandler !== undefined,
+            }
+          : false,
         isCommandTriggered: isCommandTriggered
           ? {
-              name: handler?.name,
-              command: handler?.skills[0]?.command,
-              example: handler?.skills[0]?.example,
-              description: handler?.skills[0]?.description,
-              params: handler?.skills[0]?.params
-                ? Object.entries(handler.skills[0].params).map(
-                    ([key, value]) => ({
-                      key,
-                      value,
-                    }),
-                  )
+              command: skillCommand?.command,
+              example: skillCommand?.example,
+              description: skillCommand?.description,
+              params: skillCommand?.params
+                ? Object.entries(skillCommand.params).map(([key, value]) => ({
+                    key,
+                    value,
+                  }))
                 : undefined,
             }
           : false,
@@ -167,7 +179,11 @@ export default async function run(handler: Handler, config?: Config) {
 
     return {
       isMessageValid,
-      handler: handler?.skills[0]?.handler,
+      customHandler: skillCommand
+        ? skillCommand.handler
+        : skillGroup
+          ? skillGroup.tagHandler
+          : undefined,
     };
   };
   const getConversation = async (

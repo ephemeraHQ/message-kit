@@ -51,6 +51,8 @@ export interface SkillGroup {
   name: string;
   image?: boolean;
   description: string;
+  tag?: string;
+  tagHandler?: SkillHandler;
   skills: SkillCommand[];
 }
 

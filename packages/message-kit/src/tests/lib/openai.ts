@@ -14,7 +14,6 @@ export async function textGeneration(
   address: string,
   userPrompt: string,
   systemPrompt: string,
-  isGroup: boolean = false,
 ) {
   let messages = chatHistories[address] || [];
   if (messages.length === 0) {
@@ -38,7 +37,7 @@ export async function textGeneration(
       content: reply || "No response from OpenAI.",
     });
     const cleanedReply = responseParser(reply as string);
-    if (!isGroup) chatHistories[address] = messages;
+    chatHistories[address] = messages;
     return { reply: cleanedReply, history: messages };
   } catch (error) {
     console.error("Failed to fetch from OpenAI:", error);

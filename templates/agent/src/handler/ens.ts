@@ -4,8 +4,11 @@ import { textGeneration } from "../lib/openai.js";
 import { processResponseWithSkill } from "../lib/openai.js";
 import { isAddress } from "viem";
 import { ens_agent_prompt } from "../prompt.js";
-import { frameUrl, ensUrl, baseTxUrl } from "../index.js";
 import { clearChatHistories } from "../lib/openai.js";
+
+export const frameUrl = "https://ens.steer.fun/";
+export const ensUrl = "https://app.ens.domains/";
+export const baseTxUrl = "https://base-tx-frame.vercel.app";
 
 export async function handleEns(context: HandlerContext) {
   const {
@@ -108,7 +111,7 @@ export async function handleEns(context: HandlerContext) {
 
     const data = await getUserInfo(domain);
     if (!data?.address) {
-      let message = `Looks like ${domain} is available! Do you want to register it? ${ensUrl}${domain} or would you like to see some cool alternatives?`;
+      let message = `Looks like ${domain} is available! Here you can register it: ${ensUrl}${domain} or would you like to see some cool alternatives?`;
       return {
         code: 200,
         message,
@@ -169,13 +172,10 @@ export async function ensAgent(context: HandlerContext) {
       console.log("User info not found");
       return;
     }
-    const { ensDomain, converseUsername } = userInfo;
-
     const { reply } = await textGeneration(
       sender.address,
       userPrompt,
-      await ens_agent_prompt(sender.address, ensDomain, converseUsername),
-      group !== undefined,
+      await ens_agent_prompt(userInfo),
     );
     await processResponseWithSkill(sender.address, reply, context);
   } catch (error) {

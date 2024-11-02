@@ -14,7 +14,6 @@ export async function textGeneration(
   address: string,
   userPrompt: string,
   systemPrompt: string,
-  isGroup: boolean = false,
 ) {
   let messages = chatHistories[address] || [];
   if (messages.length === 0) {
@@ -38,7 +37,7 @@ export async function textGeneration(
       content: reply || "No response from OpenAI.",
     });
     const cleanedReply = responseParser(reply as string);
-    if (!isGroup) chatHistories[address] = messages;
+    chatHistories[address] = messages;
     return { reply: cleanedReply, history: messages };
   } catch (error) {
     console.error("Failed to fetch from OpenAI:", error);
@@ -83,7 +82,7 @@ export async function vision(imageData: Uint8Array, systemPrompt: string) {
   }
 }
 
-export async function processResponseWithskill(
+export async function processResponseWithSkill(
   address: string,
   reply: string,
   context: any,
@@ -100,6 +99,9 @@ export async function processResponseWithskill(
       if (response && response.message) {
         let msg = responseParser(response.message);
 
+        if (!chatHistories[address]) {
+          chatHistories[address] = [];
+        }
         chatHistories[address].push({
           role: "system",
           content: msg,

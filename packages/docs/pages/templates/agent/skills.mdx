@@ -3,10 +3,9 @@
 Skills are the main logic of the agent. They are responsible for handling the user's input and generating responses.
 
 ```tsx [src/skills.ts]
-import type { SkillGroup } from "@xmtp/message-kit";
 import { handleEns } from "./handler/ens.js";
 
-export const skills: SkillGroup[] = [
+export const skills = [
   {
     name: "Ens Domain Bot",
     description: "Register ENS domains.",

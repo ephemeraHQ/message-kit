@@ -1,4 +1,5 @@
-import type { SkillGroup } from "../helpers/types";
+import type { SkillGroup } from "@xmtp/message-kit";
+
 let tipping = undefined;
 let transaction = undefined;
 let games = undefined;

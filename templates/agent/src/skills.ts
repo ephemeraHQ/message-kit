@@ -1,14 +1,16 @@
+import { handleEns, ensAgent } from "./handler/ens.js";
 import type { SkillGroup } from "@xmtp/message-kit";
-import { handleEns } from "./handler/ens.js";
 
 export const skills: SkillGroup[] = [
   {
     name: "Ens Domain Bot",
+    tag: "@ens",
+    tagHandler: ensAgent,
     description: "Register ENS domains.",
     skills: [
       {
         command: "/register [domain]",
-        triggers: ["/register", "@ensbot"],
+        triggers: ["/register"],
         handler: handleEns,
         description:
           "Register a new ENS domain. Returns a URL to complete the registration process.",
@@ -21,7 +23,7 @@ export const skills: SkillGroup[] = [
       },
       {
         command: "/info [domain]",
-        triggers: ["/info", "@ensbot"],
+        triggers: ["/info"],
         handler: handleEns,
         description:
           "Get detailed information about an ENS domain including owner, expiry date, and resolver.",
@@ -34,7 +36,7 @@ export const skills: SkillGroup[] = [
       },
       {
         command: "/renew [domain]",
-        triggers: ["/renew", "@ensbot"],
+        triggers: ["/renew"],
         handler: handleEns,
         description:
           "Extend the registration period of your ENS domain. Returns a URL to complete the renewal.",

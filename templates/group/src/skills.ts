@@ -1,10 +1,10 @@
-import type { SkillGroup } from "@xmtp/message-kit";
 import { handler as tipping } from "./handler/tipping.js";
 import { handler as agent } from "./handler/agent.js";
 import { handler as transaction } from "./handler/transaction.js";
 import { handler as games } from "./handler/game.js";
 import { handler as loyalty } from "./handler/loyalty.js";
 import { helpHandler } from "./index.js";
+import type { SkillGroup } from "@xmtp/message-kit";
 
 export const skills: SkillGroup[] = [
   {
