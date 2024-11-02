@@ -3,7 +3,7 @@ import { getUserInfo, clearInfoCache, isOnXMTP } from "../lib/resolver.js";
 import { textGeneration } from "../lib/openai.js";
 import { processResponseWithSkill } from "../lib/openai.js";
 import { isAddress } from "viem";
-import { ens_agent_prompt } from "../prompt.js";
+import { agent_prompt } from "../prompt.js";
 import { clearChatHistories } from "../lib/openai.js";
 
 export const frameUrl = "https://ens.steer.fun/";
@@ -175,7 +175,7 @@ export async function ensAgent(context: HandlerContext) {
     const { reply } = await textGeneration(
       sender.address,
       userPrompt,
-      await ens_agent_prompt(userInfo),
+      await agent_prompt(userInfo),
     );
     await processResponseWithSkill(sender.address, reply, context);
   } catch (error) {

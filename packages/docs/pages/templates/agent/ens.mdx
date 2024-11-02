@@ -8,7 +8,7 @@ import { getUserInfo, clearInfoCache, isOnXMTP } from "../lib/resolver.js";
 import { textGeneration } from "../lib/openai.js";
 import { processResponseWithSkill } from "../lib/openai.js";
 import { isAddress } from "viem";
-import { ens_agent_prompt } from "../prompt.js";
+import { agent_prompt } from "../prompt.js";
 import { frameUrl, ensUrl, baseTxUrl } from "../index.js";
 import { clearChatHistories } from "../lib/openai.js";
 
@@ -179,7 +179,7 @@ export async function ensAgent(context: HandlerContext) {
     const { reply } = await textGeneration(
       sender.address,
       userPrompt,
-      await ens_agent_prompt(sender.address, ensDomain, converseUsername),
+      await agent_prompt(sender.address, ensDomain, converseUsername),
       group !== undefined,
     );
     await processResponseWithSkill(sender.address, reply, context);

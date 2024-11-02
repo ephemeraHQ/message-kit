@@ -1,7 +1,7 @@
 import { skills } from "./skills.js";
 import type { UserInfo } from "./lib/resolver.js";
 
-export async function ens_agent_prompt(userInfo: UserInfo) {
+export async function agent_prompt(userInfo: UserInfo) {
   let { address, ensDomain, converseUsername } = userInfo;
 
   const systemPrompt = `You are a helpful and playful agent called @ens that lives inside a web3 messaging app called Converse.
