@@ -208,8 +208,19 @@ Powered by XMTP \x1b[0m`;
     if (config?.attachments) {
       console.warn("\t- ⚠️ Attachments are enabled");
     }
+    if (config?.client?.logging) {
+      console.warn(`\t- ⚠️ Logging is set to ${config.client.logging}`);
+    }
+    if (config?.privateKey) {
+      console.warn("\t- ⚠️ Private key is set from the code");
+    }
     if (config?.memberChange) {
       console.warn("\t- ⚠️ Member changes are enabled");
+    }
+    if (config?.skillsConfigPath) {
+      console.warn(
+        `\t- ⚠️ Skills config path is set to ${config.skillsConfigPath}`,
+      );
     }
     if (!fs.existsSync(resolvedPath)) {
       console.warn("\t- ⚠️ No skills.ts file found");

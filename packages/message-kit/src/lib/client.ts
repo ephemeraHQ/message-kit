@@ -64,7 +64,7 @@ export default async function xmtpClient(
     apiClientFactory: GrpcApiClient.fromOptions as any,
   });
 
-  if (!config?.hideLog) logInitMessage(client, config);
+  if (!config?.hideInitLogMessage) logInitMessage(client, config);
 
   // register identity
   if (!client.isRegistered && client.signatureText) {
