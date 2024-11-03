@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 dotenv.config();
-
+import type { SkillGroup } from "@xmtp/message-kit";
 import OpenAI from "openai";
 const openai = new OpenAI({
   apiKey: process.env.OPEN_AI_API_KEY,
@@ -8,8 +8,47 @@ const openai = new OpenAI({
 
 export type ChatHistoryEntry = { role: string; content: string };
 export type ChatHistories = Record<string, ChatHistoryEntry[]>;
-
 let chatHistories: ChatHistories = {};
+export const PROMPT_RULES = `You are a helpful and playful agent called {NAME} that lives inside a web3 messaging app called Converse.
+- You can respond with multiple messages if needed. Each message should be separated by a newline character.
+- You can trigger commands by only sending the command in a newline message.
+- Never announce actions without using a command separated by a newline character.
+- Never answer if the information is not verified in the prompt
+- Dont answer in markdown format, just answer in plaintext.
+- Do not make guesses or assumptions
+- Check that you are not missing a command
+`;
+
+export const PROMPT_SKILLS_AND_EXAMPLES = (skills: SkillGroup[]) => `
+Commands:
+${skills
+  .map((skill) => skill.skills.map((s) => s.command).join("\n"))
+  .join("\n")}
+
+Examples:
+${skills
+  .map((skill) => skill.skills.map((s) => s.examples?.join("\n")).join("\n"))
+  .join("\n")}
+  `;
+
+export async function agentResponse(
+  sender: { address: string },
+  userPrompt: string,
+  systemPrompt: string,
+  context: any,
+) {
+  try {
+    const { reply } = await textGeneration(
+      sender.address,
+      userPrompt,
+      systemPrompt,
+    );
+    await processResponseWithSkill(sender.address, reply, context);
+  } catch (error) {
+    console.error("Error during OpenAI call:", error);
+    await context.reply("An error occurred while processing your request.");
+  }
+}
 export async function textGeneration(
   address: string,
   userPrompt: string,

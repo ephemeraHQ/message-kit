@@ -161,7 +161,7 @@ export default async function run(handler: Handler, config?: Config) {
         isCommandTriggered: isCommandTriggered
           ? {
               command: skillCommand?.command,
-              example: skillCommand?.example,
+              examples: skillCommand?.examples,
               description: skillCommand?.description,
               params: skillCommand?.params
                 ? Object.entries(skillCommand.params).map(([key, value]) => ({

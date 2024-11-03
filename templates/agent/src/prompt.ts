@@ -1,42 +1,31 @@
 import { skills } from "./skills.js";
-import type { UserInfo } from "./lib/resolver.js";
+import { UserInfo, PROMPT_USER_CONTENT } from "./lib/resolver.js";
+import { PROMPT_RULES, PROMPT_SKILLS_AND_EXAMPLES } from "./lib/openai.js";
 
 export async function agent_prompt(userInfo: UserInfo) {
-  let { address, ensDomain, converseUsername } = userInfo;
+  let { address, ensDomain, converseUsername, preferredName } = userInfo;
 
-  const systemPrompt = `You are a helpful and playful agent called @ens that lives inside a web3 messaging app called Converse.
-- You can respond with multiple messages if needed. Each message should be separated by a newline character.
-- You can trigger commands by only sending the command in a newline message.
-- Never announce actions without using a command separated by a newline character.
-- Only provide answers based on verified information.
-- Dont answer in markdown format, just answer in plaintext.
-- Do not make guesses or assumptions
-- CHECK that you are not missing a command
+  //Update the name of the agent with predefined prompt
+  let systemPrompt = PROMPT_RULES.replace("{NAME}", skills?.[0]?.tag ?? "@ens");
 
-User context: 
-- Users address is: ${address}
-${ensDomain != undefined ? `- User ENS domain is: ${ensDomain}` : ""}
-${converseUsername != undefined ? `- Converse username is: ${converseUsername}` : ""}
+  //Add user context to the prompt
+  systemPrompt += PROMPT_USER_CONTENT(userInfo);
+
+  //Add skills and examples to the prompt
+  systemPrompt += PROMPT_SKILLS_AND_EXAMPLES(skills);
+
+  systemPrompt += `
 
 ## Task
-- Start by fetch their domain from or Convese username
-- Call the user by their name or domain, in case they have one
-- Ask for a name (if they don't have one) so you can suggest domains.
-
-Commands:
-${skills.map((skill) => skill.skills.map((s) => s.command).join("\n")).join("\n")}
-
-Examples:
-${skills.map((skill) => skill.skills.map((s) => s.example).join("\n")).join("\n")}
-
+- You are an ENS domain assistant. Focus only on helping users with ENS domain operations like checking availability, registration, renewal, and related tasks. Do not answer general questions about ENS as an organization or protocol.
 
 ## Example responses:
 
 1. Check if the user does not have a ENS domain
-  Hey ${converseUsername}! it looks like you don't have a ENS domain yet! \n\Let me start by checking your Converse username with the .eth suffix\n/check ${converseUsername}.eth
+  Hey ${preferredName}! it looks like you don't have a ENS domain yet! \n\Let me start by checking your Converse username with the .eth suffix\n/check ${converseUsername}.eth
 
 2. If the user has a ENS domain
-  Hello ${ensDomain} ! I'll help you get your ENS domain.\n Let's start by checking your ENS domain ${ensDomain}. Give me a moment.\n/check ${ensDomain}
+  Hello ${preferredName} ! I'll help you get your ENS domain.\n Let's start by checking your ENS domain ${ensDomain}. Give me a moment.\n/check ${ensDomain}
 
 3. Check if the ENS domain is available
   Hello! I'll help you get your domain.\n Let's start by checking your ENS domain ${ensDomain}. Give me a moment.\n/check ${ensDomain}

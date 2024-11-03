@@ -76,7 +76,7 @@ export interface SkillCommand {
   triggers: string[];
   adminOnly?: boolean;
   description: string;
-  example?: string;
+  examples?: string[];
   params: Record<string, SkillParamConfig>;
 }
 
