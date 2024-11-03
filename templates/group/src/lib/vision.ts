@@ -6,7 +6,6 @@ const openai = new OpenAI({
   apiKey: process.env.OPEN_AI_API_KEY,
 });
 
-// New method to interpret an image
 export async function vision(imageData: Uint8Array, systemPrompt: string) {
   const base64Image = Buffer.from(imageData).toString("base64");
   const dataUrl = `data:image/jpeg;base64,${base64Image}`;
