@@ -10,15 +10,13 @@ describe("Skill tests", () => {
     accountAddresses: ["0x3a044b218BaE80E5b9E16609443A192129A67BeA"],
   };
   const members: AbstractedMember[] = [sender];
-  const fakeUsers = members.map((member) => ({
-    ...member,
-  }));
+
   const systemPrompt = `
   ### Context
   
   You are a helpful bot agent that lives inside a web3 messaging group that helps interpret user requests and execute commands.
   #### Users
-   ${JSON.stringify(fakeUsers)}\n 
+   ${JSON.stringify(members)}\n 
   #### Commands
   ${JSON.stringify(skills)}\n
   The message was sent by @${sender?.address}
