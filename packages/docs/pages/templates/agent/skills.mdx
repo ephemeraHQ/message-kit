@@ -4,19 +4,21 @@ Skills are the main logic of the agent. They are responsible for handling the us
 
 ```tsx [src/skills.ts]
 import { handleEns } from "./handler/ens.js";
+import type { SkillGroup } from "@xmtp/message-kit";
 
-export const skills = [
+export const skills: SkillGroup[] = [
   {
     name: "Ens Domain Bot",
+    tag: "@ens",
     description: "Register ENS domains.",
     skills: [
       {
         command: "/register [domain]",
-        triggers: ["/register", "@ensbot"],
+        triggers: ["/register"],
         handler: handleEns,
         description:
           "Register a new ENS domain. Returns a URL to complete the registration process.",
-        example: "/register vitalik.eth",
+        examples: ["/register vitalik.eth"],
         params: {
           domain: {
             type: "string",
@@ -25,11 +27,11 @@ export const skills = [
       },
       {
         command: "/info [domain]",
-        triggers: ["/info", "@ensbot"],
+        triggers: ["/info"],
         handler: handleEns,
         description:
           "Get detailed information about an ENS domain including owner, expiry date, and resolver.",
-        example: "/info nick.eth",
+        examples: ["/info nick.eth"],
         params: {
           domain: {
             type: "string",
@@ -38,11 +40,11 @@ export const skills = [
       },
       {
         command: "/renew [domain]",
-        triggers: ["/renew", "@ensbot"],
+        triggers: ["/renew"],
         handler: handleEns,
         description:
           "Extend the registration period of your ENS domain. Returns a URL to complete the renewal.",
-        example: "/renew fabri.base.eth",
+        examples: ["/renew fabri.base.eth"],
         params: {
           domain: {
             type: "string",
@@ -50,22 +52,21 @@ export const skills = [
         },
       },
       {
-        command: "/check [domain] [cool_alternatives]",
+        command: "/check [domain]",
         triggers: ["/check"],
         handler: handleEns,
+        examples: ["/check vitalik.eth", "/check fabri.base.eth"],
         description: "Check if a domain is available.",
         params: {
           domain: {
             type: "string",
-          },
-          cool_alternatives: {
-            type: "quoted",
           },
         },
       },
       {
         command: "/cool [domain]",
         triggers: ["/cool"],
+        examples: ["/cool vitalik.eth"],
         handler: handleEns,
         description: "Get cool alternatives for a .eth domain.",
         params: {
@@ -77,6 +78,7 @@ export const skills = [
       {
         command: "/reset",
         triggers: ["/reset"],
+        examples: ["/reset"],
         handler: handleEns,
         description: "Reset the conversation.",
         params: {},
@@ -86,6 +88,7 @@ export const skills = [
         description: "Show a URL for tipping a domain owner.",
         triggers: ["/tip"],
         handler: handleEns,
+        examples: ["/tip 0x1234567890123456789012345678901234567890"],
         params: {
           address: {
             type: "string",

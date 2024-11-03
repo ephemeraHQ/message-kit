@@ -17,6 +17,7 @@ export type UserInfo = {
   ensDomain?: string | undefined;
   address?: string | undefined;
   converseUsername?: string | undefined;
+  preferredName?: string | undefined;
   ensInfo?: EnsData | undefined;
   avatar?: string | undefined;
 };
@@ -54,12 +55,11 @@ export const getUserInfo = async (
     converseUsername: undefined,
     ensInfo: undefined,
   };
-  //console.log("Getting user info", key, clientAddress);
   if (isAddress(clientAddress || "")) {
     data.address = clientAddress;
   } else if (isAddress(key || "")) {
     data.address = key;
-  } else if (key.includes(".eth")) {
+  } else if (key?.includes(".eth")) {
     data.ensDomain = key;
   } else if (key == "@user" || key == "@me" || key == "@bot") {
     data.address = clientAddress;
@@ -77,12 +77,8 @@ export const getUserInfo = async (
 
   let keyToUse = data.address || data.ensDomain || data.converseUsername;
   let cacheData = keyToUse && infoCache.get(keyToUse);
-  if (cacheData) {
-    //console.log("Getting user info", keyToUse, cacheData);
-    return cacheData;
-  } else {
-    //console.log("Getting user info", keyToUse, data);
-  }
+  console.log("Getting user info", { cacheData, keyToUse, data });
+  if (cacheData) return cacheData;
 
   if (keyToUse?.includes(".eth")) {
     const response = await fetch(`https://ensdata.net/${keyToUse}`);
@@ -123,4 +119,18 @@ export const isOnXMTP = async (
 ) => {
   if (domain == "fabri.eth") return false;
   if (address) return (await client.canMessage([address])).length > 0;
+};
+
+export const PROMPT_USER_CONTENT = (userInfo: UserInfo) => {
+  let { address, ensDomain, converseUsername, preferredName } = userInfo;
+  let prompt = `User context: 
+- Start by fetch their domain from or Convese username
+- Call the user by their name or domain, in case they have one
+- Ask for a name (if they don't have one) so you can suggest domains.
+- Users address is: ${address}`;
+  if (preferredName) prompt += `\n- Users name is: ${preferredName}`;
+  if (ensDomain) prompt += `\n- User ENS domain is: ${ensDomain}`;
+  if (converseUsername)
+    prompt += `\n- Converse username is: ${converseUsername}`;
+  return prompt;
 };

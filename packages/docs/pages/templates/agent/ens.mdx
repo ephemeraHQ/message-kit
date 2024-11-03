@@ -5,12 +5,12 @@ Here is the main code for the ENS agent.
 ```tsx [src/handler/ens.ts]
 import { HandlerContext } from "@xmtp/message-kit";
 import { getUserInfo, clearInfoCache, isOnXMTP } from "../lib/resolver.js";
-import { textGeneration } from "../lib/openai.js";
-import { processResponseWithSkill } from "../lib/openai.js";
 import { isAddress } from "viem";
-import { agent_prompt } from "../prompt.js";
-import { frameUrl, ensUrl, baseTxUrl } from "../index.js";
-import { clearChatHistories } from "../lib/openai.js";
+import { clearMemory } from "../lib/openai.js";
+
+export const frameUrl = "https://ens.steer.fun/";
+export const ensUrl = "https://app.ens.domains/";
+export const baseTxUrl = "https://base-tx-frame.vercel.app";
 
 export async function handleEns(context: HandlerContext) {
   const {
@@ -19,7 +19,7 @@ export async function handleEns(context: HandlerContext) {
     },
   } = context;
   if (command == "reset") {
-    clear();
+    clearMemory();
     return { code: 200, message: "Conversation reset." };
   } else if (command == "renew") {
     // Destructure and validate parameters for the ens command
@@ -34,7 +34,7 @@ export async function handleEns(context: HandlerContext) {
 
     const data = await getUserInfo(domain);
 
-    if (!data || data?.address !== sender?.address) {
+    if (!data?.address || data?.address !== sender?.address) {
       return {
         code: 403,
         message:
@@ -62,7 +62,7 @@ export async function handleEns(context: HandlerContext) {
     const { domain } = params;
 
     const data = await getUserInfo(domain);
-    if (!data) {
+    if (!data?.ensDomain) {
       return {
         code: 404,
         message: "Domain not found.",
@@ -113,7 +113,7 @@ export async function handleEns(context: HandlerContext) {
 
     const data = await getUserInfo(domain);
     if (!data?.address) {
-      let message = `Looks like ${domain} is available! Do you want to register it? ${ensUrl}${domain} or would you like to see some cool alternatives?`;
+      let message = `Looks like ${domain} is available! Here you can register it: ${ensUrl}${domain} or would you like to see some cool alternatives?`;
       return {
         code: 200,
         message,
@@ -153,41 +153,6 @@ export async function handleEns(context: HandlerContext) {
   }
 }
 
-export async function ensAgent(context: HandlerContext) {
-  if (!process?.env?.OPEN_AI_API_KEY) {
-    console.warn("No OPEN_AI_API_KEY found in .env");
-    return;
-  }
-
-  const {
-    message: {
-      content: { content, params },
-      sender,
-    },
-    group,
-  } = context;
-
-  try {
-    let userPrompt = params?.prompt ?? content;
-    const userInfo = await getUserInfo(sender.address);
-    if (!userInfo) {
-      console.log("User info not found");
-      return;
-    }
-    const { ensDomain, converseUsername } = userInfo;
-
-    const { reply } = await textGeneration(
-      sender.address,
-      userPrompt,
-      await agent_prompt(sender.address, ensDomain, converseUsername),
-    );
-    await processResponseWithSkill(sender.address, reply, context);
-  } catch (error) {
-    console.error("Error during OpenAI call:", error);
-    await context.send("An error occurred while processing your request.");
-  }
-}
-
 export const generateCoolAlternatives = (domain: string) => {
   const suffixes = ["lfg", "cool", "degen", "moon", "base", "gm"];
   const alternatives = [];
@@ -210,7 +175,7 @@ export const generateCoolAlternatives = (domain: string) => {
 };
 
 export async function clear() {
-  clearChatHistories();
+  clearMemory();
   clearInfoCache();
 }
 ```
