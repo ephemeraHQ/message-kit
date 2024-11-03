@@ -77,3 +77,18 @@ run(
 - `privateKey`: the private key of the bot wallet, like any normal wallet private key.
 - `experimental`: experimental features like logging all group messages. Default is `false`.
 - `attachments`: to receive attachments. Default is `false`.
+- `client`: Optional parameters to pass to the XMTP client.
+-
+
+### Export other clients
+
+You can export other clients on run time by importing the `xmtpClient` function.
+
+```jsx
+import { xmtpClient } from "@xmtp/message-kit";
+
+const { v2client: newClient } = await xmtpClient({
+  privateKey: /*Your private key*/,
+  /*optional parameters*/
+});
+```
