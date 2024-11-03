@@ -228,7 +228,7 @@ export default defineConfig({
       collapsed: false,
       items: [
         {
-          text: "OpenAI",
+          text: "GPT",
           link: "/middlewares/openai",
         },
         {
@@ -238,6 +238,10 @@ export default defineConfig({
         {
           text: "Redis",
           link: "/middlewares/redis",
+        },
+        {
+          text: "GPT Vision",
+          link: "/middlewares/vision",
         },
         {
           text: "Stackso",

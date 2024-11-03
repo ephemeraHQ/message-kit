@@ -36,7 +36,7 @@ export async function textGeneration(
       role: "assistant",
       content: reply || "No response from OpenAI.",
     });
-    const cleanedReply = responseParser(reply as string);
+    const cleanedReply = parseMarkdown(reply as string);
     chatHistories[address] = messages;
     return { reply: cleanedReply, history: messages };
   } catch (error) {
@@ -51,7 +51,7 @@ export async function processResponseWithSkill(
 ) {
   let messages = reply
     .split("\n")
-    .map((message: string) => responseParser(message))
+    .map((message: string) => parseMarkdown(message))
     .filter((message): message is string => message.length > 0);
 
   console.log(messages);
@@ -59,7 +59,7 @@ export async function processResponseWithSkill(
     if (message.startsWith("/")) {
       const response = await context.skill(message);
       if (response && response.message) {
-        let msg = responseParser(response.message);
+        let msg = parseMarkdown(response.message);
 
         if (!chatHistories[address]) {
           chatHistories[address] = [];
@@ -76,7 +76,7 @@ export async function processResponseWithSkill(
     }
   }
 }
-export function responseParser(message: string) {
+export function parseMarkdown(message: string) {
   let trimmedMessage = message;
   // Remove bold and underline markdown
   trimmedMessage = trimmedMessage?.replace(/(\*\*|__)(.*?)\1/g, "$2");
