@@ -15,3 +15,7 @@ npx create-message-kit@latest
 ```bash
 yarn create message-kit
 ```
+
+```bash [npm]
+npm init message-kit@latest
+```

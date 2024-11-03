@@ -14,15 +14,11 @@ const packageJson = JSON.parse(
   fs.readFileSync(resolve(__dirname, "package.json"), "utf8"),
 );
 const version = packageJson.version;
-const pckMessageKitLib = JSON.parse(
-  fs.readFileSync(resolve(__dirname, "../message-kit/package.json"), "utf8"),
-);
-const versionMessageKitLib = pckMessageKitLib.version;
 program
   .name("byob")
   .description("CLI to initialize projects")
   .action(async () => {
-    log.info(pc.cyan(`Welcome to MessageKit v${versionMessageKitLib}!`));
+    log.info(pc.cyan(`Welcome to MessageKit CLI v${version}!`));
     const coolLogo = `
 ███╗   ███╗███████╗███████╗███████╗ █████╗  ██████╗ ███████╗██╗  ██╗██╗████████╗
 ████╗ ████║██╔════╝██╔════╝██╔════╝██╔══██╗██╔════╝ ██╔════╝██║ ██╔╝██║╚══██╔══╝
