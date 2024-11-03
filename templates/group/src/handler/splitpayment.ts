@@ -1,5 +1,6 @@
 import { HandlerContext } from "@xmtp/message-kit";
-import { vision, textGeneration } from "../lib/openai.js";
+import { textGeneration } from "../lib/openai.js";
+import { vision } from "../lib/vision.js";
 import { getUserInfo } from "../lib/resolver.js";
 
 export async function handler(context: HandlerContext) {
@@ -52,12 +53,7 @@ export async function handler(context: HandlerContext) {
       `;
 
       //I want the reply to be an array of messages so the bot feels like is sending multuple ones
-      const { reply } = await textGeneration(
-        sender.address,
-        response,
-        prompt,
-        true,
-      );
+      const { reply } = await textGeneration(sender.address, response, prompt);
       let splitMessages = JSON.parse(reply);
       for (const message of splitMessages) {
         let msg = message as string;

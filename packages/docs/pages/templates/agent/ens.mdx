@@ -180,7 +180,6 @@ export async function ensAgent(context: HandlerContext) {
       sender.address,
       userPrompt,
       await agent_prompt(sender.address, ensDomain, converseUsername),
-      group !== undefined,
     );
     await processResponseWithSkill(sender.address, reply, context);
   } catch (error) {

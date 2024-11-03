@@ -1,9 +1,6 @@
 import { HandlerContext } from "@xmtp/message-kit";
 import { getUserInfo, clearInfoCache, isOnXMTP } from "../lib/resolver.js";
-import { textGeneration } from "../lib/openai.js";
-import { processResponseWithSkill } from "../lib/openai.js";
 import { isAddress } from "viem";
-import { agent_prompt } from "../prompt.js";
 import { clearChatHistories } from "../lib/openai.js";
 
 export const frameUrl = "https://ens.steer.fun/";
@@ -148,39 +145,6 @@ export async function handleEns(context: HandlerContext) {
       code: 200,
       message: `${generateCoolAlternatives(domain)}`,
     };
-  }
-}
-
-export async function ensAgent(context: HandlerContext) {
-  if (!process?.env?.OPEN_AI_API_KEY) {
-    console.warn("No OPEN_AI_API_KEY found in .env");
-    return;
-  }
-
-  const {
-    message: {
-      content: { content, params },
-      sender,
-    },
-    group,
-  } = context;
-
-  try {
-    let userPrompt = params?.prompt ?? content;
-    const userInfo = await getUserInfo(sender.address);
-    if (!userInfo) {
-      console.log("User info not found");
-      return;
-    }
-    const { reply } = await textGeneration(
-      sender.address,
-      userPrompt,
-      await agent_prompt(userInfo),
-    );
-    await processResponseWithSkill(sender.address, reply, context);
-  } catch (error) {
-    console.error("Error during OpenAI call:", error);
-    await context.send("An error occurred while processing your request.");
   }
 }
 
