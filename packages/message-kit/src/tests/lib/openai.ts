@@ -1,21 +1,18 @@
 import dotenv from "dotenv";
 dotenv.config();
-
 import OpenAI from "openai";
+import { memory } from "../lib/memory.js";
+
 const openai = new OpenAI({
   apiKey: process.env.OPEN_AI_API_KEY,
 });
 
-export type ChatHistoryEntry = { role: string; content: string };
-export type ChatHistories = Record<string, ChatHistoryEntry[]>;
-
-let chatHistories: ChatHistories = {};
 export async function textGeneration(
   address: string,
   userPrompt: string,
   systemPrompt: string,
 ) {
-  let messages = chatHistories[address] || [];
+  let messages = memory.getMemory(address) || [];
   if (messages.length === 0) {
     messages.push({
       role: "system",
@@ -93,7 +90,3 @@ export function parseMarkdown(message: string) {
 
   return trimmedMessage;
 }
-
-export const clearChatHistories = () => {
-  chatHistories = {};
-};

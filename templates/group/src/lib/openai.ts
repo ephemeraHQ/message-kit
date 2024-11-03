@@ -95,7 +95,3 @@ export function parseMarkdown(message: string) {
 
   return trimmedMessage;
 }
-
-export const clearChatHistories = () => {
-  chatHistories = {};
-};

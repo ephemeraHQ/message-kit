@@ -1,7 +1,7 @@
 import { HandlerContext } from "@xmtp/message-kit";
 import { getUserInfo, clearInfoCache, isOnXMTP } from "../lib/resolver.js";
 import { isAddress } from "viem";
-import { clearChatHistories } from "../lib/openai.js";
+import { clearMemory } from "../lib/openai.js";
 
 export const frameUrl = "https://ens.steer.fun/";
 export const ensUrl = "https://app.ens.domains/";
@@ -14,7 +14,7 @@ export async function handleEns(context: HandlerContext) {
     },
   } = context;
   if (command == "reset") {
-    clear();
+    clearMemory();
     return { code: 200, message: "Conversation reset." };
   } else if (command == "renew") {
     // Destructure and validate parameters for the ens command
@@ -29,7 +29,7 @@ export async function handleEns(context: HandlerContext) {
 
     const data = await getUserInfo(domain);
 
-    if (!data || data?.address !== sender?.address) {
+    if (!data?.address || data?.address !== sender?.address) {
       return {
         code: 403,
         message:
@@ -57,7 +57,7 @@ export async function handleEns(context: HandlerContext) {
     const { domain } = params;
 
     const data = await getUserInfo(domain);
-    if (!data) {
+    if (!data?.ensDomain) {
       return {
         code: 404,
         message: "Domain not found.",
@@ -170,6 +170,6 @@ export const generateCoolAlternatives = (domain: string) => {
 };
 
 export async function clear() {
-  clearChatHistories();
+  clearMemory();
   clearInfoCache();
 }

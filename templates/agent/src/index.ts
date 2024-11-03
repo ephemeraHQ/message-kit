@@ -17,7 +17,6 @@ run(async (context: HandlerContext) => {
       content: { content, params },
       sender,
     },
-    group,
   } = context;
 
   try {
