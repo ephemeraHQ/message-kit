@@ -20,10 +20,19 @@ export async function streamMessages(
 
     try {
       if (version === "v3") {
-        stream = await v3client.conversations.streamAllMessages();
-        for await (const message of stream) {
-          handleMessage(version, message);
-        }
+        stream = await v3client.conversations.streamAllMessages(
+          (err, message) => {
+            if (err) {
+              if (STREAM_LOG) {
+                console.warn(`[v3] Stream error occurred`);
+                stream.return();
+                throw err;
+              }
+            }
+            handleMessage(version, message);
+            // The loop will handle reconnection
+          },
+        );
       } else if (version === "v2") {
         stream = await v2client.conversations.streamAllMessages();
         for await (const message of stream) {
