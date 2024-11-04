@@ -68,24 +68,6 @@ ${skills
   .join("\n")}
   `;
 
-export async function agentResponse(
-  sender: { address: string },
-  userPrompt: string,
-  systemPrompt: string,
-  context: any,
-) {
-  try {
-    const { reply } = await textGeneration(
-      sender.address,
-      userPrompt,
-      systemPrompt,
-    );
-    await processMultilineResponse(sender.address, reply, context);
-  } catch (error) {
-    console.error("Error during OpenAI call:", error);
-    await context.reply("An error occurred while processing your request.");
-  }
-}
 export async function textGeneration(
   address: string,
   userPrompt: string,

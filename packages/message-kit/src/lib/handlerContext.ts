@@ -303,7 +303,7 @@ export default class HandlerContext {
   }
 
   async skill(text: string, conversation?: Conversation) {
-    if (process.env.MSG_LOG) console.log("skill", text);
+    //if (process.env.MSG_LOG) console.log("skill", text);
     if (conversation) this.refConv = conversation;
     try {
       let skillCommand = this.findSkill(text);

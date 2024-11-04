@@ -1,5 +1,6 @@
-import { Client } from "@xmtp/xmtp-js";
+import type { Client } from "@xmtp/xmtp-js";
 import { isAddress } from "viem";
+import type { HandlerContext } from "@xmtp/message-kit";
 
 export const converseEndpointURL =
   "https://converse-website-git-endpoit-ephemerahq.vercel.app";
@@ -48,6 +49,7 @@ export const clearInfoCache = () => {
 export const getUserInfo = async (
   key: string,
   clientAddress?: string,
+  context?: HandlerContext,
 ): Promise<UserInfo | null> => {
   let data: UserInfo = infoCache.get(key) || {
     ensDomain: undefined,
@@ -77,11 +79,16 @@ export const getUserInfo = async (
 
   let keyToUse = data.address || data.ensDomain || data.converseUsername;
   let cacheData = keyToUse && infoCache.get(keyToUse);
+  //console.log("Getting user info", { cacheData, keyToUse, data });
   if (cacheData) return cacheData;
 
+  context?.send(
+    "Hey there! Give me a sec while I fetch info about you first...",
+  );
   if (keyToUse?.includes(".eth")) {
     const response = await fetch(`https://ensdata.net/${keyToUse}`);
     const ensData: EnsData = (await response.json()) as EnsData;
+    //console.log("Ens data", ensData);
     if (ensData) {
       data.ensInfo = ensData;
       data.ensDomain = ensData?.ens;
@@ -121,7 +128,8 @@ export const isOnXMTP = async (
 
 export const PROMPT_USER_CONTENT = (userInfo: UserInfo) => {
   let { address, ensDomain, converseUsername, preferredName } = userInfo;
-  let prompt = `User context: 
+  let prompt = `
+User context: 
 - Start by fetch their domain from or Convese username
 - Call the user by their name or domain, in case they have one
 - Ask for a name (if they don't have one) so you can suggest domains.
@@ -130,5 +138,11 @@ export const PROMPT_USER_CONTENT = (userInfo: UserInfo) => {
   if (ensDomain) prompt += `\n- User ENS domain is: ${ensDomain}`;
   if (converseUsername)
     prompt += `\n- Converse username is: ${converseUsername}`;
+
+  prompt = prompt.replace("{ADDRESS}", address || "");
+  prompt = prompt.replace("{ENS_DOMAIN}", ensDomain || "");
+  prompt = prompt.replace("{CONVERSE_USERNAME}", converseUsername || "");
+  prompt = prompt.replace("{PREFERRED_NAME}", preferredName || "");
+
   return prompt;
 };
