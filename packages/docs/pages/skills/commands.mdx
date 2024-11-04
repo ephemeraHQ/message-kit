@@ -1,21 +1,22 @@
 # Commands
 
-Each app can have a `skills.ts` file that contains the commands that the app can execute. The commands are defined as an array of objects with the following keys:
+Each app can have a `skills.ts` file that contains the skills that the app can execute. The skills are defined as an array of objects with the following keys:
 
-## Declare a command
+## Command structure
 
 First think of which command you want the app to respond to. For example:
 
 ```bash [cmd]
-/send [amount] [token] [username]
+/command [parameter1] [parameter2] [parameter3]
 ```
 
 **Properties**
 
 - **command**: The name of the command.
 - **description**: The description of the command.
-- **params**: Defines the parameters required for the command.
+- **params**: Defines the parameters required for the command with its property name.
   - **default**: The default value for the parameter. This can be any type.
+  - **plural**: If true, the parameter is an array.
   - **type**: The type of the parameter. It can be one of the following:
     - `number`: The parameter is a number.
     - `string`: The parameter is a string.
@@ -23,43 +24,21 @@ First think of which command you want the app to respond to. For example:
     - `quoted`: The parameter is a quoted string.
     - `address`: The parameter is an address.
     - `prompt`: The parameter is a prompt.
+    - `url`: The parameter is a URL.
   - **values**: `[]` An array of strings that defines the accepted values for the parameter.
 
-**Example**
+## Create a command
 
 Create the command file `skills.ts` in your project root `src` folder.
 
 ```tsx [src/skills.ts]
-import { handler as transaction } from "./handler/transaction.js"; // [!code hl] // [!code focus]
+import { handler as transaction } from "./handler/transaction.js";
 
-export const commands: AgentSkill[] = [
+export const skills: SkillGroup[] = [
   {
     name: "Transactions",
     description: "Multipurpose transaction frame built onbase.",
     skills: [
-      {
-        command: "/send [amount] [token] [username]",
-        triggers: ["/send"],
-        examples: ["/send 10 usdc @vitalik"],
-        description:
-          "Send a specified amount of a cryptocurrency to a destination address.",
-        handler: transaction,
-        params: {
-          amount: {
-            default: 10,
-            type: "number",
-          },
-          token: {
-            default: "usdc",
-            type: "string",
-            values: ["eth", "dai", "usdc", "degen"], // Accepted tokens
-          },
-          username: {
-            default: "",
-            type: "username",
-          },
-        },
-      },
       {
         command: "/swap [amount] [token_from] [token_to]",
         triggers: ["/swap"],
@@ -83,20 +62,16 @@ export const commands: AgentSkill[] = [
           },
         },
       },
-      {
-        command: "/show",
-        triggers: ["/show"],
-        examples: ["/show"],
-        handler: transaction,
-        description: "Show the whole frame.",
-        params: {},
-      },
     ],
   },
 ];
 ```
 
-### Example:
+### Example
+
+:::steps
+
+### User request
 
 A user wants to swap tokens:
 
@@ -106,33 +81,6 @@ A user wants to swap tokens:
 
 MessageKit directly processes the parameters from the command and handles the parameters to return a Frame URL.
 
-### Declaring commands
-
-```tsx
-import { HandlerContext } from "@xmtp/message-kit";
-import { handleSwap } from "./handler/swap.js";
-
-export const commands: AgentSkill[] = [
-  {
-    name: "Swap Bot",
-    description: "Swap bot for base.",
-    commands: [
-      {
-        command: "/swap [amount] [token_from] [token_to]",
-        handler: handleSwap,
-        triggers: ["/swap", "@swap", "@swapbot"],
-        description: "Exchange one cryptocurrency for another.",
-        params: {
-          amount: { type: "number", default: 1 },
-          token_from: { type: "string", values: ["eth", "usdc", "dai"] },
-          token_to: { type: "string", values: ["eth", "usdc", "dai"] },
-        },
-      },
-    ],
-  },
-];
-```
-
 ### Handling command responses
 
 MessageKit will automatically handle the command parameters allowing you to focus on handling the command logic.
@@ -140,16 +88,16 @@ MessageKit will automatically handle the command parameters allowing you to focu
 ```tsx
 import { HandlerContext } from "@xmtp/message-kit";
 
-export async function handleSwap(context: HandlerContext) {
+export async function transaction(context: HandlerContext) {
   const {
     message: {
-      content: { command, params }, // [!code hl] // [!code focus]
+      content: { command, params }, // [!code hl]
     },
   } = context;
-  const baseUrl = "https://{url}";
+  const baseUrl = "https://base-tx-frame.vercel.app/transaction";
 
   if (command === "swap") {
-    const { amount, token_from, token_to } = params; // [!code hl] // [!code focus]
+    const { amount, token_from, token_to } = params; // [!code hl]
 
     if (!amount || !token_from || !token_to) {
       context.reply(
@@ -157,14 +105,19 @@ export async function handleSwap(context: HandlerContext) {
       );
       return;
     }
+    let url_swap = `${baseUrl}/swap?amount=${amount}&token_from=${token_from}&token_to=${token_to}`;
     // Generate URL for the swap transaction
-    context.reply(`${url_swap}`);
+    context.reply(`${url_swap}`); // [!code hl]
   }
 }
 ```
 
-The bot will reply with the URL to the swap transaction.
+### Bot response
+
+The bot will reply with the URL to the swap transaction which renders a [Frame](../frames/index).
 
 ```bash
-{baseUrl}/swap?amount=1&token_from=eth&token_to=usdc
+https://base-tx-frame.vercel.app/transaction?transactionType=swap&amount=1&token_from=eth&token_to=usdc
 ```
+
+:::

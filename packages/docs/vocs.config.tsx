@@ -133,7 +133,7 @@ export default defineConfig({
           ],
         },
         {
-          text: "Skills",
+          text: "AI Skills",
           link: "/skills",
           items: [
             {
@@ -143,6 +143,10 @@ export default defineConfig({
             {
               text: "Natural Language",
               link: "/skills/natural",
+            },
+            {
+              text: "Multi-line",
+              link: "/skills/multi-line",
             },
             {
               text: "Reasoning",
@@ -169,7 +173,7 @@ export default defineConfig({
           link: "/templates/agent",
           items: [
             {
-              text: "Skills",
+              text: "Skill",
               link: "/templates/agent/skills",
             },
             {

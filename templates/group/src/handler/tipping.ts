@@ -28,7 +28,7 @@ export async function handler(context: HandlerContext) {
   } else if (typeId === "text") {
     const { content: text, params } = content;
     if (text.startsWith("/tip") && params) {
-      // Process text commands starting with "/tip"
+      // Process text skills starting with "/tip"
       const {
         params: { amount: extractedAmount, username },
       } = content;

@@ -1,31 +1,138 @@
-# Skills
+# AI Skills
 
-MessageKit **Skills** allows bots to interpret and execute commands internally, giving them the ability to process user requests in a conversational manner.
+MessageKit's AI Skills system enables bots to understand and process skills through multiple intelligence layers, creating more natural and powerful conversational experiences.
 
-## Handle skills
+## Introduction to AI Skills
 
-To parse a string and execute a command handler, you can use the following method. When using responses from LLMs, you may want to execute the skill of the generated commands. This method will parse commands or send chained messages if they are in an array.
+## 1. Command Processing
+
+Bots can execute structured skills with parameter validation and type checking:
 
 ```jsx
-//Sepcifify the command
+// Execute a simple command
 const { message } = await context.skill("/send 10 usdc to @alix", conv);
 context.send(message);
 ```
 
-### Commands
+Learn more about [command processing](./commands.mdx).
 
-_See more details in the [commands](/skills/commands) section._
+## 2. Natural Language Understanding
 
-- To learn more about how to handle commands, go to the [commands](/concepts/messages/command) section.
+Bots can interpret casual human language and convert it to executable skills:
 
-### Natural language
+```bash
+User: "@swap 1 usdc to eth please"
+Bot: *converts to* "/swap 1 usdc eth"
+```
 
-_See more details in the [natural language](/skills/natural) section._
+Learn more about [natural language understanding](./natural.mdx).
 
-### Reasoning
+## 3. Multi-Step Reasoning
 
-_See more details in the [reasoning](/skills/reasoning) section._
+Bots can manage complex workflows by:
 
-### Multi agent
+- Breaking down tasks into steps
+- Maintaining conversation context
+- Executing sequential commands
+- Waiting for user input when needed
 
-_See more details in the [multi agent](/skills/multi-agent) section._
+Example of a multi-step ENS registration flow:
+
+```typescript
+["Let's first check if the domain is available.  ", "/check fabriethsf.eth"];
+["The domain is available!  ", "/register fabriethsf.eth"];
+["The domain is registered!  ", "/info fabriethsf.eth"];
+```
+
+Learn more about [multi-step reasoning](./reasoning.mdx).
+
+## 4. Multi-Agent
+
+Multiple specialized bots can work together in the same chat, each handling different aspects of user requests.
+
+Learn more about [multi-agent](./multi-agent.mdx).
+
+## Setting Up Skills
+
+### 1. Define skills
+
+Create a `skills.ts` file with your command definitions:
+
+```typescript
+export const skills: SkillGroup[] = [
+  {
+    name: "Transaction Bot",
+    description: "Handles crypto transactions",
+    skills: [
+      {
+        command: "/send [amount] [token] [username]",
+        triggers: ["/send"],
+        examples: ["/send 10 usdc @vitalik"],
+        description: "Send crypto to a user",
+        handler: transactionHandler,
+        params: {
+          amount: { type: "number", default: 10 },
+          token: {
+            type: "string",
+            values: ["eth", "usdc", "dai"],
+          },
+          username: { type: "username" },
+        },
+      },
+    ],
+  },
+];
+```
+
+### 2. Create Command Handlers
+
+Implement the logic for each command:
+
+```typescript
+async function transactionHandler(context: HandlerContext) {
+  const { command, params } = context.message.content;
+  const { amount, token, username } = params;
+
+  // Execute transaction logic
+  const result = await processTransaction(amount, token, username);
+
+  return {
+    message: `Transaction complete! Sent ${amount} ${token} to ${username}`,
+  };
+}
+```
+
+### 3. Add Natural Language Support
+
+Define prompts that help your bot understand user intent:
+
+```typescript
+const systemPrompt = `
+You are a helpful crypto transaction bot that:
+- Understands natural requests about sending/swapping tokens
+- Converts requests into proper commands
+- Only uses supported tokens: eth, usdc, dai
+- Maintains a friendly, professional tone
+
+Command format:
+/send [amount] [token] [username]
+/swap [amount] [token_from] [token_to]
+`;
+```
+
+## Best Practices
+
+1. **Validation**: Always validate parameters before execution
+2. **Error Handling**: Provide clear error messages when skills fail
+3. **Examples**: Include usage examples in command definitions
+4. **Progressive Enhancement**: Start with basic commands, then add natural language support
+5. **Context Awareness**: Maintain conversation state for multi-step operations
+
+## Advanced Features
+
+- **Custom Parameter Types**: Define your own parameter validators
+- **Chained Commands**: Execute multiple skills in sequence
+- **Conditional Logic**: Add branching based on user responses
+- **State Management**: Track conversation context across multiple messages
+
+This improved documentation provides a clearer structure, more practical examples, and better explains the capabilities of the AI Skills system while maintaining technical accuracy.

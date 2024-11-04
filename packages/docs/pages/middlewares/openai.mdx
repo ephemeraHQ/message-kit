@@ -59,7 +59,7 @@ export const chatMemory = new ChatMemory();
 let chatHistories: ChatHistories = {};
 export const PROMPT_RULES = `You are a helpful and playful agent called {NAME} that lives inside a web3 messaging app called Converse.
 - You can respond with multiple messages if needed. Each message should be separated by a newline character.
-- You can trigger commands by only sending the command in a newline message.
+- You can trigger skills by only sending the command in a newline message.
 - Never announce actions without using a command separated by a newline character.
 - Dont answer in markdown format, just answer in plaintext.
 - Do not make guesses or assumptions
@@ -92,7 +92,7 @@ export async function agentResponse(
       userPrompt,
       systemPrompt,
     );
-    await processResponseWithSkill(sender.address, reply, context);
+    await processMultilineResponse(sender.address, reply, context);
   } catch (error) {
     console.error("Error during OpenAI call:", error);
     await context.reply("An error occurred while processing your request.");
@@ -137,7 +137,7 @@ export async function textGeneration(
   }
 }
 
-export async function processResponseWithSkill(
+export async function processMultilineResponse(
   address: string,
   reply: string,
   context: any,

@@ -42,6 +42,11 @@ export default async function run(handler: Handler, config?: Config) {
           config?.skillsConfigPath,
           version,
         );
+        if (!context) {
+          if (process.env.MSG_LOG === "true")
+            console.warn("No context found", message);
+          return;
+        }
         // Check if the message content triggers a command
         const { isMessageValid, customHandler } = commandTriggered(context);
         if (isMessageValid && customHandler) await customHandler(context);

@@ -1,98 +1,136 @@
-## Reasoning (Multiple Commands)
+# Reasoning with multiple commands
 
-Bots can manage multiple commands or steps in a sequence and wait for the user response at each step, enabling them to process more complex user requests.
+Bots can handle complex conversations by managing multiple steps in sequence, maintaining context, and waiting for user responses. This creates a more natural interaction flow.
 
-### Example:
+## How it works
 
-A user interacts with the ENS bot:
+As we seen in previous sections, the bot can handle complex conversations by managing multiple steps in sequence, maintaining context, and waiting for user responses.
+
+1. [Command definition](/skills/commands.mdx): First, we define our bot's available commands.
+2. [Natural language](/skills/natural.mdx): Bot interprets user intent and translates it into a sequence of commands.
+3. Sequential execution: Commands are executed in logical order.
+4. Context maintenance: Bot maintains conversation state.
+
+## Example: Ens domain registration
+
+Let's walk through a complete ENS domain registration flow:
+
+:::steps
+
+### User initiates the conversation
 
 ```bash
 lets register fabriethsf.eth
 ```
 
-We already have the commands defined:
+### Bot skills definition
 
-```tsx
-{
-  name: "ENS Bot",
-  commands: [
-    {
-      command: "/check [domain]",
-      handler: handleEns,
-      description: "Check if a domain is available.",
-    },
-    {
-      command: "/register [domain]",
-      handler: handleEns,
-      description: "Register a domain.",
-    },
-    {
-      command: "/info [domain]",
-      handler: handleEns,
-      description: "Get information about a domain.",
-    }
-  ],
-
-}
-```
-
-Once the user types the agent will interpret the skill and create a command if needed.
-
-```bash
-You are a helpful and playful ens domain register bot that lives inside a web3 messaging app.
-- Only provide answers based on verified information.
-- Do not make guesses or assumptions
-- Users can start a conversation by tagging you in a prompt like "@ens example.eth" or chatting 1:1
-- You can respond with multiple messages if needed. Each message should be separated by a newline character.
-- You can execute commands by sending the command as a message.
-
-## Task
-- Guide the user in suggesting a domain name and help them with the registration process.  You can trigger commands by only sending the command as a message.
-- To trigger registration mini-app: "/register [domain]".
-- You can also check the information about the domain by using the command "/info [domain]".
-- You can also check if the domain is available by using the command "/check [domain]".
-
-## Commands
-- /help: Show the list of commands
-- /check [domain]: Check if a domain is available
-- /register [domain]: Register a domain
-
-Format examples:
-/register vitalik.eth
-/check vitalik.eth
-/info vitalik.eth
-/help
-```
-
-In this case the agent creates 2 messages:
-
-```bash
+```typescript
 [
-  "Let's first check if the domain is available.  ",
-  '/check fabriethsf.eth'
-]
+  {
+    name: "ENS Bot",
+    skills: [
+      {
+        command: "/check [domain]",
+        handler: handleEns,
+        description: "Check if a domain is available.",
+      },
+      {
+        command: "/register [domain]",
+        handler: handleEns,
+        description: "Register a domain.",
+      },
+      {
+        command: "/info [domain]",
+        handler: handleEns,
+        description: "Get information about a domain.",
+      },
+    ],
+  },
+];
 ```
 
-The check handler can return an api response:
+### Handler implementation
 
-```jsx
-return {
-  code: 200,
-  message: `Looks like ${domain} is available! Do you want to register it? https://ens.steer.fun/frames/manage?name=${domain}`,
-};
-```
+```typescript
+async function handleEns(context: HandlerContext) {
+  const { command, params } = context.message.content;
+  const { domain } = params;
 
-The agent now has 2 messages to reply to the user and a response to the command `/check fabriethsf.eth`.
+  switch (command) {
+    case "check":
+      const isAvailable = await checkDomain(domain);
+      return {
+        code: 200,
+        message: isAvailable
+          ? `Domain ${domain} is available!`
+          : `Domain ${domain} is already taken.`,
+      };
 
-```jsx
-for (const message of messages) {
-  if (message.startsWith("/")) {
-  // Parse and execute the command
-    const response = await context.skill(message);
-    await context.send((response as SkillResponse)?.message);
-  } else {
-    // Send the message as a text response
-    await context.send(message);
+    case "register":
+      const registration = await registerDomain(domain);
+      return {
+        code: 200,
+        message: `https://app.ens.domains/name/${domain}/register`,
+      };
+
+    case "info":
+      const info = await getDomainInfo(domain);
+      return {
+        code: 200,
+        message: `Domain info: ${JSON.stringify(info)}`,
+      };
   }
 }
 ```
+
+### Multiline prompt parsing
+
+The bot processes the natural language input "lets register fabriethsf.eth" and breaks it down into sequential steps:
+
+```typescript
+// Bot's internal reasoning process
+const steps = [
+  {
+    thought: "Need to check domain availability first",
+    command: "/check fabriethsf.eth",
+  },
+  {
+    thought: "If available, proceed with registration",
+    command: "/register fabriethsf.eth",
+  },
+  {
+    thought: "Confirm registration by getting domain info",
+    command: "/info fabriethsf.eth",
+  },
+];
+
+// Execute steps sequentially
+for (const step of steps) {
+  const response = await context.skill(step.command);
+  await context.send(response.message);
+
+  // Wait for user confirmation if needed
+  if (step.requiresConfirmation) {
+    const confirmation = await context.waitForResponse();
+    if (!confirmation.isPositive) break;
+  }
+}
+```
+
+:::
+
+## Best Practices
+
+- Sequential logic: Always follow a logical order of operations
+- User confirmation: Get user confirmation before critical actions
+- Clear communication: Keep users informed at each step
+- Error handling: Gracefully handle failures and provide clear feedback
+- Context awareness: Maintain conversation state throughout the interaction
+
+## Advanced Features
+
+- Conditional flows: Different paths based on user responses
+- State management: Track conversation progress
+- Error recovery: Handle interruptions and resume flows
+- Multi-step validation: Validate at each step before proceeding

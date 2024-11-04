@@ -57,12 +57,12 @@ The helper function will extract the parameters from the command.
 
 ## Command handlers
 
-An easier way to declare how to handle and respond to commands is to use handlers. Handlers help you orgaize the code being useful when you are managing multiple bots
+An easier way to declare how to handle and respond to skills is to use handlers. Handlers help you orgaize the code being useful when you are managing multiple bots
 
 ```tsx [src/skills.ts]
 import { handler as transaction } from "./handler/transaction.js"; // [!code hl] // [!code focus]
 
-export const commands: AgentSkill[] = [
+export const skills: SkillGroup[] = [
   {
     name: "Transactions",
     description: "Multipurpose transaction frame built onbase.",

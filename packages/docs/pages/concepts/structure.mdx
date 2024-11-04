@@ -32,14 +32,14 @@ run(async (context: HandlerContext) => {
 
 ## Commands
 
-Each app can have a `skills.ts` file that contains the available commands for the users. The commands are defined as an array of objects with the following structure:
+Each app can have a `skills.ts` file that contains the available skills for the users. The skills are defined as an array of objects with the following structure:
 
 ```tsx [src/skills.ts]
-export const commands: AgentSkill[] = [
+export const skills: SkillGroup[] = [
   {
     name: "General Commands",
     description: "Command for managing default behaviours.",
-    commands: [
+    skills: [
       {
         command: "/help",
         triggers: ["/help"],

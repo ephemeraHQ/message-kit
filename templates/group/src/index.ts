@@ -52,6 +52,6 @@ export async function helpHandler(context: HandlerContext) {
       ?.flatMap((app) => app.skills)
       .map((skill) => `${skill.command} - ${skill.description}`)
       .join("\n") +
-    "\nUse these commands to interact with specific apps.";
+    "\nUse these skills to interact with specific apps.";
   context.send(intro);
 }

@@ -85,9 +85,9 @@ export default class HandlerContext {
     { client, v2client }: { client: Client; v2client: ClientV2 },
     skillsConfigPath?: string,
     version?: "v2" | "v3",
-  ): Promise<HandlerContext> {
+  ): Promise<HandlerContext | null> {
     const context = new HandlerContext(conversation, { client, v2client });
-    if (message) {
+    if (message && message.id) {
       //v2
       const sentAt = "sentAt" in message ? message.sentAt : message.sent;
       let members: any;
@@ -166,8 +166,9 @@ export default class HandlerContext {
         sent: sentAt,
         version: version ?? "v2",
       };
+      return context;
     }
-    return context;
+    return null;
   }
 
   async getV2MessageById(reference: string): Promise<DecodedMessageV2 | null> {

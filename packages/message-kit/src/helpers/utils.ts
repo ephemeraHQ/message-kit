@@ -6,7 +6,7 @@ import { Config } from "./types";
 
 export function extractCommandValues(
   text: string,
-  commands: SkillGroup[],
+  skills: SkillGroup[],
 ): {
   command: string | undefined;
   params: { [key: string]: string | number | string[] | undefined };
@@ -29,7 +29,7 @@ export function extractCommandValues(
     let commandName = parts[0].startsWith("/") ? parts[0].slice(1) : parts[0];
     let commandConfig: SkillCommand | undefined = undefined;
 
-    for (const group of commands) {
+    for (const group of skills) {
       commandConfig = group.skills.find((cmd) =>
         cmd.command.startsWith(`/${commandName}`),
       );

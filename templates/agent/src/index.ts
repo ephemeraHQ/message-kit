@@ -1,10 +1,10 @@
 import { run, HandlerContext } from "@xmtp/message-kit";
-import { textGeneration, processResponseWithSkill } from "./lib/openai.js";
+import { textGeneration, processMultilineResponse } from "./lib/openai.js";
 import { agent_prompt } from "./prompt.js";
 import { getUserInfo } from "./lib/resolver.js";
 
 run(async (context: HandlerContext) => {
-  /*All the commands are handled through the commands file*/
+  /*All the skills are handled through the skills file*/
   /* If its just text, it will be handled by the ensAgent*/
   /* If its a group message, it will be handled by the groupAgent*/
   if (!process?.env?.OPEN_AI_API_KEY) {
@@ -31,7 +31,7 @@ run(async (context: HandlerContext) => {
       userPrompt,
       await agent_prompt(userInfo),
     );
-    await processResponseWithSkill(sender.address, reply, context);
+    await processMultilineResponse(sender.address, reply, context);
   } catch (error) {
     console.error("Error during OpenAI call:", error);
     await context.send("An error occurred while processing your request.");

@@ -15,11 +15,11 @@ _The frame used in this example is [Base Tx Frame](https://base-tx.ephemerahq.co
 
 ```tsx [src/skills.ts]
 import { handler as transaction } from "./handler/transaction.js";
-export const commands: AgentSkill[] = [
+export const skills: SkillGroup[] = [
   {
     name: "Transactions",
     description: "Multipurpose transaction frame built onbase.",
-    commands: [
+    skills: [
       {
         command: "/send [amount] [token] [username]",
         triggers: ["@send", "/send"],

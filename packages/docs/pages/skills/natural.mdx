@@ -1,42 +1,96 @@
-## Natural language
+## Natural language parsing
 
-Bots can also understand natural language prompts, allowing users to interact with the bot more conversationally. The bot translates the user's natural language input into a command and executes it.
+Transform your bot into a conversational genius! Natural language processing enables your bot to understand human-like requests and translate them into precise commands.
 
-### Example:
+## How it works
 
-A user types:
+Imagine your users chatting with your bot as naturally as texting a friend.
 
 ```bash
 @swap 1 usdc to eth please
 ```
 
-The message will trigger an AI text generation model to convert the natural language to a command.
+The bot uses AI to understand casual requests. Here's the secret sauce:
 
-```bash
-You are a helpful and playful betting bot that lives inside a web3 messaging group.
+```typescript
+const systemPrompt = `
+You're a friendly web3 swap assistant living in group chats!
 
-Users can start a swap by tagging you in a prompt like "@swap 1 eth to usdc"
+I understand casual requests like:
+- "@swap 1 eth to usdc"
+- "hey bot, swap 2 dai for eth"
+- "convert 0.5 usdc to eth please"
 
-You then have an internal command to create a swap: "/swap [amount] [token_from] [token_to]"
+I'll convert these into structured skills like:
+/swap [amount] [token_from] [token_to]
 
-Format examples:
-/swap 1 eth usdc
-/swap 100 dai usdc
-/swap 0.1 eth usdt
+Examples:
+/swap 1 eth usdc    // Swapping 1 ETH to USDC
+/swap 100 dai usdc  // Converting 100 DAI to USDC
+/swap 0.1 eth usdt  // Trading 0.1 ETH for USDT
+`;
 ```
 
-The AI model will return this command:
+And the magic happens:
 
-```bash
-/swap 1 usdc eth
-```
-
-And then the bot using `skill` will execute the command. Internally MessageKit will execute the handler `handleSwap` for the command as defined in the commands file seen before.
-
-```tsx
+```typescript
+// The AI processes the request and returns a structured command
 const { reply } = await textGeneration(userPrompt, systemPrompt);
+
+// If it's a valid command, execute it!
 if (reply.startsWith("/")) {
-  // Execute the command if it's a slash command
   await context.skill(reply);
 }
 ```
+
+### Example:
+
+::::steps
+
+### User request
+
+```bash
+@swap 1 usdc eth please
+```
+
+### Prompt parsing
+
+```typescript
+const { reply } = await textGeneration(userPrompt, systemPrompt);
+// /swap 1 usdc eth
+```
+
+### Returning a response
+
+The bot can return a structured response to the user and then handle the response in the command handler.
+
+```typescript
+import { SkillResponse } from "@xmtp/message-kit";
+
+// If it's a valid command, execute it!
+if (reply.startsWith("/")) {
+  const response = (await context.skill(reply)) as SkillResponse;
+  if (response.code == 200) await context.send(response.message);
+}
+```
+
+### Example response:
+
+```json
+{
+  "code": 200,
+  "message": "https://base-tx-frame.vercel.app/transaction?transactionType=swap&amount=1&token_from=usdc&token_to=eth"
+}
+```
+
+::::
+
+### Pro tips
+
+- Your bot can handle various casual phrases
+- Users don't need to remember exact command syntax
+- Natural language makes your bot more approachable
+- Add personality to your system prompt for extra flair!
+- Use the `SkillResponse` type to handle the response from the command handler.
+- Handle all possible responses from the command handler.
+- Use the `SkillResponse` as if they were a normal API response.

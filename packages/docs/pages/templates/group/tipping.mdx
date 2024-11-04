@@ -12,11 +12,11 @@ In this example you can tip using 3 primitives:
 :::details[Command declaration]
 
 ```tsx [src/skills.ts]
-export const commands: AgentSkill[] = [
+export const skills: SkillGroup[] = [
   {
     name: "Tipping",
     description: "Tip tokens via emoji, replies or command.",
-    commands: [
+    skills: [
       {
         command: "/tip [@users] [amount] [token]",
         triggers: ["/tip", "@tip"],
@@ -75,7 +75,7 @@ export async function handler(context: HandlerContext) {
   } else if (typeId === "text") {
     const { content: text, params } = content;
     if (text.startsWith("/tip") && params) {
-      // Process text commands starting with "/tip"
+      // Process text skills starting with "/tip"
       const {
         params: { amount: extractedAmount, username },
         content: text,

@@ -5,8 +5,8 @@ This is a reference app that will allow you to understand the potential and all 
 - [AI](/templates/group/agents): Reply with GPT when called by `/agent`.
 - [Tipping](/templates/group/tipping): Tip when a user replies with `/tip`.
 - [Games](/templates/group/games): Handle frame games like `/game slot`, `/game wordle`
-- [Transactions](/templates/group/transactions): Handle commands like `/send`, `/swap`, `/show`.
-- [Loyalty](/templates/group/loyalty): Handle loyalty commands like `/points`, `/leaderboard`.
+- [Transactions](/templates/group/transactions): Handle skills like `/send`, `/swap`, `/show`.
+- [Loyalty](/templates/group/loyalty): Handle loyalty skills like `/points`, `/leaderboard`.
 - [Split payments](/templates/group/splitpayments): Handle split payments like `/split`.
 
 ## Structure
@@ -89,7 +89,7 @@ export async function helpHandler(context: HandlerContext) {
       ?.flatMap((app) => app.skills)
       .map((skill) => `${skill.command} - ${skill.description}`)
       .join("\n") +
-    "\nUse these commands to interact with specific apps.";
+    "\nUse these skills to interact with specific apps.";
   context.send(intro);
 }
 ```

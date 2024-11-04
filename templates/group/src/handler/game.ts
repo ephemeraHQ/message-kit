@@ -34,7 +34,7 @@ export async function handler(context: HandlerContext) {
       context.send("Available games: \n/game wordle\n/game slot");
       break;
     default:
-      // Inform the user about unrecognized commands and provide available options
+      // Inform the user about unrecognized skills and provide available options
       context.send(
         "Command not recognized. Available games: wordle, slot, or help.",
       );
