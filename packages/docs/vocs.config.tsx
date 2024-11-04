@@ -148,14 +148,6 @@ export default defineConfig({
               text: "Reasoning",
               link: "/skills/reasoning",
             },
-            {
-              text: "Memory",
-              link: "/skills/memory",
-            },
-            {
-              text: "Multi Agent",
-              link: "/skills/multi-agent",
-            },
           ],
         },
         {
