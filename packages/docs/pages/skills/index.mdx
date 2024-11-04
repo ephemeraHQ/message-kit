@@ -4,7 +4,11 @@ MessageKit's AI Skills system enables bots to understand and process skills thro
 
 ## Introduction to AI Skills
 
-## 1. Command Processing
+MessageKit steps to create fully functional AI agents that perform complex tasks:
+
+:::steps
+
+### 1. Command Processing
 
 Bots can execute structured skills with parameter validation and type checking:
 
@@ -14,20 +18,43 @@ const { message } = await context.skill("/send 10 usdc to @alix", conv);
 context.send(message);
 ```
 
-Learn more about [command processing](./commands.mdx).
+Learn more about [command processing](/skills/commands)
 
-## 2. Natural Language Understanding
+### 2. Natural Language Understanding
 
 Bots can interpret casual human language and convert it to executable skills:
 
+User:
+
 ```bash
-User: "@swap 1 usdc to eth please"
-Bot: *converts to* "/swap 1 usdc eth"
+@swap 1 usdc to eth please".
 ```
 
-Learn more about [natural language understanding](./natural.mdx).
+Bot:
 
-## 3. Multi-Step Reasoning
+```bash
+/swap 1 usdc eth
+```
+
+Learn more about [natural language parsing](/skills/natural)
+
+### 3. Multi line
+
+User:
+
+```
+I want to check if vitalik.eth is available
+```
+
+This will return an array of messages, and then it will process each one sequentially:
+
+```tsx [gpt.ts]
+[" Let me check that domain for you", "/check vitalik.eth"];
+```
+
+Learn more about [multi-line responses](/skills/multi-line.mdx).
+
+### 4. Reasoning
 
 Bots can manage complex workflows by:
 
@@ -44,78 +71,12 @@ Example of a multi-step ENS registration flow:
 ["The domain is registered!  ", "/info fabriethsf.eth"];
 ```
 
-Learn more about [multi-step reasoning](./reasoning.mdx).
+Learn more about [reasoning](/skills/reasoning.mdx).
 
 ## 4. Multi-Agent
 
 Multiple specialized bots can work together in the same chat, each handling different aspects of user requests.
 
-Learn more about [multi-agent](./multi-agent.mdx).
+Learn more about [multi-agent](/skills/multi-agent.mdx).
 
-## Setting Up Skills
-
-### 1. Define skills
-
-Create a `skills.ts` file with your command definitions:
-
-```tsx
-export const skills: SkillGroup[] = [
-  {
-    name: "Transaction Bot",
-    description: "Handles crypto transactions",
-    skills: [
-      {
-        command: "/send [amount] [token] [username]",
-        triggers: ["/send"],
-        examples: ["/send 10 usdc @vitalik"],
-        description: "Send crypto to a user",
-        handler: transactionHandler,
-        params: {
-          amount: { type: "number", default: 10 },
-          token: {
-            type: "string",
-            values: ["eth", "usdc", "dai"],
-          },
-          username: { type: "username" },
-        },
-      },
-    ],
-  },
-];
-```
-
-### 2. Create Command Handlers
-
-Implement the logic for each command:
-
-```tsx
-async function transactionHandler(context: HandlerContext) {
-  const { command, params } = context.message.content;
-  const { amount, token, username } = params;
-
-  // Execute transaction logic
-  const result = await processTransaction(amount, token, username);
-
-  return {
-    message: `Transaction complete! Sent ${amount} ${token} to ${username}`,
-  };
-}
-```
-
-### 3. Add Natural Language Support
-
-Define prompts that help your bot understand user intent:
-
-```tsx
-const systemPrompt = `
-You are a helpful crypto transaction bot that:
-- Understands natural requests about sending/swapping tokens
-- Converts requests into proper commands
-- Only uses supported tokens: eth, usdc, dai
-- Maintains a friendly, professional tone
-
-Command format:
-/send [amount] [token] [username]
-/swap [amount] [token_from] [token_to]
-`;
-```
+:::

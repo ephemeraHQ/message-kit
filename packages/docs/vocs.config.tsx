@@ -236,7 +236,7 @@ export default defineConfig({
           link: "/middlewares/redis",
         },
         {
-          text: "GPT Vision",
+          text: "Vision",
           link: "/middlewares/vision",
         },
         {
