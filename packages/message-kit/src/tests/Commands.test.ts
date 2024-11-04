@@ -95,7 +95,6 @@ describe("Command extraction tests", () => {
   test("Extract values from 🔎 emoji", () => {
     const inputContent = "🔎 ";
     const extractedValues = extractCommandValues(inputContent, skills);
-    console.log(extractedValues);
     expect(extractedValues).toEqual({
       command: undefined,
       params: {},
@@ -127,7 +126,6 @@ describe("Command extraction tests", () => {
   test("Extract values from /agent tell a joke command", () => {
     const inputContent = "/agent tell a joke";
     const extractedValues = extractCommandValues(inputContent, skills);
-    console.log(extractedValues);
     expect(extractedValues).toEqual({
       command: "agent",
       params: {

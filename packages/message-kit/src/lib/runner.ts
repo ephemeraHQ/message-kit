@@ -115,9 +115,8 @@ export default async function run(handler: Handler, config?: Config) {
       typeId ?? "",
     );
 
-    const skillGroup = context.findSkillGroup(content);
-    const isTagged =
-      group && content?.startsWith("@") && skillGroup ? true : false;
+    const skillGroup = context.findSkillGroup(content); // Check if the message content triggers a tag
+    const isTagged = group && skillGroup ? true : false;
 
     const isMessageValid = isSameAddress
       ? false
