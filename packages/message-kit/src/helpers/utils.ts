@@ -236,7 +236,7 @@ Powered by XMTP \x1b[0m`;
       );
     }
     if (skills === undefined || skills?.length === 0) {
-      console.warn("\t- ⚠️ No skills.ts file found");
+      console.warn("\t- ⚠️ No skills.ts file found or wrongly formatted");
     }
     if (config?.experimental) {
       console.warn(
