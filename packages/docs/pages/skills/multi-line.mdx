@@ -1,81 +1,87 @@
-# Multi-line Response Handling
+# Multi-line responses
 
-XMTP's AI agent can respond with multiple messages, each separated by newlines. This allows for a more natural conversation flow and enables the agent to execute commands between regular messages.
+Agent can respond with multiple messages, each separated by newlines. This allows for a structured approach a more natural conversation flow.
 
-## How It Works
+## Prompt
 
-The multi-line processing happens in the `processMultilineResponse` function, which takes the AI's response, splits it into individual messages, and handles each one appropriately:
+In the prompt you will find this multi line references:
 
-```typescript
-async function processMultilineResponse(
-  address: string,
-  reply: string,
-  context: any,
-) {
-  // Split response into separate messages and filter out empty lines
-  let messages = reply
-    .split("\n")
-    .map((message) => parseMarkdown(message))
-    .filter((message) => message.length > 0);
+```plaintext [prompt.ts]
+- You can respond with multiple messages if needed. Each message should be separated by a newline character.
+- You can trigger skills by only sending the command in a newline message.
+- Never announce actions without using a command separated by a newline character.
+- Dont answer in markdown format, just answer in plaintext.
+```
 
-  // Process each message sequentially
-  for (const message of messages) {
-    if (message.startsWith("/")) {
-      // Handle skill commands
-      const response = await context.skill(message);
-      // ... handle skill response
+:::steps
+
+### User request
+
+```
+I want to check if vitalik.eth is available
+```
+
+### Bot reply
+
+The bot will reply in full with text and different commands it can execute
+
+```
+Hey! Sure, Let me check that domain for you
+
+/check vitalik.eth
+```
+
+### Parsing multi-line responses
+
+The multi-line processing happens in the `processMultilineResponse` function in the [GPT middleware](/middlewares/gpt.mdx), which takes the AI's response, splits it into individual messages, and handles each one appropriately:
+
+```tsx [gpt.ts]
+// Split response into separate messages and filter out empty lines
+let messages = reply
+  .split("\n")
+  .map((message) => parseMarkdown(message))
+  .filter((message) => message.length > 0);
+```
+
+This will return an array of messages, and then it will process each one sequentially:
+
+```tsx [gpt.ts]
+[" Let me check that domain for you", "/check vitalik.eth"];
+```
+
+### Putting it all together
+
+```tsx [gpt.ts]
+// Process each message sequentially
+for (const message of messages) {
+  if (message.startsWith("/")) {
+    const response = await context.skill(message);
+    if (response && typeof response.message === "string") {
+      let msg = parseMarkdown(response.message);
+      chatMemory.addEntry(address, {
+        role: "system",
+        content: msg,
+      });
+      await context.send(response.message);
     } else {
-      // Send regular message
-      await context.send(message);
+      /* Other type of response in .data probably, or error */
     }
+  } else {
+    await context.send(message);
   }
 }
 ```
 
-### Message Types
+The handler in this case returns all with `SkillResponse` type:
 
-The agent can send two types of messages in its response:
-
-1. **Regular Messages**: Plain text messages that are sent directly to the user
-2. **Skill Commands**: Messages that start with "/" which trigger specific actions
-
-### Example Response
-
-Here's how a multi-line response from the agent might look:
-
-```plaintext
-Hello! I'll help you check your balance.
-/balance
-Your transaction history looks good!
-/chart 7d
-Here's your weekly chart analysis.
+```tsx [processMultilineResponse.ts]
+export type SkillResponse = {
+  code: number;
+  message: string;
+  data?: any;
+};
 ```
 
-### Processing Flow
+You can learn more about GPT in the [GPT](/middlewares/gpt.mdx) section.
 
-1. The response is split by newlines
-2. Each line is cleaned of markdown formatting
-3. Empty lines are filtered out
-4. Messages are processed sequentially:
-   - Regular messages are sent directly
-   - Command messages (starting with "/") trigger skills
-   - Skill responses are captured and sent back to the chat
-
-### Important Notes
-
-- Commands must be on their own line
-- Each command is processed in order
-- The agent can mix regular messages and commands
-- Markdown formatting is automatically stripped from responses
-
-## Usage in Prompts
-
-When instructing the AI agent, you can specify multi-line responses using this format:
-
-```plaintext
-First message
-/command
-Follow-up message
-```
-
-The agent will understand to separate these into distinct messages, allowing for more dynamic and interactive conversations.
+:::

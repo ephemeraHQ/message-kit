@@ -38,7 +38,7 @@ Bots can manage complex workflows by:
 
 Example of a multi-step ENS registration flow:
 
-```typescript
+```tsx
 ["Let's first check if the domain is available.  ", "/check fabriethsf.eth"];
 ["The domain is available!  ", "/register fabriethsf.eth"];
 ["The domain is registered!  ", "/info fabriethsf.eth"];
@@ -58,7 +58,7 @@ Learn more about [multi-agent](./multi-agent.mdx).
 
 Create a `skills.ts` file with your command definitions:
 
-```typescript
+```tsx
 export const skills: SkillGroup[] = [
   {
     name: "Transaction Bot",
@@ -88,7 +88,7 @@ export const skills: SkillGroup[] = [
 
 Implement the logic for each command:
 
-```typescript
+```tsx
 async function transactionHandler(context: HandlerContext) {
   const { command, params } = context.message.content;
   const { amount, token, username } = params;
@@ -106,7 +106,7 @@ async function transactionHandler(context: HandlerContext) {
 
 Define prompts that help your bot understand user intent:
 
-```typescript
+```tsx
 const systemPrompt = `
 You are a helpful crypto transaction bot that:
 - Understands natural requests about sending/swapping tokens

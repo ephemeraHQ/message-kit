@@ -1,5 +1,5 @@
 import { HandlerContext } from "@xmtp/message-kit";
-import { textGeneration } from "../lib/openai.js";
+import { textGeneration } from "../lib/gpt.js";
 import { vision } from "../lib/vision.js";
 import { getUserInfo } from "../lib/resolver.js";
 

@@ -12,7 +12,7 @@ Imagine your users chatting with your bot as naturally as texting a friend.
 
 The bot uses AI to understand casual requests. Here's the secret sauce:
 
-```typescript
+```tsx
 const systemPrompt = `
 You're a friendly web3 swap assistant living in group chats!
 
@@ -33,7 +33,7 @@ Examples:
 
 And the magic happens:
 
-```typescript
+```tsx
 // The AI processes the request and returns a structured command
 const { reply } = await textGeneration(userPrompt, systemPrompt);
 
@@ -55,7 +55,7 @@ if (reply.startsWith("/")) {
 
 ### Prompt parsing
 
-```typescript
+```tsx
 const { reply } = await textGeneration(userPrompt, systemPrompt);
 // /swap 1 usdc eth
 ```
@@ -64,7 +64,7 @@ const { reply } = await textGeneration(userPrompt, systemPrompt);
 
 The bot can return a structured response to the user and then handle the response in the command handler.
 
-```typescript
+```tsx
 import { SkillResponse } from "@xmtp/message-kit";
 
 // If it's a valid command, execute it!

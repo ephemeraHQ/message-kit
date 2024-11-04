@@ -1,5 +1,5 @@
 import { run, HandlerContext } from "@xmtp/message-kit";
-import { textGeneration, processMultilineResponse } from "./lib/openai.js";
+import { textGeneration, processMultilineResponse } from "./lib/gpt.js";
 import { agent_prompt } from "./prompt.js";
 import { getUserInfo } from "./lib/resolver.js";
 

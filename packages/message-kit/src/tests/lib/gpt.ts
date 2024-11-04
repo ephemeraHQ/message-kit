@@ -1,6 +1,5 @@
-import dotenv from "dotenv";
-dotenv.config();
-import type { SkillGroup } from "@xmtp/message-kit";
+import "dotenv/config";
+import type { SkillGroup } from "../../helpers/types.js";
 import OpenAI from "openai";
 const openai = new OpenAI({
   apiKey: process.env.OPEN_AI_API_KEY,

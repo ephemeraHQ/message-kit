@@ -225,7 +225,7 @@ export default defineConfig({
       items: [
         {
           text: "GPT",
-          link: "/middlewares/openai",
+          link: "/middlewares/gpt",
         },
         {
           text: "Cron",

@@ -1,16 +1,4 @@
-## OpenAI middleware
-
-Install dependencies
-
-```bash [cmd]
-yarn add openai
-```
-
-Copy the following code into your `lib/openai.ts` file.
-
-```tsx [src/lib/openai.ts]
-import dotenv from "dotenv";
-dotenv.config();
+import "dotenv/config";
 import type { SkillGroup } from "@xmtp/message-kit";
 import OpenAI from "openai";
 const openai = new OpenAI({
@@ -183,4 +171,3 @@ export function parseMarkdown(message: string) {
 
   return trimmedMessage;
 }
-```
