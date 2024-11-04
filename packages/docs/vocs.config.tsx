@@ -145,8 +145,8 @@ export default defineConfig({
               link: "/skills/natural",
             },
             {
-              text: "Multi-line",
-              link: "/skills/multi-line",
+              text: "Newline Parser",
+              link: "/skills/newline-parser",
             },
             {
               text: "Reasoning",
