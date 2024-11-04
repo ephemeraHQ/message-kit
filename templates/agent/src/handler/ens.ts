@@ -14,6 +14,7 @@ export async function handleEns(
     message: {
       content: { command, params, sender },
     },
+    skill,
   } = context;
   if (command == "reset") {
     clearMemory();
@@ -117,7 +118,7 @@ export async function handleEns(
       };
     } else {
       let message = `Looks like ${domain} is already registered!`;
-      await context.skill("/cool " + domain);
+      await skill("/cool " + domain);
       return {
         code: 404,
         message,

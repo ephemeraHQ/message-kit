@@ -10,7 +10,7 @@ export async function handler(context: HandlerContext) {
   }
   const {
     members,
-    skills,
+    skill,
     message: {
       typeId,
       content: { attachment },
@@ -57,7 +57,7 @@ export async function handler(context: HandlerContext) {
       let splitMessages = JSON.parse(reply);
       for (const message of splitMessages) {
         let msg = message as string;
-        if (msg.startsWith("/")) await context.skill(msg);
+        if (msg.startsWith("/")) await skill(msg);
         else await context.send(msg);
       }
     }

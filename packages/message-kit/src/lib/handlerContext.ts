@@ -127,7 +127,7 @@ export default class HandlerContext {
         (() => null);
       // **Correct Binding:**
       context.getReplyChain = context.getReplyChain.bind(context);
-
+      context.skill = context.skill.bind(context);
       //trim spaces from text
       let content =
         typeof message.content === "string"
