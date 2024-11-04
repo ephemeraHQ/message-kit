@@ -1,7 +1,9 @@
 import { ReplyCodec } from "@xmtp/content-type-reply";
 import { Client as V2Client } from "@xmtp/xmtp-js";
+
 import { ReactionCodec } from "@xmtp/content-type-reaction";
 import { Client, ClientOptions, XmtpEnv } from "@xmtp/node-sdk";
+import { NapiSignatureRequestType } from "@xmtp/node-sdk";
 import { logInitMessage } from "../helpers/utils";
 import { TextCodec } from "@xmtp/content-type-text";
 import {
@@ -19,13 +21,8 @@ export default async function xmtpClient(
   config?: Config,
 ): Promise<{ client: Client; v2client: V2Client }> {
   // Check if both clientConfig and privateKey are empty
-  let key = getKey(config?.privateKey ?? (process.env.KEY as string));
-  const account = privateKeyToAccount(key as `0x${string}`);
-  const wallet = createWalletClient({
-    account,
-    chain: mainnet,
-    transport: http(),
-  });
+  let key = config?.privateKey ?? (process.env.KEY as string);
+  let user = createUser(key);
 
   let env = process.env.XMTP_ENV as XmtpEnv;
   if (!env) {
@@ -38,7 +35,7 @@ export default async function xmtpClient(
 
   const defaultConfig: ClientOptions = {
     env: env,
-    dbPath: `.data/${wallet.account?.address}-${env}`,
+    dbPath: `.data/${user.account?.address}-${env}`,
     codecs: [
       new TextCodec(),
       new ReactionCodec(),
@@ -49,7 +46,6 @@ export default async function xmtpClient(
   };
   // Merge the default configuration with the provided config. Repeated fields in clientConfig will override the default values
   const finalConfig = { ...defaultConfig, ...config?.client };
-  const client = await Client.create(account.address, finalConfig);
   //v2
   const account2 = privateKeyToAccount(key as `0x${string}`);
   const wallet2 = createWalletClient({
@@ -64,26 +60,44 @@ export default async function xmtpClient(
     apiClientFactory: GrpcApiClient.fromOptions as any,
   });
 
+  const client = await Client.create(user.account.address, finalConfig);
   if (!config?.hideInitLogMessage) logInitMessage(client, config);
 
-  // register identity
-  if (!client.isRegistered && client.signatureText) {
-    const signatureText = await client.signatureText();
-    if (signatureText) {
-      const signature = await wallet.signMessage({
-        message: signatureText,
-      });
-      const signatureBytes = toBytes(signature);
-      if (signatureBytes) {
-        client.addSignature(signatureBytes);
-      }
+  if (!client.isRegistered) {
+    const signature = await getSignature(client, user);
+    if (signature) {
+      client.addSignature(1 as NapiSignatureRequestType, signature);
     }
-
     await client.registerIdentity();
   }
-
   return { client, v2client };
 }
+
+export const createUser = (key: string) => {
+  const account = privateKeyToAccount(key as `0x${string}`);
+  return {
+    key,
+    account,
+    wallet: createWalletClient({
+      account,
+      chain: mainnet,
+      transport: http(),
+    }),
+  };
+};
+
+export type User = ReturnType<typeof createUser>;
+
+export const getSignature = async (client: Client, user: User) => {
+  const signatureText = await client.createInboxSignatureText();
+  if (signatureText) {
+    const signature = await user.wallet.signMessage({
+      message: signatureText,
+    });
+    return toBytes(signature);
+  }
+  return null;
+};
 
 function getKey(key: string): string {
   if (key !== undefined && !key.startsWith("0x")) key = "0x" + key;

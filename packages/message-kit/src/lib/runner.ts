@@ -94,8 +94,7 @@ export default async function run(handler: Handler, config?: Config) {
         ? false
         : true;
 
-    const isRemoteAttachment =
-      content?.contentType?.typeId == "remoteStaticAttachment";
+    const isRemoteAttachment = typeId == "remoteStaticAttachment";
 
     const isAdminOrPass =
       skillCommand?.adminOnly &&
@@ -151,6 +150,7 @@ export default async function run(handler: Handler, config?: Config) {
         version,
         typeId,
         acceptedType,
+        isRemoteAttachment,
         isImageValid,
         isAdminOrPass,
         isExperimental,

@@ -49,4 +49,30 @@ describe("Skill tests", () => {
       ].map((cmd) => cmd.toLowerCase()),
     ).toContain(reply.toLowerCase());
   });
+
+  /*
+  test("Extract values from @agent lets swap 1 eth to usdc command", () => {
+    const inputContent = "@agent lets swap 1 eth to usdc";
+    const extractedValues = extractCommandValues(inputContent, skills);
+    expect(extractedValues).toEqual({
+      command: "swap",
+      params: {
+        amount: 1,
+        token_from: "eth",
+        token_to: "usdc",
+      },
+    });
+  });
+  
+  test("Extract values from @bot thks! command", () => {
+    const inputContent = "@bot thks!";
+    const extractedValues = extractCommandValues(inputContent, skills);
+    expect(extractedValues).toEqual({
+      command: "bot",
+      params: {
+        thanks: true,
+      },
+    });
+  });
+  */
 });

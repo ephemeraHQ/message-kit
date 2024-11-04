@@ -131,10 +131,10 @@ export default class HandlerContext {
       //trim spaces from text
       let content =
         typeof message.content === "string"
-          ? { content: message.content.trim() }
+          ? { content: message.content.trim(), ...message.contentType }
           : message.content;
 
-      if (message.contentType.sameAs(ContentTypeText)) {
+      if (message?.contentType?.sameAs(ContentTypeText)) {
         const extractedValues = extractCommandValues(
           content.content,
           context.skills,
@@ -145,24 +145,25 @@ export default class HandlerContext {
             ...extractedValues,
           };
         }
-      } else if (message.contentType.sameAs(ContentTypeReply)) {
+      } else if (message?.contentType?.sameAs(ContentTypeReply)) {
         content = {
           ...content,
           typeId: message.content.contentType.typeId,
         };
-      } else if (message.contentType.sameAs(ContentTypeRemoteAttachment)) {
+      } else if (message?.contentType?.sameAs(ContentTypeRemoteAttachment)) {
         const attachment = await RemoteAttachmentCodec.load(content, client);
         content = {
           ...content,
+          ...message.contentType,
           attachment: attachment,
         };
       }
-
+      console.log("contentType", message.contentType);
       context.message = {
         id: message.id,
         content: content,
         sender: context.sender,
-        typeId: message.contentType.typeId,
+        typeId: message.contentType?.typeId as string,
         sent: sentAt,
         version: version ?? "v2",
       };

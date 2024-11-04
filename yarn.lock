@@ -3778,6 +3778,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@xmtp/content-type-group-updated@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@xmtp/content-type-group-updated@npm:1.0.0"
+  dependencies:
+    "@xmtp/content-type-primitives": "npm:^1.0.1"
+    "@xmtp/proto": "npm:^3.71.0"
+  checksum: 10/d84a93c51f7fc0cf92832f3cdaec1e34e2ad72001748f9a59eec4aacdb8104b21c13577029233ce21d89aa1a0046a3020c06a67bd3b4b7525f070b0711a050be
+  languageName: node
+  linkType: hard
+
 "@xmtp/content-type-primitives@npm:^1.0.1":
   version: 1.0.1
   resolution: "@xmtp/content-type-primitives@npm:1.0.1"
@@ -3863,7 +3873,7 @@ __metadata:
     "@xmtp/content-type-reply": "npm:^1.1.11"
     "@xmtp/content-type-text": "npm:^1.0.0"
     "@xmtp/grpc-api-client": "npm:^0.2.8"
-    "@xmtp/node-sdk": "npm:^0.0.18"
+    "@xmtp/node-sdk": "npm:^0.0.20"
     "@xmtp/xmtp-js": "npm:^13.0.3"
     dotenv: "npm:^16.4.5"
     jest: "npm:^29.7.0"
@@ -3879,22 +3889,23 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@xmtp/node-bindings@npm:^0.0.14":
-  version: 0.0.14
-  resolution: "@xmtp/node-bindings@npm:0.0.14"
-  checksum: 10/1c2186418fc3c3066f3a63f91b547b23a0165b2b7ca162e9032a19e575fe9f1fc4922ca4ee4af332d898d98c03ecdec7d954aec3dbed065f8893cf06689a7475
+"@xmtp/node-bindings@npm:^0.0.16":
+  version: 0.0.16
+  resolution: "@xmtp/node-bindings@npm:0.0.16"
+  checksum: 10/d6bf406c0e2802061a1d5808dac17fc7c0bcf01b1d3917805832e38fa5a69ccfdb0b0283fe47da2e9c302214cf693271207c466d061f8a7096b86edf7fa12c8e
   languageName: node
   linkType: hard
 
-"@xmtp/node-sdk@npm:^0.0.18":
-  version: 0.0.18
-  resolution: "@xmtp/node-sdk@npm:0.0.18"
+"@xmtp/node-sdk@npm:^0.0.20":
+  version: 0.0.20
+  resolution: "@xmtp/node-sdk@npm:0.0.20"
   dependencies:
+    "@xmtp/content-type-group-updated": "npm:^1.0.0"
     "@xmtp/content-type-primitives": "npm:^1.0.2"
     "@xmtp/content-type-text": "npm:^1.0.0"
-    "@xmtp/node-bindings": "npm:^0.0.14"
+    "@xmtp/node-bindings": "npm:^0.0.16"
     "@xmtp/proto": "npm:^3.62.1"
-  checksum: 10/21628af524eb3340fbefbaca167f0934faba66ff0f4fe4b4eb63b02b1d946cf875c49788e722a2751665a9eb02d33ca7a1e64f18be0840d62517b6bba1276fad
+  checksum: 10/b91fbdf5c532063eb7e25fe44ab440c90b493b54732bb267b8739edbdd5df5498dba482958553373c6797afeddde4cdd571a01f7f7f7cbbb4fec8220c6746ab5
   languageName: node
   linkType: hard
 
@@ -3943,6 +3954,18 @@ __metadata:
     rxjs: "npm:^7.8.0"
     undici: "npm:^5.8.1"
   checksum: 10/db633ccbe1bc4015494daa4b788f51e672ab3afa5bb54bb82839fae5101a918c6bc6b0aaf14080c8f6d5873ec42fe8f67a47621bfc023b946432a2d9bf18f7b9
+  languageName: node
+  linkType: hard
+
+"@xmtp/proto@npm:^3.71.0":
+  version: 3.72.0
+  resolution: "@xmtp/proto@npm:3.72.0"
+  dependencies:
+    long: "npm:^5.2.0"
+    protobufjs: "npm:^7.0.0"
+    rxjs: "npm:^7.8.0"
+    undici: "npm:^5.8.1"
+  checksum: 10/a60df6fa60a9523978c7ad52696ed393179060ed91fb521dfc2cace3127fcd070527a03c5be99089df6c73aead06c8ce74e86e31b9353cfb2a36986fbb7fc645
   languageName: node
   linkType: hard
 
