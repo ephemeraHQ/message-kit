@@ -84,7 +84,6 @@ export default async function run(handler: Handler, config?: Config) {
       (sender.inboxId?.toLowerCase() === senderInboxId.toLowerCase() &&
         typeId !== "group_updated");
 
-    console.log("SkillCommand", skillCommand);
     const isCommandTriggered = skillCommand?.command;
     const isExperimental = config?.experimental ?? false;
 
@@ -156,7 +155,6 @@ export default async function run(handler: Handler, config?: Config) {
         isAdminOrPass,
         isExperimental,
         isAddedMemberOrPass,
-
         skillsParsed: context.skills?.length,
         isTagged: isTagged
           ? {
@@ -218,30 +216,24 @@ export default async function run(handler: Handler, config?: Config) {
             `[${version}] Attempting to start client stream... (Attempt ${retryCount + 1})`,
           );
         }
-
-        try {
-          const stream = await clientToUse.conversations.streamAllMessages();
-
-          if (STREAM_LOG) {
-            console.log(
-              `[${version}] Successfully reconnected after ${retryCount} retries.`,
-            );
-          }
-          retryCount = 0;
-          for await (const message of stream) {
-            await handleMessage(version, message);
-          }
-        } catch (streamError: any) {
-          if (STREAM_LOG) {
-            console.warn(
-              `[${version}] Stream error occurred:`,
-              streamError?.code || streamError,
-            );
-            console.warn(`[${version}] Attempting to reconnect...`);
-          }
-          throw streamError; // Propagate to outer catch block
+        const stream = await clientToUse.conversations.streamAllMessages();
+        if (STREAM_LOG) {
+          console.log(
+            `[${version}] Successfully reconnected after ${retryCount} retries.`,
+          );
         }
-      } catch (connectionError: any) {
+        retryCount = 0;
+        for await (const message of stream) {
+          await handleMessage(version, message);
+        }
+      } catch (streamError: any) {
+        if (STREAM_LOG) {
+          console.warn(
+            `[${version}] Stream error occurred:`,
+            streamError?.code || streamError,
+          );
+          console.warn(`[${version}] Attempting to reconnect...`);
+        }
         retryCount++;
         const delay = Math.min(
           MAX_RETRY_DELAY * Math.pow(1.5, retryCount - 1),
@@ -250,7 +242,7 @@ export default async function run(handler: Handler, config?: Config) {
 
         if (STREAM_LOG) {
           console.error(
-            `[${version}] Connection error (${connectionError?.code || "UNKNOWN"}). ` +
+            `[${version}] Connection error (${streamError?.code || "UNKNOWN"}). ` +
               `Retry ${retryCount} - Reconnecting in ${delay / 1000} seconds...`,
           );
         }
