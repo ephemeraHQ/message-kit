@@ -17,8 +17,8 @@ export type ConverseProfile = {
 export type UserInfo = {
   ensDomain?: string | undefined;
   address?: string | undefined;
+  preferredName: string | undefined;
   converseUsername?: string | undefined;
-  preferredName?: string | undefined;
   ensInfo?: EnsData | undefined;
   avatar?: string | undefined;
 };
@@ -56,6 +56,7 @@ export const getUserInfo = async (
     address: undefined,
     converseUsername: undefined,
     ensInfo: undefined,
+    preferredName: undefined,
   };
   if (isAddress(clientAddress || "")) {
     data.address = clientAddress;
@@ -76,7 +77,7 @@ export const getUserInfo = async (
   } else {
     data.converseUsername = key;
   }
-
+  data.preferredName = data.ensDomain || data.converseUsername || "Friend";
   let keyToUse = data.address || data.ensDomain || data.converseUsername;
   let cacheData = keyToUse && infoCache.get(keyToUse);
   //console.log("Getting user info", { cacheData, keyToUse, data });
@@ -114,6 +115,8 @@ export const getUserInfo = async (
     data.address = converseData?.address || undefined;
     data.avatar = converseData?.avatar || undefined;
   }
+
+  data.preferredName = data.ensDomain || data.converseUsername || "Friend";
   if (data.address) infoCache.set(data.address, data);
   return data;
 };
