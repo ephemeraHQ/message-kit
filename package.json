@@ -16,6 +16,7 @@
     "dev": "cd packages/message-kit && yarn build:watch && bun link",
     "dev:agent": "cd templates/agent && yarn dev",
     "dev:docs": "cd packages/docs && yarn dev",
+    "dev:frens": "cd templates/frens && yarn dev",
     "dev:gm": "cd templates/gm && yarn dev",
     "dev:group": "cd templates/group && yarn dev",
     "format": "turbo run format",

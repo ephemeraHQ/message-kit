@@ -1,6 +1,5 @@
-import { SkillGroup, SkillCommand } from "./types";
 import path from "path";
-import fs from "fs";
+import { SkillGroup, SkillCommand } from "./types";
 import { Client } from "@xmtp/node-sdk";
 import { Config } from "./types";
 
@@ -170,6 +169,21 @@ export function extractCommandValues(
   }
 }
 
+export async function loadSkillsFile(
+  configPath: string = "skills.js",
+): Promise<SkillGroup[]> {
+  const resolvedPath = path.resolve(process.cwd(), "dist/" + configPath);
+  let skills: SkillGroup[] = [];
+  try {
+    const module = await import(resolvedPath);
+    skills = module?.skills;
+  } catch (error) {
+    if (process.env.MSG_LOG === "true")
+      console.error(`Error loading command config from ${resolvedPath}:`);
+  }
+  if (skills === undefined || skills?.length === 0) return [];
+  return skills;
+}
 export const shorterLogMessage = (message: string) => {
   return message?.substring(0, 60) + (message?.length > 60 ? "..." : "");
 };
@@ -179,9 +193,7 @@ export const logMessage = (message: string) => {
   console.log(shorterLogMessage(message));
 };
 
-export function logInitMessage(client: Client, config?: Config) {
-  const resolvedPath = path.resolve(process.cwd(), "src/" + "skills.ts");
-
+export async function logInitMessage(client: Client, config?: Config) {
   const coolLogo = `\x1b[38;2;250;105;119m\
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -197,11 +209,12 @@ Powered by XMTP \x1b[0m`;
     Send a message to this account on Converse:                              
     🔗 https://converse.xyz/dm/${client.accountAddress}`);
 
+  const skills = await loadSkillsFile();
   if (
     config?.experimental ||
     config?.attachments ||
     config?.memberChange ||
-    !fs.existsSync(resolvedPath)
+    skills?.length === 0
   ) {
     console.warn(`\x1b[33m
     Warnings:`);
@@ -222,7 +235,7 @@ Powered by XMTP \x1b[0m`;
         `\t- ⚠️ Skills config path is set to ${config.skillsConfigPath}`,
       );
     }
-    if (!fs.existsSync(resolvedPath)) {
+    if (skills === undefined || skills?.length === 0) {
       console.warn("\t- ⚠️ No skills.ts file found");
     }
     if (config?.experimental) {

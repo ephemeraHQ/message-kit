@@ -6,7 +6,7 @@ import {
 } from "@xmtp/xmtp-js";
 import { NapiGroupMember } from "@xmtp/node-sdk";
 import fs from "fs/promises";
-import path from "path";
+import { loadSkillsFile } from "../helpers/utils";
 import type { Reaction } from "@xmtp/content-type-reaction";
 import { ContentTypeText } from "@xmtp/content-type-text";
 import { logMessage } from "../helpers/utils.js";
@@ -62,23 +62,6 @@ export default class HandlerContext {
       this.conversation = conversation;
     }
   }
-  static async loadCommandConfig(
-    configPath: string = "skills.js",
-  ): Promise<SkillGroup[]> {
-    const resolvedPath = path.resolve(process.cwd(), "dist/" + configPath);
-    let skills: SkillGroup[] = [];
-    try {
-      const module = await import(resolvedPath);
-      skills = module?.skills ?? [];
-    } catch (error) {
-      /*if (process.env.MSG_LOG === "true")
-        console.error(
-          `Error loading command config from ${resolvedPath}:`,
-          error,
-        );*/
-    }
-    return skills;
-  }
   static async create(
     conversation: Conversation | ConversationV2,
     message: DecodedMessage | DecodedMessageV2 | null,
@@ -120,7 +103,7 @@ export default class HandlerContext {
         } as AbstractedMember;
       }
       //commands
-      context.skills = await HandlerContext.loadCommandConfig(skillsConfigPath);
+      context.skills = await loadSkillsFile(skillsConfigPath);
 
       context.getMessageById =
         client.conversations?.getMessageById?.bind(client.conversations) ||
@@ -320,12 +303,11 @@ export default class HandlerContext {
   }
 
   async skill(text: string, conversation?: Conversation) {
-    const { skills } = this;
     if (process.env.MSG_LOG) console.log("skill", text);
     if (conversation) this.refConv = conversation;
     try {
-      let skillCommand = this.findSkill(text, skills ?? []);
-      const extractedValues = extractCommandValues(text, skills ?? []);
+      let skillCommand = this.findSkill(text);
+      const extractedValues = extractCommandValues(text, this.skills ?? []);
       if ((text.startsWith("/") || text.startsWith("@")) && !extractedValues) {
         console.warn("Command not valid", text);
       } else if (skillCommand) {
@@ -361,21 +343,20 @@ export default class HandlerContext {
     }
   }
 
-  findSkill(text: string, skills: SkillGroup[]): SkillCommand | undefined {
+  findSkill(text: string): SkillCommand | undefined {
+    let skills = this.skills ?? [];
     const trigger = text?.split(" ")[0].toLowerCase();
     for (const skillGroup of skills) {
       const handler = skillGroup.skills.find((skill) => {
         return skill?.triggers?.includes(trigger);
       });
-      if (handler) return handler;
-    }
 
+      if (handler !== undefined) return handler;
+    }
     return undefined;
   }
-  findSkillGroup(
-    content: string,
-    skills: SkillGroup[],
-  ): SkillGroup | undefined {
+  findSkillGroup(content: string): SkillGroup | undefined {
+    let skills = this.skills ?? [];
     return skills.find((skill) => {
       if (skill.tag && content.startsWith(`${skill.tag}`)) {
         return true;

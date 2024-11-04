@@ -74,7 +74,7 @@ export default async function run(handler: Handler, config?: Config) {
       v2client,
       group,
     } = context;
-    let skillCommand = context.findSkill(content, context.skills ?? []);
+    let skillCommand = context.findSkill(content);
 
     const { inboxId: senderInboxId } = client;
     const { address: senderAddress } = v2client;
@@ -84,6 +84,7 @@ export default async function run(handler: Handler, config?: Config) {
       (sender.inboxId?.toLowerCase() === senderInboxId.toLowerCase() &&
         typeId !== "group_updated");
 
+    console.log("SkillCommand", skillCommand);
     const isCommandTriggered = skillCommand?.command;
     const isExperimental = config?.experimental ?? false;
 
@@ -115,7 +116,7 @@ export default async function run(handler: Handler, config?: Config) {
       typeId ?? "",
     );
 
-    const skillGroup = context.findSkillGroup(content, context.skills ?? []);
+    const skillGroup = context.findSkillGroup(content);
     const isTagged =
       group && content?.startsWith("@") && skillGroup ? true : false;
 

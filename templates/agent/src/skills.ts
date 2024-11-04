@@ -21,6 +21,19 @@ export const skills: SkillGroup[] = [
         },
       },
       {
+        command: "/exists",
+        adminOnly: true,
+        examples: ["/exists"],
+        handler: handleEns,
+        triggers: ["/exists"],
+        description: "Check if an address is onboarded.",
+        params: {
+          address: {
+            type: "address",
+          },
+        },
+      },
+      {
         command: "/info [domain]",
         triggers: ["/info"],
         handler: handleEns,
