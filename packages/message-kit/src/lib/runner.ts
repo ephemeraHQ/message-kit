@@ -4,6 +4,7 @@ import { Config, Handler, SkillHandler } from "../helpers/types.js";
 import { DecodedMessage } from "@xmtp/node-sdk";
 import { logMessage } from "../helpers/utils.js";
 import { DecodedMessage as DecodedMessageV2 } from "@xmtp/xmtp-js";
+import { streamMessages } from "./streams.js";
 
 export default async function run(handler: Handler, config?: Config) {
   const { client, v2client } = await xmtpClient(config);
@@ -199,58 +200,10 @@ export default async function run(handler: Handler, config?: Config) {
         )
       : (message as DecodedMessageV2)?.conversation;
   };
-  const STREAM_LOG = process.env.STREAM_LOG === "true";
-
-  // ... existing code ...
-
-  async function streamMessages(version: "v3" | "v2") {
-    const clientToUse = version === "v3" ? client : v2client;
-    let retryCount = 0;
-    const MAX_RETRY_DELAY = 5000; // max 5 seconds
-
-    while (true) {
-      try {
-        if (STREAM_LOG) {
-          console.log(
-            `[${version}] Attempting to start client stream... (Attempt ${retryCount + 1})`,
-          );
-        }
-        const stream = await clientToUse.conversations.streamAllMessages();
-        if (STREAM_LOG) {
-          console.log(
-            `[${version}] Successfully reconnected after ${retryCount} retries.`,
-          );
-        }
-        retryCount = 0;
-        for await (const message of stream) {
-          await handleMessage(version, message);
-        }
-      } catch (streamError: any) {
-        if (STREAM_LOG) {
-          console.warn(
-            `[${version}] Stream error occurred:`,
-            streamError?.code || streamError,
-          );
-          console.warn(`[${version}] Attempting to reconnect...`);
-        }
-        retryCount++;
-        const delay = Math.min(
-          MAX_RETRY_DELAY * Math.pow(1.5, retryCount - 1),
-          30000,
-        );
-
-        if (STREAM_LOG) {
-          console.error(
-            `[${version}] Connection error (${streamError?.code || "UNKNOWN"}). ` +
-              `Retry ${retryCount} - Reconnecting in ${delay / 1000} seconds...`,
-          );
-        }
-
-        await new Promise((resolve) => setTimeout(resolve, delay));
-      }
-    }
-  }
 
   // Run both clients' streams concurrently
-  await Promise.all([streamMessages("v2"), streamMessages("v3")]);
+  await Promise.all([
+    streamMessages("v3", handleMessage, client),
+    streamMessages("v2", handleMessage, v2client),
+  ]);
 }

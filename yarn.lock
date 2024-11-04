@@ -3873,7 +3873,7 @@ __metadata:
     "@xmtp/content-type-reply": "npm:^1.1.11"
     "@xmtp/content-type-text": "npm:^1.0.0"
     "@xmtp/grpc-api-client": "npm:^0.2.8"
-    "@xmtp/node-sdk": "npm:^0.0.20"
+    "@xmtp/node-sdk": "npm:^0.0.21"
     "@xmtp/xmtp-js": "npm:^13.0.3"
     dotenv: "npm:^16.4.5"
     jest: "npm:^29.7.0"
@@ -3896,16 +3896,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@xmtp/node-sdk@npm:^0.0.20":
-  version: 0.0.20
-  resolution: "@xmtp/node-sdk@npm:0.0.20"
+"@xmtp/node-sdk@npm:^0.0.21":
+  version: 0.0.21
+  resolution: "@xmtp/node-sdk@npm:0.0.21"
   dependencies:
     "@xmtp/content-type-group-updated": "npm:^1.0.0"
     "@xmtp/content-type-primitives": "npm:^1.0.2"
     "@xmtp/content-type-text": "npm:^1.0.0"
     "@xmtp/node-bindings": "npm:^0.0.16"
     "@xmtp/proto": "npm:^3.62.1"
-  checksum: 10/b91fbdf5c532063eb7e25fe44ab440c90b493b54732bb267b8739edbdd5df5498dba482958553373c6797afeddde4cdd571a01f7f7f7cbbb4fec8220c6746ab5
+  checksum: 10/f3914920d7d16c8fbcc18cffc66302b58ca5d3f41199a0ca0ca9eed2af68a68b2b278003439ca02fe07e59eb9da875922981e96d844ac790e642eb06743fc0d2
   languageName: node
   linkType: hard
 

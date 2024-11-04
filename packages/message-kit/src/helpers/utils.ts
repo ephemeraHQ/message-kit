@@ -178,8 +178,8 @@ export async function loadSkillsFile(
     const module = await import(resolvedPath);
     skills = module?.skills;
   } catch (error) {
-    if (process.env.MSG_LOG === "true")
-      console.error(`Error loading command config from ${resolvedPath}:`);
+    // if (process.env.MSG_LOG === "true")
+    //   console.error(`Error loading command config from ${resolvedPath}:`);
   }
   if (skills === undefined || skills?.length === 0) return [];
   return skills;
