@@ -158,7 +158,7 @@ export default defineConfig({
     },
 
     {
-      text: "Templates",
+      text: "Use cases",
       items: [
         {
           text: "Gm bot",
@@ -183,7 +183,7 @@ export default defineConfig({
           ],
         },
         {
-          text: "Group chat",
+          text: "Group bot",
           link: "/templates/group",
           items: [
             {
@@ -246,6 +246,10 @@ export default defineConfig({
         {
           text: "Resolver",
           link: "/middlewares/resolver",
+        },
+        {
+          text: "LearnWeb3",
+          link: "/middlewares/learnweb3",
         },
       ],
     },

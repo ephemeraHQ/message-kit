@@ -2,42 +2,44 @@
 
 ## [1.1.5] - 2024-11-02
 
-1. **Bug Fixes:**
+**Updates:**
 
-   - Fixed issues with command handlers for better reliability.
+- Added `adminOnly` commands for group settings for commands enabled only for admin of groups
+- Added `memberChange` as optional runner config for enabling new members added
+- Added `attachment` as optional runner config for enabling attachments in the stream
+- New CLI logo logo
+- Updated CLI notes and warnings
+- Implemented logging for sent messages.
+- Updated `node-sdk and `grpc-api-client`
+- Created Converse usernames endpoint. https://github.com/ephemeraHQ/converse-website/pull/32
+- Revamped command handler and triggers.
+- Added logging for invalid commands.
+- Added handling for incorrect and non-command inputs.
+- New Tagline: `An open framework for building AI agents`
 
-2. **New Features:**
+**Documentation:**
 
-   - Added `adminOnly` commands for group settings.
-   - Redesigned CLI for improved usability.
-   - Implemented logging for sent messages.
+- Restructured directory
+- Added quickstarts.
+- Replaced one-to-one with Agent example
+- Documented `skills`
+- Renamed examples as templates
+- How to use a second `xmtpClient` client
+- Optional parameters concepts/structure#optional-parameters
+- Added changelog
 
-3. **Additions:**
+**Middleware:**
+Added Middlewares section as the layer where to interact with external services in general.
 
-   - New agent example added.
-   - Updated NodeSDK.
-   - Introduced Converse usernames endpoint.
+- GPT: Use gpt responses
+- Cron: Send updates daily
+- Resolver: Resolve ens and converse usernames
+- Notion: Interact with notion docs
+- Redis: Interact with Redis DB
+- Stackso: Use stackso for tracking points and loyalty programs
+- Vision: Use GPT vision to parse attachments
+- Learnweb3: Use learnweb3 libraries for testnet funds
 
-4. **Configuration Changes:**
+**Bug Fixes:**
 
-   - Modified attachment and addMembers triggers at the config level.
-
-5. **Command Handling:**
-
-   - Revamped command handler and triggers.
-   - Added logging for invalid commands.
-   - Enhanced skill handling for incorrect and non-command inputs.
-
-6. **Documentation:**
-
-   - Updated docs with new features and local host tunnel setup.
-
-7. **Structural Enhancements:**
-
-   - Restructured directory and examples.
-   - Made prompt engineering tweaks.
-   - Updated testing procedures.
-
-8. **Middleware:**
-   - Added Resolver middleware.
-   - Announced upcoming multi-task agent.
+- Fixed CLI issues when install with npm `npm init message-kit@latest`

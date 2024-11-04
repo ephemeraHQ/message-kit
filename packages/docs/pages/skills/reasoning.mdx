@@ -89,7 +89,7 @@ for (const message of messages) {
   if (message.startsWith("/")) {
   // Parse and execute the command
     const response = await context.skill(message);
-    await context.send((response as ApiResponse)?.message);
+    await context.send((response as SkillResponse)?.message);
   } else {
     // Send the message as a text response
     await context.send(message);

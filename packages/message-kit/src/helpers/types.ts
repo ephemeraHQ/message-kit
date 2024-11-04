@@ -20,14 +20,15 @@ export type GroupAbstracted = {
   isSuperAdmin: (inboxId: string) => boolean;
   createdAt: Date;
 };
-export type ApiResponse = {
+export type SkillResponse = {
   code: number;
   message: string;
+  data?: any;
 };
 
 export type SkillHandler = (
   context: HandlerContext,
-) => Promise<void | ApiResponse>;
+) => Promise<void | SkillResponse>;
 
 export type Handler = (context: HandlerContext) => Promise<void>;
 

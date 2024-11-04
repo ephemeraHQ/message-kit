@@ -15,6 +15,7 @@ export const skills: SkillGroup[] = [
       {
         command: "/tip [@usernames] [amount] [token]",
         triggers: ["/tip"],
+        examples: ["/tip @vitalik 10 usdc"],
         description: "Tip users in a specified token.",
         handler: tipping,
         params: {
@@ -38,6 +39,7 @@ export const skills: SkillGroup[] = [
       {
         command: "/send [amount] [token] [username]",
         triggers: ["/send"],
+        examples: ["/send 10 usdc @vitalik"],
         description:
           "Send a specified amount of a cryptocurrency to a destination address.",
         handler: transaction,
@@ -60,6 +62,7 @@ export const skills: SkillGroup[] = [
       {
         command: "/swap [amount] [token_from] [token_to]",
         triggers: ["/swap"],
+        examples: ["/swap 10 usdc eth"],
         description: "Exchange one type of cryptocurrency for another.",
         handler: transaction,
         params: {
@@ -82,6 +85,7 @@ export const skills: SkillGroup[] = [
       {
         command: "/show",
         triggers: ["/show"],
+        examples: ["/show"],
         handler: transaction,
         description: "Show the whole frame.",
         params: {},
@@ -114,6 +118,7 @@ export const skills: SkillGroup[] = [
       {
         command: "/points",
         triggers: ["/points"],
+        examples: ["/points"],
         handler: loyalty,
         description: "Check your points.",
         params: {},
@@ -135,6 +140,7 @@ export const skills: SkillGroup[] = [
       {
         command: "/agent [prompt]",
         triggers: ["/agent", "@agent", "@bot"],
+        examples: ["/agent @vitalik"],
         handler: agent,
         description: "Manage agent commands.",
         params: {
@@ -153,6 +159,7 @@ export const skills: SkillGroup[] = [
       {
         command: "/help",
         triggers: ["/help"],
+        examples: ["/help"],
         handler: helpHandler,
         description: "Get help with the bot.",
         params: {},

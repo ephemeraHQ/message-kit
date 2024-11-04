@@ -19,10 +19,10 @@ export const commands: AgentSkill[] = [
   {
     name: "Transactions",
     description: "Multipurpose transaction frame built onbase.",
-    skills: [
+    commands: [
       {
         command: "/send [amount] [token] [username]",
-        triggers: ["/send"],
+        triggers: ["@send", "/send"],
         description:
           "Send a specified amount of a cryptocurrency to a destination address.",
         handler: transaction,
@@ -44,7 +44,7 @@ export const commands: AgentSkill[] = [
       },
       {
         command: "/swap [amount] [token_from] [token_to]",
-        triggers: ["/swap"],
+        triggers: ["@swap", "/swap"],
         description: "Exchange one type of cryptocurrency for another.",
         handler: transaction,
         params: {

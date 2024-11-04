@@ -1,4 +1,4 @@
-import { HandlerContext } from "@xmtp/message-kit";
+import { HandlerContext, SkillResponse } from "@xmtp/message-kit";
 import { getUserInfo, clearInfoCache, isOnXMTP } from "../lib/resolver.js";
 import { isAddress } from "viem";
 import { clearMemory } from "../lib/openai.js";
@@ -7,7 +7,9 @@ export const frameUrl = "https://ens.steer.fun/";
 export const ensUrl = "https://app.ens.domains/";
 export const baseTxUrl = "https://base-tx-frame.vercel.app";
 
-export async function handleEns(context: HandlerContext) {
+export async function handleEns(
+  context: HandlerContext,
+): Promise<SkillResponse> {
   const {
     message: {
       content: { command, params, sender },
@@ -145,6 +147,8 @@ export async function handleEns(context: HandlerContext) {
       code: 200,
       message: `${generateCoolAlternatives(domain)}`,
     };
+  } else {
+    return { code: 400, message: "Command not found." };
   }
 }
 
