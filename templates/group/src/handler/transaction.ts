@@ -21,7 +21,6 @@ export async function handler(context: HandlerContext) {
         );
         return;
       }
-      let name = senderInfo.converseUsername || senderInfo.address;
 
       let sendUrl = `${baseUrl}/?transaction_type=send&amount=${amountSend}&token=${tokenSend}&receiver=${senderInfo.address}`;
       context.send(`${sendUrl}`);

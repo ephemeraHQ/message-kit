@@ -77,13 +77,11 @@ export const getUserInfo = async (
 
   let keyToUse = data.address || data.ensDomain || data.converseUsername;
   let cacheData = keyToUse && infoCache.get(keyToUse);
-  console.log("Getting user info", { cacheData, keyToUse, data });
   if (cacheData) return cacheData;
 
   if (keyToUse?.includes(".eth")) {
     const response = await fetch(`https://ensdata.net/${keyToUse}`);
     const ensData: EnsData = (await response.json()) as EnsData;
-    //console.log("Ens data", ensData);
     if (ensData) {
       data.ensInfo = ensData;
       data.ensDomain = ensData?.ens;

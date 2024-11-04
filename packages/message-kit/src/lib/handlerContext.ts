@@ -158,7 +158,6 @@ export default class HandlerContext {
           attachment: attachment,
         };
       }
-      console.log("contentType", message.contentType);
       context.message = {
         id: message.id,
         content: content,

@@ -7,7 +7,6 @@ export async function handler(context: HandlerContext) {
     getMessageById,
     message: { content, sender, typeId },
   } = context;
-  console.log(sender);
   const msg = await getMessageById(content.reference);
   const replyReceiver = members?.find(
     (member) => member.inboxId === msg?.senderInboxId,
@@ -43,7 +42,6 @@ export async function handler(context: HandlerContext) {
     context.reply("Sender or receiver or amount not found.");
     return;
   }
-  console.log(receivers);
   const receiverAddresses = receivers.map((receiver) => receiver.address);
   // Process sending tokens to each receiver
 
