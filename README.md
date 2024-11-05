@@ -1,6 +1,6 @@
 # MessageKit
 
-This is the official repository for [MessageKit](https://message-kit.vercel.app/), powered by [Turborepo](https://turbo.build/repo).
+This is the official repository for [MessageKit](https://messagekit.ephemerahq.com/). Powered by [XMTP](http://xmtp.org)
 
 ## What's inside?
 
@@ -10,12 +10,16 @@ This is the official repository for [MessageKit](https://message-kit.vercel.app/
 - [`create-message-kit`](/packages/create-message-kit): A CLI for creating new apps easily
 - [`docs`](/packages/docs): Documentation for MessageKit
 
-### Examples
+### Templates
 
-- [`gm`](/examples/gm): A simple, customizable, and powerful conversational framework
-- [`one-to-one`](/examples/one-to-one): A simple, customizable, and powerful conversational framework
-- [`group`](/examples/group): Group chat app example.
+- [`gm`](/templates/gm): A simple bot that replies Gm
+- [`group`](/templates/group): Group chat bot example with skills and use-cases.
+- [`agent`](/templates/agent): A simple, customizable, and powerful conversational agent
 
 ## Contributing
 
 See our [contribution guide](./CONTRIBUTING.md) to learn more about contributing to this project.
+
+### Open Frames
+
+XMTP contributes to the development of the Open Frames [standard](https://www.openframes.xyz).

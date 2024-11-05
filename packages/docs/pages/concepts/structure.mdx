@@ -8,7 +8,7 @@ Each app consists of the following files:
 app-project/              # Optional middleware files
 ├── src/
 │   └── index.ts          # Entry point for your app. // [!code hl] // [!code focus]
-│   └── commands.ts       # Commands for your app. // [!code hl] // [!code focus]
+│   └── skills.ts       # Commands for your app. // [!code hl] // [!code focus]
 ├── tsconfig.json         // [!code hl] // [!code focus]
 ├── package.json          // [!code hl] // [!code focus]
 └── .env                  # Environment variables
@@ -32,17 +32,17 @@ run(async (context: HandlerContext) => {
 
 ## Commands
 
-Each app can have a `commands.ts` file that contains the available commands for the users. The commands are defined as an array of objects with the following structure:
+Each app can have a `skills.ts` file that contains the available skills for the users. The skills are defined as an array of objects with the following structure:
 
-```tsx [src/commands.ts]
-export const commands = [
+```tsx [src/skills.ts]
+export const skills: SkillGroup[] = [
   {
     name: "General Commands",
-    triggers: ["/help"],
     description: "Command for managing default behaviours.",
-    commands: [
+    skills: [
       {
         command: "/help",
+        triggers: ["/help"],
         handler: undefined,
         description: "Get help with the app.",
       },
@@ -51,14 +51,14 @@ export const commands = [
 ];
 ```
 
-_To learn more on how to define commands, go to [commands](/concepts/commands) section_
+_To learn more on how to define commands, go to [commands](/skills/commands) section_
 
 ## Environment variables
 
 Each app should have an `.env` file that contains the following:
 
 ```bash [.env]
-KEY= # 0x... the private key of the bot wallet, like any normal wallet private key. (with the 0x prefix)
+KEY= # the private key of the bot wallet, like any normal wallet private key.
 ```
 
 ### Optional parameters
@@ -70,9 +70,26 @@ run(
   async (context) => {
     // Your code here
   },
-  { privateKey: "your_private_key", experimental: true },
+  { privateKey: "your_private_key", experimental: true, attachments: true },
 );
 ```
 
-- `privateKey`: the private key of the bot wallet, like any normal wallet private key. (with the 0x prefix)
-- `experimental`: experimental features like logging all group messages
+- `privateKey`: the private key of the bot wallet, like any normal wallet private key.
+- `experimental`: experimental features like logging all group messages. Default is `false`.
+- `attachments`: to receive attachments. Default is `false`.
+- `client`: Optional parameters to pass to the XMTP client.
+
+### Export other clients
+
+You can export other clients on run time by importing the `xmtpClient` function.
+
+```jsx
+import { xmtpClient } from "@xmtp/message-kit";
+
+const { v2client: newClient } = await xmtpClient({
+  privateKey: /*Your private key*/,
+  /*optional parameters*/
+});
+```
+
+For example in the [Cron](/middlewares/cron) middleware, we use the `xmtpClient` function to create a new client and send messages to the users.

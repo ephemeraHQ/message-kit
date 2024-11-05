@@ -4,19 +4,20 @@ import {
   Client as ClientV2,
   Conversation as ConversationV2,
 } from "@xmtp/xmtp-js";
+import { NapiGroupMember } from "@xmtp/node-sdk";
 import fs from "fs/promises";
-import path from "path";
+import { loadSkillsFile } from "../helpers/utils";
 import type { Reaction } from "@xmtp/content-type-reaction";
-import { populateUsernames } from "../helpers/usernames.js";
 import { ContentTypeText } from "@xmtp/content-type-text";
-import { logMessage, shorterLogMessage } from "../helpers/helpers.js";
+import { logMessage } from "../helpers/utils.js";
 import {
-  CommandGroup,
-  User,
+  SkillGroup,
   MessageAbstracted,
   GroupAbstracted,
+  SkillCommand,
+  AbstractedMember,
 } from "../helpers/types.js";
-import { parseCommand } from "../helpers/helpers.js";
+import { extractCommandValues } from "../helpers/utils.js";
 import { ContentTypeReply } from "@xmtp/content-type-reply";
 import {
   ContentTypeRemoteAttachment,
@@ -25,7 +26,7 @@ import {
 import { ContentTypeReaction } from "@xmtp/content-type-reaction";
 
 export default class HandlerContext {
-  private refConv: Conversation | ConversationV2 | null = null;
+  refConv: Conversation | ConversationV2 | null = null;
 
   message!: MessageAbstracted;
   group!: GroupAbstracted;
@@ -33,18 +34,16 @@ export default class HandlerContext {
   client!: Client;
   version!: "v2" | "v3";
   v2client!: ClientV2;
-  commands?: CommandGroup[];
-  isGroup!: boolean;
-  members?: User[];
+  skills?: SkillGroup[];
+  members?: AbstractedMember[];
+  sender?: any;
   getMessageById!: (id: string) => DecodedMessage | null;
   private constructor(
     conversation: Conversation | ConversationV2,
     { client, v2client }: { client: Client; v2client: ClientV2 },
-    version?: "v2" | "v3",
   ) {
     this.client = client;
     this.v2client = v2client;
-    this.isGroup = version === "v3";
     if (conversation instanceof Conversation) {
       this.group = {
         id: conversation.id,
@@ -54,125 +53,105 @@ export default class HandlerContext {
         createdAt: conversation.createdAt,
         addMembersByInboxId:
           conversation.addMembersByInboxId.bind(conversation),
+        isAdmin: () => false,
+        isSuperAdmin: () => false,
       };
       this.version = "v3";
     } else {
-      this.conversation = conversation;
       this.version = "v2";
-    }
-  }
-  static async loadCommandConfig(
-    configPath: string = "commands.js",
-  ): Promise<CommandGroup[]> {
-    const resolvedPath = path.resolve(process.cwd(), "dist/" + configPath);
-
-    try {
-      const module = await import(resolvedPath);
-      const commandConfig = module.commands; // Access the exported variable
-
-      return commandConfig;
-    } catch (error) {
-      //console.error(`No commands.ts file found`);
-      return [];
+      this.conversation = conversation;
     }
   }
   static async create(
     conversation: Conversation | ConversationV2,
     message: DecodedMessage | DecodedMessageV2 | null,
     { client, v2client }: { client: Client; v2client: ClientV2 },
-    commandsConfigPath?: string,
+    skillsConfigPath?: string,
     version?: "v2" | "v3",
-  ): Promise<HandlerContext> {
-    const context = new HandlerContext(
-      conversation,
-      { client, v2client },
-      version,
-    );
-    if (message) {
+  ): Promise<HandlerContext | null> {
+    const context = new HandlerContext(conversation, { client, v2client });
+    if (message && message.id) {
       //v2
-      const senderAddress =
-        "senderAddress" in message
-          ? message.senderAddress
-          : message.senderInboxId;
       const sentAt = "sentAt" in message ? message.sentAt : message.sent;
+      let members: any;
+      if (version === "v2") {
+        context.sender = {
+          address: (message as DecodedMessageV2).senderAddress,
+          inboxId: (message as DecodedMessageV2).senderAddress,
+          installationIds: [],
+          accountAddresses: [(message as DecodedMessageV2).senderAddress],
+        } as AbstractedMember;
+      } else {
+        members = await (conversation as Conversation).members();
+        context.members = members.map((member: NapiGroupMember) => ({
+          inboxId: member.inboxId,
+          address: member.accountAddresses[0],
+          accountAddresses: member.accountAddresses,
+          installationIds: member.installationIds,
+        })) as AbstractedMember[];
 
-      context.members = await populateUsernames(
-        "members" in conversation
-          ? (await conversation.members()).map((member) => ({
-              inboxId: member.inboxId,
-              username: "",
-              address: member.accountAddresses[0] || "",
-              accountAddresses: member.accountAddresses,
-            }))
-          : [],
-        client.accountAddress,
-        senderAddress,
-      );
+        let MemberSender = members?.find(
+          (member: NapiGroupMember) =>
+            member.inboxId === (message as DecodedMessage).senderInboxId,
+        );
 
+        context.sender = {
+          address: MemberSender?.accountAddresses[0],
+          inboxId: MemberSender?.inboxId,
+          installationIds: [],
+          accountAddresses: MemberSender?.accountAddresses,
+        } as AbstractedMember;
+      }
       //commands
-      context.commands =
-        await HandlerContext.loadCommandConfig(commandsConfigPath);
+      context.skills = await loadSkillsFile(skillsConfigPath);
 
       context.getMessageById =
         client.conversations?.getMessageById?.bind(client.conversations) ||
         (() => null);
       // **Correct Binding:**
       context.getReplyChain = context.getReplyChain.bind(context);
-
+      context.skill = context.skill.bind(context);
       //trim spaces from text
       let content =
         typeof message.content === "string"
-          ? message.content.trim()
+          ? { content: message.content.trim(), ...message.contentType }
           : message.content;
 
-      if (message.contentType.sameAs(ContentTypeText)) {
-        content = parseCommand(
-          content,
-          context.commands ?? [],
-          context.members ?? [],
+      if (message?.contentType?.sameAs(ContentTypeText)) {
+        const extractedValues = extractCommandValues(
+          content.content,
+          context.skills,
         );
-      } else if (message.contentType.sameAs(ContentTypeReply)) {
+        if (extractedValues) {
+          content = {
+            ...content,
+            ...extractedValues,
+          };
+        }
+      } else if (message?.contentType?.sameAs(ContentTypeReply)) {
         content = {
           ...content,
           typeId: message.content.contentType.typeId,
         };
-      } else if (message.contentType.sameAs(ContentTypeRemoteAttachment)) {
+      } else if (message?.contentType?.sameAs(ContentTypeRemoteAttachment)) {
         const attachment = await RemoteAttachmentCodec.load(content, client);
         content = {
           ...content,
+          ...message.contentType,
           attachment: attachment,
         };
       }
-
-      //v2
-      const sender =
-        context.members?.find((member) => member.inboxId === senderAddress) ||
-        ({ address: senderAddress, inboxId: senderAddress } as User);
-
       context.message = {
         id: message.id,
         content: content,
-        sender: sender,
-        typeId: message.contentType.typeId,
+        sender: context.sender,
+        typeId: message.contentType?.typeId as string,
         sent: sentAt,
-        version: version as string,
+        version: version ?? "v2",
       };
-    } else {
-      context.message = {
-        id: "",
-        content: "",
-        sender: {
-          inboxId: "",
-          address: "",
-          username: "",
-          accountAddresses: [],
-        },
-        typeId: "new_" + (context.isGroup ? "group" : "conversation"),
-        sent: conversation.createdAt,
-        version: version as string,
-      };
+      return context;
     }
-    return context;
+    return null;
   }
 
   async getV2MessageById(reference: string): Promise<DecodedMessageV2 | null> {
@@ -207,12 +186,14 @@ export default class HandlerContext {
       };
     }
 
-    let sender = this.members?.find(
-      (member) =>
+    let sender = (await (this.group as Conversation).members())?.find(
+      (member: NapiGroupMember) =>
         member.inboxId === (msg as DecodedMessage).senderInboxId ||
-        member.address === (msg as DecodedMessageV2).senderAddress,
+        member.accountAddresses.includes(
+          (msg as DecodedMessageV2).senderAddress,
+        ),
     );
-    senderAddress = sender?.address ?? "";
+    senderAddress = sender?.accountAddresses[0] ?? "";
 
     let content = msg?.content?.content ?? msg?.content;
     let isSenderBot = senderAddress.toLowerCase() === botAddress?.toLowerCase();
@@ -244,20 +225,13 @@ export default class HandlerContext {
     };
     const conversation = this.refConv || this.conversation || this.group;
 
-    /*console.log(
-      this.version,
-      this.isConversationV2(conversation),
-      this.refConv,
-      this.conversation,
-      this.group,
-    );*/
     if (conversation) {
       if (this.isConversationV2(conversation)) {
         await conversation.send(reply, { contentType: ContentTypeReply });
-        logMessage("sent:" + reply.content);
+        logMessage("sent: " + reply.content);
       } else {
         await conversation.send(reply, ContentTypeReply);
-        logMessage("sent:" + reply.content);
+        logMessage("sent: " + reply.content);
       }
     }
   }
@@ -266,7 +240,7 @@ export default class HandlerContext {
     const conversation = this.refConv || this.conversation || this.group;
     if (conversation) {
       await conversation.send(message);
-      logMessage("sent:" + message);
+      logMessage("sent: " + message);
     }
   }
 
@@ -324,49 +298,70 @@ export default class HandlerContext {
 
       // Send the message only once per receiver
       await targetConversation.send(message);
-      logMessage("sent:" + message);
+      logMessage("sent: " + message);
     }
   }
 
-  async intent(text: string, conversation?: Conversation) {
-    const { commands, members } = this;
-
+  async skill(text: string, conversation?: Conversation) {
+    //if (process.env.MSG_LOG) console.log("skill", text);
     if (conversation) this.refConv = conversation;
     try {
-      const handler = this.commands?.find((command) =>
-        command.triggers?.includes(text.split(" ")[0]),
-      );
-
-      if (handler) {
-        let content = parseCommand(text, commands ?? [], members ?? []);
+      let skillCommand = this.findSkill(text);
+      const extractedValues = extractCommandValues(text, this.skills ?? []);
+      if ((text.startsWith("/") || text.startsWith("@")) && !extractedValues) {
+        console.warn("Command not valid", text);
+      } else if (skillCommand) {
         // Mock context for command execution
         const mockContext: HandlerContext = {
           ...this,
           conversation: conversation ?? this.conversation,
           message: {
             ...this.message,
-            content,
+            content: {
+              ...this.message.content,
+              ...extractedValues,
+            },
           },
-          intent: this.intent.bind(this),
+          skill: this.skill.bind(this),
           reply: this.reply.bind(this),
           send: this.send.bind(this),
           sendTo: this.sendTo.bind(this),
           react: this.react.bind(this),
           getMessageById: this.getMessageById.bind(this),
           getReplyChain: this.getReplyChain.bind(this),
-          isGroup: this.group instanceof Conversation,
         };
 
         this.refConv = null;
-        return await handler?.commands[0].handler?.(mockContext);
-      } else {
-        this.send(text);
-        logMessage("sent:" + text);
-      }
+        return skillCommand?.handler?.(mockContext);
+      } else if (text.startsWith("/") || text.startsWith("@")) {
+        console.warn("Command not valid", text);
+      } else return this.send(text);
     } catch (e) {
       console.log("error", e);
     } finally {
       this.refConv = null;
     }
+  }
+
+  findSkill(text: string): SkillCommand | undefined {
+    let skills = this.skills ?? [];
+    const trigger = text?.split(" ")[0].toLowerCase();
+    for (const skillGroup of skills) {
+      const handler = skillGroup.skills.find((skill) => {
+        return skill?.triggers?.includes(trigger);
+      });
+
+      if (handler !== undefined) return handler;
+    }
+    return undefined;
+  }
+  findSkillGroup(content: string): SkillGroup | undefined {
+    let skills = this.skills ?? [];
+    return skills.find((skill) => {
+      if (skill.tag && content.includes(`${skill.tag}`)) {
+        return true;
+      }
+      return undefined;
+    });
   }
 }

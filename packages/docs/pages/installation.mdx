@@ -22,11 +22,15 @@ yarn create message-kit
 npx create-message-kit@latest
 ```
 
+```bash [npm]
+npm init message-kit@latest
+```
+
 :::
 
 _Refer to [structure](/concepts/structure) of the app so see the folder is created._
 
-### Example
+### Templates
 
 Start with a simple app that replies with `gm`.
 
@@ -40,14 +44,16 @@ run(async (context: HandlerContext) => {
 });
 ```
 
-_You can also pick one of the 2 full [examples](#examples) available._
+- [`gm`](./templates/gm): Simple gm bot example.
+- [`group`](./templates/group): Group chat bot example with skills and examples.
+- [`agent`](./templates/agent): ENS agent for registering and checking domains
 
 ### Variables
 
 Create a `.env` file in the root of your project
 
 ```bash [cmd]
-KEY= # 0x... the private key of the bot wallet (with the 0x prefix)
+KEY= # the private key of the bot wallet
 ```
 
 ### Run the bot
@@ -84,11 +90,6 @@ npm run dev
 Send a message to the app, and it will reply `gm`!
 
 ::::
-
-## Examples
-
-- [`one-to-one`](/use-cases/one-to-one): A simple, customizable, and powerful conversational framework
-- [`group`](/use-cases/group): Group chat app example.
 
 ## Manual Installation
 

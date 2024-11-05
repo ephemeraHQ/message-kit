@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "workspaces": [
-    "examples/*",
+    "templates/*",
     "packages/*",
     "shared/*"
   ],
@@ -14,10 +14,10 @@
     "clean": "turbo run clean && rm -rf node_modules && rm -rf .turbo && yarn cache clean",
     "copy": "cd packages/create-message-kit && yarn copy && cd .. && cd ..",
     "dev": "cd packages/message-kit && yarn build:watch && bun link",
+    "dev:agent": "cd templates/agent && yarn dev",
     "dev:docs": "cd packages/docs && yarn dev",
-    "dev:gm": "cd examples/gm && yarn dev",
-    "dev:group": "cd examples/group && yarn dev",
-    "dev:one-to-one": "cd examples/one-to-one && yarn dev",
+    "dev:gm": "cd templates/gm && yarn dev",
+    "dev:group": "cd templates/group && yarn dev",
     "format": "turbo run format",
     "format:check": "turbo run format:check",
     "publish": "turbo run build --filter='./packages/*' --filter='!./packages/docs' && yarn copy && changeset publish",

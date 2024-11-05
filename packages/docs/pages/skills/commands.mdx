@@ -1,0 +1,123 @@
+# Commands
+
+Each app can have a `skills.ts` file that contains the skills that the app can execute. The skills are defined as an array of objects with the following keys:
+
+## Command structure
+
+First think of which command you want the app to respond to. For example:
+
+```bash [cmd]
+/command [parameter1] [parameter2] [parameter3]
+```
+
+**Properties**
+
+- **command**: The name of the command.
+- **description**: The description of the command.
+- **params**: Defines the parameters required for the command with its property name.
+  - **default**: The default value for the parameter. This can be any type.
+  - **plural**: If true, the parameter is an array.
+  - **type**: The type of the parameter. It can be one of the following:
+    - `number`: The parameter is a number.
+    - `string`: The parameter is a string.
+    - `username`: The parameter is a username.
+    - `quoted`: The parameter is a quoted string.
+    - `address`: The parameter is an address.
+    - `prompt`: The parameter is a prompt.
+    - `url`: The parameter is a URL.
+  - **values**: `[]` An array of strings that defines the accepted values for the parameter.
+
+## Create a command
+
+Create the command file `skills.ts` in your project root `src` folder.
+
+```tsx [src/skills.ts]
+import { handler as transaction } from "./handler/transaction.js";
+
+export const skills: SkillGroup[] = [
+  {
+    name: "Transactions",
+    description: "Multipurpose transaction frame built onbase.",
+    skills: [
+      {
+        command: "/swap [amount] [token_from] [token_to]",
+        triggers: ["/swap"],
+        examples: ["/swap 10 usdc eth"],
+        description: "Exchange one type of cryptocurrency for another.",
+        handler: transaction,
+        params: {
+          amount: {
+            default: 10,
+            type: "number",
+          },
+          token_from: {
+            default: "usdc",
+            type: "string",
+            values: ["eth", "dai", "usdc", "degen"], // Accepted tokens
+          },
+          token_to: {
+            default: "eth",
+            type: "string",
+            values: ["eth", "dai", "usdc", "degen"], // Accepted tokenss
+          },
+        },
+      },
+    ],
+  },
+];
+```
+
+## Example
+
+:::steps
+
+### User request
+
+A user wants to swap tokens:
+
+```bash
+/swap 1 eth usdc
+```
+
+MessageKit directly processes the parameters from the command and handles the parameters to return a Frame URL.
+
+### Handling command responses
+
+MessageKit will automatically handle the command parameters allowing you to focus on handling the command logic.
+
+```tsx
+import { HandlerContext } from "@xmtp/message-kit";
+
+export async function transaction(context: HandlerContext) {
+  const {
+    message: {
+      content: { command, params }, // [!code hl]
+    },
+  } = context;
+  const baseUrl = "https://base-tx-frame.vercel.app/transaction";
+
+  if (command === "swap") {
+    const { amount, token_from, token_to } = params; // [!code hl]
+
+    if (!amount || !token_from || !token_to) {
+      context.reply(
+        "Missing required parameters. Please provide amount, token_from, and token_to.",
+      );
+      return;
+    }
+    let url_swap = `${baseUrl}/swap?amount=${amount}&token_from=${token_from}&token_to=${token_to}`;
+    // Generate URL for the swap transaction
+    context.reply(`${url_swap}`); // [!code hl]
+  }
+}
+```
+
+### Bot response
+
+The bot will reply with the URL to the swap transaction which renders a [Frame](../frames/index).
+
+```bash
+https://base-tx-frame.vercel.app/transaction?transactionType=swap&amount=1&token_from=eth&token_to=usdc
+```
+
+:::

@@ -1,6 +1,6 @@
 # Guidelines for MessageKit Bots
 
-MessageKit is an open SDK for building bots that work seamlessly within the Converse Messenger platform built with XMTP.
+MessageKit is framework for building AI agents that work seamlessly within the Converse Messenger platform built with XMTP.
 
 Today, bots can easily become untrustworthy members of group chats. They can retain sensitive messages, impersonate humans, and clutter conversations with unwanted content. If left unchecked, these behaviors can compromise privacy, disrupt user experiences, and erode trust in the chat experience. We
 
@@ -13,7 +13,7 @@ These principles create a safe foundation that we may thoughtfully expand over t
 Bots built with MessageKit SDK follow the trusted principles detailed here. These principles are built into MessageKit to make responsible bot development straightforward and effortless.
 
 - **Bots can’t read messages in chats**
-  Bots can’t read _messages_ in chat and can only read _commands_ in chat, such as `/help` or `@bot`. This ensures that bots can act on commands sent by human members while preserving the privacy of everyone in the chat.
+  Bots can’t read _messages_ in chat and can only read _commands_ in chat, such as `/help` or `@bot`. This ensures that bots can act on skills sent by human members while preserving the privacy of everyone in the chat.
 - **Bots can’t send unprompted messages**
   Bots can’t send _unprompted_ messages and can only send messages in _response to commands_ sent by human members or if a group chat admin grants them permission to send messages freely. By ensuring that bots only send messages as requested, we keep chats focused and minimize unnecessary noise.
 - **Bots can’t join chats as members**

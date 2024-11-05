@@ -6,7 +6,7 @@ import { CustomHomePage } from "../components/CustomHomePage";
   {typeof window !== 'undefined' ? "Build with MessageKit" : ""}
 </CustomHomePage.Headline>
   <HomePage.Description>
-    An open SDK for building messaging mini-apps that run in apps built with [XMTP](https://docs.xmtp.org) 
+    An open framework for building AI agents that run in apps built with [XMTP](https://docs.xmtp.org) 
   </HomePage.Description>
 
 <div className="custom-homepage-tile-grid-container" style={{ 
@@ -31,28 +31,47 @@ yarn create message-kit
 npx create-message-kit@latest
 ```
 
+```bash [npm]
+npm init message-kit@latest
+```
+
 :::
 
 </div>
   <CustomHomePage.TileGrid>
+
+    <CustomHomePage.Tile
+      href="/directory"
+      title="Directory"
+      description="Most popular Apps built with MessageKit"
+      icon="💬"
+    />
     <CustomHomePage.Tile
       href="/installation"
       title="Get started"
       description="Get you started with this step-by-step guide"
       icon="⚡️"
     />
+
     <CustomHomePage.Tile
-      href="/directory"
-      title="Examples"
-      description="Discover some of the most popular Apps built with MessageKit"
+      href="/templates/agent"
+      title="ENS Agent"
+      description="Learn to build an ENS agent"
+      icon="🧠"
+    />
+    <CustomHomePage.Tile
+      href="/templates/group"
+      title="Group bot"
+      description="Learn to build a group chat bot"
       icon="💬"
     />
     <CustomHomePage.Tile
-      href="/deployment"
-      title="Deploy"
-      description="Deploy your mini-app with this step-by-step guide"
-      icon="🤖"
+      href="/frames"
+      title="Open Frames"
+      description="Create Open Frames using MessageKit"
+      icon="🖼️"
     />
+
     <CustomHomePage.Tile
       href="/concepts/structure"
       title="Concepts"
@@ -60,16 +79,17 @@ npx create-message-kit@latest
       icon="📚"
     />
     <CustomHomePage.Tile
-      href="/use-cases/group"
-      title="Use cases"
-      description="Learn about use cases for MessageKit"
-      icon="💡"
+      href="/deployment"
+      title="Deploy"
+      description="Deploy your bot with this step-by-step guide"
+      icon="🤖"
     />
     <CustomHomePage.Tile
-      href="/frames"
-      title="Frames"
-      description="Create Open Frames using MessageKit"
-      icon="🖼️"
+      href="/middlewares"
+      title="Middlewares"
+      description="Copy paste middlewares to add functionality to your bot"
+      icon="🔧"
     />
+
   </CustomHomePage.TileGrid>
 </CustomHomePage.Root>

@@ -1,0 +1,96 @@
+## Natural language parsing
+
+Transform your bot into a conversational genius! Natural language processing enables your bot to understand human-like requests and translate them into precise commands.
+
+## How it works
+
+Imagine your users chatting with your bot as naturally as texting a friend.
+
+```bash
+@swap 1 usdc to eth please
+```
+
+The bot uses AI to understand casual requests. Here's the secret sauce:
+
+```tsx
+const systemPrompt = `
+You're a friendly web3 swap assistant living in group chats!
+
+I understand casual requests like:
+- "@swap 1 eth to usdc"
+- "hey bot, swap 2 dai for eth"
+- "convert 0.5 usdc to eth please"
+
+I'll convert these into structured skills like:
+/swap [amount] [token_from] [token_to]
+
+Examples:
+/swap 1 eth usdc    // Swapping 1 ETH to USDC
+/swap 100 dai usdc  // Converting 100 DAI to USDC
+/swap 0.1 eth usdt  // Trading 0.1 ETH for USDT
+`;
+```
+
+And the magic happens:
+
+```tsx
+// The AI processes the request and returns a structured command
+const { reply } = await textGeneration(userPrompt, systemPrompt);
+
+// If it's a valid command, execute it!
+if (reply.startsWith("/")) {
+  await context.skill(reply);
+}
+```
+
+## Example:
+
+::::steps
+
+### User request
+
+```bash
+@swap 1 usdc eth please
+```
+
+### Prompt parsing
+
+```tsx
+const { reply } = await textGeneration(userPrompt, systemPrompt);
+// /swap 1 usdc eth
+```
+
+### Returning a response
+
+The bot can return a structured response to the user and then handle the response in the command handler.
+
+```tsx
+import { SkillResponse } from "@xmtp/message-kit";
+
+// If it's a valid command, execute it!
+if (reply.startsWith("/")) {
+  const response = (await context.skill(reply)) as SkillResponse;
+  if (response.code == 200) await context.send(response.message);
+}
+```
+
+### Example response:
+
+```json
+{
+  "code": 200,
+  "message": "https://base-tx-frame.vercel.app/transaction?transactionType=swap&amount=1&token_from=usdc&token_to=eth"
+}
+```
+
+::::
+
+### Pro tips
+
+- Your bot can handle various casual phrases
+- Users don't need to remember exact command syntax
+- Natural language makes your bot more approachable
+- Add personality to your system prompt for extra flair!
+- Use the `SkillResponse` type to handle the response from the command handler.
+- Handle all possible responses from the command handler.
+- Use the `SkillResponse` as if they were a normal API response.

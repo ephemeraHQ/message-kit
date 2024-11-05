@@ -1,0 +1,89 @@
+# Multi Skills
+
+Agent can respond with multiple messages, each separated by newlines. This allows for a structured approach a more natural conversation flow.
+
+## Prompt
+
+In the prompt you will find this multi line references:
+
+```plaintext [prompt.ts]
+- You can respond with multiple messages if needed. Each message should be separated by a newline character.
+- You can trigger skills by only sending the command in a newline message.
+- Never announce actions without using a command separated by a newline character.
+- Dont answer in markdown format, just answer in plaintext.
+```
+
+## Example
+
+:::steps
+
+### User request
+
+```
+I want to check if vitalik.eth is available
+```
+
+### Bot reply
+
+The bot will reply in full with text and different commands it can execute
+
+```
+Hey! Sure, Let me check that domain for you
+
+/check vitalik.eth
+```
+
+### Multi Skills
+
+The `Multi Skills` processing happens in the `processMultilineResponse` function in the [GPT middleware](/middlewares/gpt.mdx), which takes the AI's response, splits it into individual messages, and handles each one appropriately:
+
+```tsx [gpt.ts]
+// Split response into separate messages and filter out empty lines
+let messages = reply
+  .split("\n")
+  .map((message) => parseMarkdown(message))
+  .filter((message) => message.length > 0);
+```
+
+This will return an array of messages, and then it will process each one sequentially:
+
+```tsx [gpt.ts]
+[" Let me check that domain for you", "/check vitalik.eth"];
+```
+
+### Putting it all together
+
+```tsx [gpt.ts]
+// Process each message sequentially
+for (const message of messages) {
+  if (message.startsWith("/")) {
+    const response = await context.skill(message);
+    if (response && typeof response.message === "string") {
+      let msg = parseMarkdown(response.message);
+      chatMemory.addEntry(address, {
+        role: "system",
+        content: msg,
+      });
+      await context.send(response.message);
+    } else {
+      /* Other type of response in .data probably, or error */
+    }
+  } else {
+    await context.send(message);
+  }
+}
+```
+
+The handler in this case returns all with `SkillResponse` type:
+
+```tsx [processMultilineResponse.ts]
+export type SkillResponse = {
+  code: number;
+  message: string;
+  data?: any;
+};
+```
+
+You can learn more about GPT in the [GPT](/middlewares/gpt.mdx) section.
+
+:::

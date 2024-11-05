@@ -2,7 +2,6 @@ import { defineConfig } from "vocs";
 
 export default defineConfig({
   head: () => {
-    // console.log(`Generating head content... ${new Date().toISOString()}`)
     return (
       <>
         <meta charSet="utf-8" />
@@ -31,11 +30,25 @@ export default defineConfig({
           content="https://messagekit.ephemerahq.com/"
         />
 
-        <meta property="fc:frame:button:2" content="Examples" />
+        <meta property="fc:frame:button:2" content="Directory" />
         <meta property="fc:frame:button:2:action" content="link" />
         <meta
           property="fc:frame:button:2:target"
           content="https://messagekit.ephemerahq.com/"
+        />
+
+        <meta property="fc:frame:button:3" content="Templates" />
+        <meta property="fc:frame:button:3:action" content="link" />
+        <meta
+          property="fc:frame:button:3:target"
+          content="https://messagekit.ephemerahq.com/templates"
+        />
+
+        <meta property="fc:frame:button:4" content="Concepts" />
+        <meta property="fc:frame:button:4:action" content="link" />
+        <meta
+          property="fc:frame:button:4:target"
+          content="https://messagekit.ephemerahq.com/concepts"
         />
 
         <script
@@ -71,7 +84,8 @@ export default defineConfig({
       text: "Converse app",
       link: "https://converse.xyz",
     },
-    { text: "XMTP Docs", link: "https://docs.xmtp.org/" },
+    { text: "XMTP", link: "https://docs.xmtp.org/" },
+    { text: "1.1.5-beta.13", link: "/changelog" },
   ],
   editLink: {
     pattern:
@@ -84,8 +98,12 @@ export default defineConfig({
       link: "/installation",
     },
     {
-      text: "Examples",
+      text: "Directory",
       link: "/directory",
+    },
+    {
+      text: "Quickstarts",
+      link: "/quickstarts",
     },
     {
       text: "Deployment",
@@ -95,6 +113,7 @@ export default defineConfig({
       text: "Guidelines",
       link: "/guidelines",
     },
+
     {
       text: "Concepts",
       collapsed: false,
@@ -114,12 +133,26 @@ export default defineConfig({
           ],
         },
         {
-          text: "Commands",
-          link: "/concepts/commands",
-        },
-        {
-          text: "Intent",
-          link: "/concepts/intent",
+          text: "AI Skills",
+          link: "/skills",
+          items: [
+            {
+              text: "Commands",
+              link: "/skills/commands",
+            },
+            {
+              text: "Natural Language",
+              link: "/skills/natural",
+            },
+            {
+              text: "Multi Skills",
+              link: "/skills/multi-skills",
+            },
+            {
+              text: "Reasoning",
+              link: "/skills/reasoning",
+            },
+          ],
         },
         {
           text: "Groups",
@@ -130,51 +163,97 @@ export default defineConfig({
 
     {
       text: "Use cases",
-      collapsed: false,
       items: [
         {
-          text: "Group chat",
-          link: "/use-cases/group",
+          text: "Gm bot",
+          link: "/templates/gm",
+        },
+        {
+          text: "Agent",
+          link: "/templates/agent",
           items: [
             {
-              text: "Agents",
-              link: "/use-cases/group/agents",
+              text: "Skill",
+              link: "/templates/agent/skills",
             },
             {
-              text: "Tipping",
-              link: "/use-cases/group/tipping",
+              text: "ENS Handler",
+              link: "/templates/agent/ens",
             },
             {
-              text: "Games",
-              link: "/use-cases/group/games",
-            },
-            {
-              text: "Transactions",
-              link: "/use-cases/group/transactions",
-            },
-            {
-              text: "Split Payments",
-              link: "/use-cases/group/splitpayments",
-            },
-            {
-              text: "Loyalty",
-              link: "/use-cases/group/loyalty",
+              text: "Prompt",
+              link: "/templates/agent/prompt",
             },
           ],
         },
         {
-          text: "One-to-one",
-          link: "/use-cases/one-to-one",
+          text: "Group bot",
+          link: "/templates/group",
           items: [
             {
-              text: "Subscribe",
-              link: "/use-cases/one-to-one/subscribe",
+              text: "Agents",
+              link: "/templates/group/agents",
             },
             {
-              text: "Broadcast",
-              link: "/use-cases/one-to-one/broadcast",
+              text: "Tipping",
+              link: "/templates/group/tipping",
+            },
+            {
+              text: "Games",
+              link: "/templates/group/games",
+            },
+            {
+              text: "Transactions",
+              link: "/templates/group/transactions",
+            },
+            {
+              text: "Split Payments",
+              link: "/templates/group/splitpayments",
+            },
+            {
+              text: "Loyalty",
+              link: "/templates/group/loyalty",
             },
           ],
+        },
+      ],
+    },
+
+    {
+      text: "Middlewares",
+      collapsed: false,
+      items: [
+        {
+          text: "GPT",
+          link: "/middlewares/gpt",
+        },
+        {
+          text: "Cron",
+          link: "/middlewares/cron",
+        },
+        {
+          text: "Redis",
+          link: "/middlewares/redis",
+        },
+        {
+          text: "Vision",
+          link: "/middlewares/vision",
+        },
+        {
+          text: "Stackso",
+          link: "/middlewares/stackso",
+        },
+        {
+          text: "Notion",
+          link: "/middlewares/notion",
+        },
+        {
+          text: "Resolver",
+          link: "/middlewares/resolver",
+        },
+        {
+          text: "LearnWeb3",
+          link: "/middlewares/learnweb3",
         },
       ],
     },

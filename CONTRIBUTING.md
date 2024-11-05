@@ -35,7 +35,7 @@ This repository uses the [Yarn package manager](https://yarnpkg.com/). To use it
 ### Useful commands
 
 - `yarn`: Installs all dependencies
-- `yarn build`: Builds the examples and `packages/message-kit`
+- `yarn build`: Builds templates and `packages/message-kit`
 - `yarn clean`: Remove all `node_modules`, `.turbo`, and build folders, clears Yarn cache
 - `yarn format`: Run prettier format and write changes on all packages
 - `yarn format:check`: Run prettier format check on all packages
