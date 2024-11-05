@@ -2,20 +2,45 @@
 
 ## [1.1.5] - 2024-11-02
 
+## AI Skills
+
+- Tagline: An open framework for building AI agents ?
+- Lighter but more structured and robust.
+- Updated directory
+- Each agent can have its own landing in messagekit (devs can do PRs)
+- Quickstarts section
+- Skills: There is a 4step approach. We are calling them AI Skills ?
+  [Commands](https://messagekit.ephemerahq.com/skills/commands): Parsing commands with /
+  [Natural language](https://messagekit.ephemerahq.com/skills/natural): From @base please let swap 1 eth to usdc to /swap 1 eth usdc
+  [Multi Skill](https://messagekit.ephemerahq.com/skills/multi-skills): For a agent to perform multiple actions after the other
+  [Reasoning](https://messagekit.ephemerahq.com/skills/reasoning): For the agent to understand all context and perform commands autonomously.
+- Resolver: Fetches context from the user like ENS domain or Converse username
+
+### MessageKit updates
+
 **Updates:**
 
-- Added `adminOnly` skills for group settings for skills enabled only for admin of groups
+- Added `adminOnly` commands for group settings for commands enabled only for admin of groups
 - Added `memberChange` as optional runner config for enabling new members added
 - Added `attachment` as optional runner config for enabling attachments in the stream
 - New CLI logo logo
 - Updated CLI notes and warnings
 - Implemented logging for sent messages.
-- Updated `node-sdk and `grpc-api-client`
+- Updated `node-sdk` https://github.com/xmtp/xmtp-js/releases/tag/%40xmtp%2Fnode-sdk%400.0.20
+- Updated `xmtp-js` https://github.com/xmtp/xmtp-js/releases/tag/%40xmtp%2Fxmtp-js%4013.0.3
+- Updated grpc-client https://github.com/xmtp/xmtp-node-js-tools/releases
 - Created Converse usernames endpoint. https://github.com/ephemeraHQ/converse-website/pull/32
 - Revamped command handler and triggers.
 - Added logging for invalid commands.
 - Added handling for incorrect and non-command inputs.
 - New Tagline: `An open framework for building AI agents`
+- Updated tests
+- Improved `isMessageValid` for filtering messages
+- Added `isMessageValid` log to debug on `MSG_LOG=true`
+- Added `isTagged` in the filter
+- Restructured the isMessageValid logic
+- Updated streams with reconnect logic
+- Updated types based on Skills
 
 **Documentation:**
 
@@ -31,7 +56,7 @@
 **Middleware:**
 Added Middlewares section as the layer where to interact with external services in general.
 
-- GPT: Use gpt responses
+- GPT: Use gpt responses (Updated)
 - Cron: Send updates daily
 - Resolver: Resolve ens and converse usernames
 - Notion: Interact with notion docs
