@@ -20,17 +20,18 @@ export async function streamMessages(
 
     try {
       if (version === "v3") {
-        /*
-        await v3client.conversations.streamAllMessages((err, message) => {
-          if (err) {
-            if (STREAM_LOG) {
-              console.warn(`[v3] Stream error occurred`);
+        // await v3client.conversations.streamAllMessages((err, message) => {
+        //   if (err) {
+        //     console.log(err);
+        //     if (STREAM_LOG) {
+        //       console.warn(`[v3] Stream error occurred`);
 
-              throw err;
-            }
-          }
-          handleMessage(version, message);
-        });*/
+        //       throw err;
+        //     }
+        //   }
+        //   if (message) handleMessage(version, message);
+        // });
+
         stream = await v3client.conversations.streamAllMessages();
         for await (const message of stream) {
           handleMessage(version, message);
