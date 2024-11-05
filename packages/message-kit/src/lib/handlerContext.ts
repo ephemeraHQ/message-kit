@@ -357,7 +357,7 @@ export default class HandlerContext {
   }
   findSkillGroup(content: string): SkillGroup | undefined {
     let skills = this.skills ?? [];
-    return skills.find((skill) => {
+    return skills?.find((skill) => {
       if (skill.tag && content.includes(`${skill.tag}`)) {
         return true;
       }
