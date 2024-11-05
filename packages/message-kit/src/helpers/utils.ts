@@ -193,7 +193,12 @@ export const logMessage = (message: string) => {
   console.log(shorterLogMessage(message));
 };
 
-export async function logInitMessage(client: Client, config?: Config) {
+export async function logInitMessage(
+  client: Client,
+  config?: Config,
+  key?: string,
+  randomKey?: boolean,
+) {
   const coolLogo = `\x1b[38;2;250;105;119m\
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -221,6 +226,11 @@ Powered by XMTP \x1b[0m`;
     if (config?.attachments) {
       console.warn("\t- ⚠️ Attachments are enabled");
     }
+    if (randomKey) {
+      console.warn(
+        `\t- ⚠️🔒 Invalid private key or not set. Generating a random one.\n\t\t- Copy and paste it in your .env file as KEY=${key}`,
+      );
+    }
     if (config?.client?.logging) {
       console.warn(`\t- ⚠️ Logging is set to ${config.client.logging}`);
     }
@@ -240,9 +250,7 @@ Powered by XMTP \x1b[0m`;
     }
     if (config?.experimental) {
       console.warn(
-        `\t- ☣️ EXPERIMENTAL MODE ENABLED:
-        \t\t⚠️ All group messages will be exposed — proceed with caution.
-        \t\tℹ Guidelines: https://messagekit.ephemerahq.com/guidelines`,
+        `\t- ☣️ EXPERIMENTAL MODE ENABLED:\t\t⚠️ All group messages will be exposed — proceed with caution.\t\tℹ Guidelines: https://messagekit.ephemerahq.com/guidelines`,
       );
     }
   }
