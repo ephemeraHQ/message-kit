@@ -25,7 +25,7 @@ import {
 } from "@xmtp/content-type-remote-attachment";
 import { ContentTypeReaction } from "@xmtp/content-type-reaction";
 
-export default class HandlerContext {
+export class HandlerContext {
   refConv: Conversation | ConversationV2 | null = null;
 
   message!: MessageAbstracted;

@@ -118,7 +118,7 @@ describe("Command extraction tests", () => {
     expect(extractedValues).toEqual({
       command: "agent",
       params: expect.objectContaining({
-        prompt: "Hello, how can I assist you today?".toLowerCase(),
+        prompt: "Hello, how can I assist you today?",
       }),
     });
   });

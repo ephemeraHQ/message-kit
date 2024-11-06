@@ -17,13 +17,12 @@ import { mainnet } from "viem/chains";
 import { GrpcApiClient } from "@xmtp/grpc-api-client";
 import { Config } from "../helpers/types";
 
-export default async function xmtpClient(
+export async function xmtpClient(
   config?: Config,
 ): Promise<{ client: Client; v2client: V2Client }> {
   // Check if both clientConfig and privateKey are empty
-  let { key, isRandom } = getKey();
+  let { key, isRandom } = getKey(config?.privateKey);
   let user = createUser(key);
-
   let env = process.env.XMTP_ENV as XmtpEnv;
   if (!env) {
     env = "production" as XmtpEnv;
@@ -109,6 +108,8 @@ function getKey(customKey?: string): { key: string; isRandom: boolean } {
     !/^0x[0-9a-fA-F]{64}$/.test(key) ||
     !checkPrivateKey(key)
   ) {
+    if (process.env.MSG_LOG === "true")
+      console.log("Generating random key", key);
     key = generatePrivateKey();
     return { key, isRandom: true };
   } else return { key, isRandom: false };

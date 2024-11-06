@@ -1,5 +1,5 @@
-import { default as HandlerContext } from "./handlerContext.js";
-import { default as xmtpClient } from "./client.js";
+import { HandlerContext } from "./handlerContext.js";
+import { xmtpClient } from "./client.js";
 import { Config, Handler, SkillHandler } from "../helpers/types.js";
 import { DecodedMessage } from "@xmtp/node-sdk";
 import { logMessage } from "../helpers/utils.js";
@@ -171,7 +171,12 @@ export default async function run(handler: Handler, config?: Config) {
               params: skillCommand?.params
                 ? Object.entries(skillCommand.params).map(([key, value]) => ({
                     key,
-                    value,
+                    value: {
+                      type: value.type,
+                      values: value.values,
+                      plural: value.plural,
+                      default: value.default,
+                    },
                   }))
                 : undefined,
             }
@@ -201,7 +206,6 @@ export default async function run(handler: Handler, config?: Config) {
         )
       : (message as DecodedMessageV2)?.conversation;
   };
-
   // Run both clients' streams concurrently
   await Promise.all([
     streamMessages("v3", handleMessage, client),

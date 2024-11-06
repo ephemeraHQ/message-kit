@@ -108,7 +108,7 @@ export const getUserInfo = async (
       }),
     });
     const converseData = (await response.json()) as ConverseProfile;
-    if (process.env.MSG_LOG)
+    if (process.env.MSG_LOG === "true")
       console.log("Converse data", keyToUse, converseData);
     data.converseUsername =
       converseData?.formattedName || converseData?.name || undefined;

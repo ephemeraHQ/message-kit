@@ -16,9 +16,8 @@ export async function streamMessages(
   let v2client = client as V2Client;
 
   while (true) {
-    let stream: any | undefined;
-
     try {
+      if (STREAM_LOG) console.warn(`[${version}] Connecting to stream`);
       if (version === "v3") {
         // await v3client.conversations.streamAllMessages((err, message) => {
         //   if (err) {
@@ -32,12 +31,12 @@ export async function streamMessages(
         //   if (message) handleMessage(version, message);
         // });
 
-        stream = await v3client.conversations.streamAllMessages();
+        const stream = await v3client.conversations.streamAllMessages();
         for await (const message of stream) {
           handleMessage(version, message);
         }
       } else if (version === "v2") {
-        stream = await v2client.conversations.streamAllMessages();
+        const stream = await v2client.conversations.streamAllMessages();
         for await (const message of stream) {
           handleMessage(version, message);
         }
@@ -45,11 +44,6 @@ export async function streamMessages(
     } catch (err) {
       if (STREAM_LOG) {
         console.error(`[${version}] Stream encountered an error:`, err);
-      }
-      // Continue the loop to retry connection
-    } finally {
-      if (stream) {
-        await stream.return();
       }
     }
   }

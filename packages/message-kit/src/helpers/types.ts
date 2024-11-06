@@ -1,4 +1,4 @@
-import { default as HandlerContext } from "../lib/handlerContext.js";
+import { HandlerContext } from "../lib/handlerContext.js";
 import { ClientOptions } from "@xmtp/node-sdk";
 import { ContentTypeId } from "@xmtp/content-type-primitives";
 

@@ -20,12 +20,14 @@ export function extractCommandValues(
     if (typeof text !== "string") return defaultResult;
 
     // Replace all "“" and "”" with "'" and '"'
-    text = text.toLowerCase().replaceAll("“", '"').replaceAll("”", '"');
+    text = text.replaceAll("“", '"').replaceAll("”", '"');
 
     const parts = text.match(/[^\s"']+|"([^"]*)"|'([^']*)'|`([^`]*)`/g);
     if (!parts) return defaultResult;
+    let commandName = parts[0].startsWith("/")
+      ? parts[0].slice(1).toLowerCase()
+      : parts[0].toLowerCase();
 
-    let commandName = parts[0].startsWith("/") ? parts[0].slice(1) : parts[0];
     let commandConfig: SkillCommand | undefined = undefined;
 
     for (const group of skills) {
