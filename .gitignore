@@ -66,4 +66,5 @@ next-env.d.ts
 packages/create-message-kit/templates/**
 packages/create-message-kit/templates/**/*
 
-others
+templates/dead
+templates/split
