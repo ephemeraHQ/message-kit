@@ -5,7 +5,8 @@
   "workspaces": [
     "templates/*",
     "packages/*",
-    "shared/*"
+    "shared/*",
+    "others/*"
   ],
   "scripts": {
     "prebuild": "cd packages/docs && yarn install && cd ..",
@@ -15,11 +16,11 @@
     "copy": "cd packages/create-message-kit && yarn copy && cd .. && cd ..",
     "dev": "cd packages/message-kit && yarn build:watch",
     "dev:agent": "cd templates/agent && yarn dev",
-    "dev:dead": "cd templates/dead && yarn dev",
+    "dev:dead": "cd others/dead && yarn dev",
     "dev:docs": "cd packages/docs && yarn dev",
     "dev:gm": "cd templates/gm && yarn dev",
     "dev:group": "cd templates/group && yarn dev",
-    "dev:split": "cd templates/split && yarn dev",
+    "dev:split": "cd others/split && yarn dev",
     "format": "turbo run format",
     "format:check": "turbo run format:check",
     "publish": "turbo run build --filter='./packages/*' --filter='!./packages/docs' && yarn copy && changeset publish",

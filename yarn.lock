@@ -9638,9 +9638,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"split@workspace:templates/split":
+"split@workspace:others/split":
   version: 0.0.0-use.local
-  resolution: "split@workspace:templates/split"
+  resolution: "split@workspace:others/split"
   dependencies:
     "@stackso/js-core": "npm:^0.3.1"
     "@types/node": "npm:^20.14.2"
@@ -10945,9 +10945,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"xmtp-coinbase-betbot@workspace:templates/dead":
+"xmtp-coinbase-betbot@workspace:others/dead":
   version: 0.0.0-use.local
-  resolution: "xmtp-coinbase-betbot@workspace:templates/dead"
+  resolution: "xmtp-coinbase-betbot@workspace:others/dead"
   dependencies:
     "@types/node": "npm:^20.14.2"
     "@types/node-cron": "npm:^3.0.11"
