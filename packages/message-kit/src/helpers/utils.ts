@@ -46,7 +46,7 @@ Powered by XMTP \x1b[0m`;
     }
     if (randomKey) {
       console.warn(
-        `\t- ⚠️🔒 Invalid private key or not set. Generating a random one.\n\t\t- Copy and paste it in your .env file as KEY=${key}`,
+        `\t- ⚠️🔒 Invalid private key or not set. Generating a random one.\n\t\t- Copy and paste it in your .env file as:\n\t\t- KEY=${key}`,
       );
     }
     if (config?.client?.logging) {

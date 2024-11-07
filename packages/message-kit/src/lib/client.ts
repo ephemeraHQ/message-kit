@@ -109,8 +109,6 @@ function getKey(customKey?: string): { key: string; isRandom: boolean } {
     !/^0x[0-9a-fA-F]{64}$/.test(key) ||
     !checkPrivateKey(key)
   ) {
-    if (process.env.MSG_LOG === "true")
-      console.log("Generating random key", key);
     key = generatePrivateKey();
     return { key, isRandom: true };
   } else return { key, isRandom: false };
