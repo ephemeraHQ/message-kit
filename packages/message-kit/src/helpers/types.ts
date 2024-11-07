@@ -18,6 +18,8 @@ export type GroupAbstracted = {
   send: (content: string, contentType?: ContentTypeId) => Promise<string>;
   isAdmin: (inboxId: string) => boolean;
   isSuperAdmin: (inboxId: string) => boolean;
+  admins: string[];
+  superAdmins: string[];
   createdAt: Date;
 };
 export type SkillResponse = {

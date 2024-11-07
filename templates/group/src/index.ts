@@ -1,21 +1,18 @@
 import { run, HandlerContext } from "@xmtp/message-kit";
-import { handler as splitpayment } from "./handler/splitpayment.js";
 
 // Main function to run the app
 run(
   async (context: HandlerContext) => {
     const {
       message: { typeId },
+      group,
     } = context;
     switch (typeId) {
       case "reply":
         handleReply(context);
         break;
-      case "remoteStaticAttachment":
-        handleAttachment(context);
-        break;
     }
-    if (!context.group) {
+    if (!group) {
       context.send("This is a group bot, add this address to a group");
     }
   },
@@ -37,11 +34,6 @@ async function handleReply(context: HandlerContext) {
     v2client.address,
   );
   //await context.skill(chain);
-}
-
-// Handle attachment messages
-async function handleAttachment(context: HandlerContext) {
-  await splitpayment(context);
 }
 
 export async function helpHandler(context: HandlerContext) {

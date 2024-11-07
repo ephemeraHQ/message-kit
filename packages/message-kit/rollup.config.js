@@ -11,6 +11,7 @@ const external = [
   "@xmtp/node-sdk",
   "@xmtp/xmtp-js",
   "@xmtp/proto",
+  "@xmtp/node-bindings",
   "@xmtp/grpc-api-client",
   "path",
   "viem",

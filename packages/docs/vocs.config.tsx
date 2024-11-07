@@ -145,8 +145,12 @@ export default defineConfig({
               link: "/skills/natural",
             },
             {
-              text: "Multi Skills",
+              text: "Parsing new lines",
               link: "/skills/multi-skills",
+            },
+            {
+              text: "Fine Tuning",
+              link: "/skills/fine-tuning",
             },
             {
               text: "Reasoning",
@@ -205,10 +209,6 @@ export default defineConfig({
             {
               text: "Transactions",
               link: "/templates/group/transactions",
-            },
-            {
-              text: "Split Payments",
-              link: "/templates/group/splitpayments",
             },
             {
               text: "Loyalty",

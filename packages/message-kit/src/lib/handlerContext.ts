@@ -4,7 +4,7 @@ import {
   Client as ClientV2,
   Conversation as ConversationV2,
 } from "@xmtp/xmtp-js";
-import { NapiGroupMember } from "@xmtp/node-sdk";
+import { GroupMember } from "@xmtp/node-sdk";
 import fs from "fs/promises";
 import { loadSkillsFile } from "../helpers/utils";
 import type { Reaction } from "@xmtp/content-type-reaction";
@@ -36,6 +36,8 @@ export class HandlerContext {
   v2client!: ClientV2;
   skills?: SkillGroup[];
   members?: AbstractedMember[];
+  admins?: string[];
+  superAdmins?: string[];
   sender?: any;
   getMessageById!: (id: string) => DecodedMessage | null;
   private constructor(
@@ -55,6 +57,8 @@ export class HandlerContext {
           conversation.addMembersByInboxId.bind(conversation),
         isAdmin: () => false,
         isSuperAdmin: () => false,
+        admins: conversation.admins,
+        superAdmins: conversation.superAdmins,
       };
       this.version = "v3";
     } else {
@@ -83,7 +87,7 @@ export class HandlerContext {
         } as AbstractedMember;
       } else {
         members = await (conversation as Conversation).members();
-        context.members = members.map((member: NapiGroupMember) => ({
+        context.members = members.map((member: GroupMember) => ({
           inboxId: member.inboxId,
           address: member.accountAddresses[0],
           accountAddresses: member.accountAddresses,
@@ -91,7 +95,7 @@ export class HandlerContext {
         })) as AbstractedMember[];
 
         let MemberSender = members?.find(
-          (member: NapiGroupMember) =>
+          (member: GroupMember) =>
             member.inboxId === (message as DecodedMessage).senderInboxId,
         );
 
@@ -186,8 +190,10 @@ export class HandlerContext {
       };
     }
 
-    let sender = (await (this.group as Conversation).members())?.find(
-      (member: NapiGroupMember) =>
+    let sender = (
+      await (this.group as unknown as Conversation).members()
+    )?.find(
+      (member: GroupMember) =>
         member.inboxId === (msg as DecodedMessage).senderInboxId ||
         member.accountAddresses.includes(
           (msg as DecodedMessageV2).senderAddress,

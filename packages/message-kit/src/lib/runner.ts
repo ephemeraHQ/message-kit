@@ -5,6 +5,8 @@ import { DecodedMessage } from "@xmtp/node-sdk";
 import { logMessage } from "../helpers/utils.js";
 import { DecodedMessage as DecodedMessageV2 } from "@xmtp/xmtp-js";
 import { streamMessages } from "./streams.js";
+import { Conversation } from "@xmtp/node-sdk";
+import { Conversation as V2Conversation } from "@xmtp/xmtp-js";
 
 export async function run(handler: Handler, config?: Config) {
   const { client, v2client } = await xmtpClient(config);
@@ -14,7 +16,6 @@ export async function run(handler: Handler, config?: Config) {
   // sync and list conversations
   await client.conversations.sync();
   await client.conversations.list();
-
   const handleMessage = async (
     version: "v3" | "v2",
     message: DecodedMessage | DecodedMessageV2 | undefined,
@@ -35,7 +36,6 @@ export async function run(handler: Handler, config?: Config) {
         ) {
           return;
         }
-
         const context = await HandlerContext.create(
           conversation,
           message,
@@ -97,13 +97,17 @@ export async function run(handler: Handler, config?: Config) {
 
     const isRemoteAttachment = typeId == "remoteStaticAttachment";
 
+    // Check if the command is admin only
+
+    const isAdminOnly = skillCommand?.adminOnly;
+
     const isAdminOrPass =
-      skillCommand?.adminOnly &&
+      isAdminOnly &&
       group &&
-      !group?.isAdmin(sender.inboxId) &&
-      !group?.isSuperAdmin(sender.inboxId)
-        ? false
-        : true;
+      (group?.admins.includes(sender.inboxId) ||
+        group?.superAdmins.includes(sender.inboxId))
+        ? true
+        : false;
 
     // Remote attachments work if image:true in runner config
     // Replies only work with explicit mentions from triggers.
@@ -146,11 +150,14 @@ export async function run(handler: Handler, config?: Config) {
 
     if (process.env.MSG_LOG === "true") {
       console.log("isMessageValid", {
-        isSameAddress,
-        content,
-        version,
-        typeId,
-        acceptedType,
+        message: {
+          isSameAddress,
+          content,
+          sender,
+          version,
+          typeId,
+          acceptedType,
+        },
         isRemoteAttachment,
         isImageValid,
         isAdminOrPass,
@@ -199,12 +206,12 @@ export async function run(handler: Handler, config?: Config) {
   const getConversation = async (
     message: DecodedMessage | DecodedMessageV2 | undefined,
     version: "v3" | "v2",
-  ) => {
+  ): Promise<Conversation | V2Conversation> => {
     return version === "v3"
-      ? await client.conversations.getConversationById(
-          (message as DecodedMessage)?.conversationId ?? "",
-        )
-      : (message as DecodedMessageV2)?.conversation;
+      ? ((await client.conversations.getConversationById(
+          (message as DecodedMessage)?.conversationId as string,
+        )) as Conversation)
+      : ((message as DecodedMessageV2)?.conversation as V2Conversation);
   };
   // Run both clients' streams concurrently
   await Promise.all([

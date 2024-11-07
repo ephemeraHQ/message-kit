@@ -33,9 +33,9 @@ Hey! Sure, Let me check that domain for you
 /check vitalik.eth
 ```
 
-### Multi Skills
+### Parsing new lines
 
-The `Multi Skills` processing happens in the `processMultilineResponse` function in the [GPT middleware](/middlewares/gpt.mdx), which takes the AI's response, splits it into individual messages, and handles each one appropriately:
+This happens in the `processMultilineResponse` function in the [GPT middleware](/middlewares/gpt.mdx), which takes the AI's response, splits it into individual messages, and handles each one appropriately:
 
 ```tsx [gpt.ts]
 // Split response into separate messages and filter out empty lines

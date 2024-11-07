@@ -31,6 +31,7 @@ export const skills: SkillGroup[] = [
       },
     ],
   },
+
   {
     name: "Transactions",
     description: "Multipurpose transaction frame built onbase.",
@@ -161,6 +162,14 @@ export const skills: SkillGroup[] = [
         examples: ["/help"],
         handler: helpHandler,
         description: "Get help with the bot.",
+        params: {},
+      },
+      {
+        command: "/id",
+        adminOnly: true,
+        handler: undefined,
+        triggers: ["/id"],
+        description: "Get the group ID.",
         params: {},
       },
     ],

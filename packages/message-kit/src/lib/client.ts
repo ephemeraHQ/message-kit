@@ -3,7 +3,6 @@ import { Client as V2Client } from "@xmtp/xmtp-js";
 
 import { ReactionCodec } from "@xmtp/content-type-reaction";
 import { Client, ClientOptions, XmtpEnv } from "@xmtp/node-sdk";
-import { NapiSignatureRequestType } from "@xmtp/node-sdk";
 import { logInitMessage } from "../helpers/utils";
 import { TextCodec } from "@xmtp/content-type-text";
 import {
@@ -11,6 +10,7 @@ import {
   RemoteAttachmentCodec,
 } from "@xmtp/content-type-remote-attachment";
 import * as fs from "fs";
+import { SignatureRequestType } from "@xmtp/node-bindings";
 import { createWalletClient, http, toBytes } from "viem";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { mainnet } from "viem/chains";
@@ -66,7 +66,8 @@ export async function xmtpClient(
   if (!client.isRegistered) {
     const signature = await getSignature(client, user);
     if (signature) {
-      client.addSignature(1 as NapiSignatureRequestType, signature);
+      //@ts-ignore
+      client.addSignature(SignatureRequestType.AddWallet, signature);
     }
     await client.registerIdentity();
   }
