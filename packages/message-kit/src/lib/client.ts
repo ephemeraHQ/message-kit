@@ -67,7 +67,7 @@ export async function xmtpClient(
     const signature = await getSignature(client, user);
     if (signature) {
       //@ts-ignore
-      client.addSignature(SignatureRequestType.AddWallet, signature);
+      client.addSignature(SignatureRequestType.CreateInbox, signature);
     }
     await client.registerIdentity();
   }

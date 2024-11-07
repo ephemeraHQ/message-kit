@@ -99,16 +99,21 @@ export async function run(handler: Handler, config?: Config) {
 
     // Check if the command is admin only
 
-    const isAdminOnly = skillCommand?.adminOnly;
+    const isAdminCommand = skillCommand?.adminOnly ?? false;
 
-    const isAdminOrPass =
-      isAdminOnly &&
+    const isAdmin =
       group &&
       (group?.admins.includes(sender.inboxId) ||
         group?.superAdmins.includes(sender.inboxId))
         ? true
         : false;
 
+    const isAdminOrPass =
+      isAdminCommand && isAdmin
+        ? true
+        : isAdminCommand && !isAdmin
+          ? false
+          : true;
     // Remote attachments work if image:true in runner config
     // Replies only work with explicit mentions from triggers.
     // Text only works with explicit mentions from triggers.
@@ -149,8 +154,8 @@ export async function run(handler: Handler, config?: Config) {
                     : false;
 
     if (process.env.MSG_LOG === "true") {
-      console.log("isMessageValid", {
-        message: {
+      console.debug("Message Validation Stream Details:", {
+        messageDetails: {
           isSameAddress,
           content,
           sender,
@@ -158,19 +163,24 @@ export async function run(handler: Handler, config?: Config) {
           typeId,
           acceptedType,
         },
-        isRemoteAttachment,
-        isImageValid,
-        isAdminOrPass,
-        isExperimental,
+        attachmentDetails: {
+          isRemoteAttachment,
+          isImageValid,
+        },
+        adminDetails: {
+          isAdminCommand,
+          isAdmin,
+          isAdminOrPass,
+        },
         isAddedMemberOrPass,
         skillsParsed: context.skills?.length,
-        isTagged: isTagged
+        taggingDetails: isTagged
           ? {
               tag: skillGroup?.tag,
-              tagHandler: skillGroup?.tagHandler !== undefined,
+              hasTagHandler: skillGroup?.tagHandler !== undefined,
             }
-          : false,
-        isCommandTriggered: isCommandTriggered
+          : "No tag detected",
+        commandTriggerDetails: isCommandTriggered
           ? {
               command: skillCommand?.command,
               examples: skillCommand?.examples,
@@ -187,7 +197,7 @@ export async function run(handler: Handler, config?: Config) {
                   }))
                 : undefined,
             }
-          : false,
+          : "No command trigger detected",
         isMessageValid,
       });
     }
