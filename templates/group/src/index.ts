@@ -35,15 +35,3 @@ async function handleReply(context: HandlerContext) {
   );
   //await context.skill(chain);
 }
-
-export async function helpHandler(context: HandlerContext) {
-  const { skills } = context;
-  const intro =
-    "Available experiences:\n" +
-    skills
-      ?.flatMap((app) => app.skills)
-      .map((skill) => `${skill.command} - ${skill.description}`)
-      .join("\n") +
-    "\nUse these skills to interact with specific apps.";
-  context.send(intro);
-}

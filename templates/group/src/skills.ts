@@ -3,7 +3,7 @@ import { handler as agent } from "./handler/agent.js";
 import { handler as transaction } from "./handler/transaction.js";
 import { handler as games } from "./handler/game.js";
 import { handler as loyalty } from "./handler/loyalty.js";
-import { helpHandler } from "./index.js";
+import { handler as groupHelp } from "./handler/group.js";
 import type { SkillGroup } from "@xmtp/message-kit";
 
 export const skills: SkillGroup[] = [
@@ -160,14 +160,14 @@ export const skills: SkillGroup[] = [
         command: "/help",
         triggers: ["/help"],
         examples: ["/help"],
-        handler: helpHandler,
+        handler: groupHelp,
         description: "Get help with the bot.",
         params: {},
       },
       {
         command: "/id",
         adminOnly: true,
-        handler: undefined,
+        handler: groupHelp,
         triggers: ["/id"],
         description: "Get the group ID.",
         params: {},
