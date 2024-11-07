@@ -12,5 +12,5 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["agent", "gm", "group", "docs", "split", "@xmtp/tsconfig"]
+  "ignore": ["agent", "gm", "group", "docs", "split", "dead", "@xmtp/tsconfig"]
 }
