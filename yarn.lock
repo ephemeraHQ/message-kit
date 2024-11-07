@@ -2849,13 +2849,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node-cron@npm:^3.0.11":
-  version: 3.0.11
-  resolution: "@types/node-cron@npm:3.0.11"
-  checksum: 10/a73f69bcca52a5f3b1671cfb00a8e4a1d150d0aef36a611564a2f94e66b6981bade577e267ceeeca6fcee241768902d55eb8cf3a81f9ef4ed767a23112fdb16d
-  languageName: node
-  linkType: hard
-
 "@types/node-fetch@npm:^2.6.4":
   version: 2.6.11
   resolution: "@types/node-fetch@npm:2.6.11"
@@ -9637,18 +9630,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"split@workspace:templates/split":
-  version: 0.0.0-use.local
-  resolution: "split@workspace:templates/split"
-  dependencies:
-    "@types/node": "npm:^20.14.2"
-    "@xmtp/message-kit": "workspace:^"
-    nodemon: "npm:^3.1.3"
-    openai: "npm:^4.52.0"
-    typescript: "npm:^5.4.5"
-  languageName: unknown
-  linkType: soft
-
 "sprintf-js@npm:^1.1.3":
   version: 1.1.3
   resolution: "sprintf-js@npm:1.1.3"
@@ -10933,18 +10914,6 @@ __metadata:
   checksum: 10/70dfe53f23ff4368d46e4c0b1d4ca734db2c4149c6f68bc62cb16fc21f753c47b35fcc6e582f3bdfba0eaeb1c488cddab3c2255755a5c3eecb251431e42b3ff6
   languageName: node
   linkType: hard
-
-"xmtp-coinbase-betbot@workspace:templates/dead":
-  version: 0.0.0-use.local
-  resolution: "xmtp-coinbase-betbot@workspace:templates/dead"
-  dependencies:
-    "@types/node": "npm:^20.14.2"
-    "@types/node-cron": "npm:^3.0.11"
-    "@xmtp/message-kit": "workspace:^"
-    nodemon: "npm:^3.1.3"
-    typescript: "npm:^5.4.5"
-  languageName: unknown
-  linkType: soft
 
 "y18n@npm:^5.0.5":
   version: 5.0.8
