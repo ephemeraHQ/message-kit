@@ -20,6 +20,7 @@
     "build": "rollup -c",
     "build:watch": "yarn build -w",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "dev": "yarn build:watch",
     "format": "yarn format:base -w .",
     "format:base": "prettier --ignore-path ../../.gitignore",
     "format:check": "yarn format:base -c .",
@@ -37,6 +38,7 @@
     "@xmtp/node-sdk": "^0.0.22",
     "@xmtp/xmtp-js": "^13.0.3",
     "dotenv": "^16.4.5",
+    "ts-alias": "^0.0.7",
     "viem": "^2.16.3"
   },
   "devDependencies": {
