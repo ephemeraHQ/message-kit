@@ -53,7 +53,7 @@ describe("Skill tests", () => {
   /*
   test("Extract values from @agent lets swap 1 eth to usdc command", () => {
     const inputContent = "@agent lets swap 1 eth to usdc";
-    const extractedValues = extractCommandValues(inputContent, skills);
+    const extractedValues = parseSkill(inputContent, skills);
     expect(extractedValues).toEqual({
       command: "swap",
       params: {
@@ -66,7 +66,7 @@ describe("Skill tests", () => {
   
   test("Extract values from @bot thks! command", () => {
     const inputContent = "@bot thks!";
-    const extractedValues = extractCommandValues(inputContent, skills);
+    const extractedValues = parseSkill(inputContent, skills);
     expect(extractedValues).toEqual({
       command: "bot",
       params: {

@@ -6,7 +6,7 @@ import {
 } from "@xmtp/xmtp-js";
 import { GroupMember } from "@xmtp/node-sdk";
 import fs from "fs/promises";
-import { loadSkillsFile } from "../helpers/utils";
+import {} from "../helpers/utils";
 import type { Reaction } from "@xmtp/content-type-reaction";
 import { ContentTypeText } from "@xmtp/content-type-text";
 import { logMessage } from "../helpers/utils.js";
@@ -14,11 +14,11 @@ import {
   SkillGroup,
   MessageAbstracted,
   GroupAbstracted,
-  SkillCommand,
+  SkillResponse,
   AbstractedMember,
 } from "../helpers/types.js";
-import { extractCommandValues } from "../helpers/utils.js";
 import { ContentTypeReply } from "@xmtp/content-type-reply";
+import { executeSkill, loadSkillsFile, parseSkill } from "./skills.js";
 import {
   ContentTypeRemoteAttachment,
   RemoteAttachmentCodec,
@@ -40,6 +40,7 @@ export class HandlerContext {
   superAdmins?: string[];
   sender?: any;
   getMessageById!: (id: string) => DecodedMessage | null;
+  executeSkill!: (text: string) => Promise<void | SkillResponse>;
   private constructor(
     conversation: Conversation | ConversationV2,
     { client, v2client }: { client: Client; v2client: ClientV2 },
@@ -114,7 +115,8 @@ export class HandlerContext {
         (() => null);
       // **Correct Binding:**
       context.getReplyChain = context.getReplyChain.bind(context);
-      context.skill = context.skill.bind(context);
+      context.executeSkill = (text: string) => executeSkill(text, context); // Pass the custom text
+
       //trim spaces from text
       let content =
         typeof message.content === "string"
@@ -122,10 +124,7 @@ export class HandlerContext {
           : message.content;
 
       if (message?.contentType?.sameAs(ContentTypeText)) {
-        const extractedValues = extractCommandValues(
-          content.content,
-          context.skills,
-        );
+        const extractedValues = parseSkill(content.content, context.skills);
         if (extractedValues) {
           content = {
             ...content,
@@ -306,68 +305,5 @@ export class HandlerContext {
       await targetConversation.send(message);
       logMessage("sent: " + message);
     }
-  }
-
-  async skill(text: string, conversation?: Conversation) {
-    //if (process.env.MSG_LOG) console.log("skill", text);
-    if (conversation) this.refConv = conversation;
-    try {
-      let skillCommand = this.findSkill(text);
-      const extractedValues = extractCommandValues(text, this.skills ?? []);
-      if ((text.startsWith("/") || text.startsWith("@")) && !extractedValues) {
-        console.warn("Command not valid", text);
-      } else if (skillCommand) {
-        // Mock context for command execution
-        const mockContext: HandlerContext = {
-          ...this,
-          conversation: conversation ?? this.conversation,
-          message: {
-            ...this.message,
-            content: {
-              ...this.message.content,
-              ...extractedValues,
-            },
-          },
-          skill: this.skill.bind(this),
-          reply: this.reply.bind(this),
-          send: this.send.bind(this),
-          sendTo: this.sendTo.bind(this),
-          react: this.react.bind(this),
-          getMessageById: this.getMessageById.bind(this),
-          getReplyChain: this.getReplyChain.bind(this),
-        };
-
-        this.refConv = null;
-        return skillCommand?.handler?.(mockContext);
-      } else if (text.startsWith("/") || text.startsWith("@")) {
-        console.warn("Command not valid", text);
-      } else return this.send(text);
-    } catch (e) {
-      console.log("error", e);
-    } finally {
-      this.refConv = null;
-    }
-  }
-
-  findSkill(text: string): SkillCommand | undefined {
-    let skills = this.skills ?? [];
-    const trigger = text?.split(" ")[0].toLowerCase();
-    for (const skillGroup of skills) {
-      const handler = skillGroup.skills.find((skill) => {
-        return skill?.triggers?.includes(trigger);
-      });
-
-      if (handler !== undefined) return handler;
-    }
-    return undefined;
-  }
-  findSkillGroup(content: string): SkillGroup | undefined {
-    let skills = this.skills ?? [];
-    return skills?.find((skill) => {
-      if (skill.tag && content?.includes(`${skill.tag}`)) {
-        return true;
-      }
-      return undefined;
-    });
   }
 }

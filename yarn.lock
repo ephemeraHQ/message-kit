@@ -3150,7 +3150,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@xmtp/message-kit@workspace:*, @xmtp/message-kit@workspace:^, @xmtp/message-kit@workspace:packages/message-kit":
+"@xmtp/message-kit@npm:1.1.7-beta.4, @xmtp/message-kit@workspace:*, @xmtp/message-kit@workspace:^, @xmtp/message-kit@workspace:packages/message-kit":
   version: 0.0.0-use.local
   resolution: "@xmtp/message-kit@workspace:packages/message-kit"
   dependencies:
@@ -10866,6 +10866,18 @@ __metadata:
   checksum: 10/f17e84c042592c21e23c8195108cff18c64050b9efb8459589116999ea9da6dd1509e6a1bac3aeebefd137be00fabbb61b5c2bc0aa0f8526f32b58ee2f545651
   languageName: node
   linkType: hard
+
+"wordle-bot@workspace:templates/splitbot":
+  version: 0.0.0-use.local
+  resolution: "wordle-bot@workspace:templates/splitbot"
+  dependencies:
+    "@types/node": "npm:^20.14.2"
+    "@xmtp/message-kit": "npm:1.1.7-beta.4"
+    nodemon: "npm:^3.1.3"
+    openai: "npm:^4.65.0"
+    typescript: "npm:^5.4.5"
+  languageName: unknown
+  linkType: soft
 
 "wrap-ansi-cjs@npm:wrap-ansi@^7.0.0, wrap-ansi@npm:^7.0.0":
   version: 7.0.0

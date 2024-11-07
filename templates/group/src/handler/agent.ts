@@ -12,7 +12,6 @@ export async function handler(context: HandlerContext) {
       sender,
       content: { content, params },
     },
-    skill,
   } = context;
 
   const systemPrompt = generateSystemPrompt(context);
@@ -24,7 +23,7 @@ export async function handler(context: HandlerContext) {
       userPrompt,
       systemPrompt,
     );
-    skill(reply);
+    context.executeSkill(reply);
   } catch (error) {
     console.error("Error during OpenAI call:", error);
     await context.reply("An error occurred while processing your request.");

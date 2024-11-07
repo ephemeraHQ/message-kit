@@ -5,6 +5,7 @@ import { DecodedMessage } from "@xmtp/node-sdk";
 import { logMessage } from "../helpers/utils.js";
 import { DecodedMessage as DecodedMessageV2 } from "@xmtp/xmtp-js";
 import { streamMessages } from "./streams.js";
+import { findSkill, findSkillGroup } from "./skills.js";
 import { Conversation } from "@xmtp/node-sdk";
 import { Conversation as V2Conversation } from "@xmtp/xmtp-js";
 
@@ -73,9 +74,10 @@ export async function run(handler: Handler, config?: Config) {
       version,
       client,
       v2client,
+      skills,
       group,
     } = context;
-    let skillCommand = context.findSkill(content);
+    let skillCommand = findSkill(content, skills || []);
 
     const { inboxId: senderInboxId } = client;
     const { address: senderAddress } = v2client;
@@ -125,8 +127,7 @@ export async function run(handler: Handler, config?: Config) {
       typeId ?? "",
     );
 
-    const skillGroup =
-      typeId === "text" ? context?.findSkillGroup(content) : undefined; // Check if the message content triggers a tag
+    const skillGroup = typeId === "text" ? findSkillGroup(content) : undefined; // Check if the message content triggers a tag
     const isTagged = group && skillGroup ? true : false;
 
     const isMessageValid = isSameAddress
@@ -153,6 +154,7 @@ export async function run(handler: Handler, config?: Config) {
                     ? true
                     : false;
 
+    console.log("isMessageValid", skillCommand);
     if (process.env.MSG_LOG === "true") {
       console.debug("Message Validation Stream Details:", {
         messageDetails: {
