@@ -9641,6 +9641,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "split@workspace:templates/split"
   dependencies:
+    "@stackso/js-core": "npm:^0.3.1"
     "@types/node": "npm:^20.14.2"
     "@xmtp/message-kit": "workspace:^"
     nodemon: "npm:^3.1.3"
