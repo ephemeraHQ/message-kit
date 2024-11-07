@@ -3,7 +3,13 @@
 The GPT Vision middleware allows you to interpret images using the OpenAI API. This middleware is useful when you want to provide a description of an image or when you want to generate a caption for an image.
 
 ```tsx
-// New method to interpret an image
+import "dotenv/config";
+import OpenAI from "openai";
+
+const openai = new OpenAI({
+  apiKey: process.env.OPEN_AI_API_KEY,
+});
+
 export async function vision(imageData: Uint8Array, systemPrompt: string) {
   const base64Image = Buffer.from(imageData).toString("base64");
   const dataUrl = `data:image/jpeg;base64,${base64Image}`;

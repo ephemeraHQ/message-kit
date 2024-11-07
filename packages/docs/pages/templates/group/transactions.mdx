@@ -22,23 +22,24 @@ export const skills: SkillGroup[] = [
     skills: [
       {
         command: "/send [amount] [token] [username]",
-        triggers: ["@send", "/send"],
+        example: "/send 1 eth vitalik.eth",
+        triggers: ["/send"],
+        handler: handler,
         description:
-          "Send a specified amount of a cryptocurrency to a destination address.",
-        handler: transaction,
+          "Send a specific amount of a token to a specified address.",
         params: {
           amount: {
-            default: 10,
+            default: 1,
             type: "number",
           },
           token: {
-            default: "usdc",
+            default: "eth",
             type: "string",
             values: ["eth", "dai", "usdc", "degen"], // Accepted tokens
           },
           username: {
             default: "",
-            type: "username",
+            type: "string",
           },
         },
       },

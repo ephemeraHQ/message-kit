@@ -2353,10 +2353,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@remix-run/router@npm:1.20.0":
-  version: 1.20.0
-  resolution: "@remix-run/router@npm:1.20.0"
-  checksum: 10/e1d2420db94a1855b97f1784898d0ae389cf3b77129b8f419e51d4833b77ca2c92ac09e2cb558015324d64580a138fd6faa31e52fcc3ba90e3cc382a1a324d4a
+"@remix-run/router@npm:1.21.0":
+  version: 1.21.0
+  resolution: "@remix-run/router@npm:1.21.0"
+  checksum: 10/cf0fb69d19c1b79095ff67c59cea89086f3982a9a54c8a993818a60fc76e0ebab5a8db647c1a96a662729fad8e806ddd0a96622adf473f5a9f0b99998b2dbad4
   languageName: node
   linkType: hard
 
@@ -2849,6 +2849,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/node-cron@npm:^3.0.11":
+  version: 3.0.11
+  resolution: "@types/node-cron@npm:3.0.11"
+  checksum: 10/a73f69bcca52a5f3b1671cfb00a8e4a1d150d0aef36a611564a2f94e66b6981bade577e267ceeeca6fcee241768902d55eb8cf3a81f9ef4ed767a23112fdb16d
+  languageName: node
+  linkType: hard
+
 "@types/node-fetch@npm:^2.6.4":
   version: 2.6.11
   resolution: "@types/node-fetch@npm:2.6.11"
@@ -3165,8 +3172,10 @@ __metadata:
     prettier: "npm:^3.3.1"
     rollup: "npm:^4.18.0"
     rollup-plugin-dts: "npm:^6.1.1"
+    ts-alias: "npm:^0.0.7"
     ts-jest: "npm:^29.1.5"
     ts-node: "npm:^10.9.2"
+    turbo: "npm:^2.2.3"
     typescript: "npm:^5.4.5"
     viem: "npm:^2.16.3"
   languageName: unknown
@@ -3840,9 +3849,9 @@ __metadata:
   linkType: hard
 
 "caniuse-lite@npm:^1.0.30001646, caniuse-lite@npm:^1.0.30001669":
-  version: 1.0.30001677
-  resolution: "caniuse-lite@npm:1.0.30001677"
-  checksum: 10/e07439bdeade5ffdd974691f44f8549ae0730fcf510acaa32d0b657c10370cd5aad09eeca37248966205fb37fce5f464dbce73ce177b4a1fdc3a34adbcfd7192
+  version: 1.0.30001678
+  resolution: "caniuse-lite@npm:1.0.30001678"
+  checksum: 10/aaeeee4df57494ed84dbcaec786cbdb4d866e633a14103f52c93bc63c5ffa5ed884a8b379edbe5942fa8deec8cf925e49c9613c3009de3075882b3324069a33c
   languageName: node
   linkType: hard
 
@@ -4204,13 +4213,13 @@ __metadata:
   linkType: hard
 
 "cross-spawn@npm:^7.0.0, cross-spawn@npm:^7.0.3":
-  version: 7.0.3
-  resolution: "cross-spawn@npm:7.0.3"
+  version: 7.0.5
+  resolution: "cross-spawn@npm:7.0.5"
   dependencies:
     path-key: "npm:^3.1.0"
     shebang-command: "npm:^2.0.0"
     which: "npm:^2.0.1"
-  checksum: 10/e1a13869d2f57d974de0d9ef7acbf69dc6937db20b918525a01dacb5032129bd552d290d886d981e99f1b624cb03657084cc87bd40f115c07ecf376821c729ce
+  checksum: 10/c95062469d4bdbc1f099454d01c0e77177a3733012d41bf907a71eb8d22d2add43b5adf6a0a14ef4e7feaf804082714d6c262ef4557a1c480b86786c120d18e2
   languageName: node
   linkType: hard
 
@@ -6619,7 +6628,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"json5@npm:^2.2.3":
+"json5@npm:^2.2.0, json5@npm:^2.2.3":
   version: 2.2.3
   resolution: "json5@npm:2.2.3"
   bin:
@@ -8088,8 +8097,8 @@ __metadata:
   linkType: hard
 
 "openai@npm:^4.52.0, openai@npm:^4.52.7, openai@npm:^4.65.0":
-  version: 4.71.0
-  resolution: "openai@npm:4.71.0"
+  version: 4.71.1
+  resolution: "openai@npm:4.71.1"
   dependencies:
     "@types/node": "npm:^18.11.18"
     "@types/node-fetch": "npm:^2.6.4"
@@ -8105,7 +8114,7 @@ __metadata:
       optional: true
   bin:
     openai: bin/cli
-  checksum: 10/f105777b270e4a05bb23cf898dfa4a6044dc82b3a42d8b443bcdc9bf6a758aa41af044f75d5c7a1dd062600c0ea9a96ba1291c5c888dce6dbf4a5c66e24863b7
+  checksum: 10/fa825f6d59443d6989d806f3e939be5f331ee0463d29f7627f1dbf9594b311f5e515759346ce491214aa336033e26b77ee571e7faebe1aa291baa52b70ea0e69
   languageName: node
   linkType: hard
 
@@ -8798,26 +8807,26 @@ __metadata:
   linkType: hard
 
 "react-router-dom@npm:^6.20.0":
-  version: 6.27.0
-  resolution: "react-router-dom@npm:6.27.0"
+  version: 6.28.0
+  resolution: "react-router-dom@npm:6.28.0"
   dependencies:
-    "@remix-run/router": "npm:1.20.0"
-    react-router: "npm:6.27.0"
+    "@remix-run/router": "npm:1.21.0"
+    react-router: "npm:6.28.0"
   peerDependencies:
     react: ">=16.8"
     react-dom: ">=16.8"
-  checksum: 10/cfbcbc1d387d3341a335e3a075e487cc09dcbb62f1b83bc827fc3eec937523d5647a2c4488c804dc61581e65561823d0166d17b5dbc8579998c25b5a0bcabad6
+  checksum: 10/e637825132ea96c3514ef7b8322f9bf0b752a942d6b4ffc4c20e389b5911726adf3dba8208ed4b97bf5b9c3bd465d9d1a1db1a58a610a8d528f18d890e0b143f
   languageName: node
   linkType: hard
 
-"react-router@npm:6.27.0":
-  version: 6.27.0
-  resolution: "react-router@npm:6.27.0"
+"react-router@npm:6.28.0":
+  version: 6.28.0
+  resolution: "react-router@npm:6.28.0"
   dependencies:
-    "@remix-run/router": "npm:1.20.0"
+    "@remix-run/router": "npm:1.21.0"
   peerDependencies:
     react: ">=16.8"
-  checksum: 10/352e3af2075cdccf9d114b7e06d94a1b46a2147ba9d6e8643787a92464f5fd9ead950252a98d551f99f21860288bcf3a4f088cb5f46b28d1274a4e2ba24cc0f9
+  checksum: 10/f021a644513144884a567d9c2dcc432e8e3233f931378c219c5a3b5b842340f0faca86225a708bafca1e9010965afe1a7dada28aef5b7b6138c885c0552d9a7d
   languageName: node
   linkType: hard
 
@@ -10033,6 +10042,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ts-alias@npm:^0.0.7":
+  version: 0.0.7
+  resolution: "ts-alias@npm:0.0.7"
+  dependencies:
+    json5: "npm:^2.2.0"
+  checksum: 10/c84a06ded61f1532ce7b7620d903b7938546dfd06f43ab32e6697a4b3f5e666c2aadc7124d16aef5f5f8efdf65e8032e3df025e95f6b1c3eeea3b0a439918a4f
+  languageName: node
+  linkType: hard
+
 "ts-interface-checker@npm:^0.1.9":
   version: 0.1.13
   resolution: "ts-interface-checker@npm:0.1.13"
@@ -10129,9 +10147,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"turbo-darwin-64@npm:2.2.3":
+  version: 2.2.3
+  resolution: "turbo-darwin-64@npm:2.2.3"
+  conditions: os=darwin & cpu=x64
+  languageName: node
+  linkType: hard
+
 "turbo-darwin-arm64@npm:1.13.4":
   version: 1.13.4
   resolution: "turbo-darwin-arm64@npm:1.13.4"
+  conditions: os=darwin & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"turbo-darwin-arm64@npm:2.2.3":
+  version: 2.2.3
+  resolution: "turbo-darwin-arm64@npm:2.2.3"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
@@ -10143,9 +10175,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"turbo-linux-64@npm:2.2.3":
+  version: 2.2.3
+  resolution: "turbo-linux-64@npm:2.2.3"
+  conditions: os=linux & cpu=x64
+  languageName: node
+  linkType: hard
+
 "turbo-linux-arm64@npm:1.13.4":
   version: 1.13.4
   resolution: "turbo-linux-arm64@npm:1.13.4"
+  conditions: os=linux & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"turbo-linux-arm64@npm:2.2.3":
+  version: 2.2.3
+  resolution: "turbo-linux-arm64@npm:2.2.3"
   conditions: os=linux & cpu=arm64
   languageName: node
   linkType: hard
@@ -10157,9 +10203,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"turbo-windows-64@npm:2.2.3":
+  version: 2.2.3
+  resolution: "turbo-windows-64@npm:2.2.3"
+  conditions: os=win32 & cpu=x64
+  languageName: node
+  linkType: hard
+
 "turbo-windows-arm64@npm:1.13.4":
   version: 1.13.4
   resolution: "turbo-windows-arm64@npm:1.13.4"
+  conditions: os=win32 & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"turbo-windows-arm64@npm:2.2.3":
+  version: 2.2.3
+  resolution: "turbo-windows-arm64@npm:2.2.3"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
@@ -10190,6 +10250,35 @@ __metadata:
   bin:
     turbo: bin/turbo
   checksum: 10/b8187def43760428e117313fc4a559af5c02b473d816b3efef406165c2c45cf3a256fbda4b15f0c1a48ccd188bd43cf93686f2aeab176a15a01553cd165071cc
+  languageName: node
+  linkType: hard
+
+"turbo@npm:^2.2.3":
+  version: 2.2.3
+  resolution: "turbo@npm:2.2.3"
+  dependencies:
+    turbo-darwin-64: "npm:2.2.3"
+    turbo-darwin-arm64: "npm:2.2.3"
+    turbo-linux-64: "npm:2.2.3"
+    turbo-linux-arm64: "npm:2.2.3"
+    turbo-windows-64: "npm:2.2.3"
+    turbo-windows-arm64: "npm:2.2.3"
+  dependenciesMeta:
+    turbo-darwin-64:
+      optional: true
+    turbo-darwin-arm64:
+      optional: true
+    turbo-linux-64:
+      optional: true
+    turbo-linux-arm64:
+      optional: true
+    turbo-windows-64:
+      optional: true
+    turbo-windows-arm64:
+      optional: true
+  bin:
+    turbo: bin/turbo
+  checksum: 10/ce7dc0b45d11ba9d2a435daad3357ad45e51a81583134912d1ff5b4569c6d233f56b5fc2459ad5c4a8d41ddec566574e34e5c8649ef64b7546348014bd371ea5
   languageName: node
   linkType: hard
 
@@ -10540,8 +10629,8 @@ __metadata:
   linkType: hard
 
 "viem@npm:^2.16.3":
-  version: 2.21.41
-  resolution: "viem@npm:2.21.41"
+  version: 2.21.42
+  resolution: "viem@npm:2.21.42"
   dependencies:
     "@adraffy/ens-normalize": "npm:1.11.0"
     "@noble/curves": "npm:1.6.0"
@@ -10557,7 +10646,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10/bd3d1426584eb319c6ab69949c188d7142f6fa14b38df5ed54c967c5d5246e4eb98a9412ab7d053ff3d649df3d0174fc57f8a1e6f2803ce3aa97be2e010500b9
+  checksum: 10/c147591ba52fe10ad3499f18264af4da2b3e4f64cdf715af2ed2287fae729626bd9f9016dc1dc1aa1a84659eda42eddf61945c428f4bd120f68a072bc64b9fd6
   languageName: node
   linkType: hard
 
@@ -10842,6 +10931,18 @@ __metadata:
   checksum: 10/70dfe53f23ff4368d46e4c0b1d4ca734db2c4149c6f68bc62cb16fc21f753c47b35fcc6e582f3bdfba0eaeb1c488cddab3c2255755a5c3eecb251431e42b3ff6
   languageName: node
   linkType: hard
+
+"xmtp-coinbase-betbot@workspace:templates/dead":
+  version: 0.0.0-use.local
+  resolution: "xmtp-coinbase-betbot@workspace:templates/dead"
+  dependencies:
+    "@types/node": "npm:^20.14.2"
+    "@types/node-cron": "npm:^3.0.11"
+    "@xmtp/message-kit": "workspace:^"
+    nodemon: "npm:^3.1.3"
+    typescript: "npm:^5.4.5"
+  languageName: unknown
+  linkType: soft
 
 "y18n@npm:^5.0.5":
   version: 5.0.8
