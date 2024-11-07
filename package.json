@@ -19,7 +19,7 @@
     "dev:docs": "cd packages/docs && yarn dev",
     "dev:gm": "cd templates/gm && yarn dev",
     "dev:group": "cd templates/group && yarn dev",
-    "dev:split": "cd templates/splitbot && yarn dev",
+    "dev:split": "cd templates/split && yarn dev",
     "format": "turbo run format",
     "format:check": "turbo run format:check",
     "publish": "turbo run build --filter='./packages/*' --filter='!./packages/docs' && yarn copy && changeset publish",

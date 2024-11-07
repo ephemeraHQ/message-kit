@@ -206,7 +206,7 @@ export async function executeSkill(text: string, context: HandlerContext) {
     const extractedValues = parseSkill(text, skills ?? []);
     if ((text.startsWith("/") || text.startsWith("@")) && !extractedValues) {
       console.warn("Command not valid", text);
-    } else if (skillCommand) {
+    } else if (skillCommand && skillCommand.handler) {
       // Mock context for command execution
       const mockContext: HandlerContext = {
         ...context,
@@ -231,7 +231,9 @@ export async function executeSkill(text: string, context: HandlerContext) {
       };
 
       context.refConv = null;
-      return skillCommand?.handler?.(mockContext);
+      if (skillCommand?.handler) skillCommand.handler(mockContext);
+    } else if (skillCommand) {
+      console.warn("No handler for", skillCommand.command);
     } else if (text.startsWith("/") || text.startsWith("@")) {
       console.warn("Command not valid", text);
     } else return context.send(text);
