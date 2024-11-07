@@ -3172,7 +3172,6 @@ __metadata:
     prettier: "npm:^3.3.1"
     rollup: "npm:^4.18.0"
     rollup-plugin-dts: "npm:^6.1.1"
-    ts-alias: "npm:^0.0.7"
     ts-jest: "npm:^29.1.5"
     ts-node: "npm:^10.9.2"
     turbo: "npm:^2.2.3"
@@ -6628,7 +6627,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"json5@npm:^2.2.0, json5@npm:^2.2.3":
+"json5@npm:^2.2.3":
   version: 2.2.3
   resolution: "json5@npm:2.2.3"
   bin:
@@ -9638,9 +9637,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"split@workspace:others/split":
+"split@workspace:templates/split":
   version: 0.0.0-use.local
-  resolution: "split@workspace:others/split"
+  resolution: "split@workspace:templates/split"
   dependencies:
     "@stackso/js-core": "npm:^0.3.1"
     "@types/node": "npm:^20.14.2"
@@ -10052,15 +10051,6 @@ __metadata:
   version: 2.2.0
   resolution: "trough@npm:2.2.0"
   checksum: 10/999c1cb3db6ec63e1663f911146a90125065da37f66ba342b031d53edb22a62f56c1f934bbc61a55b2b29dd74207544cfd78875b414665c1ffadcd9a9a009eeb
-  languageName: node
-  linkType: hard
-
-"ts-alias@npm:^0.0.7":
-  version: 0.0.7
-  resolution: "ts-alias@npm:0.0.7"
-  dependencies:
-    json5: "npm:^2.2.0"
-  checksum: 10/c84a06ded61f1532ce7b7620d903b7938546dfd06f43ab32e6697a4b3f5e666c2aadc7124d16aef5f5f8efdf65e8032e3df025e95f6b1c3eeea3b0a439918a4f
   languageName: node
   linkType: hard
 
@@ -10945,9 +10935,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"xmtp-coinbase-betbot@workspace:others/dead":
+"xmtp-coinbase-betbot@workspace:templates/dead":
   version: 0.0.0-use.local
-  resolution: "xmtp-coinbase-betbot@workspace:others/dead"
+  resolution: "xmtp-coinbase-betbot@workspace:templates/dead"
   dependencies:
     "@types/node": "npm:^20.14.2"
     "@types/node-cron": "npm:^3.0.11"

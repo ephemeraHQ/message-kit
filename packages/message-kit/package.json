@@ -38,7 +38,6 @@
     "@xmtp/node-sdk": "^0.0.22",
     "@xmtp/xmtp-js": "^13.0.3",
     "dotenv": "^16.4.5",
-    "ts-alias": "^0.0.7",
     "viem": "^2.16.3"
   },
   "devDependencies": {
