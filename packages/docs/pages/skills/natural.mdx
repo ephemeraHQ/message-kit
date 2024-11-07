@@ -39,7 +39,7 @@ const { reply } = await textGeneration(userPrompt, systemPrompt);
 
 // If it's a valid command, execute it!
 if (reply.startsWith("/")) {
-  await context.skill(reply);
+  await context.executeSkill(reply);
 }
 ```
 
@@ -69,7 +69,7 @@ import { SkillResponse } from "@xmtp/message-kit";
 
 // If it's a valid command, execute it!
 if (reply.startsWith("/")) {
-  const response = (await context.skill(reply)) as SkillResponse;
+  const response = (await context.executeSkill(reply)) as SkillResponse;
   if (response.code == 200) await context.send(response.message);
 }
 ```

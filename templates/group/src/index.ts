@@ -30,5 +30,5 @@ async function handleReply(context: HandlerContext) {
     version,
     v2client.address,
   );
-  //await context.skill(chain);
+  //await context.executeSkill(chain);
 }

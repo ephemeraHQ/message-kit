@@ -14,7 +14,7 @@ Bots can execute structured skills with parameter validation and type checking:
 
 ```jsx
 // Execute a simple command
-const { message } = await context.skill("/send 10 usdc to @alix", conv);
+const { message } = await context.executeSkill("/send 10 usdc to @alix", conv);
 context.send(message);
 ```
 
