@@ -16,12 +16,60 @@ export function findSkill(
   return undefined;
 }
 
+export async function executeSkill(text: string, context: HandlerContext) {
+  // Use the custom text parameter
+  let skills = context.skills;
+  let conversation = context.conversation;
+  try {
+    let skillCommand = findSkill(text, skills ?? []);
+    const extractedValues = parseSkill(text, skills ?? []);
+    if ((text.startsWith("/") || text.startsWith("@")) && !extractedValues) {
+      console.warn("Command not valid", text);
+    } else if (skillCommand && skillCommand.handler) {
+      // Mock context for command execution
+      const mockContext: HandlerContext = {
+        ...context,
+        conversation: conversation ?? context.conversation,
+        getV2MessageById: context.getV2MessageById.bind(context),
+        isConversationV2: context.isConversationV2.bind(context),
+        getCacheCreationDate: context.getCacheCreationDate.bind(context),
+        message: {
+          ...context.message,
+          content: {
+            ...context.message.content,
+            ...extractedValues,
+          },
+        },
+        executeSkill: context.executeSkill.bind(context),
+        reply: context.reply.bind(context),
+        send: context.send.bind(context),
+        sendTo: context.sendTo.bind(context),
+        react: context.react.bind(context),
+        getMessageById: context.getMessageById.bind(context),
+        getReplyChain: context.getReplyChain.bind(context),
+      };
+
+      if (skillCommand?.handler) return skillCommand.handler(mockContext);
+    } else if (skillCommand) {
+      console.warn("No handler for", skillCommand.command);
+      return context.send(text);
+    } else if (text.startsWith("/") || text.startsWith("@")) {
+      console.warn("Command not valid", text);
+    } else return context.send(text);
+  } catch (e) {
+    console.log("error", e);
+  } finally {
+    context.refConv = null;
+  }
+}
+
 export function findSkillGroup(
   content: string,
-  skills?: SkillGroup[],
+  skills: SkillGroup[],
 ): SkillGroup | undefined {
-  let skillList = skills ?? [];
+  let skillList = skills;
   return skillList?.find((skill) => {
+    console.log("skill", skill.tag, content?.includes(`${skill.tag}`));
     if (skill.tag && content?.includes(`${skill.tag}`)) {
       return true;
     }
@@ -194,53 +242,6 @@ export function parseSkill(
   } catch (e) {
     console.error(e);
     return defaultResult;
-  }
-}
-
-export async function executeSkill(text: string, context: HandlerContext) {
-  // Use the custom text parameter
-  let skills = context.skills;
-  let conversation = context.conversation;
-  try {
-    let skillCommand = findSkill(text, skills ?? []);
-    const extractedValues = parseSkill(text, skills ?? []);
-    if ((text.startsWith("/") || text.startsWith("@")) && !extractedValues) {
-      console.warn("Command not valid", text);
-    } else if (skillCommand && skillCommand.handler) {
-      // Mock context for command execution
-      const mockContext: HandlerContext = {
-        ...context,
-        conversation: conversation ?? context.conversation,
-        getV2MessageById: context.getV2MessageById.bind(context),
-        isConversationV2: context.isConversationV2.bind(context),
-        getCacheCreationDate: context.getCacheCreationDate.bind(context),
-        message: {
-          ...context.message,
-          content: {
-            ...context.message.content,
-            ...extractedValues,
-          },
-        },
-        executeSkill: context.executeSkill.bind(context),
-        reply: context.reply.bind(context),
-        send: context.send.bind(context),
-        sendTo: context.sendTo.bind(context),
-        react: context.react.bind(context),
-        getMessageById: context.getMessageById.bind(context),
-        getReplyChain: context.getReplyChain.bind(context),
-      };
-
-      context.refConv = null;
-      if (skillCommand?.handler) skillCommand.handler(mockContext);
-    } else if (skillCommand) {
-      console.warn("No handler for", skillCommand.command);
-    } else if (text.startsWith("/") || text.startsWith("@")) {
-      console.warn("Command not valid", text);
-    } else return context.send(text);
-  } catch (e) {
-    console.log("error", e);
-  } finally {
-    context.refConv = null;
   }
 }
 
