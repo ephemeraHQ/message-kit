@@ -67,5 +67,5 @@ packages/create-message-kit/templates/**
 packages/create-message-kit/templates/**/*
 
 
-templates/dead/*
-templates/split/*
+templates/dead
+templates/split
