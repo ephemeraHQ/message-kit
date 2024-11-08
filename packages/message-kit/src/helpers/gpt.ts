@@ -1,8 +1,6 @@
 import "dotenv/config";
 import type { SkillGroup } from "./types";
-import { HandlerContext } from "../lib/handlerContext";
 import OpenAI from "openai";
-
 const openai = new OpenAI({
   apiKey: process.env.OPEN_AI_API_KEY,
 });
@@ -33,16 +31,20 @@ class ChatMemory {
     }
   }
 
-  clear() {
-    this.histories = {};
+  clear(address?: string) {
+    if (address) {
+      this.histories[address] = [];
+    } else {
+      this.histories = {};
+    }
   }
 }
 
 // Create singleton instance
 export const chatMemory = new ChatMemory();
 
-export const clearMemory = () => {
-  chatMemory.clear();
+export const clearMemory = (address?: string) => {
+  chatMemory.clear(address);
 };
 
 export const PROMPT_RULES = `You are a helpful and playful agent called {NAME} that lives inside a web3 messaging app called Converse.
@@ -62,13 +64,12 @@ export function PROMPT_SKILLS_AND_EXAMPLES(skills: SkillGroup[], tag: string) {
   );
   if (!foundSkills.length || !foundSkills[0] || !foundSkills[0].skills)
     return "";
-  let returnPrompt = `\nCommands:\n${foundSkills[0].skills
+  let returnPrompt = `\n\nCommands:\n${foundSkills[0].skills
     .map((skill) => skill.command)
     .join("\n")}\n\nExamples:\n${foundSkills[0].skills
     .map((skill) => skill.examples)
     .join("\n")}`;
-
-  returnPrompt += "\n";
+  returnPrompt += "\n\n";
   return returnPrompt;
 }
 
@@ -117,7 +118,7 @@ export async function textGeneration(
 export async function processMultilineResponse(
   memoryKey: string,
   reply: string,
-  context: HandlerContext,
+  context: any,
 ) {
   if (!memoryKey) {
     clearMemory();
@@ -131,16 +132,13 @@ export async function processMultilineResponse(
   for (const message of messages) {
     if (message.startsWith("/")) {
       const response = await context.executeSkill(message);
-      console.log("Skill response:", message, response);
       if (response && typeof response.message === "string") {
         let msg = parseMarkdown(response.message);
         chatMemory.addEntry(memoryKey, {
           role: "system",
           content: msg,
         });
-        if (response.code !== 300) {
-          await context.send(response.message);
-        }
+        await context.send(response.message);
       }
     } else {
       await context.send(message);
