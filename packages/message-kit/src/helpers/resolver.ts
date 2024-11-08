@@ -1,6 +1,6 @@
 import { isAddress } from "viem";
-import { V2Client, V3Client } from "@xmtp/message-kit";
-import type { HandlerContext } from "@xmtp/message-kit";
+import { V2Client, V3Client } from "../index";
+import { HandlerContext } from "../lib/handlerContext";
 
 export const converseEndpointURL = "https://converse.xyz/profile/";
 //"https://converse-website-git-endpoit-ephemerahq.vercel.app";

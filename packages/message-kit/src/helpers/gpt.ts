@@ -1,5 +1,6 @@
 import "dotenv/config";
-import type { SkillGroup, HandlerContext } from "@xmtp/message-kit";
+import type { SkillGroup } from "./types";
+import { HandlerContext } from "../lib/handlerContext";
 import OpenAI from "openai";
 
 const openai = new OpenAI({
