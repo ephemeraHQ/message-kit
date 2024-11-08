@@ -1,7 +1,7 @@
 import { HandlerContext, SkillResponse } from "@xmtp/message-kit";
-import { getUserInfo, clearInfoCache, isOnXMTP } from "../lib/resolver.js";
+import { getUserInfo, clearInfoCache, isOnXMTP } from "@xmtp/message-kit";
 import { isAddress } from "viem";
-import { clearMemory } from "../lib/gpt.js";
+import { clearMemory } from "@xmtp/message-kit";
 
 export const frameUrl = "https://ens.steer.fun/";
 export const ensUrl = "https://app.ens.domains/";
@@ -86,13 +86,7 @@ export async function handleEns(
     }
     message += `\n\nWould you like to tip the domain owner for getting there first 🤣?`;
     message = message.trim();
-    if (
-      await isOnXMTP(
-        context.v2client,
-        data?.ensInfo?.ens,
-        data?.ensInfo?.address,
-      )
-    ) {
+    if (await isOnXMTP(context.client, context.v2client, sender?.address)) {
       await context.send(
         `Ah, this domains is in XMTP, you can message it directly: https://converse.xyz/dm/${domain}`,
       );

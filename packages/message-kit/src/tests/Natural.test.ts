@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { textGeneration } from "./lib/gpt";
+import { textGeneration } from "@xmtp/message-kit";
 import { skills } from "./Test_skills";
 import { AbstractedMember } from "../helpers/types";
 

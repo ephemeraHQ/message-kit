@@ -130,7 +130,6 @@ export async function run(handler: Handler, config?: Config) {
     const skillGroup =
       typeId === "text" ? findSkillGroup(content, skills ?? []) : undefined; // Check if the message content triggers a tag
     const isTagged = skillGroup ? true : false;
-    console.log("isTagged", skillGroup);
     const isMessageValid = isSameAddress
       ? false
       : // v2 only accepts text, remoteStaticAttachment, reply
@@ -155,7 +154,6 @@ export async function run(handler: Handler, config?: Config) {
                     ? true
                     : false;
 
-    console.log("isMessageValid", skillCommand);
     if (process.env.MSG_LOG === "true") {
       console.debug("Message Validation Stream Details:", {
         messageDetails: {

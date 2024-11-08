@@ -1,5 +1,5 @@
 import { HandlerContext, AbstractedMember } from "@xmtp/message-kit";
-import { getUserInfo } from "../lib/resolver.js";
+import { getUserInfo } from "@xmtp/message-kit";
 
 export async function handler(context: HandlerContext) {
   const {

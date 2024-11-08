@@ -69,7 +69,6 @@ export function findSkillGroup(
 ): SkillGroup | undefined {
   let skillList = skills;
   return skillList?.find((skill) => {
-    console.log("skill", skill.tag, content?.includes(`${skill.tag}`));
     if (skill.tag && content?.includes(`${skill.tag}`)) {
       return true;
     }

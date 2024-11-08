@@ -1,7 +1,7 @@
 import { run, HandlerContext } from "@xmtp/message-kit";
-import { textGeneration, processMultilineResponse } from "./lib/gpt.js";
+import { textGeneration, processMultilineResponse } from "@xmtp/message-kit";
 import { agent_prompt } from "./prompt.js";
-import { getUserInfo } from "./lib/resolver.js";
+import { getUserInfo } from "@xmtp/message-kit";
 
 run(async (context: HandlerContext) => {
   /*All the skills are handled through the skills file*/

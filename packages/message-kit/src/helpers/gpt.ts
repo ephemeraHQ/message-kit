@@ -1,17 +1,7 @@
-## OpenAI middleware
-
-Install dependencies
-
-```bash [cmd]
-yarn add openai
-```
-
-Copy the following code into your `lib/gpt.ts` file.
-
-```tsx [src/lib/gpt.ts]
 import "dotenv/config";
-import type { SkillGroup } from "@xmtp/message-kit";
+import type { SkillGroup, HandlerContext } from "@xmtp/message-kit";
 import OpenAI from "openai";
+
 const openai = new OpenAI({
   apiKey: process.env.OPEN_AI_API_KEY,
 });
@@ -76,6 +66,8 @@ export function PROMPT_SKILLS_AND_EXAMPLES(skills: SkillGroup[], tag: string) {
     .join("\n")}\n\nExamples:\n${foundSkills[0].skills
     .map((skill) => skill.examples)
     .join("\n")}`;
+
+  returnPrompt += "\n";
   return returnPrompt;
 }
 
@@ -124,7 +116,7 @@ export async function textGeneration(
 export async function processMultilineResponse(
   memoryKey: string,
   reply: string,
-  context: any,
+  context: HandlerContext,
 ) {
   if (!memoryKey) {
     clearMemory();
@@ -138,13 +130,16 @@ export async function processMultilineResponse(
   for (const message of messages) {
     if (message.startsWith("/")) {
       const response = await context.executeSkill(message);
+      console.log("Skill response:", message, response);
       if (response && typeof response.message === "string") {
         let msg = parseMarkdown(response.message);
         chatMemory.addEntry(memoryKey, {
           role: "system",
           content: msg,
         });
-        await context.send(response.message);
+        if (response.code !== 300) {
+          await context.send(response.message);
+        }
       }
     } else {
       await context.send(message);
@@ -170,4 +165,3 @@ export function parseMarkdown(message: string) {
 
   return trimmedMessage;
 }
-```

@@ -1,5 +1,5 @@
 import { HandlerContext } from "@xmtp/message-kit";
-import { getUserInfo } from "../lib/resolver.js";
+import { getUserInfo } from "@xmtp/message-kit";
 
 // Main handler function for processing commands
 export async function handler(context: HandlerContext) {

@@ -1,6 +1,11 @@
 import { skills } from "./skills.js";
-import { UserInfo, PROMPT_USER_CONTENT } from "./lib/resolver.js";
-import { PROMPT_RULES, PROMPT_SKILLS_AND_EXAMPLES } from "./lib/gpt.js";
+import {
+  getUserInfo,
+  UserInfo,
+  PROMPT_USER_CONTENT,
+  PROMPT_RULES,
+  PROMPT_SKILLS_AND_EXAMPLES,
+} from "@xmtp/message-kit";
 
 export async function agent_prompt(userInfo: UserInfo) {
   let { address, ensDomain, converseUsername, preferredName } = userInfo;

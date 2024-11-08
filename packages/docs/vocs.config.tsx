@@ -228,10 +228,6 @@ export default defineConfig({
       collapsed: false,
       items: [
         {
-          text: "GPT",
-          link: "/middlewares/gpt",
-        },
-        {
           text: "Cron",
           link: "/middlewares/cron",
         },
@@ -250,10 +246,6 @@ export default defineConfig({
         {
           text: "Notion",
           link: "/middlewares/notion",
-        },
-        {
-          text: "Resolver",
-          link: "/middlewares/resolver",
         },
         {
           text: "LearnWeb3",

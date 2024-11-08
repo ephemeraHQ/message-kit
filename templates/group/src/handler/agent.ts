@@ -1,5 +1,5 @@
 import { HandlerContext, AbstractedMember } from "@xmtp/message-kit";
-import { textGeneration } from "../lib/gpt.js";
+import { textGeneration } from "@xmtp/message-kit";
 
 export async function handler(context: HandlerContext) {
   if (!process?.env?.OPEN_AI_API_KEY) {
