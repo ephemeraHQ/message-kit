@@ -145,8 +145,8 @@ export default defineConfig({
               link: "/skills/natural",
             },
             {
-              text: "Parsing new lines",
-              link: "/skills/multi-skills",
+              text: "Processing",
+              link: "/skills/processing",
             },
             {
               text: "Fine Tuning",
