@@ -83,14 +83,14 @@ export function parseSkill(
   command: string | undefined;
   params: { [key: string]: string | number | string[] | undefined };
 } {
+  const defaultResult = {
+    command: undefined,
+    params: {} as { [key: string]: string | number | string[] | undefined },
+  };
   try {
     if (!text.startsWith("/") && !text.startsWith("@"))
       return { command: undefined, params: {} };
 
-    const defaultResult = {
-      command: undefined,
-      params: {} as { [key: string]: string | number | string[] | undefined },
-    };
     if (typeof text !== "string") return defaultResult;
 
     // Replace all "“" and "”" with "'" and '"'
@@ -115,11 +115,14 @@ export function parseSkill(
 
     const values: {
       command: string;
-      params: { [key: string]: string | number | string[] | undefined };
+      params: {
+        [key: string]: string | number | string[] | undefined; // Removed boolean type
+      };
     } = {
       command: commandName,
       params: {},
     };
+
     const expectedParams = commandConfig.params || {};
     const usedIndices = new Set();
 
@@ -201,18 +204,18 @@ export function parseSkill(
         }
       } else if (type === "number") {
         // Handle comma-separated numbers
-        const numberParts = parts.reduce<number[]>((acc, part, idx) => {
+        const numberParts = parts.reduce<string[]>((acc, part, idx) => {
           if (!usedIndices.has(idx) && !Number.isNaN(parseFloat(part))) {
             usedIndices.add(idx);
             const numbers = part
               .split(",")
               .map((n) => parseFloat(n.trim()))
-              .filter((n) => !Number.isNaN(n));
+              .filter((n) => !Number.isNaN(n))
+              .map((n) => n.toString()); // Convert numbers to strings
             acc.push(...numbers);
           }
           return acc;
         }, []);
-
         if (numberParts.length > 0) {
           values.params[param] =
             numberParts.length === 1 ? numberParts[0] : numberParts;
@@ -230,9 +233,14 @@ export function parseSkill(
           valueFound = true;
         }
       }
-      // If no value was found, set the default value if it exists
       if (!valueFound && defaultValue !== undefined) {
-        values.params[param] = defaultValue;
+        if (
+          typeof defaultValue === "string" ||
+          typeof defaultValue === "number" ||
+          Array.isArray(defaultValue)
+        ) {
+          values.params[param] = defaultValue;
+        }
       }
     }
 
