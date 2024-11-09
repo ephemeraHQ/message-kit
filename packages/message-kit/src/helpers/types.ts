@@ -2,10 +2,10 @@ import { HandlerContext } from "../lib/handlerContext.js";
 import { ClientOptions } from "@xmtp/node-sdk";
 import { ContentTypeId } from "@xmtp/content-type-primitives";
 
-export type MessageAbstracted = {
+export type MessageAbstracted<T = unknown> = {
   id: string;
   sent: Date;
-  content: { text: string } | {};
+  content: { content: string } | T;
   version: "v2" | "v3";
   sender: AbstractedMember;
   typeId: string;
@@ -22,15 +22,15 @@ export type GroupAbstracted = {
   superAdmins: string[];
   createdAt: Date;
 };
-export type SkillResponse = {
+export type SkillResponse<T = unknown> = {
   code: number;
   message: string;
-  data?: {} | undefined;
+  data?: T;
 };
 
-export type SkillHandler = (
+export type SkillHandler<T = unknown> = (
   context: HandlerContext,
-) => Promise<SkillResponse | undefined>;
+) => Promise<SkillResponse<T> | undefined>;
 
 export type Handler = (context: HandlerContext) => Promise<void>;
 

@@ -36,7 +36,7 @@ export async function executeSkill(text: string, context: HandlerContext) {
         message: {
           ...context.message,
           content: {
-            ...context.message.content,
+            ...(context.message.content as MessageAbstracted<T>).content,
             ...extractedValues,
           },
         },

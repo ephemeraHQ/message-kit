@@ -80,7 +80,7 @@ The handler in this case returns all with `SkillResponse` type:
 export type SkillResponse = {
   code: number;
   message: string;
-  data?: any;
+  data?: {} | undefined;
 };
 ```
 
