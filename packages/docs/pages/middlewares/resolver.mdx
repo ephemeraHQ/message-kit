@@ -131,7 +131,10 @@ export const getUserInfo = async (
     if (keyToUse.includes(".eth")) {
       // Fetch ENS data
       try {
-        const response = await fetch(`https://ensdata.net/${keyToUse}`);
+        const response = await fetchWithTimeout(
+          `https://ensdata.net/${keyToUse}`,
+          5000,
+        );
         if (!response.ok) {
           throw new Error(
             `ENS data request failed with status ${response.status}`,

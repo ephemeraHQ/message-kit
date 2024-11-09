@@ -23,7 +23,13 @@ export async function handler(context: HandlerContext) {
       userPrompt,
       systemPrompt,
     );
-    context.executeSkill(reply);
+
+    try {
+      await context.executeSkill(reply);
+    } catch (error) {
+      console.error("Error executing skill:", error);
+      await context.reply("Failed to execute the requested action.");
+    }
   } catch (error) {
     console.error("Error during OpenAI call:", error);
     await context.reply("An error occurred while processing your request.");

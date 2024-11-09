@@ -38,9 +38,9 @@ export class HandlerContext {
   members?: AbstractedMember[];
   admins?: string[];
   superAdmins?: string[];
-  sender?: any;
+  sender?: AbstractedMember;
   getMessageById!: (id: string) => DecodedMessage | null;
-  executeSkill!: (text: string) => Promise<void | SkillResponse>;
+  executeSkill!: (text: string) => Promise<SkillResponse | undefined>;
   private constructor(
     conversation: Conversation | ConversationV2,
     { client, v2client }: { client: Client; v2client: ClientV2 },
@@ -78,7 +78,7 @@ export class HandlerContext {
     if (message && message.id) {
       //v2
       const sentAt = "sentAt" in message ? message.sentAt : message.sent;
-      let members: any;
+      let members: GroupMember[];
       if (version === "v2") {
         context.sender = {
           address: (message as DecodedMessageV2).senderAddress,
@@ -87,7 +87,7 @@ export class HandlerContext {
           accountAddresses: [(message as DecodedMessageV2).senderAddress],
         } as AbstractedMember;
       } else {
-        members = await (conversation as Conversation).members();
+        members = (await (conversation as Conversation).members()) || [];
         context.members = members.map((member: GroupMember) => ({
           inboxId: member.inboxId,
           address: member.accountAddresses[0],
@@ -115,8 +115,10 @@ export class HandlerContext {
         (() => null);
       // **Correct Binding:**
       context.getReplyChain = context.getReplyChain.bind(context);
-      context.executeSkill = (text: string) => executeSkill(text, context); // Pass the custom text
-
+      context.executeSkill = async (text: string) => {
+        const result = await executeSkill(text, context);
+        return result ?? undefined;
+      };
       //trim spaces from text
       let content =
         typeof message.content === "string"

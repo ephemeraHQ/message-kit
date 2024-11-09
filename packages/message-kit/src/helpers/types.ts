@@ -5,9 +5,9 @@ import { ContentTypeId } from "@xmtp/content-type-primitives";
 export type MessageAbstracted = {
   id: string;
   sent: Date;
-  content: any;
+  content: { text: string } | {};
   version: "v2" | "v3";
-  sender: any;
+  sender: AbstractedMember;
   typeId: string;
 };
 export type GroupAbstracted = {
@@ -25,12 +25,12 @@ export type GroupAbstracted = {
 export type SkillResponse = {
   code: number;
   message: string;
-  data?: any;
+  data?: {} | undefined;
 };
 
 export type SkillHandler = (
   context: HandlerContext,
-) => Promise<void | SkillResponse>;
+) => Promise<SkillResponse | undefined>;
 
 export type Handler = (context: HandlerContext) => Promise<void>;
 

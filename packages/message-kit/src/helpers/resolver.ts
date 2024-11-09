@@ -141,14 +141,18 @@ export const getUserInfo = async (
       try {
         const username = keyToUse.replace("@", "");
         const converseEndpoint = `${converseEndpointURL}${username}`;
-        const response = await fetch(converseEndpoint, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
+        const response = await fetchWithTimeout(
+          converseEndpoint,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+            body: JSON.stringify({ peer: username }),
           },
-          body: JSON.stringify({ peer: username }),
-        });
+          5000,
+        );
         if (!response.ok) {
           throw new Error(
             `Converse profile request failed with status ${response.status}`,
@@ -182,15 +186,43 @@ export const getUserInfo = async (
     return null;
   }
 };
+const fetchWithTimeout = async (
+  url: string,
+  options: RequestInit,
+  timeout = 5000,
+) => {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeout);
+  try {
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal,
+    });
+    clearTimeout(id);
+    return response;
+  } catch (error) {
+    clearTimeout(id);
+    throw error;
+  }
+};
 export const isOnXMTP = async (
   v3client: V3Client,
   v2client: V2Client,
   address: string | undefined,
 ) => {
-  let lowerAddress = address?.toLowerCase();
-  let v2 = await v2client.canMessage(lowerAddress || "");
-  let v3 = await v3client.canMessage([lowerAddress || ""]);
-  return { v2, v3: v3[lowerAddress || ""] };
+  if (!address) {
+    throw new Error("Address is required for XMTP validation");
+  }
+  try {
+    const [v2, v3] = await Promise.all([
+      v2client.canMessage(address || ""),
+      v3client.canMessage([address || ""]),
+    ]);
+    return { v2, v3: v3[address || ""] };
+  } catch (error) {
+    console.error("Error checking XMTP availability:", error);
+    throw error;
+  }
 };
 
 export const PROMPT_USER_CONTENT = (userInfo: UserInfo) => {

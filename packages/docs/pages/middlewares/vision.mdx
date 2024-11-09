@@ -11,6 +11,12 @@ const openai = new OpenAI({
 });
 
 export async function vision(imageData: Uint8Array, systemPrompt: string) {
+  if (!imageData?.length) {
+    throw new Error("imageData is required and must not be empty");
+  }
+  if (!systemPrompt?.trim()) {
+    throw new Error("systemPrompt is required and must not be empty");
+  }
   const base64Image = Buffer.from(imageData).toString("base64");
   const dataUrl = `data:image/jpeg;base64,${base64Image}`;
 

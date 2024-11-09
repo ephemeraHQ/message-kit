@@ -9,7 +9,7 @@ export const baseTxUrl = "https://base-tx-frame.vercel.app";
 
 export async function handleEns(
   context: HandlerContext,
-): Promise<SkillResponse> {
+): Promise<SkillResponse | undefined> {
   const {
     message: {
       content: { command, params, sender },

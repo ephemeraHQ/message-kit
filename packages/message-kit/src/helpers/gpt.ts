@@ -1,6 +1,7 @@
 import "dotenv/config";
 import type { SkillGroup } from "./types";
 import OpenAI from "openai";
+import type { HandlerContext } from "@xmtp/message-kit";
 const openai = new OpenAI({
   apiKey: process.env.OPEN_AI_API_KEY,
 });
@@ -118,7 +119,7 @@ export async function textGeneration(
 export async function processMultilineResponse(
   memoryKey: string,
   reply: string,
-  context: any,
+  context: HandlerContext,
 ) {
   if (!memoryKey) {
     clearMemory();
