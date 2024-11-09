@@ -6,7 +6,7 @@ export function findSkill(
   text: string,
   skills: SkillGroup[],
 ): SkillCommand | undefined {
-  const trigger = text?.split(" ")[0].toLowerCase();
+  const trigger = text.split(" ")[0].toLowerCase();
   for (const skillGroup of skills) {
     const handler = skillGroup.skills.find((skill) => {
       return skill?.triggers?.includes(trigger);
@@ -83,13 +83,14 @@ export function parseSkill(
   command: string | undefined;
   params: { [key: string]: string | number | string[] | undefined };
 } {
-  if (!text.startsWith("/")) return { command: undefined, params: {} };
-
-  const defaultResult = {
-    command: undefined,
-    params: {} as { [key: string]: string | number | string[] | undefined },
-  };
   try {
+    if (!text.startsWith("/") && !text.startsWith("@"))
+      return { command: undefined, params: {} };
+
+    const defaultResult = {
+      command: undefined,
+      params: {} as { [key: string]: string | number | string[] | undefined },
+    };
     if (typeof text !== "string") return defaultResult;
 
     // Replace all "“" and "”" with "'" and '"'
@@ -201,19 +202,18 @@ export function parseSkill(
       } else if (type === "number") {
         // Handle comma-separated numbers
         const numberParts = parts.reduce<number[]>((acc, part, idx) => {
-          if (!usedIndices.has(idx) && !isNaN(parseFloat(part))) {
+          if (!usedIndices.has(idx) && !Number.isNaN(parseFloat(part))) {
             usedIndices.add(idx);
             const numbers = part
               .split(",")
               .map((n) => parseFloat(n.trim()))
-              .filter((n) => !isNaN(n));
+              .filter((n) => !Number.isNaN(n));
             acc.push(...numbers);
           }
           return acc;
         }, []);
 
         if (numberParts.length > 0) {
-          //@ts-ignore
           values.params[param] =
             numberParts.length === 1 ? numberParts[0] : numberParts;
           valueFound = true;
@@ -232,7 +232,6 @@ export function parseSkill(
       }
       // If no value was found, set the default value if it exists
       if (!valueFound && defaultValue !== undefined) {
-        //@ts-ignore
         values.params[param] = defaultValue;
       }
     }

@@ -23,8 +23,11 @@ export async function handler(context: HandlerContext) {
         .join("\n") +
       "\nUse these skills to interact with specific apps.";
     context.send(intro);
-  } else if (command == "id") {
-    context.send(context.group?.id);
+  } else if (command === "id") {
+    if (!context.group?.id) {
+      return context.send("Group ID not available");
+    }
+    context.send(context.group.id);
   }
 }
 ```
