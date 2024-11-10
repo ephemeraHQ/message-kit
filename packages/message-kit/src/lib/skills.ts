@@ -200,22 +200,13 @@ export function parseSkill(
           valueFound = true;
         }
       } else if (type === "number") {
-        // Handle comma-separated numbers
-        const numberParts = parts.reduce<string[]>((acc, part, idx) => {
-          if (!usedIndices.has(idx) && !Number.isNaN(parseFloat(part))) {
-            usedIndices.add(idx);
-            const numbers = part
-              .split(",")
-              .map((n) => parseFloat(n.trim()))
-              .filter((n) => !Number.isNaN(n))
-              .map((n) => n.toString()); // Convert numbers to strings
-            acc.push(...numbers);
-          }
-          return acc;
-        }, []);
-        if (numberParts.length > 0) {
-          values.params[param] =
-            numberParts.length === 1 ? numberParts[0] : numberParts;
+        const numberIndex = parts.findIndex(
+          (part, idx) =>
+            !usedIndices.has(idx) && !Number.isNaN(parseFloat(part)),
+        );
+        if (numberIndex !== -1) {
+          values.params[param] = parseFloat(parts[numberIndex]);
+          usedIndices.add(numberIndex);
           valueFound = true;
         }
       } else if (possibleValues.length > 0) {
