@@ -10,13 +10,13 @@ export async function handler(context: HandlerContext) {
   const {
     message: {
       sender,
-      content: { content, params },
+      content: { params, content, text, reply, command },
     },
   } = context;
 
   const systemPrompt = generateSystemPrompt(context);
   try {
-    let userPrompt = params?.prompt ?? content;
+    let userPrompt = params?.prompt ?? text;
 
     const { reply } = await textGeneration(
       sender.address,

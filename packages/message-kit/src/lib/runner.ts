@@ -67,7 +67,8 @@ export async function run(handler: Handler, config?: Config) {
   } => {
     const {
       message: {
-        content: { content },
+        content: { text },
+        content,
         typeId,
         sender,
       },
@@ -77,7 +78,8 @@ export async function run(handler: Handler, config?: Config) {
       skills,
       group,
     } = context;
-    let skillCommand = findSkill(content, skills || []);
+
+    let skillCommand = text && skills ? findSkill(text, skills) : undefined;
 
     const { inboxId: senderInboxId } = client;
     const { address: senderAddress } = v2client;
@@ -93,6 +95,7 @@ export async function run(handler: Handler, config?: Config) {
     const isAddedMemberOrPass =
       typeId === "group_updated" &&
       config?.memberChange &&
+      //@ts-ignore
       content?.addedInboxes?.length === 0
         ? false
         : true;
@@ -110,12 +113,7 @@ export async function run(handler: Handler, config?: Config) {
         ? true
         : false;
 
-    const isAdminOrPass =
-      isAdminCommand && isAdmin
-        ? true
-        : isAdminCommand && !isAdmin
-          ? false
-          : true;
+    const isAdminOrPass = isAdminCommand && isAdmin ? true : true;
     // Remote attachments work if image:true in runner config
     // Replies only work with explicit mentions from triggers.
     // Text only works with explicit mentions from triggers.
@@ -128,7 +126,9 @@ export async function run(handler: Handler, config?: Config) {
     );
 
     const skillGroup =
-      typeId === "text" ? findSkillGroup(content, skills ?? []) : undefined; // Check if the message content triggers a tag
+      typeId === "text" && skills
+        ? findSkillGroup(text ?? "", skills)
+        : undefined; // Check if the message content triggers a tag
     const isTagged = skillGroup ? true : false;
     const isMessageValid = isSameAddress
       ? false
@@ -202,8 +202,7 @@ export async function run(handler: Handler, config?: Config) {
         isMessageValid,
       });
     }
-    if (isMessageValid)
-      logMessage(`msg_${version}: ` + (typeId == "text" ? content : typeId));
+    if (isMessageValid) logMessage(`msg_${version}: ` + (text ?? typeId));
 
     return {
       isMessageValid,

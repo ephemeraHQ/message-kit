@@ -16,13 +16,16 @@ export function findSkill(
   return undefined;
 }
 
-export async function executeSkill(text: string, context: HandlerContext) {
+export async function executeSkill(
+  text: string,
+  skills: SkillGroup[],
+  context: HandlerContext,
+) {
   // Use the custom text parameter
-  let skills = context.skills;
   let conversation = context.conversation;
   try {
-    let skillCommand = findSkill(text, skills ?? []);
-    const extractedValues = parseSkill(text, skills ?? []);
+    let skillCommand = findSkill(text, skills);
+    const extractedValues = parseSkill(text, skills);
     if ((text.startsWith("/") || text.startsWith("@")) && !extractedValues) {
       console.warn("Command not valid", text);
     } else if (skillCommand && skillCommand.handler) {
@@ -33,13 +36,7 @@ export async function executeSkill(text: string, context: HandlerContext) {
         getV2MessageById: context.getV2MessageById.bind(context),
         isConversationV2: context.isConversationV2.bind(context),
         getCacheCreationDate: context.getCacheCreationDate.bind(context),
-        message: {
-          ...context.message,
-          content: {
-            ...(context.message.content as MessageAbstracted<T>).content,
-            ...extractedValues,
-          },
-        },
+        message: { ...context.message, ...extractedValues },
         executeSkill: context.executeSkill.bind(context),
         reply: context.reply.bind(context),
         send: context.send.bind(context),
@@ -64,12 +61,12 @@ export async function executeSkill(text: string, context: HandlerContext) {
 }
 
 export function findSkillGroup(
-  content: string,
+  text: string,
   skills: SkillGroup[],
 ): SkillGroup | undefined {
   let skillList = skills;
   return skillList?.find((skill) => {
-    if (skill.tag && content?.includes(`${skill.tag}`)) {
+    if (skill.tag && text?.includes(`${skill.tag}`)) {
       return true;
     }
     return undefined;

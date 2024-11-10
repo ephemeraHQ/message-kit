@@ -53,6 +53,7 @@ export class HandlerContext {
         sync: conversation.sync.bind(conversation),
         addMembers: conversation.addMembers.bind(conversation),
         send: conversation.send.bind(conversation),
+        members: [],
         createdAt: conversation.createdAt,
         addMembersByInboxId:
           conversation.addMembersByInboxId.bind(conversation),
@@ -87,7 +88,9 @@ export class HandlerContext {
           accountAddresses: [(message as DecodedMessageV2).senderAddress],
         } as AbstractedMember;
       } else {
-        members = (await (conversation as Conversation).members()) || [];
+        let group = await (conversation as Conversation);
+        await group.sync();
+        members = await group.members();
         context.members = members.map((member: GroupMember) => ({
           inboxId: member.inboxId,
           address: member.accountAddresses[0],
@@ -114,9 +117,8 @@ export class HandlerContext {
         client.conversations?.getMessageById?.bind(client.conversations) ||
         (() => null);
       // **Correct Binding:**
-      context.getReplyChain = context.getReplyChain.bind(context);
       context.executeSkill = async (text: string) => {
-        const result = await executeSkill(text, context);
+        const result = await executeSkill(text, context.skills ?? [], context);
         return result ?? undefined;
       };
       //trim spaces from text
@@ -130,12 +132,27 @@ export class HandlerContext {
         if (extractedValues) {
           content = {
             ...content,
+            text: content.content,
             ...extractedValues,
+            typeId: message.contentType.typeId,
           };
         }
       } else if (message?.contentType?.sameAs(ContentTypeReply)) {
         content = {
           ...content,
+          reply: content.content,
+          replyChain: await context.getReplyChain(
+            content.reference,
+            version ?? "v2",
+          ),
+          reference: content.reference,
+          typeId: message.content.contentType.typeId,
+        };
+      } else if (message?.contentType?.sameAs(ContentTypeReaction)) {
+        content = {
+          ...content,
+          reaction: content.content,
+          reference: content.reference,
           typeId: message.content.contentType.typeId,
         };
       } else if (message?.contentType?.sameAs(ContentTypeRemoteAttachment)) {
@@ -148,7 +165,7 @@ export class HandlerContext {
       }
       context.message = {
         id: message.id,
-        content: content,
+        content: { ...content },
         sender: context.sender,
         typeId: message.contentType?.typeId as string,
         sent: sentAt,
@@ -190,10 +207,10 @@ export class HandlerContext {
         isSenderInChain: false,
       };
     }
-
-    let sender = (
-      await (this.group as unknown as Conversation).members()
-    )?.find(
+    let group = await (this.refConv as Conversation);
+    await group.sync();
+    let members = await group.members();
+    let sender = members?.find(
       (member: GroupMember) =>
         member.inboxId === (msg as DecodedMessage).senderInboxId ||
         member.accountAddresses.includes(

@@ -66,8 +66,9 @@ export function PROMPT_SKILLS_AND_EXAMPLES(skills: SkillGroup[], tag: string) {
   if (!foundSkills.length || !foundSkills[0] || !foundSkills[0].skills)
     return "";
   let returnPrompt = `\n\nCommands:\n${foundSkills[0].skills
-    .map((skill) => skill.command)
+    .filter((skill) => !skill.adminOnly && skill.command)
     .join("\n")}\n\nExamples:\n${foundSkills[0].skills
+    .filter((skill) => !skill.adminOnly)
     .map((skill) => skill.examples?.join("\n"))
     .join("\n")}`;
   returnPrompt += "\n\n";

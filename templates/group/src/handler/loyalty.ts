@@ -6,10 +6,13 @@ export async function handler(context: HandlerContext, fake?: boolean) {
   const {
     members,
     group,
-    message: { sender, typeId, content },
+    message: {
+      sender,
+      typeId,
+      content: { command, params },
+    },
   } = context;
   if (typeId === "text" && group) {
-    const { command } = content;
     if (command === "points") {
       const points = await stack?.getPoints(sender.address);
       context.reply(`You have ${points} points`);
@@ -31,7 +34,7 @@ export async function handler(context: HandlerContext, fake?: boolean) {
       return;
     }
   } else if (typeId === "group_updated" && group) {
-    const { initiatedByInboxId, addedInboxes } = content;
+    const { initiatedByInboxId, addedInboxes } = params;
     const adminAddress = members?.find(
       (member: AbstractedMember) => member.inboxId === initiatedByInboxId,
     );
