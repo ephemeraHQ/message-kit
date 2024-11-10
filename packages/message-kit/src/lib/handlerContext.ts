@@ -208,8 +208,13 @@ export class HandlerContext {
       };
     }
     let group = await (this.refConv as Conversation);
-    await group.sync();
-    let members = await group.members();
+    try {
+      await group.sync();
+      members = await group.members();
+    } catch (error) {
+      console.error('Failed to sync group or fetch members in reply chain:', error);
+      members = [];
+    }
     let sender = members?.find(
       (member: GroupMember) =>
         member.inboxId === (msg as DecodedMessage).senderInboxId ||
