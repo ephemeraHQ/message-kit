@@ -3,9 +3,14 @@ import type { SkillGroup } from "./types";
 import OpenAI from "openai";
 import { HandlerContext } from "../lib/handlerContext";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPEN_AI_API_KEY,
-});
+const isOpenAIConfigured = () => {
+  return !!process.env.OPEN_AI_API_KEY;
+};
+
+// Modify OpenAI initialization to be conditional
+const openai = isOpenAIConfigured()
+  ? new OpenAI({ apiKey: process.env.OPEN_AI_API_KEY })
+  : null;
 
 type ChatHistoryEntry = { role: string; content: string };
 type ChatHistories = Record<string, ChatHistoryEntry[]>;
@@ -81,6 +86,10 @@ export async function textGeneration(
   userPrompt: string,
   systemPrompt: string,
 ) {
+  if (!openai) {
+    console.warn("No OPEN_AI_API_KEY found in .env");
+    return { reply: "No OpenAI API key found in .env" };
+  }
   if (!memoryKey) {
     clearMemory();
   }

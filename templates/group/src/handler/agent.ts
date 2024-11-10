@@ -2,11 +2,6 @@ import { HandlerContext, AbstractedMember } from "@xmtp/message-kit";
 import { textGeneration } from "@xmtp/message-kit";
 
 export async function handler(context: HandlerContext) {
-  if (!process?.env?.OPEN_AI_API_KEY) {
-    console.warn("No OPEN_AI_API_KEY found in .env");
-    return;
-  }
-
   const {
     message: {
       sender,

@@ -30,10 +30,6 @@ import { vision } from "../lib/vision.js";
 import { getUserInfo } from "../lib/resolver.js";
 
 export async function handler(context: HandlerContext) {
-  if (!process?.env?.OPEN_AI_API_KEY) {
-    console.warn("No OPEN_AI_API_KEY found in .env");
-    return;
-  }
   const {
     members,
     skills,
