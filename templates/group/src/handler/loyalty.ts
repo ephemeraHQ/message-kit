@@ -9,7 +9,7 @@ export async function handler(context: HandlerContext, fake?: boolean) {
     message: {
       sender,
       typeId,
-      content: { command, params },
+      content: { command, params, text },
     },
   } = context;
   if (typeId === "text" && group) {

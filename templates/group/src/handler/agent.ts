@@ -10,7 +10,7 @@ export async function handler(context: HandlerContext) {
   const {
     message: {
       sender,
-      content: { params, content, text, reply, command },
+      content: { params, text },
     },
   } = context;
 

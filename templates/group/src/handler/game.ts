@@ -4,11 +4,10 @@ import { HandlerContext } from "@xmtp/message-kit";
 export async function handler(context: HandlerContext) {
   const {
     message: {
-      content: { command, params },
+      content: { command, params, text },
     },
   } = context;
   if (!command) {
-    const { content: text } = context?.message?.content;
     if (text === "🔎" || text === "🔍") {
       // Send the URL for the requested game
       context.reply("https://framedl.xyz/");

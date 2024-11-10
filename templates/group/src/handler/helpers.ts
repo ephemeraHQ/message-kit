@@ -3,7 +3,6 @@ import { HandlerContext } from "@xmtp/message-kit";
 export async function handler(context: HandlerContext) {
   const {
     skills,
-    group,
     message: {
       content: { command },
     },
