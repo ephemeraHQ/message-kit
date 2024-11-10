@@ -86,7 +86,10 @@ export async function handler(context: HandlerContext) {
   }
   if (!sender || receivers.length === 0 || amount === 0) {
     context.reply("Sender or receiver or amount not found.");
-    return;
+    return {
+      code: 400,
+      message: "Sender or receiver or amount not found.",
+    };
   }
   const receiverAddresses = receivers.map((receiver) => receiver.address);
   // Process sending tokens to each receiver

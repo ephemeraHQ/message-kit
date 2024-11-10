@@ -34,7 +34,6 @@ group/
 
 ```tsx [src/index.ts]
 import { run, HandlerContext } from "@xmtp/message-kit";
-import { handler as splitpayment } from "./handler/splitpayment.js";
 
 // Main function to run the app
 run(async (context: HandlerContext) => {
@@ -43,7 +42,9 @@ run(async (context: HandlerContext) => {
   } = context;
 
   if (!context.group) {
-    context.send("This is a group bot, add this address to a group");
+    context.send(
+      "This This bot only works in group chats. Please add this bot to a group to continue",
+    );
   }
 });
 ```
