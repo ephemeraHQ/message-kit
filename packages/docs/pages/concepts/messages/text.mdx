@@ -20,7 +20,7 @@ Here's an example of how you can receive a `text` message in your app:
 const { content, typeId } = context.message;
 
 if (typeId === "text") {
-  const { content: text } = content;
+  const { text } = content;
   // Use text
 }
 ```

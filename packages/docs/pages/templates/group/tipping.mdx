@@ -73,12 +73,12 @@ export async function handler(context: HandlerContext) {
       else amount = 10;
     }
   } else if (typeId === "text") {
-    const { content: text, params } = content;
+    const { text, params } = content;
     if (text.startsWith("/tip") && params) {
       // Process text skills starting with "/tip"
       const {
         params: { amount: extractedAmount, username },
-        content: text,
+        text,
       } = content;
       amount = extractedAmount || 10; // Default amount if not specified
       receivers = username; // Extract receiver from parameters
