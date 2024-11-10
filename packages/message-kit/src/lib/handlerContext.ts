@@ -200,7 +200,7 @@ export class HandlerContext {
 
     if (version === "v3") msg = await this.getMessageById(reference);
     else if (version === "v2") msg = await this.getV2MessageById(reference);
-
+    let members: GroupMember[] = [];
     if (!msg) {
       return {
         chain: [],
@@ -212,7 +212,10 @@ export class HandlerContext {
       await group.sync();
       members = await group.members();
     } catch (error) {
-      console.error('Failed to sync group or fetch members in reply chain:', error);
+      console.error(
+        "Failed to sync group or fetch members in reply chain:",
+        error,
+      );
       members = [];
     }
     let sender = members?.find(
