@@ -12,7 +12,8 @@ export async function handleEns(
 ): Promise<SkillResponse | undefined> {
   const {
     message: {
-      content: { command, params, sender },
+      sender,
+      content: { command, params },
     },
   } = context;
   if (command == "reset") {
