@@ -66,18 +66,15 @@ export const PROMPT_RULES = `You are a helpful and playful agent called {NAME} t
 `;
 
 export function PROMPT_SKILLS_AND_EXAMPLES(skills: SkillGroup[], tag: string) {
-  let foundSkills = skills.filter(
-    (skill) => skill.tag == `${tag.toLowerCase()}`,
-  );
-  if (!foundSkills.length || !foundSkills[0] || !foundSkills[0].skills)
-    return "";
-  let returnPrompt = `\n\nCommands:\n${foundSkills[0].skills
+  let foundSkills = skills.filter((skill) => skill.tag == tag);
+  let returnPrompt = `\nCommands:\n${foundSkills[0]?.skills
     .filter((skill) => !skill.adminOnly && skill.command)
-    .join("\n")}\n\nExamples:\n${foundSkills[0].skills
+    .map((skill) => skill.command)
+    .join("\n")}\n\nExamples:\n${foundSkills[0]?.skills
     .filter((skill) => !skill.adminOnly)
     .map((skill) => skill.examples?.join("\n"))
     .join("\n")}`;
-  returnPrompt += "\n\n";
+  returnPrompt += "\n";
   return returnPrompt;
 }
 
