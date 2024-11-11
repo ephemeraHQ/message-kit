@@ -32,9 +32,7 @@ Powered by XMTP`;
 
     const { templateType, displayName, destDir } = await gatherProjectInfo();
 
-    // Replace dot files
-    //replaceDotfiles(destDir);
-
+    addPackagejson(destDir, displayName);
     // Create .gitignore
     createGitignore(destDir);
 
@@ -62,7 +60,15 @@ Powered by XMTP`;
   });
 
 program.parse(process.argv);
-
+async function addPackagejson(destDir, name) {
+  fs.copySync(
+    resolve(__dirname, "templates/package.template.json"),
+    resolve(destDir, "package.json"),
+    {
+      name: name,
+    },
+  );
+}
 async function gatherProjectInfo() {
   const templateOptions = [
     { value: "gm", label: "GM" },
@@ -150,15 +156,6 @@ function createTsconfig(destDir) {
   fs.writeJsonSync(resolve(destDir, "tsconfig.json"), tsconfigContent, {
     spaces: 2,
   });
-}
-function replaceDotfiles(destDir) {
-  for (const file of fs.readdirSync(destDir)) {
-    if (!file.startsWith("_")) continue;
-    fs.renameSync(
-      resolve(destDir, file),
-      resolve(destDir, `.${file.slice(1)}`),
-    );
-  }
 }
 
 function updatePackageJson(destDir, name) {
