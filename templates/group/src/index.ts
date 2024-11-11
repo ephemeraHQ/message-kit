@@ -6,7 +6,7 @@ run(async (context: HandlerContext) => {
 
   if (!group) {
     context.send(
-      "This This bot only works in group chats. Please add this bot to a group to continue",
+      "This bot only works in group chats. Please add this bot to a group to continue",
     );
   }
 });
