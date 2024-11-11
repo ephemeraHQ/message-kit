@@ -211,10 +211,6 @@ export default defineConfig({
               link: "/templates/group/transactions",
             },
             {
-              text: "Loyalty",
-              link: "/templates/group/loyalty",
-            },
-            {
               text: "Helpers",
               link: "/templates/group/helpers",
             },

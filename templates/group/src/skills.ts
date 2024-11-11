@@ -112,28 +112,6 @@ export const skills: SkillGroup[] = [
     ],
   },
   {
-    name: "Loyalty",
-    description: "Manage group members and metadata.",
-    skills: [
-      {
-        command: "/points",
-        triggers: ["/points"],
-        examples: ["/points"],
-        handler: loyalty,
-        description: "Check your points.",
-        params: {},
-      },
-      {
-        command: "/leaderboard",
-        triggers: ["/leaderboard"],
-        adminOnly: true,
-        handler: loyalty,
-        description: "Check the points of a user.",
-        params: {},
-      },
-    ],
-  },
-  {
     name: "Agent",
     description: "Manage agent commands.",
     skills: [

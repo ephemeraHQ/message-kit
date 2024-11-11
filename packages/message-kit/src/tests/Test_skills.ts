@@ -3,7 +3,7 @@ import type { SkillGroup } from "../helpers/types.js";
 let tipping = undefined;
 let transaction = undefined;
 let games = undefined;
-let loyalty = undefined;
+
 let agent = undefined;
 let helpHandler = undefined;
 
@@ -108,28 +108,6 @@ export const skills: SkillGroup[] = [
             values: ["wordle", "slot", "help"],
           },
         },
-      },
-    ],
-  },
-  {
-    name: "Loyalty",
-    description: "Manage group members and metadata.",
-    skills: [
-      {
-        command: "/points",
-        triggers: ["/points"],
-        examples: ["/points"],
-        handler: loyalty,
-        description: "Check your points.",
-        params: {},
-      },
-      {
-        command: "/leaderboard",
-        triggers: ["/leaderboard"],
-        adminOnly: true,
-        handler: loyalty,
-        description: "Check the points of a user.",
-        params: {},
       },
     ],
   },
