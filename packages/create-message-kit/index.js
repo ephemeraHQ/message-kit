@@ -62,7 +62,7 @@ Powered by XMTP`;
 program.parse(process.argv);
 async function addPackagejson(destDir, name) {
   fs.copySync(
-    resolve(__dirname, "templates/package.template.json"),
+    resolve(__dirname, "package.template.json"),
     resolve(destDir, "package.json"),
     {
       name: name,

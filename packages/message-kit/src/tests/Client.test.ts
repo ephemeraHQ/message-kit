@@ -1,7 +1,6 @@
 import "dotenv/config";
-
 import { describe, test, expect } from "vitest";
-import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
+import { generatePrivateKey } from "viem/accounts";
 import { xmtpClient, createUser } from "../lib/client";
 
 describe("Client Private Key Configuration Tests", () => {
