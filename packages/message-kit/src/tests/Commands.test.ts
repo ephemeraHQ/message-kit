@@ -1,4 +1,5 @@
 import "dotenv/config";
+import { describe, test, expect } from "vitest";
 import { parseSkill } from "../lib/skills";
 import { skills } from "./Test_skills";
 

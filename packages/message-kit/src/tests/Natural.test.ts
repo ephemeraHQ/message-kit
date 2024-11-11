@@ -1,4 +1,5 @@
 import "dotenv/config";
+import { describe, test, expect } from "vitest";
 import { textGeneration } from "../helpers/gpt";
 import { skills } from "./Test_skills";
 import { AbstractedMember } from "../helpers/types";
