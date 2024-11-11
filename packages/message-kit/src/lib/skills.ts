@@ -26,13 +26,16 @@ export async function executeSkill(
   try {
     let skillCommand = findSkill(text, skills);
     const extractedValues = parseSkill(text, skills);
-    if ((text.startsWith("/") || text.startsWith("@")) && !extractedValues) {
+    if (
+      (text.startsWith("/") || text.startsWith("@")) &&
+      !extractedValues?.command
+    ) {
       console.warn("Command not valid", text);
-    } else if (skillCommand && skillCommand.handler) {
+    } else if (skillCommand?.handler) {
       // Mock context for command execution
       const mockContext: HandlerContext = {
         ...context,
-        conversation: conversation ?? context.conversation,
+        conversation,
         getV2MessageById: context.getV2MessageById.bind(context),
         isConversationV2: context.isConversationV2.bind(context),
         getCacheCreationDate: context.getCacheCreationDate.bind(context),

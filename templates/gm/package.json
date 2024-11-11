@@ -3,8 +3,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -w",
     "dev": "tsc -w & sleep 1 && node --watch dist/index.js",
+    "postinstall": "tsc",
     "start": "node dist/index.js"
   },
   "dependencies": {
