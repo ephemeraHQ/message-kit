@@ -1,0 +1,147 @@
+# Transactions
+
+This example demonstrates how to generate frame URLs for different types of transactions.
+
+## Skills
+
+```bash [cmd]
+/send 1 eth to @bo
+/swap 1 DAI to USDC
+/show
+```
+
+::::note
+:::details[Skill declaration]
+
+```tsx [src/skills.ts]
+import { handler as transaction } from "./handler/transaction.js";
+export const skills: SkillGroup[] = [
+  {
+    name: "Transactions",
+    description: "Multipurpose transaction frame built onbase.",
+    skills: [
+      {
+        skill: "/send [amount] [token] [username]",
+        example: "/send 1 eth vitalik.eth",
+        triggers: ["/send"],
+        handler: handler,
+        description:
+          "Send a specific amount of a token to a specified address.",
+        params: {
+          amount: {
+            default: 1,
+            type: "number",
+          },
+          token: {
+            default: "eth",
+            type: "string",
+            values: ["eth", "dai", "usdc", "degen"], // Accepted tokens
+          },
+          username: {
+            default: "",
+            type: "string",
+          },
+        },
+      },
+      {
+        skill: "/swap [amount] [token_from] [token_to]",
+        triggers: ["@swap", "/swap"],
+        description: "Exchange one type of cryptocurrency for another.",
+        handler: transaction,
+        params: {
+          amount: {
+            default: 10,
+            type: "number",
+          },
+          token_from: {
+            default: "usdc",
+            type: "string",
+            values: ["eth", "dai", "usdc", "degen"], // Accepted tokens
+          },
+          token_to: {
+            default: "eth",
+            type: "string",
+            values: ["eth", "dai", "usdc", "degen"], // Accepted tokenss
+          },
+        },
+      },
+      {
+        skill: "/show",
+        triggers: ["/show"],
+        handler: transaction,
+        description: "Show the whole frame.",
+        params: {},
+      },
+    ],
+  },
+];
+```
+
+:::
+::::
+
+## Main code
+
+```tsx [src/handler/transactions.ts]
+import { handler as transaction } from "./handler/transaction.js";
+export const skills: SkillGroup[] = [
+  {
+    name: "Transactions",
+    description: "Multipurpose transaction frame built onbase.",
+    skills: [
+      {
+        skill: "/send [amount] [token] [username]",
+        example: "/send 1 eth vitalik.eth",
+        triggers: ["/send"],
+        handler: handler,
+        description:
+          "Send a specific amount of a token to a specified address.",
+        params: {
+          amount: {
+            default: 1,
+            type: "number",
+          },
+          token: {
+            default: "eth",
+            type: "string",
+            values: ["eth", "dai", "usdc", "degen"], // Accepted tokens
+          },
+          username: {
+            default: "",
+            type: "string",
+          },
+        },
+      },
+      {
+        skill: "/swap [amount] [token_from] [token_to]",
+        triggers: ["@swap", "/swap"],
+        description: "Exchange one type of cryptocurrency for another.",
+        handler: transaction,
+        params: {
+          amount: {
+            default: 10,
+            type: "number",
+          },
+          token_from: {
+            default: "usdc",
+            type: "string",
+            values: ["eth", "dai", "usdc", "degen"], // Accepted tokens
+          },
+          token_to: {
+            default: "eth",
+            type: "string",
+            values: ["eth", "dai", "usdc", "degen"], // Accepted tokenss
+          },
+        },
+      },
+      {
+        skill: "/show",
+        triggers: ["/show"],
+        handler: transaction,
+        description: "Show the whole frame.",
+        params: {},
+      },
+    ],
+  },
+];
+```

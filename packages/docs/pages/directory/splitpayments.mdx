@@ -21,7 +21,7 @@ run(
 
 ## Main code
 
-In this case the app replies with context about the group like users and commands.
+In this case the app replies with context about the group like users and skills.
 
 ```tsx [src/handler/splitpayments.ts]
 import { HandlerContext } from "@xmtp/message-kit";
@@ -30,10 +30,6 @@ import { vision } from "../lib/vision.js";
 import { getUserInfo } from "../lib/resolver.js";
 
 export async function handler(context: HandlerContext) {
-  if (!process?.env?.OPEN_AI_API_KEY) {
-    console.warn("No OPEN_AI_API_KEY found in .env");
-    return;
-  }
   const {
     members,
     skills,
@@ -83,7 +79,7 @@ export async function handler(context: HandlerContext) {
       let splitMessages = JSON.parse(reply);
       for (const message of splitMessages) {
         let msg = message as string;
-        if (msg.startsWith("/")) await context.skill(msg);
+        if (msg.startsWith("/")) await context.executeSkill(msg);
         else await context.send(msg);
       }
     }

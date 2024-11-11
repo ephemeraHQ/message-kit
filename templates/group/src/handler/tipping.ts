@@ -1,49 +1,39 @@
-import { HandlerContext, AbstractedMember } from "@xmtp/message-kit";
-import { getUserInfo } from "../lib/resolver.js";
+import {
+  HandlerContext,
+  AbstractedMember,
+  SkillResponse,
+} from "@xmtp/message-kit";
+import { getUserInfo } from "@xmtp/message-kit";
 
-export async function handler(context: HandlerContext) {
+export async function handler(context: HandlerContext): Promise<SkillResponse> {
   const {
     members,
-    getMessageById,
-    message: { content, sender, typeId },
+    message: {
+      content: {
+        reference,
+        reply,
+        text,
+        skill,
+        params: { amount, username },
+      },
+      sender,
+    },
   } = context;
-  const msg = await getMessageById(content.reference);
-  const replyReceiver = members?.find(
-    (member) => member.inboxId === msg?.senderInboxId,
-  );
-  let amount: number = 0,
-    receivers: AbstractedMember[] = [];
-  // Handle different types of messages
-  if (typeId === "reply" && replyReceiver) {
-    const { content: reply } = content;
+  let receivers: AbstractedMember[] = [];
 
-    if (reply.includes("degen")) {
-      receivers = [replyReceiver];
-      const match = reply.match(/(\d+)/);
-      if (match)
-        amount = parseInt(match[0]); // Extract amount from reply
-      else amount = 10;
-    }
-  } else if (typeId === "text") {
-    const { content: text, params } = content;
-    if (text.startsWith("/tip") && params) {
-      // Process text skills starting with "/tip"
-      const {
-        params: { amount: extractedAmount, username },
-      } = content;
-      amount = extractedAmount || 10; // Default amount if not specified
-
-      receivers = await Promise.all(
-        username.map((username: string) => getUserInfo(username)),
-      );
-    }
+  if (skill === "tip") {
+    receivers = await Promise.all(
+      username.map((username: string) => getUserInfo(username)),
+    );
   }
   if (!sender || receivers.length === 0 || amount === 0) {
     context.reply("Sender or receiver or amount not found.");
-    return;
+    return {
+      code: 400,
+      message: "Sender or receiver or amount not found.",
+    };
   }
   const receiverAddresses = receivers.map((receiver) => receiver.address);
-  // Process sending tokens to each receiver
 
   context.sendTo(
     `You received ${amount} tokens from ${sender.address}.`,
@@ -55,4 +45,8 @@ export async function handler(context: HandlerContext) {
     `You sent ${amount * receiverAddresses.length} tokens in total.`,
     [sender.address],
   );
+  return {
+    code: 200,
+    message: "Success",
+  };
 }

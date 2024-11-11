@@ -4,9 +4,9 @@ import {
   Client as ClientV2,
   Conversation as ConversationV2,
 } from "@xmtp/xmtp-js";
-import { NapiGroupMember } from "@xmtp/node-sdk";
+import { GroupMember } from "@xmtp/node-sdk";
 import fs from "fs/promises";
-import { loadSkillsFile } from "../helpers/utils";
+import {} from "../helpers/utils";
 import type { Reaction } from "@xmtp/content-type-reaction";
 import { ContentTypeText } from "@xmtp/content-type-text";
 import { logMessage } from "../helpers/utils.js";
@@ -14,18 +14,18 @@ import {
   SkillGroup,
   MessageAbstracted,
   GroupAbstracted,
-  SkillCommand,
+  SkillResponse,
   AbstractedMember,
 } from "../helpers/types.js";
-import { extractCommandValues } from "../helpers/utils.js";
 import { ContentTypeReply } from "@xmtp/content-type-reply";
+import { executeSkill, loadSkillsFile, parseSkill } from "./skills.js";
 import {
   ContentTypeRemoteAttachment,
   RemoteAttachmentCodec,
 } from "@xmtp/content-type-remote-attachment";
 import { ContentTypeReaction } from "@xmtp/content-type-reaction";
 
-export default class HandlerContext {
+export class HandlerContext {
   refConv: Conversation | ConversationV2 | null = null;
 
   message!: MessageAbstracted;
@@ -36,8 +36,11 @@ export default class HandlerContext {
   v2client!: ClientV2;
   skills?: SkillGroup[];
   members?: AbstractedMember[];
-  sender?: any;
+  admins?: string[];
+  superAdmins?: string[];
+  sender?: AbstractedMember;
   getMessageById!: (id: string) => DecodedMessage | null;
+  executeSkill!: (text: string) => Promise<SkillResponse | undefined>;
   private constructor(
     conversation: Conversation | ConversationV2,
     { client, v2client }: { client: Client; v2client: ClientV2 },
@@ -50,11 +53,14 @@ export default class HandlerContext {
         sync: conversation.sync.bind(conversation),
         addMembers: conversation.addMembers.bind(conversation),
         send: conversation.send.bind(conversation),
+        members: [],
         createdAt: conversation.createdAt,
         addMembersByInboxId:
           conversation.addMembersByInboxId.bind(conversation),
         isAdmin: () => false,
         isSuperAdmin: () => false,
+        admins: conversation.admins,
+        superAdmins: conversation.superAdmins,
       };
       this.version = "v3";
     } else {
@@ -66,14 +72,14 @@ export default class HandlerContext {
     conversation: Conversation | ConversationV2,
     message: DecodedMessage | DecodedMessageV2 | null,
     { client, v2client }: { client: Client; v2client: ClientV2 },
-    skillsConfigPath?: string,
+    skills?: SkillGroup[],
     version?: "v2" | "v3",
   ): Promise<HandlerContext | null> {
     const context = new HandlerContext(conversation, { client, v2client });
     if (message && message.id) {
       //v2
       const sentAt = "sentAt" in message ? message.sentAt : message.sent;
-      let members: any;
+      let members: GroupMember[];
       if (version === "v2") {
         context.sender = {
           address: (message as DecodedMessageV2).senderAddress,
@@ -82,8 +88,10 @@ export default class HandlerContext {
           accountAddresses: [(message as DecodedMessageV2).senderAddress],
         } as AbstractedMember;
       } else {
-        members = await (conversation as Conversation).members();
-        context.members = members.map((member: NapiGroupMember) => ({
+        let group = await (conversation as Conversation);
+        await group.sync();
+        members = await group.members();
+        context.members = members.map((member: GroupMember) => ({
           inboxId: member.inboxId,
           address: member.accountAddresses[0],
           accountAddresses: member.accountAddresses,
@@ -91,7 +99,7 @@ export default class HandlerContext {
         })) as AbstractedMember[];
 
         let MemberSender = members?.find(
-          (member: NapiGroupMember) =>
+          (member: GroupMember) =>
             member.inboxId === (message as DecodedMessage).senderInboxId,
         );
 
@@ -102,15 +110,19 @@ export default class HandlerContext {
           accountAddresses: MemberSender?.accountAddresses,
         } as AbstractedMember;
       }
-      //commands
-      context.skills = await loadSkillsFile(skillsConfigPath);
+
+      context.skills = skills ?? (await loadSkillsFile());
 
       context.getMessageById =
         client.conversations?.getMessageById?.bind(client.conversations) ||
         (() => null);
       // **Correct Binding:**
-      context.getReplyChain = context.getReplyChain.bind(context);
-      context.skill = context.skill.bind(context);
+      context.executeSkill = async (text: string) => {
+        const result = await executeSkill(text, context.skills ?? [], context);
+        return result ?? undefined;
+      };
+      let typeId = message.contentType?.typeId;
+
       //trim spaces from text
       let content =
         typeof message.content === "string"
@@ -118,35 +130,44 @@ export default class HandlerContext {
           : message.content;
 
       if (message?.contentType?.sameAs(ContentTypeText)) {
-        const extractedValues = extractCommandValues(
-          content.content,
-          context.skills,
-        );
-        if (extractedValues) {
+        const extractedValues = parseSkill(content.content, context.skills);
+        if (extractedValues?.skill) {
           content = {
-            ...content,
+            text: content.content,
             ...extractedValues,
+          };
+          typeId = "skill";
+        } else {
+          content = {
+            text: content.content,
           };
         }
       } else if (message?.contentType?.sameAs(ContentTypeReply)) {
         content = {
-          ...content,
-          typeId: message.content.contentType.typeId,
+          reply: content.content,
+          replyChain: await context.getReplyChain(
+            content.reference,
+            version ?? "v2",
+          ),
+          reference: content.reference,
+        };
+      } else if (message?.contentType?.sameAs(ContentTypeReaction)) {
+        content = {
+          reaction: content.content,
+          reference: content.reference,
         };
       } else if (message?.contentType?.sameAs(ContentTypeRemoteAttachment)) {
         const attachment = await RemoteAttachmentCodec.load(content, client);
         content = {
-          ...content,
-          ...message.contentType,
           attachment: attachment,
         };
       }
       context.message = {
         id: message.id,
-        content: content,
+        content,
         sender: context.sender,
-        typeId: message.contentType?.typeId as string,
         sent: sentAt,
+        typeId: typeId ?? "",
         version: version ?? "v2",
       };
       return context;
@@ -178,16 +199,26 @@ export default class HandlerContext {
 
     if (version === "v3") msg = await this.getMessageById(reference);
     else if (version === "v2") msg = await this.getV2MessageById(reference);
-
+    let members: GroupMember[] = [];
     if (!msg) {
       return {
         chain: [],
         isSenderInChain: false,
       };
     }
-
-    let sender = (await (this.group as Conversation).members())?.find(
-      (member: NapiGroupMember) =>
+    let group = await (this.refConv as Conversation);
+    try {
+      await group.sync();
+      members = await group.members();
+    } catch (error) {
+      console.error(
+        "Failed to sync group or fetch members in reply chain:",
+        error,
+      );
+      members = [];
+    }
+    let sender = members?.find(
+      (member: GroupMember) =>
         member.inboxId === (msg as DecodedMessage).senderInboxId ||
         member.accountAddresses.includes(
           (msg as DecodedMessageV2).senderAddress,
@@ -300,68 +331,5 @@ export default class HandlerContext {
       await targetConversation.send(message);
       logMessage("sent: " + message);
     }
-  }
-
-  async skill(text: string, conversation?: Conversation) {
-    //if (process.env.MSG_LOG) console.log("skill", text);
-    if (conversation) this.refConv = conversation;
-    try {
-      let skillCommand = this.findSkill(text);
-      const extractedValues = extractCommandValues(text, this.skills ?? []);
-      if ((text.startsWith("/") || text.startsWith("@")) && !extractedValues) {
-        console.warn("Command not valid", text);
-      } else if (skillCommand) {
-        // Mock context for command execution
-        const mockContext: HandlerContext = {
-          ...this,
-          conversation: conversation ?? this.conversation,
-          message: {
-            ...this.message,
-            content: {
-              ...this.message.content,
-              ...extractedValues,
-            },
-          },
-          skill: this.skill.bind(this),
-          reply: this.reply.bind(this),
-          send: this.send.bind(this),
-          sendTo: this.sendTo.bind(this),
-          react: this.react.bind(this),
-          getMessageById: this.getMessageById.bind(this),
-          getReplyChain: this.getReplyChain.bind(this),
-        };
-
-        this.refConv = null;
-        return skillCommand?.handler?.(mockContext);
-      } else if (text.startsWith("/") || text.startsWith("@")) {
-        console.warn("Command not valid", text);
-      } else return this.send(text);
-    } catch (e) {
-      console.log("error", e);
-    } finally {
-      this.refConv = null;
-    }
-  }
-
-  findSkill(text: string): SkillCommand | undefined {
-    let skills = this.skills ?? [];
-    const trigger = text?.split(" ")[0].toLowerCase();
-    for (const skillGroup of skills) {
-      const handler = skillGroup.skills.find((skill) => {
-        return skill?.triggers?.includes(trigger);
-      });
-
-      if (handler !== undefined) return handler;
-    }
-    return undefined;
-  }
-  findSkillGroup(content: string): SkillGroup | undefined {
-    let skills = this.skills ?? [];
-    return skills.find((skill) => {
-      if (skill.tag && content.includes(`${skill.tag}`)) {
-        return true;
-      }
-      return undefined;
-    });
   }
 }

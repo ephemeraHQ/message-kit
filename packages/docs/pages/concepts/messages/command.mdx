@@ -1,45 +1,48 @@
-# Command
+# Skill
 
-If the message starts with a `/` it is considered a command. See more details in the [commands](/skills/commands) section.
+If the message starts with a `/` it is considered a skill. See more details in the [skills](/skills/structure) section.
 
-## Command object
+## Skill object
 
-The command object is a `text` type contains the following extra property:
+The skill object is a `text` type contains the following extra property:
 
 ```tsx
-{
-  content: string, // The raw content of the message
-  command: string, // The command root "send"  // [!code hl] // [!code focus]
-  params: params // The value of the parameters of the command // [!code hl] // [!code focus]
-}
+const {
+  message: {
+    content: { text, skill, params },
+  },
+  typeId: "skill",
+} = context;
 ```
+
+- `text`: string, // The raw text of the message // [!code hl] // [!code focus]
+- `skill`: string, // The skill root "send" // [!code hl] // [!code focus]
+- `params`: params // The value of the parameters of the skill // [!code hl] // [!code focus]
 
 > If the parameter is not correctly declared in the `src/skills.ts` file or the text input from the user is not correct, the `params` will return `undefined`
 
-## Receive a command
+## Receive a skill
 
 Here's an example of how you can receive a `text` message in your app:
 
 ```tsx
-const { content, typeId } = context.message;
-
 if (typeId === "text") {
-  const { command, params } = content;
-  // Use the extracted command and params
+  const { text, skill, params } = content;
+  // Use the extracted skill and params
 }
 ```
 
-Let's say the user sends the command to the app.
+Let's say the user sends the skill to the app.
 
 ```bash [cmd]
 /send 10 usdc @bo
 ```
 
-The helper function will extract the parameters from the command.
+The helper function will extract the parameters from the skill.
 
 ```json [params]
 {
-  "command": "send",
+  "skill": "send",
   "params": {
     "amount": 10,
     "token": "usdc",
@@ -55,7 +58,7 @@ The helper function will extract the parameters from the command.
 }
 ```
 
-## Command handlers
+## Skill handlers
 
 An easier way to declare how to handle and respond to skills is to use handlers. Handlers help you orgaize the code being useful when you are managing multiple bots
 
@@ -68,7 +71,7 @@ export const skills: SkillGroup[] = [
     description: "Multipurpose transaction frame built onbase.",
     skills: [
       {
-        command: "/send [amount] [token] [username]",
+        skill: "/send [amount] [token] [username]",
         triggers: ["/send"],
         examples: ["/send 10 usdc @vitalik"],
         description:
@@ -91,7 +94,7 @@ export const skills: SkillGroup[] = [
         },
       },
       {
-        command: "/swap [amount] [token_from] [token_to]",
+        skill: "/swap [amount] [token_from] [token_to]",
         triggers: ["/swap"],
         examples: ["/swap 10 usdc eth"],
         description: "Exchange one type of cryptocurrency for another.",
@@ -114,7 +117,7 @@ export const skills: SkillGroup[] = [
         },
       },
       {
-        command: "/show",
+        skill: "/show",
         triggers: ["/show"],
         examples: ["/show"],
         handler: transaction,

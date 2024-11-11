@@ -1,57 +1,32 @@
 import { run, HandlerContext } from "@xmtp/message-kit";
-import { handler as splitpayment } from "./handler/splitpayment.js";
+import { textGeneration, processMultilineResponse } from "@xmtp/message-kit";
+import { agent_prompt } from "./prompt.js";
+import { getUserInfo } from "@xmtp/message-kit";
 
-// Main function to run the app
-run(
-  async (context: HandlerContext) => {
-    const {
-      message: { typeId },
-    } = context;
-    switch (typeId) {
-      case "reply":
-        handleReply(context);
-        break;
-      case "remoteStaticAttachment":
-        handleAttachment(context);
-        break;
-    }
-    if (!context.group) {
-      context.send("This is a group bot, add this address to a group");
-    }
-  },
-  { attachments: true },
-);
-async function handleReply(context: HandlerContext) {
+run(async (context: HandlerContext) => {
   const {
-    v2client,
-    getReplyChain,
-    version,
     message: {
-      content: { reference },
+      content: { text, params },
+      sender,
     },
+    group,
   } = context;
 
-  const { chain, isSenderInChain } = await getReplyChain(
-    reference,
-    version,
-    v2client.address,
-  );
-  //await context.skill(chain);
-}
-
-// Handle attachment messages
-async function handleAttachment(context: HandlerContext) {
-  await splitpayment(context);
-}
-
-export async function helpHandler(context: HandlerContext) {
-  const { skills } = context;
-  const intro =
-    "Available experiences:\n" +
-    skills
-      ?.flatMap((app) => app.skills)
-      .map((skill) => `${skill.command} - ${skill.description}`)
-      .join("\n") +
-    "\nUse these skills to interact with specific apps.";
-  context.send(intro);
-}
+  try {
+    let userPrompt = params?.prompt ?? text;
+    const userInfo = await getUserInfo(sender.address);
+    if (!userInfo) {
+      console.log("User info not found");
+      return;
+    }
+    const { reply } = await textGeneration(
+      sender.address,
+      userPrompt,
+      await agent_prompt(userInfo),
+    );
+    await processMultilineResponse(sender.address, reply, context);
+  } catch (error) {
+    console.error("Error during OpenAI call:", error);
+    await context.send("An error occurred while processing your request.");
+  }
+});

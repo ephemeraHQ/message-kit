@@ -1,12 +1,15 @@
-import { default as HandlerContext } from "./handlerContext.js";
-import { default as xmtpClient } from "./client.js";
+import { HandlerContext } from "./handlerContext.js";
+import { xmtpClient } from "./client.js";
 import { Config, Handler, SkillHandler } from "../helpers/types.js";
 import { DecodedMessage } from "@xmtp/node-sdk";
 import { logMessage } from "../helpers/utils.js";
 import { DecodedMessage as DecodedMessageV2 } from "@xmtp/xmtp-js";
 import { streamMessages } from "./streams.js";
+import { findSkill, findSkillGroup } from "./skills.js";
+import { Conversation } from "@xmtp/node-sdk";
+import { Conversation as V2Conversation } from "@xmtp/xmtp-js";
 
-export default async function run(handler: Handler, config?: Config) {
+export async function run(handler: Handler, config?: Config) {
   const { client, v2client } = await xmtpClient(config);
   const { inboxId: address } = client;
   const { address: addressV2 } = v2client;
@@ -14,7 +17,6 @@ export default async function run(handler: Handler, config?: Config) {
   // sync and list conversations
   await client.conversations.sync();
   await client.conversations.list();
-
   const handleMessage = async (
     version: "v3" | "v2",
     message: DecodedMessage | DecodedMessageV2 | undefined,
@@ -35,12 +37,11 @@ export default async function run(handler: Handler, config?: Config) {
         ) {
           return;
         }
-
         const context = await HandlerContext.create(
           conversation,
           message,
           { client, v2client },
-          config?.skillsConfigPath,
+          config?.skills,
           version,
         );
         if (!context) {
@@ -48,8 +49,8 @@ export default async function run(handler: Handler, config?: Config) {
             console.warn("No context found", message);
           return;
         }
-        // Check if the message content triggers a command
-        const { isMessageValid, customHandler } = commandTriggered(context);
+        // Check if the message content triggers a skill
+        const { isMessageValid, customHandler } = skillTriggered(context);
         if (isMessageValid && customHandler) await customHandler(context);
         else if (isMessageValid) await handler(context);
       } catch (e) {
@@ -58,7 +59,7 @@ export default async function run(handler: Handler, config?: Config) {
     }
   };
 
-  const commandTriggered = (
+  const skillTriggered = (
     context: HandlerContext,
   ): {
     isMessageValid: boolean;
@@ -66,16 +67,19 @@ export default async function run(handler: Handler, config?: Config) {
   } => {
     const {
       message: {
-        content: { content },
+        content: { text },
+        content,
         typeId,
         sender,
       },
       version,
       client,
       v2client,
+      skills,
       group,
     } = context;
-    let skillCommand = context.findSkill(content);
+
+    let skillAction = text && skills ? findSkill(text, skills) : undefined;
 
     const { inboxId: senderInboxId } = client;
     const { address: senderAddress } = v2client;
@@ -85,25 +89,29 @@ export default async function run(handler: Handler, config?: Config) {
       (sender.inboxId?.toLowerCase() === senderInboxId.toLowerCase() &&
         typeId !== "group_updated");
 
-    const isCommandTriggered = skillCommand?.command;
+    const isSkillTriggered = skillAction?.skill;
     const isExperimental = config?.experimental ?? false;
 
     const isAddedMemberOrPass =
       typeId === "group_updated" &&
       config?.memberChange &&
+      //@ts-ignore
       content?.addedInboxes?.length === 0
         ? false
         : true;
 
     const isRemoteAttachment = typeId == "remoteStaticAttachment";
 
-    const isAdminOrPass =
-      skillCommand?.adminOnly &&
+    const isAdminSkill = skillAction?.adminOnly ?? false;
+
+    const isAdmin =
       group &&
-      !group?.isAdmin(sender.inboxId) &&
-      !group?.isSuperAdmin(sender.inboxId)
-        ? false
-        : true;
+      (group?.admins.includes(sender.inboxId) ||
+        group?.superAdmins.includes(sender.inboxId))
+        ? true
+        : false;
+
+    const isAdminOrPass = isAdminSkill && !isAdmin ? false : true;
 
     // Remote attachments work if image:true in runner config
     // Replies only work with explicit mentions from triggers.
@@ -112,19 +120,24 @@ export default async function run(handler: Handler, config?: Config) {
 
     const isImageValid = isRemoteAttachment && config?.attachments;
 
-    const acceptedType = ["text", "remoteStaticAttachment", "reply"].includes(
-      typeId ?? "",
-    );
+    const acceptedType = [
+      "text",
+      "remoteStaticAttachment",
+      "reply",
+      "skill",
+    ].includes(typeId ?? "");
 
-    const skillGroup = context.findSkillGroup(content); // Check if the message content triggers a tag
-    const isTagged = group && skillGroup ? true : false;
-
+    const skillGroup =
+      typeId === "text" && skills
+        ? findSkillGroup(text ?? "", skills)
+        : undefined; // Check if the message content triggers a tag
+    const isTagged = skillGroup ? true : false;
     const isMessageValid = isSameAddress
       ? false
       : // v2 only accepts text, remoteStaticAttachment, reply
         version == "v2" && acceptedType
         ? true
-        : //If its image is also good, if it has a command image:true
+        : //If its image is also good, if it has a skill image:true
           isImageValid
           ? true
           : //If its not an admin, nope
@@ -135,8 +148,8 @@ export default async function run(handler: Handler, config?: Config) {
               : //If its a group update but its not an added member, nope
                 !isAddedMemberOrPass
                 ? false
-                : //If it has a command trigger, good
-                  isCommandTriggered
+                : //If it has a skill trigger, good
+                  isSkillTriggered
                   ? true
                   : //If it has a tag trigger, good
                     isTagged
@@ -144,47 +157,56 @@ export default async function run(handler: Handler, config?: Config) {
                     : false;
 
     if (process.env.MSG_LOG === "true") {
-      console.log("isMessageValid", {
+      console.debug("Message Validation Stream Details:", {
         isSameAddress,
+        sender,
         content,
         version,
-        typeId,
         acceptedType,
-        isRemoteAttachment,
-        isImageValid,
-        isAdminOrPass,
-        isExperimental,
+        attachmentDetails: {
+          isRemoteAttachment,
+          isImageValid,
+        },
+        adminDetails: {
+          isAdminSkill,
+          isAdmin,
+          isAdminOrPass,
+        },
         isAddedMemberOrPass,
         skillsParsed: context.skills?.length,
-        isTagged: isTagged
+        taggingDetails: isTagged
           ? {
               tag: skillGroup?.tag,
-              tagHandler: skillGroup?.tagHandler !== undefined,
+              hasTagHandler: skillGroup?.tagHandler !== undefined,
             }
-          : false,
-        isCommandTriggered: isCommandTriggered
+          : "No tag detected",
+        skillTriggerDetails: isSkillTriggered
           ? {
-              command: skillCommand?.command,
-              examples: skillCommand?.examples,
-              description: skillCommand?.description,
-              params: skillCommand?.params
-                ? Object.entries(skillCommand.params).map(([key, value]) => ({
+              skill: skillAction?.skill,
+              examples: skillAction?.examples,
+              description: skillAction?.description,
+              params: skillAction?.params
+                ? Object.entries(skillAction.params).map(([key, value]) => ({
                     key,
-                    value,
+                    value: {
+                      type: value.type,
+                      values: value.values,
+                      plural: value.plural,
+                      default: value.default,
+                    },
                   }))
                 : undefined,
             }
-          : false,
+          : "No skill trigger detected",
         isMessageValid,
       });
     }
-    if (isMessageValid)
-      logMessage(`msg_${version}: ` + (typeId == "text" ? content : typeId));
+    if (isMessageValid) logMessage(`msg_${version}: ` + (text ?? typeId));
 
     return {
       isMessageValid,
-      customHandler: skillCommand
-        ? skillCommand.handler
+      customHandler: skillAction
+        ? skillAction.handler
         : skillGroup
           ? skillGroup.tagHandler
           : undefined,
@@ -193,14 +215,13 @@ export default async function run(handler: Handler, config?: Config) {
   const getConversation = async (
     message: DecodedMessage | DecodedMessageV2 | undefined,
     version: "v3" | "v2",
-  ) => {
+  ): Promise<Conversation | V2Conversation> => {
     return version === "v3"
-      ? await client.conversations.getConversationById(
-          (message as DecodedMessage)?.conversationId ?? "",
-        )
-      : (message as DecodedMessageV2)?.conversation;
+      ? ((await client.conversations.getConversationById(
+          (message as DecodedMessage)?.conversationId as string,
+        )) as Conversation)
+      : ((message as DecodedMessageV2)?.conversation as V2Conversation);
   };
-
   // Run both clients' streams concurrently
   await Promise.all([
     streamMessages("v3", handleMessage, client),

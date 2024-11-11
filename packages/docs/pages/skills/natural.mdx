@@ -1,6 +1,6 @@
 ## Natural language parsing
 
-Transform your bot into a conversational genius! Natural language processing enables your bot to understand human-like requests and translate them into precise commands.
+Transform your bot into a conversational genius! Natural language processing enables your bot to understand human-like requests and translate them into precise skill.
 
 ## How it works
 
@@ -34,12 +34,12 @@ Examples:
 And the magic happens:
 
 ```tsx
-// The AI processes the request and returns a structured command
+// The AI processes the request and returns a structured skill
 const { reply } = await textGeneration(userPrompt, systemPrompt);
 
-// If it's a valid command, execute it!
+// If it's a valid skill, execute it!
 if (reply.startsWith("/")) {
-  await context.skill(reply);
+  await context.executeSkill(reply);
 }
 ```
 
@@ -62,14 +62,14 @@ const { reply } = await textGeneration(userPrompt, systemPrompt);
 
 ### Returning a response
 
-The bot can return a structured response to the user and then handle the response in the command handler.
+The bot can return a structured response to the user and then handle the response in the skill handler.
 
 ```tsx
 import { SkillResponse } from "@xmtp/message-kit";
 
-// If it's a valid command, execute it!
+// If it's a valid skil, execute it!
 if (reply.startsWith("/")) {
-  const response = (await context.skill(reply)) as SkillResponse;
+  const response = (await context.executeSkill(reply)) as SkillResponse;
   if (response.code == 200) await context.send(response.message);
 }
 ```
@@ -88,9 +88,9 @@ if (reply.startsWith("/")) {
 ### Pro tips
 
 - Your bot can handle various casual phrases
-- Users don't need to remember exact command syntax
+- Users don't need to remember exact skill syntax
 - Natural language makes your bot more approachable
 - Add personality to your system prompt for extra flair!
-- Use the `SkillResponse` type to handle the response from the command handler.
-- Handle all possible responses from the command handler.
+- Use the `SkillResponse` type to handle the response from the skill handler.
+- Handle all possible responses from the skill handler.
 - Use the `SkillResponse` as if they were a normal API response.

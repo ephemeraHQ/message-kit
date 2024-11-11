@@ -8,17 +8,17 @@ MessageKit steps to create fully functional AI agents that perform complex tasks
 
 :::steps
 
-### 1. Command Processing
+### 1. Skill Processing
 
 Bots can execute structured skills with parameter validation and type checking:
 
 ```jsx
-// Execute a simple command
-const { message } = await context.skill("/send 10 usdc to @alix", conv);
+// Execute a simple skill
+const { message } = await context.executeSkill("/send 10 usdc to @alix", conv);
 context.send(message);
 ```
 
-Learn more about [command processing](/skills/commands)
+Learn more about [skill processing](/skills/structure)
 
 ### 2. Natural Language Understanding
 
@@ -38,7 +38,7 @@ Bot:
 
 Learn more about [natural language parsing](/skills/natural)
 
-### 3. Multi line
+### 3. Processing new lines
 
 User:
 
@@ -52,15 +52,20 @@ This will return an array of messages, and then it will process each one sequent
 [" Let me check that domain for you", "/check vitalik.eth"];
 ```
 
-Learn more about [Multi Skills](/skills/multi-skills.mdx).
+Learn more about [Processing new lines](/skills/processing.mdx).
 
-### 4. Reasoning
+### 4. Fine Tuning
+
+Get your agent to the next level with fine tuning.
+Learn more about [Fine Tuning](/skills/fine-tuning.mdx).
+
+### 5. Reasoning
 
 Bots can manage complex workflows by:
 
 - Breaking down tasks into steps
 - Maintaining conversation context
-- Executing sequential commands
+- Executing sequential skills
 - Waiting for user input when needed
 
 Example of a multi-step ENS registration flow:

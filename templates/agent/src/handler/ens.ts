@@ -1,7 +1,7 @@
 import { HandlerContext, SkillResponse } from "@xmtp/message-kit";
-import { getUserInfo, clearInfoCache, isOnXMTP } from "../lib/resolver.js";
+import { getUserInfo, clearInfoCache, isOnXMTP } from "@xmtp/message-kit";
 import { isAddress } from "viem";
-import { clearMemory } from "../lib/gpt.js";
+import { clearMemory } from "@xmtp/message-kit";
 
 export const frameUrl = "https://ens.steer.fun/";
 export const ensUrl = "https://app.ens.domains/";
@@ -9,18 +9,19 @@ export const baseTxUrl = "https://base-tx-frame.vercel.app";
 
 export async function handleEns(
   context: HandlerContext,
-): Promise<SkillResponse> {
+): Promise<SkillResponse | undefined> {
   const {
     message: {
-      content: { command, params, sender },
+      sender,
+      content: { skill, params },
     },
-    skill,
   } = context;
-  if (command == "reset") {
+
+  if (skill == "reset") {
     clearMemory();
     return { code: 200, message: "Conversation reset." };
-  } else if (command == "renew") {
-    // Destructure and validate parameters for the ens command
+  } else if (skill == "renew") {
+    // Destructure and validate parameters for the ens
     const { domain } = params;
     // Check if the user holds the domain
     if (!domain) {
@@ -43,8 +44,8 @@ export async function handleEns(
     // Generate URL for the ens
     let url_ens = frameUrl + "frames/manage?name=" + domain;
     return { code: 200, message: `${url_ens}` };
-  } else if (command == "register") {
-    // Destructure and validate parameters for the ens command
+  } else if (skill == "register") {
+    // Destructure and validate parameters for the ens
     const { domain } = params;
 
     if (!domain) {
@@ -56,7 +57,7 @@ export async function handleEns(
     // Generate URL for the ens
     let url_ens = ensUrl + domain;
     return { code: 200, message: `${url_ens}` };
-  } else if (command == "info") {
+  } else if (skill == "info") {
     const { domain } = params;
 
     const data = await getUserInfo(domain);
@@ -87,19 +88,13 @@ export async function handleEns(
     }
     message += `\n\nWould you like to tip the domain owner for getting there first 🤣?`;
     message = message.trim();
-    if (
-      await isOnXMTP(
-        context.v2client,
-        data?.ensInfo?.ens,
-        data?.ensInfo?.address,
-      )
-    ) {
+    if (await isOnXMTP(context.client, context.v2client, sender?.address)) {
       await context.send(
         `Ah, this domains is in XMTP, you can message it directly: https://converse.xyz/dm/${domain}`,
       );
     }
     return { code: 200, message };
-  } else if (command == "check") {
+  } else if (skill == "check") {
     const { domain } = params;
 
     if (!domain) {
@@ -118,13 +113,13 @@ export async function handleEns(
       };
     } else {
       let message = `Looks like ${domain} is already registered!`;
-      await skill("/cool " + domain);
+      await context.executeSkill("/cool " + domain);
       return {
         code: 404,
         message,
       };
     }
-  } else if (command == "tip") {
+  } else if (skill == "tip") {
     const { address } = params;
     if (!address) {
       return {
@@ -141,7 +136,7 @@ export async function handleEns(
       code: 200,
       message: txUrl,
     };
-  } else if (command == "cool") {
+  } else if (skill == "cool") {
     const { domain } = params;
     //What about these cool alternatives?\
     return {
@@ -149,7 +144,7 @@ export async function handleEns(
       message: `${generateCoolAlternatives(domain)}`,
     };
   } else {
-    return { code: 400, message: "Command not found." };
+    return { code: 400, message: "Skill not found." };
   }
 }
 

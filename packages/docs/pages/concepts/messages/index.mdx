@@ -19,20 +19,34 @@ run(async (context: HandlerContext) => {
 The `message` object contains the following
 
 ```tsx
-{
-  id: string, // The id of the message
-  content: {}, // The content of the message depending on the  type
-  sender: User, // The user object of the sender
-  sent: Date, // The timestamp of the message
-  typeId: string; // The  type of the message (text, reply)
-}
+const {
+  message: {
+    id,
+    content: { text, skill, params, attachment, reply, reference },
+    sender,
+    sent,
+    typeId,
+  },
+};
 ```
+
+- `id`: string, // The id of the message
+- `content`: all the content of the message depending on the type
+  - `text`: string, // The content of the message
+  - `skill`: string, // The skill of the message
+  - `params`: string[], // The parameters of the message
+  - `attachment`: Attachment, // The attachment of the message
+  - `reply`: Reply, // The reply of the message
+  - `reference`: string, // The reference of the message
+- `sender`: User, // The user object of the sender
+- `sent`: Date, // The timestamp of the message
+- `typeId`: string, // The type of the message (text, reply)
 
 To learn more about the types, see [types](/concepts/messages/text)
 
-## Send message
+## Send messages
 
-App messages are messages that are sent when you send a reply to a message and are highlighted differently by the apps.
+App messages a re messages that are sent when you send a reply to a message and are highlighted differently by the apps.
 
 ```tsx
 // Send a message

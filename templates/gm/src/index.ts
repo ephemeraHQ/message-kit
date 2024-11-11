@@ -1,5 +1,5 @@
 import { run, HandlerContext } from "@xmtp/message-kit";
-
+import { skills } from "./skills.js";
 run(
   async (context: HandlerContext) => {
     // Get the message and the address from the sender
@@ -9,8 +9,6 @@ run(
     await context.send(`gm`);
   },
   {
-    client: {
-      logging: "debug",
-    },
+    skills: skills,
   },
 );

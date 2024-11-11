@@ -7,20 +7,25 @@ With XMTP, text is represented as objects with the following keys:
 The `text` type contains the following
 
 ```tsx
-{
-  content: string, // The content of the message
-}
+const {
+  message: {
+    content: {
+      text, // The content of the message
+    },
+    typeId: "text",
+  },
+};
 ```
+
+- `text`: string, // The content of the message
 
 ## Receive a text message
 
 Here's an example of how you can receive a `text` message in your app:
 
 ```tsx
-const { content, typeId } = context.message;
-
 if (typeId === "text") {
-  const { content: text } = content;
+  const { text } = content;
   // Use text
 }
 ```

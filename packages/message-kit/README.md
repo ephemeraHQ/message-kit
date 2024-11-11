@@ -4,7 +4,7 @@
 bun install @xmtp/message-kit
 ```
 
-```jsx
+```bash
 npm install @xmtp/message-kit
 ```
 

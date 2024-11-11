@@ -8,7 +8,7 @@ export const skills: SkillGroup[] = [
     description: "Register ENS domains.",
     skills: [
       {
-        command: "/register [domain]",
+        skill: "/register [domain]",
         triggers: ["/register"],
         handler: handleEns,
         description:
@@ -21,8 +21,7 @@ export const skills: SkillGroup[] = [
         },
       },
       {
-        command: "/exists",
-        adminOnly: true,
+        skill: "/exists",
         examples: ["/exists"],
         handler: handleEns,
         triggers: ["/exists"],
@@ -34,7 +33,7 @@ export const skills: SkillGroup[] = [
         },
       },
       {
-        command: "/info [domain]",
+        skill: "/info [domain]",
         triggers: ["/info"],
         handler: handleEns,
         description:
@@ -47,7 +46,7 @@ export const skills: SkillGroup[] = [
         },
       },
       {
-        command: "/renew [domain]",
+        skill: "/renew [domain]",
         triggers: ["/renew"],
         handler: handleEns,
         description:
@@ -60,7 +59,7 @@ export const skills: SkillGroup[] = [
         },
       },
       {
-        command: "/check [domain]",
+        skill: "/check [domain]",
         triggers: ["/check"],
         handler: handleEns,
         examples: ["/check vitalik.eth", "/check fabri.base.eth"],
@@ -72,7 +71,7 @@ export const skills: SkillGroup[] = [
         },
       },
       {
-        command: "/cool [domain]",
+        skill: "/cool [domain]",
         triggers: ["/cool"],
         examples: ["/cool vitalik.eth"],
         handler: handleEns,
@@ -84,7 +83,7 @@ export const skills: SkillGroup[] = [
         },
       },
       {
-        command: "/reset",
+        skill: "/reset",
         triggers: ["/reset"],
         examples: ["/reset"],
         handler: handleEns,
@@ -92,7 +91,7 @@ export const skills: SkillGroup[] = [
         params: {},
       },
       {
-        command: "/tip [address]",
+        skill: "/tip [address]",
         description: "Show a URL for tipping a domain owner.",
         triggers: ["/tip"],
         handler: handleEns,

@@ -1,13 +1,20 @@
 import "dotenv/config";
-import type { SkillGroup } from "../../helpers/types.js";
+import type { SkillGroup } from "./types";
 import OpenAI from "openai";
-const openai = new OpenAI({
-  apiKey: process.env.OPEN_AI_API_KEY,
-});
+import { findSkillGroupByTag } from "../lib/skills";
+import { HandlerContext } from "../lib/handlerContext";
 
-export type ChatHistoryEntry = { role: string; content: string };
-export type ChatHistories = Record<string, ChatHistoryEntry[]>;
+const isOpenAIConfigured = () => {
+  return !!process.env.OPEN_AI_API_KEY;
+};
 
+// Modify OpenAI initialization to be conditional
+const openai = isOpenAIConfigured()
+  ? new OpenAI({ apiKey: process.env.OPEN_AI_API_KEY })
+  : null;
+
+type ChatHistoryEntry = { role: string; content: string };
+type ChatHistories = Record<string, ChatHistoryEntry[]>;
 // New ChatMemory class
 class ChatMemory {
   private histories: ChatHistories = {};
@@ -32,19 +39,22 @@ class ChatMemory {
     }
   }
 
-  clear() {
-    this.histories = {};
+  clear(address?: string) {
+    if (address) {
+      this.histories[address] = [];
+    } else {
+      this.histories = {};
+    }
   }
 }
-
-export const clearMemory = () => {
-  chatHistories = {};
-};
 
 // Create singleton instance
 export const chatMemory = new ChatMemory();
 
-let chatHistories: ChatHistories = {};
+export const clearMemory = (address?: string) => {
+  chatMemory.clear(address);
+};
+
 export const PROMPT_RULES = `You are a helpful and playful agent called {NAME} that lives inside a web3 messaging app called Converse.
 - You can respond with multiple messages if needed. Each message should be separated by a newline character.
 - You can trigger skills by only sending the command in a newline message.
@@ -56,25 +66,32 @@ export const PROMPT_RULES = `You are a helpful and playful agent called {NAME} t
 - Focus only on helping users with operations detailed below.
 `;
 
-export const PROMPT_SKILLS_AND_EXAMPLES = (skills: SkillGroup[]) => `
-Commands:
-${skills
-  .map((skill) => skill.skills.map((s) => s.command).join("\n"))
-  .join("\n")}
+export function PROMPT_SKILLS_AND_EXAMPLES(skills: SkillGroup[], tag: string) {
+  let skillGroup = findSkillGroupByTag(tag, skills);
 
-Examples:
-${skills
-  .map((skill) => skill.skills.map((s) => s.examples).join("\n"))
-  .join("\n")}
-  `;
+  let returnPrompt = `\nSkills:\n${skillGroup?.skills
+    .map((skill) => skill.skill)
+    .join("\n")}\n\nExamples:\n${skillGroup?.skills
+    .map((skill) => skill.examples?.join("\n"))
+    .join("\n")}`;
+  returnPrompt += "\n";
+  return returnPrompt;
+}
 
 export async function textGeneration(
-  address: string,
+  memoryKey: string,
   userPrompt: string,
   systemPrompt: string,
 ) {
-  let messages = chatMemory.getHistory(address);
-  chatMemory.initializeWithSystem(address, systemPrompt);
+  if (!openai) {
+    console.warn("No OPEN_AI_API_KEY found in .env");
+    return { reply: "No OpenAI API key found in .env" };
+  }
+  if (!memoryKey) {
+    clearMemory();
+  }
+  let messages = chatMemory.getHistory(memoryKey);
+  chatMemory.initializeWithSystem(memoryKey, systemPrompt);
   if (messages.length === 0) {
     messages.push({
       role: "system",
@@ -96,7 +113,7 @@ export async function textGeneration(
       content: reply || "No response from OpenAI.",
     });
     const cleanedReply = parseMarkdown(reply as string);
-    chatMemory.addEntry(address, {
+    chatMemory.addEntry(memoryKey, {
       role: "assistant",
       content: cleanedReply,
     });
@@ -108,10 +125,13 @@ export async function textGeneration(
 }
 
 export async function processMultilineResponse(
-  address: string,
+  memoryKey: string,
   reply: string,
-  context: any,
+  context: HandlerContext,
 ) {
+  if (!memoryKey) {
+    clearMemory();
+  }
   let messages = reply
     .split("\n")
     .map((message: string) => parseMarkdown(message))
@@ -120,10 +140,10 @@ export async function processMultilineResponse(
   console.log(messages);
   for (const message of messages) {
     if (message.startsWith("/")) {
-      const response = await context.skill(message);
+      const response = await context.executeSkill(message);
       if (response && typeof response.message === "string") {
         let msg = parseMarkdown(response.message);
-        chatMemory.addEntry(address, {
+        chatMemory.addEntry(memoryKey, {
           role: "system",
           content: msg,
         });

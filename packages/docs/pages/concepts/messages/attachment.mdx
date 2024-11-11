@@ -4,15 +4,24 @@ Any type of file can be attached to a message. Images, files, videos, audio, and
 
 ## Attachment object
 
-The `remoteStaticAttachment` type contains the following
+The `attachment` type contains the following
 
 ```tsx
-{
-  data: Uint8Array; // the decoded data
-  filename: string; // the filename
-  mimeType: string; // the mime type
-}
+const {
+  message: {
+    content: {
+      attachment: { data, filename, mimeType },
+    },
+    typeId: "attachment",
+  },
+} = context;
 ```
+
+The `attachment` object contains the following:
+
+- `data`: Uint8Array; // the decoded data
+- `filename`: string; // the filename
+- `mimeType`: string; // the mime type
 
 ## Activate attachments
 
@@ -38,12 +47,13 @@ Now that you understand how images are represented, you can receive them in your
 ```tsx
 const {
   message: {
-    content: { attachment },
+    content: {
+      attachment: { data, filename, mimeType },
+    },
   },
 } = context;
 
-if (attachment && typeId === "remoteStaticAttachment") {
-  const { data, filename, mimeType } = attachment;
+if (typeId === "attachment") {
   // Parse the data to a base64 string
   const base64Image = Buffer.from(data).toString("base64");
   // Get the data URL in base64

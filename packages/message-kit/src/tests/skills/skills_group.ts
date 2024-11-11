@@ -1,19 +1,18 @@
-import type { SkillGroup } from "../helpers/types.js";
+import type { SkillGroup } from "../../helpers/types.js";
 
 let tipping = undefined;
 let transaction = undefined;
 let games = undefined;
-let loyalty = undefined;
-let agent = undefined;
-let helpHandler = undefined;
+let help = undefined;
 
 export const skills: SkillGroup[] = [
   {
-    name: "Tipping",
-    description: "Tip tokens via emoji, replies or command.",
+    name: "Group bot",
+    tag: "@bot",
+    description: "Group bot for tipping and transactions.",
     skills: [
       {
-        command: "/tip [@usernames] [amount] [token]",
+        skill: "/tip [usernames] [amount] [token]",
         triggers: ["/tip"],
         examples: ["/tip @vitalik 10 usdc"],
         description: "Tip users in a specified token.",
@@ -30,14 +29,8 @@ export const skills: SkillGroup[] = [
           },
         },
       },
-    ],
-  },
-  {
-    name: "Transactions",
-    description: "Multipurpose transaction frame built onbase.",
-    skills: [
       {
-        command: "/send [amount] [token] [username]",
+        skill: "/send [amount] [token] [username]",
         triggers: ["/send"],
         examples: ["/send 10 usdc @vitalik"],
         description:
@@ -60,7 +53,7 @@ export const skills: SkillGroup[] = [
         },
       },
       {
-        command: "/swap [amount] [token_from] [token_to]",
+        skill: "/swap [amount] [token_from] [token_to]",
         triggers: ["/swap"],
         examples: ["/swap 10 usdc eth"],
         description: "Exchange one type of cryptocurrency for another.",
@@ -83,24 +76,19 @@ export const skills: SkillGroup[] = [
         },
       },
       {
-        command: "/show",
+        skill: "/show",
         triggers: ["/show"],
         examples: ["/show"],
         handler: transaction,
         description: "Show the whole frame.",
         params: {},
       },
-    ],
-  },
-  {
-    name: "Games",
-    description: "Provides various gaming experiences.",
-    skills: [
       {
-        command: "/game [game]",
+        skill: "/game [game]",
         triggers: ["/game", "🔎", "🔍"],
         handler: games,
         description: "Play a game.",
+        examples: ["/game wordle", "/game slot", "/game help"],
         params: {
           game: {
             default: "",
@@ -109,59 +97,21 @@ export const skills: SkillGroup[] = [
           },
         },
       },
-    ],
-  },
-  {
-    name: "Loyalty",
-    description: "Manage group members and metadata.",
-    skills: [
       {
-        command: "/points",
-        triggers: ["/points"],
-        examples: ["/points"],
-        handler: loyalty,
-        description: "Check your points.",
-        params: {},
-      },
-      {
-        command: "/leaderboard",
-        triggers: ["/leaderboard"],
-        adminOnly: true,
-        handler: loyalty,
-        description: "Check the points of a user.",
-        params: {},
-      },
-    ],
-  },
-  {
-    name: "Agent",
-    description: "Manage agent commands.",
-    skills: [
-      {
-        command: "/agent [prompt]",
-        triggers: ["/agent", "@agent", "@bot"],
-        examples: ["/agent @vitalik"],
-        handler: agent,
-        description: "Manage agent commands.",
-        params: {
-          prompt: {
-            default: "",
-            type: "prompt",
-          },
-        },
-      },
-    ],
-  },
-  {
-    name: "Help",
-    description: "Get help with the bot.",
-    skills: [
-      {
-        command: "/help",
+        skill: "/help",
         triggers: ["/help"],
         examples: ["/help"],
-        handler: helpHandler,
+        handler: help,
         description: "Get help with the bot.",
+        params: {},
+      },
+      {
+        skill: "/id",
+        adminOnly: true,
+        examples: ["/id"],
+        handler: help,
+        triggers: ["/id"],
+        description: "Get the group ID.",
         params: {},
       },
     ],

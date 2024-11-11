@@ -1,13 +1,21 @@
-import { default as HandlerContext } from "../lib/handlerContext.js";
-import { ClientOptions } from "@xmtp/node-sdk";
+import { HandlerContext } from "../lib/handlerContext.js";
+import { ClientOptions, GroupMember } from "@xmtp/node-sdk";
 import { ContentTypeId } from "@xmtp/content-type-primitives";
 
 export type MessageAbstracted = {
   id: string;
   sent: Date;
-  content: any;
+  content: {
+    text?: string | undefined;
+    reply?: string | undefined;
+    react?: string | undefined;
+    content?: any | undefined;
+    params?: any | undefined;
+    reference?: string | undefined;
+    skill?: string | undefined;
+  };
   version: "v2" | "v3";
-  sender: any;
+  sender: AbstractedMember;
   typeId: string;
 };
 export type GroupAbstracted = {
@@ -18,7 +26,10 @@ export type GroupAbstracted = {
   send: (content: string, contentType?: ContentTypeId) => Promise<string>;
   isAdmin: (inboxId: string) => boolean;
   isSuperAdmin: (inboxId: string) => boolean;
+  admins: string[];
+  superAdmins: string[];
   createdAt: Date;
+  members: GroupMember[];
 };
 export type SkillResponse = {
   code: number;
@@ -28,7 +39,7 @@ export type SkillResponse = {
 
 export type SkillHandler = (
   context: HandlerContext,
-) => Promise<void | SkillResponse>;
+) => Promise<SkillResponse | void>;
 
 export type Handler = (context: HandlerContext) => Promise<void>;
 
@@ -39,14 +50,14 @@ export type Config = {
   privateKey?: string;
   // if true, the init log message with messagekit logo and stuff will be hidden
   experimental?: boolean;
-  // path to the skills config file
-  skillsConfigPath?: string;
   // hide the init log message with messagekit logo and stuff
   hideInitLogMessage?: boolean;
   // if true, attachments will be enabled
   attachments?: boolean;
   // if true, member changes will be enabled, like adding members to the group
   memberChange?: boolean;
+  // skills to be used
+  skills?: SkillGroup[];
 };
 export interface SkillParamConfig {
   default?: string | number | boolean;
@@ -68,16 +79,16 @@ export interface SkillGroup {
   description: string;
   tag?: string;
   tagHandler?: SkillHandler;
-  skills: SkillCommand[];
+  skills: skillAction[];
 }
 
-export interface SkillCommand {
-  command: string;
-  handler?: SkillHandler;
+export interface skillAction {
+  skill: string;
+  handler: SkillHandler | undefined;
   triggers: string[];
   adminOnly?: boolean;
   description: string;
-  examples?: string[];
+  examples: string[];
   params: Record<string, SkillParamConfig>;
 }
 

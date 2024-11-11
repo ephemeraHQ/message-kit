@@ -3,7 +3,6 @@ import { Client as V2Client } from "@xmtp/xmtp-js";
 
 import { ReactionCodec } from "@xmtp/content-type-reaction";
 import { Client, ClientOptions, XmtpEnv } from "@xmtp/node-sdk";
-import { NapiSignatureRequestType } from "@xmtp/node-sdk";
 import { logInitMessage } from "../helpers/utils";
 import { TextCodec } from "@xmtp/content-type-text";
 import {
@@ -11,19 +10,19 @@ import {
   RemoteAttachmentCodec,
 } from "@xmtp/content-type-remote-attachment";
 import * as fs from "fs";
-import { createWalletClient, http, toBytes, isHex } from "viem";
+import { SignatureRequestType } from "@xmtp/node-bindings";
+import { createWalletClient, http, toBytes } from "viem";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { mainnet } from "viem/chains";
 import { GrpcApiClient } from "@xmtp/grpc-api-client";
 import { Config } from "../helpers/types";
 
-export default async function xmtpClient(
+export async function xmtpClient(
   config?: Config,
 ): Promise<{ client: Client; v2client: V2Client }> {
   // Check if both clientConfig and privateKey are empty
-  let key = config?.privateKey ?? (process.env.KEY as string);
+  let { key, isRandom } = getKey(config?.privateKey);
   let user = createUser(key);
-
   let env = process.env.XMTP_ENV as XmtpEnv;
   if (!env) {
     env = "production" as XmtpEnv;
@@ -61,12 +60,14 @@ export default async function xmtpClient(
   });
 
   const client = await Client.create(user.account.address, finalConfig);
-  if (!config?.hideInitLogMessage) logInitMessage(client, config);
+  if (!config?.hideInitLogMessage)
+    logInitMessage(client, config, key, isRandom);
 
   if (!client.isRegistered) {
     const signature = await getSignature(client, user);
     if (signature) {
-      client.addSignature(1 as NapiSignatureRequestType, signature);
+      //@ts-ignore
+      client.addSignature(SignatureRequestType.CreateInbox, signature);
     }
     await client.registerIdentity();
   }
@@ -99,21 +100,23 @@ export const getSignature = async (client: Client, user: User) => {
   return null;
 };
 
-function getKey(key: string): string {
+function getKey(customKey?: string): { key: string; isRandom: boolean } {
+  let key = customKey ?? process?.env?.KEY;
   if (key !== undefined && !key.startsWith("0x")) key = "0x" + key;
-
-  if (key === undefined) {
-    console.warn("⚠️🔒 .env KEY not set. Generating a random one:");
+  if (
+    key == undefined ||
+    typeof key !== "string" ||
+    !/^0x[0-9a-fA-F]{64}$/.test(key) ||
+    !checkPrivateKey(key)
+  ) {
     key = generatePrivateKey();
-    console.warn(key + "\nCopy and paste it in your .env file as KEY=YOUR_KEY");
-  } else if (!isPrivateKey(key)) {
-    console.warn("⚠️🔒 Invalid private key. Generating a random one:");
-    key = generatePrivateKey();
-    console.info(key + "\nCopy and paste it in your .env file as KEY=YOUR_KEY");
-  }
-  return key;
+    return { key, isRandom: true };
+  } else return { key, isRandom: false };
 }
-function isPrivateKey(key: string): boolean {
-  if (key.length !== 66) return false;
-  return privateKeyToAccount(key as `0x${string}`).address !== undefined;
+function checkPrivateKey(key: string) {
+  try {
+    return privateKeyToAccount(key as `0x${string}`).address !== undefined;
+  } catch (e) {
+    return false;
+  }
 }

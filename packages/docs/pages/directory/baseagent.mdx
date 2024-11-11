@@ -70,7 +70,7 @@ export const skills: SkillGroup[] = [
     description: "Swap bot for base.",
     skills: [
       {
-        command: "/swap [amount] [token_from] [token_to]",
+        skill: "/swap [amount] [token_from] [token_to]",
         triggers: ["/swap"],
         example: "/swap 10 usdc eth",
         handler: handler,
@@ -92,8 +92,9 @@ export const skills: SkillGroup[] = [
           },
         },
       },
+
       {
-        command: "/send [amount] [token] [username]",
+        skill: "/send [amount] [token] [username]",
         example: "/send 1 eth vitalik.eth",
         triggers: ["/send"],
         handler: handler,
@@ -116,7 +117,7 @@ export const skills: SkillGroup[] = [
         },
       },
       {
-        command: "/show",
+        skill: "/show",
         triggers: ["/show"],
         handler: handler,
         params: {},

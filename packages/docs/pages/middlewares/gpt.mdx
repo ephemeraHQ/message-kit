@@ -1,12 +1,8 @@
 ## OpenAI middleware
 
-Install dependencies
+This middleware is used to generate responses using OpenAI.
 
-```bash [cmd]
-yarn add openai
-```
-
-Copy the following code into your `lib/gpt.ts` file.
+> Already commes with message-kit.
 
 ```tsx [src/lib/gpt.ts]
 import "dotenv/config";
@@ -72,7 +68,7 @@ export function PROMPT_SKILLS_AND_EXAMPLES(skills: SkillGroup[], tag: string) {
   if (!foundSkills.length || !foundSkills[0] || !foundSkills[0].skills)
     return "";
   let returnPrompt = `\nCommands:\n${foundSkills[0].skills
-    .map((skill) => skill.command)
+    .map((skill) => skill.skill)
     .join("\n")}\n\nExamples:\n${foundSkills[0].skills
     .map((skill) => skill.examples)
     .join("\n")}`;
@@ -137,7 +133,7 @@ export async function processMultilineResponse(
   console.log(messages);
   for (const message of messages) {
     if (message.startsWith("/")) {
-      const response = await context.skill(message);
+      const response = await context.executeSkill(message);
       if (response && typeof response.message === "string") {
         let msg = parseMarkdown(response.message);
         chatMemory.addEntry(memoryKey, {
