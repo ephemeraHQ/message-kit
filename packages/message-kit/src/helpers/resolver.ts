@@ -122,9 +122,12 @@ export const getUserInfo = async (
       try {
         const response = await fetch(`https://ensdata.net/${keyToUse}`);
         if (!response.ok) {
-          throw new Error(
+          console.error(
             `ENS data request failed with status ${response.status}`,
           );
+          // throw new Error(
+          //   `ENS data request failed with status ${response.status}`,
+          // );
         }
         const ensData = (await response.json()) as EnsData;
         if (ensData) {
@@ -254,13 +257,13 @@ export const PROMPT_REPLACE_VARIABLES = (
       converseUsername: address,
     };
   }
-  prompt = prompt.replace("{ADDRESS}", userInfo.address || "");
-  prompt = prompt.replace("{ENS_DOMAIN}", userInfo.ensDomain || "");
-  prompt = prompt.replace(
+  prompt = prompt.replaceAll("{ADDRESS}", userInfo.address || "");
+  prompt = prompt.replaceAll("{ENS_DOMAIN}", userInfo.ensDomain || "");
+  prompt = prompt.replaceAll(
     "{CONVERSE_USERNAME}",
     userInfo.converseUsername || "",
   );
-  prompt = prompt.replace("{PREFERRED_NAME}", userInfo.preferredName || "");
-  prompt = prompt.replace("{NAME}", tag);
+  prompt = prompt.replaceAll("{PREFERRED_NAME}", userInfo.preferredName || "");
+  prompt = prompt.replaceAll("{NAME}", tag);
   return prompt;
 };

@@ -39,7 +39,10 @@ export async function executeSkill(
         getV2MessageById: context.getV2MessageById.bind(context),
         isConversationV2: context.isConversationV2.bind(context),
         getCacheCreationDate: context.getCacheCreationDate.bind(context),
-        message: { ...context.message, ...extractedValues },
+        message: {
+          ...context.message,
+          content: { ...context.message.content, ...extractedValues },
+        },
         executeSkill: context.executeSkill.bind(context),
         reply: context.reply.bind(context),
         send: context.send.bind(context),
@@ -56,8 +59,13 @@ export async function executeSkill(
     } else if (text.startsWith("/") || text.startsWith("@")) {
       console.warn("Command not valid", text);
     } else return context.send(text);
-  } catch (e) {
-    console.log("error", e);
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(`Skill execution failed: ${error.message}`);
+    } else {
+      console.error("Unknown error during skill execution:", error);
+    }
+    throw error; // Re-throw to allow proper handling upstream
   } finally {
     context.refConv = null;
   }
