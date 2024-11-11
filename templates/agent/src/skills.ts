@@ -22,7 +22,6 @@ export const skills: SkillGroup[] = [
       },
       {
         command: "/exists",
-        adminOnly: true,
         examples: ["/exists"],
         handler: handleEns,
         triggers: ["/exists"],

@@ -6,6 +6,7 @@ export async function handler(context: HandlerContext) {
     message: {
       content: { command },
     },
+    group,
   } = context;
 
   if (command == "help") {
@@ -18,6 +19,7 @@ export async function handler(context: HandlerContext) {
       "\nUse these skills to interact with specific apps.";
     context.send(intro);
   } else if (command == "id") {
-    context.send(context.group?.id);
+    console.log(group?.id);
+    context.send(group?.id);
   }
 }

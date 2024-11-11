@@ -113,7 +113,8 @@ export async function run(handler: Handler, config?: Config) {
         ? true
         : false;
 
-    const isAdminOrPass = isAdminCommand && isAdmin ? true : true;
+    const isAdminOrPass = isAdminCommand && !isAdmin ? false : true;
+
     // Remote attachments work if image:true in runner config
     // Replies only work with explicit mentions from triggers.
     // Text only works with explicit mentions from triggers.
@@ -156,14 +157,11 @@ export async function run(handler: Handler, config?: Config) {
 
     if (process.env.MSG_LOG === "true") {
       console.debug("Message Validation Stream Details:", {
-        messageDetails: {
-          isSameAddress,
-          content,
-          sender,
-          version,
-          typeId,
-          acceptedType,
-        },
+        isSameAddress,
+        sender,
+        content,
+        version,
+        acceptedType,
         attachmentDetails: {
           isRemoteAttachment,
           isImageValid,

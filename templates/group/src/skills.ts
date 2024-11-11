@@ -2,13 +2,13 @@ import { handler as tipping } from "./handler/tipping.js";
 import { handler as agent } from "./handler/agent.js";
 import { handler as transaction } from "./handler/transaction.js";
 import { handler as games } from "./handler/game.js";
-import { handler as loyalty } from "./handler/loyalty.js";
 import { handler as groupHelp } from "./handler/helpers.js";
 import type { SkillGroup } from "@xmtp/message-kit";
 
 export const skills: SkillGroup[] = [
   {
     name: "Tipping",
+    tag: "@bot",
     description: "Tip tokens via emoji, replies or command.",
     skills: [
       {
