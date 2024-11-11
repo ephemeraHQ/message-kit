@@ -51,9 +51,9 @@ export async function handler(context: HandlerContext) {
   const {
     members,
     getMessageById,
-    message: { content, sender, typeId },
+    message: { reference, sender, typeId },
   } = context;
-  const msg = await getMessageById(content.reference);
+  const msg = await getMessageById(reference);
   const replyReceiver = members?.find(
     (member) => member.inboxId === msg?.senderInboxId,
   );

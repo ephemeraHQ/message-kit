@@ -131,35 +131,27 @@ export class HandlerContext {
         const extractedValues = parseSkill(content.content, context.skills);
         if (extractedValues) {
           content = {
-            ...content,
             text: content.content,
             ...extractedValues,
-            typeId: message.contentType.typeId,
           };
         }
       } else if (message?.contentType?.sameAs(ContentTypeReply)) {
         content = {
-          ...content,
           reply: content.content,
           replyChain: await context.getReplyChain(
             content.reference,
             version ?? "v2",
           ),
           reference: content.reference,
-          typeId: message.content.contentType.typeId,
         };
       } else if (message?.contentType?.sameAs(ContentTypeReaction)) {
         content = {
-          ...content,
           reaction: content.content,
           reference: content.reference,
-          typeId: message.content.contentType.typeId,
         };
       } else if (message?.contentType?.sameAs(ContentTypeRemoteAttachment)) {
         const attachment = await RemoteAttachmentCodec.load(content, client);
         content = {
-          ...content,
-          ...message.contentType,
           attachment: attachment,
         };
       }
@@ -167,8 +159,8 @@ export class HandlerContext {
         id: message.id,
         content: { ...content },
         sender: context.sender,
-        typeId: message.contentType?.typeId as string,
         sent: sentAt,
+        typeId: message.contentType?.typeId as string,
         version: version ?? "v2",
       };
       return context;
