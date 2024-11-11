@@ -1,5 +1,6 @@
-import { handleEns } from "./handler/ens.js";
-import type { SkillGroup } from "@xmtp/message-kit";
+import type { SkillGroup } from "../../helpers/types.js";
+
+let handleEns = undefined;
 
 export const skills: SkillGroup[] = [
   {

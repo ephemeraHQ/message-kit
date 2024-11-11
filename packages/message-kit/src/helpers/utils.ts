@@ -32,7 +32,7 @@ Powered by XMTP \x1b[0m`;
     Send a message to this account on Converse:                              
     🔗 https://converse.xyz/dm/${client.accountAddress}`);
 
-  const skills = await loadSkillsFile();
+  const skills = config?.skills ?? (await loadSkillsFile());
   if (
     config?.experimental ||
     config?.attachments ||
@@ -58,10 +58,8 @@ Powered by XMTP \x1b[0m`;
     if (config?.memberChange) {
       console.warn("\t- ⚠️ Member changes are enabled");
     }
-    if (config?.skillsConfigPath) {
-      console.warn(
-        `\t- ⚠️ Skills config path is set to ${config.skillsConfigPath}`,
-      );
+    if (config?.skills) {
+      console.warn(`\t- ⚠️ Skills are missing`);
     }
     if (skills === undefined || skills?.length === 0) {
       console.warn("\t- ⚠️ No skills.ts file found or wrongly formatted");

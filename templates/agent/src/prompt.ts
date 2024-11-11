@@ -13,7 +13,7 @@ export async function agent_prompt(userInfo: UserInfo) {
     PROMPT_USER_CONTENT(userInfo) +
     PROMPT_SKILLS_AND_EXAMPLES(skills, "@ens");
 
-  systemPrompt += `
+  let fineTunning = `
 
 ## Example responses:
 
@@ -53,12 +53,16 @@ export async function agent_prompt(userInfo: UserInfo) {
   But you forgot to add the command at the end of the message.
   You should have said something like: "Looks like vitalik.eth is registered! What about these cool alternatives?\n/cool vitalik.eth
 `;
+
+  // Add the fine tuning to the system prompt
+  systemPrompt += fineTunning;
+
+  // Replace the variables in the system prompt
   systemPrompt = PROMPT_REPLACE_VARIABLES(
     systemPrompt,
     userInfo?.address ?? "",
     userInfo,
     "@ens",
   );
-  console.log(systemPrompt);
   return systemPrompt;
 }

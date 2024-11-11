@@ -49,15 +49,15 @@ export async function handler(context: HandlerContext, fake?: boolean) {
     message: {
       sender,
       typeId,
-      content: { command, params, text },
+      content: { skill, params, text },
     },
   } = context;
   if (typeId === "text" && group) {
-    if (command === "points") {
+    if (skill === "points") {
       const points = await stack?.getPoints(sender.address);
       context.reply(`You have ${points} points`);
       return;
-    } else if (command === "leaderboard") {
+    } else if (skill === "leaderboard") {
       const leaderboard = await stack?.getLeaderboard();
       const formattedLeaderboard = leaderboard?.leaderboard
         .map(

@@ -1,16 +1,4 @@
-# Ens agent
-
-This is a simple yet powerful agent that will help users interact with ENS.
-
-Source code:
-[Bot](https://github.com/fabriguespe/ens-agent) | [Frame](https://github.com/stephancill/ens-frame-v2)
-
-## Prompt
-
-Here is the prompt for the agent.
-
-```jsx [src/prompt.ts]
-import { skills } from "./skills.js";
+import { skills } from "../skills/skills_agent";
 import {
   UserInfo,
   PROMPT_USER_CONTENT,
@@ -25,7 +13,7 @@ export async function agent_prompt(userInfo: UserInfo) {
     PROMPT_USER_CONTENT(userInfo) +
     PROMPT_SKILLS_AND_EXAMPLES(skills, "@ens");
 
-  systemPrompt += `
+  let fineTunning = `
 
 ## Example responses:
 
@@ -45,16 +33,16 @@ export async function agent_prompt(userInfo: UserInfo) {
   Looks like  {ENS_DOMAIN} is already registered!\n What about these cool alternatives?\n/cool  {ENS_DOMAIN}
 
 6. If the user wants to register a ENS domain, use the command "/register [domain]"
-  Looks like  {ENS_DOMAIN} is available! Let me help you register it\n/register  {ENS_DOMAIN}
-
-7. If the user wants to directly to tip to the ENS domain owner, use directly the command "/tip [domain]", this will return a url but a button to send the tip
+  Looks like  {ENS_DOMAIN} is available! Let me help you register it\n/register  {ENS_DOMAIN} 
+  
+7. If the user wants to directly to tip to the ENS domain owner, use directly the command "/tip [domain]", this will return a url but a button to send the tip 
   Here is the url to send the tip:\n/tip  {ENS_DOMAIN}
 
 8. If the user wants to get information about the ENS domain, use the command "/info [domain]"
-  Hello! I'll help you get info about  {ENS_DOMAIN}.\n Give me a moment.\n/info  {ENS_DOMAIN}
+  Hello! I'll help you get info about  {ENS_DOMAIN}.\n Give me a moment.\n/info  {ENS_DOMAIN}  
 
 9. If the user wants to renew their domain, use the command "/renew [domain]"
-  Hello! I'll help you get your ENS domain.\n Let's start by checking your ENS domain  {ENS_DOMAIN}. Give me a moment.\n/renew  {ENS_DOMAIN}
+  Hello! I'll help you get your ENS domain.\n Let's start by checking your ENS domain  {ENS_DOMAIN}. Give me a moment.\n/renew  {ENS_DOMAIN} 
 
 10. If the user wants cool suggestions about a domain, use the command "/cool [domain]"
   Here are some cool suggestions for your domain.\n/cool  {ENS_DOMAIN}
@@ -65,48 +53,16 @@ export async function agent_prompt(userInfo: UserInfo) {
   But you forgot to add the command at the end of the message.
   You should have said something like: "Looks like vitalik.eth is registered! What about these cool alternatives?\n/cool vitalik.eth
 `;
+
+  // Add the fine tuning to the system prompt
+  systemPrompt += fineTunning;
+
+  // Replace the variables in the system prompt
   systemPrompt = PROMPT_REPLACE_VARIABLES(
     systemPrompt,
     userInfo?.address ?? "",
     userInfo,
-    "@ens"
+    "@ens",
   );
   return systemPrompt;
 }
-```
-
-## Main code
-
-```tsx [src/index.ts]
-import { run, HandlerContext } from "@xmtp/message-kit";
-import { textGeneration, processMultilineResponse } from "./lib/gpt.js";
-import { agent_prompt } from "./prompt.js";
-import { getUserInfo } from "./lib/resolver.js";
-
-run(async (context: HandlerContext) => {
-  const {
-    message: {
-      content: { text, params },
-      sender,
-    },
-  } = context;
-
-  try {
-    let userPrompt = params?.prompt ?? text;
-    const userInfo = await getUserInfo(sender.address);
-    if (!userInfo) {
-      console.log("User info not found");
-      return;
-    }
-    const { reply } = await textGeneration(
-      sender.address,
-      userPrompt,
-      await agent_prompt(userInfo),
-    );
-    await processMultilineResponse(sender.address, reply, context);
-  } catch (error) {
-    console.error("Error during OpenAI call:", error);
-    await context.send("An error occurred while processing your request.");
-  }
-});
-```

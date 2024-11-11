@@ -85,7 +85,7 @@ export default defineConfig({
       link: "https://converse.xyz",
     },
     { text: "XMTP", link: "https://docs.xmtp.org/" },
-    { text: "1.1.7-beta.17", link: "/changelog" },
+    { text: "1.1.7-beta.18", link: "/changelog" },
   ],
   editLink: {
     pattern:
@@ -116,7 +116,7 @@ export default defineConfig({
 
     {
       text: "Concepts",
-      collapsed: false,
+
       items: [
         {
           text: "Structure",
@@ -125,20 +125,25 @@ export default defineConfig({
         {
           text: "Messages",
           link: "/concepts/messages",
+          collapsed: undefined,
           items: [
             { text: "Text", link: "/concepts/messages/text" },
             { text: "Reply", link: "/concepts/messages/reply" },
-            { text: "Command", link: "/concepts/messages/command" },
+            { text: "Skill", link: "/concepts/messages/skill" },
             { text: "Attachment", link: "/concepts/messages/attachment" },
           ],
+        },
+        {
+          text: "Groups",
+          link: "/concepts/groups",
         },
         {
           text: "AI Skills",
           link: "/skills",
           items: [
             {
-              text: "Commands",
-              link: "/skills/commands",
+              text: "Structure",
+              link: "/skills/structure",
             },
             {
               text: "Natural Language",
@@ -158,10 +163,6 @@ export default defineConfig({
             },
           ],
         },
-        {
-          text: "Groups",
-          link: "/concepts/groups",
-        },
       ],
     },
 
@@ -169,50 +170,74 @@ export default defineConfig({
       text: "Use cases",
       items: [
         {
-          text: "Gm bot",
+          text: "Gm",
           link: "/templates/gm",
         },
         {
           text: "Agent",
           link: "/templates/agent",
+          collapsed: true,
           items: [
             {
-              text: "Skill",
-              link: "/templates/agent/skills",
+              text: "Handlers",
+              items: [
+                {
+                  text: "ENS",
+                  link: "/templates/agent/handlers/ens",
+                },
+              ],
             },
             {
-              text: "ENS Handler",
-              link: "/templates/agent/ens",
+              text: "Skills",
+              link: "/templates/agent/skills",
             },
             {
               text: "Prompt",
               link: "/templates/agent/prompt",
             },
+            {
+              text: "Index",
+              link: "/templates/agent",
+            },
           ],
         },
         {
-          text: "Group bot",
+          text: "Group",
           link: "/templates/group",
+          collapsed: true,
           items: [
             {
-              text: "Agents",
-              link: "/templates/group/agents",
+              text: "Handlers",
+              items: [
+                {
+                  text: "Tipping",
+                  link: "/templates/group/handlers/tipping",
+                },
+                {
+                  text: "Games",
+                  link: "/templates/group/handlers/games",
+                },
+                {
+                  text: "Transactions",
+                  link: "/templates/group/handlers/transactions",
+                },
+                {
+                  text: "Helpers",
+                  link: "/templates/group/handlers/helpers",
+                },
+              ],
             },
             {
-              text: "Tipping",
-              link: "/templates/group/tipping",
+              text: "Skills",
+              link: "/templates/group/skills",
             },
             {
-              text: "Games",
-              link: "/templates/group/games",
+              text: "Prompt",
+              link: "/templates/group/prompt",
             },
             {
-              text: "Transactions",
-              link: "/templates/group/transactions",
-            },
-            {
-              text: "Helpers",
-              link: "/templates/group/helpers",
+              text: "Index",
+              link: "/templates/group",
             },
           ],
         },
@@ -221,7 +246,7 @@ export default defineConfig({
 
     {
       text: "Middlewares",
-      collapsed: false,
+      collapsed: true,
       items: [
         {
           text: "Cron",
@@ -251,8 +276,8 @@ export default defineConfig({
     },
     {
       text: "Frames",
-      collapsed: false,
       link: "/frames",
+      collapsed: true,
       items: [
         {
           text: "Introduction",

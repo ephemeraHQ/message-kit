@@ -41,7 +41,7 @@ export async function run(handler: Handler, config?: Config) {
           conversation,
           message,
           { client, v2client },
-          config?.skillsConfigPath,
+          config?.skills,
           version,
         );
         if (!context) {
@@ -49,8 +49,8 @@ export async function run(handler: Handler, config?: Config) {
             console.warn("No context found", message);
           return;
         }
-        // Check if the message content triggers a command
-        const { isMessageValid, customHandler } = commandTriggered(context);
+        // Check if the message content triggers a skill
+        const { isMessageValid, customHandler } = skillTriggered(context);
         if (isMessageValid && customHandler) await customHandler(context);
         else if (isMessageValid) await handler(context);
       } catch (e) {
@@ -59,7 +59,7 @@ export async function run(handler: Handler, config?: Config) {
     }
   };
 
-  const commandTriggered = (
+  const skillTriggered = (
     context: HandlerContext,
   ): {
     isMessageValid: boolean;
@@ -79,7 +79,7 @@ export async function run(handler: Handler, config?: Config) {
       group,
     } = context;
 
-    let skillCommand = text && skills ? findSkill(text, skills) : undefined;
+    let skillAction = text && skills ? findSkill(text, skills) : undefined;
 
     const { inboxId: senderInboxId } = client;
     const { address: senderAddress } = v2client;
@@ -89,7 +89,7 @@ export async function run(handler: Handler, config?: Config) {
       (sender.inboxId?.toLowerCase() === senderInboxId.toLowerCase() &&
         typeId !== "group_updated");
 
-    const isCommandTriggered = skillCommand?.command;
+    const isSkillTriggered = skillAction?.skill;
     const isExperimental = config?.experimental ?? false;
 
     const isAddedMemberOrPass =
@@ -102,9 +102,7 @@ export async function run(handler: Handler, config?: Config) {
 
     const isRemoteAttachment = typeId == "remoteStaticAttachment";
 
-    // Check if the command is admin only
-
-    const isAdminCommand = skillCommand?.adminOnly ?? false;
+    const isAdminSkill = skillAction?.adminOnly ?? false;
 
     const isAdmin =
       group &&
@@ -113,7 +111,7 @@ export async function run(handler: Handler, config?: Config) {
         ? true
         : false;
 
-    const isAdminOrPass = isAdminCommand && !isAdmin ? false : true;
+    const isAdminOrPass = isAdminSkill && !isAdmin ? false : true;
 
     // Remote attachments work if image:true in runner config
     // Replies only work with explicit mentions from triggers.
@@ -122,9 +120,12 @@ export async function run(handler: Handler, config?: Config) {
 
     const isImageValid = isRemoteAttachment && config?.attachments;
 
-    const acceptedType = ["text", "remoteStaticAttachment", "reply"].includes(
-      typeId ?? "",
-    );
+    const acceptedType = [
+      "text",
+      "remoteStaticAttachment",
+      "reply",
+      "skill",
+    ].includes(typeId ?? "");
 
     const skillGroup =
       typeId === "text" && skills
@@ -136,7 +137,7 @@ export async function run(handler: Handler, config?: Config) {
       : // v2 only accepts text, remoteStaticAttachment, reply
         version == "v2" && acceptedType
         ? true
-        : //If its image is also good, if it has a command image:true
+        : //If its image is also good, if it has a skill image:true
           isImageValid
           ? true
           : //If its not an admin, nope
@@ -147,8 +148,8 @@ export async function run(handler: Handler, config?: Config) {
               : //If its a group update but its not an added member, nope
                 !isAddedMemberOrPass
                 ? false
-                : //If it has a command trigger, good
-                  isCommandTriggered
+                : //If it has a skill trigger, good
+                  isSkillTriggered
                   ? true
                   : //If it has a tag trigger, good
                     isTagged
@@ -167,7 +168,7 @@ export async function run(handler: Handler, config?: Config) {
           isImageValid,
         },
         adminDetails: {
-          isAdminCommand,
+          isAdminSkill,
           isAdmin,
           isAdminOrPass,
         },
@@ -179,13 +180,13 @@ export async function run(handler: Handler, config?: Config) {
               hasTagHandler: skillGroup?.tagHandler !== undefined,
             }
           : "No tag detected",
-        commandTriggerDetails: isCommandTriggered
+        skillTriggerDetails: isSkillTriggered
           ? {
-              command: skillCommand?.command,
-              examples: skillCommand?.examples,
-              description: skillCommand?.description,
-              params: skillCommand?.params
-                ? Object.entries(skillCommand.params).map(([key, value]) => ({
+              skill: skillAction?.skill,
+              examples: skillAction?.examples,
+              description: skillAction?.description,
+              params: skillAction?.params
+                ? Object.entries(skillAction.params).map(([key, value]) => ({
                     key,
                     value: {
                       type: value.type,
@@ -196,7 +197,7 @@ export async function run(handler: Handler, config?: Config) {
                   }))
                 : undefined,
             }
-          : "No command trigger detected",
+          : "No skill trigger detected",
         isMessageValid,
       });
     }
@@ -204,8 +205,8 @@ export async function run(handler: Handler, config?: Config) {
 
     return {
       isMessageValid,
-      customHandler: skillCommand
-        ? skillCommand.handler
+      customHandler: skillAction
+        ? skillAction.handler
         : skillGroup
           ? skillGroup.tagHandler
           : undefined,

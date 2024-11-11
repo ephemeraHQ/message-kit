@@ -1,17 +1,17 @@
 import { getUserInfo, HandlerContext, SkillResponse } from "@xmtp/message-kit";
 
-// Main handler function for processing commands
+// Main handler function for processing
 export async function handler(context: HandlerContext): Promise<SkillResponse> {
   const {
     message: {
-      content: { command, params },
+      content: { skill, params },
     },
   } = context;
   const baseUrl = "https://base-tx-frame.vercel.app/transaction";
 
-  switch (command) {
+  switch (skill) {
     case "send":
-      // Destructure and validate parameters for the send command
+      // Destructure and validate parameters for the send
       const { amount: amountSend, token: tokenSend, username } = params; // [!code hl] // [!code focus]
       let senderInfo = await getUserInfo(username);
       if (!amountSend || !tokenSend || !senderInfo) {
@@ -32,7 +32,7 @@ export async function handler(context: HandlerContext): Promise<SkillResponse> {
         message: `${sendUrl}`,
       };
     case "swap":
-      // Destructure and validate parameters for the swap command
+      // Destructure and validate parameters for the swap
       const { amount, token_from, token_to } = params; // [!code hl] // [!code focus]
 
       if (!amount || !token_from || !token_to) {
@@ -60,11 +60,10 @@ export async function handler(context: HandlerContext): Promise<SkillResponse> {
         message: `${baseUrl.replace("/transaction", "")}`,
       };
     default:
-      // Handle unknown commands
-      context.reply("Unknown command. Use help to see all available commands.");
+      context.reply("Unknown skill. Use help to see all available skills.");
       return {
         code: 400,
-        message: "Unknown command. Use help to see all available commands.",
+        message: "Unknown skill. Use help to see all available skills.",
       };
   }
 }

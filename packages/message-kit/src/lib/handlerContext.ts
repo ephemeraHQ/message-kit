@@ -72,7 +72,7 @@ export class HandlerContext {
     conversation: Conversation | ConversationV2,
     message: DecodedMessage | DecodedMessageV2 | null,
     { client, v2client }: { client: Client; v2client: ClientV2 },
-    skillsConfigPath?: string,
+    skills?: SkillGroup[],
     version?: "v2" | "v3",
   ): Promise<HandlerContext | null> {
     const context = new HandlerContext(conversation, { client, v2client });
@@ -110,8 +110,8 @@ export class HandlerContext {
           accountAddresses: MemberSender?.accountAddresses,
         } as AbstractedMember;
       }
-      //commands
-      context.skills = await loadSkillsFile(skillsConfigPath);
+
+      context.skills = skills ?? (await loadSkillsFile());
 
       context.getMessageById =
         client.conversations?.getMessageById?.bind(client.conversations) ||
@@ -121,6 +121,8 @@ export class HandlerContext {
         const result = await executeSkill(text, context.skills ?? [], context);
         return result ?? undefined;
       };
+      let typeId = message.contentType?.typeId;
+
       //trim spaces from text
       let content =
         typeof message.content === "string"
@@ -129,10 +131,15 @@ export class HandlerContext {
 
       if (message?.contentType?.sameAs(ContentTypeText)) {
         const extractedValues = parseSkill(content.content, context.skills);
-        if (extractedValues) {
+        if (extractedValues?.skill) {
           content = {
             text: content.content,
             ...extractedValues,
+          };
+          typeId = "skill";
+        } else {
+          content = {
+            text: content.content,
           };
         }
       } else if (message?.contentType?.sameAs(ContentTypeReply)) {
@@ -157,10 +164,10 @@ export class HandlerContext {
       }
       context.message = {
         id: message.id,
-        content: { ...content },
+        content,
         sender: context.sender,
         sent: sentAt,
-        typeId: message.contentType?.typeId as string,
+        typeId: typeId ?? "",
         version: version ?? "v2",
       };
       return context;

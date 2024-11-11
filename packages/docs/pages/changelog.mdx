@@ -1,21 +1,21 @@
 # Changelog
 
-## [1.1.7-beta.17] - 2024-11-02
+## [1.1.7-beta.18] - 2024-11-02
 
 - **New Features**
 
-  - Introduced new commands for handling group interactions, including `/id` for retrieving group ID.
+  - Introduced new skills for handling group interactions, including `/id` for retrieving group ID.
   - Added a new section for "AI Skills" in the documentation, detailing a framework for building AI agents.
-  - Enhanced command execution with improved error handling and response structures.
+  - Enhanced skill execution with improved error handling and response structures.
 
 - **Bug Fixes**
 
-  - Resolved issues related to command execution and improved logging for better error tracking.
+  - Resolved issues related to skill execution and improved logging for better error tracking.
 
 - **Documentation**
 
   - Updated installation instructions and added more resources for users.
-  - Enhanced clarity in documentation regarding command processing and multi-line responses.
+  - Enhanced clarity in documentation regarding skill processing and multi-line responses.
 
 - **Chores**
   - Removed outdated files and consolidated functionality to improve code organization.
@@ -33,18 +33,18 @@
 - Quickstarts section
   -- Skills: There is a 4step approach. We are calling them AI Skills ?
   +- Skills: There is a 4-step approach to AI Skills:
-  [Commands](https://messagekit.ephemerahq.com/skills/commands): Parsing commands with /
+  [Structure](https://messagekit.ephemerahq.com/skills/structure): Define the skills
   [Natural language](https://messagekit.ephemerahq.com/skills/natural): From @base please let swap 1 eth to usdc to /swap 1 eth usdc
 - [Processing](https://messagekit.ephemerahq.com/skills/processing): For a agent to process new lines
-- [Fine Tuning](https://messagekit.ephemerahq.com/skills/fine-tuning): For the agent to understand the context and perform commands autonomously.
-- [Reasoning](https://messagekit.ephemerahq.com/skills/reasoning): For the agent to understand all context and perform commands autonomously.
+- [Fine Tuning](https://messagekit.ephemerahq.com/skills/fine-tuning): For the agent to understand the context and perform skills autonomously.
+- [Reasoning](https://messagekit.ephemerahq.com/skills/reasoning): For the agent to understand all context and perform skills autonomously.
 - Resolver: Fetches context from the user like ENS domain or Converse username
 
 ### MessageKit updates
 
 **Updates:**
 
-- Added `adminOnly` commands for group settings for commands enabled only for admin of groups
+- Added `adminOnly` skills for group settings for skills enabled only for admin of groups
 - Added `memberChange` as optional runner config for enabling new members added
 - Added `attachment` as optional runner config for enabling attachments in the stream
 - New CLI logo logo
@@ -54,9 +54,9 @@
 - Updated `xmtp-js` https://github.com/xmtp/xmtp-js/releases/tag/%40xmtp%2Fxmtp-js%4013.0.3
 - Updated grpc-client https://github.com/xmtp/xmtp-node-js-tools/releases
 - Created Converse usernames endpoint. https://github.com/ephemeraHQ/converse-website/pull/32
-- Revamped command handler and triggers.
-- Added logging for invalid commands.
-- Added handling for incorrect and non-command inputs.
+- Revamped skill handler and triggers.
+- Added logging for invalid skills.
+- Added handling for incorrect and non-skill inputs.
 - New Tagline: `An open framework for building AI agents`
 - Updated tests
 - Improved `isMessageValid` for filtering messages

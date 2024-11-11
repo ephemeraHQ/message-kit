@@ -12,7 +12,7 @@ export type MessageAbstracted = {
     content?: any | undefined;
     params?: any | undefined;
     reference?: string | undefined;
-    command?: string | undefined;
+    skill?: string | undefined;
   };
   version: "v2" | "v3";
   sender: AbstractedMember;
@@ -50,14 +50,14 @@ export type Config = {
   privateKey?: string;
   // if true, the init log message with messagekit logo and stuff will be hidden
   experimental?: boolean;
-  // path to the skills config file
-  skillsConfigPath?: string;
   // hide the init log message with messagekit logo and stuff
   hideInitLogMessage?: boolean;
   // if true, attachments will be enabled
   attachments?: boolean;
   // if true, member changes will be enabled, like adding members to the group
   memberChange?: boolean;
+  // skills to be used
+  skills?: SkillGroup[];
 };
 export interface SkillParamConfig {
   default?: string | number | boolean;
@@ -79,16 +79,16 @@ export interface SkillGroup {
   description: string;
   tag?: string;
   tagHandler?: SkillHandler;
-  skills: SkillCommand[];
+  skills: skillAction[];
 }
 
-export interface SkillCommand {
-  command: string;
-  handler?: SkillHandler;
+export interface skillAction {
+  skill: string;
+  handler: SkillHandler | undefined;
   triggers: string[];
   adminOnly?: boolean;
   description: string;
-  examples?: string[];
+  examples: string[];
   params: Record<string, SkillParamConfig>;
 }
 

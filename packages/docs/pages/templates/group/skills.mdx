@@ -1,4 +1,10 @@
+# Skills
+
+Skills are the main logic of the agent. They are responsible for handling the user's input and generating responses.
+
+```ts
 import { handler as tipping } from "./handler/tipping.js";
+import { handler as agent } from "./handler/agent.js";
 import { handler as transaction } from "./handler/transaction.js";
 import { handler as games } from "./handler/game.js";
 import { handler as help } from "./handler/helpers.js";
@@ -6,9 +12,9 @@ import type { SkillGroup } from "@xmtp/message-kit";
 
 export const skills: SkillGroup[] = [
   {
-    name: "Group bot",
+    name: "Tipping",
     tag: "@bot",
-    description: "Group bot for tipping and transactions.",
+    description: "Tip tokens via emoji, replies or skill.",
     skills: [
       {
         skill: "/tip [usernames] [amount] [token]",
@@ -28,6 +34,13 @@ export const skills: SkillGroup[] = [
           },
         },
       },
+    ],
+  },
+
+  {
+    name: "Transactions",
+    description: "Multipurpose transaction frame built onbase.",
+    skills: [
       {
         skill: "/send [amount] [token] [username]",
         triggers: ["/send"],
@@ -82,12 +95,17 @@ export const skills: SkillGroup[] = [
         description: "Show the whole frame.",
         params: {},
       },
+    ],
+  },
+  {
+    name: "Games",
+    description: "Provides various gaming experiences.",
+    skills: [
       {
         skill: "/game [game]",
         triggers: ["/game", "🔎", "🔍"],
         handler: games,
         description: "Play a game.",
-        examples: ["/game wordle", "/game slot", "/game help"],
         params: {
           game: {
             default: "",
@@ -96,6 +114,12 @@ export const skills: SkillGroup[] = [
           },
         },
       },
+    ],
+  },
+  {
+    name: "Help",
+    description: "Get help with the bot.",
+    skills: [
       {
         skill: "/help",
         triggers: ["/help"],
@@ -107,7 +131,6 @@ export const skills: SkillGroup[] = [
       {
         skill: "/id",
         adminOnly: true,
-        examples: ["/id"],
         handler: help,
         triggers: ["/id"],
         description: "Get the group ID.",
@@ -116,3 +139,4 @@ export const skills: SkillGroup[] = [
     ],
   },
 ];
+```

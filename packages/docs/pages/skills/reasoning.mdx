@@ -6,8 +6,8 @@ Bots can handle complex conversations by managing multiple steps in sequence, ma
 
 As we seen in previous sections, the bot can handle complex interactions by managing multiple steps in sequence, maintaining context, and waiting for user responses.
 
-1. [Command definition](/skills/commands.mdx): First, we define our bot's available commands.
-2. [Natural language](/skills/natural.mdx): Bot interprets user intent and translates it into a sequence of commands.
+1. [Skill definition](/skills/structure.mdx): First, we define our bot's available skills.
+2. [Natural language](/skills/natural.mdx): Bot interprets user intent and translates it into a sequence of skills.
 3. [Processing](/skills/processing.mdx): Bot can handle multiple responses from the AI.
 4. [Fine Tuning](/skills/fine-tuning.mdx): Bot can handle fine tuned responses.
 5. [Reasoning](/skills/reasoning.mdx): Smart agents with reasoning capabilities.
@@ -34,17 +34,17 @@ lets register fabriethsf.eth
     name: "ENS Bot",
     skills: [
       {
-        command: "/check [domain]",
+        skill: "/check [domain]",
         handler: handleEns,
         description: "Check if a domain is available.",
       },
       {
-        command: "/register [domain]",
+        skill: "/register [domain]",
         handler: handleEns,
         description: "Register a domain.",
       },
       {
-        command: "/info [domain]",
+        skill: "/info [domain]",
         handler: handleEns,
         description: "Get information about a domain.",
       },
@@ -57,10 +57,10 @@ lets register fabriethsf.eth
 
 ```tsx
 async function handleEns(context: HandlerContext) {
-  const { command, params } = context.message.content;
+  const { skill, params } = context.message.content;
   const { domain } = params;
 
-  switch (command) {
+  switch (skill) {
     case "check":
       const isAvailable = await checkDomain(domain);
       return {

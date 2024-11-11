@@ -1,11 +1,11 @@
-import { SkillGroup, SkillCommand } from "../helpers/types.js";
+import { SkillGroup, skillAction } from "../helpers/types.js";
 import { HandlerContext } from "./handlerContext";
 import path from "path";
 
 export function findSkill(
   text: string,
   skills: SkillGroup[],
-): SkillCommand | undefined {
+): skillAction | undefined {
   const trigger = text.split(" ")[0].toLowerCase();
   for (const skillGroup of skills) {
     const handler = skillGroup.skills.find((skill) => {
@@ -24,15 +24,15 @@ export async function executeSkill(
   // Use the custom text parameter
   let conversation = context.conversation;
   try {
-    let skillCommand = findSkill(text, skills);
+    let skillAction = findSkill(text, skills);
     const extractedValues = parseSkill(text, skills);
     if (
       (text.startsWith("/") || text.startsWith("@")) &&
-      !extractedValues?.command
+      !extractedValues?.skill
     ) {
-      console.warn("Command not valid", text);
-    } else if (skillCommand?.handler) {
-      // Mock context for command execution
+      console.warn("Skill not valid", text);
+    } else if (skillAction?.handler) {
+      // Mock context for skill execution
       const mockContext: HandlerContext = {
         ...context,
         conversation,
@@ -52,12 +52,12 @@ export async function executeSkill(
         getReplyChain: context.getReplyChain.bind(context),
       };
 
-      if (skillCommand?.handler) return skillCommand.handler(mockContext);
-    } else if (skillCommand) {
-      console.warn("No handler for", skillCommand.command);
+      if (skillAction?.handler) return skillAction.handler(mockContext);
+    } else if (skillAction) {
+      console.warn("No handler for", skillAction.skill);
       return context.send(text);
     } else if (text.startsWith("/") || text.startsWith("@")) {
-      console.warn("Command not valid", text);
+      console.warn("Skill not valid", text);
     } else return context.send(text);
   } catch (error) {
     if (error instanceof Error) {
@@ -70,7 +70,12 @@ export async function executeSkill(
     context.refConv = null;
   }
 }
-
+export function findSkillGroupByTag(
+  tag: string,
+  skills: SkillGroup[],
+): SkillGroup | undefined {
+  return skills.find((skill) => skill.tag === tag);
+}
 export function findSkillGroup(
   text: string,
   skills: SkillGroup[],
@@ -88,16 +93,16 @@ export function parseSkill(
   text: string,
   skills: SkillGroup[],
 ): {
-  command: string | undefined;
+  skill: string | undefined;
   params: { [key: string]: string | number | string[] | undefined };
 } {
   const defaultResult = {
-    command: undefined,
+    skill: undefined,
     params: {} as { [key: string]: string | number | string[] | undefined },
   };
   try {
     if (!text.startsWith("/") && !text.startsWith("@"))
-      return { command: undefined, params: {} };
+      return { skill: undefined, params: {} };
 
     if (typeof text !== "string") return defaultResult;
 
@@ -110,11 +115,11 @@ export function parseSkill(
       ? parts[0].slice(1).toLowerCase()
       : parts[0].toLowerCase();
 
-    let commandConfig: SkillCommand | undefined = undefined;
+    let commandConfig: skillAction | undefined = undefined;
 
     for (const group of skills) {
       commandConfig = group.skills.find((cmd) =>
-        cmd.command.startsWith(`/${commandName}`),
+        cmd.skill.startsWith(`/${commandName}`),
       );
       if (commandConfig) break;
     }
@@ -122,12 +127,12 @@ export function parseSkill(
     if (!commandConfig) return defaultResult;
 
     const values: {
-      command: string;
+      skill: string;
       params: {
         [key: string]: string | number | string[] | undefined; // Removed boolean type
       };
     } = {
-      command: commandName,
+      skill: commandName,
       params: {},
     };
 
@@ -250,10 +255,8 @@ export function parseSkill(
   }
 }
 
-export async function loadSkillsFile(
-  configPath: string = "skills.js",
-): Promise<SkillGroup[]> {
-  const resolvedPath = path.resolve(process.cwd(), "dist/" + configPath);
+export async function loadSkillsFile(): Promise<SkillGroup[]> {
+  const resolvedPath = path.resolve(process.cwd(), "dist/skills.js");
   let skills: SkillGroup[] = [];
   try {
     const module = await import(resolvedPath);

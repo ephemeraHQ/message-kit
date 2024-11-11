@@ -2,7 +2,6 @@ import type { Client as V3Client } from "@xmtp/node-sdk";
 import type { Client as V2Client } from "@xmtp/xmtp-js";
 import type { DecodedMessage } from "@xmtp/node-sdk";
 import { DecodedMessage as DecodedMessageV2 } from "@xmtp/xmtp-js";
-const STREAM_LOG = process.env.STREAM_LOG === "true";
 
 export async function streamMessages(
   version: "v3" | "v2",
@@ -17,20 +16,8 @@ export async function streamMessages(
 
   while (true) {
     try {
-      if (STREAM_LOG) console.warn(`[${version}] Connecting to stream`);
+      console.warn(`[${version}] Stream started`);
       if (version === "v3") {
-        // await v3client.conversations.streamAllMessages((err, message) => {
-        //   if (err) {
-        //     console.log(err);
-        //     if (STREAM_LOG) {
-        //       console.warn(`[v3] Stream error occurred`);
-
-        //       throw err;
-        //     }
-        //   }
-        //   if (message) handleMessage(version, message);
-        // });
-
         const stream = await v3client.conversations.streamAllMessages();
         for await (const message of stream) {
           handleMessage(version, message);
@@ -42,9 +29,7 @@ export async function streamMessages(
         }
       }
     } catch (err) {
-      if (STREAM_LOG) {
-        console.error(`[${version}] Stream encountered an error:`, err);
-      }
+      console.error(`[${version}] Stream encountered an error:`, err);
     }
   }
 }

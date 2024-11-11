@@ -1,13 +1,13 @@
 import { HandlerContext } from "@xmtp/message-kit";
 
-// Handler function to process game-related commands
+// Handler function to process game-related
 export async function handler(context: HandlerContext) {
   const {
     message: {
-      content: { command, params, text },
+      content: { skill, params, text },
     },
   } = context;
-  if (!command) {
+  if (!skill) {
     if (text === "🔎" || text === "🔍") {
       // Send the URL for the requested game
       context.reply("https://framedl.xyz/");
@@ -35,7 +35,7 @@ export async function handler(context: HandlerContext) {
     default:
       // Inform the user about unrecognized skills and provide available options
       context.send(
-        "Command not recognized. Available games: wordle, slot, or help.",
+        "Skill not recognized. Available games: wordle, slot, or help.",
       );
   }
 }

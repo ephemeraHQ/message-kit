@@ -1,3 +1,50 @@
+# Tipping
+
+In this example you can tip using 3 primitives:
+
+## Skills
+
+```bash [cmd]
+/tip @bo @alix 15
+```
+
+::::note
+:::details[Skill declaration]
+
+```tsx [src/skills.ts]
+export const skills: SkillGroup[] = [
+  {
+    name: "Tipping",
+    description: "Tip tokens via emoji, replies or skill.",
+    skills: [
+      {
+        skill: "/tip [@users] [amount] [token]",
+        triggers: ["/tip", "@tip"],
+        description: "Tip users in a specified token.",
+        handler: tipping,
+        params: {
+          username: {
+            plural: true,
+            default: "",
+            type: "username",
+          },
+          amount: {
+            default: 10,
+            type: "number",
+          },
+        },
+      },
+    ],
+  },
+];
+```
+
+:::
+::::
+
+## Main code
+
+```tsx [src/handler/tipping.ts]
 import {
   HandlerContext,
   AbstractedMember,
@@ -50,3 +97,4 @@ export async function handler(context: HandlerContext): Promise<SkillResponse> {
     message: "Success",
   };
 }
+```

@@ -15,9 +15,9 @@
 const { group } = context;
 await group.sync();
 //By address
-await group.addMembers(userAddresses);
+await group.addMembers([userAddresses]);
 //By inboxId
-await group.addMembersByInboxId(addedInboxes);
+await group.addMembersByInboxId([addedInboxes]);
 ```
 
 ## Added member

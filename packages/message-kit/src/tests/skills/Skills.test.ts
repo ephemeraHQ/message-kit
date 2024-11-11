@@ -1,14 +1,14 @@
 import "dotenv/config";
 import { describe, test, expect } from "vitest";
-import { parseSkill } from "../lib/skills";
-import { skills } from "./Test_skills";
+import { parseSkill } from "../../lib/skills";
+import { skills } from "../skills/skills_group";
 
-describe("Command extraction tests", () => {
-  test("Extract values from /tip command", () => {
+describe("Skill extraction tests", () => {
+  test("Extract values from /tip skill", () => {
     const inputContent = "/tip @bo @alix 15";
     const extractedValues = parseSkill(inputContent, skills);
     expect(extractedValues).toEqual({
-      command: "tip",
+      skill: "tip",
       params: {
         amount: 15,
         username: ["@bo", "@alix"], // Simplified expectation to match actual output
@@ -17,11 +17,11 @@ describe("Command extraction tests", () => {
   });
 
   // /send 1 to @bo
-  test("Extract values from /send command", () => {
+  test("Extract values from /send skill", () => {
     const inputContent = "/send 1 to @bo";
     const extractedValues = parseSkill(inputContent, skills);
     expect(extractedValues).toEqual({
-      command: "send",
+      skill: "send",
       params: {
         amount: 1,
         token: "usdc",
@@ -30,11 +30,11 @@ describe("Command extraction tests", () => {
     });
   });
 
-  test("Extract values from /swap command", () => {
+  test("Extract values from /swap skill", () => {
     const inputContent = "/swap 10 eth to usdc";
     const extractedValues = parseSkill(inputContent, skills);
     expect(extractedValues).toEqual({
-      command: "swap",
+      skill: "swap",
       params: {
         amount: 10,
         token_from: "eth",
@@ -43,11 +43,11 @@ describe("Command extraction tests", () => {
     });
   });
 
-  test("Extract values from /send command", () => {
+  test("Extract values from /send skill", () => {
     const inputContent = "/send 10 usdc to @bo";
     const extractedValues = parseSkill(inputContent, skills);
     expect(extractedValues).toEqual({
-      command: "send",
+      skill: "send",
       params: {
         amount: 10,
         token: "usdc",
@@ -56,11 +56,11 @@ describe("Command extraction tests", () => {
     });
   });
 
-  test("Extract values from /send command", () => {
+  test("Extract values from /send skill", () => {
     const inputContent = "/send 10 usdc to @fabri";
     const extractedValues = parseSkill(inputContent, skills);
     expect(extractedValues).toEqual({
-      command: "send",
+      skill: "send",
       params: {
         amount: 10,
         token: "usdc",
@@ -69,11 +69,11 @@ describe("Command extraction tests", () => {
     });
   });
 
-  test("Extract values from /send command", () => {
+  test("Extract values from /send  skill", () => {
     const inputContent = "/send 10 usdc vitalik.eth";
     const extractedValues = parseSkill(inputContent, skills);
     expect(extractedValues).toEqual({
-      command: "send",
+      skill: "send",
       params: {
         amount: 10,
         token: "usdc",
@@ -82,11 +82,11 @@ describe("Command extraction tests", () => {
     });
   });
 
-  test("Extract values from /game command", () => {
+  test("Extract values from /game skill", () => {
     const inputContent = "/game slot";
     const extractedValues = parseSkill(inputContent, skills);
     expect(extractedValues).toEqual({
-      command: "game",
+      skill: "game",
       params: {
         game: "slot",
       },
@@ -97,49 +97,27 @@ describe("Command extraction tests", () => {
     const inputContent = "🔎 ";
     const extractedValues = parseSkill(inputContent, skills);
     expect(extractedValues).toEqual({
-      command: undefined,
+      skill: undefined,
       params: {},
     });
   });
 
-  test("Extract values from /game help command", () => {
+  test("Extract values from /game help skill", () => {
     const inputContent = "/game help";
     const extractedValues = parseSkill(inputContent, skills);
     expect(extractedValues).toEqual({
-      command: "game",
+      skill: "game",
       params: {
         game: "help",
       },
     });
   });
 
-  test("Extract values from /agent prompt command", () => {
-    const inputContent = "/agent Hello, how can I assist you today?";
-    const extractedValues = parseSkill(inputContent, skills);
-    expect(extractedValues).toEqual({
-      command: "agent",
-      params: expect.objectContaining({
-        prompt: "Hello, how can I assist you today?",
-      }),
-    });
-  });
-
-  test("Extract values from /agent tell a joke command", () => {
-    const inputContent = "/agent tell a joke";
-    const extractedValues = parseSkill(inputContent, skills);
-    expect(extractedValues).toEqual({
-      command: "agent",
-      params: {
-        prompt: "tell a joke",
-      },
-    });
-  });
-
-  test("Extract values from /send 1 eth to @bo command", () => {
+  test("Extract values from /send 1 eth to @bo skill", () => {
     const inputContent = "/send 1 eth to @bo";
     const extractedValues = parseSkill(inputContent, skills);
     expect(extractedValues).toEqual({
-      command: "send",
+      skill: "send",
       params: {
         amount: 1,
         token: "eth",
@@ -148,31 +126,20 @@ describe("Command extraction tests", () => {
     });
   });
 
-  test("Extract values from /show swap demo command", () => {
+  test("Extract values from /show swap demo skill", () => {
     const inputContent = "/show";
     const extractedValues = parseSkill(inputContent, skills);
     expect(extractedValues).toEqual({
-      command: "show",
+      skill: "show",
       params: {},
     });
   });
 
-  test("Extract values from /agent lets play a game command", () => {
-    const inputContent = "/agent lets play a game";
-    const extractedValues = parseSkill(inputContent, skills);
-    expect(extractedValues).toEqual({
-      command: "agent",
-      params: {
-        prompt: "lets play a game",
-      },
-    });
-  });
-
-  test("Extract values from /help command", () => {
+  test("Extract values from /help skill", () => {
     const inputContent = "/help";
     const extractedValues = parseSkill(inputContent, skills);
     expect(extractedValues).toEqual({
-      command: "help",
+      skill: "help",
       params: {},
     });
   });

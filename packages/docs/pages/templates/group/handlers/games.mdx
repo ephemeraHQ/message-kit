@@ -1,8 +1,8 @@
 # Games
 
-Create an app that receives a game as a command request and sends a frame to the user.
+Create an app that receives a game as a skill request and sends a frame to the user.
 
-## Commands
+## Skills
 
 Here are the skills to play the games:
 
@@ -13,7 +13,7 @@ Here are the skills to play the games:
 ```
 
 ::::note
-:::details[Command declaration]
+:::details[Skill declaration]
 
 ```tsx [src/skills.ts]
 export const skills: SkillGroup[] = [
@@ -22,7 +22,7 @@ export const skills: SkillGroup[] = [
     description: "Provides various gaming experiences.",
     skills: [
       {
-        command: "/game [game]",
+        skill: "/game [game]",
         triggers: ["/game", "🔎", "🔍"],
         handler: games,
         description: "Play a game.",
@@ -47,14 +47,14 @@ export const skills: SkillGroup[] = [
 ```tsx [src/handler/game.ts]
 import { HandlerContext } from "@xmtp/message-kit";
 
-// Handler function to process game-related commands
+// Handler function to process game-related skill
 export async function handler(context: HandlerContext) {
   const {
     message: {
-      content: { command, text, params },
+      content: { skill, params, text },
     },
   } = context;
-  if (!command) {
+  if (!skill) {
     if (text === "🔎" || text === "🔍") {
       // Send the URL for the requested game
       context.reply("https://framedl.xyz/");
@@ -82,7 +82,7 @@ export async function handler(context: HandlerContext) {
     default:
       // Inform the user about unrecognized skills and provide available options
       context.send(
-        "Command not recognized. Available games: wordle, slot, or help.",
+        "Skill not recognized. Available games: wordle, slot, or help.",
       );
   }
 }

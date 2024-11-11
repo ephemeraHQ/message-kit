@@ -1,6 +1,7 @@
 import "dotenv/config";
 import type { SkillGroup } from "./types";
 import OpenAI from "openai";
+import { findSkillGroupByTag } from "../lib/skills";
 import { HandlerContext } from "../lib/handlerContext";
 
 const isOpenAIConfigured = () => {
@@ -66,10 +67,11 @@ export const PROMPT_RULES = `You are a helpful and playful agent called {NAME} t
 `;
 
 export function PROMPT_SKILLS_AND_EXAMPLES(skills: SkillGroup[], tag: string) {
-  let foundSkills = skills.filter((skill) => skill.tag == tag);
-  let returnPrompt = `\nCommands:\n${foundSkills[0]?.skills
-    .map((skill) => skill.command)
-    .join("\n")}\n\nExamples:\n${foundSkills[0]?.skills
+  let skillGroup = findSkillGroupByTag(tag, skills);
+
+  let returnPrompt = `\nSkills:\n${skillGroup?.skills
+    .map((skill) => skill.skill)
+    .join("\n")}\n\nExamples:\n${skillGroup?.skills
     .map((skill) => skill.examples?.join("\n"))
     .join("\n")}`;
   returnPrompt += "\n";

@@ -7,23 +7,28 @@ With XMTP, replies are represented as objects with the following keys:
 The `reply` type contains the following
 
 ```tsx
-{
-  reference: someMessageID, //ID of the message being replied to
-  contentType: ContentType, // type of the reply
-  reply: "I concur", //String representation of the reply
-};
+const {
+  messae: {
+    content: {
+      reference: someMessageID; //ID of the message being replied to
+      reply: "I concur"; //String representation of the reply
+      replyChain: [someMessageID], //Array of message IDs that are part of the reply chain
+    },
+    typeId: "reply",
+  }
+} = context;
 ```
+
+- `reference`: string, // ID of the message being replied to
+- `reply`: string, // String representation of the reply
+- `replyChain`: string[], // Array of message IDs that are part of the reply chain
 
 ## Receive a reply
 
 Now that you understand how replies are represented, you can receive them in your app. Here's an example of how you can receive a reply in your app:
 
 ```tsx
-const { reference, getMessageById } = message;
-
 if (typeId === "reply") {
-  //Get the message that was replied to
-  const msg = await getMessageById(reference);
   // Use reply...
 }
 ```
