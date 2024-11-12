@@ -34,21 +34,7 @@ export default defineConfig({
         <meta property="fc:frame:button:2:action" content="link" />
         <meta
           property="fc:frame:button:2:target"
-          content="https://messagekit.ephemerahq.com/"
-        />
-
-        <meta property="fc:frame:button:3" content="Templates" />
-        <meta property="fc:frame:button:3:action" content="link" />
-        <meta
-          property="fc:frame:button:3:target"
-          content="https://messagekit.ephemerahq.com/templates"
-        />
-
-        <meta property="fc:frame:button:4" content="Concepts" />
-        <meta property="fc:frame:button:4:action" content="link" />
-        <meta
-          property="fc:frame:button:4:target"
-          content="https://messagekit.ephemerahq.com/concepts"
+          content="https://messagekit.ephemerahq.com/directory"
         />
 
         <script
