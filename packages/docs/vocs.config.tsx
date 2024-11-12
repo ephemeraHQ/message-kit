@@ -30,11 +30,11 @@ export default defineConfig({
           content="https://messagekit.ephemerahq.com/"
         />
 
-        <meta property="fc:frame:button:2" content="Directory" />
+        <meta property="fc:frame:button:2" content="Like the repo ⭐️" />
         <meta property="fc:frame:button:2:action" content="link" />
         <meta
           property="fc:frame:button:2:target"
-          content="https://messagekit.ephemerahq.com/directory"
+          content="https://github.com/ephemeraHQ/message-kit"
         />
 
         <script
