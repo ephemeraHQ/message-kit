@@ -32,7 +32,9 @@ Powered by XMTP`;
 
     const { templateType, displayName, destDir } = await gatherProjectInfo();
 
+    // Add package.json
     addPackagejson(destDir, displayName);
+
     // Create .gitignore
     createGitignore(destDir);
 
@@ -41,9 +43,6 @@ Powered by XMTP`;
 
     // Create tsconfig.json file
     createTsconfig(destDir);
-
-    // Replace package.json properties
-    updatePackageJson(destDir, displayName);
 
     // Wrap up
     log.success(`Project launched in ${pc.red(destDir)}!`);
@@ -60,15 +59,32 @@ Powered by XMTP`;
   });
 
 program.parse(process.argv);
+
 async function addPackagejson(destDir, name) {
-  fs.copySync(
-    resolve(__dirname, "package.template.json"),
-    resolve(destDir, "package.json"),
-    {
-      name: name,
+  // Create package.json based on the template
+  const packageTemplate = {
+    name: name,
+    private: true,
+    type: "module",
+    scripts: {
+      build: "tsc",
+      dev: "tsc -w & sleep 1 && node --watch dist/index.js",
+      start: "node dist/index.js",
+      postinstall: "tsc",
     },
-  );
+    dependencies: {
+      "@xmtp/message-kit": "workspace:*",
+    },
+    engines: {
+      node: ">=20",
+    },
+  };
+
+  fs.writeJsonSync(resolve(destDir, "package.json"), packageTemplate, {
+    spaces: 2,
+  });
 }
+
 async function gatherProjectInfo() {
   const templateOptions = [
     { value: "gm", label: "GM" },
@@ -156,13 +172,6 @@ function createTsconfig(destDir) {
   fs.writeJsonSync(resolve(destDir, "tsconfig.json"), tsconfigContent, {
     spaces: 2,
   });
-}
-
-function updatePackageJson(destDir, name) {
-  const pkgJson = fs.readJsonSync(resolve(destDir, "package.json"));
-  pkgJson.name = name;
-  updateDependenciesToLatest(pkgJson);
-  fs.writeJsonSync(resolve(destDir, "package.json"), pkgJson, { spaces: 2 });
 }
 
 function logNextSteps(name) {
