@@ -32,6 +32,8 @@ Powered by XMTP`;
 
     const { templateType, displayName, destDir } = await gatherProjectInfo();
 
+    log.info("Package manager:", detectPackageManager());
+
     // Add package.json
     addPackagejson(destDir, displayName);
 
@@ -62,7 +64,7 @@ program.parse(process.argv);
 
 async function addPackagejson(destDir, name) {
   // Create package.json based on the template
-  const packageTemplate = {
+  let packageTemplate = {
     name: name,
     private: true,
     type: "module",
@@ -73,13 +75,17 @@ async function addPackagejson(destDir, name) {
       postinstall: "tsc",
     },
     dependencies: {
-      "@xmtp/message-kit": "workspace:*",
+      "@xmtp/message-kit": "latest",
     },
     engines: {
       node: ">=20",
     },
   };
-
+  // Only add packageManager field if using yarn
+  const pkgManager = detectPackageManager();
+  if (pkgManager.startsWith("yarn")) {
+    packageTemplate.packageManager = pkgManager;
+  }
   fs.writeJsonSync(resolve(destDir, "package.json"), packageTemplate, {
     spaces: 2,
   });
@@ -128,24 +134,6 @@ async function gatherProjectInfo() {
   fs.copySync(templateDir, destDir);
 
   return { templateType, displayName, destDir, templateDir };
-}
-
-function updateDependenciesToLatest(pkgJson) {
-  const updateToLatest = (deps) => {
-    for (const key in deps) {
-      if (deps[key].startsWith("workspace:")) {
-        deps[key] = "latest";
-      }
-    }
-  };
-
-  if (pkgJson.dependencies) {
-    updateToLatest(pkgJson.dependencies);
-  }
-
-  if (pkgJson.devDependencies) {
-    updateToLatest(pkgJson.devDependencies);
-  }
 }
 
 function createTsconfig(destDir) {
@@ -211,10 +199,27 @@ yarn-error.log*
 function detectPackageManager() {
   const userAgent = process.env.npm_config_user_agent;
   if (!userAgent) return "npm";
-  if (userAgent.includes("bun")) return "bun";
-  if (userAgent.includes("yarn")) return "yarn";
-  if (userAgent.includes("pnpm")) return "pnpm";
-  if (userAgent.includes("npm")) return "npm";
+
+  // Improve package manager detection
+  const managers = {
+    bun: "bun",
+    yarn: "yarn",
+    pnpm: "pnpm",
+    npm: "npm",
+  };
+
+  for (const [manager, value] of Object.entries(managers)) {
+    if (userAgent.includes(manager)) {
+      // Extract version for yarn
+      if (manager === "yarn") {
+        const version =
+          userAgent.match(/yarn\/(\d+\.\d+\.\d+)/)?.[1] || "4.5.1";
+        return `${value}@${version}`;
+      }
+      return value;
+    }
+  }
+
   return "npm";
 }
 
