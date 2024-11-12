@@ -13,7 +13,7 @@ npx create-message-kit@latest
 ```
 
 ```bash
-yarn create message-kit
+yarn create message-kit@latest
 ```
 
 ```bash [npm]

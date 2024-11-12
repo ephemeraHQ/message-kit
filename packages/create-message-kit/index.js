@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import { log, outro, text, select } from "@clack/prompts";
 import { default as fs } from "fs-extra";
 import { isCancel } from "@clack/prompts";
+import { detect } from "detect-package-manager";
 import pc from "picocolors";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -15,9 +16,17 @@ const packageJson = JSON.parse(
 );
 const version = packageJson.version;
 program
-  .name("byob")
+  .name("message-kit")
   .description("CLI to initialize projects")
   .action(async () => {
+    // Add Yarn 4 check at the start of the action
+    const pkgManager = await detectPackageManager();
+
+    if (pkgManager.startsWith("yarn@4")) {
+      log.error("Yarn 4 is not supported. Please use bun, npm, or yarn v1");
+      process.exit(1);
+    }
+
     log.info(pc.cyan(`Welcome to MessageKit CLI v${version}!`));
     const coolLogo = `
 ███╗   ███╗███████╗███████╗███████╗ █████╗  ██████╗ ███████╗██╗  ██╗██╗████████╗
@@ -32,11 +41,6 @@ Powered by XMTP`;
 
     const { templateType, displayName, destDir } = await gatherProjectInfo();
 
-    log.info("Package manager:", detectPackageManager());
-
-    // Add package.json
-    addPackagejson(destDir, displayName);
-
     // Create .gitignore
     createGitignore(destDir);
 
@@ -49,7 +53,8 @@ Powered by XMTP`;
     // Wrap up
     log.success(`Project launched in ${pc.red(destDir)}!`);
 
-    const pkgManager = detectPackageManager();
+    // Add package.json
+    addPackagejson(destDir, displayName, pkgManager);
 
     // Create README.md file
     createReadme(destDir, templateType, displayName, pkgManager);
@@ -62,7 +67,7 @@ Powered by XMTP`;
 
 program.parse(process.argv);
 
-async function addPackagejson(destDir, name) {
+async function addPackagejson(destDir, name, pkgManager) {
   // Create package.json based on the template
   let packageTemplate = {
     name: name,
@@ -77,12 +82,14 @@ async function addPackagejson(destDir, name) {
     dependencies: {
       "@xmtp/message-kit": "latest",
     },
+    devDependencies: {
+      typescript: "^5.4.5",
+    },
     engines: {
       node: ">=20",
     },
   };
-  // Only add packageManager field if using yarn
-  const pkgManager = detectPackageManager();
+
   if (pkgManager.startsWith("yarn")) {
     packageTemplate.packageManager = pkgManager;
   }
@@ -196,31 +203,21 @@ yarn-error.log*
   fs.writeFileSync(resolve(destDir, ".gitignore"), gitignoreContent.trim());
 }
 
-function detectPackageManager() {
-  const userAgent = process.env.npm_config_user_agent;
-  if (!userAgent) return "npm";
-
-  // Improve package manager detection
-  const managers = {
-    bun: "bun",
-    yarn: "yarn",
-    pnpm: "pnpm",
-    npm: "npm",
-  };
-
-  for (const [manager, value] of Object.entries(managers)) {
-    if (userAgent.includes(manager)) {
-      // Extract version for yarn
-      if (manager === "yarn") {
-        const version =
-          userAgent.match(/yarn\/(\d+\.\d+\.\d+)/)?.[1] || "4.5.1";
-        return `${value}@${version}`;
-      }
-      return value;
+async function detectPackageManager() {
+  try {
+    const pkgManager = await detect();
+    // Still maintain the Yarn 4 check if needed
+    if (
+      pkgManager === "yarn" &&
+      process.env.npm_config_user_agent?.includes("yarn/4")
+    ) {
+      return "yarn@4";
     }
+    return pkgManager;
+  } catch (error) {
+    // Fallback to npm if detection fails
+    return "npm";
   }
-
-  return "npm";
 }
 
 function kebabcase(str) {

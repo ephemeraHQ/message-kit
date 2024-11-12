@@ -71,7 +71,7 @@ export default defineConfig({
       link: "https://converse.xyz",
     },
     { text: "XMTP", link: "https://docs.xmtp.org/" },
-    { text: "1.1.7-beta.22", link: "/changelog" },
+    { text: "1.1.7-beta.26", link: "/changelog" },
   ],
   editLink: {
     pattern:
