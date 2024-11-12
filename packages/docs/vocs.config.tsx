@@ -85,7 +85,7 @@ export default defineConfig({
       link: "https://converse.xyz",
     },
     { text: "XMTP", link: "https://docs.xmtp.org/" },
-    { text: "1.1.7- beta.19", link: "/changelog" },
+    { text: "1.1.7-beta.19", link: "/changelog" },
   ],
   editLink: {
     pattern:
@@ -246,7 +246,6 @@ export default defineConfig({
 
     {
       text: "Middlewares",
-      collapsed: true,
       items: [
         {
           text: "Cron",
@@ -271,6 +270,18 @@ export default defineConfig({
         {
           text: "LearnWeb3",
           link: "/middlewares/learnweb3",
+        },
+        {
+          text: "Lowdb",
+          link: "/middlewares/lowdb",
+        },
+        {
+          text: "Gpt",
+          link: "/middlewares/gpt",
+        },
+        {
+          text: "Resolver",
+          link: "/middlewares/resolver",
         },
       ],
     },
