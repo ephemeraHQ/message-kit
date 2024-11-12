@@ -30,25 +30,11 @@ export default defineConfig({
           content="https://messagekit.ephemerahq.com/"
         />
 
-        <meta property="fc:frame:button:2" content="Directory" />
+        <meta property="fc:frame:button:2" content="Drop a ⭐️" />
         <meta property="fc:frame:button:2:action" content="link" />
         <meta
           property="fc:frame:button:2:target"
-          content="https://messagekit.ephemerahq.com/"
-        />
-
-        <meta property="fc:frame:button:3" content="Templates" />
-        <meta property="fc:frame:button:3:action" content="link" />
-        <meta
-          property="fc:frame:button:3:target"
-          content="https://messagekit.ephemerahq.com/templates"
-        />
-
-        <meta property="fc:frame:button:4" content="Concepts" />
-        <meta property="fc:frame:button:4:action" content="link" />
-        <meta
-          property="fc:frame:button:4:target"
-          content="https://messagekit.ephemerahq.com/concepts"
+          content="https://github.com/ephemeraHQ/message-kit"
         />
 
         <script
@@ -85,7 +71,7 @@ export default defineConfig({
       link: "https://converse.xyz",
     },
     { text: "XMTP", link: "https://docs.xmtp.org/" },
-    { text: "1.1.7- beta.19", link: "/changelog" },
+    { text: "1.1.7-beta.19", link: "/changelog" },
   ],
   editLink: {
     pattern:
@@ -246,7 +232,6 @@ export default defineConfig({
 
     {
       text: "Middlewares",
-      collapsed: true,
       items: [
         {
           text: "Cron",
@@ -271,6 +256,18 @@ export default defineConfig({
         {
           text: "LearnWeb3",
           link: "/middlewares/learnweb3",
+        },
+        {
+          text: "Lowdb",
+          link: "/middlewares/lowdb",
+        },
+        {
+          text: "Gpt",
+          link: "/middlewares/gpt",
+        },
+        {
+          text: "Resolver",
+          link: "/middlewares/resolver",
         },
       ],
     },
