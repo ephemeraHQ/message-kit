@@ -14,9 +14,10 @@ export const logMessage = (message: string) => {
 export async function logInitMessage(
   client: Client,
   config?: Config,
-  key?: string,
-  randomKey?: boolean,
+  generatedKey?: string,
 ) {
+  if (config?.hideInitLogMessage === true) return;
+
   const coolLogo = `\x1b[38;2;250;105;119m\
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -33,6 +34,12 @@ Powered by XMTP \x1b[0m`;
     🔗 https://converse.xyz/dm/${client.accountAddress}`);
 
   const skills = config?.skills ?? (await loadSkillsFile());
+
+  if (generatedKey) {
+    console.warn(
+      `\t- ⚠️🔒 Invalid private key or not set. Generating a random one.\n\t\t- Copy and paste it in your .env file as:\n\t\t- KEY=${generatedKey}`,
+    );
+  }
   if (
     config?.experimental ||
     config?.attachments ||
@@ -43,11 +50,6 @@ Powered by XMTP \x1b[0m`;
     Warnings:`);
     if (config?.attachments) {
       console.warn("\t- ⚠️ Attachments are enabled");
-    }
-    if (randomKey) {
-      console.warn(
-        `\t- ⚠️🔒 Invalid private key or not set. Generating a random one.\n\t\t- Copy and paste it in your .env file as:\n\t\t- KEY=${key}`,
-      );
     }
     if (config?.client?.logging) {
       console.warn(`\t- ⚠️ Logging is set to ${config.client.logging}`);
