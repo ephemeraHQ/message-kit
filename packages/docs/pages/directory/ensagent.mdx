@@ -2,10 +2,7 @@
 
 This is a simple yet powerful agent that will help users interact with ENS.
 
-Source code:
-[Bot](https://github.com/fabriguespe/ens-agent) | [Frame](https://github.com/stephancill/ens-frame-v2)
-
-## Prompt
+## Fine tunning
 
 Here is the prompt for the agent.
 
@@ -75,38 +72,118 @@ export async function agent_prompt(userInfo: UserInfo) {
 }
 ```
 
-## Main code
+## Skills
 
 ```tsx [src/index.ts]
-import { run, HandlerContext } from "@xmtp/message-kit";
-import { textGeneration, processMultilineResponse } from "./lib/gpt.js";
-import { agent_prompt } from "./prompt.js";
-import { getUserInfo } from "./lib/resolver.js";
+import { handleEns } from "./handler/ens.js";
+import type { SkillGroup } from "@xmtp/message-kit";
 
-run(async (context: HandlerContext) => {
-  const {
-    message: {
-      content: { text, params },
-      sender,
-    },
-  } = context;
-
-  try {
-    let userPrompt = params?.prompt ?? text;
-    const userInfo = await getUserInfo(sender.address);
-    if (!userInfo) {
-      console.log("User info not found");
-      return;
-    }
-    const { reply } = await textGeneration(
-      sender.address,
-      userPrompt,
-      await agent_prompt(userInfo),
-    );
-    await processMultilineResponse(sender.address, reply, context);
-  } catch (error) {
-    console.error("Error during OpenAI call:", error);
-    await context.send("An error occurred while processing your request.");
-  }
-});
+export const skills: SkillGroup[] = [
+  {
+    name: "Ens Domain Bot",
+    tag: "@ens",
+    description: "Register ENS domains.",
+    skills: [
+      {
+        skill: "/register [domain]",
+        triggers: ["/register"],
+        handler: handleEns,
+        description:
+          "Register a new ENS domain. Returns a URL to complete the registration process.",
+        examples: ["/register vitalik.eth"],
+        params: {
+          domain: {
+            type: "string",
+          },
+        },
+      },
+      {
+        skill: "/exists",
+        examples: ["/exists"],
+        handler: handleEns,
+        triggers: ["/exists"],
+        description: "Check if an address is onboarded.",
+        params: {
+          address: {
+            type: "address",
+          },
+        },
+      },
+      {
+        skill: "/info [domain]",
+        triggers: ["/info"],
+        handler: handleEns,
+        description:
+          "Get detailed information about an ENS domain including owner, expiry date, and resolver.",
+        examples: ["/info nick.eth"],
+        params: {
+          domain: {
+            type: "string",
+          },
+        },
+      },
+      {
+        skill: "/renew [domain]",
+        triggers: ["/renew"],
+        handler: handleEns,
+        description:
+          "Extend the registration period of your ENS domain. Returns a URL to complete the renewal.",
+        examples: ["/renew fabri.base.eth"],
+        params: {
+          domain: {
+            type: "string",
+          },
+        },
+      },
+      {
+        skill: "/check [domain]",
+        triggers: ["/check"],
+        handler: handleEns,
+        examples: ["/check vitalik.eth", "/check fabri.base.eth"],
+        description: "Check if a domain is available.",
+        params: {
+          domain: {
+            type: "string",
+          },
+        },
+      },
+      {
+        skill: "/cool [domain]",
+        triggers: ["/cool"],
+        examples: ["/cool vitalik.eth"],
+        handler: handleEns,
+        description: "Get cool alternatives for a .eth domain.",
+        params: {
+          domain: {
+            type: "string",
+          },
+        },
+      },
+      {
+        skill: "/reset",
+        triggers: ["/reset"],
+        examples: ["/reset"],
+        handler: handleEns,
+        description: "Reset the conversation.",
+        params: {},
+      },
+      {
+        skill: "/tip [address]",
+        description: "Show a URL for tipping a domain owner.",
+        triggers: ["/tip"],
+        handler: handleEns,
+        examples: ["/tip 0x1234567890123456789012345678901234567890"],
+        params: {
+          address: {
+            type: "string",
+          },
+        },
+      },
+    ],
+  },
+];
 ```
+
+---
+
+Made with ❤️ by [Ephemera](https://ephemerahq.com).
