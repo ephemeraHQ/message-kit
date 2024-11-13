@@ -35,21 +35,22 @@ Powered by XMTP \x1b[0m`;
 
   const skills = config?.skills ?? (await loadSkillsFile());
 
-  if (generatedKey) {
-    console.warn(
-      `\t- ⚠️🔒 Invalid private key or not set. Generating a random one.\n\t\t- Copy and paste it in your .env file as:\n\t\t- KEY=${generatedKey}`,
-    );
-  }
   if (
     config?.experimental ||
     config?.attachments ||
     config?.memberChange ||
+    generatedKey ||
     skills?.length === 0
   ) {
     console.warn(`\x1b[33m
     Warnings:`);
     if (config?.attachments) {
       console.warn("\t- ⚠️ Attachments are enabled");
+    }
+    if (generatedKey) {
+      console.warn(
+        `\t- ⚠️🔒 Invalid private key or not set. Generating a random one.\n\t\t- Copy and paste it in your .env file as:\n\t\t- KEY=${generatedKey}`,
+      );
     }
     if (config?.client?.logging) {
       console.warn(`\t- ⚠️ Logging is set to ${config.client.logging}`);
