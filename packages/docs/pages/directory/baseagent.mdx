@@ -51,7 +51,7 @@ export async function agent_prompt(userInfo: UserInfo) {
   Let's go ahead and tip 1 USDC to nick.eth\n/send 1 usdc 0x123456789...
 
 7. If the users wants to know more:
-  I can assist you with swapping, minting and sending tokens on Base. Just let me know what you need help with!.\nThis is the base url of the Frame yo ucan also navigate to it by clicking\n/show
+  I can assist you with swapping, minting and sending tokens on Base. Just let me know what you need help with!.\nThis is the base url of the Frame you can also navigate to it by clicking\n/show
 `;
   return systemPrompt;
 }
@@ -88,7 +88,7 @@ export const skills: SkillGroup[] = [
           token_to: {
             default: "eth",
             type: "string",
-            values: ["eth", "dai", "usdc", "degen"], // Accepted tokenss
+            values: ["eth", "dai", "usdc", "degen"], // Accepted tokens
           },
         },
       },
