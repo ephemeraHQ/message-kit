@@ -27,7 +27,7 @@ import { ContentTypeReaction } from "@xmtp/content-type-reaction";
 
 export const awaitedHandlers = new Map<
   string,
-  (text: string) => Promise<boolean | void>
+  (text: string) => Promise<boolean | undefined>
 >();
 
 export class HandlerContext {
@@ -200,7 +200,7 @@ export class HandlerContext {
         const response = text.trim().toLowerCase();
 
         if (validResponses.map((r) => r.toLowerCase()).includes(response)) {
-          awaitedHandlers.delete(this.getConversationKey()); // Clean up
+          this.resetAwaitedState();
           resolve(response);
           return true;
         }
@@ -219,6 +219,7 @@ export class HandlerContext {
   resetAwaitedState() {
     this.awaitingResponse = false;
     this.awaitedHandler = null;
+    awaitedHandlers.delete(this.getConversationKey());
   }
 
   async getV2MessageById(reference: string): Promise<DecodedMessageV2 | null> {
