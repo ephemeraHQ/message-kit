@@ -36,8 +36,6 @@ run(
 );
 ```
 
-## Other concepts
-
 ### Optional parameters
 
 - `privateKey`: the private key of the agent wallet, like any normal wallet private key. //
@@ -48,15 +46,13 @@ run(
 - `hideInitLogMessage`: hide the init log message with messagekit logo and stuff
 - `memberChange`: if true, member changes will be enabled, like adding members to the group
 
-### Exporting other clients
+## Clients
 
 Use this instead of XMTP sdks for compatibility with MessageKit
 
 ```tsx
 import { V2Client, V3Client } from "@xmtp/message-kit";
 ```
-
-### Importing other clients
 
 You can export other clients on run time by importing the `xmtpClient` function.
 
