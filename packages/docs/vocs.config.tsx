@@ -128,24 +128,24 @@ export default defineConfig({
           link: "/skills",
           items: [
             {
-              text: "Structure",
-              link: "/skills/structure",
-            },
-            {
-              text: "Natural Language",
-              link: "/skills/natural",
-            },
-            {
-              text: "Processing",
-              link: "/skills/processing",
+              text: "Reasoning",
+              link: "/skills/reasoning",
             },
             {
               text: "Fine Tuning",
               link: "/skills/fine-tuning",
             },
             {
-              text: "Reasoning",
-              link: "/skills/reasoning",
+              text: "Processing",
+              link: "/skills/processing",
+            },
+            {
+              text: "Parsing",
+              link: "/skills/parsing",
+            },
+            {
+              text: "Structure",
+              link: "/skills/structure",
             },
           ],
         },
