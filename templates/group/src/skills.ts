@@ -8,7 +8,7 @@ export const skills: SkillGroup[] = [
   {
     name: "Group bot",
     tag: "@bot",
-    description: "Group bot for tipping and transactions.",
+    description: "Group agent for tipping and transactions.",
     skills: [
       {
         skill: "/tip [usernames] [amount] [token]",

@@ -1,15 +1,17 @@
 # Reasoning
 
-Bots can handle complex conversations by managing multiple steps in sequence, maintaining context, and waiting for user responses. This creates a more natural interaction flow.
+Agents can handle complex conversations by managing multiple steps in sequence, maintaining context, and waiting for user responses. This creates a more natural interaction flow.
 
 ## Introduction
 
-As we seen in previous sections, the bot can handle complex interactions by managing multiple steps in sequence, maintaining context, and waiting for user responses.
+As we seen in previous sections, the agent can handle complex interactions by managing multiple steps in sequence, maintaining context, and waiting for user responses.
 
-- [Reasoning](/skills/reasoning): Smart agents with reasoning capabilities.
-- [Fine Tuning](/skills/fine-tuning): Bot can handle fine tuned responses.
-- [Processing](/skills/processing): Bot can handle multiple responses from the AI.
-- [Parsing](/skills/parsing): Bot interprets user intent and translates it into a sequence of skills.
+For full reasoning we need to combine the following skills:
+
+- [Fine Tuning](/skills/fine-tuning): agent can handle fine tuned responses.
+- [Prompting](/skills/prompting): agent can handle multiple responses from the AI.
+- [Processing](/skills/processing): agent can handle multiple responses from the AI.
+- [Parsing](/skills/parsing): agent interprets user intent and translates it into a sequence of skills.
 - [Definition](/skills/definition): First, we define our bot's available skills.
 
 ## Example: Ens domain registration
@@ -26,7 +28,7 @@ Let's walk through a complete ENS domain registration flow:
 lets register fabriethsf.eth
 ```
 
-### Bot skills definition
+### agent skills definition
 
 ```tsx
 [
@@ -89,7 +91,7 @@ async function handleEns(context: HandlerContext) {
 
 ### Execution of the skills
 
-The bot processes the natural language input "lets register fabriethsf.eth" and breaks it down into sequential steps:
+The agent processes the natural language input "lets register fabriethsf.eth" and breaks it down into sequential steps:
 
 ```tsx
 run(async (context: HandlerContext) => {
@@ -122,4 +124,4 @@ run(async (context: HandlerContext) => {
 
 :::
 
-This is a very simple example, but it shows how the bot can handle complex interactions by managing multiple steps in sequence, maintaining context, and waiting for user responses.
+This is a very simple example, but it shows how the agent can handle complex interactions by managing multiple steps in sequence, maintaining context, and waiting for user responses.

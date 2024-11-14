@@ -136,6 +136,10 @@ export default defineConfig({
               link: "/skills/fine-tuning",
             },
             {
+              text: "Prompting",
+              link: "/skills/prompting",
+            },
+            {
               text: "Processing",
               link: "/skills/processing",
             },

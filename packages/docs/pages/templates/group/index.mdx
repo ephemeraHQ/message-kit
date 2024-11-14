@@ -41,7 +41,7 @@ run(async (context: HandlerContext) => {
 
   if (!context.group) {
     context.send(
-      "This bot only works in group chats. Please add this bot to a group to continue",
+      "This agent only works in group chats. Please add this agent to a group to continue",
     );
     return;
   }
@@ -72,7 +72,7 @@ yarn dev
 Set up these variables in your app
 
 ```bash [cmd]
-KEY= # the private key of the bot wallet
+KEY= # the private key of the agent wallet
 OPEN_AI_API_KEY= # your openai api key
 ```
 

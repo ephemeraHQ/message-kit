@@ -22,5 +22,5 @@ yarn dev
 Set up these variables in your app
 
 ```bash [cmd]
-KEY= # the private key of the bot wallet
+KEY= # the private key of the agent wallet
 ```

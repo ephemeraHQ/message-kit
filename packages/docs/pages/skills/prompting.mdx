@@ -1,0 +1,53 @@
+# Prompting
+
+Prompting is a technique to improve the performance of a model on a specific tas just giving example responses.This technique can have the most important impact to improve the agent responses to specific use case and in general.
+
+## Introduction
+
+For prompting to be effective we need to combine the following skills:
+
+- [Processing](/skills/processing): agent can handle multiple responses from the AI.
+- [Parsing](/skills/parsing): agent interprets user intent and translates it into a sequence of skills.
+- [Definition](/skills/definition): First, we define our bot's available skills.
+
+## Example
+
+Here is the prompt for the agent.
+
+```jsx [src/prompt.ts]
+import { skills } from "./skills.js";
+import {
+  UserInfo,
+  PROMPT_USER_CONTENT,
+  PROMPT_RULES,
+  PROMPT_SKILLS_AND_EXAMPLES,
+  PROMPT_REPLACE_VARIABLES,
+} from "@xmtp/message-kit";
+
+export async function agent_prompt(userInfo: UserInfo) {
+  let systemPrompt =
+    PROMPT_RULES +
+    PROMPT_USER_CONTENT(userInfo) +
+    PROMPT_SKILLS_AND_EXAMPLES(skills, "@ens");
+
+  let fineTunning = `
+
+## Example responses:
+
+1. Check if the user does not have a ENS domain
+  Hey {PREFERRED_NAME}! it looks like you don't have a ENS domain yet! \n\Let me start by checking your Converse username with the .eth suffix\n/check {CONVERSE_USERNAME}.eth
+  ...`;
+
+  // Add the fine tuning to the system prompt
+  systemPrompt += fineTunning;
+
+  // Replace the variables in the system prompt
+  systemPrompt = PROMPT_REPLACE_VARIABLES(
+    systemPrompt,
+    userInfo?.address ?? "",
+    userInfo,
+    "@ens",
+  );
+  return systemPrompt;
+}
+```

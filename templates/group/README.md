@@ -22,6 +22,6 @@ yarn dev
 Set up these variables in your app
 
 ```bash [cmd]
-KEY= # the private key of the bot wallet
+KEY= # the private key of the agent wallet
 OPEN_AI_API_KEY= # openai api key
 ```

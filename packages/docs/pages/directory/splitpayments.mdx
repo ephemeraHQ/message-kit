@@ -4,7 +4,7 @@ When you upload an image and this image is a bill of a dinner, the app will proc
 
 ## Activate attachments
 
-For this bot to receive attachments you need to activate attachments in the `run` function.
+For this agent to receive attachments you need to activate attachments in the `run` function.
 
 ```tsx [src/index.ts]
 import { run, HandlerContext } from "@xmtp/message-kit";
@@ -74,7 +74,7 @@ export async function handler(context: HandlerContext) {
       ]
       `;
 
-      //I want the reply to be an array of messages so the bot feels like is sending multuple ones
+      //I want the reply to be an array of messages so the agent feels like is sending multuple ones
       const { reply } = await textGeneration(sender.address, response, prompt);
       let splitMessages = JSON.parse(reply);
       for (const message of splitMessages) {

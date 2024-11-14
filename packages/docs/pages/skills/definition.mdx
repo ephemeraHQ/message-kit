@@ -2,7 +2,7 @@
 
 Each app can have a `skills.ts` file that contains the skills that the app can execute. The skills are defined as an array of objects with the following keys:
 
-## Create a skill file
+## Create file
 
 Create the skill file `skills.ts` in your project root `src` folder.
 
@@ -32,12 +32,15 @@ export const skills: SkillGroup[] = [
 ];
 ```
 
-**Properties**
+### Properties
 
 - **skill**: The name of the skill.
 - **description**: The description of the skill.
+- **triggers**: The triggers of the skill.
+- **examples**: Examples of how to use the skill.
 - **params**: Defines the parameters required for the skill with its property name.
   - **default**: The default value for the parameter. This can be any type.
+  - **values**: `[]` An array of strings that defines the accepted values for the parameter.
   - **plural**: If true, the parameter is an array.
   - **type**: The type of the parameter. It can be one of the following:
     - `number`: The parameter is a number.
@@ -47,4 +50,3 @@ export const skills: SkillGroup[] = [
     - `address`: The parameter is an address.
     - `prompt`: The parameter is a prompt.
     - `url`: The parameter is a URL.
-  - **values**: `[]` An array of strings that defines the accepted values for the parameter.
