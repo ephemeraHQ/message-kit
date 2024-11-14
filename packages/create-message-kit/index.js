@@ -22,6 +22,8 @@ program
     // Add Yarn 4 check at the start of the action
     const pkgManager = await detectPackageManager();
 
+    log.info(pc.cyan(`pkgManager detected: ${pkgManager}`));
+
     log.info(pc.cyan(`Welcome to MessageKit CLI v${version}!`));
     const coolLogo = `
 ███╗   ███╗███████╗███████╗███████╗ █████╗  ██████╗ ███████╗██╗  ██╗██╗████████╗
