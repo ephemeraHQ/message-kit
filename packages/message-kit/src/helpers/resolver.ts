@@ -121,20 +121,19 @@ export const getUserInfo = async (
       // Fetch ENS data
       try {
         const response = await fetch(`https://ensdata.net/${keyToUse}`);
+        console.log(response);
         if (!response.ok) {
           console.error(
-            `ENS data request failed with status ${response.status}`,
+            `ENS data request failed with status or unable to resolve ${keyToUse}`,
           );
-          // throw new Error(
-          //   `ENS data request failed with status ${response.status}`,
-          // );
-        }
-        const ensData = (await response.json()) as EnsData;
-        if (ensData) {
-          data.ensInfo = ensData;
-          data.ensDomain = ensData.ens || data.ensDomain;
-          data.address = ensData.address || data.address;
-          data.avatar = ensData.avatar_url || data.avatar;
+        } else {
+          const ensData = (await response.json()) as EnsData;
+          if (ensData) {
+            data.ensInfo = ensData;
+            data.ensDomain = ensData.ens || data.ensDomain;
+            data.address = ensData.address || data.address;
+            data.avatar = ensData.avatar_url || data.avatar;
+          }
         }
       } catch (error) {
         console.error("Failed to fetch ENS data:", error);
@@ -157,7 +156,7 @@ export const getUserInfo = async (
           5000,
         );
         if (!response.ok) {
-          throw new Error(
+          console.error(
             `Converse profile request failed with status ${response.status}`,
           );
         }

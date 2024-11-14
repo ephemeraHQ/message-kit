@@ -22,11 +22,6 @@ program
     // Add Yarn 4 check at the start of the action
     const pkgManager = await detectPackageManager();
 
-    if (pkgManager.startsWith("yarn@4")) {
-      log.error("Yarn 4 is not supported. Please use bun, npm, or yarn v1");
-      process.exit(1);
-    }
-
     log.info(pc.cyan(`Welcome to MessageKit CLI v${version}!`));
     const coolLogo = `
 ███╗   ███╗███████╗███████╗███████╗ █████╗  ██████╗ ███████╗██╗  ██╗██╗████████╗
@@ -82,16 +77,18 @@ async function addPackagejson(destDir, name, pkgManager) {
     dependencies: {
       "@xmtp/message-kit": "latest",
     },
-    devDependencies: {
-      typescript: "^5.4.5",
-    },
     engines: {
       node: ">=20",
     },
   };
 
   if (pkgManager.startsWith("yarn")) {
-    packageTemplate.packageManager = pkgManager;
+    packageTemplate.packageManager = `${pkgManager}`;
+    // Add .yarnrc.yml to disable PnP mode
+    fs.writeFileSync(
+      resolve(destDir, ".yarnrc.yml"),
+      "nodeLinker: node-modules\n",
+    );
   }
   fs.writeJsonSync(resolve(destDir, "package.json"), packageTemplate, {
     spaces: 2,
@@ -206,14 +203,17 @@ yarn-error.log*
 async function detectPackageManager() {
   try {
     const pkgManager = await detect();
-    // Still maintain the Yarn 4 check if needed
-    if (
-      pkgManager === "yarn" &&
-      process.env.npm_config_user_agent?.includes("yarn/4")
-    ) {
-      return "yarn@4";
+    const userAgent = process.env.npm_config_user_agent;
+    let version = "";
+
+    if (userAgent && pkgManager === "yarn") {
+      const parts = userAgent.split(" ")[0]?.split("/");
+      if (parts && parts.length > 1) {
+        version = `@${parts[1]}`;
+      }
     }
-    return pkgManager;
+
+    return pkgManager + version;
   } catch (error) {
     // Fallback to npm if detection fails
     return "npm";

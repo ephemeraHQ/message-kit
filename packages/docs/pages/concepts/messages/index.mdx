@@ -56,3 +56,15 @@ context.reply("Your message.");
 // Send a message to specific users
 context.sendTo("Your message.", ["address1", "address2"]);
 ```
+
+## Await a response
+
+You can set an awaited handler to wait for a response from the user.
+
+```tsx
+const answer = await context.awaitResponse("Please answer with yes or no", [
+  "yes",
+  "no",
+]);
+await context.send(`You answered: ${answer}`);
+```

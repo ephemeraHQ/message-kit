@@ -9,13 +9,13 @@ bun create message-kit
 ```
 
 ```bash
-npx create-message-kit@latest
+npx create-message-kit
 ```
 
 ```bash
-yarn create message-kit@latest
+yarn create message-kit
 ```
 
 ```bash [npm]
-npm init message-kit@latest
+npm init message-kit
 ```
