@@ -28,7 +28,7 @@ npm init message-kit
 
 :::
 
-_Refer to [structure](/concepts/structure) of the app so see the folder is created._
+_Refer to [structure](/concepts/index) of the app so see the folder is created._
 
 ### Templates
 
@@ -44,10 +44,6 @@ run(async (context: HandlerContext) => {
 });
 ```
 
-- [`gm`](./templates/gm): Simple gm agent example.
-- [`group`](./templates/group): Group chat agent example with skills and examples.
-- [`agent`](./templates/agent): ENS agent for registering and checking domains
-
 ### Variables
 
 Create a `.env` file in the root of your project
@@ -62,18 +58,18 @@ Follow the steps below to run the bot
 
 :::code-group
 
-```bash [yarn]
-# Install the dependencies
-yarn install
-# Run the app
-yarn dev
-```
-
 ```bash [bun]
 # Install the dependencies
 bun install
 # run the app
 bun dev
+```
+
+```bash [yarn]
+# Install the dependencies
+yarn install
+# Run the app
+yarn dev
 ```
 
 ```bash [npm]
@@ -87,13 +83,7 @@ npm run dev
 
 ### Test
 
-Send a message to the app, and it will reply `gm`!
-
-### Learn more
-
-- [Directory](/directory): List of apps built with MessageKit.
-- [Quickstart](/quickstarts): Quickstart guide to build your first app.
-- [Skills](/skills): Learn how to build skills for your app.
+Send a message to the app from [Converse](https://converse.xyz/), and it will reply `gm`!
 
 ::::
 

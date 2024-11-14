@@ -80,22 +80,17 @@ export default defineConfig({
   },
   sidebar: [
     {
-      text: "Installation",
-      link: "/installation",
+      text: "Quickstart",
+      link: "/quickstart",
     },
     {
       text: "Directory",
       link: "/directory",
     },
     {
-      text: "Quickstarts",
-      link: "/quickstarts",
+      text: "Examples",
+      link: "/examples",
     },
-    {
-      text: "Deployment",
-      link: "/deployment",
-    },
-
     {
       text: "Concepts",
       link: "/concepts",
@@ -115,6 +110,10 @@ export default defineConfig({
         {
           text: "Guidelines",
           link: "/concepts/guidelines",
+        },
+        {
+          text: "Deployment",
+          link: "/concepts/deployment",
         },
       ],
     },
