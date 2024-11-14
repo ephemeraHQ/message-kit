@@ -14,61 +14,16 @@ app-project/              # Optional middleware files
 └── .env                  # Environment variables
 ```
 
-## Main code
-
-The `index.ts` file is the entry point for your app. It should contain something like the following:
-
-```tsx [src/index.ts]
-import { run, HandlerContext } from "@xmtp/message-kit";
-
-run(async (context: HandlerContext) => {
-  // Get the message and the address from the sender
-  const { content, sender } = context.message;
-
-  // To reply, just call `reply` on the HandlerContext.
-  await context.send(`gm`);
-});
-```
-
-## Skills
-
-Each app can have a `skills.ts` file that contains the available skills for the users. The skills are defined as an array of objects with the following structure:
-
-```tsx [src/skills.ts]
-export const skills: SkillGroup[] = [
-  {
-    name: "General",
-    description: "General skills for the app.",
-    skills: [
-      {
-        skill: "/help",
-        triggers: ["/help"],
-        handler: undefined,
-        description: "Get help with the app.",
-      },
-    ],
-  },
-];
-```
-
-_To learn more on how to define skills, go to [skills](/skills/definition) section_
-
-## Environment variables
-
-Each app should have an `.env` file that contains the following:
-
-```bash [.env]
-KEY= # the private key of the agent wallet, like any normal wallet private key.
-```
-
-### Optional parameters
-
 MessageKit uses by default the ENV private key, but you can send messageKit a private key as a parameter.
 
 ```jsx
 run(
   async (context) => {
-    // Your code here
+    // Get the message and the address from the sender
+    const { content, sender } = context.message;
+
+    // To reply, just call `reply` on the HandlerContext.
+    await context.send(`gm`);
   },
   {
     privateKey: "your_private_key", //optional. default from env
@@ -80,6 +35,8 @@ run(
   },
 );
 ```
+
+### Optional parameters
 
 - `privateKey`: the private key of the agent wallet, like any normal wallet private key. //
 - `experimental`: experimental features like logging all group messages. Default is `false`.
@@ -112,4 +69,4 @@ const { v2client: newClient } = await xmtpClient({
 );
 ```
 
-For example in the [Cron](/middlewares/cron) middleware, we use the `xmtpClient` function to create a new client and send messages to the users.
+> This is used in the [Cron](/middlewares/cron) middleware to send updates to the users.

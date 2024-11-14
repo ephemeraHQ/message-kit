@@ -98,11 +98,8 @@ export default defineConfig({
 
     {
       text: "Concepts",
+      link: "/concepts",
       items: [
-        {
-          text: "Structure",
-          link: "/concepts/structure",
-        },
         {
           text: "Messages",
           link: "/concepts/messages",
