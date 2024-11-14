@@ -95,14 +95,9 @@ export default defineConfig({
       text: "Deployment",
       link: "/deployment",
     },
-    {
-      text: "Guidelines",
-      link: "/guidelines",
-    },
 
     {
       text: "Concepts",
-
       items: [
         {
           text: "Structure",
@@ -121,34 +116,38 @@ export default defineConfig({
           link: "/concepts/groups",
         },
         {
-          text: "AI Skills",
-          link: "/skills",
-          items: [
-            {
-              text: "Reasoning",
-              link: "/skills/reasoning",
-            },
-            {
-              text: "Fine Tuning",
-              link: "/skills/fine-tuning",
-            },
-            {
-              text: "Prompting",
-              link: "/skills/prompting",
-            },
-            {
-              text: "Processing",
-              link: "/skills/processing",
-            },
-            {
-              text: "Parsing",
-              link: "/skills/parsing",
-            },
-            {
-              text: "Definition",
-              link: "/skills/definition",
-            },
-          ],
+          text: "Guidelines",
+          link: "/concepts/guidelines",
+        },
+      ],
+    },
+    {
+      text: "AI Skills",
+      link: "/skills",
+      items: [
+        {
+          text: "Reasoning",
+          link: "/skills/reasoning",
+        },
+        {
+          text: "Fine Tuning",
+          link: "/skills/fine-tuning",
+        },
+        {
+          text: "Prompting",
+          link: "/skills/prompting",
+        },
+        {
+          text: "Processing",
+          link: "/skills/processing",
+        },
+        {
+          text: "Parsing",
+          link: "/skills/parsing",
+        },
+        {
+          text: "Definition",
+          link: "/skills/definition",
         },
       ],
     },
