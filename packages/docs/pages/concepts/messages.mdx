@@ -2,32 +2,20 @@
 
 ## Listening
 
-When you start the app, you can listen for incoming messages in the conversation using the `run` function.
+When you start the app, you can listen for incoming messages using the `run` function.
 
 ```tsx [src/index.ts]
 run(async (context: HandlerContext) => {
-  // Get the message and the address from the sender
-  const { content, sender } = context.message;
-
-  // To reply, just call `reply` on the HandlerContext.
-  await context.send(`gm`);
+  const {
+    message: {
+      id,
+      content: { text, skill, params, attachment, reply, reference },
+      sender,
+      sent,
+      typeId,
+    },
+  };
 });
-```
-
-## Message object
-
-The `message` object contains the following
-
-```tsx
-const {
-  message: {
-    id,
-    content: { text, skill, params, attachment, reply, reference },
-    sender,
-    sent,
-    typeId,
-  },
-};
 ```
 
 - `id`: string, // The id of the message
@@ -42,7 +30,7 @@ const {
 - `sent`: Date, // The timestamp of the message
 - `typeId`: string, // The type of the message (text, reply)
 
-To learn more about the types, see [types](/concepts/messages)
+> To learn more about the types, see [types](/concepts/types)
 
 ## Send messages
 
