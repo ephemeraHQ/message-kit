@@ -144,8 +144,8 @@ export default defineConfig({
               link: "/skills/parsing",
             },
             {
-              text: "Structure",
-              link: "/skills/structure",
+              text: "Definition",
+              link: "/skills/definition",
             },
           ],
         },

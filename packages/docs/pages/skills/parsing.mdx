@@ -6,81 +6,53 @@ Parsing enables your bot to understand human-like requests and translate them in
 
 Imagine your users chatting with your bot as naturally as texting a friend.
 
-```bash
-/check vitalik.eth
-```
-
-The bot uses AI to understand casual requests. Here's the secret sauce:
-
-```tsx
-const systemPrompt = `
-You're a friendly web3 swap assistant living in group chats!
-
-I understand casual requests like:
-- "@swap 1 eth to usdc"
-- "hey bot, swap 2 dai for eth"
-- "convert 0.5 usdc to eth please"
-
-I'll convert these into structured skills like:
-/swap [amount] [token_from] [token_to]
-
-Examples:
-/swap 1 eth usdc    // Swapping 1 ETH to USDC
-/swap 100 dai usdc  // Converting 100 DAI to USDC
-/swap 0.1 eth usdt  // Trading 0.1 ETH for USDT
-`;
-```
-
-And the magic happens:
-
-```tsx
-// The AI processes the request and returns a structured skill
-const { reply } = await textGeneration(userPrompt, systemPrompt);
-
-// If it's a valid skill, execute it!
-if (reply.startsWith("/")) {
-  await context.executeSkill(reply);
-}
-```
-
-## Example:
-
-::::steps
+:::steps
 
 ### User request
 
 ```bash
-@swap 1 usdc eth please
+/check vitalik.eth
 ```
 
-### Prompt parsing
+### Parsing
 
-```tsx
-const { reply } = await textGeneration(userPrompt, systemPrompt);
-// /swap 1 usdc eth
-```
-
-### Returning a response
-
-The bot can return a structured response to the user and then handle the response in the skill handler.
-
-```tsx
-import { SkillResponse } from "@xmtp/message-kit";
-
-// If it's a valid skil, execute it!
-if (reply.startsWith("/")) {
-  const response = (await context.executeSkill(reply)) as SkillResponse;
-  if (response.code == 200) await context.send(response.message);
-}
-```
-
-### Example response:
+This is the parameters extracted from the user request:
 
 ```json
 {
-  "code": 200,
-  "message": "https://base-tx-frame.vercel.app/transaction?transactionType=swap&amount=1&token_from=usdc&token_to=eth"
+  "skill": "check",
+  "params": {
+    "domain": "vitalik.eth"
+  }
 }
 ```
 
-::::
+### Handler
+
+```tsx
+const {
+  message: {
+    sender,
+    content: { skill, params },
+  },
+} = context;
+
+if (skill == "check") {
+  const { domain } = params;
+  const data = await getUserInfo(domain);
+  if (!data?.address) {
+    let message = `Looks like ${domain} is available! Here you can register it: ${ensUrl}${domain} or would you like to see some cool alternatives?`;
+    return {
+      code: 200,
+      message,
+    };
+  } else {
+    let message = `Looks like ${domain} is already registered!`;
+    await context.executeSkill("/cool " + domain);
+    return {
+      code: 404,
+      message,
+    };
+  }
+}
+```

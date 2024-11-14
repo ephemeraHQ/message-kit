@@ -8,37 +8,29 @@ MessageKit steps to create fully functional AI agents that perform complex tasks
 
 :::steps
 
-### 1. Skill Processing
+### Reasoning
 
-Bots can execute structured skills with parameter validation and type checking:
+Bots can manage complex workflows by managing all the concepts below:
 
-```jsx
-// Execute a simple skill
-const { message } = await context.executeSkill("/send 10 usdc to @alix", conv);
-context.send(message);
+- Breaking down tasks into steps
+- Maintaining conversation context
+- Executing sequential skills
+- Waiting for user input when needed
+
+Learn more about [Reasoning](/skills/reasoning).
+
+### Fine Tuning
+
+Get your agent to the next level with fine tuning.
+
+```
+1. If the user asks to check a domain like vitalik.eth:
+  Hey! ill check that domain for you.\n/check vitalik.eth
 ```
 
-Learn more about [skill processing](/skills/structure)
+Learn more about [Fine Tuning](/skills/fine-tuning).
 
-### 2. Parsing
-
-Bots can interpret casual human language and convert it to executable skills:
-
-User:
-
-```bash
-@swap 1 usdc to eth please".
-```
-
-Bot:
-
-```bash
-/swap 1 usdc eth
-```
-
-Learn more about [Parsing](/skills/parsing)
-
-### 3. Processing new lines
+### Processing
 
 User:
 
@@ -49,33 +41,46 @@ I want to check if vitalik.eth is available
 This will return an array of messages, and then it will process each one sequentially:
 
 ```tsx [gpt.ts]
-[" Let me check that domain for you", "/check vitalik.eth"];
+["Let me check that domain for you", "/check vitalik.eth"];
 ```
 
-Learn more about [Processing new lines](/skills/processing.mdx).
+Learn more about [Processing](/skills/processing).
 
-### 4. Fine Tuning
+### 2. Parsing
 
-Get your agent to the next level with fine tuning.
-Learn more about [Fine Tuning](/skills/fine-tuning.mdx).
+Bots can interpret casual human language and convert it to executable skills:
 
-### 5. Reasoning
+User request:
 
-Bots can manage complex workflows by:
-
-- Breaking down tasks into steps
-- Maintaining conversation context
-- Executing sequential skills
-- Waiting for user input when needed
-
-Example of a multi-step ENS registration flow:
-
-```tsx
-["Let's first check if the domain is available.  ", "/check fabriethsf.eth"];
-["The domain is available!  ", "/register fabriethsf.eth"];
-["The domain is registered!  ", "/info fabriethsf.eth"];
+```bash
+/check vitalik.eth
 ```
 
-Learn more about [reasoning](/skills/reasoning.mdx).
+Parsing:
+
+This is the parameters extracted from the user request:
+
+```json
+{
+  "skill": "check",
+  "params": {
+    "domain": "vitalik.eth"
+  }
+}
+```
+
+Learn more about [Parsing](/skills/parsing)
+
+### 1. Definition
+
+Bots can execute structured skills with parameter validation and type checking:
+
+```jsx
+// Execute a simple skill
+const { message } = await context.executeSkill("/send 10 usdc to @alix", conv);
+context.send(message);
+```
+
+Learn more about [Definition](/skills/definition)
 
 :::
