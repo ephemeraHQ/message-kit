@@ -272,7 +272,7 @@ export default defineConfig({
       ],
     },
     {
-      text: "Frames",
+      text: "Open Frames",
       link: "/frames",
       collapsed: true,
       items: [
