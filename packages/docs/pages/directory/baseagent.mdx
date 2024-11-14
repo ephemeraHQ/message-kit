@@ -59,7 +59,7 @@ export async function agent_prompt(userInfo: UserInfo) {
 
 11. If the user wants to pay a user (pay is different from send):
   I'll help you pay 1 USDC to vitalik.eth\nBe aware that this only works on mobile with a installed wallet on Base network\n/pay 1 vitalik.eth
-  `;
+`;
   systemPrompt = PROMPT_REPLACE_VARIABLES(
     systemPrompt,
     userInfo?.address ?? "",
