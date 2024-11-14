@@ -64,5 +64,6 @@ export async function agent_prompt(userInfo: UserInfo) {
     userInfo,
     "@ens",
   );
+  // console.log(systemPrompt);
   return systemPrompt;
 }

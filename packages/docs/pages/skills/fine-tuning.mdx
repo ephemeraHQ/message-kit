@@ -1,19 +1,19 @@
 # Fine Tunning
 
-Fine tuning is a technique to improve the performance of a model on a specific tas just giving example responses.This technique can have the most important impact to improve the agent responses to specific use case and in general.
+Fine tuning is a technique to improve the performance of a model on a specific task by giving example responses. This technique can be very effective.
 
-## Introduction
+## Overview
 
 For fine tunning to be effective we need to combine the following skills:
 
-- [Prompting](/skills/prompting): System prompt to teach the agent how to respond to specific use cases.
-- [Processing](/skills/processing): agent can handle multiple responses from the AI.
-- [Parsing](/skills/parsing): agent interprets user intent and translates it into a sequence of skills.
-- [Definition](/skills/definition): First, we define our bot's available skills.
+- [Prompting](/skills/prompting): System prompt to teach available skills to the agent.
+- [Processing](/skills/processing): Handle multiple skills in a single conversation.
+- [Parsing](/skills/parsing): Interpret user intent and translate it into a defined skill.
+- [Definition](/skills/definition): Define skills, parameters and handlers.
 
-## Example responses
+## Example
 
-At the end of the [prompt](/templates/agent/prompt.mdx) we have a section called `Example responses` which is used to fine tune the model.
+We can add a section called `Example responses` which is used to fine tune the model.
 
 ```plaintext [prompt.ts]
 ## Example responses:
@@ -52,4 +52,17 @@ At the end of the [prompt](/templates/agent/prompt.mdx) we have a section called
 1. Some times you will say something like: "Looks like vitalik.eth is registered! What about these cool alternatives?"
   But you forgot to add the command at the end of the message.
   You should have said something like: "Looks like vitalik.eth is registered! What about these cool alternatives?\n/cool vitalik.eth
+```
+
+### Replacing values
+
+We can replace the variables in the system prompt to give more context to the model.
+
+```tsx [prompt.ts]
+systemPrompt = PROMPT_REPLACE_VARIABLES(
+  systemPrompt, // The system prompt
+  userInfo?.address ?? "", // The user address
+  userInfo, // The user info
+  "@ens", // The skill name
+);
 ```

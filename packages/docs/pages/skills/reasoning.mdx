@@ -2,17 +2,15 @@
 
 Agents can handle complex conversations by managing multiple steps in sequence, maintaining context, and waiting for user responses. This creates a more natural interaction flow.
 
-## Introduction
-
-As we seen in previous sections, the agent can handle complex interactions by managing multiple steps in sequence, maintaining context, and waiting for user responses.
+## Overview
 
 For full reasoning we need to combine the following skills:
 
-- [Fine Tuning](/skills/fine-tuning): agent can handle fine tuned responses.
-- [Prompting](/skills/prompting): agent can handle multiple responses from the AI.
-- [Processing](/skills/processing): agent can handle multiple responses from the AI.
-- [Parsing](/skills/parsing): agent interprets user intent and translates it into a sequence of skills.
-- [Definition](/skills/definition): First, we define our bot's available skills.
+- [Fine Tuning](/skills/fine-tuning): Train your agent for reliable responses.
+- [Prompting](/skills/prompting): System prompt to teach available skills to the agent.
+- [Processing](/skills/processing): Handle multiple skills in a single conversation.
+- [Parsing](/skills/parsing): Interpret user intent and translate it into a defined skill.
+- [Definition](/skills/definition): Define skills, parameters and handlers.
 
 ## Example: Ens domain registration
 
@@ -28,7 +26,7 @@ Let's walk through a complete ENS domain registration flow:
 lets register fabriethsf.eth
 ```
 
-### agent skills definition
+### Skills definition
 
 ```tsx
 [

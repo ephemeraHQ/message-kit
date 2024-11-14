@@ -2,13 +2,15 @@
 
 Each app can have a `skills.ts` file that contains the skills that the app can execute. The skills are defined as an array of objects with the following keys:
 
-## Create file
+## Overview
 
 Create the skill file `skills.ts` in your project root `src` folder.
 
 ```tsx [src/skills.ts]
+// Import the handler for the skill
 import { handler as transaction } from "./handler/transaction.js";
 
+// Define the skills
 export const skills: SkillGroup[] = [
   {
     name: "Ens Domain Bot",
@@ -32,7 +34,7 @@ export const skills: SkillGroup[] = [
 ];
 ```
 
-### Properties
+## Properties
 
 - **skill**: The name of the skill.
 - **description**: The description of the skill.

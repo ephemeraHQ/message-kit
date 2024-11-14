@@ -2,78 +2,15 @@
 
 AI Skills system framework enables agents to understand and process skills through multiple intelligence layers, creating more natural and powerful conversational experiences.
 
-## Introduction
+![](/img/skills.png)
+
+## Overview
 
 MessageKit steps to create fully functional AI agents that perform complex tasks:
 
-:::steps
-
-### Definition
-
-Agents can execute structured skills with parameter validation and type checking:
-
-```jsx
-// Execute a simple skill
-const { message } = await context.executeSkill("/send 10 usdc to @alix", conv);
-context.send(message);
-```
-
-Learn more about [Definition](/skills/definition)
-
-### Parsing
-
-Agents can interpret casual human language and convert it to executable skills:
-
-```bash
-/check vitalik.eth
-```
-
-This is the parameters extracted from the user request:
-
-```json
-{
-  "skill": "check",
-  "params": {
-    "domain": "vitalik.eth"
-  }
-}
-```
-
-Learn more about [Parsing](/skills/parsing)
-
-### Processing
-
-```
-User: I want to check if vitalik.eth is available
-```
-
-This will return an array of messages, and then it will process each one sequentially:
-
-```tsx [gpt.ts]
-["Let me check that domain for you", "/check vitalik.eth"];
-```
-
-Learn more about [Processing](/skills/processing).
-
-### Fine Tuning
-
-Get your agent to the next level with fine tuning.
-
-```
-1. If the user asks to check a domain like vitalik.eth:
-  Hey! ill check that domain for you.\n/check vitalik.eth
-```
-
-Learn more about [Fine Tuning](/skills/fine-tuning).
-
-### Reasoning
-
-Agents can manage complex workflows by managing all the concepts below:
-
-- Breaking down tasks into steps
-- Maintaining conversation context
-- Executing sequential skills
-- Waiting for user input when needed
-
-Learn more about [Reasoning](/skills/reasoning).
-:::
+- [Reasoning](/skills/reasoning): Agent can handle complex conversations and perform autonomously.
+- [Fine Tuning](/skills/fine-tuning): Train your agent for reliable responses.
+- [Prompting](/skills/prompting): System prompt to teach available skills to the agent.
+- [Processing](/skills/processing): Handle multiple skills in a single conversation.
+- [Parsing](/skills/parsing): Interpret user intent and translate it into a defined skill.
+- [Definition](/skills/definition): Define skills, parameters and handlers.
