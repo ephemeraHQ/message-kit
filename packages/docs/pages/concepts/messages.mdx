@@ -1,6 +1,6 @@
 # Messages
 
-## Listening
+## Receiving
 
 When you start the app, you can listen for incoming messages using the `run` function.
 
@@ -32,37 +32,21 @@ run(async (context: HandlerContext) => {
 
 > To learn more about the types, see [types](/concepts/types)
 
-## Send messages
+## Sending
 
 App messages are messages that are sent when you send a reply to a message and are highlighted differently by the apps.
 
 ```tsx
 // Send a message
-context.send("Your message.");
+await context.send("Your message.");
 // Reply to the last message
-context.reply("Your message.");
+await context.reply("Your message.");
 // Send a message to specific users
-context.sendTo("Your message.", ["address1", "address2"]);
-```
-
-## Await a response
-
-The `awaitResponse` method allows you to:
-
-- Prompt the user with a message
-- Specify a list of valid responses
-- Handle timeouts and invalid responses
-
-Important considerations:
-
-- The handler will block until a valid response is received
-- Invalid responses will be ignored
-- Consider implementing timeout handling in production
-
-```tsx
+await context.sendTo("Your message.", ["address1", "address2"]);
+// Await a response
 const answer = await context.awaitResponse("Please answer with yes or no", [
   "yes",
   "no",
 ]);
-await context.send(`You answered: ${answer}`);
+console.log(`You answered: ${answer}`);
 ```

@@ -16,6 +16,8 @@ app-project/              # Optional middleware files
 
 ## Main code
 
+This is the main function that runs the listener.
+
 ```jsx
 run(
   async (context) => {
@@ -26,17 +28,12 @@ run(
     await context.send(`gm`);
   },
   {
-    privateKey: "your_private_key", //optional. default from env
-    experimental: true, //optional. default is false
-    attachments: true, //optional. default is false
-    skills: skills, //optional
-    hideInitLogMessage: true, //optional. default is false
-    memberChange: true, //optional. default is false
+    /*optional parameters*/
   },
 );
 ```
 
-### Optional parameters
+#### Optional parameters
 
 - `privateKey`: the private key of the agent wallet, like any normal wallet private key. //
 - `experimental`: experimental features like logging all group messages. Default is `false`.

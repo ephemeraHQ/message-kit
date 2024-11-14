@@ -93,8 +93,11 @@ export default defineConfig({
     },
     {
       text: "Concepts",
-      link: "/concepts",
       items: [
+        {
+          text: "Structure",
+          link: "/concepts/structure",
+        },
         {
           text: "Messages",
           link: "/concepts/messages",
@@ -162,12 +165,7 @@ export default defineConfig({
           items: [
             {
               text: "Handlers",
-              items: [
-                {
-                  text: "ENS",
-                  link: "/templates/agent/handlers/ens",
-                },
-              ],
+              link: "/templates/agent/handlers",
             },
             {
               text: "Skills",
@@ -176,10 +174,6 @@ export default defineConfig({
             {
               text: "Prompt",
               link: "/templates/agent/prompt",
-            },
-            {
-              text: "Index",
-              link: "/templates/agent",
             },
           ],
         },
@@ -216,10 +210,6 @@ export default defineConfig({
             {
               text: "Prompt",
               link: "/templates/group/prompt",
-            },
-            {
-              text: "Index",
-              link: "/templates/group",
             },
           ],
         },
