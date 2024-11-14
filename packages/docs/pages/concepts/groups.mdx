@@ -2,13 +2,34 @@
 
 > Make sure you follow the [guidelines](/guidelines) for building responsible group agents on XMTP.
 
-## Add members to a group
+## Tag an agent
 
-:::info
+If a message includes a tag like `@ens`, it will be received by your stream like any other message.
 
-- You need admin privileges to manage members.
+```tsx
+export const skills: SkillGroup[] = [
+  {
+    name: "Ens Domain Bot",
+    tag: "@ens",
+    description: "Register ENS domains.",
+    skills: [
+      /*Your set of skills*/
+    ],
+  },
+];
+```
 
-:::
+Example:
+
+```bash
+@ens who owns vitalik.eth
+```
+
+> Be aware that you need to add the agent to the group as a member.
+
+## Add members
+
+As an admin you can add members to the group.
 
 ```tsx
 // get the group
@@ -20,7 +41,7 @@ await group.addMembers([userAddresses]);
 await group.addMembersByInboxId([addedInboxes]);
 ```
 
-## Added member
+## Added member event
 
 When a member is added to a group it will emit a `group_updated` event with a `addedInboxes` array containing the addresses of the users added.
 

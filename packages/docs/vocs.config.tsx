@@ -111,13 +111,10 @@ export default defineConfig({
         {
           text: "Messages",
           link: "/concepts/messages",
-          collapsed: undefined,
-          items: [
-            { text: "Text", link: "/concepts/messages/text" },
-            { text: "Reply", link: "/concepts/messages/reply" },
-            { text: "Skill", link: "/concepts/messages/skill" },
-            { text: "Attachment", link: "/concepts/messages/attachment" },
-          ],
+        },
+        {
+          text: "Types",
+          link: "/concepts/types",
         },
         {
           text: "Groups",
