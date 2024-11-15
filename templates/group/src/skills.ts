@@ -11,7 +11,7 @@ export const skills: SkillGroup[] = [
     description: "Group agent for tipping and transactions.",
     skills: [
       {
-        skill: "/tip [username] [amount] [token]",
+        skill: "/tip [usernames] [amount] [token]",
         triggers: ["/tip"],
         examples: ["/tip @vitalik 10 usdc"],
         description: "Tip users in a specified token.",

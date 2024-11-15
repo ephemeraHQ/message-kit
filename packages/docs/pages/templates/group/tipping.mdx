@@ -18,7 +18,7 @@ export const skills: SkillGroup[] = [
     description: "Tip tokens via emoji, replies or skill.",
     skills: [
       {
-        skill: "/tip [@users] [amount] [token]",
+        skill: "/tip [usernames] [amount] [token]",
         triggers: ["/tip", "@tip"],
         description: "Tip users in a specified token.",
         handler: tipping,

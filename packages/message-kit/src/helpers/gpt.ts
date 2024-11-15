@@ -18,7 +18,11 @@ const openai = isOpenAIConfigured()
   ? new OpenAI({ apiKey: process.env.OPEN_AI_API_KEY })
   : null;
 
-type ChatHistoryEntry = { role: string; content: string };
+type ChatHistoryEntry = {
+  role: "user" | "assistant" | "system"; // restrict roles to valid options
+  content: string;
+};
+
 type ChatHistories = Record<string, ChatHistoryEntry[]>;
 // New ChatMemory class
 class ChatMemory {
@@ -101,7 +105,7 @@ export async function defaultPromptTemplate(
     PROMPT_USER_CONTENT(userInfo) +
     PROMPT_SKILLS_AND_EXAMPLES(skills, tag);
 
-  // Add the fine tuning to the system prompt
+  // Add the fine-tuning to the system prompt
   systemPrompt += fineTuning;
 
   // Replace the variables in the system prompt
@@ -143,44 +147,42 @@ export async function textGeneration(
   userPrompt: string,
   systemPrompt?: string,
 ) {
+  // Early validation
   if (!openai) {
-    console.warn("No OPEN_AI_API_KEY found in .env");
     return { reply: "No OpenAI API key found in .env" };
   }
-  if (!memoryKey) {
-    clearMemory();
-  }
-  let messages = chatMemory.getHistory(memoryKey);
+
+  // Handle memory management
+  if (!memoryKey) clearMemory();
+
+  // Initialize or get chat history
   chatMemory.initializeWithSystem(memoryKey, systemPrompt ?? "");
-  if (messages.length === 0) {
-    messages.push({
-      role: "system",
-      content: systemPrompt ?? "",
-    });
-  }
-  messages.push({
-    role: "user",
-    content: userPrompt,
-  });
+  let messages = chatMemory.getHistory(memoryKey);
+
+  // Add user's prompt
+  messages.push({ role: "user", content: userPrompt });
+
   try {
+    // Make OpenAI API call
     const response = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: messages as any,
+      model: "gpt-4",
+      messages,
     });
-    const reply = response.choices[0].message.content;
-    messages.push({
-      role: "assistant",
-      content: reply || "No response from OpenAI.",
-    });
-    const cleanedReply = parseMarkdown(reply as string);
+
+    const reply =
+      response.choices[0].message.content ?? "No response from OpenAI.";
+    const cleanedReply = parseMarkdown(reply);
+
+    // Update chat memory
     chatMemory.addEntry(memoryKey, {
       role: "assistant",
       content: cleanedReply,
     });
+
     return { reply: cleanedReply, history: messages };
   } catch (error) {
-    console.error("Failed to fetch from OpenAI:", error);
-    throw error;
+    console.error("OpenAI API error:", error);
+    throw new Error("Failed to generate response");
   }
 }
 

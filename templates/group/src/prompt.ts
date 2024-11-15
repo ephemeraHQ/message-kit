@@ -9,7 +9,7 @@ export async function agent_prompt(senderAddress: string) {
   Hey! Sure let's do that.\n/game wordle
   
 2. When user wants to pay a specific token:
-  I'll help you pay 1 USDC to 0x123...\n/pay 1 {TOKE}} 0x123456789...
+  I'll help you pay 1 USDC to 0x123...\n/pay 1 [token] 0x123456789...
   *This will return a url to pay
 
 3. If the user wants to pay a eth domain:
