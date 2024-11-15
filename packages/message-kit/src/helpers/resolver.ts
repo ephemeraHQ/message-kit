@@ -90,7 +90,6 @@ export const getUserInfo = async (
     data.preferredName = data.ensDomain || data.converseUsername || "Friend";
     const keyToUse = data.address || data.ensDomain || data.converseUsername;
 
-    console.log("keyToUse", keyToUse);
     if (!keyToUse) {
       throw new Error(
         "Unable to determine a valid key for fetching user info.",

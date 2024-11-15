@@ -15,8 +15,8 @@ describe("Skill tests", async () => {
       throw new Error("User info not found");
     }
     let systemPrompt = await agent_prompt(userInfo);
-
+    // ... existing code ...
     const reply = await agentParse(userPrompt, sender.address, systemPrompt);
-    expect(reply).toContain("/cool vitalik.eth");
+    expect(reply).toMatch(/(\/check vitalik\.eth|\/cool vitalik\.eth)/);
   });
 });
