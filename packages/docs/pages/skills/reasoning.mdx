@@ -56,38 +56,37 @@ lets register fabriethsf.eth
 ### Handler implementation
 
 ```tsx
-async function handleEns(context: HandlerContext) {
-  const { skill, params } = context.message.content;
+const {
+  message: {
+    sender,
+    content: { skill, params },
+  },
+} = context;
+
+if (skill == "check") {
   const { domain } = params;
 
-  switch (skill) {
-    case "check":
-      const isAvailable = await checkDomain(domain);
-      return {
-        code: 200,
-        message: isAvailable
-          ? `Domain ${domain} is available!`
-          : `Domain ${domain} is already taken.`,
-      };
-
-    case "register":
-      const registration = await registerDomain(domain);
-      return {
-        code: 200,
-        message: `https://app.ens.domains/name/${domain}/register`,
-      };
-
-    case "info":
-      const info = await getDomainInfo(domain);
-      return {
-        code: 200,
-        message: `Domain info: ${JSON.stringify(info)}`,
-      };
+  const data = await getUserInfo(domain);
+  if (!data?.address) {
+    let message = `Looks like ${domain} is available! 
+    Here you can register it: ${ensUrl}${domain} or would you like to see 
+    some cool alternatives?`;
+    return {
+      code: 200,
+      message,
+    };
+  } else {
+    let message = `Looks like ${domain} is already registered!`;
+    await context.executeSkill("/cool " + domain);
+    return {
+      code: 404,
+      message,
+    };
   }
 }
 ```
 
-### Execution of the skills
+### Creating a response
 
 The agent processes the natural language input "lets register fabriethsf.eth" and breaks it down into sequential steps:
 
