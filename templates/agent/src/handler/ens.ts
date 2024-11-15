@@ -5,7 +5,7 @@ import { clearMemory } from "@xmtp/message-kit";
 
 export const frameUrl = "https://ens.steer.fun/";
 export const ensUrl = "https://app.ens.domains/";
-export const baseTxUrl = "https://base-tx-frame.vercel.app";
+export const txpayUrl = "https://txpay.vercel.app";
 
 export async function handleEns(
   context: HandlerContext,
@@ -128,13 +128,12 @@ export async function handleEns(
       };
     }
     const data = await getUserInfo(address);
-    let txUrl = `${baseTxUrl}/transaction/?transaction_type=send&buttonName=Tip%20${data?.ensDomain ?? ""}&amount=1&token=USDC&receiver=${
-      isAddress(address) ? address : data?.address
-    }`;
-    console.log(txUrl);
+
+    let sendUrl = `${txpayUrl}/?&amount=1&token=USDC&receiver=${address}`;
+
     return {
       code: 200,
-      message: txUrl,
+      message: sendUrl,
     };
   } else if (skill == "cool") {
     const { domain } = params;

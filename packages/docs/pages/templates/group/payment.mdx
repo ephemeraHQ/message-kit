@@ -60,7 +60,7 @@ export async function handler(context: HandlerContext) {
       content: { skill, params },
     },
   } = context;
-  const baseUrl = "https://txpay.vercel.app";
+  const txpayUrl = "https://txpay.vercel.app";
 
   if (skill === "pay") {
     const { amount: amountSend, token: tokenSend, username } = params;
@@ -77,7 +77,7 @@ export async function handler(context: HandlerContext) {
       };
     }
 
-    let sendUrl = `${baseUrl}/?&amount=${amountSend}&token=${tokenSend}&receiver=${senderInfo.address}`;
+    let sendUrl = `${txpayUrl}/?&amount=${amountSend}&token=${tokenSend}&receiver=${senderInfo.address}`;
     await context.send(`${sendUrl}`);
   }
 }

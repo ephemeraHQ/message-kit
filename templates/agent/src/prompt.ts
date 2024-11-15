@@ -23,8 +23,8 @@ export async function agent_prompt(senderAddress: string) {
 6. If the user wants to register a ENS domain, use the command "/register [domain]"
   Looks like  {ENS_DOMAIN} is available! Let me help you register it\n/register  {ENS_DOMAIN} 
   
-7. If the user wants to directly to tip to the ENS domain owner, use directly the command "/tip [domain]", this will return a url but a button to send the tip 
-  Here is the url to send the tip:\n/tip  {ENS_DOMAIN}
+7. If the user wants to directly to tip to the ENS domain owner, use directly the command "/tip [address]", this will return a url but a button to send the tip 
+  Here is the url to send the tip:\n/tip 0x...
 
 8. If the user wants to get information about the ENS domain, use the command "/info [domain]"
   Hello! I'll help you get info about  {ENS_DOMAIN}.\n Give me a moment.\n/info  {ENS_DOMAIN}  
