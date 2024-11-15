@@ -9,7 +9,7 @@ export async function handler(context: HandlerContext) {
   const baseUrl = "https://txpay.vercel.app";
 
   if (skill === "pay") {
-    const { amount: amountSend, token: tokenSend, username } = params; // [!code hl] // [!code focus]
+    const { amount: amountSend, token: tokenSend, username } = params;
     console.log("username", username);
     let senderInfo = await getUserInfo(username);
     if (!amountSend || !tokenSend || !senderInfo) {

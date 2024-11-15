@@ -161,11 +161,10 @@ export default defineConfig({
         {
           text: "Agent",
           link: "/templates/agent",
-          collapsed: true,
           items: [
             {
-              text: "Handlers",
-              link: "/templates/agent/handlers",
+              text: "Ens",
+              link: "/templates/agent/ens",
             },
             {
               text: "Skills",
@@ -180,29 +179,24 @@ export default defineConfig({
         {
           text: "Group",
           link: "/templates/group",
-          collapsed: true,
           items: [
             {
-              text: "Handlers",
-              items: [
-                {
-                  text: "Tipping",
-                  link: "/templates/group/handlers/tipping",
-                },
-                {
-                  text: "Games",
-                  link: "/templates/group/handlers/games",
-                },
-                {
-                  text: "Transactions",
-                  link: "/templates/group/handlers/transactions",
-                },
-                {
-                  text: "Helpers",
-                  link: "/templates/group/handlers/helpers",
-                },
-              ],
+              text: "Tipping",
+              link: "/templates/group/tipping",
             },
+            {
+              text: "Games",
+              link: "/templates/group/games",
+            },
+            {
+              text: "Payments",
+              link: "/templates/group/payment",
+            },
+            {
+              text: "Helpers",
+              link: "/templates/group/helpers",
+            },
+
             {
               text: "Skills",
               link: "/templates/group/skills",
