@@ -75,7 +75,7 @@ export default defineConfig({
   ],
   editLink: {
     pattern:
-      "https://github.com/ephemeraHQ/message-kit/blob/main/packages/docs/:path",
+      "https://github.com/ephemeraHQ/message-kit/blob/main/packages/docs/pages/:path",
     text: "Suggest changes to this page",
   },
   sidebar: [

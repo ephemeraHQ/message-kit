@@ -92,6 +92,10 @@ async function handleEns(context: HandlerContext) {
 The agent processes the natural language input "lets register fabriethsf.eth" and breaks it down into sequential steps:
 
 ```tsx
+import { run, HandlerContext } from "@xmtp/message-kit";
+import { textGeneration, processMultilineResponse } from "@xmtp/message-kit";
+import { agent_prompt } from "./prompt.js";
+
 run(async (context: HandlerContext) => {
   const {
     message: {
@@ -102,15 +106,10 @@ run(async (context: HandlerContext) => {
 
   try {
     let userPrompt = params?.prompt ?? text;
-    const userInfo = await getUserInfo(sender.address);
-    if (!userInfo) {
-      console.log("User info not found");
-      return;
-    }
     const { reply } = await textGeneration(
       sender.address,
       userPrompt,
-      await agent_prompt(userInfo),
+      await agent_prompt(sender.address),
     );
     await processMultilineResponse(sender.address, reply, context);
   } catch (error) {

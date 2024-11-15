@@ -83,7 +83,7 @@ export function PROMPT_SKILLS_AND_EXAMPLES(skills: SkillGroup[], tag: string) {
   return returnPrompt;
 }
 export async function defaultPromptTemplate(
-  fineTunning: string,
+  fineTuning: string,
   senderAddress: string,
   skills: SkillGroup[],
   tag: string,
@@ -99,7 +99,7 @@ export async function defaultPromptTemplate(
     PROMPT_SKILLS_AND_EXAMPLES(skills, tag);
 
   // Add the fine tuning to the system prompt
-  systemPrompt += fineTunning;
+  systemPrompt += fineTuning;
   // Replace the variables in the system prompt
   systemPrompt = PROMPT_REPLACE_VARIABLES(
     systemPrompt,
