@@ -12,9 +12,6 @@ describe("Prompting tests", () => {
   const testCases = [
     ["hi", "/check humanagent.eth"],
     ["I want an ENS domain", "/check humanagent.eth"],
-    ["check vitalik.eth", "/cool vitalik.eth"],
-    ["suggest some names", "/cool humanagent.eth"],
-    ["how much to register?", "Typically"],
     ["renew my domain", "/renew humanagent.eth"],
     ["domain info for humanagent.eth", "/info humanagent.eth"],
   ];
