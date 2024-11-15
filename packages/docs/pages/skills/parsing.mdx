@@ -1,0 +1,68 @@
+# Parsing
+
+Parsing enables your agent to understand human-like requests and translate them into precise skill with defined parameters that can be used by the handler.
+
+## Overview
+
+For parsing to be effective we need to combine the following skills:
+
+- [Definition](/skills/definition): Define skills, parameters and handlers.
+
+## Example
+
+Imagine your users chatting with your agent as naturally as texting a friend.
+
+:::steps
+
+### User request
+
+```bash
+/check vitalik.eth
+```
+
+### Parsing
+
+This is the parameters extracted from the user request:
+
+```json
+{
+  "skill": "check",
+  "params": {
+    "domain": "vitalik.eth"
+  }
+}
+```
+
+### Handler
+
+```tsx
+export async function handleEns(
+  context: HandlerContext,
+): Promise<SkillResponse | undefined> {
+  const {
+    message: {
+      sender,
+      content: { skill, params },
+    },
+  } = context;
+
+  if (skill == "check") {
+    const { domain } = params;
+    const data = await getUserInfo(domain);
+    if (!data?.address) {
+      let message = `Looks like ${domain} is available! Here you can register it: ${ensUrl}${domain} or would you like to see some cool alternatives?`;
+      return {
+        code: 200,
+        message,
+      };
+    } else {
+      let message = `Looks like ${domain} is already registered!`;
+      await context.executeSkill("/cool " + domain);
+      return {
+        code: 404,
+        message,
+      };
+    }
+  }
+}
+```

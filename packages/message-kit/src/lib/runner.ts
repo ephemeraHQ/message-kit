@@ -8,6 +8,7 @@ import { streamMessages } from "./streams.js";
 import { findSkill, findSkillGroup } from "./skills.js";
 import { Conversation } from "@xmtp/node-sdk";
 import { Conversation as V2Conversation } from "@xmtp/xmtp-js";
+import { awaitedHandlers } from "./handlerContext.js";
 
 export async function run(handler: Handler, config?: Config) {
   const { client, v2client } = await xmtpClient(config);
@@ -49,8 +50,24 @@ export async function run(handler: Handler, config?: Config) {
             console.warn("No context found", message);
           return;
         }
+
+        //Await response
+        const awaitedHandler = awaitedHandlers.get(
+          context.getConversationKey(),
+        );
+        if (awaitedHandler) {
+          const messageText =
+            context.message.content.text || context.message.content.reply || "";
+          const isValidResponse = await awaitedHandler(messageText);
+          // Only remove the handler if we got a valid response
+          if (isValidResponse) {
+            awaitedHandlers.delete(context.getConversationKey());
+          }
+          return;
+        }
+
         // Check if the message content triggers a skill
-        const { isMessageValid, customHandler } = skillTriggered(context);
+        const { isMessageValid, customHandler } = filterMessage(context);
         if (isMessageValid && customHandler) await customHandler(context);
         else if (isMessageValid) await handler(context);
       } catch (e) {
@@ -59,7 +76,7 @@ export async function run(handler: Handler, config?: Config) {
     }
   };
 
-  const skillTriggered = (
+  const filterMessage = (
     context: HandlerContext,
   ): {
     isMessageValid: boolean;

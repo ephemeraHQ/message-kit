@@ -60,8 +60,8 @@ export async function xmtpClient(
   });
 
   const client = await Client.create(user.account.address, finalConfig);
-  if (!config?.hideInitLogMessage)
-    logInitMessage(client, config, key, isRandom);
+
+  logInitMessage(client, config, isRandom ? key : undefined);
 
   if (!client.isRegistered) {
     const signature = await getSignature(client, user);
@@ -102,6 +102,7 @@ export const getSignature = async (client: Client, user: User) => {
 
 function getKey(customKey?: string): { key: string; isRandom: boolean } {
   let key = customKey ?? process?.env?.KEY;
+
   if (key !== undefined && !key.startsWith("0x")) key = "0x" + key;
   if (
     key == undefined ||

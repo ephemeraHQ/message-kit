@@ -1,33 +1,21 @@
 # Messages
 
-## Listening
+## Receiving
 
-When you start the app, you can listen for incoming messages in the conversation using the `run` function.
+When you start the app, you can listen for incoming messages using the `run` function.
 
 ```tsx [src/index.ts]
 run(async (context: HandlerContext) => {
-  // Get the message and the address from the sender
-  const { content, sender } = context.message;
-
-  // To reply, just call `reply` on the HandlerContext.
-  await context.send(`gm`);
+  const {
+    message: {
+      id,
+      content: { text, skill, params, attachment, reply, reference },
+      sender,
+      sent,
+      typeId,
+    },
+  };
 });
-```
-
-## Message object
-
-The `message` object contains the following
-
-```tsx
-const {
-  message: {
-    id,
-    content: { text, skill, params, attachment, reply, reference },
-    sender,
-    sent,
-    typeId,
-  },
-};
 ```
 
 - `id`: string, // The id of the message
@@ -42,17 +30,23 @@ const {
 - `sent`: Date, // The timestamp of the message
 - `typeId`: string, // The type of the message (text, reply)
 
-To learn more about the types, see [types](/concepts/messages/text)
+> To learn more about the types, see [types](/concepts/types)
 
-## Send messages
+## Sending
 
 App messages are messages that are sent when you send a reply to a message and are highlighted differently by the apps.
 
 ```tsx
 // Send a message
-context.send("Your message.");
+await context.send("Your message.");
 // Reply to the last message
-context.reply("Your message.");
+await context.reply("Your message.");
 // Send a message to specific users
-context.sendTo("Your message.", ["address1", "address2"]);
+await context.sendTo("Your message.", ["address1", "address2"]);
+// Await a response
+const answer = await context.awaitResponse("Please answer with yes or no", [
+  "yes",
+  "no",
+]);
+console.log(`You answered: ${answer}`);
 ```

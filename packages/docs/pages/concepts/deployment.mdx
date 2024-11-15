@@ -30,7 +30,7 @@ Here’s how to easily deploy this app:
 Add the variable to the env editor in Railway.
 
 ```bash [.env]
-KEY= # the private key of the bot wallet
+KEY= # the private key of the agent wallet
 REDIS_CONNECTION_STRING= # the connection string for the Redis database
 ```
 
@@ -45,13 +45,13 @@ REDIS_CONNECTION_STRING= # the connection string for the Redis database
 5. **Cache**:
 
 :::warning
-Installing a persistent cache is crucial for maintaining bot functionality and efficiency
+Installing a persistent cache is crucial for maintaining agent functionality and efficiency
 :::
 
 - Preserves conversation history between deployments
 - Prevents creation of new installations on each restart
 - Ensures faster group additions by retaining past installations
-- Avoids the 256-installation limit, preventing bot failure
+- Avoids the 256-installation limit, preventing agent failure
 - Reduces the risk of missing messages during redeployment
 
 To implement:
@@ -62,4 +62,4 @@ To implement:
 
 ![](/img/railway/volume.png)
 
-This approach creates a continuous installation, preventing message loss and maintaining bot functionality across redeployments.
+This approach creates a continuous installation, preventing message loss and maintaining agent functionality across redeployments.

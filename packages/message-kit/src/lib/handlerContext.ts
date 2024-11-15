@@ -1,12 +1,11 @@
 import { Conversation, DecodedMessage, Client } from "@xmtp/node-sdk";
 import {
   DecodedMessage as DecodedMessageV2,
-  Client as ClientV2,
-  Conversation as ConversationV2,
+  Client as V2Client,
+  Conversation as V2Conversation,
 } from "@xmtp/xmtp-js";
 import { GroupMember } from "@xmtp/node-sdk";
 import fs from "fs/promises";
-import {} from "../helpers/utils";
 import type { Reaction } from "@xmtp/content-type-reaction";
 import { ContentTypeText } from "@xmtp/content-type-text";
 import { logMessage } from "../helpers/utils.js";
@@ -25,25 +24,32 @@ import {
 } from "@xmtp/content-type-remote-attachment";
 import { ContentTypeReaction } from "@xmtp/content-type-reaction";
 
+export const awaitedHandlers = new Map<
+  string,
+  (text: string) => Promise<boolean | undefined>
+>();
+
 export class HandlerContext {
-  refConv: Conversation | ConversationV2 | null = null;
+  refConv: Conversation | V2Conversation | null = null;
 
   message!: MessageAbstracted;
   group!: GroupAbstracted;
-  conversation!: ConversationV2;
+  conversation!: V2Conversation;
   client!: Client;
   version!: "v2" | "v3";
-  v2client!: ClientV2;
+  v2client!: V2Client;
   skills?: SkillGroup[];
   members?: AbstractedMember[];
   admins?: string[];
   superAdmins?: string[];
   sender?: AbstractedMember;
+  awaitingResponse: boolean = false;
+  awaitedHandler: ((text: string) => Promise<boolean | void>) | null = null;
   getMessageById!: (id: string) => DecodedMessage | null;
   executeSkill!: (text: string) => Promise<SkillResponse | undefined>;
   private constructor(
-    conversation: Conversation | ConversationV2,
-    { client, v2client }: { client: Client; v2client: ClientV2 },
+    conversation: Conversation | V2Conversation,
+    { client, v2client }: { client: Client; v2client: V2Client },
   ) {
     this.client = client;
     this.v2client = v2client;
@@ -69,9 +75,9 @@ export class HandlerContext {
     }
   }
   static async create(
-    conversation: Conversation | ConversationV2,
+    conversation: Conversation | V2Conversation,
     message: DecodedMessage | DecodedMessageV2 | null,
-    { client, v2client }: { client: Client; v2client: ClientV2 },
+    { client, v2client }: { client: Client; v2client: V2Client },
     skills?: SkillGroup[],
     version?: "v2" | "v3",
   ): Promise<HandlerContext | null> {
@@ -173,6 +179,46 @@ export class HandlerContext {
       return context;
     }
     return null;
+  } // Add properties to track awaited responses
+
+  async awaitResponse(
+    prompt: string,
+    validResponses: string[],
+  ): Promise<string> {
+    if (!validResponses || validResponses.length === 0) {
+      throw new Error("Valid responses array must not be empty");
+    }
+
+    await this.send(`${prompt}`);
+
+    return new Promise<string>((resolve, reject) => {
+      // Create the handler function
+      const handler = async (text: string) => {
+        if (!text) return false;
+
+        const response = text.trim().toLowerCase();
+
+        if (validResponses.map((r) => r.toLowerCase()).includes(response)) {
+          this.resetAwaitedState();
+          resolve(response);
+          return true;
+        }
+
+        await this.send(
+          `Invalid response "${text}". Please respond with one of: ${validResponses.join(", ")}`,
+        );
+        return false;
+      };
+
+      // Add the handler to the Map
+      awaitedHandlers.set(this.getConversationKey(), handler);
+    });
+  }
+  // Method to reset the awaited state
+  resetAwaitedState() {
+    this.awaitingResponse = false;
+    this.awaitedHandler = null;
+    awaitedHandlers.delete(this.getConversationKey());
   }
 
   async getV2MessageById(reference: string): Promise<DecodedMessageV2 | null> {
@@ -257,7 +303,7 @@ export class HandlerContext {
     const conversation = this.refConv || this.conversation || this.group;
 
     if (conversation) {
-      if (this.isConversationV2(conversation)) {
+      if (this.isV2Conversation(conversation)) {
         await conversation.send(reply, { contentType: ContentTypeReply });
         logMessage("sent: " + reply.content);
       } else {
@@ -274,11 +320,17 @@ export class HandlerContext {
       logMessage("sent: " + message);
     }
   }
-
-  isConversationV2(
-    conversation: Conversation | ConversationV2 | null,
-  ): conversation is ConversationV2 {
-    return (conversation as ConversationV2)?.topic !== undefined;
+  getConversationKey() {
+    const conversation = this.refConv || this.conversation || this.group;
+    return (
+      (conversation as V2Conversation)?.topic ||
+      (conversation as Conversation)?.id
+    );
+  }
+  isV2Conversation(
+    conversation: Conversation | V2Conversation | null,
+  ): conversation is V2Conversation {
+    return (conversation as V2Conversation)?.topic !== undefined;
   }
 
   async react(emoji: string) {
@@ -290,7 +342,7 @@ export class HandlerContext {
     };
     const conversation = this.refConv || this.conversation || this.group;
     if (conversation) {
-      if (this.isConversationV2(conversation)) {
+      if (this.isV2Conversation(conversation)) {
         await conversation.send(reaction, { contentType: ContentTypeReaction });
       } else if (conversation instanceof Conversation) {
         await conversation.send(reaction, ContentTypeReaction);
@@ -312,7 +364,6 @@ export class HandlerContext {
   }
   async sendTo(message: string, receivers: string[]) {
     const conversations = await this.v2client.conversations.list();
-    //Sends a 1 to 1 to multiple users
     for (const receiver of receivers) {
       if (this.v2client.address.toLowerCase() === receiver.toLowerCase()) {
         continue;

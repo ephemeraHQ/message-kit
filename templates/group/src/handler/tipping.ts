@@ -5,14 +5,10 @@ import {
 } from "@xmtp/message-kit";
 import { getUserInfo } from "@xmtp/message-kit";
 
-export async function handler(context: HandlerContext): Promise<SkillResponse> {
+export async function handler(context: HandlerContext) {
   const {
-    members,
     message: {
       content: {
-        reference,
-        reply,
-        text,
         skill,
         params: { amount, username },
       },
@@ -28,10 +24,6 @@ export async function handler(context: HandlerContext): Promise<SkillResponse> {
   }
   if (!sender || receivers.length === 0 || amount === 0) {
     context.reply("Sender or receiver or amount not found.");
-    return {
-      code: 400,
-      message: "Sender or receiver or amount not found.",
-    };
   }
   const receiverAddresses = receivers.map((receiver) => receiver.address);
 
@@ -45,8 +37,4 @@ export async function handler(context: HandlerContext): Promise<SkillResponse> {
     `You sent ${amount * receiverAddresses.length} tokens in total.`,
     [sender.address],
   );
-  return {
-    code: 200,
-    message: "Success",
-  };
 }

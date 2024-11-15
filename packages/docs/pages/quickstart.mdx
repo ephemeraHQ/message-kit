@@ -1,6 +1,6 @@
 # Installation
 
-MessageKit is a powerful framework that simplifies the process of building messaging bots on [xmtp](https://docs.xmtp.org). Here’s a step-by-step guide to get you started.
+MessageKit is a powerful framework that simplifies the process of building messaging agents on [xmtp](https://docs.xmtp.org). Here’s a step-by-step guide to get you started.
 
 ::::steps
 
@@ -19,11 +19,11 @@ yarn create message-kit
 ```
 
 ```bash [npx]
-npx create-message-kit@latest
+npx create-message-kit
 ```
 
 ```bash [npm]
-npm init message-kit@latest
+npm init message-kit
 ```
 
 :::
@@ -44,16 +44,12 @@ run(async (context: HandlerContext) => {
 });
 ```
 
-- [`gm`](./templates/gm): Simple gm bot example.
-- [`group`](./templates/group): Group chat bot example with skills and examples.
-- [`agent`](./templates/agent): ENS agent for registering and checking domains
-
 ### Variables
 
 Create a `.env` file in the root of your project
 
 ```bash [cmd]
-KEY= # the private key of the bot wallet
+KEY= # the private key of the agent wallet
 ```
 
 ### Run the bot
@@ -62,18 +58,18 @@ Follow the steps below to run the bot
 
 :::code-group
 
-```bash [yarn]
-# Install the dependencies
-yarn install
-# Run the app
-yarn dev
-```
-
 ```bash [bun]
 # Install the dependencies
 bun install
 # run the app
 bun dev
+```
+
+```bash [yarn]
+# Install the dependencies
+yarn install
+# Run the app
+yarn dev
 ```
 
 ```bash [npm]
@@ -85,15 +81,14 @@ npm run dev
 
 :::
 
+### Download Converse
+
+- IOS & Mac: https://testflight.apple.com/join/Q27zugWe
+- Android: https://play.google.com/store/apps/details?id=com.converse.prod
+
 ### Test
 
-Send a message to the app, and it will reply `gm`!
-
-### Learn more
-
-- [Directory](/directory): List of apps built with MessageKit.
-- [Quickstart](/quickstarts): Quickstart guide to build your first app.
-- [Skills](/skills): Learn how to build skills for your app.
+Send a message to the app from [Converse](https://converse.xyz/), and it will reply `gm`!
 
 ::::
 

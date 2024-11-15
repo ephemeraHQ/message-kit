@@ -68,10 +68,10 @@ export default defineConfig({
   topNav: [
     {
       text: "Converse app",
-      link: "https://converse.xyz",
+      link: "https://testflight.apple.com/join/Q27zugWe",
     },
     { text: "XMTP", link: "https://docs.xmtp.org/" },
-    { text: "1.1.7-beta.19", link: "/changelog" },
+    { text: "1.1.8", link: "/changelog" },
   ],
   editLink: {
     pattern:
@@ -80,29 +80,19 @@ export default defineConfig({
   },
   sidebar: [
     {
-      text: "Installation",
-      link: "/installation",
+      text: "Quickstart",
+      link: "/quickstart",
     },
     {
       text: "Directory",
       link: "/directory",
     },
     {
-      text: "Quickstarts",
-      link: "/quickstarts",
+      text: "Examples",
+      link: "/examples",
     },
-    {
-      text: "Deployment",
-      link: "/deployment",
-    },
-    {
-      text: "Guidelines",
-      link: "/guidelines",
-    },
-
     {
       text: "Concepts",
-
       items: [
         {
           text: "Structure",
@@ -111,43 +101,52 @@ export default defineConfig({
         {
           text: "Messages",
           link: "/concepts/messages",
-          collapsed: undefined,
-          items: [
-            { text: "Text", link: "/concepts/messages/text" },
-            { text: "Reply", link: "/concepts/messages/reply" },
-            { text: "Skill", link: "/concepts/messages/skill" },
-            { text: "Attachment", link: "/concepts/messages/attachment" },
-          ],
+        },
+        {
+          text: "Types",
+          link: "/concepts/types",
         },
         {
           text: "Groups",
           link: "/concepts/groups",
         },
         {
-          text: "AI Skills",
-          link: "/skills",
-          items: [
-            {
-              text: "Structure",
-              link: "/skills/structure",
-            },
-            {
-              text: "Natural Language",
-              link: "/skills/natural",
-            },
-            {
-              text: "Processing",
-              link: "/skills/processing",
-            },
-            {
-              text: "Fine Tuning",
-              link: "/skills/fine-tuning",
-            },
-            {
-              text: "Reasoning",
-              link: "/skills/reasoning",
-            },
-          ],
+          text: "Guidelines",
+          link: "/concepts/guidelines",
+        },
+        {
+          text: "Deployment",
+          link: "/concepts/deployment",
+        },
+      ],
+    },
+    {
+      text: "AI Skills",
+      link: "/skills",
+      items: [
+        {
+          text: "Reasoning",
+          link: "/skills/reasoning",
+        },
+        {
+          text: "Fine Tuning",
+          link: "/skills/fine-tuning",
+        },
+        {
+          text: "Prompting",
+          link: "/skills/prompting",
+        },
+        {
+          text: "Processing",
+          link: "/skills/processing",
+        },
+        {
+          text: "Parsing",
+          link: "/skills/parsing",
+        },
+        {
+          text: "Definition",
+          link: "/skills/definition",
         },
       ],
     },
@@ -166,12 +165,7 @@ export default defineConfig({
           items: [
             {
               text: "Handlers",
-              items: [
-                {
-                  text: "ENS",
-                  link: "/templates/agent/handlers/ens",
-                },
-              ],
+              link: "/templates/agent/handlers",
             },
             {
               text: "Skills",
@@ -180,10 +174,6 @@ export default defineConfig({
             {
               text: "Prompt",
               link: "/templates/agent/prompt",
-            },
-            {
-              text: "Index",
-              link: "/templates/agent",
             },
           ],
         },
@@ -220,10 +210,6 @@ export default defineConfig({
             {
               text: "Prompt",
               link: "/templates/group/prompt",
-            },
-            {
-              text: "Index",
-              link: "/templates/group",
             },
           ],
         },
@@ -272,7 +258,7 @@ export default defineConfig({
       ],
     },
     {
-      text: "Frames",
+      text: "Open Frames",
       link: "/frames",
       collapsed: true,
       items: [

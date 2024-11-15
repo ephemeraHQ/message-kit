@@ -29,11 +29,11 @@ yarn create message-kit
 ```
 
 ```bash [npx]
-npx create-message-kit@latest
+npx create-message-kit
 ```
 
 ```bash [npm]
-npm init message-kit@latest
+npm init message-kit
 ```
 
 :::
@@ -42,18 +42,18 @@ npm init message-kit@latest
   <CustomHomePage.TileGrid>
 
     <CustomHomePage.Tile
+      href="/quickstart"
+      title="Quickstart"
+      description="Get you started with this step-by-step guide"
+      icon="⚡️"
+    />
+
+    <CustomHomePage.Tile
       href="/directory"
       title="Directory"
       description="Most popular Apps built with MessageKit"
       icon="💬"
     />
-    <CustomHomePage.Tile
-      href="/installation"
-      title="Get started"
-      description="Get you started with this step-by-step guide"
-      icon="⚡️"
-    />
-
     <CustomHomePage.Tile
       href="/templates/agent"
       title="ENS Agent"
@@ -74,21 +74,9 @@ npm init message-kit@latest
     />
 
     <CustomHomePage.Tile
-      href="/concepts/structure"
-      title="Concepts"
-      description="Learn about key MessageKit concepts"
-      icon="📚"
-    />
-    <CustomHomePage.Tile
-      href="/deployment"
-      title="Deploy"
-      description="Deploy your bot with this step-by-step guide"
-      icon="🤖"
-    />
-    <CustomHomePage.Tile
       href="/middlewares"
       title="Middlewares"
-      description="Copy paste middlewares to add functionality to your bot"
+      description="Add extra functionality to your bot"
       icon="🔧"
     />
 

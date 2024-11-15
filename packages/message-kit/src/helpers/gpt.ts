@@ -3,6 +3,7 @@ import type { SkillGroup } from "./types";
 import OpenAI from "openai";
 import { findSkillGroupByTag } from "../lib/skills";
 import { HandlerContext } from "../lib/handlerContext";
+import { getUserInfo } from "./resolver";
 
 const isOpenAIConfigured = () => {
   return !!process.env.OPEN_AI_API_KEY;
@@ -77,7 +78,29 @@ export function PROMPT_SKILLS_AND_EXAMPLES(skills: SkillGroup[], tag: string) {
   returnPrompt += "\n";
   return returnPrompt;
 }
-
+export async function agentParse(
+  prompt: string,
+  senderAddress: string,
+  systemPrompt: string,
+) {
+  try {
+    let userPrompt = prompt;
+    const userInfo = await getUserInfo(senderAddress);
+    if (!userInfo) {
+      console.log("User info not found");
+      return;
+    }
+    const { reply } = await textGeneration(
+      senderAddress,
+      userPrompt,
+      systemPrompt,
+    );
+    return reply;
+  } catch (error) {
+    console.error("Error during OpenAI call:", error);
+    throw error;
+  }
+}
 export async function textGeneration(
   memoryKey: string,
   userPrompt: string,

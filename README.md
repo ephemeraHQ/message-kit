@@ -12,8 +12,8 @@ This is the official repository for [MessageKit](https://messagekit.ephemerahq.c
 
 ### Templates
 
-- [`gm`](/templates/gm): A simple bot that replies Gm
-- [`group`](/templates/group): Group chat bot example with skills and use-cases.
+- [`gm`](/templates/gm): A simple agent that replies Gm
+- [`group`](/templates/group): Group chat agent example with skills and use-cases.
 - [`agent`](/templates/agent): A simple, customizable, and powerful conversational agent
 
 ## Contributing

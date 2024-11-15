@@ -1,0 +1,83 @@
+# Payments
+
+This example demonstrates how to generate frame URLs for different types of payments.
+
+## Skills
+
+```bash [cmd]
+/pay 1 usdc to @bo
+```
+
+::::note
+:::details[Skill declaration]
+
+```tsx [src/skills.ts]
+import { handler as transaction } from "./handler/transaction.js";
+export const skills: SkillGroup[] = [
+  {
+    name: "Payments",
+    description: "Multipurpose payment frame built onbase.",
+    skills: [
+      {
+        skill: "/pay [amount] [token] [username]",
+        triggers: ["/pay"],
+        examples: ["/pay 10 vitalik.eth"],
+        description:
+          "Send a specified amount of a cryptocurrency to a destination address.",
+        handler: payment,
+        params: {
+          amount: {
+            default: 10,
+            type: "number",
+          },
+          token: {
+            default: "usdc",
+            type: "string",
+            values: ["eth", "dai", "usdc", "degen"], // Accepted tokens
+          },
+          username: {
+            default: "",
+            type: "username",
+          },
+        },
+      },
+    ],
+  },
+];
+```
+
+:::
+::::
+
+## Main code
+
+```tsx [src/handler/payment.ts]
+import { getUserInfo, HandlerContext } from "@xmtp/message-kit";
+
+export async function handler(context: HandlerContext) {
+  const {
+    message: {
+      content: { skill, params },
+    },
+  } = context;
+  const baseUrl = "https://txpay.vercel.app";
+
+  if (skill === "pay") {
+    const { amount: amountSend, token: tokenSend, username } = params; // [!code hl] // [!code focus]
+    let senderInfo = await getUserInfo(username);
+    if (!amountSend || !tokenSend || !senderInfo) {
+      context.reply(
+        "Missing required parameters. Please provide amount, token, and username.",
+      );
+      return {
+        code: 400,
+        message:
+          "Missing required parameters. Please provide amount, token, and username.",
+      };
+    }
+
+    let sendUrl = `${baseUrl}/?transaction_type=send&amount=${amountSend}&token=${tokenSend}&receiver=${senderInfo.address}`;
+    await context.send(`${sendUrl}`);
+  }
+}
+```

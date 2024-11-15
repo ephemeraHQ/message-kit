@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import { log, outro, text, select } from "@clack/prompts";
 import { default as fs } from "fs-extra";
 import { isCancel } from "@clack/prompts";
+import { detect } from "detect-package-manager";
 import pc from "picocolors";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -15,9 +16,14 @@ const packageJson = JSON.parse(
 );
 const version = packageJson.version;
 program
-  .name("byob")
+  .name("message-kit")
   .description("CLI to initialize projects")
   .action(async () => {
+    // Add Yarn 4 check at the start of the action
+    const pkgManager = await detectPackageManager();
+
+    log.info(pc.cyan(`pkgManager detected: ${pkgManager}`));
+
     log.info(pc.cyan(`Welcome to MessageKit CLI v${version}!`));
     const coolLogo = `
 ███╗   ███╗███████╗███████╗███████╗ █████╗  ██████╗ ███████╗██╗  ██╗██╗████████╗
@@ -32,7 +38,6 @@ Powered by XMTP`;
 
     const { templateType, displayName, destDir } = await gatherProjectInfo();
 
-    addPackagejson(destDir, displayName);
     // Create .gitignore
     createGitignore(destDir);
 
@@ -42,13 +47,11 @@ Powered by XMTP`;
     // Create tsconfig.json file
     createTsconfig(destDir);
 
-    // Replace package.json properties
-    updatePackageJson(destDir, displayName);
-
     // Wrap up
     log.success(`Project launched in ${pc.red(destDir)}!`);
 
-    const pkgManager = detectPackageManager();
+    // Add package.json
+    addPackagejson(destDir, displayName, pkgManager);
 
     // Create README.md file
     createReadme(destDir, templateType, displayName, pkgManager);
@@ -60,15 +63,40 @@ Powered by XMTP`;
   });
 
 program.parse(process.argv);
-async function addPackagejson(destDir, name) {
-  fs.copySync(
-    resolve(__dirname, "package.template.json"),
-    resolve(destDir, "package.json"),
-    {
-      name: name,
+
+async function addPackagejson(destDir, name, pkgManager) {
+  // Create package.json based on the template
+  let packageTemplate = {
+    name: name,
+    private: true,
+    type: "module",
+    scripts: {
+      build: "tsc",
+      dev: "tsc -w & sleep 1 && node --watch dist/index.js",
+      start: "node dist/index.js",
+      postinstall: "tsc",
     },
-  );
+    dependencies: {
+      "@xmtp/message-kit": "latest",
+    },
+    engines: {
+      node: ">=20",
+    },
+  };
+
+  if (pkgManager.startsWith("yarn")) {
+    packageTemplate.packageManager = `${pkgManager}`;
+    // Add .yarnrc.yml to disable PnP mode
+    fs.writeFileSync(
+      resolve(destDir, ".yarnrc.yml"),
+      "nodeLinker: node-modules\n",
+    );
+  }
+  fs.writeJsonSync(resolve(destDir, "package.json"), packageTemplate, {
+    spaces: 2,
+  });
 }
+
 async function gatherProjectInfo() {
   const templateOptions = [
     { value: "gm", label: "GM" },
@@ -114,24 +142,6 @@ async function gatherProjectInfo() {
   return { templateType, displayName, destDir, templateDir };
 }
 
-function updateDependenciesToLatest(pkgJson) {
-  const updateToLatest = (deps) => {
-    for (const key in deps) {
-      if (deps[key].startsWith("workspace:")) {
-        deps[key] = "latest";
-      }
-    }
-  };
-
-  if (pkgJson.dependencies) {
-    updateToLatest(pkgJson.dependencies);
-  }
-
-  if (pkgJson.devDependencies) {
-    updateToLatest(pkgJson.devDependencies);
-  }
-}
-
 function createTsconfig(destDir) {
   const tsconfigContent = {
     include: ["src/**/*"],
@@ -156,13 +166,6 @@ function createTsconfig(destDir) {
   fs.writeJsonSync(resolve(destDir, "tsconfig.json"), tsconfigContent, {
     spaces: 2,
   });
-}
-
-function updatePackageJson(destDir, name) {
-  const pkgJson = fs.readJsonSync(resolve(destDir, "package.json"));
-  pkgJson.name = name;
-  updateDependenciesToLatest(pkgJson);
-  fs.writeJsonSync(resolve(destDir, "package.json"), pkgJson, { spaces: 2 });
 }
 
 function logNextSteps(name) {
@@ -199,14 +202,24 @@ yarn-error.log*
   fs.writeFileSync(resolve(destDir, ".gitignore"), gitignoreContent.trim());
 }
 
-function detectPackageManager() {
-  const userAgent = process.env.npm_config_user_agent;
-  if (!userAgent) return "npm";
-  if (userAgent.includes("bun")) return "bun";
-  if (userAgent.includes("yarn")) return "yarn";
-  if (userAgent.includes("pnpm")) return "pnpm";
-  if (userAgent.includes("npm")) return "npm";
-  return "npm";
+async function detectPackageManager() {
+  try {
+    const pkgManager = await detect();
+    const userAgent = process.env.npm_config_user_agent;
+    let version = "";
+
+    if (userAgent && pkgManager === "yarn") {
+      const parts = userAgent.split(" ")[0]?.split("/");
+      if (parts && parts.length > 1) {
+        version = `@${parts[1]}`;
+      }
+    }
+
+    return pkgManager + version;
+  } catch (error) {
+    // Fallback to npm if detection fails
+    return "npm";
+  }
 }
 
 function kebabcase(str) {

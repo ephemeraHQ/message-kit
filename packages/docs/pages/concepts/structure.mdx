@@ -16,72 +16,26 @@ app-project/              # Optional middleware files
 
 ## Main code
 
-The `index.ts` file is the entry point for your app. It should contain something like the following:
-
-```tsx [src/index.ts]
-import { run, HandlerContext } from "@xmtp/message-kit";
-
-run(async (context: HandlerContext) => {
-  // Get the message and the address from the sender
-  const { content, sender } = context.message;
-
-  // To reply, just call `reply` on the HandlerContext.
-  await context.send(`gm`);
-});
-```
-
-## Skills
-
-Each app can have a `skills.ts` file that contains the available skills for the users. The skills are defined as an array of objects with the following structure:
-
-```tsx [src/skills.ts]
-export const skills: SkillGroup[] = [
-  {
-    name: "General",
-    description: "General skills for the app.",
-    skills: [
-      {
-        skill: "/help",
-        triggers: ["/help"],
-        handler: undefined,
-        description: "Get help with the app.",
-      },
-    ],
-  },
-];
-```
-
-_To learn more on how to define skills, go to [skills](/skills/structure) section_
-
-## Environment variables
-
-Each app should have an `.env` file that contains the following:
-
-```bash [.env]
-KEY= # the private key of the bot wallet, like any normal wallet private key.
-```
-
-### Optional parameters
-
-MessageKit uses by default the ENV private key, but you can send messageKit a private key as a parameter.
+This is the main function that runs the listener.
 
 ```jsx
 run(
   async (context) => {
-    // Your code here
+    // Get the message and the address from the sender
+    const { content, sender } = context.message;
+
+    // To reply, just call `reply` on the HandlerContext.
+    await context.send(`gm`);
   },
   {
-    privateKey: "your_private_key", //optional. default from env
-    experimental: true, //optional. default is false
-    attachments: true, //optional. default is false
-    skills: skills, //optional
-    hideInitLogMessage: true, //optional. default is false
-    memberChange: true, //optional. default is false
+    /*optional parameters*/
   },
 );
 ```
 
-- `privateKey`: the private key of the bot wallet, like any normal wallet private key. //
+#### Optional parameters
+
+- `privateKey`: the private key of the agent wallet, like any normal wallet private key. //
 - `experimental`: experimental features like logging all group messages. Default is `false`.
 - `attachments`: to receive attachments. Default is `false`.
 - `client`: Optional parameters to pass to the XMTP client.
@@ -89,15 +43,13 @@ run(
 - `hideInitLogMessage`: hide the init log message with messagekit logo and stuff
 - `memberChange`: if true, member changes will be enabled, like adding members to the group
 
-### Exporting other clients
+## Clients
 
 Use this instead of XMTP sdks for compatibility with MessageKit
 
 ```tsx
 import { V2Client, V3Client } from "@xmtp/message-kit";
 ```
-
-### Importing other clients
 
 You can export other clients on run time by importing the `xmtpClient` function.
 
@@ -112,4 +64,4 @@ const { v2client: newClient } = await xmtpClient({
 );
 ```
 
-For example in the [Cron](/middlewares/cron) middleware, we use the `xmtpClient` function to create a new client and send messages to the users.
+> This is used in the [Cron](/middlewares/cron) middleware to send updates to the users.

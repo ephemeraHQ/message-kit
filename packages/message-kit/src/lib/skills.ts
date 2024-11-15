@@ -36,8 +36,11 @@ export async function executeSkill(
       const mockContext: HandlerContext = {
         ...context,
         conversation,
+        getConversationKey: context.getConversationKey.bind(context),
+        isV2Conversation: context.isV2Conversation.bind(context),
+        awaitResponse: context.awaitResponse.bind(context),
+        resetAwaitedState: context.resetAwaitedState.bind(context),
         getV2MessageById: context.getV2MessageById.bind(context),
-        isConversationV2: context.isConversationV2.bind(context),
         getCacheCreationDate: context.getCacheCreationDate.bind(context),
         message: {
           ...context.message,

@@ -9,7 +9,6 @@ run(async (context: HandlerContext) => {
       content: { text, params },
       sender,
     },
-    group,
   } = context;
 
   try {

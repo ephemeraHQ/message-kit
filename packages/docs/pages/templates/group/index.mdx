@@ -6,7 +6,7 @@ This is a reference app that will allow you to understand the potential and all 
 
 - [Tipping](/templates/group/handlers/tipping): Tip when a user replies with `/tip`.
 - [Games](/templates/group/handlers/games): Handle frame games like `/game slot`, `/game wordle`
-- [Transactions](/templates/group/handlers/transactions): Handle skills like `/send`, `/swap`, `/show`.
+- [Payments](/templates/group/handlers/payment): Handle skills like `/pay`
 - [Helpers](/templates/group/handlers/helpers): Handle group helpers like `/id`, `/help`
 
 ## Structure
@@ -18,7 +18,7 @@ group/
 │         └── helpers.ts        # Handles group others // [!code hl] // [!code focus]
 │         └── tipping.ts        # Handles tipping. // [!code hl] // [!code focus]
 │         └── game.ts           # Handles game frames. // [!code hl] // [!code focus]
-│         └── transactions.ts   # Handles the transaction frame. // [!code hl] // [!code focus]
+│         └── payment.ts        # Handles the payment frame. // [!code hl] // [!code focus]
 │   ├── index.ts                # Index file of the app. // [!code hl] // [!code focus]
 │   ├── skills.ts               # Skills // [!code hl] // [!code focus]
 │   ├── prompt.ts               # Prompt for the agent. // [!code hl] // [!code focus]
@@ -41,7 +41,7 @@ run(async (context: HandlerContext) => {
 
   if (!context.group) {
     context.send(
-      "This bot only works in group chats. Please add this bot to a group to continue",
+      "This agent only works in group chats. Please add this agent to a group to continue",
     );
     return;
   }
@@ -72,7 +72,7 @@ yarn dev
 Set up these variables in your app
 
 ```bash [cmd]
-KEY= # the private key of the bot wallet
+KEY= # the private key of the agent wallet
 OPEN_AI_API_KEY= # your openai api key
 ```
 
