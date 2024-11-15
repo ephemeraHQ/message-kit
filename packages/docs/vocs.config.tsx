@@ -73,6 +73,11 @@ export default defineConfig({
     { text: "XMTP", link: "https://docs.xmtp.org/" },
     { text: "1.1.8", link: "/changelog" },
   ],
+  editLink: {
+    pattern:
+      "https://github.com/ephemeraHQ/message-kit/blob/main/packages/docs/:path",
+    text: "Suggest changes to this page",
+  },
   sidebar: [
     {
       text: "Quickstart",
