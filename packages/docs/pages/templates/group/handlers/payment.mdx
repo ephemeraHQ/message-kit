@@ -6,8 +6,6 @@ This example demonstrates how to generate frame URLs for different types of tran
 
 ```bash [cmd]
 /send 1 eth to @bo
-/swap 1 DAI to USDC
-/show
 ```
 
 ::::note
@@ -43,36 +41,6 @@ export const skills: SkillGroup[] = [
           },
         },
       },
-      {
-        skill: "/swap [amount] [token_from] [token_to]",
-        triggers: ["@swap", "/swap"],
-        description: "Exchange one type of cryptocurrency for another.",
-        handler: transaction,
-        params: {
-          amount: {
-            default: 10,
-            type: "number",
-          },
-          token_from: {
-            default: "usdc",
-            type: "string",
-            values: ["eth", "dai", "usdc", "degen"], // Accepted tokens
-          },
-          token_to: {
-            default: "eth",
-            type: "string",
-            values: ["eth", "dai", "usdc", "degen"], // Accepted tokenss
-          },
-        },
-      },
-      {
-        skill: "/show",
-        triggers: ["/show"],
-        handler: transaction,
-        description: "Show the whole frame.",
-        params: {},
-      },
-    ],
   },
 ];
 ```
@@ -111,35 +79,6 @@ export const skills: SkillGroup[] = [
             type: "string",
           },
         },
-      },
-      {
-        skill: "/swap [amount] [token_from] [token_to]",
-        triggers: ["@swap", "/swap"],
-        description: "Exchange one type of cryptocurrency for another.",
-        handler: transaction,
-        params: {
-          amount: {
-            default: 10,
-            type: "number",
-          },
-          token_from: {
-            default: "usdc",
-            type: "string",
-            values: ["eth", "dai", "usdc", "degen"], // Accepted tokens
-          },
-          token_to: {
-            default: "eth",
-            type: "string",
-            values: ["eth", "dai", "usdc", "degen"], // Accepted tokenss
-          },
-        },
-      },
-      {
-        skill: "/show",
-        triggers: ["/show"],
-        handler: transaction,
-        description: "Show the whole frame.",
-        params: {},
       },
     ],
   },

@@ -16,12 +16,12 @@ describe("Skill extraction tests", () => {
     });
   });
 
-  // /send 1 to @bo
-  test("Extract values from /send skill", () => {
-    const inputContent = "/send 1 to @bo";
+  // /pay 1 to @bo
+  test("Extract values from /pay skill", () => {
+    const inputContent = "/pay 1 to @bo";
     const extractedValues = parseSkill(inputContent, skills);
     expect(extractedValues).toEqual({
-      skill: "send",
+      skill: "pay",
       params: {
         amount: 1,
         token: "usdc",
@@ -43,11 +43,11 @@ describe("Skill extraction tests", () => {
     });
   });
 
-  test("Extract values from /send skill", () => {
-    const inputContent = "/send 10 usdc to @bo";
+  test("Extract values from /pay skill", () => {
+    const inputContent = "/pay 10 usdc to @bo";
     const extractedValues = parseSkill(inputContent, skills);
     expect(extractedValues).toEqual({
-      skill: "send",
+      skill: "pay",
       params: {
         amount: 10,
         token: "usdc",
@@ -56,11 +56,11 @@ describe("Skill extraction tests", () => {
     });
   });
 
-  test("Extract values from /send skill", () => {
-    const inputContent = "/send 10 usdc to @fabri";
+  test("Extract values from /pay skill", () => {
+    const inputContent = "/pay 10 usdc to @fabri";
     const extractedValues = parseSkill(inputContent, skills);
     expect(extractedValues).toEqual({
-      skill: "send",
+      skill: "pay",
       params: {
         amount: 10,
         token: "usdc",
@@ -69,11 +69,11 @@ describe("Skill extraction tests", () => {
     });
   });
 
-  test("Extract values from /send  skill", () => {
-    const inputContent = "/send 10 usdc vitalik.eth";
+  test("Extract values from /pay  skill", () => {
+    const inputContent = "/pay 10 usdc vitalik.eth";
     const extractedValues = parseSkill(inputContent, skills);
     expect(extractedValues).toEqual({
-      skill: "send",
+      skill: "pay",
       params: {
         amount: 10,
         token: "usdc",
@@ -113,11 +113,11 @@ describe("Skill extraction tests", () => {
     });
   });
 
-  test("Extract values from /send 1 eth to @bo skill", () => {
-    const inputContent = "/send 1 eth to @bo";
+  test("Extract values from /pay 1 eth to @bo skill", () => {
+    const inputContent = "/pay 1 eth to @bo";
     const extractedValues = parseSkill(inputContent, skills);
     expect(extractedValues).toEqual({
-      skill: "send",
+      skill: "pay",
       params: {
         amount: 1,
         token: "eth",
