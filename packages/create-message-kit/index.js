@@ -79,6 +79,10 @@ async function addPackagejson(destDir, name, pkgManager) {
     dependencies: {
       "@xmtp/message-kit": "latest",
     },
+    devDependencies: {
+      "@types/node": "latest",
+      typescript: "latest",
+    },
     engines: {
       node: ">=20",
     },

@@ -56,6 +56,7 @@ export async function handleEns(
     }
     // Generate URL for the ens
     let url_ens = ensUrl + domain;
+    context.send(`${url_ens}`);
     return { code: 200, message: `${url_ens}` };
   } else if (skill == "info") {
     const { domain } = params;
