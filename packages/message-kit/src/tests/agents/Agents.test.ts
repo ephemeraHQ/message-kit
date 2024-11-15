@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { describe, test, expect } from "vitest";
-import { getUserInfo } from "@xmtp/message-kit";
-import { textGeneration } from "../../helpers/gpt";
+import { getUserInfo } from "../../helpers/resolver";
+import { agentParse } from "../../helpers/gpt";
 import { agent_prompt } from "./prompt_agent";
 
 describe("Skill tests", async () => {
@@ -12,14 +12,11 @@ describe("Skill tests", async () => {
     };
     const userInfo = await getUserInfo(sender.address);
     if (!userInfo) {
-      console.log("User info not found");
-      return;
+      throw new Error("User info not found");
     }
-    const { reply } = await textGeneration(
-      sender.address,
-      userPrompt,
-      await agent_prompt(userInfo),
-    );
+    let systemPrompt = await agent_prompt(userInfo);
+
+    const reply = await agentParse(userPrompt, sender.address, systemPrompt);
     expect(reply).toContain("/cool vitalik.eth");
   });
 });
