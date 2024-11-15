@@ -205,17 +205,21 @@ yarn-error.log*
 }
 async function detectPackageManager() {
   try {
-    // Check for npm_config_user_agent first
-    const userAgent = process.env.npm_config_user_agent;
-
     // Check if running through bun create
-    if (process.env.BUN_CREATE === "true") {
+    if (process.env.BUN_CREATE === "true" || process.env._?.includes("bun")) {
       return "bun";
     }
+
+    const userAgent = process.env.npm_config_user_agent;
 
     // Check if running through npm init
     if (userAgent?.startsWith("npm")) {
       return "npm";
+    }
+
+    // Check for Bun in process.argv
+    if (process.argv.some((arg) => arg.includes("bun"))) {
+      return "bun";
     }
 
     // Fallback to detect for other cases
@@ -231,7 +235,6 @@ async function detectPackageManager() {
 
     return pkgManager + version;
   } catch (error) {
-    // Fallback to npm if detection fails
     return "npm";
   }
 }
