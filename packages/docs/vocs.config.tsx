@@ -258,10 +258,6 @@ export default defineConfig({
       collapsed: true,
       items: [
         {
-          text: "Introduction",
-          link: "/frames",
-        },
-        {
           text: "Frameworks",
           items: [
             {
