@@ -88,11 +88,14 @@ export async function defaultPromptTemplate(
   skills: SkillGroup[],
   tag: string,
 ) {
+  // Fetch user information based on the sender's address
   const userInfo = await getUserInfo(senderAddress.toLowerCase());
   if (!userInfo) {
     console.log("User info not found");
     return;
   }
+
+  // Construct the initial system prompt with rules, user content, and skills/examples
   let systemPrompt =
     PROMPT_RULES +
     PROMPT_USER_CONTENT(userInfo) +
@@ -100,6 +103,7 @@ export async function defaultPromptTemplate(
 
   // Add the fine tuning to the system prompt
   systemPrompt += fineTuning;
+
   // Replace the variables in the system prompt
   systemPrompt = PROMPT_REPLACE_VARIABLES(
     systemPrompt,
@@ -107,6 +111,8 @@ export async function defaultPromptTemplate(
     userInfo,
     tag,
   );
+
+  // Return the final system prompt
   return systemPrompt;
 }
 export async function agentParse(
