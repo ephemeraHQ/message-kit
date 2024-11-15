@@ -29,25 +29,38 @@ lets register fabriethsf.eth
 ### Skills definition
 
 ```tsx
-[
+export const skills: SkillGroup[] = [
   {
-    name: "ENS Bot",
+    name: "Ens Domain Bot",
+    tag: "@ens",
+    description: "Register ENS domains.",
     skills: [
       {
-        skill: "/check [domain]",
-        handler: handleEns,
-        description: "Check if a domain is available.",
-      },
-      {
         skill: "/register [domain]",
+        triggers: ["/register"],
         handler: handleEns,
-        description: "Register a domain.",
+        description:
+          "Register a new ENS domain. Returns a URL to complete the registration process.",
+        examples: ["/register vitalik.eth"],
+        params: {
+          domain: {
+            type: "string",
+          },
+        },
       },
       {
-        skill: "/info [domain]",
+        skill: "/exists",
+        examples: ["/exists"],
         handler: handleEns,
-        description: "Get information about a domain.",
+        triggers: ["/exists"],
+        description: "Check if an address is onboarded.",
+        params: {
+          address: {
+            type: "address",
+          },
+        },
       },
+      /* More Skills */
     ],
   },
 ];

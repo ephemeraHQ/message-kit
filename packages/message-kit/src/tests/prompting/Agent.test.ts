@@ -10,10 +10,11 @@ const sender = {
 
 describe("Prompting tests", () => {
   const testCases = [
-    ["hi", "/check humanagent.eth"],
-    ["I want an ENS domain", "/check humanagent.eth"],
+    ["hi", "humanagent.eth"],
+    ["I want to check vitalik.eth", "/check vitalik.eth"],
     ["renew my domain", "/renew humanagent.eth"],
     ["domain info for humanagent.eth", "/info humanagent.eth"],
+    ["tip vitalik.eth", "/tip vitalik.eth"],
   ];
 
   test.each(testCases)(
