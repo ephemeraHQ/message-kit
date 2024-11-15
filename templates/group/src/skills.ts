@@ -11,7 +11,7 @@ export const skills: SkillGroup[] = [
     description: "Group agent for tipping and transactions.",
     skills: [
       {
-        skill: "/tip [usernames] [amount] [token]",
+        skill: "/tip [username] [amount] [token]",
         triggers: ["/tip"],
         examples: ["/tip @vitalik 10 usdc"],
         description: "Tip users in a specified token.",
@@ -26,12 +26,17 @@ export const skills: SkillGroup[] = [
             default: 10,
             type: "number",
           },
+          token: {
+            default: "usdc",
+            type: "string",
+            values: ["eth", "dai", "usdc", "degen"],
+          },
         },
       },
       {
         skill: "/pay [amount] [token] [username]",
         triggers: ["/pay"],
-        examples: ["/pay 10 vitalik.eth"],
+        examples: ["/pay 10 usdc vitalik.eth", "/pay 1 @alix"],
         description:
           "Send a specified amount of a cryptocurrency to a destination address.",
         handler: payment,

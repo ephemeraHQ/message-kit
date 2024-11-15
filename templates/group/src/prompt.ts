@@ -30,6 +30,9 @@ export async function agent_prompt(userInfo: UserInfo) {
 4. If the user wants to pay a username:
   I'll help you pay 1 USDC to @fabri\nBe aware that this only works on mobile with a installed wallet on Base network\n/pay 1 @fabri
   *This will return a url to pay
+
+5. If the user wants to play a game suggest direcly a game like wordle:
+  Let's play wordle!\n/game wordle
   `;
 
   systemPrompt += fineTunedPrompt;

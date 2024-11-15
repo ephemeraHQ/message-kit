@@ -87,11 +87,13 @@ async function addPackagejson(destDir, name, pkgManager) {
   if (pkgManager.startsWith("yarn")) {
     packageTemplate.packageManager = `${pkgManager}`;
     // Add .yarnrc.yml to disable PnP mode
-    fs.writeFileSync(
-      resolve(destDir, ".yarnrc.yml"),
-      "nodeLinker: node-modules\n",
-    );
   }
+
+  fs.writeFileSync(
+    resolve(destDir, ".yarnrc.yml"),
+    "nodeLinker: node-modules\n",
+  );
+
   fs.writeJsonSync(resolve(destDir, "package.json"), packageTemplate, {
     spaces: 2,
   });
