@@ -365,7 +365,6 @@ export class HandlerContext {
   }
   async sendTo(message: string, receivers: string[]) {
     const conversations = await this.v2client.conversations.list();
-    //Sends a 1 to 1 to multiple users
     for (const receiver of receivers) {
       if (this.v2client.address.toLowerCase() === receiver.toLowerCase()) {
         continue;
