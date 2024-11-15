@@ -53,6 +53,8 @@ jobs:
         run: corepack enable
       - name: Install dependencies
         run: yarn
+      - name: Install latest message-kit
+        run: yarn add @xmtp/message-kit@latest
       - name: Test
         env:
           OPEN_AI_API_KEY: ${{ secrets.OPEN_AI_API_KEY }}
