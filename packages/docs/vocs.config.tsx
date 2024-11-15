@@ -247,28 +247,9 @@ export default defineConfig({
           text: "Lowdb",
           link: "/middlewares/lowdb",
         },
-      ],
-    },
-    {
-      text: "Open Frames",
-      link: "/frames",
-      items: [
         {
-          text: "Frameworks",
-          items: [
-            {
-              text: "OnchainKit",
-              link: "/frames/frameworks/onchainkit",
-            },
-            {
-              text: "Frames.js",
-              link: "/frames/frameworks/framesjs",
-            },
-            {
-              text: "Frog",
-              link: "/frames/frameworks/frog",
-            },
-          ],
+          text: "Frames.js",
+          link: "/middlewares/framesjs",
         },
       ],
     },
