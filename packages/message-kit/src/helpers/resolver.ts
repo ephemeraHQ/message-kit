@@ -66,6 +66,8 @@ export const getUserInfo = async (
       preferredName: undefined,
     };
 
+    key = key?.toLowerCase();
+    clientAddress = clientAddress?.toLowerCase();
     // Determine user information based on provided key
     if (isAddress(clientAddress || "")) {
       data.address = clientAddress;
