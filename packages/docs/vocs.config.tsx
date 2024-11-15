@@ -212,6 +212,7 @@ export default defineConfig({
 
     {
       text: "Middlewares",
+      collapsed: true,
       items: [
         {
           text: "Cron",
@@ -274,19 +275,6 @@ export default defineConfig({
             {
               text: "Frog",
               link: "/frames/frameworks/frog",
-            },
-          ],
-        },
-        {
-          text: "Tutorials",
-          items: [
-            {
-              text: "Subscribe",
-              link: "/frames/tutorials/subscribe",
-            },
-            {
-              text: "Transactions",
-              link: "/frames/tutorials/transactions",
             },
           ],
         },
