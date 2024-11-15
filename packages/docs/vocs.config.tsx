@@ -68,7 +68,7 @@ export default defineConfig({
   topNav: [
     {
       text: "Converse app",
-      link: "https://converse.xyz",
+      link: "https://testflight.apple.com/join/Q27zugWe",
     },
     { text: "XMTP", link: "https://docs.xmtp.org/" },
     { text: "1.1.7-beta.32", link: "/changelog" },
