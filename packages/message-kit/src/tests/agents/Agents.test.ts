@@ -5,7 +5,7 @@ import { agentParse } from "../../helpers/gpt";
 import { agent_prompt } from "./prompt_agent";
 
 describe("Skill tests", async () => {
-  test("should handle game skill correctly", async () => {
+  test("should handle check skill correctly", async () => {
     let userPrompt = "check vitalik.eth";
     let sender = {
       address: "0x3a044b218BaE80E5b9E16609443A192129A67BeA",

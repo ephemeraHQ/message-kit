@@ -6,7 +6,6 @@ import {
 } from "@xmtp/xmtp-js";
 import { GroupMember } from "@xmtp/node-sdk";
 import fs from "fs/promises";
-import {} from "../helpers/utils";
 import type { Reaction } from "@xmtp/content-type-reaction";
 import { ContentTypeText } from "@xmtp/content-type-text";
 import { logMessage } from "../helpers/utils.js";
