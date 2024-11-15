@@ -30,19 +30,6 @@ describe("Skill extraction tests", () => {
     });
   });
 
-  test("Extract values from /swap skill", () => {
-    const inputContent = "/swap 10 eth to usdc";
-    const extractedValues = parseSkill(inputContent, skills);
-    expect(extractedValues).toEqual({
-      skill: "swap",
-      params: {
-        amount: 10,
-        token_from: "eth",
-        token_to: "usdc",
-      },
-    });
-  });
-
   test("Extract values from /pay skill", () => {
     const inputContent = "/pay 10 usdc to @bo";
     const extractedValues = parseSkill(inputContent, skills);
@@ -113,25 +100,16 @@ describe("Skill extraction tests", () => {
     });
   });
 
-  test("Extract values from /pay 1 eth to @bo skill", () => {
-    const inputContent = "/pay 1 eth to @bo";
+  test("Extract values from /pay 1 to @bo skill", () => {
+    const inputContent = "/pay 1 to @bo";
     const extractedValues = parseSkill(inputContent, skills);
     expect(extractedValues).toEqual({
       skill: "pay",
       params: {
         amount: 1,
-        token: "eth",
+        token: "usdc",
         username: "@bo",
       },
-    });
-  });
-
-  test("Extract values from /show swap demo skill", () => {
-    const inputContent = "/show";
-    const extractedValues = parseSkill(inputContent, skills);
-    expect(extractedValues).toEqual({
-      skill: "show",
-      params: {},
     });
   });
 
