@@ -71,7 +71,7 @@ export default defineConfig({
       link: "https://testflight.apple.com/join/Q27zugWe",
     },
     { text: "XMTP", link: "https://docs.xmtp.org/" },
-    { text: "1.1.8", link: "/changelog" },
+    { text: "1.1.8-beta.1", link: "/changelog" },
   ],
   editLink: {
     pattern:
@@ -129,7 +129,7 @@ export default defineConfig({
           link: "/skills/reasoning",
         },
         {
-          text: "Fine Tuning",
+          text: "Fine-Tuning",
           link: "/skills/fine-tuning",
         },
         {
@@ -212,7 +212,6 @@ export default defineConfig({
 
     {
       text: "Middlewares",
-      collapsed: true,
       items: [
         {
           text: "Cron",
@@ -255,7 +254,6 @@ export default defineConfig({
     {
       text: "Open Frames",
       link: "/frames",
-      collapsed: true,
       items: [
         {
           text: "Frameworks",

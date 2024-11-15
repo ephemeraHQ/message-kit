@@ -1,4 +1,4 @@
-# Fine Tunning
+# Fine-Tuning
 
 Fine tuning is a technique to improve the performance of a model on a specific task by giving example responses. This technique can be very effective.
 
@@ -52,17 +52,4 @@ We can add a section called `Example responses` which is used to fine tune the m
 1. Some times you will say something like: "Looks like vitalik.eth is registered! What about these cool alternatives?"
   But you forgot to add the command at the end of the message.
   You should have said something like: "Looks like vitalik.eth is registered! What about these cool alternatives?\n/cool vitalik.eth
-```
-
-### Replacing values
-
-We can replace the variables in the system prompt to give more context to the model.
-
-```tsx [prompt.ts]
-systemPrompt = PROMPT_REPLACE_VARIABLES(
-  systemPrompt, // The system prompt
-  userInfo?.address ?? "", // The user address
-  userInfo, // The user info
-  "@ens", // The skill name
-);
 ```
