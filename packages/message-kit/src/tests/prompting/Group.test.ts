@@ -11,9 +11,9 @@ const sender = {
 
 describe("Prompting tests", () => {
   const testCases = [
-    ["@bot lets play a game", "/game wordle"], // second parameter is just what we want to find
-    ["@bot lets tip @alix 10 usdc", "/tip @alix 10 usdc"],
-    ["@bot lets pay 10 usdc to vitalik.eth", "/pay 10 usdc vitalik.eth"],
+    ["@bot let's play a game", "/game wordle"], // second parameter is just what we want to find
+    ["@bot let's tip @alix 10 usdc", "/tip @alix 10 usdc"],
+    ["@bot let's pay 10 usdc to vitalik.eth", "/pay 10 usdc vitalik.eth"],
   ];
 
   test.each(testCases)(

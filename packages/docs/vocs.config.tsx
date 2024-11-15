@@ -247,14 +247,6 @@ export default defineConfig({
           text: "Lowdb",
           link: "/middlewares/lowdb",
         },
-        {
-          text: "Gpt",
-          link: "/middlewares/gpt",
-        },
-        {
-          text: "Resolver",
-          link: "/middlewares/resolver",
-        },
       ],
     },
     {
