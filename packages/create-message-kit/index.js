@@ -84,8 +84,8 @@ async function addPackagejson(destDir, name, pkgManager) {
     },
   };
 
-  if (pkgManager.startsWith("yarn")) {
-    packageTemplate.packageManager = `${pkgManager}`;
+  if (pkgManager.includes("yarn")) {
+    //packageTemplate.packageManager = `${pkgManager}`;
     // Add .yarnrc.yml to disable PnP mode
   }
 
@@ -203,11 +203,23 @@ yarn-error.log*
 
   fs.writeFileSync(resolve(destDir, ".gitignore"), gitignoreContent.trim());
 }
-
 async function detectPackageManager() {
   try {
-    const pkgManager = await detect();
+    // Check for npm_config_user_agent first
     const userAgent = process.env.npm_config_user_agent;
+
+    // Check if running through bun create
+    if (process.env.BUN_CREATE === "true") {
+      return "bun";
+    }
+
+    // Check if running through npm init
+    if (userAgent?.startsWith("npm")) {
+      return "npm";
+    }
+
+    // Fallback to detect for other cases
+    const pkgManager = await detect();
     let version = "";
 
     if (userAgent && pkgManager === "yarn") {
@@ -223,7 +235,6 @@ async function detectPackageManager() {
     return "npm";
   }
 }
-
 function kebabcase(str) {
   return str
     .replace(/([a-z])([A-Z])/g, "$1-$2")

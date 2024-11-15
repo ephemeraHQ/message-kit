@@ -37,7 +37,6 @@ export const skills: SkillGroup[] = [
     skills: [
       {
         skill: "/register [domain]",
-        triggers: ["/register"],
         handler: handleEns,
         description:
           "Register a new ENS domain. Returns a URL to complete the registration process.",
@@ -52,7 +51,6 @@ export const skills: SkillGroup[] = [
         skill: "/exists",
         examples: ["/exists"],
         handler: handleEns,
-        triggers: ["/exists"],
         description: "Check if an address is onboarded.",
         params: {
           address: {

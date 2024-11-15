@@ -9,7 +9,7 @@ export function findSkill(
   const trigger = text.split(" ")[0].toLowerCase();
   for (const skillGroup of skills) {
     const handler = skillGroup.skills.find((skill) => {
-      return skill?.triggers?.includes(trigger);
+      return skill.skill?.split(" ")[0].toLowerCase() === trigger;
     });
     if (handler !== undefined) return handler;
   }

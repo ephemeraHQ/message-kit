@@ -85,7 +85,6 @@ export interface SkillGroup {
 export interface skillAction {
   skill: string;
   handler: SkillHandler | undefined;
-  triggers: string[];
   adminOnly?: boolean;
   description: string;
   examples: string[];

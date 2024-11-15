@@ -12,7 +12,6 @@ export const skills: SkillGroup[] = [
     skills: [
       {
         skill: "/tip [usernames] [amount] [token]",
-        triggers: ["/tip"],
         examples: ["/tip @vitalik 10 usdc"],
         description: "Tip users in a specified token.",
         handler: tipping,
@@ -35,7 +34,6 @@ export const skills: SkillGroup[] = [
       },
       {
         skill: "/pay [amount] [token] [username]",
-        triggers: ["/pay"],
         examples: ["/pay 10 usdc vitalik.eth", "/pay 1 @alix"],
         description:
           "Send a specified amount of a cryptocurrency to a destination address.",
@@ -58,7 +56,6 @@ export const skills: SkillGroup[] = [
       },
       {
         skill: "/game [game]",
-        triggers: ["/game", "🔎", "🔍"],
         handler: games,
         description: "Play a game.",
         examples: ["/game wordle", "/game slot", "/game help"],
@@ -72,7 +69,6 @@ export const skills: SkillGroup[] = [
       },
       {
         skill: "/help",
-        triggers: ["/help"],
         examples: ["/help"],
         handler: help,
         description: "Get help with the bot.",
@@ -83,7 +79,6 @@ export const skills: SkillGroup[] = [
         adminOnly: true,
         examples: ["/id"],
         handler: help,
-        triggers: ["/id"],
         description: "Get the group ID.",
         params: {},
       },

@@ -22,7 +22,6 @@ const skills: SkillGroup[] = [
     skills: [
       {
         skill: "/help",
-        triggers: ["/help"],
         examples: ["/help"],
         handler: help,
         description: "Get help with the bot.",
@@ -32,7 +31,6 @@ const skills: SkillGroup[] = [
         skill: "/id",
         adminOnly: true,
         handler: help,
-        triggers: ["/id"],
         description: "Get the group ID.",
         params: {},
       },
