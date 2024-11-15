@@ -1,0 +1,64 @@
+# Gm bot
+
+This is the simplest example of a gm bot.
+
+```tsx [index.ts]
+import {
+  run,
+  HandlerContext,
+  textGeneration,
+  processMultilineResponse,
+} from "@xmtp/message-kit";
+import { agent_prompt } from "./prompt.js";
+
+run(async (context: HandlerContext) => {
+  const {
+    message: {
+      content: { text, params },
+      sender,
+    },
+  } = context;
+
+  try {
+    let userPrompt = params?.prompt ?? text;
+    const { reply } = await textGeneration(
+      sender.address,
+      userPrompt,
+      await agent_prompt(sender.address),
+    );
+    await processMultilineResponse(sender.address, reply, context);
+  } catch (error) {
+    console.error("Error during OpenAI call:", error);
+    await context.send("An error occurred while processing your request.");
+  }
+});
+```
+
+## Run the app
+
+Follow the steps below to run the app
+
+::::steps
+
+### Setup
+
+```bash [cmd]
+# Clone the repo
+git clone https://github.com/ephemeraHQ/message-kit
+# Go to the templates/gpt folder
+cd templates/gpt
+# Install the dependencies
+yarn install
+# Run the app
+yarn dev
+```
+
+### Variables
+
+Set up these variables in your app
+
+```bash [cmd]
+KEY= # the private key of the agent wallet
+```
+
+::::

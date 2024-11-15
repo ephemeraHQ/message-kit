@@ -4,7 +4,7 @@ import { default as fs } from "fs-extra";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-const templates = ["group", "gm", "agent"];
+const templates = ["group", "gpt", "agent"];
 const templateDir = resolve(__dirname, "templates");
 async function copyTemplates() {
   try {

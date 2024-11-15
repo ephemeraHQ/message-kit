@@ -4699,9 +4699,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"gm@workspace:templates/gm":
+"gpt@workspace:templates/gpt":
   version: 0.0.0-use.local
-  resolution: "gm@workspace:templates/gm"
+  resolution: "gpt@workspace:templates/gpt"
   dependencies:
     "@xmtp/message-kit": "workspace:*"
   languageName: unknown

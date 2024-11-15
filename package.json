@@ -17,7 +17,7 @@
     "dev:agent": "cd templates/agent && yarn dev",
     "dev:dead": "cd templates/dead && yarn dev",
     "dev:docs": "cd packages/docs && yarn dev",
-    "dev:gm": "cd templates/gm && yarn dev",
+    "dev:gpt": "cd templates/gpt && yarn dev",
     "dev:group": "cd templates/group && yarn dev",
     "dev:split": "cd templates/split && yarn dev",
     "format": "turbo run format",

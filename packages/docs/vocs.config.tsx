@@ -155,8 +155,14 @@ export default defineConfig({
       text: "Use cases",
       items: [
         {
-          text: "Gm",
-          link: "/templates/gm",
+          text: "Gpt",
+          link: "/templates/gpt",
+          items: [
+            {
+              text: "Prompt",
+              link: "/templates/gpt/prompt",
+            },
+          ],
         },
         {
           text: "Agent",
