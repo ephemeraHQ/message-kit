@@ -43,6 +43,5 @@ export async function agent_prompt(userInfo: UserInfo) {
     userInfo,
     "@bot",
   );
-  console.log(systemPrompt);
   return systemPrompt;
 }

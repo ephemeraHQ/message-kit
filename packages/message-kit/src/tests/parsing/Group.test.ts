@@ -3,7 +3,7 @@ import { describe, test, expect } from "vitest";
 import { parseSkill } from "../../lib/skills";
 import { skills as skillsGroup } from "../../../../../templates/group/src/skills";
 
-describe("Parsing tests", () => {
+describe("Parsing extraction tests", () => {
   test.each([
     [
       "/tip @vitalik 10 usdc",
