@@ -24,7 +24,8 @@ describe("Prompting tests", () => {
     async (userPrompt, expectedPattern) => {
       const userInfo = await getUserInfo(sender.address);
       if (!userInfo) throw new Error("User info not found");
-      const systemPrompt = await agent_prompt(userInfo);
+      const systemPrompt = await agent_prompt(sender.address);
+      if (!systemPrompt) throw new Error("System prompt not found");
       const reply = await agentParse(userPrompt, sender.address, systemPrompt);
       console.log(reply);
       expect(reply).toContain(expectedPattern); // This will pass if "/game wordle" appears anywhere in the reply

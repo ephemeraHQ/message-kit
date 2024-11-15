@@ -1,20 +1,8 @@
 import { skills } from "./skills.js";
-import {
-  UserInfo,
-  PROMPT_USER_CONTENT,
-  PROMPT_RULES,
-  PROMPT_SKILLS_AND_EXAMPLES,
-  PROMPT_REPLACE_VARIABLES,
-} from "@xmtp/message-kit";
+import { defaultPromptTemplate } from "@xmtp/message-kit";
 
-export async function agent_prompt(userInfo: UserInfo) {
-  let systemPrompt =
-    PROMPT_RULES +
-    PROMPT_USER_CONTENT(userInfo) +
-    PROMPT_SKILLS_AND_EXAMPLES(skills, "@ens");
-
+export async function agent_prompt(senderAddress: string) {
   let fineTunning = `
-
 ## Example responses:
 
 1. Check if the user does not have a ENS domain
@@ -54,15 +42,5 @@ export async function agent_prompt(userInfo: UserInfo) {
   You should have said something like: "Looks like vitalik.eth is registered! What about these cool alternatives?\n/cool vitalik.eth
 `;
 
-  // Add the fine tuning to the system prompt
-  systemPrompt += fineTunning;
-
-  // Replace the variables in the system prompt
-  systemPrompt = PROMPT_REPLACE_VARIABLES(
-    systemPrompt,
-    userInfo?.address ?? "",
-    userInfo,
-    "@ens",
-  );
-  return systemPrompt;
+  return defaultPromptTemplate(fineTunning, senderAddress, skills, "@ens");
 }

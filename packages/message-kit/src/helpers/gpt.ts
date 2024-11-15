@@ -3,7 +3,11 @@ import type { SkillGroup } from "./types";
 import OpenAI from "openai";
 import { findSkillGroupByTag } from "../lib/skills";
 import { HandlerContext } from "../lib/handlerContext";
-import { getUserInfo } from "./resolver";
+import {
+  getUserInfo,
+  PROMPT_REPLACE_VARIABLES,
+  PROMPT_USER_CONTENT,
+} from "./resolver";
 
 const isOpenAIConfigured = () => {
   return !!process.env.OPEN_AI_API_KEY;
@@ -78,10 +82,37 @@ export function PROMPT_SKILLS_AND_EXAMPLES(skills: SkillGroup[], tag: string) {
   returnPrompt += "\n";
   return returnPrompt;
 }
+export async function defaultPromptTemplate(
+  fineTunning: string,
+  senderAddress: string,
+  skills: SkillGroup[],
+  tag: string,
+) {
+  const userInfo = await getUserInfo(senderAddress.toLowerCase());
+  if (!userInfo) {
+    console.log("User info not found");
+    return;
+  }
+  let systemPrompt =
+    PROMPT_RULES +
+    PROMPT_USER_CONTENT(userInfo) +
+    PROMPT_SKILLS_AND_EXAMPLES(skills, tag);
+
+  // Add the fine tuning to the system prompt
+  systemPrompt += fineTunning;
+  // Replace the variables in the system prompt
+  systemPrompt = PROMPT_REPLACE_VARIABLES(
+    systemPrompt,
+    userInfo?.address ?? "",
+    userInfo,
+    tag,
+  );
+  return systemPrompt;
+}
 export async function agentParse(
   prompt: string,
   senderAddress: string,
-  systemPrompt: string,
+  systemPrompt?: string,
 ) {
   try {
     let userPrompt = prompt;
@@ -104,7 +135,7 @@ export async function agentParse(
 export async function textGeneration(
   memoryKey: string,
   userPrompt: string,
-  systemPrompt: string,
+  systemPrompt?: string,
 ) {
   if (!openai) {
     console.warn("No OPEN_AI_API_KEY found in .env");
@@ -114,11 +145,11 @@ export async function textGeneration(
     clearMemory();
   }
   let messages = chatMemory.getHistory(memoryKey);
-  chatMemory.initializeWithSystem(memoryKey, systemPrompt);
+  chatMemory.initializeWithSystem(memoryKey, systemPrompt ?? "");
   if (messages.length === 0) {
     messages.push({
       role: "system",
-      content: systemPrompt,
+      content: systemPrompt ?? "",
     });
   }
   messages.push({
