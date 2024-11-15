@@ -8,7 +8,11 @@ export default defineConfig({
     },
     environment: "node",
     deps: {
-      inline: ["@xmtp/message-kit"],
+      optimizer: {
+        ssr: {
+          include: ["@xmtp/message-kit"],
+        },
+      },
     },
   },
 });
