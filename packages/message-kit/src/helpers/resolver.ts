@@ -3,8 +3,6 @@ import { V2Client, V3Client } from "../index";
 import { HandlerContext } from "../lib/handlerContext";
 
 export const converseEndpointURL = "https://converse.xyz/profile/";
-//"https://converse-website-git-endpoit-ephemerahq.vercel.app";
-//"http://localhost:3000");
 
 export type InfoCache = Map<string, UserInfo>;
 export type ConverseProfile = {
@@ -58,11 +56,6 @@ export const getUserInfo = async (
   context?: HandlerContext,
 ): Promise<UserInfo | null> => {
   try {
-    // Validate inputs
-    if (!key && !clientAddress) {
-      throw new Error("No key or client address provided.");
-    }
-
     let data: UserInfo = infoCache.get(key) || {
       ensDomain: undefined,
       address: undefined,
@@ -97,6 +90,7 @@ export const getUserInfo = async (
     data.preferredName = data.ensDomain || data.converseUsername || "Friend";
     const keyToUse = data.address || data.ensDomain || data.converseUsername;
 
+    console.log("keyToUse", keyToUse);
     if (!keyToUse) {
       throw new Error(
         "Unable to determine a valid key for fetching user info.",

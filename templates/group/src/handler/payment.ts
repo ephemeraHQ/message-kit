@@ -10,6 +10,7 @@ export async function handler(context: HandlerContext) {
 
   if (skill === "pay") {
     const { amount: amountSend, token: tokenSend, username } = params; // [!code hl] // [!code focus]
+    console.log("username", username);
     let senderInfo = await getUserInfo(username);
     if (!amountSend || !tokenSend || !senderInfo) {
       context.reply(
@@ -22,7 +23,7 @@ export async function handler(context: HandlerContext) {
       };
     }
 
-    let sendUrl = `${baseUrl}/?transaction_type=send&amount=${amountSend}&token=${tokenSend}&receiver=${senderInfo.address}`;
+    let sendUrl = `${baseUrl}/?&amount=${amountSend}&token=${tokenSend}&receiver=${senderInfo.address}`;
     await context.send(`${sendUrl}`);
   }
 }
