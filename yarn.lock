@@ -8572,9 +8572,9 @@ __metadata:
   linkType: hard
 
 "tinypool@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "tinypool@npm:1.0.1"
-  checksum: 10/eaceb93784b8e27e60c0e3e2c7d11c29e1e79b2a025b2c232215db73b90fe22bd4753ad53fc8e801c2b5a63b94a823af549555d8361272bc98271de7dd4a9925
+  version: 1.0.2
+  resolution: "tinypool@npm:1.0.2"
+  checksum: 10/6109322f14b3763f65c8fa49fddab72cd3edd96b82dd50e05e63de74867329ff5353bff4377281ec963213d9314f37f4a353e9ee34bbac85fd4c1e4a568d6076
   languageName: node
   linkType: hard
 
@@ -8704,9 +8704,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"turbo-darwin-64@npm:2.2.3":
-  version: 2.2.3
-  resolution: "turbo-darwin-64@npm:2.2.3"
+"turbo-darwin-64@npm:2.3.0":
+  version: 2.3.0
+  resolution: "turbo-darwin-64@npm:2.3.0"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
@@ -8718,9 +8718,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"turbo-darwin-arm64@npm:2.2.3":
-  version: 2.2.3
-  resolution: "turbo-darwin-arm64@npm:2.2.3"
+"turbo-darwin-arm64@npm:2.3.0":
+  version: 2.3.0
+  resolution: "turbo-darwin-arm64@npm:2.3.0"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
@@ -8732,9 +8732,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"turbo-linux-64@npm:2.2.3":
-  version: 2.2.3
-  resolution: "turbo-linux-64@npm:2.2.3"
+"turbo-linux-64@npm:2.3.0":
+  version: 2.3.0
+  resolution: "turbo-linux-64@npm:2.3.0"
   conditions: os=linux & cpu=x64
   languageName: node
   linkType: hard
@@ -8746,9 +8746,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"turbo-linux-arm64@npm:2.2.3":
-  version: 2.2.3
-  resolution: "turbo-linux-arm64@npm:2.2.3"
+"turbo-linux-arm64@npm:2.3.0":
+  version: 2.3.0
+  resolution: "turbo-linux-arm64@npm:2.3.0"
   conditions: os=linux & cpu=arm64
   languageName: node
   linkType: hard
@@ -8760,9 +8760,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"turbo-windows-64@npm:2.2.3":
-  version: 2.2.3
-  resolution: "turbo-windows-64@npm:2.2.3"
+"turbo-windows-64@npm:2.3.0":
+  version: 2.3.0
+  resolution: "turbo-windows-64@npm:2.3.0"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
@@ -8774,9 +8774,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"turbo-windows-arm64@npm:2.2.3":
-  version: 2.2.3
-  resolution: "turbo-windows-arm64@npm:2.2.3"
+"turbo-windows-arm64@npm:2.3.0":
+  version: 2.3.0
+  resolution: "turbo-windows-arm64@npm:2.3.0"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
@@ -8811,15 +8811,15 @@ __metadata:
   linkType: hard
 
 "turbo@npm:^2.2.3":
-  version: 2.2.3
-  resolution: "turbo@npm:2.2.3"
+  version: 2.3.0
+  resolution: "turbo@npm:2.3.0"
   dependencies:
-    turbo-darwin-64: "npm:2.2.3"
-    turbo-darwin-arm64: "npm:2.2.3"
-    turbo-linux-64: "npm:2.2.3"
-    turbo-linux-arm64: "npm:2.2.3"
-    turbo-windows-64: "npm:2.2.3"
-    turbo-windows-arm64: "npm:2.2.3"
+    turbo-darwin-64: "npm:2.3.0"
+    turbo-darwin-arm64: "npm:2.3.0"
+    turbo-linux-64: "npm:2.3.0"
+    turbo-linux-arm64: "npm:2.3.0"
+    turbo-windows-64: "npm:2.3.0"
+    turbo-windows-arm64: "npm:2.3.0"
   dependenciesMeta:
     turbo-darwin-64:
       optional: true
@@ -8835,7 +8835,7 @@ __metadata:
       optional: true
   bin:
     turbo: bin/turbo
-  checksum: 10/ce7dc0b45d11ba9d2a435daad3357ad45e51a81583134912d1ff5b4569c6d233f56b5fc2459ad5c4a8d41ddec566574e34e5c8649ef64b7546348014bd371ea5
+  checksum: 10/adabcc54514d0b670caea01c6de088da2f78ef8b4f1e204799c4602aee958148d2f5f29885f49129a8d127a00832a99635af2518ee692ca6b788e2e424bb5b74
   languageName: node
   linkType: hard
 

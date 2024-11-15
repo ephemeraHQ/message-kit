@@ -7,5 +7,8 @@ export default defineConfig({
       reporter: ["text", "json", "html"],
     },
     environment: "node",
+    deps: {
+      inline: ["@xmtp/message-kit"],
+    },
   },
 });
