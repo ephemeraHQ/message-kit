@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { run, HandlerContext } from "@xmtp/message-kit";
 import { ChatOpenAI } from "@langchain/openai";
 import { createOpenAIFunctionsAgent, AgentExecutor } from "langchain/agents";

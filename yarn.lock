@@ -4446,6 +4446,7 @@ __metadata:
     "@langchain/openai": "npm:^0.0.14"
     "@xmtp/message-kit": "workspace:*"
     langchain: "npm:^0.1.21"
+    typescript: "npm:^5.4.5"
   languageName: unknown
   linkType: soft
 
