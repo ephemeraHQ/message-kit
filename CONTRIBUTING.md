@@ -28,7 +28,7 @@ Please make sure you have a compatible version as specified in `package.json`. W
 
 This repository uses the [Yarn package manager](https://yarnpkg.com/). To use it, enable [Corepack](https://yarnpkg.com/corepack), if it isn't already, by running `corepack enable`.
 
-### Useful scripts
+Useful scripts:
 
 - `yarn`: Installs all dependencies
 - `yarn build`: Builds templates and `packages/message-kit`
