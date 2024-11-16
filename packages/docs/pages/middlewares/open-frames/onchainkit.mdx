@@ -1,0 +1,54 @@
+# Onchain Kit
+
+Onchain Kit incorporates XMTP payloads
+
+- [Official Docs](https://onchainkit.xyz/xmtp/introduction): Official Onchain Kit documentation.
+- [OnchainKit Quickstart](https://github.com/ephemeraHQ/open-frames-starter-onchainkit/): Onchain Kit quickstart that integrates XMTP.
+
+## Metadata
+
+First add the metadata indicating which protocols you support.
+
+```jsx
+const frameMetadata = getFrameMetadata({
+  /**
+   * Frame metadata like image, buttons, input, etc.
+   */
+  isOpenFrame: true,
+  accepts: { xmtp: "vNext" },
+});
+
+export const metadata: Metadata = {
+  /**
+   * ...other metadata
+   */
+  other: {
+    ...frameMetadata,
+  },
+};
+```
+
+## Validate incoming messages:
+
+Validate incoming messages to ensure they are from XMTP.
+
+```jsx
+import {
+  isXmtpFrameRequest,
+  getXmtpFrameMessage,
+} from "@coinbase/onchainkit/xmtp";
+/* ... */
+async function getResponse(req: any): Promise<NextResponse> {
+  const body: FrameRequest = await req.json();
+  if (isXmtpFrameRequest(body)) {
+    const { isValid, message } = await getXmtpFrameMessage(body);
+    // ... do something with the message if isValid is true
+    if (isValid) {
+      const { verifiedWalletAddress } = message;
+      // ... do something with the verifiedWalletAddress
+    }
+  } else {
+    // ...
+  }
+}
+```

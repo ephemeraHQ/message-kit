@@ -1,0 +1,70 @@
+# Frog
+
+Discover how Frog seamlessly incorporates XMTP payloads
+
+- [Official Docs](https://frog.fm/concepts/middleware#xmtp-frames-middleware): XMTP Frog official middleware
+- [Frog Quickstart](https://github.com/ephemeraHQ/open-frames-starter-frog): Frog XMTP quickstart
+
+## Metadata
+
+First add the metadata indicating which protocols you support.
+
+```jsx
+const addMetaTags = (client: string, version?: string) => {
+  // Follow the OpenFrames meta tags spec
+  return {
+    unstable_metaTags: [
+      { property: `of:accepts`, content: version || "vNext" },
+      { property: `of:accepts:${client}`, content: version || "vNext" },
+    ],
+  };
+};
+
+export const app = new Frog(addMetaTags("xmtp"));
+```
+
+## Validate incoming messages:
+
+Install the `@xmtp/frames-validator` package to validate incoming messages.
+
+```bash [cmd]
+npm i @xmtp/frames-validator
+```
+
+Add the middleware to validate incoming messages.
+
+```jsx
+import { validateFramesPost } from "@xmtp/frames-validator";
+
+const xmtpSupport = async (c: Context, next: Next) => {
+  // Check if the request is a POST and relevant for XMTP processing
+  if (c.req.method === "POST") {
+    const requestBody = (await c.req.json().catch(() => {})) || {};
+    if (requestBody?.clientProtocol?.includes("xmtp")) {
+      c.set("client", "xmtp");
+      const { verifiedWalletAddress } = await validateFramesPost(requestBody);
+      c.set("verifiedWalletAddress", verifiedWalletAddress);
+    } else {
+      // Add farcaster check
+      c.set("client", "farcaster");
+    }
+  }
+  await next();
+};
+
+app.use(xmtpSupport);
+```
+
+**Access verified wallet address**:
+
+```jsx
+app.frame("/", (c) => {
+  /* Get Frame variables */
+  const { buttonValue, inputText, status } = c;
+
+  // XMTP verified address
+  const { verifiedWalletAddress } = c?.var || {};
+
+  /* return */
+});
+```
