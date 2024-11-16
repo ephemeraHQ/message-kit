@@ -59,7 +59,7 @@ export type Config = {
   // skills to be used
   skills?: SkillGroup[];
   // model to be used
-  model?: string;
+  gptModel?: string;
 };
 export interface SkillParamConfig {
   default?: string | number | boolean;

@@ -190,7 +190,7 @@ export async function textGeneration(
   try {
     // Make OpenAI API call
     const response = await openai.chat.completions.create({
-      model: (process.env.LLM_MODEL as string) || "gpt-4o",
+      model: (process.env.GPT_MODEL as string) || "gpt-4o",
       messages: messages,
     });
 
