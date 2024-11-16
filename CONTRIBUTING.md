@@ -16,8 +16,6 @@ Report a bug using [GitHub Issues](https://github.com/ephemeraHQ/message-kit/iss
 
 PRs are encouraged, but consider starting with a feature request to temperature-check first.
 
----
-
 ## Developing
 
 #### Node
