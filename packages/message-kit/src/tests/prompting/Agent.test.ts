@@ -14,7 +14,7 @@ describe("Prompting tests", () => {
     ["I want to get info for vitalik.eth", "/info vitalik.eth"],
     ["renew my domain", "/renew humanagent.eth"],
     ["domain info for humanagent.eth", "/info humanagent.eth"],
-    ["tip vitalik.eth", "/tip 0x93e2fc3e99dfb1238eb9e0ef2580efc5809c7204"],
+    ["tip vitalik.eth", "/tip 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"],
   ];
 
   test.each(testCases)(
