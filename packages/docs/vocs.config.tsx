@@ -157,12 +157,6 @@ export default defineConfig({
         {
           text: "Gpt",
           link: "/templates/gpt",
-          items: [
-            {
-              text: "Prompt",
-              link: "/templates/gpt/prompt",
-            },
-          ],
         },
         {
           text: "Agent",
@@ -217,51 +211,51 @@ export default defineConfig({
     },
 
     {
-      text: "Middlewares",
+      text: "Middleware",
       items: [
         {
           text: "Cron",
-          link: "/middlewares/cron",
+          link: "/middleware/cron",
         },
         {
           text: "Redis",
-          link: "/middlewares/redis",
+          link: "/middleware/redis",
         },
         {
           text: "Vision",
-          link: "/middlewares/vision",
+          link: "/middleware/vision",
         },
         {
           text: "Stackso",
-          link: "/middlewares/stackso",
+          link: "/middleware/stackso",
         },
         {
           text: "Notion",
-          link: "/middlewares/notion",
+          link: "/middleware/notion",
         },
         {
           text: "LearnWeb3",
-          link: "/middlewares/learnweb3",
+          link: "/middleware/learnweb3",
         },
         {
           text: "Lowdb",
-          link: "/middlewares/lowdb",
+          link: "/middleware/lowdb",
         },
         {
           text: "Open Frames",
-          link: "/middlewares/open-frames",
+          link: "/middleware/open-frames",
           items: [
             {
               text: "Frames.js",
-              link: "/middlewares/open-frames/framesjs",
+              link: "/middleware/open-frames/framesjs",
             },
             {
               text: "OnchainKit",
-              link: "/middlewares/open-frames/onchainkit",
+              link: "/middleware/open-frames/onchainkit",
             },
             {
               text: "Frog",
-              link: "/middlewares/open-frames/frog",
+              link: "/middleware/open-frames/frog",
             },
           ],
         },
