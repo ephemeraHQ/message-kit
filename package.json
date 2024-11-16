@@ -19,6 +19,7 @@
     "dev:docs": "cd packages/docs && yarn dev",
     "dev:gpt": "cd templates/gpt && yarn dev",
     "dev:group": "cd templates/group && yarn dev",
+    "dev:pro": "cd templates/ens-agent-pro && yarn dev",
     "dev:split": "cd templates/split && yarn dev",
     "format": "turbo run format",
     "format:check": "turbo run format:check",

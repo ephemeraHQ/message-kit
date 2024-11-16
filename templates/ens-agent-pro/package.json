@@ -1,0 +1,20 @@
+{
+  "name": "ens-agent-pro",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc -w & sleep 1 && node --watch dist/agent.js",
+    "postinstall": "tsc",
+    "start": "node dist/agent.js"
+  },
+  "dependencies": {
+    "@langchain/core": "^0.1.27",
+    "@langchain/openai": "^0.0.14",
+    "@xmtp/message-kit": "workspace:*",
+    "langchain": "^0.1.21"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
