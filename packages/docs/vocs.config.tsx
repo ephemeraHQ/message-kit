@@ -111,6 +111,10 @@ export default defineConfig({
           link: "/concepts/groups",
         },
         {
+          text: "Usernames",
+          link: "/concepts/usernames",
+        },
+        {
           text: "Guidelines",
           link: "/concepts/guidelines",
         },
@@ -212,6 +216,7 @@ export default defineConfig({
 
     {
       text: "Middleware",
+      link: "/middleware",
       items: [
         {
           text: "Cron",

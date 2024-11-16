@@ -93,7 +93,7 @@ export async function defaultPromptTemplate(
   tag: string,
 ) {
   // Fetch user information based on the sender's address
-  const userInfo = await getUserInfo(senderAddress.toLowerCase());
+  const userInfo = await getUserInfo(senderAddress);
   if (!userInfo) {
     console.log("User info not found");
     return;
