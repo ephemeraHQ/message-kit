@@ -163,6 +163,10 @@ export default defineConfig({
           link: "/templates/gpt",
         },
         {
+          text: "Ens Agent Pro",
+          link: "/templates/ens-agent-pro",
+        },
+        {
           text: "Ens agent",
           link: "/templates/agent",
           items: [
