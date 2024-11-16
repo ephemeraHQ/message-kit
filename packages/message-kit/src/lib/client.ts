@@ -147,7 +147,11 @@ async function setupTestEncryptionKey(): Promise<Uint8Array> {
   const envFilePath = path.resolve(process.cwd(), ".env");
 
   // Check if TEST_ENCRYPTION_KEY already exists in .env
-  if (!process.env.TEST_ENCRYPTION_KEY) {
+  if (
+    !process.env.TEST_ENCRYPTION_KEY &&
+    fs.existsSync(`.data`) &&
+    fs.readdirSync(`.data`).length > 0
+  ) {
     //Remove current data if key doesn't exist
     console.error(
       " ‼️ Since the latest version of message-kit a new key is required. \n" +
@@ -160,9 +164,9 @@ async function setupTestEncryptionKey(): Promise<Uint8Array> {
       )) === "no"
     ) {
       console.error("Exiting...");
-      process.exit(1);
+      //process.exit(1);
+      fs.rmSync(`.data`, { recursive: true });
     }
-    if (fs.existsSync(`.data`)) fs.rmSync(`.data`, { recursive: true });
 
     // Generate new test encryption key
     const testEncryptionKey = toHex(getRandomValues(new Uint8Array(32)));
