@@ -7,45 +7,12 @@ This is a simple yet powerful agent that will help users interact with ENS.
 ```
 agent/
 ├── src/
-│   └── handler/
-│       └── ens.ts         # ENS agent // [!code hl] // [!code focus]
-│   ├── index.ts           # Conversational logic // [!code hl] // [!code focus]
+│   └── handler/           # ENS agent // [!code hl] // [!code focus]
+│   ├── index.ts           # Prompt and stream // [!code hl] // [!code focus]
 │   ├── skills.ts          # Skills // [!code hl] // [!code focus]
-│   ├── prompt.ts          # Prompt // [!code hl] // [!code focus]
 ├── package.json
 ├── tsconfig.json
 └── .env
-```
-
-## Handler
-
-```tsx [src/index.ts]
-import { run, HandlerContext } from "@xmtp/message-kit";
-import { textGeneration, processMultilineResponse } from "@xmtp/message-kit";
-import { agent_prompt } from "./prompt.js";
-
-run(async (context: HandlerContext) => {
-  const {
-    message: {
-      content: { text, params },
-      sender,
-    },
-  } = context;
-
-  try {
-    let userPrompt = params?.prompt ?? text;
-
-    const { reply } = await textGeneration(
-      sender.address,
-      userPrompt,
-      await agent_prompt(sender.address),
-    );
-    await processMultilineResponse(sender.address, reply, context);
-  } catch (error) {
-    console.error("Error during OpenAI call:", error);
-    await context.send("An error occurred while processing your request.");
-  }
-});
 ```
 
 ## Run the app

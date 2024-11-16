@@ -163,12 +163,12 @@ export default defineConfig({
           link: "/templates/gpt",
         },
         {
-          text: "Agent",
+          text: "Ens agent",
           link: "/templates/agent",
           items: [
             {
-              text: "Ens",
-              link: "/templates/agent/ens",
+              text: "Handler",
+              link: "/templates/agent/handler",
             },
             {
               text: "Skills",

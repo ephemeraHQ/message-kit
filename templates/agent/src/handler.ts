@@ -1,6 +1,5 @@
 import { HandlerContext, SkillResponse } from "@xmtp/message-kit";
 import { getUserInfo, clearInfoCache, isOnXMTP } from "@xmtp/message-kit";
-import { isAddress } from "viem";
 import { clearMemory } from "@xmtp/message-kit";
 
 export const frameUrl = "https://ens.steer.fun/";
