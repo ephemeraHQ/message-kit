@@ -8,7 +8,7 @@ import { ChatPromptTemplate } from "@langchain/core/prompts";
 // Initialize OpenAI chat model
 const model = new ChatOpenAI({
   temperature: 0.7,
-  modelName: "gpt-4o-mini",
+  modelName: "gpt-4o",
 });
 
 // Create the prompt template with required variables
