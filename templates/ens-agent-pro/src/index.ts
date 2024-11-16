@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { run, HandlerContext } from "@xmtp/message-kit";
 import { ChatOpenAI } from "@langchain/openai";
 import { createOpenAIFunctionsAgent, AgentExecutor } from "langchain/agents";
@@ -27,13 +26,13 @@ const chatHistory = new Map<string, { role: string; content: string }[]>();
 const initializeAgent = async () => {
   const agent = await createOpenAIFunctionsAgent({
     llm: model,
-    tools,
+    tools: tools as any,
     prompt: await prompt,
   });
 
   return new AgentExecutor({
     agent,
-    tools,
+    tools: tools as any,
     returnIntermediateSteps: false,
     verbose: true, // Set to true for checking the agent's thought process
   });

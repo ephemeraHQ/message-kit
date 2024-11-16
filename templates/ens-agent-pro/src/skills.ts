@@ -1,5 +1,5 @@
 import { DynamicStructuredTool } from "langchain/tools";
-import { getUserInfo, clearInfoCache, isOnXMTP } from "@xmtp/message-kit";
+import { getUserInfo } from "@xmtp/message-kit";
 import { clearMemory } from "@xmtp/message-kit";
 import { isAddress } from "viem";
 import { z } from "zod";

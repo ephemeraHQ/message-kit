@@ -12,8 +12,7 @@
     "@langchain/core": "^0.1.27",
     "@langchain/openai": "^0.0.14",
     "@xmtp/message-kit": "workspace:*",
-    "langchain": "^0.1.21",
-    "typescript": "^5.4.5"
+    "langchain": "^0.1.21"
   },
   "engines": {
     "node": ">=20"
