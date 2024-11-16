@@ -100,7 +100,7 @@ function setupPrivateKey(customKey?: string): {
     isRandom = true;
 
     // Write new key to .env only if it was randomly generated
-    const envContent = `KEY=${key.substring(2)}\n`;
+    const envContent = `\nKEY=${key.substring(2)}\n`;
     if (fs.existsSync(envFilePath)) {
       fs.appendFileSync(envFilePath, envContent);
     } else {
@@ -168,7 +168,7 @@ async function setupTestEncryptionKey(): Promise<Uint8Array> {
     const testEncryptionKey = toHex(getRandomValues(new Uint8Array(32)));
 
     // Prepare the env content
-    const envContent = `TEST_ENCRYPTION_KEY=${testEncryptionKey}\n`;
+    const envContent = `\nTEST_ENCRYPTION_KEY=${testEncryptionKey}\n`;
 
     // Append or create .env file
     if (fs.existsSync(envFilePath)) {
