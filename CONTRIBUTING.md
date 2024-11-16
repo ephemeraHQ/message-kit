@@ -20,7 +20,7 @@ PRs are encouraged, but consider starting with a feature request to temperature-
 
 #### Node
 
-Please make sure you have a compatible version as specified in `package.json`. We recommend using a Node version manager such as [nvm](https://github.com/nvm-sh/nvm) or [nodenv](https://github.com/nodenv/nodenv).
+Please make sure you have a compatible version as specified in `package.json` >= 20
 
 #### Yarn
 
