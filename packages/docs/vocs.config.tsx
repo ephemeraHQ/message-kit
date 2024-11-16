@@ -248,7 +248,6 @@ export default defineConfig({
         },
         {
           text: "Open Frames",
-          link: "/middleware/open-frames",
           items: [
             {
               text: "Frames.js",
