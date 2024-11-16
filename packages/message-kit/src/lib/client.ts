@@ -4,7 +4,7 @@ import { ReactionCodec } from "@xmtp/content-type-reaction";
 import { Client, ClientOptions, XmtpEnv } from "@xmtp/node-sdk";
 import { logInitMessage } from "../helpers/utils";
 import { TextCodec } from "@xmtp/content-type-text";
-import readline from "readline";
+//import readline from "readline";
 import {
   AttachmentCodec,
   RemoteAttachmentCodec,
@@ -134,14 +134,6 @@ export const createSigner = (user: User) => {
     },
   };
 };
-
-async function getResponse(question: string): Promise<string> {
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
-  return new Promise((resolve) => rl.question(question, resolve));
-}
 
 async function setupTestEncryptionKey(): Promise<Uint8Array> {
   const envFilePath = path.resolve(process.cwd(), ".env");
