@@ -10,7 +10,7 @@ const sender = {
 
 describe("Prompting tests", () => {
   const testCases = [
-    ["hi", "humanagent"],
+    ["hi", "fabri"],
     ["I want to get info for vitalik.eth", "/info vitalik.eth"],
     ["renew my domain", "/renew humanagent.eth"],
     ["domain info for humanagent.eth", "/info humanagent.eth"],
