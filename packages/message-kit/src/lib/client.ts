@@ -147,12 +147,12 @@ async function setupTestEncryptionKey(): Promise<Uint8Array> {
   const envFilePath = path.resolve(process.cwd(), ".env");
 
   if (!process.env.TEST_ENCRYPTION_KEY) {
-    console.error(
-      " ‼️ Since the latest version of message-kit a new key is required. \n" +
-        "\tYour current .data folder will be removed \n" +
-        "\tYou will loose history of your conversations.",
-    );
-    fs.rmSync(`.data`, { recursive: true });
+    // console.error(
+    //   " ‼️ Since the latest version of message-kit a new key is required. \n" +
+    //     "\tYour current .data folder will be removed \n" +
+    //     "\tYou will loose history of your conversations.",
+    // );
+    if (fs.existsSync(`.data`)) fs.rmSync(`.data`, { recursive: true });
 
     // Generate new test encryption key
     const testEncryptionKey = toHex(getRandomValues(new Uint8Array(32)));
