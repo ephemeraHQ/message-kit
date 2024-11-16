@@ -33,7 +33,7 @@ jobs:
       - name: Enable corepack
         run: corepack enable
       - name: Install dependencies
-        run: yarn
+        run: yarn install
       - name: Build dependencies
         run: yarn build
       - name: Check types
