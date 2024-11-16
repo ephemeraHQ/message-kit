@@ -142,6 +142,31 @@ export async function agentParse(
     throw error;
   }
 }
+export async function agentRun(
+  context: HandlerContext,
+  handlerPrompt: (address: string) => Promise<string>,
+) {
+  const {
+    message: {
+      content: { text, params },
+      sender,
+    },
+  } = context;
+
+  try {
+    let userPrompt = params?.prompt ?? text;
+
+    const { reply } = await textGeneration(
+      sender.address,
+      userPrompt,
+      await handlerPrompt(sender.address),
+    );
+    await processMultilineResponse(sender.address, reply, context);
+  } catch (error) {
+    console.error("Error during OpenAI call:", error);
+    await context.send("An error occurred while processing your request.");
+  }
+}
 export async function textGeneration(
   memoryKey: string,
   userPrompt: string,
@@ -165,8 +190,8 @@ export async function textGeneration(
   try {
     // Make OpenAI API call
     const response = await openai.chat.completions.create({
-      model: "gpt-4",
-      messages,
+      model: (process.env.LLM_MODEL as string) || "gpt-4o",
+      messages: messages,
     });
 
     const reply =

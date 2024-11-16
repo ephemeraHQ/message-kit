@@ -58,6 +58,8 @@ export type Config = {
   memberChange?: boolean;
   // skills to be used
   skills?: SkillGroup[];
+  // model to be used
+  model?: string;
 };
 export interface SkillParamConfig {
   default?: string | number | boolean;

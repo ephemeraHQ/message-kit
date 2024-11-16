@@ -295,6 +295,10 @@ export class HandlerContext {
     };
   }
   async reply(message: string) {
+    if (typeof message !== "string") {
+      console.error("Message must be a string");
+      return;
+    }
     const reply = {
       content: message,
       contentType: ContentTypeText,
@@ -314,6 +318,10 @@ export class HandlerContext {
   }
 
   async send(message: string) {
+    if (typeof message !== "string") {
+      console.error("Message must be a string");
+      return;
+    }
     const conversation = this.refConv || this.conversation || this.group;
     if (conversation) {
       await conversation.send(message);
@@ -363,6 +371,10 @@ export class HandlerContext {
     }
   }
   async sendTo(message: string, receivers: string[]) {
+    if (typeof message !== "string") {
+      console.error("Message must be a string");
+      return;
+    }
     const conversations = await this.v2client.conversations.list();
     for (const receiver of receivers) {
       if (this.v2client.address.toLowerCase() === receiver.toLowerCase()) {

@@ -43,6 +43,9 @@ export async function xmtpClient(
       new AttachmentCodec(),
     ],
   };
+  // Store the GPT model in process.env for global access
+  process.env.LLM_MODEL = config?.model || "gpt-4o";
+
   // Merge the default configuration with the provided config. Repeated fields in clientConfig will override the default values
   const finalConfig = { ...defaultConfig, ...config?.client };
   //v2

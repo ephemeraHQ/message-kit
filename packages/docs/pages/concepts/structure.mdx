@@ -35,11 +35,12 @@ run(
 
 #### Optional parameters
 
-- `privateKey`: the private key of the agent wallet, like any normal wallet private key. //
+- `privateKey`: the private key of the agent wallet, like any normal wallet private key.
 - `experimental`: experimental features like logging all group messages. Default is `false`.
 - `attachments`: to receive attachments. Default is `false`.
 - `client`: Optional parameters to pass to the XMTP client.
-- `skills`: skills to be used
+- `skills`: Custom skills to be used. Default is to create the skills in the `src/skills.ts` file.
+- `model`: model to be used. Default is `gpt-4o`.
 - `hideInitLogMessage`: hide the init log message with messagekit logo and stuff
 - `memberChange`: if true, member changes will be enabled, like adding members to the group
 

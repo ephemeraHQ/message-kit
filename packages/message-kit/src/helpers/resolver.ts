@@ -93,9 +93,8 @@ export const getUserInfo = async (
     const keyToUse = data.address || data.ensDomain || data.converseUsername;
 
     if (!keyToUse) {
-      throw new Error(
-        "Unable to determine a valid key for fetching user info.",
-      );
+      console.log("Unable to determine a valid key for fetching user info.");
+      return data;
     }
 
     // Check cache for existing data
