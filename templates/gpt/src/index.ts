@@ -15,6 +15,7 @@ run(async (context: HandlerContext) => {
     context.send("gm");
     return;
   }
+
   const {
     message: {
       content: { text, params },
