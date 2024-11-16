@@ -42,7 +42,7 @@
     "@xmtp/content-type-reply": "^1.1.11",
     "@xmtp/content-type-text": "^1.0.0",
     "@xmtp/grpc-api-client": "^0.2.8",
-    "@xmtp/node-sdk": "^0.0.22",
+    "@xmtp/node-sdk": "^0.0.24",
     "@xmtp/xmtp-js": "^13.0.3",
     "dotenv": "^16.4.5",
     "openai": "^4.52.7",

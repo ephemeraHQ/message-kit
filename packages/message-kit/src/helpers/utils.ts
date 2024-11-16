@@ -52,8 +52,10 @@ Powered by XMTP \x1b[0m`;
         `\t- ⚠️🔒 Invalid private key or not set. Generating a random one.\n\t\t- Copy and paste it in your .env file as:\n\t\t- KEY=${generatedKey}`,
       );
     }
-    if (config?.client?.logging) {
-      console.warn(`\t- ⚠️ Logging is set to ${config.client.logging}`);
+    if (config?.client?.structuredLogging) {
+      console.warn(
+        `\t- ⚠️ Structured logging is set to ${config.client.structuredLogging}`,
+      );
     }
     if (config?.privateKey) {
       console.warn("\t- ⚠️ Private key is set from the code");

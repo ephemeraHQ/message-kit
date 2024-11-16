@@ -215,7 +215,7 @@ export const isOnXMTP = async (
       v2client.canMessage(address || ""),
       v3client.canMessage([address || ""]),
     ]);
-    return { v2, v3: v3[address || ""] };
+    return { v2, v3: v3.get(address || "") };
   } catch (error) {
     console.error("Error checking XMTP availability:", error);
     throw error;

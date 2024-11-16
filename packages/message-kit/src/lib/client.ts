@@ -1,39 +1,39 @@
 import { ReplyCodec } from "@xmtp/content-type-reply";
 import { Client as V2Client } from "@xmtp/xmtp-js";
-
 import { ReactionCodec } from "@xmtp/content-type-reaction";
 import { Client, ClientOptions, XmtpEnv } from "@xmtp/node-sdk";
 import { logInitMessage } from "../helpers/utils";
 import { TextCodec } from "@xmtp/content-type-text";
+import readline from "readline";
 import {
   AttachmentCodec,
   RemoteAttachmentCodec,
 } from "@xmtp/content-type-remote-attachment";
 import * as fs from "fs";
-import { SignatureRequestType } from "@xmtp/node-bindings";
-import { createWalletClient, http, toBytes } from "viem";
+import { createWalletClient, http, toBytes, toHex } from "viem";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { mainnet } from "viem/chains";
 import { GrpcApiClient } from "@xmtp/grpc-api-client";
 import { Config } from "../helpers/types";
+import { getRandomValues } from "crypto";
+import path from "path";
+
+export type User = ReturnType<typeof createUser>;
 
 export async function xmtpClient(
   config?: Config,
 ): Promise<{ client: Client; v2client: V2Client }> {
   // Check if both clientConfig and privateKey are empty
-  let { key, isRandom } = getKey(config?.privateKey);
-  let user = createUser(key);
-  let env = process.env.XMTP_ENV as XmtpEnv;
-  if (!env) {
-    env = "production" as XmtpEnv;
-  }
+  const testKey = await setupTestEncryptionKey();
+  const { key, isRandom } = setupPrivateKey(config?.privateKey);
+  const user = createUser(key);
 
-  if (!fs.existsSync(`.data`)) {
-    fs.mkdirSync(`.data`);
-  }
+  let env = process.env.XMTP_ENV as XmtpEnv;
+  if (!env) env = "production" as XmtpEnv;
 
   const defaultConfig: ClientOptions = {
     env: env,
+    disableAutoRegister: true,
     dbPath: `.data/${user.account?.address}-${env}`,
     codecs: [
       new TextCodec(),
@@ -58,19 +58,10 @@ export async function xmtpClient(
     skipContactPublishing: false,
     apiClientFactory: GrpcApiClient.fromOptions as any,
   });
-
-  const client = await Client.create(user.account.address, finalConfig);
+  const client = await Client.create(createSigner(user), testKey, finalConfig);
 
   logInitMessage(client, config, isRandom ? key : undefined);
 
-  if (!client.isRegistered) {
-    const signature = await getSignature(client, user);
-    if (signature) {
-      //@ts-ignore
-      client.addSignature(SignatureRequestType.CreateInbox, signature);
-    }
-    await client.registerIdentity();
-  }
   return { client, v2client };
 }
 
@@ -87,37 +78,108 @@ export const createUser = (key: string) => {
   };
 };
 
-export type User = ReturnType<typeof createUser>;
+function setupPrivateKey(customKey?: string): {
+  key: string;
+  isRandom: boolean;
+} {
+  const envFilePath = path.resolve(process.cwd(), ".env");
+  let isRandom = false;
 
-export const getSignature = async (client: Client, user: User) => {
-  const signatureText = await client.createInboxSignatureText();
-  if (signatureText) {
-    const signature = await user.wallet.signMessage({
-      message: signatureText,
-    });
-    return toBytes(signature);
+  // Handle private key setup
+  let key = process?.env?.KEY || customKey;
+  if (key && !key.startsWith("0x")) {
+    key = "0x" + key;
   }
-  return null;
-};
 
-function getKey(customKey?: string): { key: string; isRandom: boolean } {
-  let key = customKey ?? process?.env?.KEY;
-
-  if (key !== undefined && !key.startsWith("0x")) key = "0x" + key;
-  if (
-    key == undefined ||
-    typeof key !== "string" ||
-    !/^0x[0-9a-fA-F]{64}$/.test(key) ||
-    !checkPrivateKey(key)
-  ) {
+  // Generate new key if none exists or invalid
+  if (!key || !checkPrivateKey(key)) {
     key = generatePrivateKey();
-    return { key, isRandom: true };
-  } else return { key, isRandom: false };
+    isRandom = true;
+
+    // Write new key to .env only if it was randomly generated
+    const envContent = `KEY=${key.substring(2)}\n`;
+    if (fs.existsSync(envFilePath)) {
+      fs.appendFileSync(envFilePath, envContent);
+    } else {
+      fs.writeFileSync(envFilePath, envContent);
+    }
+  }
+
+  return {
+    key,
+    isRandom,
+  };
 }
+
 function checkPrivateKey(key: string) {
   try {
     return privateKeyToAccount(key as `0x${string}`).address !== undefined;
   } catch (e) {
     return false;
   }
+}
+
+export const createSigner = (user: User) => {
+  if (!fs.existsSync(`.data`)) fs.mkdirSync(`.data`);
+  return {
+    getAddress: () => user.account.address,
+    signMessage: async (message: string) => {
+      const signature = await user.wallet.signMessage({
+        message,
+      });
+      return toBytes(signature);
+    },
+  };
+};
+
+async function getResponse(question: string): Promise<string> {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+  return new Promise((resolve) => rl.question(question, resolve));
+}
+
+async function setupTestEncryptionKey(): Promise<Uint8Array> {
+  const envFilePath = path.resolve(process.cwd(), ".env");
+
+  // Check if TEST_ENCRYPTION_KEY already exists in .env
+  if (!process.env.TEST_ENCRYPTION_KEY) {
+    //Remove current data if key doesn't exist
+    console.error(
+      " ‼️ Since the latest version of message-kit a new key is required. \n" +
+        "\tYour current .data folder will be removed \n" +
+        "\tYou will loose history of your conversations.",
+    );
+    if (
+      (await getResponse(
+        "Are you sure you want to remove the .data folder? (yes/no) ",
+      )) === "no"
+    ) {
+      console.error("Exiting...");
+      process.exit(1);
+    }
+    if (fs.existsSync(`.data`)) fs.rmSync(`.data`, { recursive: true });
+
+    // Generate new test encryption key
+    const testEncryptionKey = toHex(getRandomValues(new Uint8Array(32)));
+
+    // Prepare the env content
+    const envContent = `TEST_ENCRYPTION_KEY=${testEncryptionKey}\n`;
+
+    // Append or create .env file
+    if (fs.existsSync(envFilePath)) {
+      fs.appendFileSync(envFilePath, envContent);
+    } else {
+      fs.writeFileSync(envFilePath, envContent);
+    }
+
+    // Update process.env
+    process.env.TEST_ENCRYPTION_KEY = testEncryptionKey;
+  }
+
+  // Return as Uint8Array
+  return new Uint8Array(
+    toBytes(process.env.TEST_ENCRYPTION_KEY as `0x${string}`),
+  );
 }
