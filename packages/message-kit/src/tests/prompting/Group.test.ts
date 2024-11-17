@@ -8,6 +8,7 @@ const sender = {
   address: "0x3a044b218BaE80E5b9E16609443A192129A67BeA",
   converseUsername: "alix",
 };
+console.log(process.env.OPENAI_API_KEY);
 
 describe("Prompting tests", () => {
   const testCases = [

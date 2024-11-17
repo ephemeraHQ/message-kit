@@ -35,12 +35,20 @@ _Refer to [structure](/concepts/structure) of the app so see the folder is creat
 Start with a simple app that replies with `gm`.
 
 ```tsx [src/index.ts]
-run(async (context: XMTPContext) => {
-  // Get the message and the address from the sender
-  const { content, sender } = context.message;
+import { run, XMTPContext, agentReply } from "@xmtp/message-kit";
+import { agent_prompt } from "./prompt.js";
 
-  // To reply, just call `reply` on the XMTPContext.
-  await context.send(`gm`);
+run(async (context: XMTPContext) => {
+  if (!process.env.OPENAI_API_KEY) {
+    console.error("OPENAI_API_KEY is not set");
+    context.send("gm");
+    return;
+  }
+
+  agentReply(context, async (address: string) => {
+    const result = (await agent_prompt(address)) ?? "No response available";
+    return result;
+  });
 });
 ```
 
