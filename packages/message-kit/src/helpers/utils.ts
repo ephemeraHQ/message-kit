@@ -66,7 +66,7 @@ Powered by XMTP \x1b[0m`;
     if (config?.skills) {
       console.warn(`\t- ⚠️ Skills are missing`);
     }
-    if (skills === undefined || skills?.length === 0) {
+    if (skills === undefined && config?.skills === undefined) {
       console.warn("\t- ⚠️ No skills.ts file found or wrongly formatted");
     }
     if (config?.experimental) {
