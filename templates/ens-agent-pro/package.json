@@ -5,7 +5,6 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc -w & sleep 1 && node --watch dist/index.js",
-    "postinstall": "tsc",
     "start": "node dist/index.js"
   },
   "dependencies": {
