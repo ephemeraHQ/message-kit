@@ -1,4 +1,4 @@
-import { run, HandlerContext } from "@xmtp/message-kit";
+import { run, XMTPContext } from "@xmtp/message-kit";
 import { agentRun } from "@xmtp/message-kit";
 import { skills } from "./skills.js";
 import { defaultPromptTemplate } from "@xmtp/message-kit";
@@ -47,7 +47,7 @@ export async function agent_prompt(senderAddress: string) {
   return defaultPromptTemplate(fineTuning, senderAddress, skills, "@ens");
 }
 
-run(async (context: HandlerContext) => {
+run(async (context: XMTPContext) => {
   agentRun(context, async (address: string) => {
     const result = (await agent_prompt(address)) ?? "No response available";
     return result;

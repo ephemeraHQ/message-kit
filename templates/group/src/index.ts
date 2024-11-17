@@ -1,8 +1,8 @@
-import { run, HandlerContext } from "@xmtp/message-kit";
+import { run, XMTPContext } from "@xmtp/message-kit";
 import { textGeneration, processMultilineResponse } from "@xmtp/message-kit";
 import { agent_prompt } from "./prompt.js";
 
-run(async (context: HandlerContext) => {
+run(async (context: XMTPContext) => {
   const {
     message: {
       content: { text, params },

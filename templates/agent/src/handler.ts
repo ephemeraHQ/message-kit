@@ -1,4 +1,4 @@
-import { HandlerContext, SkillResponse } from "@xmtp/message-kit";
+import { XMTPContext, SkillResponse } from "@xmtp/message-kit";
 import { getUserInfo, clearInfoCache, isOnXMTP } from "@xmtp/message-kit";
 import { clearMemory } from "@xmtp/message-kit";
 
@@ -7,7 +7,7 @@ export const ensUrl = "https://app.ens.domains/";
 export const txpayUrl = "https://txpay.vercel.app";
 
 export async function handleEns(
-  context: HandlerContext,
+  context: XMTPContext,
 ): Promise<SkillResponse | undefined> {
   const {
     message: {

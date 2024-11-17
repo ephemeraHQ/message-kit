@@ -30,11 +30,11 @@ group/
 ## Handler
 
 ```tsx [src/index.ts]
-import { run, HandlerContext } from "@xmtp/message-kit";
+import { run, XMTPContext } from "@xmtp/message-kit";
 import { textGeneration, processMultilineResponse } from "@xmtp/message-kit";
 import { agent_prompt } from "./prompt.js";
 
-run(async (context: HandlerContext) => {
+run(async (context: XMTPContext) => {
   const {
     message: {
       content: { text, params },
@@ -82,7 +82,7 @@ Set up these variables in your app
 
 ```bash [cmd]
 KEY= # the private key of the agent wallet
-OPEN_AI_API_KEY= # your openai api key
+OPENAI_API_KEY= # your openai api key
 ```
 
 ::::

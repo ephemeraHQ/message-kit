@@ -1,6 +1,6 @@
 import { isAddress } from "viem";
 import { V2Client, V3Client } from "../index";
-import { HandlerContext } from "../lib/handlerContext";
+import { XMTPContext } from "../lib/xmtp";
 
 export const converseEndpointURL = "https://converse.xyz/profile/";
 
@@ -53,7 +53,7 @@ export const clearInfoCache = (address?: string) => {
 export const getUserInfo = async (
   key: string,
   clientAddress?: string,
-  context?: HandlerContext,
+  context?: XMTPContext,
 ): Promise<UserInfo | null> => {
   try {
     let data: UserInfo = infoCache.get(key) || {

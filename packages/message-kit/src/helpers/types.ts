@@ -1,4 +1,4 @@
-import { HandlerContext } from "../lib/handlerContext.js";
+import { XMTPContext } from "../lib/xmtp.js";
 import { ClientOptions, GroupMember } from "@xmtp/node-sdk";
 import { ContentTypeId } from "@xmtp/content-type-primitives";
 
@@ -38,10 +38,10 @@ export type SkillResponse = {
 };
 
 export type SkillHandler = (
-  context: HandlerContext,
+  context: XMTPContext,
 ) => Promise<SkillResponse | void>;
 
-export type Handler = (context: HandlerContext) => Promise<void>;
+export type Handler = (context: XMTPContext) => Promise<void>;
 
 export type Config = {
   // client options from XMTP client

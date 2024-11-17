@@ -45,13 +45,13 @@ export const skills: SkillGroup[] = [
 
 ```tsx [src/handler/tipping.ts]
 import {
-  HandlerContext,
+  XMTPContext,
   AbstractedMember,
   SkillResponse,
 } from "@xmtp/message-kit";
 import { getUserInfo } from "@xmtp/message-kit";
 
-export async function handler(context: HandlerContext): Promise<SkillResponse> {
+export async function handler(context: XMTPContext): Promise<SkillResponse> {
   const {
     members,
     message: {

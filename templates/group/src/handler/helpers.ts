@@ -1,6 +1,6 @@
-import { HandlerContext } from "@xmtp/message-kit";
+import { XMTPContext } from "@xmtp/message-kit";
 
-export async function handler(context: HandlerContext) {
+export async function handler(context: XMTPContext) {
   const {
     skills,
     message: {

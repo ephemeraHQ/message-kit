@@ -35,11 +35,11 @@ _Refer to [structure](/concepts/structure) of the app so see the folder is creat
 Start with a simple app that replies with `gm`.
 
 ```tsx [src/index.ts]
-run(async (context: HandlerContext) => {
+run(async (context: XMTPContext) => {
   // Get the message and the address from the sender
   const { content, sender } = context.message;
 
-  // To reply, just call `reply` on the HandlerContext.
+  // To reply, just call `reply` on the XMTPContext.
   await context.send(`gm`);
 });
 ```

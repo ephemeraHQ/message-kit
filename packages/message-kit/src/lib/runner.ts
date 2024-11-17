@@ -1,4 +1,4 @@
-import { HandlerContext } from "./handlerContext.js";
+import { XMTPContext } from "./xmtp.js";
 import { xmtpClient } from "./client.js";
 import { Config, Handler, SkillHandler } from "../helpers/types.js";
 import { DecodedMessage } from "@xmtp/node-sdk";
@@ -8,7 +8,7 @@ import { streamMessages } from "./streams.js";
 import { findSkill, findSkillGroup } from "./skills.js";
 import { Conversation } from "@xmtp/node-sdk";
 import { Conversation as V2Conversation } from "@xmtp/xmtp-js";
-import { awaitedHandlers } from "./handlerContext.js";
+import { awaitedHandlers } from "./xmtp.js";
 
 export async function run(handler: Handler, config?: Config) {
   const { client, v2client } = await xmtpClient(config);
@@ -38,7 +38,7 @@ export async function run(handler: Handler, config?: Config) {
         ) {
           return;
         }
-        const context = await HandlerContext.create(
+        const context = await XMTPContext.create(
           conversation,
           message,
           { client, v2client },
@@ -77,7 +77,7 @@ export async function run(handler: Handler, config?: Config) {
   };
 
   const filterMessage = (
-    context: HandlerContext,
+    context: XMTPContext,
   ): {
     isMessageValid: boolean;
     customHandler: SkillHandler | undefined;

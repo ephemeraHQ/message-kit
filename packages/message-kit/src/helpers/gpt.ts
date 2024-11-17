@@ -2,19 +2,19 @@ import "dotenv/config";
 import type { SkillGroup } from "./types";
 import OpenAI from "openai";
 import { findSkillGroupByTag } from "../lib/skills";
-import { HandlerContext } from "../lib/handlerContext";
+import { XMTPContext } from "../lib/xmtp";
 import {
   getUserInfo,
   PROMPT_REPLACE_VARIABLES,
   PROMPT_USER_CONTENT,
 } from "./resolver";
 const isOpenAIConfigured = () => {
-  return !!process.env.OPEN_AI_API_KEY;
+  return !!process.env.OPENAI_API_KEY;
 };
 
 // Modify OpenAI initialization to be conditional
 const openai = isOpenAIConfigured()
-  ? new OpenAI({ apiKey: process.env.OPEN_AI_API_KEY })
+  ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
   : null;
 
 type ChatHistoryEntry = {
@@ -142,7 +142,7 @@ export async function agentParse(
   }
 }
 export async function agentRun(
-  context: HandlerContext,
+  context: XMTPContext,
   handlerPrompt: (address: string) => Promise<string>,
 ) {
   const {
@@ -213,7 +213,7 @@ export async function textGeneration(
 export async function processMultilineResponse(
   memoryKey: string,
   reply: string,
-  context: HandlerContext,
+  context: XMTPContext,
 ) {
   if (!memoryKey) {
     clearMemory();

@@ -1,17 +1,17 @@
 import {
   run,
-  HandlerContext,
+  XMTPContext,
   textGeneration,
   processMultilineResponse,
 } from "@xmtp/message-kit";
 import { agent_prompt } from "./prompt.js";
 
-if (!process.env.OPEN_AI_API_KEY) {
-  console.error("OPEN_AI_API_KEY is not set");
+if (!process.env.OPENAI_API_KEY) {
+  console.error("OPENAI_API_KEY is not set");
 }
 
-run(async (context: HandlerContext) => {
-  if (!process.env.OPEN_AI_API_KEY) {
+run(async (context: XMTPContext) => {
+  if (!process.env.OPENAI_API_KEY) {
     context.send("gm");
     return;
   }

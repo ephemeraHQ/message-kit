@@ -5,7 +5,7 @@ This example uses langchain to create an agent that can use various tools to hel
 ## Agent
 
 ```tsx
-import { run, HandlerContext } from "@xmtp/message-kit";
+import { run, XMTPContext } from "@xmtp/message-kit";
 import { ChatOpenAI } from "@langchain/openai";
 import { createOpenAIFunctionsAgent, AgentExecutor } from "langchain/agents";
 import { tools } from "./skills.js";
@@ -49,7 +49,7 @@ const initializeAgent = async () => {
 const executor = await initializeAgent();
 
 run(
-  async (context: HandlerContext) => {
+  async (context: XMTPContext) => {
     const {
       message: {
         content: { text },

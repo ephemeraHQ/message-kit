@@ -38,10 +38,10 @@ export type { StackClient };
 ## Example handler
 
 ```tsx [src/handler/loyalty.ts]
-import { HandlerContext, AbstractedMember } from "@xmtp/message-kit";
+import { XMTPContext, AbstractedMember } from "@xmtp/message-kit";
 import { getStackClient } from "../lib/stack.js";
 
-export async function handler(context: HandlerContext, fake?: boolean) {
+export async function handler(context: XMTPContext, fake?: boolean) {
   const stack = getStackClient();
   const {
     members,

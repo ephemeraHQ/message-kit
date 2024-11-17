@@ -159,14 +159,6 @@ export default defineConfig({
       text: "Use cases",
       items: [
         {
-          text: "Gpt",
-          link: "/templates/gpt",
-        },
-        {
-          text: "Ens Agent Pro",
-          link: "/templates/ens-agent-pro",
-        },
-        {
           text: "Ens agent",
           link: "/templates/agent",
           items: [
@@ -214,6 +206,10 @@ export default defineConfig({
               link: "/templates/group/prompt",
             },
           ],
+        },
+        {
+          text: "GPT Example",
+          link: "/templates/gpt",
         },
       ],
     },

@@ -1,5 +1,5 @@
 import { SkillGroup, skillAction } from "../helpers/types.js";
-import { HandlerContext } from "./handlerContext";
+import { XMTPContext } from "./xmtp.js";
 import path from "path";
 
 export function findSkill(
@@ -19,7 +19,7 @@ export function findSkill(
 export async function executeSkill(
   text: string,
   skills: SkillGroup[],
-  context: HandlerContext,
+  context: XMTPContext,
 ) {
   // Use the custom text parameter
   let conversation = context.conversation;
@@ -33,7 +33,7 @@ export async function executeSkill(
       console.warn("Skill not valid", text);
     } else if (skillAction?.handler) {
       // Mock context for skill execution
-      const mockContext: HandlerContext = {
+      const mockContext: XMTPContext = {
         ...context,
         conversation,
         getConversationKey: context.getConversationKey.bind(context),

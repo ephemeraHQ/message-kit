@@ -19,17 +19,19 @@ import {
 import { ContentTypeReply } from "@xmtp/content-type-reply";
 import { executeSkill, loadSkillsFile, parseSkill } from "./skills.js";
 import {
+  ContentTypeAttachment,
   ContentTypeRemoteAttachment,
   RemoteAttachmentCodec,
 } from "@xmtp/content-type-remote-attachment";
 import { ContentTypeReaction } from "@xmtp/content-type-reaction";
+import path from "path";
 
 export const awaitedHandlers = new Map<
   string,
   (text: string) => Promise<boolean | undefined>
 >();
 
-export class HandlerContext {
+export class XMTPContext {
   refConv: Conversation | V2Conversation | null = null;
 
   message!: MessageAbstracted;
@@ -80,8 +82,8 @@ export class HandlerContext {
     { client, v2client }: { client: Client; v2client: V2Client },
     skills?: SkillGroup[],
     version?: "v2" | "v3",
-  ): Promise<HandlerContext | null> {
-    const context = new HandlerContext(conversation, { client, v2client });
+  ): Promise<XMTPContext | null> {
+    const context = new XMTPContext(conversation, { client, v2client });
     if (message && message.id) {
       //v2
       const sentAt = "sentAt" in message ? message.sentAt : message.sent;
@@ -393,6 +395,42 @@ export class HandlerContext {
       // Send the message only once per receiver
       await targetConversation.send(message);
       logMessage("sent: " + message);
+    }
+  }
+
+  async sendImage(filePath: string) {
+    try {
+      // Read local file and extract its details
+      const file = await fs.readFile(filePath);
+      const filename = path.basename(filePath);
+      const extname = path.extname(filePath);
+      console.log(`Filename: ${filename}`);
+      console.log(`File Type: ${extname}`);
+
+      // Convert the file to a Uint8Array
+      const blob = new Blob([file], { type: extname });
+      let imgArray = new Uint8Array(await blob.arrayBuffer());
+
+      const attachment = {
+        filename: filename,
+        mimeType: extname, // image, video, or audio
+        data: imgArray,
+      };
+
+      console.log("Attachment created", attachment);
+
+      const conversation = this.refConv || this.conversation || this.group;
+      if (conversation) {
+        if (this.isV2Conversation(conversation)) {
+          await conversation.send(attachment, {
+            contentType: ContentTypeAttachment,
+          });
+        } else if (conversation instanceof Conversation) {
+          await conversation.send(attachment, ContentTypeAttachment);
+        }
+      }
+    } catch (error) {
+      console.error("Failed to send image:", error);
     }
   }
 }
