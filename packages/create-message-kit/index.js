@@ -108,7 +108,7 @@ async function gatherProjectInfo() {
     { value: "gpt", label: "GPT" },
     { value: "agent", label: "Agent" },
     { value: "group", label: "Group" },
-    { value: "ens", label: "Ens Agent Pro" },
+    { value: "ens-agent-pro", label: "Ens Agent Pro" },
   ];
 
   const templateType = await select({
