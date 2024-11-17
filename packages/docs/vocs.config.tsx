@@ -71,7 +71,7 @@ export default defineConfig({
       link: "https://testflight.apple.com/join/Q27zugWe",
     },
     { text: "XMTP", link: "https://docs.xmtp.org/" },
-    { text: "1.1.8-beta.9", link: "/changelog" },
+    { text: "1.1.9", link: "/changelog" },
   ],
   editLink: {
     pattern:
