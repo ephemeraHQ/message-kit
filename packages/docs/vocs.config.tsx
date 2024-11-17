@@ -177,7 +177,7 @@ export default defineConfig({
           ],
         },
         {
-          text: "Group",
+          text: "Group bot",
           link: "/templates/group",
           items: [
             {

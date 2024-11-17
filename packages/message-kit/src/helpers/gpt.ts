@@ -141,7 +141,7 @@ export async function agentParse(
     throw error;
   }
 }
-export async function agentRun(
+export async function agentReply(
   context: XMTPContext,
   handlerPrompt: (address: string) => Promise<string>,
 ) {

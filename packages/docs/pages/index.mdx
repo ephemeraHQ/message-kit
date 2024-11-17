@@ -3,11 +3,11 @@ import { CustomHomePage } from "../components/CustomHomePage";
 
 <CustomHomePage.Root>
 <CustomHomePage.Headline>
-  {typeof window !== 'undefined' ? "Build with MessageKit" : ""}
+  Build with MessageKit
 </CustomHomePage.Headline>
-  <HomePage.Description>
-    An open framework for building AI agents that run in apps built with [XMTP](https://docs.xmtp.org) 
-  </HomePage.Description>
+  <div className="custom-homepage-description" style={{ textAlign: 'center' }}>
+    An open framework for conversational AI agents for apps built with [XMTP](https://docs.xmtp.org) 
+  </div>
 
 <div className="custom-homepage-tile-grid-container" style={{ 
   marginTop: '2rem', 
@@ -15,7 +15,8 @@ import { CustomHomePage } from "../components/CustomHomePage";
   width: '75%', 
   maxWidth: '400px', 
   margin: '2rem auto',
-  textAlign: 'center'
+  textAlign: 'center',
+  fontSize: '1.5rem'
 }}>
 
 :::code-group
