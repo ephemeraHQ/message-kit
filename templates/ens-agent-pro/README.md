@@ -1,6 +1,6 @@
 # mk-langhchain
 
-This project is powered by [MessageKit](https://messagekit.ephemerahq.com/) 
+This project is powered by [MessageKit](https://messagekit.ephemerahq.com/)
 
 ## Setup
 
@@ -16,7 +16,7 @@ cd ./mk-langhchain
 
 ```sh
 KEY= # the private key of the wallet
-OPEN_AI_API_KEY= # sk-proj-...
+OPENAI_API_KEY= # sk-proj-...
 ```
 
 3. **Install dependencies:**
@@ -32,5 +32,7 @@ yarn@10.9.0 dev
 ```
 
 5. Enjoy!
+
 ---
+
 Made with ❤️ by [XMTP](https://xmtp.org)
