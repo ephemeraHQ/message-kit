@@ -2474,7 +2474,7 @@ __metadata:
     csstype: "npm:^3.0.7"
     dedent: "npm:^1.5.3"
     deep-object-diff: "npm:^1.1.9"
-    deepmerge: "npm:^4.2.2"
+    deepmerge: "npm:^4.5.1"
     lru-cache: "npm:^10.4.3"
     media-query-parser: "npm:^2.0.2"
     modern-ahocorasick: "npm:^1.0.0"
@@ -3717,7 +3717,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"deepmerge@npm:^4.2.2":
+"deepmerge@npm:^4.5.1":
   version: 4.3.1
   resolution: "deepmerge@npm:4.3.1"
   checksum: 10/058d9e1b0ff1a154468bf3837aea436abcfea1ba1d165ddaaf48ca93765fdd01a30d33c36173da8fbbed951dd0a267602bc782fe288b0fc4b7e1e7091afc4529
