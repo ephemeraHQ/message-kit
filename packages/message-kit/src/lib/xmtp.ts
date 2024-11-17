@@ -33,7 +33,6 @@ export const awaitedHandlers = new Map<
 
 export class XMTPContext {
   refConv: Conversation | V2Conversation | null = null;
-
   message!: MessageAbstracted;
   group!: GroupAbstracted;
   conversation!: V2Conversation;

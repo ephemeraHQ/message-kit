@@ -80,7 +80,6 @@ export interface SkillGroup {
   image?: boolean;
   description: string;
   tag?: string;
-  tagHandler?: SkillHandler;
   skills: skillAction[];
 }
 

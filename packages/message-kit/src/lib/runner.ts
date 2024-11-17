@@ -194,7 +194,6 @@ export async function run(handler: Handler, config?: Config) {
         taggingDetails: isTagged
           ? {
               tag: skillGroup?.tag,
-              hasTagHandler: skillGroup?.tagHandler !== undefined,
             }
           : "No tag detected",
         skillTriggerDetails: isSkillTriggered
@@ -222,11 +221,7 @@ export async function run(handler: Handler, config?: Config) {
 
     return {
       isMessageValid,
-      customHandler: skillAction
-        ? skillAction.handler
-        : skillGroup
-          ? skillGroup.tagHandler
-          : undefined,
+      customHandler: skillAction?.handler,
     };
   };
   const getConversation = async (
