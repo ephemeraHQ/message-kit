@@ -9,6 +9,7 @@ import { ChatPromptTemplate } from "@langchain/core/prompts";
 const model = new ChatOpenAI({
   temperature: 0.7,
   modelName: "gpt-4o",
+  openAIApiKey: process.env.OPEN_AI_API_KEY,
 });
 
 // Create the prompt template with required variables

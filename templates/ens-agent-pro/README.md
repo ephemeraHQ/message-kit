@@ -16,7 +16,7 @@ cd ./mk-langhchain
 
 ```sh
 KEY= # the private key of the wallet
-OPENAI_API_KEY= # sk-proj-...
+OPEN_AI_API_KEY= # sk-proj-...
 ```
 
 3. **Install dependencies:**

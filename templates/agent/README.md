@@ -23,5 +23,5 @@ Set up these variables in your app
 
 ```bash [cmd]
 KEY= # the private key of the wallet
-OPENAI_API_KEY= # sk-proj-...
+OPEN_AI_API_KEY= # sk-proj-...
 ```

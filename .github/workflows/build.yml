@@ -59,7 +59,7 @@ jobs:
         run: yarn build
       - name: Test
         env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPEN_AI_API_KEY: ${{ secrets.OPEN_AI_API_KEY }}
         run: yarn test
 
   build:
