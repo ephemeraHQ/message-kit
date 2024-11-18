@@ -1,8 +1,4 @@
-import {
-  XMTPContext,
-  AbstractedMember,
-  SkillResponse,
-} from "@xmtp/message-kit";
+import { XMTPContext, AbstractedMember } from "@xmtp/message-kit";
 import { getUserInfo } from "@xmtp/message-kit";
 
 export async function handler(context: XMTPContext) {

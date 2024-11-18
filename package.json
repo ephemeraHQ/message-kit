@@ -8,7 +8,7 @@
     "shared/*"
   ],
   "scripts": {
-    "prebuild": "cd packages/docs && yarn install && cd ..",
+    "prebuild": "cd packages/docs && yarn install && cd ../.. && cd packages/message-kit && yarn install && yarn build && cd ../..",
     "build": "yarn prebuild && turbo run build --filter='./packages/*'",
     "changeset": "yarn copy && changeset add --type patch",
     "clean": "turbo run clean && rm -rf node_modules && rm -rf .turbo && yarn cache clean",
@@ -24,9 +24,9 @@
     "format:check": "turbo run format:check",
     "publish": "turbo run build --filter='./packages/*' --filter='!./packages/docs' && yarn copy && changeset publish",
     "test": "FORCE_COLOR=1 turbo run test --force",
-    "test:client": "cd packages/message-kit/src/tests/client/ && yarn test:client",
-    "test:parsing": "cd packages/message-kit/src/tests/parsing/ && yarn test:parsing",
-    "test:prompting": "cd packages/message-kit/src/tests/prompting/ && yarn test:prompting",
+    "test:client": "cd packages/message-kit/tests/client/ && yarn test:client",
+    "test:parsing": "cd packages/message-kit/tests/parsing/ && yarn test:parsing",
+    "test:prompting": "cd packages/message-kit/tests/prompting/ && yarn test:prompting",
     "typecheck": "FORCE_COLOR=1 turbo run typecheck"
   },
   "resolutions": {

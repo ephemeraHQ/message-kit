@@ -26,10 +26,10 @@
     "format:check": "yarn format:base -c .",
     "prepublishOnly": " cd ../../ && yarn copy && yarn build",
     "test": "vitest",
-    "test:client": "vitest run src/tests/client",
+    "test:client": "vitest run tests/client",
     "test:coverage": "vitest run --coverage",
-    "test:parsing": "vitest run src/tests/parsing",
-    "test:prompting": "vitest run src/tests/prompting",
+    "test:parsing": "vitest run tests/parsing",
+    "test:prompting": "vitest run tests/prompting",
     "test:watch": "vitest watch",
     "typecheck": "tsc --noEmit"
   },

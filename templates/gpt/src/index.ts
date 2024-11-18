@@ -1,17 +1,12 @@
 import { run, XMTPContext, agentReply } from "@xmtp/message-kit";
-import { agent_prompt } from "./prompt.js";
 
+console.log(process.env.OPEN_AI_API_KEY);
 run(async (context: XMTPContext) => {
-  if (!process.env.OPENAI_API_KEY) {
-    console.error("OPENAI_API_KEY is not set");
-    context.send("gm");
-    return;
-  }
   const {
     message: { sender },
   } = context;
 
-  let prompt = `
+  let systemPrompt = `
  
   ### Context
   
@@ -27,6 +22,10 @@ run(async (context: XMTPContext) => {
   - If the user is grateful, respond asking for a tip in a playful manner.
   `;
 
-  let systemPrompt = await agent_prompt(context.message.sender.address);
-  agentReply(context, systemPrompt);
+  try {
+    agentReply(context, systemPrompt);
+  } catch (error) {
+    context.send("gm");
+    console.error(error);
+  }
 });

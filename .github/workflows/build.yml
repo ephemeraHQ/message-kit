@@ -46,11 +46,11 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Set OpenAI API Key
-        run: echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> $GITHUB_ENV
+        run: echo "OPEN_AI_API_KEY=${{ secrets.OPEN_AI_API_KEY }}" >> $GITHUB_ENV
 
       - name: Run tests
         env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPEN_AI_API_KEY: ${{ secrets.OPEN_AI_API_KEY }}
         run: yarn test
 
   build:

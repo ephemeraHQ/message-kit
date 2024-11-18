@@ -1,15 +1,16 @@
-import "dotenv/config";
-import type { SkillGroup } from "./types";
-import OpenAI from "openai";
+import dotenv from "dotenv";
+dotenv.config({ override: true });
 import { findSkillGroupByTag } from "../lib/skills";
+import OpenAI from "openai";
 import { XMTPContext } from "../lib/xmtp";
 import {
   getUserInfo,
   PROMPT_REPLACE_VARIABLES,
   PROMPT_USER_CONTENT,
 } from "./resolver";
+import type { SkillGroup } from "./types";
+
 const isOpenAIConfigured = () => {
-  console.log(process.env.OPEN_AI_API_KEY);
   return !!process.env.OPEN_AI_API_KEY;
 };
 

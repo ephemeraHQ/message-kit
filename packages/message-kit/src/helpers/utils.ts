@@ -1,6 +1,6 @@
 import { Client } from "@xmtp/node-sdk";
-import { Config } from "./types";
 import { loadSkillsFile } from "../lib/skills.js";
+import { Config } from "./types";
 
 export const shorterLogMessage = (message: string) => {
   return message?.substring(0, 60) + (message?.length > 60 ? "..." : "");
@@ -39,8 +39,11 @@ Powered by XMTP \x1b[0m`;
     config?.experimental ||
     config?.attachments ||
     config?.memberChange ||
+    config?.client?.structuredLogging ||
     generatedKey ||
-    skills?.length === 0
+    skills?.length === 0 ||
+    skills === undefined ||
+    config?.skills === undefined
   ) {
     console.warn(`\x1b[33m
     Warnings:`);
@@ -63,10 +66,7 @@ Powered by XMTP \x1b[0m`;
     if (config?.memberChange) {
       console.warn("\t- ⚠️ Member changes are enabled");
     }
-    if (config?.skills) {
-      console.warn(`\t- ⚠️ Skills are missing`);
-    }
-    if (skills === undefined && config?.skills === undefined) {
+    if (skills === undefined || config?.skills === undefined) {
       console.warn("\t- ⚠️ No skills.ts file found or wrongly formatted");
     }
     if (config?.experimental) {

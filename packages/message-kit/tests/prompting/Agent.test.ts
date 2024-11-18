@@ -1,7 +1,6 @@
-import "dotenv/config";
 import { describe, test, expect } from "vitest";
-import { agentParse, clearMemory } from "../../helpers/gpt";
-import { agent_prompt } from "../../../../../templates/agent/src/index";
+import { agentParse, clearMemory } from "../../src/helpers/gpt";
+import { agent_prompt } from "../../../../templates/agent/src/index";
 const sender = {
   address: "0x93E2fc3e99dFb1238eB9e0eF2580EFC5809C7204",
   converseUsername: "humanagent",

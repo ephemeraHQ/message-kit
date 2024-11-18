@@ -176,7 +176,10 @@ export async function run(handler: Handler, config?: Config) {
     if (process.env.MSG_LOG === "true") {
       console.debug("Message Validation Stream Details:", {
         isSameAddress,
-        sender,
+        openai: {
+          model: process.env.GPT_MODEL,
+          key: process.env.OPEN_AI_API_KEY,
+        },
         content,
         version,
         acceptedType,
