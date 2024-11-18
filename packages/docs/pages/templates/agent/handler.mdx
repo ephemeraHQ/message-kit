@@ -21,7 +21,6 @@ export async function handleEns(
       content: { skill, params },
     },
   } = context;
-  console.log(skill, params);
   if (skill == "reset") {
     clearMemory();
     return { code: 200, message: "Conversation reset." };
@@ -194,7 +193,6 @@ export async function handleEns(
       content: { skill, params },
     },
   } = context;
-  console.log(skill, params);
   if (skill == "reset") {
     clearMemory();
     return { code: 200, message: "Conversation reset." };

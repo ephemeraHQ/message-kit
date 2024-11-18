@@ -27,7 +27,8 @@
     "test:client": "cd packages/message-kit/src/tests/client/ && yarn test:client",
     "test:parsing": "cd packages/message-kit/src/tests/parsing/ && yarn test:parsing",
     "test:prompting": "cd packages/message-kit/src/tests/prompting/ && yarn test:prompting",
-    "typecheck": "FORCE_COLOR=1 turbo run typecheck"
+    "typecheck": "FORCE_COLOR=1 turbo run typecheck",
+    "typecheck:fix": "yarn build && turbo run typecheck --force"
   },
   "resolutions": {
     "viem": "^2.16.3"
