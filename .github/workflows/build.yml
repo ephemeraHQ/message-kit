@@ -38,9 +38,10 @@ jobs:
       - name: Build all packages
         run: yarn build
 
-        
+
   typecheck:
     runs-on: ubuntu-latest
+    needs: build
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
