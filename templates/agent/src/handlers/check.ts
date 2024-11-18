@@ -1,10 +1,10 @@
 import { ensUrl } from "../skills.js";
-import { XMTPContext } from "@xmtp/message-kit";
+import { XMTPContext, getUserInfo } from "@xmtp/message-kit";
 
 export async function handleCheck(context: XMTPContext) {
   const {
     message: {
-      content: { skill, params: domain },
+      content: { params: domain },
     },
   } = context;
 

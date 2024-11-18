@@ -1,42 +1,35 @@
 import { XMTPContext } from "@xmtp/message-kit";
 
 export async function handleCool(context: XMTPContext) {
-  const { domain } = context.message.content.params;
-
-  if (!address) {
-    return {
-      code: 400,
-      message: "Please provide an address to tip.",
-    };
-  }
-  const data = await getUserInfo(address);
-
-  let sendUrl = `${txpayUrl}/?&amount=1&token=USDC&receiver=${address}`;
-
+  const {
+    message: {
+      content: { params: domain },
+    },
+  } = context;
+  //What about these cool alternatives?\
   return {
     code: 200,
-    message: sendUrl,
+    message: `${generateCoolAlternatives(domain)}`,
   };
-  if (!domain) {
-    return {
-      code: 400,
-      message: "Missing required parameters. Please provide domain.",
-    };
+}
+
+export const generateCoolAlternatives = (domain: string) => {
+  const suffixes = ["lfg", "cool", "degen", "moon", "base", "gm"];
+  const alternatives = [];
+  for (let i = 0; i < 5; i++) {
+    const randomPosition = Math.random() < 0.5;
+    const baseDomain = domain.replace(/\.eth$/, ""); // Remove any existing .eth suffix
+    alternatives.push(
+      randomPosition
+        ? `${suffixes[i]}${baseDomain}.eth`
+        : `${baseDomain}${suffixes[i]}.eth`,
+    );
   }
 
-  // Remove .eth if present
-  const baseName = domain.replace(".eth", "");
-
-  // Generate some cool alternatives
-  const alternatives = [
-    `${baseName}.eth`,
-    `${baseName}eth.eth`,
-    `${baseName}.base`,
-    `${baseName}base.eth`,
-    `${baseName}.op`,
-  ];
-
-  const message = `Cool alternatives for ${domain}:\n${alternatives.join("\n")}`;
-  context.send(message);
-  return { code: 200, message };
-}
+  const cool_alternativesFormat = alternatives
+    .map(
+      (alternative: string, index: number) => `${index + 1}. ${alternative} ✨`,
+    )
+    .join("\n");
+  return cool_alternativesFormat;
+};

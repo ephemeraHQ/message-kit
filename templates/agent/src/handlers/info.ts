@@ -1,17 +1,46 @@
 import { ensUrl } from "../skills.js";
-import { XMTPContext } from "@xmtp/message-kit";
+import { XMTPContext, getUserInfo, isOnXMTP } from "@xmtp/message-kit";
 
 export async function handleInfo(context: XMTPContext) {
-  const { domain } = context.message.content.params;
+  const {
+    message: {
+      sender,
+      content: { params: domain },
+    },
+  } = context;
 
-  if (!domain) {
+  const data = await getUserInfo(domain);
+  if (!data?.ensDomain) {
     return {
-      code: 400,
-      message: "Missing required parameters. Please provide domain.",
+      code: 404,
+      message: "Domain not found.",
     };
   }
 
-  let url_ens = `${ensUrl}${domain}`;
-  context.send(`${url_ens}`);
-  return { code: 200, message: `Retrieving info for ${domain}` };
+  const formattedData = {
+    Address: data?.address,
+    "Avatar URL": data?.ensInfo?.avatar,
+    Description: data?.ensInfo?.description,
+    ENS: data?.ensDomain,
+    "Primary ENS": data?.ensInfo?.ens_primary,
+    GitHub: data?.ensInfo?.github,
+    Resolver: data?.ensInfo?.resolverAddress,
+    Twitter: data?.ensInfo?.twitter,
+    URL: `${ensUrl}${domain}`,
+  };
+
+  let message = "Domain information:\n\n";
+  for (const [key, value] of Object.entries(formattedData)) {
+    if (value) {
+      message += `${key}: ${value}\n`;
+    }
+  }
+  message += `\n\nWould you like to tip the domain owner for getting there first 🤣?`;
+  message = message.trim();
+  if (await isOnXMTP(context.client, context.v2client, sender?.address)) {
+    await context.send(
+      `Ah, this domains is in XMTP, you can message it directly: https://converse.xyz/dm/${domain}`,
+    );
+  }
+  return { code: 200, message };
 }

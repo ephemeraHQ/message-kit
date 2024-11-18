@@ -5,7 +5,7 @@ export async function handleRenew(context: XMTPContext) {
   const {
     message: {
       sender,
-      content: { skill, params: domain },
+      content: { params: domain },
     },
   } = context;
 
