@@ -31,7 +31,7 @@ export async function agent_prompt(userInfo: UserInfo) {
   Hello! I'll help you get your domain.\n Let's start by checking your ENS domain  {ENS_DOMAIN}. Give me a moment.\n/check  {ENS_DOMAIN}
 
 4. If the ENS domain is available,
-  Looks like  {ENS_DOMAIN} is available! Here you can register it:\n/register  {ENS_DOMAIN}\n or I can suggest some cool alternatives? Le me know!
+  Looks like  {ENS_DOMAIN} is available! Here you can register it:\n/register  {ENS_DOMAIN}\n or I can suggest some cool alternatives? Let me know!
 
 5. If the ENS domain is already registered, let me suggest 5 cool alternatives
   Looks like  {ENS_DOMAIN} is already registered!\n What about these cool alternatives?\n/cool  {ENS_DOMAIN}
@@ -53,7 +53,7 @@ export async function agent_prompt(userInfo: UserInfo) {
 
 ## Most common bugs
 
-1. Some times you will say something like: "Looks like vitalik.eth is registered! What about these cool alternatives?"
+1. Sometimes you will say something like: "Looks like vitalik.eth is registered! What about these cool alternatives?"
   But you forgot to add the command at the end of the message.
   You should have said something like: "Looks like vitalik.eth is registered! What about these cool alternatives?\n/cool vitalik.eth
 `;
