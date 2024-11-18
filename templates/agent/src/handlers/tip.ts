@@ -4,7 +4,9 @@ import { XMTPContext, getUserInfo } from "@xmtp/message-kit";
 export async function handleTip(context: XMTPContext) {
   const {
     message: {
-      content: { params: address },
+      content: {
+        params: { address },
+      },
     },
   } = context;
 

@@ -76,14 +76,14 @@ export const PROMPT_RULES = `
 export function replaceSkills(skills: SkillGroup[], tag: string) {
   let skillGroup = findSkillGroupByTag(tag, skills);
   if (skillGroup) {
-    let returnPrompt = `## Skills\n${skillGroup?.skills
+    let returnPrompt = `## Commands\n${skillGroup?.skills
       .map((skill) => skill.skill)
       .join("\n")}\n\n### Examples\n${skillGroup?.skills
       .map((skill) => skill.examples?.join("\n"))
       .join("\n")}`;
     return returnPrompt;
   } else {
-    return "## Skills\n- No skills found\n- Don't make up skills\n- If you don't know the answer, just say so, concisely.\n";
+    return "## Commands\n- No commands found\n- Don't make up commands\n- If you don't know the answer, just say so, concisely.\n";
   }
 }
 export async function replaceVariables(

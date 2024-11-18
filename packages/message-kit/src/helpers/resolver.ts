@@ -55,6 +55,9 @@ export const getUserInfo = async (
   clientAddress?: string,
   context?: XMTPContext,
 ): Promise<UserInfo | null> => {
+  if (typeof key !== "string") {
+    throw new Error("userinfo key must be a string");
+  }
   let data: UserInfo = infoCache.get(key) || {
     ensDomain: undefined,
     address: undefined,
@@ -64,7 +67,6 @@ export const getUserInfo = async (
     converseEndpoint: undefined,
     preferredName: undefined,
   };
-
   key = key?.toLowerCase();
   clientAddress = clientAddress?.toLowerCase();
   // Determine user information based on provided key
@@ -214,7 +216,7 @@ export const isOnXMTP = async (
 
 export const replaceUserContext = (userInfo: UserInfo) => {
   let { address, ensDomain, converseUsername, preferredName } = userInfo;
-  let prompt = `User context: 
+  let prompt = `### User context: 
 - Start by fetch their domain from or Converse username
 - Call the user by their name or domain, in case they have one
 - Ask for a name (if they don't have one) so you can suggest domains.

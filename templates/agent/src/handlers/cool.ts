@@ -3,7 +3,9 @@ import { XMTPContext } from "@xmtp/message-kit";
 export async function handleCool(context: XMTPContext) {
   const {
     message: {
-      content: { params: domain },
+      content: {
+        params: { domain },
+      },
     },
   } = context;
   //What about these cool alternatives?\

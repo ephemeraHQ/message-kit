@@ -5,7 +5,9 @@ export async function handleInfo(context: XMTPContext) {
   const {
     message: {
       sender,
-      content: { params: domain },
+      content: {
+        params: { domain },
+      },
     },
   } = context;
 

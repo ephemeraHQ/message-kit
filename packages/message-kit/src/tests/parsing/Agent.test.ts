@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { describe, test, expect } from "vitest";
 import { parseSkill } from "../../lib/skills";
 import { skills as skillsEns } from "../../../../../templates/agent/src/skills";

@@ -4,7 +4,9 @@ import { XMTPContext } from "@xmtp/message-kit";
 export async function handleRegister(context: XMTPContext) {
   const {
     message: {
-      content: { params: domain },
+      content: {
+        params: { domain },
+      },
     },
   } = context;
 

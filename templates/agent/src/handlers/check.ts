@@ -4,7 +4,9 @@ import { XMTPContext, getUserInfo } from "@xmtp/message-kit";
 export async function handleCheck(context: XMTPContext) {
   const {
     message: {
-      content: { params: domain },
+      content: {
+        params: { domain },
+      },
     },
   } = context;
 

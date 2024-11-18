@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { describe, test, expect } from "vitest";
 import { agentParse, clearMemory, replaceVariables } from "../../helpers/gpt";
 import { skills } from "../../../../../templates/group/src/skills";

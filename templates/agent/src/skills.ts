@@ -1,10 +1,10 @@
-import { handleCheck } from "./handlers/check";
-import { handleCool } from "./handlers/cool";
-import { handleInfo } from "./handlers/info";
-import { handleRegister } from "./handlers/register";
-import { handleRenew } from "./handlers/renew";
-import { handleReset } from "./handlers/reset";
-import { handleTip } from "./handlers/tip";
+import { handleCheck } from "./handlers/check.js";
+import { handleCool } from "./handlers/cool.js";
+import { handleInfo } from "./handlers/info.js";
+import { handleRegister } from "./handlers/register.js";
+import { handleRenew } from "./handlers/renew.js";
+import { handleReset } from "./handlers/reset.js";
+import { handleTip } from "./handlers/tip.js";
 
 import type { SkillGroup } from "@xmtp/message-kit";
 
