@@ -10,6 +10,7 @@ const external = [
   "@xmtp/content-type-remote-attachment",
   "@xmtp/node-sdk",
   "@xmtp/xmtp-js",
+  "@xmtp/message-kit",
   "@xmtp/proto",
   "@xmtp/node-bindings",
   "@xmtp/grpc-api-client",
