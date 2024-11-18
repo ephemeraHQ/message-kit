@@ -223,10 +223,6 @@ export default defineConfig({
           link: "/middleware/cron",
         },
         {
-          text: "Redis",
-          link: "/middleware/redis",
-        },
-        {
           text: "Vision",
           link: "/middleware/vision",
         },
@@ -245,6 +241,23 @@ export default defineConfig({
         {
           text: "Lowdb",
           link: "/middleware/lowdb",
+        },
+        {
+          text: "Defaults",
+          items: [
+            {
+              text: "GPT",
+              link: "/middleware/gpt",
+            },
+            {
+              text: "Resolver",
+              link: "/middleware/resolver",
+            },
+            {
+              text: "XMTP",
+              link: "/middleware/xmtp",
+            },
+          ],
         },
         {
           text: "Open Frames",
