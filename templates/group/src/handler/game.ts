@@ -1,7 +1,6 @@
 import { XMTPContext } from "@xmtp/message-kit";
 
-// Handler function to process game-related
-export async function handler(context: XMTPContext) {
+export async function handleGames(context: XMTPContext) {
   const {
     message: {
       content: { skill, params, text },

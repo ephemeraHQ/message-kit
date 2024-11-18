@@ -1,6 +1,6 @@
 import { XMTPContext } from "@xmtp/message-kit";
 
-export async function handler(context: XMTPContext) {
+export async function handleHelp(context: XMTPContext) {
   const {
     config,
     message: {

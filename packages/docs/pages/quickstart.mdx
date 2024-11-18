@@ -35,21 +35,32 @@ _Refer to [structure](/concepts/structure) of the app so see the folder is creat
 Start with a simple app that replies with `gm`.
 
 ```tsx [src/index.ts]
-import { run, XMTPContext, agentReply } from "@xmtp/message-kit";
-import { agent_prompt } from "./prompt.js";
+import {
+  run,
+  XMTPContext,
+  agentReply,
+  replaceVariables,
+} from "@xmtp/message-kit";
+import { skills } from "./skills.js";
+import { systemPrompt } from "./prompt.js";
 
-run(async (context: XMTPContext) => {
-  if (!process.env.OPEN_AI_API_KEY) {
-    console.error("OPEN_AI_API_KEY is not set");
-    context.send("gm");
-    return;
-  }
+run(
+  async (context: XMTPContext) => {
+    const {
+      message: { sender },
+      config,
+    } = context;
 
-  agentReply(context, async (address: string) => {
-    const result = (await agent_prompt(address)) ?? "No response available";
-    return result;
-  });
-});
+    let prompt = await replaceVariables(
+      systemPrompt,
+      sender.address,
+      config?.skills,
+      "@bot",
+    );
+    await agentReply(context, prompt);
+  },
+  { skills },
+);
 ```
 
 ### Variables

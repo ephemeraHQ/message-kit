@@ -8,11 +8,50 @@ This is a simple yet powerful agent that will help users interact with ENS.
 agent/
 ├── src/
 │   └── handler/           # ENS agent // [!code hl] // [!code focus]
+│       ├── check.ts       # Check if a domain is available // [!code hl] // [!code focus]
+│       ├── cool.ts        # Show cool alternatives // [!code hl] // [!code focus]
+│       ├── exists.ts      # Check if a domain is registered // [!code hl] // [!code focus]
+│       ├── register.ts    # Register a domain // [!code hl] // [!code focus]
+│       ├── renew.ts       # Renew a domain // [!code hl] // [!code focus]
+│       ├── reset.ts       # Reset a domain // [!code hl] // [!code focus]
+│       ├── tip.ts         # Tip a domain // [!code hl] // [!code focus]
 │   ├── index.ts           # Prompt and stream // [!code hl] // [!code focus]
+│   ├── prompt.ts          # Prompt // [!code hl] // [!code focus]
 │   ├── skills.ts          # Skills // [!code hl] // [!code focus]
 ├── package.json
 ├── tsconfig.json
 └── .env
+```
+
+## Main
+
+```tsx [src/index.ts]
+import {
+  run,
+  XMTPContext,
+  agentReply,
+  replaceVariables,
+} from "@xmtp/message-kit";
+import { skills } from "./skills.js";
+import { systemPrompt } from "./prompt.js";
+
+run(
+  async (context: XMTPContext) => {
+    const {
+      message: { sender },
+      config,
+    } = context;
+
+    let prompt = await replaceVariables(
+      systemPrompt,
+      sender.address,
+      config?.skills,
+      "@bot",
+    );
+    await agentReply(context, prompt);
+  },
+  { skills },
+);
 ```
 
 ## Run the app

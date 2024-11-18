@@ -1,7 +1,7 @@
 import { XMTPContext, AbstractedMember } from "@xmtp/message-kit";
 import { getUserInfo } from "@xmtp/message-kit";
 
-export async function handler(context: XMTPContext) {
+export async function handleTipping(context: XMTPContext) {
   const {
     message: {
       content: {
@@ -13,11 +13,10 @@ export async function handler(context: XMTPContext) {
   } = context;
   let receivers: AbstractedMember[] = [];
 
-  if (skill === "tip") {
-    receivers = await Promise.all(
-      username.map((username: string) => getUserInfo(username)),
-    );
-  }
+  receivers = await Promise.all(
+    username.map((username: string) => getUserInfo(username)),
+  );
+
   if (!sender || receivers.length === 0 || amount === 0) {
     context.reply("Sender or receiver or amount not found.");
   }

@@ -29,6 +29,10 @@ let's register fabriethsf.eth
 ### Skills definition
 
 ```tsx
+import { SkillGroup } from "@xmtp/message-kit";
+import { handler as handleRegister } from "./handler/register.js";
+import { handler as handleExists } from "./handler/exists.js";
+
 export const skills: SkillGroup[] = [
   {
     name: "Ens Domain Bot",
@@ -37,7 +41,7 @@ export const skills: SkillGroup[] = [
     skills: [
       {
         skill: "/register [domain]",
-        handler: handleEns,
+        handler: handleRegister,
         description:
           "Register a new ENS domain. Returns a URL to complete the registration process.",
         examples: ["/register vitalik.eth"],
@@ -50,7 +54,7 @@ export const skills: SkillGroup[] = [
       {
         skill: "/exists",
         examples: ["/exists"],
-        handler: handleEns,
+        handler: handleExists,
         description: "Check if an address is onboarded.",
         params: {
           address: {
@@ -67,21 +71,21 @@ export const skills: SkillGroup[] = [
 ### Handler implementation
 
 ```tsx
-const {
-  message: {
-    sender,
-    content: { skill, params },
-  },
-} = context;
+import { ensUrl } from "../skills.js";
+import { XMTPContext, getUserInfo } from "@xmtp/message-kit";
 
-if (skill == "check") {
-  const { domain } = params;
+export async function handleCheck(context: XMTPContext) {
+  const {
+    message: {
+      content: {
+        params: { domain },
+      },
+    },
+  } = context;
 
   const data = await getUserInfo(domain);
   if (!data?.address) {
-    let message = `Looks like ${domain} is available! 
-    Here you can register it: ${ensUrl}${domain} or would you like to see 
-    some cool alternatives?`;
+    let message = `Looks like ${domain} is available! Here you can register it: ${ensUrl}${domain} or would you like to see some cool alternatives?`;
     return {
       code: 200,
       message,
@@ -102,31 +106,32 @@ if (skill == "check") {
 The agent processes the natural language input "let's register fabriethsf.eth" and breaks it down into sequential steps:
 
 ```tsx
-import { run, XMTPContext } from "@xmtp/message-kit";
-import { textGeneration, processMultilineResponse } from "@xmtp/message-kit";
-import { agent_prompt } from "./prompt.js";
+import {
+  run,
+  XMTPContext,
+  agentReply,
+  replaceVariables,
+} from "@xmtp/message-kit";
+import { skills } from "./skills.js";
+import { systemPrompt } from "./prompt.js";
 
-run(async (context: XMTPContext) => {
-  const {
-    message: {
-      content: { text, params },
-      sender,
-    },
-  } = context;
+run(
+  async (context: XMTPContext) => {
+    const {
+      message: { sender },
+      config,
+    } = context;
 
-  try {
-    let userPrompt = params?.prompt ?? text;
-    const { reply } = await textGeneration(
+    let prompt = await replaceVariables(
+      systemPrompt,
       sender.address,
-      userPrompt,
-      await agent_prompt(sender.address),
+      config?.skills,
+      "@bot",
     );
-    await processMultilineResponse(sender.address, reply, context);
-  } catch (error) {
-    console.error("Error during OpenAI call:", error);
-    await context.send("An error occurred while processing your request.");
-  }
-});
+    await agentReply(context, prompt);
+  },
+  { skills },
+);
 ```
 
 :::

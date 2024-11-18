@@ -1,7 +1,7 @@
-import { handler as tipping } from "./handler/tipping.js";
-import { handler as payment } from "./handler/payment.js";
-import { handler as games } from "./handler/game.js";
-import { handler as help } from "./handler/helpers.js";
+import { handleTipping } from "./handler/tipping.js";
+import { handlePay } from "./handler/payment.js";
+import { handleGames } from "./handler/game.js";
+import { handleHelp } from "./handler/helpers.js";
 import type { SkillGroup } from "@xmtp/message-kit";
 
 export const skills: SkillGroup[] = [
@@ -14,7 +14,7 @@ export const skills: SkillGroup[] = [
         skill: "/tip [usernames] [amount] [token]",
         examples: ["/tip @vitalik 10 usdc"],
         description: "Tip users in a specified token.",
-        handler: tipping,
+        handler: handleTipping,
         params: {
           username: {
             default: "",
@@ -37,7 +37,7 @@ export const skills: SkillGroup[] = [
         examples: ["/pay 10 usdc vitalik.eth", "/pay 1 @alix"],
         description:
           "Send a specified amount of a cryptocurrency to a destination address.",
-        handler: payment,
+        handler: handlePay,
         params: {
           amount: {
             default: 10,
@@ -56,7 +56,7 @@ export const skills: SkillGroup[] = [
       },
       {
         skill: "/game [game]",
-        handler: games,
+        handler: handleGames,
         description: "Play a game.",
         examples: ["/game wordle", "/game slot", "/game help"],
         params: {
@@ -70,7 +70,7 @@ export const skills: SkillGroup[] = [
       {
         skill: "/help",
         examples: ["/help"],
-        handler: help,
+        handler: handleHelp,
         description: "Get help with the bot.",
         params: {},
       },
@@ -78,7 +78,7 @@ export const skills: SkillGroup[] = [
         skill: "/id",
         adminOnly: true,
         examples: ["/id"],
-        handler: help,
+        handler: handleHelp,
         description: "Get the group ID.",
         params: {},
       },

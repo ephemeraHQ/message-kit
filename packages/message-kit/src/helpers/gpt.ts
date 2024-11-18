@@ -86,6 +86,7 @@ export function replaceSkills(skills: SkillGroup[], tag: string) {
     return "## Commands\n- No commands found\n- Don't make up commands\n- If you don't know the answer, just say so, concisely.\n";
   }
 }
+
 export async function replaceVariables(
   prompt: string,
   senderAddress: string,
