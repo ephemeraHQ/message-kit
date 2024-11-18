@@ -84,7 +84,7 @@ export const PROMPT_RULES = `You are a helpful and playful agent called {NAME} t
 export function PROMPT_SKILLS_AND_EXAMPLES(skills: SkillGroup[], tag: string) {
   let skillGroup = findSkillGroupByTag(tag, skills);
 
-  let returnPrompt = `\nSkills:\n${skillGroup?.skills
+  let returnPrompt = `\nCommands:\n${skillGroup?.skills
     .map((skill) => skill.skill)
     .join("\n")}\n\nExamples:\n${skillGroup?.skills
     .map((skill) => skill.examples?.join("\n"))
