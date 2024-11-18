@@ -1,7 +1,7 @@
 import { describe, test, expect } from "vitest";
-import { getUserInfo } from "../../src/helpers/resolver";
-import { agentParse } from "../../src/helpers/gpt";
-import { agent_prompt } from "../../../../templates/group/src/prompt";
+import { getUserInfo } from "../../helpers/resolver";
+import { agentParse } from "../../helpers/gpt";
+import { agent_prompt } from "../../../../../templates/group/src/prompt";
 
 const sender = {
   address: "0x3a044b218BaE80E5b9E16609443A192129A67BeA",

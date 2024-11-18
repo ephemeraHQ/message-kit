@@ -1,6 +1,6 @@
 import { describe, test, expect } from "vitest";
-import { parseSkill } from "../../src/lib/skills";
-import { skills as skillsEns } from "../../../../templates/agent/src/skills";
+import { parseSkill } from "../../lib/skills";
+import { skills as skillsEns } from "../../../../../templates/agent/src/skills";
 
 describe("Parsing tests", () => {
   test.each([
