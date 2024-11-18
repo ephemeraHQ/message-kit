@@ -49,6 +49,7 @@ jobs:
           SKIP_YARN_COREPACK_CHECK: "1"
       - name: Enable corepack
         run: corepack enable
+      - run: yarn
       - name: Install dependencies
         run: yarn install
       - name: Build
