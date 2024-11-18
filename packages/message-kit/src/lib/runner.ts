@@ -1,6 +1,6 @@
 import { XMTPContext } from "./xmtp.js";
 import { xmtpClient } from "./client.js";
-import { Config, Handler, SkillHandler } from "../helpers/types.js";
+import { RunConfig, Handler, SkillHandler } from "../helpers/types.js";
 import { DecodedMessage } from "@xmtp/node-sdk";
 import { logMessage } from "../helpers/utils.js";
 import { DecodedMessage as DecodedMessageV2 } from "@xmtp/xmtp-js";
@@ -10,7 +10,7 @@ import { Conversation } from "@xmtp/node-sdk";
 import { Conversation as V2Conversation } from "@xmtp/xmtp-js";
 import { awaitedHandlers } from "./xmtp.js";
 
-export async function run(handler: Handler, config?: Config) {
+export async function run(handler: Handler, config?: RunConfig) {
   const { client, v2client } = await xmtpClient(config);
   const { inboxId: address } = client;
   const { address: addressV2 } = v2client;
@@ -42,7 +42,7 @@ export async function run(handler: Handler, config?: Config) {
           conversation,
           message,
           { client, v2client },
-          config?.skills,
+          config ?? {},
           version,
         );
         if (!context) {
@@ -92,11 +92,12 @@ export async function run(handler: Handler, config?: Config) {
       version,
       client,
       v2client,
-      skills,
+      config,
       group,
     } = context;
 
-    let skillAction = text && skills ? findSkill(text, skills) : undefined;
+    let skillAction =
+      text && config?.skills ? findSkill(text, config.skills) : undefined;
 
     const { inboxId: senderInboxId } = client;
     const { address: senderAddress } = v2client;
@@ -145,8 +146,8 @@ export async function run(handler: Handler, config?: Config) {
     ].includes(typeId ?? "");
 
     const skillGroup =
-      typeId === "text" && skills
-        ? findSkillGroup(text ?? "", skills)
+      typeId === "text" && config?.skills
+        ? findSkillGroup(text ?? "", config.skills)
         : undefined; // Check if the message content triggers a tag
     const isTagged = skillGroup ? true : false;
     const isMessageValid = isSameAddress
@@ -193,7 +194,7 @@ export async function run(handler: Handler, config?: Config) {
           isAdminOrPass,
         },
         isAddedMemberOrPass,
-        skillsParsed: context.skills?.length,
+        skillsParsed: config?.skills?.length,
         taggingDetails: isTagged
           ? {
               tag: skillGroup?.tag,

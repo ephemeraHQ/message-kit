@@ -10,14 +10,14 @@ import type { Reaction } from "@xmtp/content-type-reaction";
 import { ContentTypeText } from "@xmtp/content-type-text";
 import { logMessage } from "../helpers/utils.js";
 import {
-  SkillGroup,
+  RunConfig,
   MessageAbstracted,
   GroupAbstracted,
   SkillResponse,
   AbstractedMember,
 } from "../helpers/types.js";
 import { ContentTypeReply } from "@xmtp/content-type-reply";
-import { executeSkill, loadSkillsFile, parseSkill } from "./skills.js";
+import { executeSkill, parseSkill } from "./skills.js";
 import {
   ContentTypeAttachment,
   ContentTypeRemoteAttachment,
@@ -39,9 +39,9 @@ export class XMTPContext {
   client!: Client;
   version!: "v2" | "v3";
   v2client!: V2Client;
-  skills?: SkillGroup[];
   members?: AbstractedMember[];
   admins?: string[];
+  config?: RunConfig;
   superAdmins?: string[];
   sender?: AbstractedMember;
   awaitingResponse: boolean = false;
@@ -79,7 +79,7 @@ export class XMTPContext {
     conversation: Conversation | V2Conversation,
     message: DecodedMessage | DecodedMessageV2 | null,
     { client, v2client }: { client: Client; v2client: V2Client },
-    skills?: SkillGroup[],
+    config: RunConfig,
     version?: "v2" | "v3",
   ): Promise<XMTPContext | null> {
     const context = new XMTPContext(conversation, { client, v2client });
@@ -118,14 +118,16 @@ export class XMTPContext {
         } as AbstractedMember;
       }
 
-      context.skills = skills ?? (await loadSkillsFile());
+      //Config
+      context.config = config;
+      context.config.skills = config?.skills ?? [];
 
       context.getMessageById =
         client.conversations?.getMessageById?.bind(client.conversations) ||
         (() => null);
       // **Correct Binding:**
       context.executeSkill = async (text: string) => {
-        const result = await executeSkill(text, context.skills ?? [], context);
+        const result = await executeSkill(text, config?.skills ?? [], context);
         return result ?? undefined;
       };
       let typeId = message.contentType?.typeId;
@@ -137,7 +139,10 @@ export class XMTPContext {
           : message.content;
 
       if (message?.contentType?.sameAs(ContentTypeText)) {
-        const extractedValues = parseSkill(content.content, context.skills);
+        const extractedValues = parseSkill(
+          content.content,
+          config?.skills ?? [],
+        );
         if (extractedValues?.skill) {
           content = {
             text: content.content,

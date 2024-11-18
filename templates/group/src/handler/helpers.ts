@@ -2,7 +2,7 @@ import { XMTPContext } from "@xmtp/message-kit";
 
 export async function handler(context: XMTPContext) {
   const {
-    skills,
+    config,
     message: {
       content: { skill },
     },
@@ -12,7 +12,7 @@ export async function handler(context: XMTPContext) {
   if (skill == "help") {
     const intro =
       "Available experiences:\n" +
-      skills
+      config?.skills
         ?.flatMap((app) => app.skills)
         .map((skill) => `${skill.skill} - ${skill.description}`)
         .join("\n") +

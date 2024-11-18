@@ -10,7 +10,6 @@ export async function handler(context: XMTPContext) {
 
   if (skill === "pay") {
     const { amount: amountSend, token: tokenSend, username } = params;
-    console.log("username", username);
     let senderInfo = await getUserInfo(username);
     if (!amountSend || !tokenSend || !senderInfo) {
       context.reply(

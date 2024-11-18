@@ -3,7 +3,7 @@ dotenv.config({ override: true });
 import { findSkillGroupByTag } from "../lib/skills";
 import OpenAI from "openai";
 import { XMTPContext } from "../lib/xmtp";
-import { getUserInfo, PROMPT_USER_CONTENT } from "./resolver";
+import { getUserInfo, replaceUserContext } from "./resolver";
 import type { SkillGroup } from "./types";
 
 const isOpenAIConfigured = () => {
@@ -73,23 +73,23 @@ export const PROMPT_RULES = `
 - Focus only on helping users with operations detailed below.
 `;
 
-export function PROMPT_SKILLS_AND_EXAMPLES(skills: SkillGroup[], tag: string) {
+export function replaceSkills(skills: SkillGroup[], tag: string) {
   let skillGroup = findSkillGroupByTag(tag, skills);
   if (skillGroup) {
-    let returnPrompt = `Skills:\n${skillGroup?.skills
+    let returnPrompt = `## Skills\n${skillGroup?.skills
       .map((skill) => skill.skill)
-      .join("\n")}\n\nExamples:\n${skillGroup?.skills
+      .join("\n")}\n\n### Examples\n${skillGroup?.skills
       .map((skill) => skill.examples?.join("\n"))
       .join("\n")}`;
     return returnPrompt;
   } else {
-    return "";
+    return "## Skills\n- No skills found\n- Don't make up skills\n- If you don't know the answer, just say so, concisely.\n";
   }
 }
 export async function replaceVariables(
   prompt: string,
   senderAddress: string,
-  skills: SkillGroup[],
+  skills: SkillGroup[] | undefined,
   tag: string,
 ) {
   // Fetch user information based on the sender's address
@@ -108,27 +108,21 @@ export async function replaceVariables(
     "{persona}",
     "You are a helpful agent called {agent_name} that lives inside a web3 messaging app called Converse.",
   );
-  // Add the fine-tuning to the system prompt
+
+  prompt = prompt.replace("{agent_name}", tag);
   prompt = prompt.replace("{rules}", PROMPT_RULES);
+  prompt = prompt.replace("{skills}", replaceSkills(skills ?? [], tag));
 
   // Replace variables in the system prompt
   if (userInfo) {
-    prompt = prompt.replace("{user_context}", PROMPT_USER_CONTENT(userInfo));
+    prompt = prompt.replace("{user_context}", replaceUserContext(userInfo));
     prompt = prompt.replaceAll("{address}", userInfo.address || "");
     prompt = prompt.replaceAll("{ens_domain}", userInfo.ensDomain || "");
     prompt = prompt.replaceAll("{username}", userInfo.converseUsername || "");
     prompt = prompt.replaceAll("{name}", userInfo.preferredName || "");
   }
-  if (skills && tag) {
-    prompt = prompt.replace(
-      "{skills}",
-      PROMPT_SKILLS_AND_EXAMPLES(skills, tag),
-    );
-  }
-  prompt = prompt.replace("{agent_name}", tag);
 
-  console.log("System Prompt", prompt);
-  if (process.env.MSG_LOG === "development") {
+  if (process.env.MSG_LOG === "true") {
     console.log("System Prompt", prompt);
   }
   return prompt;

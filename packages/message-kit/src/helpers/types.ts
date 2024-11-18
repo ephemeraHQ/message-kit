@@ -43,7 +43,7 @@ export type SkillHandler = (
 
 export type Handler = (context: XMTPContext) => Promise<void>;
 
-export type Config = {
+export type RunConfig = {
   // client options from XMTP client
   client?: ClientOptions;
   // private key to be used for the client, if not, default from env

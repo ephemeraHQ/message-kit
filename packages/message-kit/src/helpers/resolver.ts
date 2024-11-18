@@ -113,7 +113,7 @@ export const getUserInfo = async (
       // Fetch ENS data
       try {
         const response = await fetch(`https://ensdata.net/${keyToUse}`);
-        console.log(response);
+
         if (!response.ok) {
           console.error(
             `ENS data request failed with status or unable to resolve ${keyToUse}`,
@@ -212,7 +212,7 @@ export const isOnXMTP = async (
   }
 };
 
-export const PROMPT_USER_CONTENT = (userInfo: UserInfo) => {
+export const replaceUserContext = (userInfo: UserInfo) => {
   let { address, ensDomain, converseUsername, preferredName } = userInfo;
   let prompt = `User context: 
 - Start by fetch their domain from or Converse username

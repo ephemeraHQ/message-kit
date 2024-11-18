@@ -4,23 +4,20 @@ import {
   agentReply,
   replaceVariables,
 } from "@xmtp/message-kit";
+
 import { systemPrompt } from "./prompt.js";
 
 run(async (context: XMTPContext) => {
   const {
     message: { sender },
-    skills,
+    config,
   } = context;
 
-  try {
-    let prompt = await replaceVariables(
-      systemPrompt,
-      sender.address,
-      skills ?? [],
-      "@bot",
-    );
-    await agentReply(context, prompt);
-  } catch (error) {
-    console.error(error);
-  }
+  let prompt = await replaceVariables(
+    systemPrompt,
+    sender.address,
+    config?.skills,
+    "@bot",
+  );
+  await agentReply(context, prompt);
 });

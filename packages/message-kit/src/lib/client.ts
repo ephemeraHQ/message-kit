@@ -15,14 +15,14 @@ import { createWalletClient, http, toBytes, toHex } from "viem";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { mainnet } from "viem/chains";
 import { GrpcApiClient } from "@xmtp/grpc-api-client";
-import { Config } from "../helpers/types";
+import { RunConfig } from "../helpers/types";
 import { getRandomValues } from "crypto";
 import path from "path";
 
 export type User = ReturnType<typeof createUser>;
 
 export async function xmtpClient(
-  config?: Config,
+  config?: RunConfig,
 ): Promise<{ client: Client; v2client: V2Client }> {
   // Check if both clientConfig and privateKey are empty
   const testKey = await setupTestEncryptionKey();

@@ -75,9 +75,10 @@ export async function executeSkill(
   }
 }
 export function findSkillGroupByTag(
-  tag: string,
-  skills: SkillGroup[],
+  tag?: string,
+  skills: SkillGroup[] = [],
 ): SkillGroup | undefined {
+  if (!tag) return skills.find((skill) => skill.skills);
   return skills.find((skill) => skill.tag === tag);
 }
 export function findSkillGroup(
@@ -258,7 +259,7 @@ export function parseSkill(
     return defaultResult;
   }
 }
-
+/*
 export async function loadSkillsFile(): Promise<SkillGroup[]> {
   const resolvedPath = path.resolve(process.cwd(), "dist/skills.js");
   let skills: SkillGroup[] = [];
@@ -272,3 +273,4 @@ export async function loadSkillsFile(): Promise<SkillGroup[]> {
   if (skills === undefined || skills?.length === 0) return [];
   return skills;
 }
+*/

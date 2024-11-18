@@ -1,6 +1,5 @@
 import { Client } from "@xmtp/node-sdk";
-import { loadSkillsFile } from "../lib/skills.js";
-import { Config } from "./types";
+import { RunConfig } from "./types";
 
 export const shorterLogMessage = (message: string) => {
   return message?.substring(0, 60) + (message?.length > 60 ? "..." : "");
@@ -13,7 +12,7 @@ export const logMessage = (message: string) => {
 
 export async function logInitMessage(
   client: Client,
-  config?: Config,
+  config?: RunConfig,
   generatedKey?: string,
 ) {
   if (config?.hideInitLogMessage === true) return;
@@ -33,16 +32,12 @@ Powered by XMTP \x1b[0m`;
     Send a message to this account on Converse:                              
     🔗 https://converse.xyz/dm/${client.accountAddress}`);
 
-  const skills = config?.skills ?? (await loadSkillsFile());
-
   if (
     config?.experimental ||
     config?.attachments ||
     config?.memberChange ||
     config?.client?.structuredLogging ||
     generatedKey ||
-    skills?.length === 0 ||
-    skills === undefined ||
     config?.skills === undefined
   ) {
     console.warn(`\x1b[33m
@@ -66,8 +61,8 @@ Powered by XMTP \x1b[0m`;
     if (config?.memberChange) {
       console.warn("\t- ⚠️ Member changes are enabled");
     }
-    if (skills === undefined || config?.skills === undefined) {
-      console.warn("\t- ⚠️ No skills.ts file found or wrongly formatted");
+    if (config?.skills === undefined) {
+      console.warn("\t- ⚠️ No skills found");
     }
     if (config?.experimental) {
       console.warn(
