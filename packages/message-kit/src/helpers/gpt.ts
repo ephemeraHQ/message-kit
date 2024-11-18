@@ -141,10 +141,7 @@ export async function agentParse(
     throw error;
   }
 }
-export async function agentReply(
-  context: XMTPContext,
-  handlerPrompt: (address: string) => Promise<string>,
-) {
+export async function agentReply(context: XMTPContext, systemPrompt?: string) {
   const {
     message: {
       content: { text, params },
@@ -158,7 +155,7 @@ export async function agentReply(
     const { reply } = await textGeneration(
       sender.address,
       userPrompt,
-      await handlerPrompt(sender.address),
+      systemPrompt,
     );
     await processMultilineResponse(sender.address, reply, context);
   } catch (error) {

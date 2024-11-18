@@ -47,8 +47,6 @@ export async function agent_prompt(senderAddress: string) {
 }
 
 run(async (context: XMTPContext) => {
-  agentReply(context, async (address: string) => {
-    const result = (await agent_prompt(address)) ?? "No response available";
-    return result;
-  });
+  let systemPrompt = await agent_prompt(context.message.sender.address);
+  agentReply(context, systemPrompt);
 });
