@@ -1,3 +1,5 @@
+import dotenv from "dotenv";
+dotenv.config();
 import { describe, test, expect } from "vitest";
 import { generatePrivateKey } from "viem/accounts";
 import { xmtpClient, createUser } from "../../lib/client";

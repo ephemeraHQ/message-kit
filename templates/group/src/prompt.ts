@@ -1,8 +1,15 @@
-import { skills } from "./skills.js";
-import { defaultPromptTemplate } from "@xmtp/message-kit";
+export const systemPrompt = `
+{persona}
 
-export async function agent_prompt(senderAddress: string) {
-  let fineTunedPrompt = `
+# Rules
+{rules}
+
+# User context
+{user_context}
+
+# Skills
+{skills}
+
 ## Example response
 
 1. If user wants to play a game, use the skill 'game' and specify the game type.
@@ -22,7 +29,4 @@ export async function agent_prompt(senderAddress: string) {
 
 5. If the user wants to play a game suggest direcly a game like wordle:
   Let's play wordle!\n/game wordle
-  `;
-
-  return defaultPromptTemplate(fineTunedPrompt, senderAddress, skills, "@bot");
-}
+`;

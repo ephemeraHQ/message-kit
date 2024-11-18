@@ -3,11 +3,7 @@ dotenv.config({ override: true });
 import { findSkillGroupByTag } from "../lib/skills";
 import OpenAI from "openai";
 import { XMTPContext } from "../lib/xmtp";
-import {
-  getUserInfo,
-  PROMPT_REPLACE_VARIABLES,
-  PROMPT_USER_CONTENT,
-} from "./resolver";
+import { getUserInfo, PROMPT_USER_CONTENT } from "./resolver";
 import type { SkillGroup } from "./types";
 
 const isOpenAIConfigured = () => {
@@ -65,7 +61,8 @@ export const clearMemory = (address?: string) => {
   chatMemory.clear(address);
 };
 
-export const PROMPT_RULES = `You are a helpful and playful agent called {NAME} that lives inside a web3 messaging app called Converse.
+export const PROMPT_RULES = `
+# Rules
 - You can respond with multiple messages if needed. Each message should be separated by a newline character.
 - You can trigger skills by only sending the command in a newline message.
 - Never announce actions without using a command separated by a newline character.
@@ -78,52 +75,68 @@ export const PROMPT_RULES = `You are a helpful and playful agent called {NAME} t
 
 export function PROMPT_SKILLS_AND_EXAMPLES(skills: SkillGroup[], tag: string) {
   let skillGroup = findSkillGroupByTag(tag, skills);
-
-  let returnPrompt = `\nSkills:\n${skillGroup?.skills
-    .map((skill) => skill.skill)
-    .join("\n")}\n\nExamples:\n${skillGroup?.skills
-    .map((skill) => skill.examples?.join("\n"))
-    .join("\n")}`;
-  returnPrompt += "\n";
-  return returnPrompt;
+  if (skillGroup) {
+    let returnPrompt = `Skills:\n${skillGroup?.skills
+      .map((skill) => skill.skill)
+      .join("\n")}\n\nExamples:\n${skillGroup?.skills
+      .map((skill) => skill.examples?.join("\n"))
+      .join("\n")}`;
+    return returnPrompt;
+  } else {
+    return "";
+  }
 }
-export async function defaultPromptTemplate(
-  fineTuning: string,
+export async function replaceVariables(
+  prompt: string,
   senderAddress: string,
   skills: SkillGroup[],
   tag: string,
 ) {
   // Fetch user information based on the sender's address
-  const userInfo = await getUserInfo(senderAddress);
+  let userInfo = await getUserInfo(senderAddress);
   if (!userInfo) {
     console.log("User info not found");
-    return;
+    userInfo = {
+      preferredName: senderAddress,
+      address: senderAddress,
+      ensDomain: senderAddress,
+      converseUsername: senderAddress,
+    };
   }
 
-  // Construct the initial system prompt with rules, user content, and skills/examples
-  let systemPrompt =
-    PROMPT_RULES +
-    PROMPT_USER_CONTENT(userInfo) +
-    PROMPT_SKILLS_AND_EXAMPLES(skills, tag);
-
-  // Add the fine-tuning to the system prompt
-  systemPrompt += fineTuning;
-
-  // Replace the variables in the system prompt
-  systemPrompt = PROMPT_REPLACE_VARIABLES(
-    systemPrompt,
-    userInfo?.address ?? "",
-    userInfo,
-    tag,
+  prompt = prompt.replace(
+    "{persona}",
+    "You are a helpful agent called {agent} that lives inside a web3 messaging group that helps interpret user requests and execute skills.",
   );
+  // Add the fine-tuning to the system prompt
+  prompt = prompt.replace("{rules}", PROMPT_RULES);
 
-  // Return the final system prompt
-  return systemPrompt;
+  // Replace variables in the system prompt
+  if (userInfo) {
+    prompt = prompt.replace("{user_context}", PROMPT_USER_CONTENT(userInfo));
+    prompt = prompt.replaceAll("{address}", userInfo.address || "");
+    prompt = prompt.replaceAll("{ens_domain}", userInfo.ensDomain || "");
+    prompt = prompt.replaceAll("{username}", userInfo.converseUsername || "");
+    prompt = prompt.replaceAll("{name}", userInfo.preferredName || "");
+  }
+  if (skills && tag) {
+    prompt = prompt.replace(
+      "{skills}",
+      PROMPT_SKILLS_AND_EXAMPLES(skills, tag),
+    );
+  }
+  prompt = prompt.replace("{agent}", tag);
+
+  console.log("System Prompt", prompt);
+  if (process.env.MSG_LOG === "development") {
+    console.log("System Prompt", prompt);
+  }
+  return prompt;
 }
 export async function agentParse(
   prompt: string,
   senderAddress: string,
-  systemPrompt?: string,
+  systemPrompt: string,
 ) {
   try {
     let userPrompt = prompt;

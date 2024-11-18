@@ -1,25 +1,27 @@
-import { run, XMTPContext } from "@xmtp/message-kit";
-import { textGeneration, processMultilineResponse } from "@xmtp/message-kit";
-import { agent_prompt } from "./prompt.js";
+import {
+  run,
+  XMTPContext,
+  agentReply,
+  replaceVariables,
+} from "@xmtp/message-kit";
+import { systemPrompt } from "./prompt.js";
 
 run(async (context: XMTPContext) => {
   const {
-    message: {
-      content: { text, params },
-      sender,
-    },
+    message: { sender },
+    skills,
   } = context;
 
   try {
-    let userPrompt = params?.prompt ?? text;
-    const { reply } = await textGeneration(
+    let prompt = await replaceVariables(
+      systemPrompt,
       sender.address,
-      userPrompt,
-      await agent_prompt(sender.address),
+      skills ?? [],
+      "@bot",
     );
-    await processMultilineResponse(sender.address, reply, context);
+    console.log(prompt);
+    await agentReply(context, prompt);
   } catch (error) {
-    console.error("Error during OpenAI call:", error);
-    await context.send("An error occurred while processing your request.");
+    console.error(error);
   }
 });

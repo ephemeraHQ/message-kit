@@ -55,48 +55,46 @@ export const getUserInfo = async (
   clientAddress?: string,
   context?: XMTPContext,
 ): Promise<UserInfo | null> => {
-  try {
-    let data: UserInfo = infoCache.get(key) || {
-      ensDomain: undefined,
-      address: undefined,
-      converseUsername: undefined,
-      ensInfo: undefined,
-      avatar: undefined,
-      converseEndpoint: undefined,
-      preferredName: undefined,
-    };
+  let data: UserInfo = infoCache.get(key) || {
+    ensDomain: undefined,
+    address: undefined,
+    converseUsername: undefined,
+    ensInfo: undefined,
+    avatar: undefined,
+    converseEndpoint: undefined,
+    preferredName: undefined,
+  };
 
-    key = key?.toLowerCase();
-    clientAddress = clientAddress?.toLowerCase();
-    // Determine user information based on provided key
-    if (isAddress(clientAddress || "")) {
-      data.address = clientAddress;
-    } else if (isAddress(key || "")) {
-      data.address = key;
-    } else if (key.includes(".eth")) {
-      data.ensDomain = key;
-    } else if (["@user", "@me", "@bot"].includes(key)) {
-      data.address = clientAddress;
-      data.ensDomain = key.replace("@", "") + ".eth";
-      data.converseUsername = key.replace("@", "");
-    } else if (key === "@alix") {
-      data.address = "0x3a044b218BaE80E5b9E16609443A192129A67BeA";
-      data.converseUsername = "alix";
-    } else if (key === "@bo") {
-      data.address = "0xbc3246461ab5e1682baE48fa95172CDf0689201a";
-      data.converseUsername = "bo";
-    } else {
-      data.converseUsername = key;
-    }
+  key = key?.toLowerCase();
+  clientAddress = clientAddress?.toLowerCase();
+  // Determine user information based on provided key
+  if (isAddress(clientAddress || "")) {
+    data.address = clientAddress;
+  } else if (isAddress(key || "")) {
+    data.address = key;
+  } else if (key.includes(".eth")) {
+    data.ensDomain = key;
+  } else if (["@user", "@me", "@bot"].includes(key)) {
+    data.address = clientAddress;
+    data.ensDomain = key.replace("@", "") + ".eth";
+    data.converseUsername = key.replace("@", "");
+  } else if (key === "@alix") {
+    data.address = "0x3a044b218BaE80E5b9E16609443A192129A67BeA";
+    data.converseUsername = "alix";
+  } else if (key === "@bo") {
+    data.address = "0xbc3246461ab5e1682baE48fa95172CDf0689201a";
+    data.converseUsername = "bo";
+  } else {
+    data.converseUsername = key;
+  }
 
-    data.preferredName = data.ensDomain || data.converseUsername || "Friend";
-    const keyToUse = data.address || data.ensDomain || data.converseUsername;
+  data.preferredName = data.ensDomain || data.converseUsername || "Friend";
+  const keyToUse = data.address || data.ensDomain || data.converseUsername;
 
-    if (!keyToUse) {
-      console.log("Unable to determine a valid key for fetching user info.");
-      return data;
-    }
-
+  if (!keyToUse) {
+    console.log("Unable to determine a valid key for fetching user info.");
+    return data;
+  } else {
     // Check cache for existing data
     const cacheData = infoCache.get(keyToUse);
     if (cacheData) {
@@ -172,16 +170,9 @@ export const getUserInfo = async (
     data.preferredName = data.ensDomain || data.converseUsername || "Friend";
     infoCache.set(keyToUse, data);
     return data;
-  } catch (error) {
-    console.error("An error occurred in getUserInfo:", error);
-    if (context) {
-      await context.send(
-        "Sorry, I encountered an error while fetching your information.",
-      );
-    }
-    return null;
   }
 };
+
 const fetchWithTimeout = async (
   url: string,
   options: RequestInit,
@@ -223,7 +214,7 @@ export const isOnXMTP = async (
 
 export const PROMPT_USER_CONTENT = (userInfo: UserInfo) => {
   let { address, ensDomain, converseUsername, preferredName } = userInfo;
-  let prompt = `\n\nUser context: 
+  let prompt = `User context: 
 - Start by fetch their domain from or Converse username
 - Call the user by their name or domain, in case they have one
 - Ask for a name (if they don't have one) so you can suggest domains.
@@ -232,31 +223,5 @@ export const PROMPT_USER_CONTENT = (userInfo: UserInfo) => {
   if (ensDomain) prompt += `\n- User ENS domain is: ${ensDomain}`;
   if (converseUsername)
     prompt += `\n- Converse username is: ${converseUsername}`;
-  prompt += "\n\n";
-  return prompt;
-};
-
-export const PROMPT_REPLACE_VARIABLES = (
-  prompt: string,
-  address: string,
-  userInfo: UserInfo | undefined,
-  tag: string,
-) => {
-  if (!userInfo) {
-    userInfo = {
-      preferredName: address,
-      address: address,
-      ensDomain: address,
-      converseUsername: address,
-    };
-  }
-  prompt = prompt.replaceAll("{ADDRESS}", userInfo.address || "");
-  prompt = prompt.replaceAll("{ENS_DOMAIN}", userInfo.ensDomain || "");
-  prompt = prompt.replaceAll(
-    "{CONVERSE_USERNAME}",
-    userInfo.converseUsername || "",
-  );
-  prompt = prompt.replaceAll("{PREFERRED_NAME}", userInfo.preferredName || "");
-  prompt = prompt.replaceAll("{NAME}", tag);
   return prompt;
 };

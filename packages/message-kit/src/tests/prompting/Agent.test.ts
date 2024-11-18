@@ -1,7 +1,8 @@
 import { describe, test, expect } from "vitest";
+import { agentParse, clearMemory, replaceVariables } from "../../helpers/gpt";
+import { skills } from "../../../../../templates/agent/src/skills";
+import { systemPrompt } from "../../../../../templates/agent/src/prompt";
 
-import { agentParse, clearMemory } from "../../helpers/gpt";
-import { agent_prompt } from "../../../../../templates/agent/src/index";
 const sender = {
   address: "0x93E2fc3e99dFb1238eB9e0eF2580EFC5809C7204",
   converseUsername: "humanagent",
@@ -39,15 +40,17 @@ describe("Prompting tests", () => {
     "should handle %s correctly",
     async (userPrompt, expectedPatterns) => {
       clearMemory();
-      let address = sender.address.toLowerCase();
-      const systemPrompt = await agent_prompt(address);
-
-      const reply = await agentParse(
-        (userPrompt as string).toLowerCase(),
-        address,
-        systemPrompt?.toLowerCase(),
+      let prompt = await replaceVariables(
+        systemPrompt,
+        sender.address,
+        skills,
+        "@bot",
       );
-
+      const reply = await agentParse(
+        userPrompt as string,
+        sender.address,
+        prompt,
+      );
       let matches = false as boolean | undefined;
       if (Array.isArray(expectedPatterns)) {
         for (const pattern of expectedPatterns) {

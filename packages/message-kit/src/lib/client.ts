@@ -4,6 +4,7 @@ import { ReactionCodec } from "@xmtp/content-type-reaction";
 import { Client, ClientOptions, XmtpEnv } from "@xmtp/node-sdk";
 import { logInitMessage } from "../helpers/utils";
 import { TextCodec } from "@xmtp/content-type-text";
+import dotenv from "dotenv";
 //import readline from "readline";
 import {
   AttachmentCodec,
@@ -139,11 +140,6 @@ async function setupTestEncryptionKey(): Promise<Uint8Array> {
   const envFilePath = path.resolve(process.cwd(), ".env");
 
   if (!process.env.TEST_ENCRYPTION_KEY) {
-    // console.error(
-    //   " ‼️ Since the latest version of message-kit a new key is required. \n" +
-    //     "\tYour current .data folder will be removed \n" +
-    //     "\tYou will loose history of your conversations.",
-    // );
     if (fs.existsSync(`.data`)) fs.rmSync(`.data`, { recursive: true });
 
     // Generate new test encryption key
@@ -158,9 +154,7 @@ async function setupTestEncryptionKey(): Promise<Uint8Array> {
     } else {
       fs.writeFileSync(envFilePath, envContent);
     }
-
-    // Update process.env
-    process.env.TEST_ENCRYPTION_KEY = testEncryptionKey;
+    dotenv.config();
   }
 
   // Return as Uint8Array
