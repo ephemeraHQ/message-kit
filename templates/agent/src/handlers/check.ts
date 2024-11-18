@@ -2,16 +2,25 @@ import { ensUrl } from "../skills.js";
 import { XMTPContext } from "@xmtp/message-kit";
 
 export async function handleCheck(context: XMTPContext) {
-  const { domain } = context.message.content.params;
+  const {
+    message: {
+      content: { skill, params: domain },
+    },
+  } = context;
 
-  if (!domain) {
+  const data = await getUserInfo(domain);
+  if (!data?.address) {
+    let message = `Looks like ${domain} is available! Here you can register it: ${ensUrl}${domain} or would you like to see some cool alternatives?`;
     return {
-      code: 400,
-      message: "Missing required parameters. Please provide domain.",
+      code: 200,
+      message,
+    };
+  } else {
+    let message = `Looks like ${domain} is already registered!`;
+    await context.executeSkill("/cool " + domain);
+    return {
+      code: 404,
+      message,
     };
   }
-
-  let url_ens = `${ensUrl}${domain}`;
-  context.send(`${url_ens}`);
-  return { code: 200, message: `Check domain availability at: ${url_ens}` };
 }
