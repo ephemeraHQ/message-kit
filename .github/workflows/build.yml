@@ -33,22 +33,25 @@ jobs:
       - name: Enable corepack
         run: corepack enable
       - name: Install dependencies
-        run: yarn install
-      - name: Build dependencies
-        run: yarn build
+        run: yarn
       - name: Check types
         run: yarn typecheck
 
   test:
     runs-on: warp-ubuntu-latest-x64-16x
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set OpenAI API Key
-        run: echo "OPEN_AI_API_KEY=${{ secrets.OPEN_AI_API_KEY }}" >> $GITHUB_ENV
-
-      - name: Run tests
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ".node-version"
+          cache: "yarn"
+        env:
+          SKIP_YARN_COREPACK_CHECK: "1"
+      - name: Enable corepack
+        run: corepack enable
+      - name: Install dependencies
+        run: yarn
+      - name: Test
         env:
           OPEN_AI_API_KEY: ${{ secrets.OPEN_AI_API_KEY }}
         run: yarn test
