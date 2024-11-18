@@ -106,7 +106,7 @@ export async function replaceVariables(
 
   prompt = prompt.replace(
     "{persona}",
-    "You are a helpful agent called {agent} that lives inside a web3 messaging group that helps interpret user requests and execute skills.",
+    "You are a helpful agent called {agent_name} that lives inside a web3 messaging app called Converse.",
   );
   // Add the fine-tuning to the system prompt
   prompt = prompt.replace("{rules}", PROMPT_RULES);
@@ -125,7 +125,7 @@ export async function replaceVariables(
       PROMPT_SKILLS_AND_EXAMPLES(skills, tag),
     );
   }
-  prompt = prompt.replace("{agent}", tag);
+  prompt = prompt.replace("{agent_name}", tag);
 
   console.log("System Prompt", prompt);
   if (process.env.MSG_LOG === "development") {
