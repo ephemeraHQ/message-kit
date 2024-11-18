@@ -4,17 +4,15 @@ Interact with GPT and use it for your agents.
 
 > Is already includes in MessageKit but you could import this one in your files for more customization
 
-```jsx [lib/resolver.ts]
-
-import type { SkillGroup } from "./types";
-import OpenAI from "openai";
+```jsx [lib/gpt.ts]
+import dotenv from "dotenv";
+dotenv.config({ override: true });
 import { findSkillGroupByTag } from "../lib/skills";
+import OpenAI from "openai";
 import { XMTPContext } from "../lib/xmtp";
-import {
-  getUserInfo,
-  PROMPT_REPLACE_VARIABLES,
-  PROMPT_USER_CONTENT,
-} from "./resolver";
+import { getUserInfo, replaceUserContext } from "./resolver";
+import type { SkillGroup } from "./types";
+
 const isOpenAIConfigured = () => {
   return !!process.env.OPEN_AI_API_KEY;
 };
@@ -70,7 +68,8 @@ export const clearMemory = (address?: string) => {
   chatMemory.clear(address);
 };
 
-export const PROMPT_RULES = `You are a helpful and playful agent called {NAME} that lives inside a web3 messaging app called Converse.
+export const PROMPT_RULES = `
+# Rules
 - You can respond with multiple messages if needed. Each message should be separated by a newline character.
 - You can trigger skills by only sending the command in a newline message.
 - Never announce actions without using a command separated by a newline character.
@@ -81,54 +80,64 @@ export const PROMPT_RULES = `You are a helpful and playful agent called {NAME} t
 - Focus only on helping users with operations detailed below.
 `;
 
-export function PROMPT_SKILLS_AND_EXAMPLES(skills: SkillGroup[], tag: string) {
+export function replaceSkills(skills: SkillGroup[], tag: string) {
   let skillGroup = findSkillGroupByTag(tag, skills);
-
-  let returnPrompt = `\nCommands:\n${skillGroup?.skills
-    .map((skill) => skill.skill)
-    .join("\n")}\n\nExamples:\n${skillGroup?.skills
-    .map((skill) => skill.examples?.join("\n"))
-    .join("\n")}`;
-  returnPrompt += "\n";
-  return returnPrompt;
+  if (skillGroup) {
+    let returnPrompt = `## Commands\n${skillGroup?.skills
+      .map((skill) => skill.skill)
+      .join("\n")}\n\n### Examples\n${skillGroup?.skills
+      .map((skill) => skill.examples?.join("\n"))
+      .join("\n")}`;
+    return returnPrompt;
+  } else {
+    return "## Commands\n- No commands found\n- Don't make up commands\n- If you don't know the answer, just say so, concisely.\n";
+  }
 }
-export async function defaultPromptTemplate(
-  fineTuning: string,
+export async function replaceVariables(
+  prompt: string,
   senderAddress: string,
-  skills: SkillGroup[],
+  skills: SkillGroup[] | undefined,
   tag: string,
 ) {
   // Fetch user information based on the sender's address
-  const userInfo = await getUserInfo(senderAddress);
+  let userInfo = await getUserInfo(senderAddress);
   if (!userInfo) {
     console.log("User info not found");
-    return;
+    userInfo = {
+      preferredName: senderAddress,
+      address: senderAddress,
+      ensDomain: senderAddress,
+      converseUsername: senderAddress,
+    };
   }
 
-  // Construct the initial system prompt with rules, user content, and skills/examples
-  let systemPrompt =
-    PROMPT_RULES +
-    PROMPT_USER_CONTENT(userInfo) +
-    PROMPT_SKILLS_AND_EXAMPLES(skills, tag);
-
-  // Add the fine-tuning to the system prompt
-  systemPrompt += fineTuning;
-
-  // Replace the variables in the system prompt
-  systemPrompt = PROMPT_REPLACE_VARIABLES(
-    systemPrompt,
-    userInfo?.address ?? "",
-    userInfo,
-    tag,
+  prompt = prompt.replace(
+    "{persona}",
+    "You are a helpful agent called {agent_name} that lives inside a web3 messaging app called Converse.",
   );
 
-  // Return the final system prompt
-  return systemPrompt;
+  prompt = prompt.replace("{agent_name}", tag);
+  prompt = prompt.replace("{rules}", PROMPT_RULES);
+  prompt = prompt.replace("{skills}", replaceSkills(skills ?? [], tag));
+
+  // Replace variables in the system prompt
+  if (userInfo) {
+    prompt = prompt.replace("{user_context}", replaceUserContext(userInfo));
+    prompt = prompt.replaceAll("{address}", userInfo.address || "");
+    prompt = prompt.replaceAll("{ens_domain}", userInfo.ensDomain || "");
+    prompt = prompt.replaceAll("{username}", userInfo.converseUsername || "");
+    prompt = prompt.replaceAll("{name}", userInfo.preferredName || "");
+  }
+
+  if (process.env.MSG_LOG === "true") {
+    console.log("System Prompt", prompt);
+  }
+  return prompt;
 }
 export async function agentParse(
   prompt: string,
   senderAddress: string,
-  systemPrompt?: string,
+  systemPrompt: string,
 ) {
   try {
     let userPrompt = prompt;
@@ -148,10 +157,7 @@ export async function agentParse(
     throw error;
   }
 }
-export async function agentReply(
-  context: XMTPContext,
-  handlerPrompt: (address: string) => Promise<string>,
-) {
+export async function agentReply(context: XMTPContext, systemPrompt?: string) {
   const {
     message: {
       content: { text, params },
@@ -165,7 +171,7 @@ export async function agentReply(
     const { reply } = await textGeneration(
       sender.address,
       userPrompt,
-      await handlerPrompt(sender.address),
+      systemPrompt,
     );
     await processMultilineResponse(sender.address, reply, context);
   } catch (error) {

@@ -74,4 +74,4 @@ jobs:
       - name: Install dependencies
         run: yarn
       - name: Check types
-        run: yarn typecheck --skipTests
+        run: yarn typecheck
