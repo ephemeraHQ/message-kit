@@ -84,10 +84,6 @@ export default defineConfig({
       link: "/quickstart",
     },
     {
-      text: "Directory",
-      link: "/directory",
-    },
-    {
       text: "Examples",
       link: "/examples",
     },
@@ -208,7 +204,7 @@ export default defineConfig({
           ],
         },
         {
-          text: "GPT Example",
+          text: "GPT",
           link: "/templates/gpt",
         },
       ],
@@ -242,22 +238,18 @@ export default defineConfig({
           text: "Lowdb",
           link: "/middleware/lowdb",
         },
+
         {
-          text: "Defaults",
-          items: [
-            {
-              text: "GPT",
-              link: "/middleware/gpt",
-            },
-            {
-              text: "Resolver",
-              link: "/middleware/resolver",
-            },
-            {
-              text: "XMTP",
-              link: "/middleware/xmtp",
-            },
-          ],
+          text: "GPT",
+          link: "/middleware/gpt",
+        },
+        {
+          text: "Resolver",
+          link: "/middleware/resolver",
+        },
+        {
+          text: "XMTP",
+          link: "/middleware/xmtp",
         },
         {
           text: "Open Frames",
