@@ -1,7 +1,7 @@
 import { describe } from "vitest";
-import { skills as ensSkills } from "../../../../templates/agent/src/skills";
+import { skills as ensSkills } from "../../../../templates/agent/src/";
 import { systemPrompt as ensSystemPrompt } from "../../../../templates/agent/src/prompt";
-import { skills as groupSkills } from "../../../../templates/group/src/skills";
+import { skills as groupSkills } from "../../../../templates/group/src/index";
 import { systemPrompt as groupSystemPrompt } from "../../../../templates/group/src/prompt";
 import { testPrompt } from "./utils";
 const humanAgent = {

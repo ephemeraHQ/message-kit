@@ -121,8 +121,8 @@ export default defineConfig({
           link: "/skills/reasoning",
         },
         {
-          text: "Fine-Tuning",
-          link: "/skills/fine-tuning",
+          text: "Scenarios",
+          link: "/skills/scenarios",
         },
         {
           text: "Prompting",

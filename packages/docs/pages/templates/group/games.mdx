@@ -8,37 +8,9 @@ Create an app that receives a game as a skill request and sends a frame to the u
 🔎 emoji
 ```
 
-## Skill declaration
+## Skill
 
-How the skill is declared in the `skills.ts` file:
-
-```tsx [src/skills.ts]
-export const skills: SkillGroup[] = [
-  {
-    name: "Group bot",
-    tag: "@bot",
-    description: "Group agent for tipping payments, games and more.",
-    skills: [
-      {
-        skill: "/game [game]",
-        handler: games,
-        description: "Play a game.",
-        params: {
-          game: {
-            default: "",
-            type: "string",
-            values: ["wordle", "slot", "help"],
-          },
-        },
-      },
-    ],
-  },
-];
-```
-
-## Handler
-
-The handler function to process game-related skill requests:
+This file outlines the structure and management of the skill
 
 ```tsx [src/handlers/game.ts]
 // [!include ~/../../templates/group/src/handlers/game.ts]

@@ -7,42 +7,9 @@ Other skills in case you need them:
 /id
 ```
 
-## Skill declaration
+## Skill
 
-How the skill is declared in the `skills.ts` file:
-
-```tsx [src/skills.ts]
-const skills: SkillGroup[] = [
-  {
-    name: "Group bot",
-    tag: "@bot",
-    description: "Group agent for tipping payments, games and more.",
-    skills: [
-      /* Other skills */
-      {
-        skill: "/help",
-        examples: ["/help"],
-        handler: help,
-        description: "Get help with the bot.",
-        params: {},
-      },
-      {
-        skill: "/id",
-        adminOnly: true,
-        handler: help,
-        description: "Get the group ID.",
-        params: {},
-      },
-
-      /* Other skills */
-    ],
-  },
-];
-```
-
-## Handler
-
-The handler function to process skill requests:
+This file outlines the structure and management of the skill
 
 ```tsx [src/handlers/helpers.ts]
 // [!include ~/../../templates/group/src/handlers/helpers.ts]

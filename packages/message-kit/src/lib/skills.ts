@@ -258,18 +258,3 @@ export function parseSkill(
     return defaultResult;
   }
 }
-/*
-export async function loadSkillsFile(): Promise<SkillGroup[]> {
-  const resolvedPath = path.resolve(process.cwd(), "dist/skills.js");
-  let skills: SkillGroup[] = [];
-  try {
-    const module = await import(resolvedPath);
-    skills = module?.skills;
-  } catch (error) {
-    // if (process.env.MSG_LOG === "true")
-    //   console.error(`Error loading command config from ${resolvedPath}:`);
-  }
-  if (skills === undefined || skills?.length === 0) return [];
-  return skills;
-}
-*/

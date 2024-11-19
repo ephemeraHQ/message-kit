@@ -1,13 +1,8 @@
-import {
-  run,
-  XMTPContext,
-  agentReply,
-  replaceVariables,
-} from "@xmtp/message-kit";
+import { run, agentReply, replaceVariables } from "@xmtp/message-kit";
 
 import { systemPrompt } from "./prompt.js";
 
-run(async (context: XMTPContext) => {
+run(async (context) => {
   const {
     message: { sender },
     runConfig,

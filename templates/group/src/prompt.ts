@@ -1,7 +1,10 @@
 export const systemPrompt = `
 {persona}
+
 {rules}
+
 {user_context}
+
 {skills}
 
 ## Example response

@@ -6,43 +6,9 @@ In this example you can tip using 3 primitives:
 /tip @bo @alix 15
 ```
 
-## Skill declaration
+## Skill
 
-How the skill is declared in the `skills.ts` file:
-
-```tsx [src/skills.ts]
-export const skills: SkillGroup[] = [
-  {
-    name: "Group bot",
-    tag: "@bot",
-    description: "Group agent for tipping payments, games and more.",
-    skills: [
-      /* Other skills */
-      {
-        skill: "/tip [usernames] [amount] [token]",
-        description: "Tip users in a specified token.",
-        handler: tipping,
-        params: {
-          username: {
-            plural: true,
-            default: "",
-            type: "username",
-          },
-          amount: {
-            default: 10,
-            type: "number",
-          },
-        },
-      },
-      /* Other skills */
-    ],
-  },
-];
-```
-
-## Handler
-
-The handler function to process tipping skill requests:
+This file outlines the structure and management of the skill
 
 ```tsx [src/handlers/tipping.ts]
 // [!include ~/../../templates/group/src/handlers/tipping.ts]

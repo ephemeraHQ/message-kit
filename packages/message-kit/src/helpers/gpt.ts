@@ -78,7 +78,7 @@ export function replaceSkills(skills: SkillGroup[], tag: string) {
   if (skillGroup) {
     let returnPrompt = `## Commands\n${skillGroup?.skills
       .map((skill) => skill.skill)
-      .join("\n")}\n\n### Examples\n${skillGroup?.skills
+      .join("\n")}\n\n## Examples\n${skillGroup?.skills
       .map((skill) => skill.examples?.join("\n"))
       .join("\n")}`;
     return returnPrompt;

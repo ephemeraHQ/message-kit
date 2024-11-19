@@ -1,4 +1,21 @@
 import { XMTPContext } from "@xmtp/message-kit";
+import type { skillAction } from "@xmtp/message-kit";
+
+export const registerSkill: skillAction[] = [
+  {
+    skill: "/game [game]",
+    handler: handleGames,
+    description: "Play a game.",
+    examples: ["/game wordle", "/game slot", "/game help"],
+    params: {
+      game: {
+        default: "",
+        type: "string",
+        values: ["wordle", "slot", "help"],
+      },
+    },
+  },
+];
 
 export async function handleGames(context: XMTPContext) {
   const {

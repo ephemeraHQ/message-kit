@@ -1,5 +1,31 @@
 import { XMTPContext, AbstractedMember } from "@xmtp/message-kit";
 import { getUserInfo } from "@xmtp/message-kit";
+import type { skillAction } from "@xmtp/message-kit";
+
+export const registerSkill: skillAction[] = [
+  {
+    skill: "/tip [usernames] [amount] [token]",
+    examples: ["/tip @vitalik 10 usdc"],
+    description: "Tip users in a specified token.",
+    handler: handleTipping,
+    params: {
+      username: {
+        default: "",
+        plural: true,
+        type: "username",
+      },
+      amount: {
+        default: 10,
+        type: "number",
+      },
+      token: {
+        default: "usdc",
+        type: "string",
+        values: ["eth", "dai", "usdc", "degen"],
+      },
+    },
+  },
+];
 
 export async function handleTipping(context: XMTPContext) {
   const {

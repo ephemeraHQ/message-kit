@@ -6,51 +6,9 @@ This example demonstrates how to generate frame URLs for different types of paym
 /pay 1 usdc to @bo
 ```
 
-## Skill declaration
+## Skill
 
-How the skill is declared in the `skills.ts` file:
-
-```tsx [src/skills.ts]
-import { handler as transaction } from "./handler/transaction.js";
-export const skills: SkillGroup[] = [
-  {
-    name: "Group bot",
-    tag: "@bot",
-    description: "Group agent for tipping payments, games and more.",
-    skills: [
-      /* Other skills */
-      {
-        skill: "/pay [amount] [token] [username]",
-        examples: ["/pay 10 vitalik.eth"],
-        description:
-          "Send a specified amount of a cryptocurrency to a destination address.",
-        handler: payment,
-        params: {
-          amount: {
-            default: 10,
-            type: "number",
-          },
-          token: {
-            default: "usdc",
-            type: "string",
-            values: ["eth", "dai", "usdc", "degen"], // Accepted tokens
-          },
-          username: {
-            default: "",
-            type: "username",
-          },
-        },
-      },
-
-      /* Other skills */
-    ],
-  },
-];
-```
-
-## Handler
-
-The handler function to process payment-related skill requests:
+This file outlines the structure and management of the skill
 
 ```tsx [src/handlers/payment.ts]
 // [!include ~/../../templates/group/src/handlers/payment.ts]

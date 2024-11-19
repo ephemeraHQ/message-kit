@@ -1,5 +1,20 @@
 import { XMTPContext } from "@xmtp/message-kit";
 
+import type { skillAction } from "@xmtp/message-kit";
+
+export const registerSkill: skillAction[] = [
+  {
+    skill: "/cool [domain]",
+    examples: ["/cool vitalik.eth"],
+    handler: handleCool,
+    description: "Get cool alternatives for a .eth domain.",
+    params: {
+      domain: {
+        type: "string",
+      },
+    },
+  },
+];
 export async function handleCool(context: XMTPContext) {
   const {
     message: {

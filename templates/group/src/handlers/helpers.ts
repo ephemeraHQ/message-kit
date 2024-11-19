@@ -1,5 +1,24 @@
 import { XMTPContext } from "@xmtp/message-kit";
 
+import type { skillAction } from "@xmtp/message-kit";
+
+export const registerSkill: skillAction[] = [
+  {
+    skill: "/help",
+    examples: ["/help"],
+    handler: handleHelp,
+    description: "Get help with the bot.",
+    params: {},
+  },
+  {
+    skill: "/id",
+    examples: ["/id"],
+    handler: handleHelp,
+    description: "Get the group ID.",
+    params: {},
+  },
+];
+
 export async function handleHelp(context: XMTPContext) {
   const {
     message: {

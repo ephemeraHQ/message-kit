@@ -1,5 +1,22 @@
-import { frameUrl } from "../skills.js";
+import { frameUrl } from "../index.js";
 import { getUserInfo, XMTPContext } from "@xmtp/message-kit";
+
+import type { skillAction } from "@xmtp/message-kit";
+
+export const registerSkill: skillAction[] = [
+  {
+    skill: "/renew [domain]",
+    handler: handleRenew,
+    description:
+      "Extend the registration period of your ENS domain. Returns a URL to complete the renewal.",
+    examples: ["/renew fabri.base.eth"],
+    params: {
+      domain: {
+        type: "string",
+      },
+    },
+  },
+];
 
 export async function handleRenew(context: XMTPContext) {
   const {
