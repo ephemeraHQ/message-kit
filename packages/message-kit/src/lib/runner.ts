@@ -180,8 +180,8 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
       console.debug("Message Validation Stream Details:", {
         isSameAddress,
         openai: {
-          model: process.env.GPT_MODEL,
-          key: process.env.OPEN_AI_API_KEY,
+          model: process?.env?.GPT_MODEL,
+          key: process?.env?.OPEN_AI_API_KEY?.slice(0, 5) + "...",
         },
         content,
         version,

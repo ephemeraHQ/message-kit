@@ -119,13 +119,13 @@ export async function replaceVariables(
   if (userInfo) {
     prompt = prompt.replace("{user_context}", replaceUserContext(userInfo));
     prompt = prompt.replaceAll("{address}", userInfo.address || "");
-    prompt = prompt.replaceAll("{ens_domain}", userInfo.ensDomain || "");
+    prompt = prompt.replaceAll("{domain}", userInfo.ensDomain || "");
     prompt = prompt.replaceAll("{username}", userInfo.converseUsername || "");
     prompt = prompt.replaceAll("{name}", userInfo.preferredName || "");
   }
 
   if (process.env.MSG_LOG === "true") {
-    console.log("System Prompt", prompt);
+    //console.log("System Prompt", prompt);
   }
   return prompt;
 }
