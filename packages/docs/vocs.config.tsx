@@ -110,10 +110,6 @@ export default defineConfig({
           text: "Deployment",
           link: "/concepts/deployment",
         },
-        {
-          text: "Middleware",
-          link: "/concepts/middleware",
-        },
       ],
     },
     {
