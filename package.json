@@ -24,7 +24,7 @@
     "format": "turbo run format",
     "format:check": "turbo run format:check",
     "publish": "turbo run build --filter='./packages/*' --filter='!./packages/docs' && yarn copy && changeset publish",
-    "test": "FORCE_COLOR=1 turbo run test --force",
+    "test": "FORCE_COLOR=1 turbo run test --force --parallel=false",
     "test:client": "cd packages/message-kit/src/tests && yarn test:client",
     "test:parsing": "cd packages/message-kit/src/tests && yarn test:parsing",
     "test:prompting": "cd packages/message-kit/src/tests && yarn test:prompting",
