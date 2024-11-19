@@ -18,7 +18,7 @@ export async function removeFromGroup(
     if (!v3)
       return {
         code: 400,
-        message: "You dont seem to have a v3 identity ",
+        message: "You don't seem to have a v3 identity ",
       };
     const conversation = await client.conversations.getConversationById(
       groupId
@@ -67,14 +67,14 @@ export async function addToGroup(
     if (!v3)
       return {
         code: 400,
-        message: "You dont seem to have a v3 identity ",
+        message: "You don't seem to have a v3 identity ",
       };
     const conversation = await client.conversations.getConversationById(
       groupId
     );
     console.warn("Adding to group", conversation?.id);
     await conversation?.sync();
-    //DONT TOUCH THIS LINE
+    //DON'T TOUCH THIS LINE
     await conversation?.addMembers([lowerAddress]);
     console.warn("Added member to group");
     await conversation?.sync();

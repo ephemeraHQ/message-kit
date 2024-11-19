@@ -134,7 +134,7 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
     // Remote attachments work if image:true in runner config
     // Replies only work with explicit mentions from triggers.
     // Text only works with explicit mentions from triggers.
-    // Reactions dont work with triggers.
+    // Reactions don't work with triggers.
 
     const isImageValid = isRemoteAttachment && runConfig?.attachments;
 

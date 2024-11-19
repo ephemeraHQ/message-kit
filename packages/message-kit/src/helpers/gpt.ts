@@ -66,7 +66,7 @@ export const PROMPT_RULES = `
 - You can respond with multiple messages if needed. Each message should be separated by a newline character.
 - You can trigger skills by only sending the command in a newline message.
 - Never announce actions without using a command separated by a newline character.
-- Dont answer in markdown format, just answer in plaintext.
+- Don't answer in markdown format, just answer in plaintext.
 - Do not make guesses or assumptions
 - Only answer if the verified information is in the prompt.
 - Check that you are not missing a command
