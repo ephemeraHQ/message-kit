@@ -15,7 +15,7 @@ const alix = {
 };
 type testCase = [string, string | string[]][];
 
-describe("Prompting tests", () => {
+describe("Ens agent tests", () => {
   const testCases: testCase = [
     ["hi", "Fabri"],
     ["I want to get info for vitalik.eth", "/info vitalik.eth"],
@@ -45,7 +45,7 @@ describe("Prompting tests", () => {
   testPrompt(testCases, ensSkills, ensSystemPrompt, "@ens", humanAgent);
 }, 15000);
 
-describe("Prompting tests", () => {
+describe("FGroip agent", () => {
   const testCases: testCase = [
     ["@bot let's play a game", "/game wordle"],
     ["@bot let's tip @alix 10 usdc", ["/tip @alix 10 usdc"]],
