@@ -44,30 +44,6 @@ const skills: SkillGroup[] = [
 
 The handler function to process skill requests:
 
-```tsx [src/handler/group.ts]
-import { XMTPContext } from "@xmtp/message-kit";
-
-export async function handler(context: XMTPContext) {
-  const {
-    skills,
-    message: {
-      content: { skill },
-    },
-    group,
-  } = context;
-
-  if (skill == "help") {
-    const intro =
-      "Available experiences:\n" +
-      skills
-        ?.flatMap((app) => app.skills)
-        .map((skill) => `${skill.skill} - ${skill.description}`)
-        .join("\n") +
-      "\nUse these skills to interact with specific apps.";
-    context.send(intro);
-  } else if (skill == "id") {
-    console.log(group?.id);
-    context.send(group?.id);
-  }
-}
+```tsx [src/handlers/helpers.ts]
+// [!include ~/../../templates/group/src/handlers/helpers.ts]
 ```

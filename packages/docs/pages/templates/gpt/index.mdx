@@ -18,43 +18,16 @@ group/
 
 The process that starts listening to messages and replying to them.
 
-```tsx [index.ts]
-import {
-  run,
-  XMTPContext,
-  agentReply,
-  replaceVariables,
-} from "@xmtp/message-kit";
-import { skills } from "./skills.js";
-import { systemPrompt } from "./prompt.js";
-
-run(async (context: XMTPContext) => {
-  const {
-    message: { sender },
-    runConfig,
-  } = context;
-
-  let prompt = await replaceVariables(
-    systemPrompt,
-    sender.address,
-    runConfig?.skills,
-    "@bot",
-  );
-  await agentReply(context, prompt);
-});
+```tsx [src/index.ts]
+// [!include ~/../../templates/gpt/src/index.ts]
 ```
 
 ## Prompt
 
 Here is the prompt that the agent will use to reply to messages.
 
-```tsx [index.ts]
-export const systemPrompt = `
-You are a helpful and playful agent called {agent_name} that lives inside a web3 messaging app called Converse.
-{rules}
-{skills}
-{user_context}
-`;
+```tsx [src/prompt.ts]
+// [!include ~/../../templates/gpt/src/prompt.ts]
 ```
 
 ## Run the app

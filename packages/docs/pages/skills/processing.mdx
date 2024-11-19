@@ -32,24 +32,7 @@ The agent will parse the response into an array of skills and messages. This hap
 The agent will execute each skill in the array.
 
 ```tsx [index.ts]
-// Process each message sequentially
-for (const message of messages) {
-  if (message.startsWith("/")) {
-    const response = await context.executeSkill(message);
-    if (response && typeof response.message === "string") {
-      let msg = parseMarkdown(response.message);
-      chatMemory.addEntry(address, {
-        role: "system",
-        content: msg,
-      });
-      await context.send(response.message);
-    } else {
-      /* Other type of responses like errors or json data */
-    }
-  } else {
-    await context.send(message);
-  }
-}
+// [!include ~/../../packages/message-kit/src/helpers/gpt.ts:processing]
 ```
 
 :::

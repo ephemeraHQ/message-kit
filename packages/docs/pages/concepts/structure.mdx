@@ -29,7 +29,9 @@ run(
   async (context: XMTPContext) => {
     // your logic here
   },
-  { skills },
+  { skills,
+    /*optional parameters*/
+   },
 );
 
 ```
@@ -54,13 +56,7 @@ import { XMTPContext } from "@xmtp/message-kit";
 
 run(async (context: XMTPContext) => {
   const {
-    message: {
-      id,
-      content: { text, skill, params, attachment, reply, reference, reaction },
-      sender,
-      sent,
-      typeId,
-    },
+    message,
     group,
     conversation,
     client,
@@ -76,20 +72,7 @@ run(async (context: XMTPContext) => {
 
 ### Context properties
 
-- `message`: the message object
-
-  - `id`: 'string'
-  - `content`:
-    - `text`: 'string'
-    - `skill`: 'string'
-    - `params`: 'object'
-    - `attachment`: 'object'
-    - `reply`: 'string'
-    - `reference`: 'string'
-    - `reaction`: 'string'
-  - `sender`: 'AbstractedMember'
-  - `sent`: 'Date'
-  - `typeId`: 'string'
+- `message`: the [message](/concepts/messages) object
 - `group`: the group object
 - `conversation`: the conversation object
 - `client`: the client object

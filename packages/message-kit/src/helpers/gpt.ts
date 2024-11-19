@@ -87,6 +87,7 @@ export function replaceSkills(skills: SkillGroup[], tag: string) {
   }
 }
 
+// [!region replaceVariables]
 export async function replaceVariables(
   prompt: string,
   senderAddress: string,
@@ -128,6 +129,7 @@ export async function replaceVariables(
   }
   return prompt;
 }
+// [!endregion replaceVariables]
 export async function agentParse(
   prompt: string,
   senderAddress: string,
@@ -216,7 +218,6 @@ export async function textGeneration(
     throw new Error("Failed to generate response");
   }
 }
-
 export async function processMultilineResponse(
   memoryKey: string,
   reply: string,
@@ -231,6 +232,7 @@ export async function processMultilineResponse(
     .filter((message): message is string => message.length > 0);
 
   console.log(messages);
+  // [!region processing]
   for (const message of messages) {
     if (message.startsWith("/")) {
       const response = await context.executeSkill(message);
@@ -246,6 +248,7 @@ export async function processMultilineResponse(
       await context.send(message);
     }
   }
+  // [!endregion processing]
 }
 export function parseMarkdown(message: string) {
   let trimmedMessage = message;

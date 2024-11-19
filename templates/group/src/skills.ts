@@ -1,7 +1,7 @@
-import { handleTipping } from "./handler/tipping.js";
-import { handlePay } from "./handler/payment.js";
-import { handleGames } from "./handler/game.js";
-import { handleHelp } from "./handler/helpers.js";
+import { handleTipping } from "./handlers/tipping.js";
+import { handlePay } from "./handlers/payment.js";
+import { handleGames } from "./handlers/game.js";
+import { handleHelp } from "./handlers/helpers.js";
 import type { SkillGroup } from "@xmtp/message-kit";
 
 export const skills: SkillGroup[] = [

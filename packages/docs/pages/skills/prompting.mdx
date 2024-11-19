@@ -21,7 +21,7 @@ Your are helpful and playful agent called {agent_name} that lives inside a web3 
 {user_context}
 {skills}
 {fine_tuning}
-
+`;
 ```
 
 Predefined properties:
@@ -41,48 +41,8 @@ This properties are predefined in MessageKit and will be replaced by the agent w
 
 This template is part of the message-kit package.
 
-```jsx
-export async function replaceVariables(
-  prompt: string,
-  senderAddress: string,
-  skills: SkillGroup[] | undefined,
-  tag: string,
-) {
-  // Fetch user information based on the sender's address
-  let userInfo = await getUserInfo(senderAddress);
-  if (!userInfo) {
-    console.log("User info not found");
-    userInfo = {
-      preferredName: senderAddress,
-      address: senderAddress,
-      ensDomain: senderAddress,
-      converseUsername: senderAddress,
-    };
-  }
-
-  prompt = prompt.replace(
-    "{persona}",
-    "You are a helpful agent called {agent_name} that lives inside a web3 messaging app called Converse.",
-  );
-
-  prompt = prompt.replace("{agent_name}", tag);
-  prompt = prompt.replace("{rules}", PROMPT_RULES);
-  prompt = prompt.replace("{skills}", replaceSkills(skills ?? [], tag));
-
-  // Replace variables in the system prompt
-  if (userInfo) {
-    prompt = prompt.replace("{user_context}", replaceUserContext(userInfo));
-    prompt = prompt.replaceAll("{address}", userInfo.address || "");
-    prompt = prompt.replaceAll("{ens_domain}", userInfo.ensDomain || "");
-    prompt = prompt.replaceAll("{username}", userInfo.converseUsername || "");
-    prompt = prompt.replaceAll("{name}", userInfo.preferredName || "");
-  }
-
-  if (process.env.MSG_LOG === "true") {
-    console.log("System Prompt", prompt);
-  }
-  return prompt;
-}
+```jsx [src/helpers/gpt.ts]
+// [!include ~/../../packages/message-kit/src/helpers/gpt.ts:replaceVariables]
 ```
 
 ## End result
