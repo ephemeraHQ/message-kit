@@ -1,5 +1,6 @@
 import { test, expect } from "vitest";
 import { clearMemory, replaceVariables, agentParse } from "../helpers/gpt";
+import { clearInfoCache } from "../helpers/resolver";
 
 export function testPrompt(
   testCases: [string, string | string[]][],
@@ -8,10 +9,11 @@ export function testPrompt(
   tag: string,
   sender: { address: string; converseUsername: string },
 ) {
+  clearMemory();
+  clearInfoCache();
   test.each(testCases)(
     "should handle %s correctly",
     async (userPrompt, expectedPatterns) => {
-      clearMemory();
       let prompt = await replaceVariables(
         systemPrompt,
         sender.address,

@@ -45,7 +45,7 @@ describe("Ens agent tests", () => {
   testPrompt(testCases, ensSkills, ensSystemPrompt, "@ens", humanAgent);
 }, 15000);
 
-describe("FGroip agent", () => {
+describe("Group bot test", () => {
   const testCases: testCase = [
     ["@bot let's play a game", "/game wordle"],
     ["@bot let's tip @alix 10 usdc", ["/tip @alix 10 usdc"]],
