@@ -3,14 +3,21 @@ dotenv.config({ override: true });
 import { Client } from "@xmtp/node-sdk";
 import { RunConfig } from "./types";
 import { loadSkillsFile } from "../lib/skills";
-
-export const shorterLogMessage = (message: string) => {
-  return message?.substring(0, 60) + (message?.length > 60 ? "..." : "");
-};
-
-export const logMessage = (message: string) => {
-  if (process.env.MSG_LOG === "false") return;
-  console.log(shorterLogMessage(message));
+import pino from "pino";
+const logger = pino({
+  level: process.env.LOG_LEVEL || "info",
+  transport: {
+    target: "pino-pretty",
+    options: {
+      colorize: true, // Colorize output for better readability
+      translateTime: "SYS:standard", // Add timestamp to logs
+      ignore: "pid,hostname", // Ignore certain fields
+    },
+  }, // Use default JSON format in production
+});
+export const logMessage = (message: any) => {
+  //let msh = message?.substring(0, 60) + (message?.length > 60 ? "..." : "");
+  if (process?.env?.MSG_LOG === "true") logger.info(message);
 };
 
 export async function logInitMessage(
@@ -47,8 +54,7 @@ Powered by XMTP \x1b[0m`;
     skills.length === 0 ||
     generatedKey
   ) {
-    console.warn(`\x1b[33m
-    Warnings:`);
+    console.warn(`\x1b[33m\n\tWarnings:`);
     if (runConfig?.attachments) {
       console.warn("\t- ⚠️ Attachments are enabled");
     }

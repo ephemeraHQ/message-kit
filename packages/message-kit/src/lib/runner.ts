@@ -46,8 +46,7 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
           version,
         );
         if (!context) {
-          if (process.env.MSG_LOG === "true")
-            console.warn("No context found", message);
+          logMessage("No context found" + message);
           return;
         }
 
@@ -175,7 +174,7 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
                     : false;
 
     if (process.env.MSG_LOG === "true") {
-      console.debug("Message Validation Stream Details:", {
+      logMessage({
         isSameAddress,
         openai: {
           model: process?.env?.GPT_MODEL,

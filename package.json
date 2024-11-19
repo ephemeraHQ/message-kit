@@ -36,7 +36,10 @@
   },
   "dependencies": {
     "@changesets/changelog-git": "^0.2.0",
-    "@changesets/cli": "^2.27.5"
+    "@changesets/cli": "^2.27.5",
+    "pino": "^9.5.0",
+    "pino-pretty": "^13.0.0",
+    "punycode": "^2.3.1"
   },
   "devDependencies": {
     "prettier": "^3.3.1",

@@ -269,8 +269,7 @@ export async function loadSkillsFile(): Promise<SkillGroup[] | []> {
     skills = module?.skills;
     return skills;
   } catch (error) {
-    // if (process.env.MSG_LOG === "true")
-    //   console.error(`Error loading command config from ${resolvedPath}:`);
+    //console.error(`Error loading command config from ${resolvedPath}:`);
   }
   return [];
 }
