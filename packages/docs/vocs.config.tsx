@@ -65,14 +65,7 @@ export default defineConfig({
       link: "https://github.com/ephemeraHQ/message-kit",
     },
   ],
-  topNav: [
-    {
-      text: "Converse app",
-      link: "https://testflight.apple.com/join/Q27zugWe",
-    },
-    { text: "XMTP", link: "https://docs.xmtp.org/" },
-    { text: "1.1.9-beta.1", link: "/changelog" },
-  ],
+  topNav: [{ text: "1.1.9-beta.1", link: "/changelog" }],
   editLink: {
     pattern:
       "https://github.com/ephemeraHQ/message-kit/blob/main/packages/docs/pages/:path",

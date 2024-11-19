@@ -1,9 +1,6 @@
-// @ts-nocheck
-import dotenv from "dotenv";
-dotenv.config();
 import { describe, test, expect } from "vitest";
 import { generatePrivateKey } from "viem/accounts";
-import { xmtpClient, createUser } from "../../lib/client";
+import { xmtpClient, createUser } from "../lib/client";
 
 describe("Client Private Key Configuration Tests", () => {
   test("simple placeholder test", () => {
