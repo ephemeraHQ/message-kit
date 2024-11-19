@@ -69,7 +69,7 @@ export async function executeSkill(
     } else {
       console.error("Unknown error during skill execution:", error);
     }
-    throw error; // Re-throw to allow proper handling upstream
+    throw error;
   } finally {
     context.refConv = null;
   }
@@ -266,7 +266,6 @@ export async function loadSkillsFile(): Promise<SkillGroup[] | []> {
   let skills: SkillGroup[] = [];
   try {
     const module = await import(resolvedPath);
-    console.log(module);
     skills = module?.skills;
     return skills;
   } catch (error) {

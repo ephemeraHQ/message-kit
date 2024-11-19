@@ -10,7 +10,7 @@ import { systemPrompt } from "./prompt.js";
 run(async (context: XMTPContext) => {
   const {
     message: { sender },
-    runConfig,
+    skills,
   } = context;
 
   let prompt = await replaceVariables(

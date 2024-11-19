@@ -34,11 +34,14 @@ Powered by XMTP \x1b[0m`;
     🔗 https://converse.xyz/dm/${client.accountAddress}`);
 
   let skills = runConfig?.skills ?? (await loadSkillsFile());
+
   if (
     runConfig?.experimental ||
     runConfig?.attachments ||
     runConfig?.memberChange ||
     runConfig?.client?.structuredLogging ||
+    skills === undefined ||
+    skills.length === 0 ||
     generatedKey
   ) {
     console.warn(`\x1b[33m
@@ -62,7 +65,7 @@ Powered by XMTP \x1b[0m`;
     if (runConfig?.memberChange) {
       console.warn("\t- ⚠️ Member changes are enabled");
     }
-    if (skills === undefined) {
+    if (skills === undefined || skills.length === 0) {
       console.warn("\t- ⚠️ No skills found");
     }
     if (runConfig?.experimental) {

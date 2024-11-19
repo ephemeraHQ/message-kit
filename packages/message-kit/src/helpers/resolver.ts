@@ -55,10 +55,7 @@ export const getUserInfo = async (
   clientAddress?: string,
   context?: XMTPContext,
 ): Promise<UserInfo | null> => {
-  if (typeof key !== "string") {
-    throw new Error("userinfo key must be a string");
-  }
-  let data: UserInfo = infoCache.get(key) || {
+  let data: UserInfo = {
     ensDomain: undefined,
     address: undefined,
     converseUsername: undefined,
@@ -67,6 +64,11 @@ export const getUserInfo = async (
     converseEndpoint: undefined,
     preferredName: undefined,
   };
+  if (typeof key !== "string") {
+    console.error("userinfo key must be a string");
+    return data;
+  }
+  if (infoCache.get(key)) return infoCache.get(key) as UserInfo;
   key = key?.toLowerCase();
   clientAddress = clientAddress?.toLowerCase();
   // Determine user information based on provided key
@@ -149,12 +151,12 @@ export const getUserInfo = async (
           },
           5000,
         );
-        if (!response.ok) {
+        if (!response?.ok) {
           console.error(
-            `Converse profile request failed with status ${response.status}`,
+            `Converse profile request failed with status ${response?.status}`,
           );
         }
-        const converseData = (await response.json()) as ConverseProfile;
+        const converseData = (await response?.json()) as ConverseProfile;
         if (converseData) {
           data.converseUsername =
             converseData.formattedName ||
@@ -191,17 +193,14 @@ const fetchWithTimeout = async (
     return response;
   } catch (error) {
     clearTimeout(id);
-    throw error;
+    console.error("fetching");
   }
 };
 export const isOnXMTP = async (
   v3client: V3Client,
   v2client: V2Client,
-  address: string | undefined,
+  address: string,
 ) => {
-  if (!address) {
-    throw new Error("Address is required for XMTP validation");
-  }
   try {
     const [v2, v3] = await Promise.all([
       v2client.canMessage(address || ""),
@@ -210,7 +209,6 @@ export const isOnXMTP = async (
     return { v2, v3: v3.get(address || "") };
   } catch (error) {
     console.error("Error checking XMTP availability:", error);
-    throw error;
   }
 };
 

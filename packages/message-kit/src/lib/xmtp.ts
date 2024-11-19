@@ -193,10 +193,6 @@ export class XMTPContext {
     prompt: string,
     validResponses: string[],
   ): Promise<string> {
-    if (!validResponses || validResponses.length === 0) {
-      throw new Error("Valid responses array must not be empty");
-    }
-
     await this.send(`${prompt}`);
 
     return new Promise<string>((resolve, reject) => {
