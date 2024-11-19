@@ -10,14 +10,8 @@ import { systemPrompt } from "./prompt.js";
 run(async (context: XMTPContext) => {
   const {
     message: { sender },
-    skills,
   } = context;
 
-  let prompt = await replaceVariables(
-    systemPrompt,
-    sender.address,
-    skills,
-    "@bot",
-  );
+  let prompt = await replaceVariables(systemPrompt, sender.address, [], "@bot");
   await agentReply(context, prompt);
 });

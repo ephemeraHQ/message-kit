@@ -15,7 +15,7 @@
     "copy": "rm -rf packages/create-message-kit/templates && cd packages/create-message-kit && yarn copy && cd ../.. && echo 'Copy completed'",
     "dev": "cd packages/message-kit && yarn build:watch",
     "dev:agent": "cd templates/agent && yarn dev",
-    "dev:dead": "cd templates/dead && yarn dev",
+    "dev:cli": "yarn copy && cd packages/create-message-kit && yarn link",
     "dev:docs": "cd packages/docs && yarn dev",
     "dev:gated": "cd templates/gated && yarn dev",
     "dev:gpt": "cd templates/gpt && yarn dev",

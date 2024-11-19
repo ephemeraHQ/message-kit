@@ -12,7 +12,12 @@ async function copyTemplates() {
       const srcDir = resolve(__dirname, `../../templates/${template}`);
       const destDir = resolve(templateDir, template);
       if (fs.existsSync(srcDir)) {
-        const itemsToCopy = ["src", ".env.example"];
+        const itemsToCopy = [
+          "src",
+          ".env.example",
+          "package.json",
+          ".yarnrc.yml",
+        ];
         for (const item of itemsToCopy) {
           const srcItem = resolve(srcDir, item);
           const destItem = resolve(destDir, item);

@@ -51,8 +51,7 @@ Powered by XMTP`;
     log.success(`Project launched in ${pc.red(destDir)}!`);
 
     // Add package.json
-    //addPackagejson(destDir, displayName, pkgManager);
-    createYarnFile(destDir, pkgManager);
+    updatePackagejson(destDir, templateType);
 
     // Create README.md file
     createReadme(destDir, templateType, displayName, pkgManager);
@@ -65,20 +64,14 @@ Powered by XMTP`;
 
 program.parse(process.argv);
 
-async function addPackagejson(destDir, name, pkgManager) {
+async function updatePackagejson(destDir, templateType) {
   // Create package.json based on the template
   const templateDir = resolve(__dirname, `./templates/${templateType}`);
-  const packageTemplate = require(`${templateDir}/package.json`);
+  const packageTemplate = fs.readJsonSync(`${templateDir}/package.json`);
 
-  if (pkgManager.includes("yarn")) {
-    packageTemplate.packageManager = `yarn@4.5.1`;
-  }
-
-  // Add .yarnrc.yml just in caseto disable PnP mode
-  fs.writeFileSync(
-    resolve(destDir, ".yarnrc.yml"),
-    "nodeLinker: node-modules\n",
-  );
+  packageTemplate.dependencies["@xmtp/message-kit"] = "latest";
+  //Add for yarn in general
+  packageTemplate.packageManager = `yarn@4.5.1`;
 
   fs.writeJsonSync(resolve(destDir, "package.json"), packageTemplate, {
     spaces: 2,
@@ -88,7 +81,7 @@ async function addPackagejson(destDir, name, pkgManager) {
 async function gatherProjectInfo() {
   const templateOptions = [
     { value: "gpt", label: "Simple Gpt" },
-    { value: "agent", label: "Agent" },
+    { value: "agent", label: "ENS Agent" },
     { value: "group", label: "Group bot" },
     { value: "gated", label: "Gated Group" },
   ];
@@ -131,22 +124,6 @@ async function gatherProjectInfo() {
   return { templateType, displayName, destDir, templateDir };
 }
 
-function createYarnFile() {
-  let content = `
-compressionLevel: mixed
-
-enableGlobalCache: false
-
-enableTelemetry: false
-
-nodeLinker: node-modules
-
-yarnPath: .yarn/releases/yarn-4.5.1.cjs`;
-
-  fs.writeJsonSync(resolve(destDir, ".yarnrc.yml"), content, {
-    spaces: 2,
-  });
-}
 function createTsconfig(destDir) {
   const tsconfigContent = {
     include: ["src/**/*"],

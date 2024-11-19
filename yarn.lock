@@ -3402,7 +3402,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "agent@workspace:templates/agent"
   dependencies:
+    "@types/node": "npm:^20.14.2"
     "@xmtp/message-kit": "workspace:*"
+    typescript: "npm:^5.4.5"
   languageName: unknown
   linkType: soft
 
@@ -5374,9 +5376,11 @@ __metadata:
   resolution: "gated@workspace:templates/gated"
   dependencies:
     "@types/express": "npm:^4"
+    "@types/node": "npm:^20.14.2"
     "@xmtp/message-kit": "workspace:*"
     alchemy-sdk: "npm:^3.4.3"
     express: "npm:^4.19.2"
+    typescript: "npm:^5.4.5"
   languageName: unknown
   linkType: soft
 
@@ -5523,7 +5527,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "gpt@workspace:templates/gpt"
   dependencies:
+    "@types/node": "npm:^20.14.2"
     "@xmtp/message-kit": "workspace:*"
+    typescript: "npm:^5.4.5"
   languageName: unknown
   linkType: soft
 
@@ -5538,7 +5544,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "group@workspace:templates/group"
   dependencies:
+    "@types/node": "npm:^20.14.2"
     "@xmtp/message-kit": "workspace:*"
+    typescript: "npm:^5.4.5"
   languageName: unknown
   linkType: soft
 
