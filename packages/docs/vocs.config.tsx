@@ -67,7 +67,7 @@ export default defineConfig({
   ],
   topNav: [
     { text: "Guidelines", link: "/concepts/guidelines" },
-    { text: "1.1.9-beta.1", link: "/changelog" },
+    { text: "1.1.9-beta.2", link: "/changelog" },
   ],
   editLink: {
     pattern:
@@ -110,6 +110,10 @@ export default defineConfig({
           text: "Deployment",
           link: "/concepts/deployment",
         },
+        {
+          text: "Middleware",
+          link: "/concepts/middleware",
+        },
       ],
     },
     {
@@ -149,58 +153,10 @@ export default defineConfig({
         {
           text: "Ens agent",
           link: "/templates/agent",
-          items: [
-            {
-              text: "Check",
-              link: "/templates/agent/handlers/check",
-            },
-            {
-              text: "Info",
-              link: "/templates/agent/handlers/info",
-            },
-            {
-              text: "Cool",
-              link: "/templates/agent/handlers/cool",
-            },
-            {
-              text: "Register",
-              link: "/templates/agent/handlers/register",
-            },
-            {
-              text: "Renew",
-              link: "/templates/agent/handlers/renew",
-            },
-            {
-              text: "Reset",
-              link: "/templates/agent/handlers/reset",
-            },
-            {
-              text: "Tip",
-              link: "/templates/agent/handlers/tip",
-            },
-          ],
         },
         {
           text: "Group bot",
           link: "/templates/group",
-          items: [
-            {
-              text: "Tipping",
-              link: "/templates/group/tipping",
-            },
-            {
-              text: "Games",
-              link: "/templates/group/games",
-            },
-            {
-              text: "Payments",
-              link: "/templates/group/payment",
-            },
-            {
-              text: "Helpers",
-              link: "/templates/group/helpers",
-            },
-          ],
         },
         {
           text: "Gpt",
@@ -211,44 +167,10 @@ export default defineConfig({
 
     {
       text: "Middleware",
-      link: "/middleware",
       items: [
         {
-          text: "Cron",
-          link: "/middleware/cron",
-        },
-        {
-          text: "Vision",
-          link: "/middleware/vision",
-        },
-        {
-          text: "Stackso",
-          link: "/middleware/stackso",
-        },
-        {
-          text: "Notion",
-          link: "/middleware/notion",
-        },
-        {
-          text: "LearnWeb3",
-          link: "/middleware/learnweb3",
-        },
-        {
-          text: "Lowdb",
-          link: "/middleware/lowdb",
-        },
-
-        {
-          text: "GPT",
-          link: "/middleware/gpt",
-        },
-        {
-          text: "Resolver",
-          link: "/middleware/resolver",
-        },
-        {
-          text: "XMTP Groups",
-          link: "/middleware/xmtp",
+          text: "Overview",
+          link: "/middleware",
         },
         {
           text: "Open Frames",
