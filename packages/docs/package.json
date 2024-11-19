@@ -3,7 +3,6 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "prebuild": "mkdir -p dist/.vocs",
     "build": "vocs build ",
     "dev": "vocs dev",
     "preview": "vocs preview"

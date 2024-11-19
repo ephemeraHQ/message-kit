@@ -50,8 +50,8 @@ export default defineConfig({
     "/docs": "/hero.jpg",
   },
   title: "MessageKit",
-  iconUrl: "/messagekit-logo.png",
-  rootDir: "/",
+  iconUrl: "/messagekit -logo.png",
+  rootDir: ".",
   theme: {
     colorScheme: "dark",
     accentColor: {
