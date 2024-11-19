@@ -1,4 +1,9 @@
-import { run, agentReply, replaceVariables } from "@xmtp/message-kit";
+import {
+  run,
+  agentReply,
+  replaceVariables,
+  XMTPContext,
+} from "@xmtp/message-kit";
 import { systemPrompt } from "./prompt.js";
 import { registerSkill as checkSkill } from "./handlers/check.js";
 import { registerSkill as coolSkill } from "./handlers/cool.js";
@@ -31,16 +36,16 @@ export const skills = [
 ];
 
 run(
-  async (context) => {
+  async (context: XMTPContext) => {
     const {
       message: { sender },
-      runConfig,
+      skills,
     } = context;
 
     let prompt = await replaceVariables(
       systemPrompt,
       sender.address,
-      runConfig?.skills,
+      skills,
       "@ens",
     );
     fs.writeFileSync("example_prompt.md", prompt);

@@ -92,14 +92,12 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
       version,
       client,
       v2client,
+      skills,
       runConfig,
       group,
     } = context;
 
-    let skillAction =
-      text && runConfig?.skills
-        ? findSkill(text, runConfig?.skills)
-        : undefined;
+    let skillAction = text && skills ? findSkill(text, skills) : undefined;
 
     const { inboxId: senderInboxId } = client;
     const { address: senderAddress } = v2client;
@@ -148,8 +146,8 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
     ].includes(typeId ?? "");
 
     const skillGroup =
-      typeId === "text" && runConfig?.skills
-        ? findSkillGroup(text ?? "", runConfig?.skills)
+      typeId === "text" && skills
+        ? findSkillGroup(text ?? "", skills)
         : undefined; // Check if the message content triggers a tag
     const isTagged = skillGroup ? true : false;
     const isMessageValid = isSameAddress
@@ -196,7 +194,7 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
           isAdminOrPass,
         },
         isAddedMemberOrPass,
-        skillsParsed: runConfig?.skills?.length,
+        skillsParsed: skills?.length,
         taggingDetails: isTagged
           ? {
               tag: skillGroup?.tag,

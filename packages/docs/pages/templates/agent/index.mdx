@@ -41,35 +41,6 @@ The runner function to start the agent and listen for incoming messages:
 // [!include ~/../../templates/agent/src/index.ts]
 ```
 
-```tsx [src/index.ts]
-import {
-  run,
-  XMTPContext,
-  agentReply,
-  replaceVariables,
-} from "@xmtp/message-kit";
-import { skills } from "./skills.js";
-import { systemPrompt } from "./prompt.js";
-
-run(
-  async (context: XMTPContext) => {
-    const {
-      message: { sender },
-      runConfig,
-    } = context;
-
-    let prompt = await replaceVariables(
-      systemPrompt,
-      sender.address,
-      runConfig?.skills,
-      "@bot",
-    );
-    await agentReply(context, prompt);
-  },
-  { skills },
-);
-```
-
 ## Prompt
 
 This is the prompt that the agent will use to respond to the user.

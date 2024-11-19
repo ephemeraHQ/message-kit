@@ -51,7 +51,8 @@ Powered by XMTP`;
     log.success(`Project launched in ${pc.red(destDir)}!`);
 
     // Add package.json
-    addPackagejson(destDir, displayName, pkgManager);
+    //addPackagejson(destDir, displayName, pkgManager);
+    createYarnFile(destDir, pkgManager);
 
     // Create README.md file
     createReadme(destDir, templateType, displayName, pkgManager);
@@ -66,27 +67,8 @@ program.parse(process.argv);
 
 async function addPackagejson(destDir, name, pkgManager) {
   // Create package.json based on the template
-  let packageTemplate = {
-    name: name,
-    private: true,
-    type: "module",
-    scripts: {
-      build: "tsc",
-      dev: "tsc -w & sleep 1 && node --watch dist/index.js",
-      start: "node dist/index.js",
-      postinstall: "tsc",
-    },
-    dependencies: {
-      "@xmtp/message-kit": "latest",
-    },
-    devDependencies: {
-      "@types/node": "latest",
-      typescript: "latest",
-    },
-    engines: {
-      node: ">=20",
-    },
-  };
+  const templateDir = resolve(__dirname, `./templates/${templateType}`);
+  const packageTemplate = require(`${templateDir}/package.json`);
 
   if (pkgManager.includes("yarn")) {
     packageTemplate.packageManager = `yarn@4.5.1`;
@@ -107,7 +89,8 @@ async function gatherProjectInfo() {
   const templateOptions = [
     { value: "gpt", label: "Simple Gpt" },
     { value: "agent", label: "Agent" },
-    { value: "group", label: "Group" },
+    { value: "group", label: "Group bot" },
+    { value: "gated", label: "Gated Group" },
   ];
 
   const templateType = await select({
@@ -148,6 +131,22 @@ async function gatherProjectInfo() {
   return { templateType, displayName, destDir, templateDir };
 }
 
+function createYarnFile() {
+  let content = `
+compressionLevel: mixed
+
+enableGlobalCache: false
+
+enableTelemetry: false
+
+nodeLinker: node-modules
+
+yarnPath: .yarn/releases/yarn-4.5.1.cjs`;
+
+  fs.writeJsonSync(resolve(destDir, ".yarnrc.yml"), content, {
+    spaces: 2,
+  });
+}
 function createTsconfig(destDir) {
   const tsconfigContent = {
     include: ["src/**/*"],

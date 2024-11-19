@@ -1,5 +1,4 @@
-import { XMTPContext, AbstractedMember } from "@xmtp/message-kit";
-import { getUserInfo } from "@xmtp/message-kit";
+import { getUserInfo, AbstractedMember, XMTPContext } from "@xmtp/message-kit";
 import type { skillAction } from "@xmtp/message-kit";
 
 export const registerSkill: skillAction[] = [

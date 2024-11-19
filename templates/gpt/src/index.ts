@@ -1,8 +1,13 @@
-import { run, agentReply, replaceVariables } from "@xmtp/message-kit";
+import {
+  run,
+  agentReply,
+  replaceVariables,
+  XMTPContext,
+} from "@xmtp/message-kit";
 
 import { systemPrompt } from "./prompt.js";
 
-run(async (context) => {
+run(async (context: XMTPContext) => {
   const {
     message: { sender },
     runConfig,
@@ -11,7 +16,7 @@ run(async (context) => {
   let prompt = await replaceVariables(
     systemPrompt,
     sender.address,
-    runConfig?.skills,
+    skills,
     "@bot",
   );
   await agentReply(context, prompt);

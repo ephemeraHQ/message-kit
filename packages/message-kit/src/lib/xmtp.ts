@@ -13,11 +13,12 @@ import {
   RunConfig,
   MessageAbstracted,
   GroupAbstracted,
+  SkillGroup,
   SkillResponse,
   AbstractedMember,
 } from "../helpers/types.js";
 import { ContentTypeReply } from "@xmtp/content-type-reply";
-import { executeSkill, parseSkill } from "./skills.js";
+import { executeSkill, parseSkill, loadSkillsFile } from "./skills.js";
 import {
   ContentTypeAttachment,
   ContentTypeRemoteAttachment,
@@ -43,6 +44,7 @@ export class XMTPContext {
   admins?: string[];
   runConfig?: RunConfig;
   superAdmins?: string[];
+  skills: SkillGroup[] = [];
   sender?: AbstractedMember;
   awaitingResponse: boolean = false;
   awaitedHandler: ((text: string) => Promise<boolean | void>) | null = null;
@@ -119,18 +121,14 @@ export class XMTPContext {
       }
 
       //Config
-      context.runConfig = runConfig;
+      context.skills = runConfig?.skills ?? (await loadSkillsFile());
 
       context.getMessageById =
         client.conversations?.getMessageById?.bind(client.conversations) ||
         (() => null);
-      // **Correct Binding:**
+
       context.executeSkill = async (text: string) => {
-        const result = await executeSkill(
-          text,
-          runConfig?.skills ?? [],
-          context,
-        );
+        const result = await executeSkill(text, context.skills ?? [], context);
         return result ?? undefined;
       };
       let typeId = message.contentType?.typeId;
@@ -142,10 +140,7 @@ export class XMTPContext {
           : message.content;
 
       if (message?.contentType?.sameAs(ContentTypeText)) {
-        const extractedValues = parseSkill(
-          content.content,
-          runConfig?.skills ?? [],
-        );
+        const extractedValues = parseSkill(content.content, context.skills);
         if (extractedValues?.skill) {
           content = {
             text: content.content,
@@ -176,6 +171,11 @@ export class XMTPContext {
         content = {
           attachment: attachment,
         };
+      } else if (message?.contentType?.sameAs(ContentTypeAttachment)) {
+        const attachment = await RemoteAttachmentCodec.load(content, client);
+        content = {
+          attachment: attachment,
+        };
       }
       context.message = {
         id: message.id,
@@ -188,8 +188,7 @@ export class XMTPContext {
       return context;
     }
     return null;
-  } // Add properties to track awaited responses
-
+  }
   async awaitResponse(
     prompt: string,
     validResponses: string[],

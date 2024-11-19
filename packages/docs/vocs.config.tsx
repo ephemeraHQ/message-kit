@@ -162,6 +162,10 @@ export default defineConfig({
           text: "Gpt",
           link: "/templates/gpt",
         },
+        {
+          text: "Gated group",
+          link: "/templates/gated",
+        },
       ],
     },
 

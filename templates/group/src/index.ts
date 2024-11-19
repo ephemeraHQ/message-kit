@@ -1,4 +1,9 @@
-import { run, agentReply, replaceVariables } from "@xmtp/message-kit";
+import {
+  run,
+  agentReply,
+  XMTPContext,
+  replaceVariables,
+} from "@xmtp/message-kit";
 import { registerSkill as tippingSkill } from "./handlers/tipping.js";
 import { registerSkill as paymentSkill } from "./handlers/payment.js";
 import { registerSkill as gameSkill } from "./handlers/game.js";
@@ -15,16 +20,16 @@ export const skills = [
 ];
 
 run(
-  async (context) => {
+  async (context: XMTPContext) => {
     const {
       message: { sender },
-      runConfig,
+      skills,
     } = context;
 
     let prompt = await replaceVariables(
       systemPrompt,
       sender.address,
-      runConfig?.skills,
+      skills,
       "@bot",
     );
     await agentReply(context, prompt);

@@ -1,5 +1,6 @@
 import { Client } from "@xmtp/node-sdk";
 import { RunConfig } from "./types";
+import { loadSkillsFile } from "../lib/skills";
 
 export const shorterLogMessage = (message: string) => {
   return message?.substring(0, 60) + (message?.length > 60 ? "..." : "");
@@ -32,13 +33,13 @@ Powered by XMTP \x1b[0m`;
     Send a message to this account on Converse:                              
     🔗 https://converse.xyz/dm/${client.accountAddress}`);
 
+  let skills = runConfig?.skills ?? (await loadSkillsFile());
   if (
     runConfig?.experimental ||
     runConfig?.attachments ||
     runConfig?.memberChange ||
     runConfig?.client?.structuredLogging ||
-    generatedKey ||
-    runConfig?.skills === undefined
+    generatedKey
   ) {
     console.warn(`\x1b[33m
     Warnings:`);
@@ -61,7 +62,7 @@ Powered by XMTP \x1b[0m`;
     if (runConfig?.memberChange) {
       console.warn("\t- ⚠️ Member changes are enabled");
     }
-    if (runConfig?.skills === undefined) {
+    if (skills === undefined) {
       console.warn("\t- ⚠️ No skills found");
     }
     if (runConfig?.experimental) {
