@@ -11,13 +11,13 @@ run(
   async (context: XMTPContext) => {
     const {
       message: { sender },
-      config,
+      runConfig,
     } = context;
 
     let prompt = await replaceVariables(
       systemPrompt,
       sender.address,
-      config?.skills,
+      runConfig?.skills,
       "@bot",
     );
     await agentReply(context, prompt);

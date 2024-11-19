@@ -2,24 +2,23 @@
 
 Other skills in case you need them:
 
-## Skills
-
-Here are the skills to play the games:
-
 ```bash [cmd]
 /help
 /id
 ```
 
-::::note
-:::details[Skill declaration]
+## Skill declaration
+
+How the skill is declared in the `skills.ts` file:
 
 ```tsx [src/skills.ts]
 const skills: SkillGroup[] = [
   {
-    name: "Help",
-    description: "Get help with the bot.",
+    name: "Group bot",
+    tag: "@bot",
+    description: "Group agent for tipping payments, games and more.",
     skills: [
+      /* Other skills */
       {
         skill: "/help",
         examples: ["/help"],
@@ -34,13 +33,16 @@ const skills: SkillGroup[] = [
         description: "Get the group ID.",
         params: {},
       },
+
+      /* Other skills */
     ],
   },
 ];
 ```
 
-:::
-::::
+## Handler
+
+The handler function to process skill requests:
 
 ```tsx [src/handler/group.ts]
 import { XMTPContext } from "@xmtp/message-kit";

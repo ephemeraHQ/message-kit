@@ -32,33 +32,11 @@ _Refer to [structure](/concepts/structure) of the app so see the folder is creat
 
 ### Templates
 
-Start with a simple app that replies with `gm`.
+These are templates for different use cases inside of our Docs
 
-```tsx [src/index.ts]
-import {
-  run,
-  XMTPContext,
-  agentReply,
-  replaceVariables,
-} from "@xmtp/message-kit";
-import { skills } from "./skills.js";
-import { systemPrompt } from "./prompt.js";
-
-run(async (context: XMTPContext) => {
-  const {
-    message: { sender },
-    config,
-  } = context;
-
-  let prompt = await replaceVariables(
-    systemPrompt,
-    sender.address,
-    config?.skills,
-    "@bot",
-  );
-  await agentReply(context, prompt);
-});
-```
+- [`gpt`](./templates/gpt): Simple GPT agent example.
+- [`group`](./templates/group): Group chat agent example with skills and examples.
+- [`agent`](./templates/agent): ENS agent for registering and checking domains
 
 ### Variables
 

@@ -15,7 +15,7 @@ app-project/              # Optional middleware files
 └── .env                  # Environment variables
 ```
 
-## Handler
+## Runner
 
 This is the main function that runs the listener.
 
@@ -23,26 +23,11 @@ This is the main function that runs the listener.
 import {
   run,
   XMTPContext,
-  agentReply,
-  replaceVariables,
 } from "@xmtp/message-kit";
-import { skills } from "./skills.js";
-import { systemPrompt } from "./prompt.js";
 
 run(
   async (context: XMTPContext) => {
-    const {
-      message: { sender },
-      config,
-    } = context;
-
-    let prompt = await replaceVariables(
-      systemPrompt,
-      sender.address,
-      config?.skills,
-      "@bot",
-    );
-    await agentReply(context, prompt);
+    // your logic here
   },
   { skills },
 );
@@ -59,6 +44,62 @@ run(
 - `skills`: Custom skills to be used. Default is to create the skills in the `src/skills.ts` file.
 - `hideInitLogMessage`: hide the init log message with messagekit logo and stuff
 - `memberChange`: if true, member changes will be enabled, like adding members to the group
+
+## XMTPContext
+
+XMTPContext bridges the skills to the XMTP protocol. It's aware of conversations, groups and users.
+
+```tsx
+import { XMTPContext } from "@xmtp/message-kit";
+
+run(async (context: XMTPContext) => {
+  const {
+    message: {
+      id,
+      content: { text, skill, params, attachment, reply, reference, reaction },
+      sender,
+      sent,
+      typeId,
+    },
+    group,
+    conversation,
+    client,
+    version,
+    v2client,
+    members,
+    admins,
+    runConfig,
+    superAdmins,
+  } = context;
+});
+```
+
+### Context properties
+
+- `message`: the message object
+
+  - `id`: 'string'
+  - `content`:
+    - `text`: 'string'
+    - `skill`: 'string'
+    - `params`: 'object'
+    - `attachment`: 'object'
+    - `reply`: 'string'
+    - `reference`: 'string'
+    - `reaction`: 'string'
+  - `sender`: 'AbstractedMember'
+  - `sent`: 'Date'
+  - `typeId`: 'string'
+- `group`: the group object
+- `conversation`: the conversation object
+- `client`: the client object
+- `version`: the version of the client
+- `v2client`: the v2 client object
+- `members`: the members of the group
+- `admins`: the admins of the group
+- `superAdmins`: the super admins of the group
+- `runConfig`: the config of the Runner
+- `sender`: the sender of the message
 
 ## Clients
 

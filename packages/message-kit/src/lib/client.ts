@@ -22,11 +22,11 @@ import path from "path";
 export type User = ReturnType<typeof createUser>;
 
 export async function xmtpClient(
-  config?: RunConfig,
+  runConfig?: RunConfig,
 ): Promise<{ client: Client; v2client: V2Client }> {
   // Check if both clientConfig and privateKey are empty
   const testKey = await setupTestEncryptionKey();
-  const { key, isRandom } = setupPrivateKey(config?.privateKey);
+  const { key, isRandom } = setupPrivateKey(runConfig?.privateKey);
   const user = createUser(key);
 
   let env = process.env.XMTP_ENV as XmtpEnv;
@@ -45,10 +45,10 @@ export async function xmtpClient(
     ],
   };
   // Store the GPT model in process.env for global access
-  process.env.GPT_MODEL = config?.gptModel || "gpt-4o";
+  process.env.GPT_MODEL = runConfig?.gptModel || "gpt-4o";
 
   // Merge the default configuration with the provided config. Repeated fields in clientConfig will override the default values
-  const finalConfig = { ...defaultConfig, ...config?.client };
+  const finalConfig = { ...defaultConfig, ...runConfig?.client };
   //v2
   const account2 = privateKeyToAccount(key as `0x${string}`);
   const wallet2 = createWalletClient({
@@ -64,7 +64,7 @@ export async function xmtpClient(
   });
   const client = await Client.create(createSigner(user), testKey, finalConfig);
 
-  logInitMessage(client, config, isRandom ? key : undefined);
+  logInitMessage(client, runConfig, isRandom ? key : undefined);
 
   return { client, v2client };
 }

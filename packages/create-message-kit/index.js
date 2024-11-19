@@ -105,7 +105,7 @@ async function addPackagejson(destDir, name, pkgManager) {
 
 async function gatherProjectInfo() {
   const templateOptions = [
-    { value: "gpt", label: "GPT" },
+    { value: "gpt", label: "Simple Gpt" },
     { value: "agent", label: "Agent" },
     { value: "group", label: "Group" },
   ];

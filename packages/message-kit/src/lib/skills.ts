@@ -1,6 +1,5 @@
 import { SkillGroup, skillAction } from "../helpers/types.js";
 import { XMTPContext } from "./xmtp.js";
-import path from "path";
 
 export function findSkill(
   text: string,

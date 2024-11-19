@@ -41,7 +41,7 @@ export class XMTPContext {
   v2client!: V2Client;
   members?: AbstractedMember[];
   admins?: string[];
-  config?: RunConfig;
+  runConfig?: RunConfig;
   superAdmins?: string[];
   sender?: AbstractedMember;
   awaitingResponse: boolean = false;
@@ -79,7 +79,7 @@ export class XMTPContext {
     conversation: Conversation | V2Conversation,
     message: DecodedMessage | DecodedMessageV2 | null,
     { client, v2client }: { client: Client; v2client: V2Client },
-    config: RunConfig,
+    runConfig: RunConfig,
     version?: "v2" | "v3",
   ): Promise<XMTPContext | null> {
     const context = new XMTPContext(conversation, { client, v2client });
@@ -119,15 +119,18 @@ export class XMTPContext {
       }
 
       //Config
-      context.config = config;
-      context.config.skills = config?.skills ?? [];
+      context.runConfig = runConfig;
 
       context.getMessageById =
         client.conversations?.getMessageById?.bind(client.conversations) ||
         (() => null);
       // **Correct Binding:**
       context.executeSkill = async (text: string) => {
-        const result = await executeSkill(text, config?.skills ?? [], context);
+        const result = await executeSkill(
+          text,
+          runConfig?.skills ?? [],
+          context,
+        );
         return result ?? undefined;
       };
       let typeId = message.contentType?.typeId;
@@ -141,7 +144,7 @@ export class XMTPContext {
       if (message?.contentType?.sameAs(ContentTypeText)) {
         const extractedValues = parseSkill(
           content.content,
-          config?.skills ?? [],
+          runConfig?.skills ?? [],
         );
         if (extractedValues?.skill) {
           content = {

@@ -2,24 +2,22 @@
 
 Create an app that receives a game as a skill request and sends a frame to the user.
 
-## Skills
-
-Here are the skills to play the games:
-
 ```bash [cmd]
 /game help
 /game wordle
 🔎 emoji
 ```
 
-::::note
-:::details[Skill declaration]
+## Skill declaration
+
+How the skill is declared in the `skills.ts` file:
 
 ```tsx [src/skills.ts]
 export const skills: SkillGroup[] = [
   {
-    name: "Games",
-    description: "Provides various gaming experiences.",
+    name: "Group bot",
+    tag: "@bot",
+    description: "Group agent for tipping payments, games and more.",
     skills: [
       {
         skill: "/game [game]",
@@ -38,10 +36,9 @@ export const skills: SkillGroup[] = [
 ];
 ```
 
-:::
-::::
-
 ## Handler
+
+The handler function to process game-related skill requests:
 
 ```tsx [src/handler/game.ts]
 import { XMTPContext } from "@xmtp/message-kit";

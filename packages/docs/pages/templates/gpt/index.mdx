@@ -2,6 +2,22 @@
 
 This is the simplest example of a GPT bot.
 
+## Structure
+
+```
+group/
+├── src/
+│   ├── index.ts                # Index file of the app. // [!code hl] // [!code focus]
+│   ├── prompt.ts               # Prompt for the agent. // [!code hl] // [!code focus]
+├── package.json
+├── tsconfig.json
+└── .env
+```
+
+## Runner
+
+The process that starts listening to messages and replying to them.
+
 ```tsx [index.ts]
 import {
   run,
@@ -15,13 +31,13 @@ import { systemPrompt } from "./prompt.js";
 run(async (context: XMTPContext) => {
   const {
     message: { sender },
-    config,
+    runConfig,
   } = context;
 
   let prompt = await replaceVariables(
     systemPrompt,
     sender.address,
-    config?.skills,
+    runConfig?.skills,
     "@bot",
   );
   await agentReply(context, prompt);
@@ -29,6 +45,8 @@ run(async (context: XMTPContext) => {
 ```
 
 ## Prompt
+
+Here is the prompt that the agent will use to reply to messages.
 
 ```tsx [index.ts]
 export const systemPrompt = `

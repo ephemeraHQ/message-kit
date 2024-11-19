@@ -65,7 +65,10 @@ export default defineConfig({
       link: "https://github.com/ephemeraHQ/message-kit",
     },
   ],
-  topNav: [{ text: "1.1.9-beta.1", link: "/changelog" }],
+  topNav: [
+    { text: "Guidelines", link: "/concepts/guidelines" },
+    { text: "1.1.9-beta.1", link: "/changelog" },
+  ],
   editLink: {
     pattern:
       "https://github.com/ephemeraHQ/message-kit/blob/main/packages/docs/pages/:path",
@@ -102,10 +105,6 @@ export default defineConfig({
         {
           text: "Usernames",
           link: "/concepts/usernames",
-        },
-        {
-          text: "Guidelines",
-          link: "/concepts/guidelines",
         },
         {
           text: "Deployment",
@@ -152,16 +151,32 @@ export default defineConfig({
           link: "/templates/agent",
           items: [
             {
-              text: "Handler",
-              link: "/templates/agent/handler",
+              text: "Check",
+              link: "/templates/agent/handlers/check",
             },
             {
-              text: "Skills",
-              link: "/templates/agent/skills",
+              text: "Info",
+              link: "/templates/agent/handlers/info",
             },
             {
-              text: "Prompt",
-              link: "/templates/agent/prompt",
+              text: "Cool",
+              link: "/templates/agent/handlers/cool",
+            },
+            {
+              text: "Register",
+              link: "/templates/agent/handlers/register",
+            },
+            {
+              text: "Renew",
+              link: "/templates/agent/handlers/renew",
+            },
+            {
+              text: "Reset",
+              link: "/templates/agent/handlers/reset",
+            },
+            {
+              text: "Tip",
+              link: "/templates/agent/handlers/tip",
             },
           ],
         },
@@ -185,19 +200,10 @@ export default defineConfig({
               text: "Helpers",
               link: "/templates/group/helpers",
             },
-
-            {
-              text: "Skills",
-              link: "/templates/group/skills",
-            },
-            {
-              text: "Prompt",
-              link: "/templates/group/prompt",
-            },
           ],
         },
         {
-          text: "GPT",
+          text: "Gpt",
           link: "/templates/gpt",
         },
       ],
@@ -241,7 +247,7 @@ export default defineConfig({
           link: "/middleware/resolver",
         },
         {
-          text: "XMTP",
+          text: "XMTP Groups",
           link: "/middleware/xmtp",
         },
         {

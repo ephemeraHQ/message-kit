@@ -10,8 +10,8 @@ import { Conversation } from "@xmtp/node-sdk";
 import { Conversation as V2Conversation } from "@xmtp/xmtp-js";
 import { awaitedHandlers } from "./xmtp.js";
 
-export async function run(handler: Handler, config?: RunConfig) {
-  const { client, v2client } = await xmtpClient(config);
+export async function run(handler: Handler, runConfig?: RunConfig) {
+  const { client, v2client } = await xmtpClient(runConfig);
   const { inboxId: address } = client;
   const { address: addressV2 } = v2client;
 
@@ -42,7 +42,7 @@ export async function run(handler: Handler, config?: RunConfig) {
           conversation,
           message,
           { client, v2client },
-          config ?? {},
+          runConfig ?? {},
           version,
         );
         if (!context) {
@@ -92,12 +92,14 @@ export async function run(handler: Handler, config?: RunConfig) {
       version,
       client,
       v2client,
-      config,
+      runConfig,
       group,
     } = context;
 
     let skillAction =
-      text && config?.skills ? findSkill(text, config.skills) : undefined;
+      text && runConfig?.skills
+        ? findSkill(text, runConfig?.skills)
+        : undefined;
 
     const { inboxId: senderInboxId } = client;
     const { address: senderAddress } = v2client;
@@ -108,11 +110,11 @@ export async function run(handler: Handler, config?: RunConfig) {
         typeId !== "group_updated");
 
     const isSkillTriggered = skillAction?.skill;
-    const isExperimental = config?.experimental ?? false;
+    const isExperimental = runConfig?.experimental ?? false;
 
     const isAddedMemberOrPass =
       typeId === "group_updated" &&
-      config?.memberChange &&
+      runConfig?.memberChange &&
       //@ts-ignore
       content?.addedInboxes?.length === 0
         ? false
@@ -136,7 +138,7 @@ export async function run(handler: Handler, config?: RunConfig) {
     // Text only works with explicit mentions from triggers.
     // Reactions dont work with triggers.
 
-    const isImageValid = isRemoteAttachment && config?.attachments;
+    const isImageValid = isRemoteAttachment && runConfig?.attachments;
 
     const acceptedType = [
       "text",
@@ -146,8 +148,8 @@ export async function run(handler: Handler, config?: RunConfig) {
     ].includes(typeId ?? "");
 
     const skillGroup =
-      typeId === "text" && config?.skills
-        ? findSkillGroup(text ?? "", config.skills)
+      typeId === "text" && runConfig?.skills
+        ? findSkillGroup(text ?? "", runConfig?.skills)
         : undefined; // Check if the message content triggers a tag
     const isTagged = skillGroup ? true : false;
     const isMessageValid = isSameAddress
@@ -194,7 +196,7 @@ export async function run(handler: Handler, config?: RunConfig) {
           isAdminOrPass,
         },
         isAddedMemberOrPass,
-        skillsParsed: config?.skills?.length,
+        skillsParsed: runConfig?.skills?.length,
         taggingDetails: isTagged
           ? {
               tag: skillGroup?.tag,

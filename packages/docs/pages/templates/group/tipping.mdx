@@ -2,21 +2,22 @@
 
 In this example you can tip using 3 primitives:
 
-## Skills
-
 ```bash [cmd]
 /tip @bo @alix 15
 ```
 
-::::note
-:::details[Skill declaration]
+## Skill declaration
+
+How the skill is declared in the `skills.ts` file:
 
 ```tsx [src/skills.ts]
 export const skills: SkillGroup[] = [
   {
-    name: "Tipping",
-    description: "Tip tokens via emoji, replies or skill.",
+    name: "Group bot",
+    tag: "@bot",
+    description: "Group agent for tipping payments, games and more.",
     skills: [
+      /* Other skills */
       {
         skill: "/tip [usernames] [amount] [token]",
         description: "Tip users in a specified token.",
@@ -33,15 +34,15 @@ export const skills: SkillGroup[] = [
           },
         },
       },
+      /* Other skills */
     ],
   },
 ];
 ```
 
-:::
-::::
-
 ## Handler
+
+The handler function to process tipping skill requests:
 
 ```tsx [src/handler/tipping.ts]
 import {

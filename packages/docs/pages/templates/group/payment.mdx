@@ -2,22 +2,23 @@
 
 This example demonstrates how to generate frame URLs for different types of payments.
 
-## Skills
-
 ```bash [cmd]
 /pay 1 usdc to @bo
 ```
 
-::::note
-:::details[Skill declaration]
+## Skill declaration
+
+How the skill is declared in the `skills.ts` file:
 
 ```tsx [src/skills.ts]
 import { handler as transaction } from "./handler/transaction.js";
 export const skills: SkillGroup[] = [
   {
-    name: "Payments",
-    description: "Multipurpose payment frame built onbase.",
+    name: "Group bot",
+    tag: "@bot",
+    description: "Group agent for tipping payments, games and more.",
     skills: [
+      /* Other skills */
       {
         skill: "/pay [amount] [token] [username]",
         examples: ["/pay 10 vitalik.eth"],
@@ -40,15 +41,16 @@ export const skills: SkillGroup[] = [
           },
         },
       },
+
+      /* Other skills */
     ],
   },
 ];
 ```
 
-:::
-::::
-
 ## Handler
+
+The handler function to process payment-related skill requests:
 
 ```tsx [src/handler/payment.ts]
 import { getUserInfo, XMTPContext } from "@xmtp/message-kit";
