@@ -36,6 +36,7 @@ export async function executeSkill(
       const mockContext: XMTPContext = {
         ...context,
         conversation,
+        sendPay: context.sendPay.bind(context),
         sendImage: context.sendImage.bind(context),
         getConversationKey: context.getConversationKey.bind(context),
         isV2Conversation: context.isV2Conversation.bind(context),

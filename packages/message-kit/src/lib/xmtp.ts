@@ -5,6 +5,7 @@ import {
   Conversation as V2Conversation,
 } from "@xmtp/xmtp-js";
 import { GroupMember } from "@xmtp/node-sdk";
+import { getUserInfo } from "../helpers/resolver.js";
 import fs from "fs/promises";
 import type { Reaction } from "@xmtp/content-type-reaction";
 import { ContentTypeText } from "@xmtp/content-type-text";
@@ -399,7 +400,23 @@ export class XMTPContext {
       logMessage("sent: " + message);
     }
   }
+  async sendPay(
+    amount: number = 1,
+    token: string = "usdc",
+    username: string = "humanagent.eth",
+  ) {
+    const txpayUrl = "https://txpay.vercel.app";
+    console.log("sendPay", amount, token, username);
+    let senderInfo = await getUserInfo(username);
+    console.log("senderInfo", senderInfo);
+    if (!senderInfo) {
+      console.error("Failed to get sender info");
+      return;
+    }
 
+    let sendUrl = `${txpayUrl}/?&amount=${amount}&token=${token}&receiver=${senderInfo?.address}`;
+    await this.send(sendUrl);
+  }
   async sendImage(filePath: string) {
     try {
       // Read local file and extract its details

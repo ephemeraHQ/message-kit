@@ -24,19 +24,6 @@ export async function handleTip(context: XMTPContext) {
       },
     },
   } = context;
-
-  if (!address) {
-    return {
-      code: 400,
-      message: "Please provide an address to tip.",
-    };
-  }
-  const data = await getUserInfo(address);
-
-  let sendUrl = `${txpayUrl}/?&amount=1&token=USDC&receiver=${address}`;
-
-  return {
-    code: 200,
-    message: sendUrl,
-  };
+  console.log("tip", address);
+  await context.sendPay(1, "USDC", address);
 }
