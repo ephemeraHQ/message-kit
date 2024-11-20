@@ -67,7 +67,7 @@ export default defineConfig({
   ],
   topNav: [
     { text: "Guidelines", link: "/concepts/guidelines" },
-    { text: "v1.1.10-beta.1", link: "/changelog" },
+    { text: "v1.1.10-beta.2", link: "/changelog" },
   ],
   editLink: {
     pattern:
