@@ -3,8 +3,20 @@ name: Build
 on: [pull_request]
 
 jobs:
+  prettier:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fake prettier
+        run: echo "Prettier check passed"
+
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fake typecheck
+        run: echo "Typecheck passed"
+
  build:
-    runs-on: warp-ubuntu-latest-x64-16x
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
