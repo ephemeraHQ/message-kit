@@ -8,10 +8,11 @@
     "shared/*"
   ],
   "scripts": {
-    "build": "turbo run build --filter='./packages/*' && turbo run build --filter='./templates/*'",
+    "prebuild": "cd packages/docs && yarn install && cd ../.. && cd packages/message-kit && yarn install && yarn build && cd ../..",
+    "build": "yarn prebuild && turbo run build --filter='./packages/*'",
     "changeset": "yarn copy && changeset add --type patch",
     "clean": "turbo run clean && rm -rf node_modules && rm -rf .turbo && yarn cache clean",
-    "clean:all": "find . -name 'node_modules' -type d -prune -exec rm -rf '{}' + && find . -name 'dist' -type d -prune -exec rm -rf '{}' + && rm -rf .turbo .next && yarn cache clean",
+    "clean:all": "rm -rf node_modules .turbo .next dist packages/**/node_modules packages/**/dist templates/**/node_modules templates/**/dist && yarn cache clean",
     "copy": "rm -rf packages/create-message-kit/templates && cd packages/create-message-kit && yarn copy && cd ../.. && echo 'Copy completed'",
     "dev": "cd packages/message-kit && yarn build:watch",
     "dev:agent": "cd templates/agent && yarn dev",
