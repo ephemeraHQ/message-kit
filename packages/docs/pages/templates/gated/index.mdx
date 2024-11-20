@@ -51,15 +51,31 @@ export async function verifiedRequest() {
 }
 ```
 
-## Running locally
+## Run the app
+
+Follow the steps below to run the app
+
+::::steps
+
+### Setup
 
 ```bash [cmd]
 # Clone the repo
-git clone https://github.com/ephemeraHQ/gated-group
-# Go to the example folder
-cd gated-group
+git clone https://github.com/ephemeraHQ/message-kit
+# Go to the templates/gated folder
+cd templates/gated
 # Install the dependencies
-bun install
+yarn install
 # Run the app
-bun dev
+yarn dev
 ```
+
+### Variables
+
+Set up these variables in your app
+
+```bash [cmd]
+KEY= # the private key of the agent wallet
+```
+
+::::
