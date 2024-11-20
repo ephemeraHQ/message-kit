@@ -42,6 +42,7 @@ jobs:
 
   test:
     runs-on: warp-ubuntu-latest-x64-16x
+    needs: build
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
