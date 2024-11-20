@@ -3,21 +3,10 @@ dotenv.config({ override: true });
 import { Client } from "@xmtp/node-sdk";
 import { RunConfig } from "./types";
 import { loadSkillsFile } from "../lib/skills";
-import pino from "pino";
-const logger = pino({
-  level: process.env.LOG_LEVEL || "info",
-  transport: {
-    target: "pino-pretty",
-    options: {
-      colorize: true, // Colorize output for better readability
-      translateTime: "SYS:standard", // Add timestamp to logs
-      ignore: "pid,hostname", // Ignore certain fields
-    },
-  }, // Use default JSON format in production
-});
+
 export const logMessage = (message: any) => {
   //let msh = message?.substring(0, 60) + (message?.length > 60 ? "..." : "");
-  if (process?.env?.MSG_LOG === "true") logger.info(message);
+  if (process?.env?.MSG_LOG === "true") console.log(message);
 };
 
 export async function logInitMessage(

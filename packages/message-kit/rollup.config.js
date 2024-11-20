@@ -16,8 +16,6 @@ const external = [
   "@xmtp/grpc-api-client",
   "path",
   "crypto",
-  "pino",
-  "pino-pretty",
   "viem",
   "dotenv",
   "openai",
