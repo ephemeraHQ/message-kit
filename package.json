@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "prebuild": "cd packages/docs && yarn install && cd ../.. && cd packages/message-kit && yarn install && yarn build && cd ../..",
-    "build": "yarn prebuild && turbo run build --filter='./packages/*'",
+    "build": "yarn prebuild && turbo run build --filter='./packages/*' && yarn format:check && yarn typecheck --force",
     "changeset": "yarn copy && changeset add --type patch",
     "clean": "turbo run clean && rm -rf node_modules && rm -rf .turbo && yarn cache clean",
     "clean:all": "rm -rf node_modules .turbo .next dist packages/**/node_modules packages/**/dist templates/**/node_modules templates/**/dist && yarn cache clean",
