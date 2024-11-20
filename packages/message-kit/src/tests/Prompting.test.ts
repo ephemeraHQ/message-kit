@@ -25,6 +25,7 @@ describe("Ens agent tests", () => {
         "/check fabri.eth",
         "/check humanagent.eth",
         "/renew humanagent.eth",
+        "/renew fabri.eth",
         "/renew fabri.base.eth",
       ],
     ],
