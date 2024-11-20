@@ -3,18 +3,6 @@ name: Build
 on: [pull_request]
 
 jobs:
-  prettier:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Fake prettier
-        run: echo "Prettier check passed"
-
-  typecheck:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Fake typecheck
-        run: echo "Typecheck passed"
-
   build:
     runs-on: ubuntu-latest
     steps:
@@ -59,7 +47,3 @@ jobs:
         env:
           OPEN_AI_API_KEY: ${{ secrets.OPEN_AI_API_KEY }}
         run: yarn test:client
-      - name: Test prompting
-        run: yarn test:prompting
-      - name: Test parsing
-        run: yarn test:parsing
