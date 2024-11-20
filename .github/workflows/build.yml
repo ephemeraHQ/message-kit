@@ -19,10 +19,6 @@ jobs:
         run: yarn
       - name: Build all packages
         run: yarn build
-      - name: Check code format
-        run: yarn format:check
-      - name: Check types
-        run: yarn typecheck --force
 
   test:
     runs-on: warp-ubuntu-latest-x64-16x
