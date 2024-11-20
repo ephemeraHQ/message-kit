@@ -1,6 +1,5 @@
 import { ensUrl } from "../index.js";
 import { XMTPContext, getUserInfo } from "@xmtp/message-kit";
-
 import type { skillAction } from "@xmtp/message-kit";
 
 export const registerSkill: skillAction[] = [
