@@ -67,7 +67,7 @@ export default defineConfig({
   ],
   topNav: [
     { text: "Guidelines", link: "/concepts/guidelines" },
-    { text: "1.1.10 ⭐️", link: "/changelog" },
+    { text: "@xmtp/message-kit@1.1.10", link: "/changelog" },
   ],
   editLink: {
     pattern:
