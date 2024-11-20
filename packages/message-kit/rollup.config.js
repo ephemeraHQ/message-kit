@@ -17,6 +17,7 @@ const external = [
   "path",
   "crypto",
   "pino",
+  "pino-pretty",
   "viem",
   "dotenv",
   "openai",

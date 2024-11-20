@@ -1,6 +1,6 @@
 {
   "name": "@xmtp/message-kit",
-  "version": "1.1.10",
+  "version": "1.1.10-beta.1",
   "license": "MIT",
   "type": "module",
   "exports": {
@@ -37,7 +37,7 @@
     "@types/node": "^20.14.2",
     "@vitest/coverage-v8": "^2.1.4",
     "@xmtp/content-type-primitives": "^1.0.2",
-    "@xmtp/content-type-reaction": "^1.1.10",
+    "@xmtp/content-type-reaction": "^1.1.10-beta.1",
     "@xmtp/content-type-remote-attachment": "1.1.11",
     "@xmtp/content-type-reply": "^1.1.11",
     "@xmtp/content-type-text": "^1.0.0",
