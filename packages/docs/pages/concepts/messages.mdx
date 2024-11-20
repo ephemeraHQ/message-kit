@@ -5,7 +5,7 @@
 When you start the app, you can listen for incoming messages using the `run` function.
 
 ```tsx [src/index.ts]
-run(async (context: HandlerContext) => {
+run(async (context: XMTPContext) => {
   const {
     message: {
       id,
@@ -49,4 +49,6 @@ const answer = await context.awaitResponse("Please answer with yes or no", [
   "no",
 ]);
 console.log(`You answered: ${answer}`);
+// Send an image
+await context.sendImage("path/to/image.png");
 ```

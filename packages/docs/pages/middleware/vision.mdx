@@ -1,0 +1,55 @@
+# GPT Vision
+
+The GPT Vision middleware allows you to interpret images using the OpenAI API. This middleware is useful when you want to provide a description of an image or when you want to generate a caption for an image.
+
+> OpenAI library comes with message-kit.
+
+```tsx
+import OpenAI from "openai";
+
+const openai = new OpenAI({
+  apiKey: process.env.OPEN_AI_API_KEY,
+});
+
+export async function vision(imageData: Uint8Array, systemPrompt: string) {
+  if (!imageData?.length) {
+    throw new Error("imageData is required and must not be empty");
+  }
+  if (!systemPrompt?.trim()) {
+    throw new Error("systemPrompt is required and must not be empty");
+  }
+  const base64Image = Buffer.from(imageData).toString("base64");
+  const dataUrl = `data:image/jpeg;base64,${base64Image}`;
+
+  // Create a new thread for each vision request
+  const visionMessages = [
+    {
+      role: "system",
+      content: systemPrompt,
+    },
+    {
+      role: "user",
+      content: [
+        { type: "text", text: systemPrompt },
+        {
+          type: "image_url",
+          image_url: {
+            url: dataUrl,
+          },
+        },
+      ],
+    },
+  ];
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: visionMessages as any,
+    });
+    return response.choices[0].message.content;
+  } catch (error) {
+    console.error("Failed to interpret image with OpenAI:", error);
+    throw error;
+  }
+}
+```

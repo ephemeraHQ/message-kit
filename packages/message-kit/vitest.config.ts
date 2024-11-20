@@ -7,5 +7,12 @@ export default defineConfig({
       reporter: ["text", "json", "html"],
     },
     environment: "node",
+    deps: {
+      optimizer: {
+        ssr: {
+          include: ["@xmtp/message-kit"],
+        },
+      },
+    },
   },
 });

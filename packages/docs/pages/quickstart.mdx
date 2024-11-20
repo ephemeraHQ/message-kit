@@ -1,6 +1,6 @@
 # Installation
 
-MessageKit is a powerful framework that simplifies the process of building messaging agents on [xmtp](https://docs.xmtp.org). Here’s a step-by-step guide to get you started.
+Here’s a step-by-step guide to get you started.
 
 ::::steps
 
@@ -32,17 +32,11 @@ _Refer to [structure](/concepts/structure) of the app so see the folder is creat
 
 ### Templates
 
-Start with a simple app that replies with `gm`.
+These are templates for different use cases inside of our Docs
 
-```tsx [src/index.ts]
-run(async (context: HandlerContext) => {
-  // Get the message and the address from the sender
-  const { content, sender } = context.message;
-
-  // To reply, just call `reply` on the HandlerContext.
-  await context.send(`gm`);
-});
-```
+- [`gpt`](./templates/gpt): Simple GPT agent example.
+- [`group`](./templates/group): Group chat agent example with skills and examples.
+- [`agent`](./templates/agent): ENS agent for registering and checking domains
 
 ### Variables
 
@@ -77,6 +71,8 @@ yarn dev
 npm install
 # Run the app
 npm run dev
+# or
+npm run start
 ```
 
 :::

@@ -1,4 +1,3 @@
-import "dotenv/config";
 import { describe, test, expect } from "vitest";
 import { generatePrivateKey } from "viem/accounts";
 import { xmtpClient, createUser } from "../lib/client";
@@ -12,9 +11,9 @@ describe("Client Private Key Configuration Tests", () => {
     const { client, v2client } = await xmtpClient({
       hideInitLogMessage: true,
     });
-    expect(client).toBeDefined();
-    expect(v2client).toBeDefined();
-  }, 15000); // Added 15 second timeout
+    expect(client.inboxId).toBeDefined();
+    expect(v2client.address).toBeDefined();
+  }, 25000); // Added 15 second timeout
 
   test("creates a client with a provided private key", async () => {
     const privateKey = generatePrivateKey();

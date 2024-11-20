@@ -20,5 +20,5 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["**/*.ts", "**/*.tsx"]
+  "include": ["**/*.ts", "**/*.tsx", "pages/middleware/gpt.mdx", "pages/templates/agent/handlers/check.mdx", "pages/templates/agent/handlers/cool.mdx", "pages/templates/agent/handlers/info.mdx", "pages/templates/agent/handlers/register.mdx", "pages/templates/agent/handlers/renew.mdx", "pages/templates/agent/handlers/reset.mdx", "pages/templates/agent/handlers/tip.mdx"]
 }

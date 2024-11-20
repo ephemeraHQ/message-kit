@@ -2,55 +2,51 @@
 
 This is a simple yet powerful agent that will help users interact with ENS.
 
+## Skills
+
+- [Check](/templates/agent/handlers/check): Check if a domain is available
+- [Cool](/templates/agent/handlers/cool): Show cool alternatives
+- [Register](/templates/agent/handlers/register): Register a domain
+- [Reset](/templates/agent/handlers/reset): Reset a domain
+- [Renew](/templates/agent/handlers/renew): Renew a domain
+- [Info](/templates/agent/handlers/info): Get info about a domain
+- [Tip](/templates/agent/handlers/tip): Tip a domain
+
 ## Structure
 
 ```
 agent/
 ├── src/
-│   └── handler/
-│       └── ens.ts         # ENS agent // [!code hl] // [!code focus]
-│   ├── index.ts           # Conversational logic // [!code hl] // [!code focus]
-│   ├── skills.ts          # Skills // [!code hl] // [!code focus]
+│   └── handler/           # ENS agent // [!code hl] // [!code focus]
+│       ├── check.ts       # Check if a domain is available // [!code hl] // [!code focus]
+│       ├── cool.ts        # Show cool alternatives // [!code hl] // [!code focus]
+│       ├── info.ts        # Check if a domain is registered // [!code hl] // [!code focus]
+│       ├── register.ts    # Register a domain // [!code hl] // [!code focus]
+│       ├── renew.ts       # Renew a domain // [!code hl] // [!code focus]
+│       ├── reset.ts       # Reset a domain // [!code hl] // [!code focus]
+│       ├── tip.ts         # Tip a domain // [!code hl] // [!code focus]
+│   ├── index.ts           # Prompt and stream // [!code hl] // [!code focus]
 │   ├── prompt.ts          # Prompt // [!code hl] // [!code focus]
+│   ├── skills.ts          # Skills // [!code hl] // [!code focus]
 ├── package.json
 ├── tsconfig.json
 └── .env
 ```
 
-## Main code
+## Runner
+
+The runner function to start the agent and listen for incoming messages:
 
 ```tsx [src/index.ts]
-import { run, HandlerContext } from "@xmtp/message-kit";
-import { textGeneration, processMultilineResponse } from "./lib/gpt.js";
-import { agent_prompt } from "./prompt.js";
-import { getUserInfo } from "./lib/resolver.js";
+// [!include ~/../../templates/agent/src/index.ts]
+```
 
-run(async (context: HandlerContext) => {
-  const {
-    message: {
-      content: { text, params },
-      sender,
-    },
-  } = context;
+## Prompt
 
-  try {
-    let userPrompt = params?.prompt ?? text;
-    const userInfo = await getUserInfo(sender.address);
-    if (!userInfo) {
-      console.log("User info not found");
-      return;
-    }
-    const { reply } = await textGeneration(
-      sender.address,
-      userPrompt,
-      await agent_prompt(userInfo),
-    );
-    await processMultilineResponse(sender.address, reply, context);
-  } catch (error) {
-    console.error("Error during OpenAI call:", error);
-    await context.send("An error occurred while processing your request.");
-  }
-});
+This is the prompt that the agent will use to respond to the user.
+
+```tsx [src/prompt.ts]
+// [!include ~/../../templates/agent/src/prompt.ts]
 ```
 
 ## Run the app

@@ -2,19 +2,19 @@
 
 This is a reference app that will allow you to understand the potential and all of its features. Through many handlers, you will be able to understand different use cases:
 
-## Handlers
+## Skills
 
-- [Tipping](/templates/group/handlers/tipping): Tip when a user replies with `/tip`.
-- [Games](/templates/group/handlers/games): Handle frame games like `/game slot`, `/game wordle`
-- [Payments](/templates/group/handlers/payment): Handle skills like `/pay`
-- [Helpers](/templates/group/handlers/helpers): Handle group helpers like `/id`, `/help`
+- [Tipping](/templates/group/tipping): Tip when a user replies with `/tip`.
+- [Games](/templates/group/games): Handle frame games like `/game slot`, `/game wordle`
+- [Payments](/templates/group/payment): Handle skills like `/pay`
+- [Helpers](/templates/group/helpers): Handle group helpers like `/id`, `/help`
 
 ## Structure
 
 ```
 group/
 ├── src/
-│   └── handler/
+│   └── handlers/
 │         └── helpers.ts        # Handles group others // [!code hl] // [!code focus]
 │         └── tipping.ts        # Handles tipping. // [!code hl] // [!code focus]
 │         └── game.ts           # Handles game frames. // [!code hl] // [!code focus]
@@ -27,25 +27,20 @@ group/
 └── .env
 ```
 
-## Main code
+## Runner
+
+The process that starts listening to messages and replying to them.
 
 ```tsx [src/index.ts]
-v;
-import { run, HandlerContext } from "@xmtp/message-kit";
+// [!include ~/../../templates/group/src/index.ts]
+```
 
-// Main function to run the app
-run(async (context: HandlerContext) => {
-  const {
-    message: { typeId },
-  } = context;
+## Prompt
 
-  if (!context.group) {
-    context.send(
-      "This agent only works in group chats. Please add this agent to a group to continue",
-    );
-    return;
-  }
-});
+Here is the prompt that the agent will use to reply to messages.
+
+```tsx [src/prompt.ts]
+// [!include ~/../../templates/group/src/prompt.ts]
 ```
 
 ## Run the app

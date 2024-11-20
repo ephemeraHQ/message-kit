@@ -1,5 +1,5 @@
 import { SkillGroup, skillAction } from "../helpers/types.js";
-import { HandlerContext } from "./handlerContext";
+import { XMTPContext } from "./xmtp.js";
 import path from "path";
 
 export function findSkill(
@@ -9,7 +9,7 @@ export function findSkill(
   const trigger = text.split(" ")[0].toLowerCase();
   for (const skillGroup of skills) {
     const handler = skillGroup.skills.find((skill) => {
-      return skill?.triggers?.includes(trigger);
+      return skill.skill?.split(" ")[0].toLowerCase() === trigger;
     });
     if (handler !== undefined) return handler;
   }
@@ -19,7 +19,7 @@ export function findSkill(
 export async function executeSkill(
   text: string,
   skills: SkillGroup[],
-  context: HandlerContext,
+  context: XMTPContext,
 ) {
   // Use the custom text parameter
   let conversation = context.conversation;
@@ -33,9 +33,11 @@ export async function executeSkill(
       console.warn("Skill not valid", text);
     } else if (skillAction?.handler) {
       // Mock context for skill execution
-      const mockContext: HandlerContext = {
+      const mockContext: XMTPContext = {
         ...context,
         conversation,
+        sendPay: context.sendPay.bind(context),
+        sendImage: context.sendImage.bind(context),
         getConversationKey: context.getConversationKey.bind(context),
         isV2Conversation: context.isV2Conversation.bind(context),
         awaitResponse: context.awaitResponse.bind(context),
@@ -68,15 +70,16 @@ export async function executeSkill(
     } else {
       console.error("Unknown error during skill execution:", error);
     }
-    throw error; // Re-throw to allow proper handling upstream
+    throw error;
   } finally {
     context.refConv = null;
   }
 }
 export function findSkillGroupByTag(
-  tag: string,
-  skills: SkillGroup[],
+  tag?: string,
+  skills: SkillGroup[] = [],
 ): SkillGroup | undefined {
+  if (!tag) return skills.find((skill) => skill.skills);
   return skills.find((skill) => skill.tag === tag);
 }
 export function findSkillGroup(
@@ -258,16 +261,16 @@ export function parseSkill(
   }
 }
 
-export async function loadSkillsFile(): Promise<SkillGroup[]> {
+export async function loadSkillsFile(): Promise<SkillGroup[] | []> {
   const resolvedPath = path.resolve(process.cwd(), "dist/skills.js");
+
   let skills: SkillGroup[] = [];
   try {
     const module = await import(resolvedPath);
     skills = module?.skills;
+    return skills;
   } catch (error) {
-    // if (process.env.MSG_LOG === "true")
-    //   console.error(`Error loading command config from ${resolvedPath}:`);
+    //console.error(`Error loading command config from ${resolvedPath}:`);
   }
-  if (skills === undefined || skills?.length === 0) return [];
-  return skills;
+  return [];
 }

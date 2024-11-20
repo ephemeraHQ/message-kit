@@ -6,7 +6,7 @@ Agents can handle complex conversations by managing multiple steps in sequence, 
 
 For full reasoning we need to combine the following skills:
 
-- [Fine Tuning](/skills/fine-tuning): Train your agent for reliable responses.
+- [Scenarios](/skills/scenarios): Train your agent for reliable responses.
 - [Prompting](/skills/prompting): System prompt to teach available skills to the agent.
 - [Processing](/skills/processing): Handle multiple skills in a single conversation.
 - [Parsing](/skills/parsing): Interpret user intent and translate it into a defined skill.
@@ -23,31 +23,46 @@ Let's walk through a complete ENS domain registration flow:
 ### User initiates the conversation
 
 ```bash
-lets register fabriethsf.eth
+let's register fabriethsf.eth
 ```
 
 ### Skills definition
 
 ```tsx
-[
+import { SkillGroup } from "@xmtp/message-kit";
+import { handler as handleRegister } from "./handler/register.js";
+import { handler as handleExists } from "./handler/exists.js";
+
+export const skills: SkillGroup[] = [
   {
-    name: "ENS Bot",
+    name: "Ens Domain Bot",
+    tag: "@ens",
+    description: "Register ENS domains.",
     skills: [
       {
-        skill: "/check [domain]",
-        handler: handleEns,
-        description: "Check if a domain is available.",
-      },
-      {
         skill: "/register [domain]",
-        handler: handleEns,
-        description: "Register a domain.",
+        handler: handleRegister,
+        description:
+          "Register a new ENS domain. Returns a URL to complete the registration process.",
+        examples: ["/register vitalik.eth"],
+        params: {
+          domain: {
+            type: "string",
+          },
+        },
       },
       {
-        skill: "/info [domain]",
-        handler: handleEns,
-        description: "Get information about a domain.",
+        skill: "/exists",
+        examples: ["/exists"],
+        handler: handleExists,
+        description: "Check if an address is onboarded.",
+        params: {
+          address: {
+            type: "address",
+          },
+        },
       },
+      /* More Skills */
     ],
   },
 ];
@@ -55,69 +70,18 @@ lets register fabriethsf.eth
 
 ### Handler implementation
 
-```tsx
-async function handleEns(context: HandlerContext) {
-  const { skill, params } = context.message.content;
-  const { domain } = params;
+The handler function to process check skill requests:
 
-  switch (skill) {
-    case "check":
-      const isAvailable = await checkDomain(domain);
-      return {
-        code: 200,
-        message: isAvailable
-          ? `Domain ${domain} is available!`
-          : `Domain ${domain} is already taken.`,
-      };
-
-    case "register":
-      const registration = await registerDomain(domain);
-      return {
-        code: 200,
-        message: `https://app.ens.domains/name/${domain}/register`,
-      };
-
-    case "info":
-      const info = await getDomainInfo(domain);
-      return {
-        code: 200,
-        message: `Domain info: ${JSON.stringify(info)}`,
-      };
-  }
-}
+```tsx [src/handlers/check.ts]
+// [!include ~/../../templates/agent/src/handlers/check.ts]
 ```
 
-### Execution of the skills
+### Creating a response
 
-The agent processes the natural language input "lets register fabriethsf.eth" and breaks it down into sequential steps:
+The agent processes the natural language input "let's register fabriethsf.eth" and breaks it down into sequential steps:
 
-```tsx
-run(async (context: HandlerContext) => {
-  const {
-    message: {
-      content: { text, params },
-      sender,
-    },
-  } = context;
-
-  try {
-    let userPrompt = params?.prompt ?? text;
-    const userInfo = await getUserInfo(sender.address);
-    if (!userInfo) {
-      console.log("User info not found");
-      return;
-    }
-    const { reply } = await textGeneration(
-      sender.address,
-      userPrompt,
-      await agent_prompt(userInfo),
-    );
-    await processMultilineResponse(sender.address, reply, context);
-  } catch (error) {
-    console.error("Error during OpenAI call:", error);
-    await context.send("An error occurred while processing your request.");
-  }
-});
+```tsx [src/index.ts]
+// [!include ~/../../templates/agent/src/index.ts]
 ```
 
 :::

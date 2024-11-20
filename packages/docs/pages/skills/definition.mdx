@@ -8,7 +8,8 @@ Create the skill file `skills.ts` in your project root `src` folder.
 
 ```tsx [src/skills.ts]
 // Import the handler for the skill
-import { handler as transaction } from "./handler/transaction.js";
+import { handler as check } from "./handler/check.js";
+import { SkillGroup } from "@xmtp/message-kit";
 
 // Define the skills
 export const skills: SkillGroup[] = [
@@ -19,8 +20,7 @@ export const skills: SkillGroup[] = [
     skills: [
       {
         skill: "/check [domain]",
-        triggers: ["/check"],
-        handler: handleEns,
+        handler: handleCheck,
         examples: ["/check vitalik.eth", "/check fabri.base.eth"],
         description: "Check if a domain is available.",
         params: {
@@ -38,7 +38,6 @@ export const skills: SkillGroup[] = [
 
 - **skill**: The name of the skill.
 - **description**: The description of the skill.
-- **triggers**: The triggers of the skill.
 - **examples**: Examples of how to use the skill.
 - **params**: Defines the parameters required for the skill with its property name.
   - **default**: The default value for the parameter. This can be any type.

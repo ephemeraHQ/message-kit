@@ -1,4 +1,4 @@
-import { HandlerContext } from "../lib/handlerContext.js";
+import { XMTPContext } from "../lib/xmtp.js";
 import { ClientOptions, GroupMember } from "@xmtp/node-sdk";
 import { ContentTypeId } from "@xmtp/content-type-primitives";
 
@@ -38,12 +38,12 @@ export type SkillResponse = {
 };
 
 export type SkillHandler = (
-  context: HandlerContext,
+  context: XMTPContext,
 ) => Promise<SkillResponse | void>;
 
-export type Handler = (context: HandlerContext) => Promise<void>;
+export type Handler = (context: XMTPContext) => Promise<void>;
 
-export type Config = {
+export type RunConfig = {
   // client options from XMTP client
   client?: ClientOptions;
   // private key to be used for the client, if not, default from env
@@ -58,6 +58,8 @@ export type Config = {
   memberChange?: boolean;
   // skills to be used
   skills?: SkillGroup[];
+  // model to be used
+  gptModel?: string;
 };
 export interface SkillParamConfig {
   default?: string | number | boolean;
@@ -78,14 +80,12 @@ export interface SkillGroup {
   image?: boolean;
   description: string;
   tag?: string;
-  tagHandler?: SkillHandler;
   skills: skillAction[];
 }
 
 export interface skillAction {
   skill: string;
-  handler: SkillHandler | undefined;
-  triggers: string[];
+  handler?: SkillHandler | undefined;
   adminOnly?: boolean;
   description: string;
   examples: string[];

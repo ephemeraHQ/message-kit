@@ -1,6 +1,6 @@
-import { HandlerContext } from "./handlerContext.js";
+import { XMTPContext } from "./xmtp.js";
 import { xmtpClient } from "./client.js";
-import { Config, Handler, SkillHandler } from "../helpers/types.js";
+import { RunConfig, Handler, SkillHandler } from "../helpers/types.js";
 import { DecodedMessage } from "@xmtp/node-sdk";
 import { logMessage } from "../helpers/utils.js";
 import { DecodedMessage as DecodedMessageV2 } from "@xmtp/xmtp-js";
@@ -8,10 +8,10 @@ import { streamMessages } from "./streams.js";
 import { findSkill, findSkillGroup } from "./skills.js";
 import { Conversation } from "@xmtp/node-sdk";
 import { Conversation as V2Conversation } from "@xmtp/xmtp-js";
-import { awaitedHandlers } from "./handlerContext.js";
+import { awaitedHandlers } from "./xmtp.js";
 
-export async function run(handler: Handler, config?: Config) {
-  const { client, v2client } = await xmtpClient(config);
+export async function run(handler: Handler, runConfig?: RunConfig) {
+  const { client, v2client } = await xmtpClient(runConfig);
   const { inboxId: address } = client;
   const { address: addressV2 } = v2client;
 
@@ -38,16 +38,15 @@ export async function run(handler: Handler, config?: Config) {
         ) {
           return;
         }
-        const context = await HandlerContext.create(
+        const context = await XMTPContext.create(
           conversation,
           message,
           { client, v2client },
-          config?.skills,
+          runConfig ?? {},
           version,
         );
         if (!context) {
-          if (process.env.MSG_LOG === "true")
-            console.warn("No context found", message);
+          logMessage("No context found" + message);
           return;
         }
 
@@ -77,7 +76,7 @@ export async function run(handler: Handler, config?: Config) {
   };
 
   const filterMessage = (
-    context: HandlerContext,
+    context: XMTPContext,
   ): {
     isMessageValid: boolean;
     customHandler: SkillHandler | undefined;
@@ -93,6 +92,7 @@ export async function run(handler: Handler, config?: Config) {
       client,
       v2client,
       skills,
+      runConfig,
       group,
     } = context;
 
@@ -107,11 +107,11 @@ export async function run(handler: Handler, config?: Config) {
         typeId !== "group_updated");
 
     const isSkillTriggered = skillAction?.skill;
-    const isExperimental = config?.experimental ?? false;
+    const isExperimental = runConfig?.experimental ?? false;
 
     const isAddedMemberOrPass =
       typeId === "group_updated" &&
-      config?.memberChange &&
+      runConfig?.memberChange &&
       //@ts-ignore
       content?.addedInboxes?.length === 0
         ? false
@@ -133,9 +133,9 @@ export async function run(handler: Handler, config?: Config) {
     // Remote attachments work if image:true in runner config
     // Replies only work with explicit mentions from triggers.
     // Text only works with explicit mentions from triggers.
-    // Reactions dont work with triggers.
+    // Reactions don't work with triggers.
 
-    const isImageValid = isRemoteAttachment && config?.attachments;
+    const isImageValid = isRemoteAttachment && runConfig?.attachments;
 
     const acceptedType = [
       "text",
@@ -174,9 +174,12 @@ export async function run(handler: Handler, config?: Config) {
                     : false;
 
     if (process.env.MSG_LOG === "true") {
-      console.debug("Message Validation Stream Details:", {
+      logMessage({
         isSameAddress,
-        sender,
+        openai: {
+          model: process?.env?.GPT_MODEL,
+          key: process?.env?.OPEN_AI_API_KEY?.slice(0, 5) + "...",
+        },
         content,
         version,
         acceptedType,
@@ -190,11 +193,10 @@ export async function run(handler: Handler, config?: Config) {
           isAdminOrPass,
         },
         isAddedMemberOrPass,
-        skillsParsed: context.skills?.length,
+        skillsParsed: skills?.length,
         taggingDetails: isTagged
           ? {
               tag: skillGroup?.tag,
-              hasTagHandler: skillGroup?.tagHandler !== undefined,
             }
           : "No tag detected",
         skillTriggerDetails: isSkillTriggered
@@ -222,11 +224,7 @@ export async function run(handler: Handler, config?: Config) {
 
     return {
       isMessageValid,
-      customHandler: skillAction
-        ? skillAction.handler
-        : skillGroup
-          ? skillGroup.tagHandler
-          : undefined,
+      customHandler: skillAction?.handler,
     };
   };
   const getConversation = async (

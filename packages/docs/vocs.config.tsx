@@ -50,7 +50,7 @@ export default defineConfig({
     "/docs": "/hero.jpg",
   },
   title: "MessageKit",
-  iconUrl: "/messagekit-logo.png",
+  iconUrl: "/messagekit -logo.png",
   rootDir: ".",
   theme: {
     colorScheme: "dark",
@@ -66,26 +66,18 @@ export default defineConfig({
     },
   ],
   topNav: [
-    {
-      text: "Converse app",
-      link: "https://testflight.apple.com/join/Q27zugWe",
-    },
-    { text: "XMTP", link: "https://docs.xmtp.org/" },
-    { text: "1.1.8", link: "/changelog" },
+    { text: "Guidelines", link: "/concepts/guidelines" },
+    { text: "v1.1.10-beta.1", link: "/changelog" },
   ],
   editLink: {
     pattern:
-      "https://github.com/ephemeraHQ/message-kit/packages/docs/main/:path",
+      "https://github.com/ephemeraHQ/message-kit/blob/main/packages/docs/pages/:path",
     text: "Suggest changes to this page",
   },
   sidebar: [
     {
       text: "Quickstart",
       link: "/quickstart",
-    },
-    {
-      text: "Directory",
-      link: "/directory",
     },
     {
       text: "Examples",
@@ -111,8 +103,8 @@ export default defineConfig({
           link: "/concepts/groups",
         },
         {
-          text: "Guidelines",
-          link: "/concepts/guidelines",
+          text: "Usernames",
+          link: "/concepts/usernames",
         },
         {
           text: "Deployment",
@@ -129,8 +121,8 @@ export default defineConfig({
           link: "/skills/reasoning",
         },
         {
-          text: "Fine Tuning",
-          link: "/skills/fine-tuning",
+          text: "Scenarios",
+          link: "/skills/scenarios",
         },
         {
           text: "Prompting",
@@ -155,144 +147,45 @@ export default defineConfig({
       text: "Use cases",
       items: [
         {
-          text: "Gm",
-          link: "/templates/gm",
-        },
-        {
-          text: "Agent",
+          text: "Ens agent",
           link: "/templates/agent",
-          collapsed: true,
-          items: [
-            {
-              text: "Handlers",
-              link: "/templates/agent/handlers",
-            },
-            {
-              text: "Skills",
-              link: "/templates/agent/skills",
-            },
-            {
-              text: "Prompt",
-              link: "/templates/agent/prompt",
-            },
-          ],
         },
         {
-          text: "Group",
+          text: "Group bot",
           link: "/templates/group",
-          collapsed: true,
-          items: [
-            {
-              text: "Handlers",
-              items: [
-                {
-                  text: "Tipping",
-                  link: "/templates/group/handlers/tipping",
-                },
-                {
-                  text: "Games",
-                  link: "/templates/group/handlers/games",
-                },
-                {
-                  text: "Transactions",
-                  link: "/templates/group/handlers/transactions",
-                },
-                {
-                  text: "Helpers",
-                  link: "/templates/group/handlers/helpers",
-                },
-              ],
-            },
-            {
-              text: "Skills",
-              link: "/templates/group/skills",
-            },
-            {
-              text: "Prompt",
-              link: "/templates/group/prompt",
-            },
-          ],
+        },
+        {
+          text: "Gpt",
+          link: "/templates/gpt",
+        },
+        {
+          text: "Gated group",
+          link: "/templates/gated",
         },
       ],
     },
 
     {
-      text: "Middlewares",
+      text: "Middleware",
       items: [
         {
-          text: "Cron",
-          link: "/middlewares/cron",
+          text: "Overview",
+          link: "/middleware",
         },
         {
-          text: "Redis",
-          link: "/middlewares/redis",
-        },
-        {
-          text: "Vision",
-          link: "/middlewares/vision",
-        },
-        {
-          text: "Stackso",
-          link: "/middlewares/stackso",
-        },
-        {
-          text: "Notion",
-          link: "/middlewares/notion",
-        },
-        {
-          text: "LearnWeb3",
-          link: "/middlewares/learnweb3",
-        },
-        {
-          text: "Lowdb",
-          link: "/middlewares/lowdb",
-        },
-        {
-          text: "Gpt",
-          link: "/middlewares/gpt",
-        },
-        {
-          text: "Resolver",
-          link: "/middlewares/resolver",
-        },
-      ],
-    },
-    {
-      text: "Open Frames",
-      link: "/frames",
-      collapsed: true,
-      items: [
-        {
-          text: "Introduction",
-          link: "/frames",
-        },
-        {
-          text: "Frameworks",
+          text: "Open Frames",
           items: [
             {
-              text: "OnchainKit",
-              link: "/frames/frameworks/onchainkit",
+              text: "Frames.js",
+              link: "/middleware/open-frames/framesjs",
             },
             {
-              text: "Frames.js",
-              link: "/frames/frameworks/framesjs",
+              text: "OnchainKit",
+              link: "/middleware/open-frames/onchainkit",
             },
             {
               text: "Frog",
-              link: "/frames/frameworks/frog",
-            },
-          ],
-        },
-        {
-          text: "Tutorials",
-          items: [
-            {
-              text: "Subscribe",
-              link: "/frames/tutorials/subscribe",
-            },
-            {
-              text: "Transactions",
-              link: "/frames/tutorials/transactions",
+              link: "/middleware/open-frames/frog",
             },
           ],
         },

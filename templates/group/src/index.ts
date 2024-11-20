@@ -1,31 +1,38 @@
-import { run, HandlerContext } from "@xmtp/message-kit";
-import { textGeneration, processMultilineResponse } from "@xmtp/message-kit";
-import { agent_prompt } from "./prompt.js";
-import { getUserInfo } from "@xmtp/message-kit";
+import {
+  run,
+  agentReply,
+  XMTPContext,
+  replaceVariables,
+} from "@xmtp/message-kit";
+import { registerSkill as tippingSkill } from "./handlers/tipping.js";
+import { registerSkill as paymentSkill } from "./handlers/payment.js";
+import { registerSkill as gameSkill } from "./handlers/game.js";
+import { registerSkill as helperSkill } from "./handlers/helpers.js";
+import { systemPrompt } from "./prompt.js";
 
-run(async (context: HandlerContext) => {
-  const {
-    message: {
-      content: { text, params },
-      sender,
-    },
-  } = context;
+export const skills = [
+  {
+    name: "Group bot",
+    tag: "@bot",
+    description: "Group agent for tipping payments, games and more.",
+    skills: [...tippingSkill, ...paymentSkill, ...gameSkill, ...helperSkill],
+  },
+];
 
-  try {
-    let userPrompt = params?.prompt ?? text;
-    const userInfo = await getUserInfo(sender.address);
-    if (!userInfo) {
-      console.log("User info not found");
-      return;
-    }
-    const { reply } = await textGeneration(
+run(
+  async (context: XMTPContext) => {
+    const {
+      message: { sender },
+      skills,
+    } = context;
+
+    let prompt = await replaceVariables(
+      systemPrompt,
       sender.address,
-      userPrompt,
-      await agent_prompt(userInfo),
+      skills,
+      "@bot",
     );
-    await processMultilineResponse(sender.address, reply, context);
-  } catch (error) {
-    console.error("Error during OpenAI call:", error);
-    await context.send("An error occurred while processing your request.");
-  }
-});
+    await agentReply(context, prompt);
+  },
+  { skills },
+);

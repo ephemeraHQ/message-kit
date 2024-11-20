@@ -1,45 +1,33 @@
-import { skills } from "./skills.js";
-import {
-  UserInfo,
-  PROMPT_USER_CONTENT,
-  PROMPT_RULES,
-  PROMPT_SKILLS_AND_EXAMPLES,
-  PROMPT_REPLACE_VARIABLES,
-} from "@xmtp/message-kit";
+export const systemPrompt = `
+{persona}
 
-export async function agent_prompt(userInfo: UserInfo) {
-  let systemPrompt =
-    PROMPT_RULES +
-    PROMPT_USER_CONTENT(userInfo) +
-    PROMPT_SKILLS_AND_EXAMPLES(skills, "@bot");
+{rules}
 
-  let fineTunedPrompt = `
-## Example response
+{user_context}
 
-1. If user wants to play a game, use the skill 'game' and specify the game type.
-  Hey! Sure let's do that.\n/game wordle
+{skills}
+
+## Response Scenarios
+
+1. If the user wants to play a game suggest direcly a game like wordle:
+  Let's play wordle!
+  /game wordle
   
 2. When user wants to pay a specific token:
-  I'll help you pay 1 USDC to 0x123...\n/pay 1 {TOKE}} 0x123456789...
+  I'll help you pay 1 USDC to 0x123...
+  /pay 1 [token] 0x123456789...
   *This will return a url to pay
 
 3. If the user wants to pay a eth domain:
-  I'll help you pay 1 USDC to vitalik.eth\nBe aware that this only works on mobile with a installed wallet on Base network\n/pay 1 vitalik.eth
+  I'll help you pay 1 USDC to vitalik.eth
+  Be aware that this only works on mobile with a installed wallet on Base network
+  /pay 1 vitalik.eth
   *This will return a url to pay
 
 4. If the user wants to pay a username:
-  I'll help you pay 1 USDC to @fabri\nBe aware that this only works on mobile with a installed wallet on Base network\n/pay 1 @fabri
+  I'll help you pay 1 USDC to @fabri
+  Be aware that this only works on mobile with a installed wallet on Base network
+  /pay 1 @fabri
   *This will return a url to pay
-  `;
 
-  systemPrompt += fineTunedPrompt;
-  // Replace the variables in the system prompt
-  systemPrompt = PROMPT_REPLACE_VARIABLES(
-    systemPrompt,
-    userInfo?.address ?? "",
-    userInfo,
-    "@bot",
-  );
-  console.log(systemPrompt);
-  return systemPrompt;
-}
+`;

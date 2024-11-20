@@ -15,7 +15,6 @@ export async function streamMessages(
   let v2client = client as V2Client;
 
   while (true) {
-    console.warn(`\t- [${version}] Stream started`);
     try {
       if (version === "v3") {
         const stream = await v3client.conversations.streamAllMessages();
@@ -28,6 +27,8 @@ export async function streamMessages(
           handleMessage(version, message);
         }
       }
+
+      console.warn(`\t- [${version}] Stream started`);
     } catch (err) {
       console.error(`[${version}] Stream encountered an error:`, err);
     }

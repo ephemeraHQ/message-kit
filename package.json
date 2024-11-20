@@ -8,22 +8,26 @@
     "shared/*"
   ],
   "scripts": {
-    "prebuild": "cd packages/docs && yarn install && cd ..",
+    "prebuild": "cd packages/docs && yarn install && cd ../.. && cd packages/message-kit && yarn install && yarn build && cd ../..",
     "build": "yarn prebuild && turbo run build --filter='./packages/*'",
     "changeset": "yarn copy && changeset add --type patch",
     "clean": "turbo run clean && rm -rf node_modules && rm -rf .turbo && yarn cache clean",
+    "clean:all": "rm -rf node_modules .turbo .next dist packages/**/node_modules packages/**/dist templates/**/node_modules templates/**/dist && yarn cache clean",
     "copy": "rm -rf packages/create-message-kit/templates && cd packages/create-message-kit && yarn copy && cd ../.. && echo 'Copy completed'",
     "dev": "cd packages/message-kit && yarn build:watch",
     "dev:agent": "cd templates/agent && yarn dev",
-    "dev:dead": "cd templates/dead && yarn dev",
+    "dev:cli": "cd packages/create-message-kit ",
     "dev:docs": "cd packages/docs && yarn dev",
-    "dev:gm": "cd templates/gm && yarn dev",
+    "dev:gated": "cd templates/gated && yarn dev",
+    "dev:gpt": "cd templates/gpt && yarn dev",
     "dev:group": "cd templates/group && yarn dev",
-    "dev:split": "cd templates/split && yarn dev",
     "format": "turbo run format",
     "format:check": "turbo run format:check",
     "publish": "turbo run build --filter='./packages/*' --filter='!./packages/docs' && yarn copy && changeset publish",
-    "test": "FORCE_COLOR=1 turbo run test --force",
+    "test": "FORCE_COLOR=1 turbo run test --force --concurrency=1",
+    "test:client": "cd packages/message-kit/src/tests && yarn test:client",
+    "test:parsing": "cd packages/message-kit/src/tests && yarn test:parsing",
+    "test:prompting": "cd packages/message-kit/src/tests && yarn test:prompting",
     "typecheck": "FORCE_COLOR=1 turbo run typecheck"
   },
   "resolutions": {
@@ -31,12 +35,14 @@
   },
   "dependencies": {
     "@changesets/changelog-git": "^0.2.0",
-    "@changesets/cli": "^2.27.5"
+    "@changesets/cli": "^2.27.5",
+    "punycode": "^2.3.1"
   },
   "devDependencies": {
     "prettier": "^3.3.1",
     "prettier-plugin-packagejson": "^2.5.0",
-    "turbo": "^1.13.4"
+    "turbo": "^1.13.4",
+    "typescript": "^5.4.5"
   },
   "packageManager": "yarn@4.5.1",
   "engines": {

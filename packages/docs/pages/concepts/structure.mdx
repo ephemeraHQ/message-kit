@@ -9,39 +9,80 @@ app-project/              # Optional middleware files
 ├── src/
 │   └── index.ts          # Entry point for your agent. // [!code hl] // [!code focus]
 │   └── skills.ts         # Skills for your agent. // [!code hl] // [!code focus]
+│   └── prompt.ts         # Prompt for your agent. // [!code hl] // [!code focus]
 ├── tsconfig.json         // [!code hl] // [!code focus]
 ├── package.json          // [!code hl] // [!code focus]
 └── .env                  # Environment variables
 ```
 
-## Main code
+## Runner
 
 This is the main function that runs the listener.
 
 ```jsx
-run(
-  async (context) => {
-    // Get the message and the address from the sender
-    const { content, sender } = context.message;
+import {
+  run,
+  XMTPContext,
+} from "@xmtp/message-kit";
 
-    // To reply, just call `reply` on the HandlerContext.
-    await context.send(`gm`);
+run(
+  async (context: XMTPContext) => {
+    // your logic here
   },
-  {
+  { skills,
     /*optional parameters*/
-  },
+   },
 );
+
 ```
 
 #### Optional parameters
 
-- `privateKey`: the private key of the agent wallet, like any normal wallet private key. //
+- `privateKey`: the private key of the agent wallet, like any normal wallet private key.
 - `experimental`: experimental features like logging all group messages. Default is `false`.
 - `attachments`: to receive attachments. Default is `false`.
+- `gptModel`: model to be used. Default is `gpt-4o`.
 - `client`: Optional parameters to pass to the XMTP client.
-- `skills`: skills to be used
+- `skills`: Custom skills to be used. Default is to create the skills in the `src/skills.ts` file.
 - `hideInitLogMessage`: hide the init log message with messagekit logo and stuff
 - `memberChange`: if true, member changes will be enabled, like adding members to the group
+
+## XMTPContext
+
+XMTPContext bridges the skills to the XMTP protocol. It's aware of conversations, groups and users.
+
+```tsx
+import { XMTPContext } from "@xmtp/message-kit";
+
+run(async (context: XMTPContext) => {
+  const {
+    message,
+    group,
+    conversation,
+    client,
+    version,
+    v2client,
+    members,
+    admins,
+    runConfig,
+    superAdmins,
+  } = context;
+});
+```
+
+### Context properties
+
+- `message`: the [message](/concepts/messages) object
+- `group`: the group object
+- `conversation`: the conversation object
+- `client`: the client object
+- `version`: the version of the client
+- `v2client`: the v2 client object
+- `members`: the members of the group
+- `admins`: the admins of the group
+- `superAdmins`: the super admins of the group
+- `runConfig`: the config of the Runner
+- `sender`: the sender of the message
 
 ## Clients
 
@@ -64,4 +105,4 @@ const { v2client: newClient } = await xmtpClient({
 );
 ```
 
-> This is used in the [Cron](/middlewares/cron) middleware to send updates to the users.
+> This is used in the [Cron](/middleware/cron) middleware to send updates to the users.

@@ -1,0 +1,20 @@
+# Scenarios
+
+`Scenarios` is a technique to improve the performance of a model on a specific task. This technique can be **very** effective.
+
+## Overview
+
+For `Scenarios` to be effective we need to combine the following skills:
+
+- [Prompting](/skills/prompting): System prompt to teach available skills to the agent.
+- [Processing](/skills/processing): Handle multiple skills in a single conversation.
+- [Parsing](/skills/parsing): Interpret user intent and translate it into a defined skill.
+- [Definition](/skills/definition): Define skills, parameters and handlers.
+
+## Example
+
+We can add a section called `Response Scenarios` which is used to train the agent.
+
+```tsx [src/prompt.ts]
+// [!include ~/../../templates/agent/src/prompt.ts]
+```

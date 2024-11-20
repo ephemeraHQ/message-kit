@@ -51,7 +51,7 @@ Powered by XMTP`;
     log.success(`Project launched in ${pc.red(destDir)}!`);
 
     // Add package.json
-    addPackagejson(destDir, displayName, pkgManager);
+    updatePackagejson(destDir, templateType);
 
     // Create README.md file
     createReadme(destDir, templateType, displayName, pkgManager);
@@ -64,34 +64,16 @@ Powered by XMTP`;
 
 program.parse(process.argv);
 
-async function addPackagejson(destDir, name, pkgManager) {
+async function updatePackagejson(destDir, templateType) {
   // Create package.json based on the template
-  let packageTemplate = {
-    name: name,
-    private: true,
-    type: "module",
-    scripts: {
-      build: "tsc",
-      dev: "tsc -w & sleep 1 && node --watch dist/index.js",
-      start: "node dist/index.js",
-      postinstall: "tsc",
-    },
-    dependencies: {
-      "@xmtp/message-kit": "latest",
-    },
-    engines: {
-      node: ">=20",
-    },
-  };
+  const templateDir = resolve(__dirname, `./templates/${templateType}`);
+  const packageTemplate = fs.readJsonSync(`${templateDir}/package.json`);
 
-  if (pkgManager.startsWith("yarn")) {
-    packageTemplate.packageManager = `${pkgManager}`;
-    // Add .yarnrc.yml to disable PnP mode
-    fs.writeFileSync(
-      resolve(destDir, ".yarnrc.yml"),
-      "nodeLinker: node-modules\n",
-    );
-  }
+  packageTemplate.dependencies["@xmtp/message-kit"] = "latest";
+  //Add for yarn in general
+  packageTemplate.scripts.postinstall = "tsc";
+  packageTemplate.packageManager = `yarn@4.5.1`;
+
   fs.writeJsonSync(resolve(destDir, "package.json"), packageTemplate, {
     spaces: 2,
   });
@@ -99,9 +81,10 @@ async function addPackagejson(destDir, name, pkgManager) {
 
 async function gatherProjectInfo() {
   const templateOptions = [
-    { value: "gm", label: "GM" },
-    { value: "agent", label: "Agent" },
-    { value: "group", label: "Group" },
+    { value: "gpt", label: "Simple Gpt" },
+    { value: "agent", label: "ENS Agent" },
+    { value: "group", label: "Group bot" },
+    { value: "gated", label: "Gated Group" },
   ];
 
   const templateType = await select({
@@ -201,11 +184,27 @@ yarn-error.log*
 
   fs.writeFileSync(resolve(destDir, ".gitignore"), gitignoreContent.trim());
 }
-
 async function detectPackageManager() {
   try {
-    const pkgManager = await detect();
+    // Check if running through bun create
+    if (process.env.BUN_CREATE === "true" || process.env._?.includes("bun")) {
+      return "bun";
+    }
+
     const userAgent = process.env.npm_config_user_agent;
+
+    // Check if running through npm init
+    if (userAgent?.startsWith("npm")) {
+      return "npm";
+    }
+
+    // Check for Bun in process.argv
+    if (process.argv.some((arg) => arg.includes("bun"))) {
+      return "bun";
+    }
+
+    // Fallback to detect for other cases
+    const pkgManager = await detect();
     let version = "";
 
     if (userAgent && pkgManager === "yarn") {
@@ -217,11 +216,9 @@ async function detectPackageManager() {
 
     return pkgManager + version;
   } catch (error) {
-    // Fallback to npm if detection fails
     return "npm";
   }
 }
-
 function kebabcase(str) {
   return str
     .replace(/([a-z])([A-Z])/g, "$1-$2")
