@@ -12,7 +12,7 @@
     "build": "yarn prebuild && turbo run build --filter='./packages/*'",
     "changeset": "yarn copy && changeset add --type patch",
     "clean": "turbo run clean && rm -rf node_modules && rm -rf .turbo && yarn cache clean",
-    "clean:all": "rm -rf node_modules .turbo .next dist && yarn cache clean",
+    "clean:all": "rm -rf node_modules .turbo .next dist packages/**/node_modules packages/**/dist templates/**/node_modules templates/**/dist && yarn cache clean",
     "copy": "rm -rf packages/create-message-kit/templates && cd packages/create-message-kit && yarn copy && cd ../.. && echo 'Copy completed'",
     "dev": "cd packages/message-kit && yarn build:watch",
     "dev:agent": "cd templates/agent && yarn dev",
