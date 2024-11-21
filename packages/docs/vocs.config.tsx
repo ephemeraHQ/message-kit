@@ -157,31 +157,10 @@ export default defineConfig({
           link: "/middleware",
         },
         {
-          text: "Open Frames",
-          items: [
-            {
-              text: "Frames.js",
-              link: "/middleware/open-frames/framesjs",
-            },
-            {
-              text: "OnchainKit",
-              link: "/middleware/open-frames/onchainkit",
-            },
-            {
-              text: "Frog",
-              link: "/middleware/open-frames/frog",
-            },
-          ],
+          text: "Deployment",
+          link: "/concepts/deployment",
         },
       ],
-    },
-    {
-      text: "XMTP",
-      link: "/xmtp",
-    },
-    {
-      text: "Converse",
-      link: "/converse",
     },
     {
       text: "Changelog",
@@ -190,10 +169,6 @@ export default defineConfig({
     {
       text: "Guidelines",
       link: "/concepts/guidelines",
-    },
-    {
-      text: "Deployment",
-      link: "/concepts/deployment",
     },
   ],
 });
