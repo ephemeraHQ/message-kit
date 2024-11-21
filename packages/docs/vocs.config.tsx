@@ -65,10 +65,7 @@ export default defineConfig({
       link: "https://github.com/ephemeraHQ/message-kit",
     },
   ],
-  topNav: [
-    { text: "Guidelines", link: "/concepts/guidelines" },
-    { text: "v1.1.10-beta.2", link: "/changelog" },
-  ],
+  topNav: [{ text: "v1.1.10-beta.2", link: "/changelog" }],
   editLink: {
     pattern:
       "https://github.com/ephemeraHQ/message-kit/blob/main/packages/docs/pages/:path",
@@ -109,36 +106,32 @@ export default defineConfig({
         {
           text: "AI Skills",
           link: "/skills",
-
-      items: [
-        {
-          text: "Reasoning",
-          link: "/skills/reasoning",
-        },
-        {
-          text: "Scenarios",
-          link: "/skills/scenarios",
-        },
-        {
-          text: "Prompting",
-          link: "/skills/prompting",
-        },
-        {
-          text: "Processing",
-          link: "/skills/processing",
-        },
-        {
-          text: "Parsing",
-          link: "/skills/parsing",
-        },
-        {
-          text: "Definition",
-          link: "/skills/definition",
-          },
-        },
-        {
-          text: "Deployment",
-          link: "/concepts/deployment",
+          items: [
+            {
+              text: "Reasoning",
+              link: "/skills/reasoning",
+            },
+            {
+              text: "Scenarios",
+              link: "/skills/scenarios",
+            },
+            {
+              text: "Prompting",
+              link: "/skills/prompting",
+            },
+            {
+              text: "Processing",
+              link: "/skills/processing",
+            },
+            {
+              text: "Parsing",
+              link: "/skills/parsing",
+            },
+            {
+              text: "Definition",
+              link: "/skills/definition",
+            },
+          ],
         },
       ],
     },
@@ -186,6 +179,25 @@ export default defineConfig({
         },
       ],
     },
-    
+    {
+      text: "XMTP",
+      link: "/xmtp",
+    },
+    {
+      text: "Converse",
+      link: "/converse",
+    },
+    {
+      text: "Changelog",
+      link: "/changelog",
+    },
+    {
+      text: "Guidelines",
+      link: "/concepts/guidelines",
+    },
+    {
+      text: "Deployment",
+      link: "/concepts/deployment",
+    },
   ],
 });
