@@ -1,4 +1,6 @@
-# Installation
+# GPT example
+
+This is the simplest example of a GPT bot.
 
 Here’s a step-by-step guide to get you started.
 
@@ -32,15 +34,39 @@ _Refer to [structure](/concepts/structure) of the app so see the folder is creat
 
 ### Templates
 
-These are templates for different use cases inside of our Docs
+Lets choose the `GPT` template as an example
 
-- [`gpt`](./templates/gpt): Simple GPT agent example.
-- [`group`](./templates/group): Group chat agent example with skills and examples.
-- [`agent`](./templates/agent): ENS agent for registering and checking domains
+### Structure
+
+```
+group/
+├── src/
+│   ├── index.ts                # Index file of the app. // [!code hl] // [!code focus]
+│   ├── prompt.ts               # Prompt for the agent. // [!code hl] // [!code focus]
+├── package.json
+├── tsconfig.json
+└── .env
+```
+
+### Runner
+
+The process that starts listening to messages and replying to them.
+
+```tsx [src/index.ts]
+// [!include ~/../../templates/gpt/src/index.ts]
+```
+
+### Prompt
+
+Here is the prompt that the agent will use to reply to messages.
+
+```tsx [src/prompt.ts]
+// [!include ~/../../templates/gpt/src/prompt.ts]
+```
 
 ### Variables
 
-Create a `.env` file in the root of your project
+Set up these variables in your app
 
 ```bash [cmd]
 KEY= # the private key of the agent wallet
@@ -87,23 +113,3 @@ npm run start
 Send a message to the app from [Converse](https://converse.xyz/), and it will reply `gm`!
 
 ::::
-
-## Manual Installation
-
-You can also install the package manually using your preferred package manager.
-
-:::code-group
-
-```bash [bun]
-bun i @xmtp/message-kit
-```
-
-```bash [npm]
-npm i @xmtp/message-kit
-```
-
-```bash [yarn]
-yarn add @xmtp/message-kit
-```
-
-:::

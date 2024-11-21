@@ -121,10 +121,6 @@ export default defineConfig({
           link: "/templates/group",
         },
         {
-          text: "Gpt",
-          link: "/templates/gpt",
-        },
-        {
           text: "Gated group",
           link: "/templates/gated",
         },
@@ -156,6 +152,14 @@ export default defineConfig({
           ],
         },
       ],
+    },
+    {
+      text: "Converse",
+      link: "https://converse.xyz/developers",
+    },
+    {
+      text: "XMTP",
+      link: "https://xmtp.org",
     },
     {
       text: "Deployment",
