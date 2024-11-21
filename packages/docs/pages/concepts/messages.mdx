@@ -9,16 +9,7 @@ run(async (context: XMTPContext) => {
   const {
     message: {
       id,
-      content: {
-        text,
-        skill,
-        params,
-        attachment: {
-          data, //Uint8Array; // the decoded data
-          filename, //string; // the filename
-          mimeType, //string; // the mime type
-        },
-      },
+      content: { text, skill, params, attachment },
       reply,
       reference,
     },
@@ -81,9 +72,9 @@ if (typeId === "text") {
 } else if (typeId === "reply") {
   // Do something with the `reply`
 } else if (typeId === "attachment") {
-  // Parse the data to a base64 string
+  const { data, mimeType, filename } = attachment;
   const base64Image = Buffer.from(data).toString("base64");
   // Get the data URL in base64
-  const dataUrl = `data:image/jpeg;base64,${base64Image}`;
+  const dataUrl = `data:${mimeType};base64,${base64Image}`;
 }
 ```

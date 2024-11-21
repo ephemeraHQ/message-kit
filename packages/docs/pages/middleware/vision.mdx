@@ -8,7 +8,7 @@ The GPT Vision middleware allows you to interpret images using the OpenAI API. T
 import OpenAI from "openai";
 
 const openai = new OpenAI({
-  apiKey: process.env.OPEN_AI_API_KEY,
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
 export async function vision(imageData: Uint8Array, systemPrompt: string) {

@@ -178,7 +178,7 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
         isSameAddress,
         openai: {
           model: process?.env?.GPT_MODEL,
-          key: process?.env?.OPEN_AI_API_KEY?.slice(0, 5) + "...",
+          key: process?.env?.OPENAI_API_KEY?.slice(0, 5) + "...",
         },
         content,
         version,

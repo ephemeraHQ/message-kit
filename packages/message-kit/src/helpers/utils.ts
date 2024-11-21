@@ -35,7 +35,7 @@ Powered by XMTP \x1b[0m`;
 
   if (
     runConfig?.experimental ||
-    process?.env?.OPEN_AI_API_KEY === undefined ||
+    process?.env?.OPENAI_API_KEY === undefined ||
     runConfig?.attachments ||
     runConfig?.memberChange ||
     runConfig?.client?.structuredLogging ||
@@ -52,9 +52,9 @@ Powered by XMTP \x1b[0m`;
         `\t- ⚠️🔒 Invalid private key or not set. Generating a random one in your .env file.`,
       );
     }
-    if (process.env.OPEN_AI_API_KEY === undefined) {
+    if (process.env.OPENAI_API_KEY === undefined) {
       console.warn(
-        `\t- ⚠️ OPEN_AI_API_KEY is not set. Please set it in your .env file.`,
+        `\t- ⚠️ OPENAI_API_KEY is not set. Please set it in your .env file.`,
       );
     }
     if (runConfig?.client?.structuredLogging) {

@@ -23,5 +23,5 @@ Set up these variables in your app
 
 ```bash [cmd]
 KEY= # the private key of the agent wallet
-OPEN_AI_API_KEY= # openai api key
+OPENAI_API_KEY= # openai api key
 ```

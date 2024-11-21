@@ -7,12 +7,12 @@ import { getUserInfo, replaceUserContext } from "./resolver";
 import type { SkillGroup } from "./types";
 
 const isOpenAIConfigured = () => {
-  return !!process.env.OPEN_AI_API_KEY;
+  return !!process.env.OPENAI_API_KEY;
 };
 
 // Modify OpenAI initialization to be conditional
 const openai = isOpenAIConfigured()
-  ? new OpenAI({ apiKey: process.env.OPEN_AI_API_KEY })
+  ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
   : null;
 
 type ChatHistoryEntry = {

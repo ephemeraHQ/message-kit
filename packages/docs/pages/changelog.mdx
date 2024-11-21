@@ -1,5 +1,31 @@
 # Changelog
 
+## [1.1.10-beta.2] - 2024-11-21
+
+**Summary of Changes**
+
+The pull request introduces several updates and improvements across multiple files in the project:
+
+- **Template Renaming**: The `gm` template has been renamed to `gpt` throughout the codebase. This reflects a shift to using GPT-based agents for more advanced interactions.
+
+- **Prompt Enhancements**: Agent prompt functions have been updated to use a simplified and more effective prompt generation method. The prompts now leverage a `defaultPromptTemplate`, improving the way agents generate and handle prompts for GPT-based models.
+
+- **Skill Definitions Updates**: Skill definitions in `skills.ts` files have been modified. The `triggers` property has been removed from skill objects, and parameters have been updated to enhance skill parsing and execution.
+
+- **New Test Suites**: New test files have been added to improve testing coverage for agents and skill parsing. These include tests for agent prompting, skill parsing, and group interactions.
+
+- **Codebase Cleanup**: Outdated files and templates, such as the old `gm` template and middleware files, have been removed to streamline the codebase and reduce clutter.
+
+- **Documentation Updates**: Documentation has been extensively updated to reflect all changes. This includes updates to READMEs, code examples, tutorial guides, and the AI Skills framework documentation.
+
+- **Dependency and Configuration Updates**: Several dependencies have been updated to newer versions, and configurations like package versions and build scripts have been adjusted accordingly.
+
+- **Improvements in Handlers and Skills**: Handler functions have been refined for better error handling and functionality, particularly in agent and group templates.
+
+- **User Information Resolution**: Enhancements have been made to how user information is resolved and cached, improving efficiency and consistency when retrieving user data like ENS domains and addresses.
+
+Overall, these changes aim to enhance the functionality of GPT-based agents, improve code quality, update documentation for better developer experience, and streamline the project structure.
+
 ## [1.1.8] - 2024-11-11
 
 - **New Features**
