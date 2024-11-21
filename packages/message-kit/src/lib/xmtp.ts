@@ -28,6 +28,8 @@ import {
 import { ContentTypeReaction } from "@xmtp/content-type-reaction";
 import path from "path";
 
+const txpayUrl = "https://txpay.vercel.app";
+
 export const awaitedHandlers = new Map<
   string,
   (text: string) => Promise<boolean | undefined>
@@ -400,12 +402,15 @@ export class XMTPContext {
       logMessage("sent: " + message);
     }
   }
-  async sendPayment(
+
+  async sendCustomFrame(frame: string) {
+    await this.send(frame);
+  }
+  async requestPayment(
     amount: number = 1,
     token: string = "usdc",
     username: string = "humanagent.eth",
   ) {
-    const txpayUrl = "https://txpay.vercel.app";
     let senderInfo = await getUserInfo(username);
     if (senderInfo && process.env.MSG_LOG === "true")
       console.log("senderInfo", senderInfo);
@@ -414,7 +419,7 @@ export class XMTPContext {
       return;
     }
 
-    let sendUrl = `${txpayUrl}/?&amount=${amount}&token=${token}&receiver=${senderInfo?.address}`;
+    let sendUrl = `${txpayUrl}/payment?amount=${amount}&token=${token}&receiver=${senderInfo?.address}`;
     await this.send(sendUrl);
   }
 
@@ -426,7 +431,6 @@ export class XMTPContext {
     dripAmount: number,
   ) {
     networkName = networkName.replaceAll(" ", "-");
-    const txpayUrl = "https://txpay.vercel.app";
     let receiptUrl = `${txpayUrl}/receipt?txLink=${txLink}&networkLogo=${
       networkLogo
     }&networkName=${networkName}&tokenName=${tokenName}&amount=${dripAmount}`;
