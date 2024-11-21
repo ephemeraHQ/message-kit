@@ -1,6 +1,6 @@
 # Messages
 
-## Receiving
+## Content
 
 When you start the app, you can listen for incoming messages using the `run` function.
 
@@ -9,28 +9,39 @@ run(async (context: XMTPContext) => {
   const {
     message: {
       id,
-      content: { text, skill, params, attachment, reply, reference },
-      sender,
-      sent,
-      typeId,
+      content: {
+        text,
+        skill,
+        params,
+        attachment: {
+          data, //Uint8Array; // the decoded data
+          filename, //string; // the filename
+          mimeType, //string; // the mime type
+        },
+      },
+      reply,
+      reference,
     },
-  };
+    sender,
+    sent,
+    typeId,
+  } = context;
+
+  /*Logic*/
 });
 ```
 
-- `id`: string, // The id of the message
+- `id`: string // The id of the message
 - `content`: all the content of the message depending on the type
-  - `text`: string, // The content of the message
+  - `text`: string // The content of the message
   - `skill`: string, // The skill of the message
   - `params`: string[], // The parameters of the message
-  - `attachment`: Attachment, // The attachment of the message
-  - `reply`: Reply, // The reply of the message
-  - `reference`: string, // The reference of the message
-- `sender`: User, // The user object of the sender
-- `sent`: Date, // The timestamp of the message
-- `typeId`: string, // The type of the message (text, reply)
-
-> To learn more about the types, see [types](/concepts/types)
+  - `attachment`: Attachment // The attachment of the message
+  - `reply`: Reply // The reply of the message
+  - `reference`: string // The reference of the message
+- `sender`: User // The user object of the sender
+- `sent`: Date // The timestamp of the message
+- `typeId`: string // The type of the message (text, reply, attachment, skill)
 
 ## Sending
 
@@ -51,4 +62,28 @@ const answer = await context.awaitResponse("Please answer with yes or no", [
 console.log(`You answered: ${answer}`);
 // Send an image
 await context.sendImage("path/to/image.png");
+// Send a payment url
+await context.sendPayment("https://example.com/payment");
+```
+
+## Receiving
+
+Attachments are files that are sent with the message. They can be images, videos, or any other file type.
+
+```tsx
+// Check if the message is an attachment
+if (typeId === "text") {
+  // Do something with the text
+} else if (typeId === "skill") {
+  // Do something with the skill
+  const { address, domain } = params;
+  // Use params
+} else if (typeId === "reply") {
+  // Do something with the `reply`
+} else if (typeId === "attachment") {
+  // Parse the data to a base64 string
+  const base64Image = Buffer.from(data).toString("base64");
+  // Get the data URL in base64
+  const dataUrl = `data:image/jpeg;base64,${base64Image}`;
+}
 ```

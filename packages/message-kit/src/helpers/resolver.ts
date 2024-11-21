@@ -111,13 +111,12 @@ export const getUserInfo = async (
         "Hey there! Give me a sec while I fetch info about you first...",
       );
     }
-    console.log("keyToUse", keyToUse);
     // Fetch data based on ENS domain or Converse username
     if (keyToUse.includes(".eth")) {
       // Fetch ENS data
       try {
         const response = await fetch(`https://ensdata.net/${keyToUse}`);
-        console.log("response", response);
+
         if (!response.ok) {
           console.error(
             `ENS data request failed with status or unable to resolve ${keyToUse}`,
@@ -132,7 +131,7 @@ export const getUserInfo = async (
           }
         }
       } catch (error) {
-        console.error("Failed to fetch ENS data:", error);
+        //console.error(`Failed to fetch ENS data for ${keyToUse}`);
       }
     } else {
       // Fetch Converse profile data

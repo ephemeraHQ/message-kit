@@ -18,6 +18,7 @@ export const frameUrl = "https://ens.steer.fun/";
 export const ensUrl = "https://app.ens.domains/";
 export const txpayUrl = "https://txpay.vercel.app";
 
+// [!region skills]
 export const skills = [
   {
     name: "Ens Domain Bot",
@@ -34,7 +35,9 @@ export const skills = [
     ],
   },
 ];
+// [!endregion skills]
 
+// [!region run]
 run(
   async (context: XMTPContext) => {
     const {
@@ -53,3 +56,5 @@ run(
   },
   { skills },
 );
+
+// [!endregion run]

@@ -65,10 +65,7 @@ export default defineConfig({
       link: "https://github.com/ephemeraHQ/message-kit",
     },
   ],
-  topNav: [
-    { text: "Guidelines", link: "/concepts/guidelines" },
-    { text: "v1.1.10-beta.2", link: "/changelog" },
-  ],
+  topNav: [{ text: "v1.1.10-beta.2", link: "/changelog" }],
   editLink: {
     pattern:
       "https://github.com/ephemeraHQ/message-kit/blob/main/packages/docs/pages/:path",
@@ -84,6 +81,10 @@ export default defineConfig({
       link: "/examples",
     },
     {
+      text: "Guidelines",
+      link: "/concepts/guidelines",
+    },
+    {
       text: "Concepts",
       items: [
         {
@@ -95,10 +96,6 @@ export default defineConfig({
           link: "/concepts/messages",
         },
         {
-          text: "Types",
-          link: "/concepts/types",
-        },
-        {
           text: "Groups",
           link: "/concepts/groups",
         },
@@ -107,42 +104,11 @@ export default defineConfig({
           link: "/concepts/usernames",
         },
         {
-          text: "Deployment",
-          link: "/concepts/deployment",
+          text: "AI Skills",
+          link: "/skills",
         },
       ],
     },
-    {
-      text: "AI Skills",
-      link: "/skills",
-      items: [
-        {
-          text: "Reasoning",
-          link: "/skills/reasoning",
-        },
-        {
-          text: "Scenarios",
-          link: "/skills/scenarios",
-        },
-        {
-          text: "Prompting",
-          link: "/skills/prompting",
-        },
-        {
-          text: "Processing",
-          link: "/skills/processing",
-        },
-        {
-          text: "Parsing",
-          link: "/skills/parsing",
-        },
-        {
-          text: "Definition",
-          link: "/skills/definition",
-        },
-      ],
-    },
-
     {
       text: "Use cases",
       items: [
@@ -190,6 +156,14 @@ export default defineConfig({
           ],
         },
       ],
+    },
+    {
+      text: "Deployment",
+      link: "/concepts/deployment",
+    },
+    {
+      text: "Changelog",
+      link: "/changelog",
     },
   ],
 });

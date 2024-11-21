@@ -234,17 +234,23 @@ export async function processMultilineResponse(
   console.log(messages);
   // [!region processing]
   for (const message of messages) {
+    // Check if the message is a command (starts with "/")
     if (message.startsWith("/")) {
+      // Execute the skill associated with the command
       const response = await context.executeSkill(message);
       if (response && typeof response.message === "string") {
+        // Parse the response message
         let msg = parseMarkdown(response.message);
+        // Add the parsed message to chat memory as a system message
         chatMemory.addEntry(memoryKey, {
           role: "system",
           content: msg,
         });
+        // Send the response message
         await context.send(response.message);
       }
     } else {
+      // If the message is not a command, send it as is
       await context.send(message);
     }
   }
