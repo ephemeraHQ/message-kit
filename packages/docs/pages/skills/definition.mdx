@@ -2,15 +2,7 @@
 
 Each app can have a `skills.ts` file that contains the skills that the app can execute. The skills are defined as an array of objects with the following keys:
 
-## Overview
-
-Create the skill file `skills.ts` in your project root `src` folder.
-
-```tsx [src/index.ts]
-// [!include ~/../../templates/agent/src/index.ts:skills]
-```
-
-## Skill
+## Skill declaration
 
 The handler function to process check skill requests:
 
@@ -18,7 +10,20 @@ The handler function to process check skill requests:
 // [!include ~/../../templates/agent/src/handlers/check.ts:define]
 ```
 
-## Properties
+### Converted parameters
+
+This is the parameters extracted from the user request:
+
+```json
+{
+  "skill": "check",
+  "params": {
+    "domain": "vitalik.eth"
+  }
+}
+```
+
+### Properties
 
 - **skill**: The name of the skill.
 - **description**: The description of the skill.
