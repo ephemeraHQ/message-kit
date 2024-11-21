@@ -56,13 +56,7 @@ await context.sendImage("path/to/image.png");
 // Send a payment url
 await context.sendPayment(1, "USDC", address);
 //Send receipt
-await context.sendReceipt(
-  result.value!,
-  selectedNetwork?.networkLogo,
-  selectedNetwork?.networkName.replaceAll(" ", "-"),
-  selectedNetwork?.tokenName,
-  selectedNetwork?.dripAmount,
-);
+await context.sendReceipt(result.value!, "logo", "base", "token", 1);
 ```
 
 ## Receiving
@@ -70,19 +64,30 @@ await context.sendReceipt(
 Attachments are files that are sent with the message. They can be images, videos, or any other file type.
 
 ```tsx
-// Check if the message is an attachment
-if (typeId === "text") {
-  // Do something with the text
-} else if (typeId === "skill") {
-  // Do something with the skill
-  const { address, domain } = params;
-  // Use params
-} else if (typeId === "reply") {
-  // Do something with the `reply`
-} else if (typeId === "attachment") {
-  const { data, mimeType, filename } = attachment;
-  const base64Image = Buffer.from(data).toString("base64");
-  // Get the data URL in base64
-  const dataUrl = `data:${mimeType};base64,${base64Image}`;
-}
+run(async (context: XMTPContext) => {
+  const {
+    message: {
+      id,
+      content: { reply, text, skill, params, attachment },
+      reference,
+      typeId,
+    },
+  } = context;
+
+  // Check if the message is an attachment
+  if (typeId === "text") {
+    // Do something with the text
+  } else if (typeId === "skill") {
+    // Do something with the skill
+    const { address, domain } = params;
+    // Use params
+  } else if (typeId === "reply") {
+    // Do something with the `reply`
+  } else if (typeId === "attachment") {
+    const { data, mimeType, filename } = attachment;
+    const base64Image = Buffer.from(data).toString("base64");
+    // Get the data URL in base64
+    const dataUrl = `data:${mimeType};base64,${base64Image}`;
+  }
+});
 ```

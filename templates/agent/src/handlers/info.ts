@@ -35,27 +35,16 @@ export async function handleInfo(context: XMTPContext) {
       message: "Domain not found.",
     };
   }
-
-  const formattedData = {
-    Address: data?.address,
-    "Avatar URL": data?.ensInfo?.avatar,
-    Description: data?.ensInfo?.description,
-    ENS: data?.ensDomain,
-    "Primary ENS": data?.ensInfo?.ens_primary,
-    GitHub: data?.ensInfo?.github,
-    Resolver: data?.ensInfo?.resolverAddress,
-    Twitter: data?.ensInfo?.twitter,
-    URL: `${ensUrl}${domain}`,
-  };
-
-  let message = "Domain information:\n\n";
-  for (const [key, value] of Object.entries(formattedData)) {
-    if (value) {
-      message += `${key}: ${value}\n`;
-    }
-  }
+  let message = `Domain information:\n\n`;
+  message += `Address: ${data?.address}\n`;
+  message += `Avatar URL: ${data?.ensInfo?.avatar}\n`;
+  message += `Description: ${data?.ensInfo?.description}\n`;
+  message += `ENS: ${data?.ensDomain}\n`;
+  message += `Primary ENS: ${data?.ensInfo?.ens_primary}\n`;
+  message += `GitHub: ${data?.ensInfo?.github}\n`;
   message += `\n\nWould you like to tip the domain owner for getting there first 🤣?`;
   message = message.trim();
+
   if (await isOnXMTP(context.client, context.v2client, sender?.address)) {
     await context.send(
       `Ah, this domains is in XMTP, you can message it directly: https://converse.xyz/dm/${domain}`,

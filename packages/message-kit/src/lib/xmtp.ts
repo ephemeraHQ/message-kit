@@ -406,7 +406,6 @@ export class XMTPContext {
     username: string = "humanagent.eth",
   ) {
     const txpayUrl = "https://txpay.vercel.app";
-    console.log("sendPayment", amount, token, username);
     let senderInfo = await getUserInfo(username);
     if (senderInfo && process.env.MSG_LOG === "true")
       console.log("senderInfo", senderInfo);
