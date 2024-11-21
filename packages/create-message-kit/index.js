@@ -72,7 +72,9 @@ async function updatePackagejson(destDir, templateType) {
   packageTemplate.dependencies["@xmtp/message-kit"] = "latest";
   //Add for yarn in general
   packageTemplate.scripts.postinstall = "tsc";
-  packageTemplate.packageManager = `yarn@4.5.1`;
+  if (packageTemplate.packageManager.includes("yarn")) {
+    packageTemplate.packageManager = "yarn@4.5.1";
+  }
 
   fs.writeJsonSync(resolve(destDir, "package.json"), packageTemplate, {
     spaces: 2,
