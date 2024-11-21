@@ -28,6 +28,7 @@
     "test": "vitest",
     "test:client": "vitest run src/tests/client",
     "test:coverage": "vitest run --coverage",
+    "test:frames": "vitest run src/tests/frames",
     "test:parsing": "vitest run src/tests/parsing",
     "test:prompting": "vitest run src/tests/prompting",
     "test:watch": "vitest watch",

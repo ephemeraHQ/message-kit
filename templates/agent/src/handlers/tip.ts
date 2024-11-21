@@ -23,5 +23,5 @@ export async function handleTip(context: XMTPContext) {
       },
     },
   } = context;
-  await context.sendPayment(1, "USDC", address);
+  await context.requestPayment(1, "USDC", address);
 }

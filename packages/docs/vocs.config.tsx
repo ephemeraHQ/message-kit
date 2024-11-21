@@ -100,6 +100,10 @@ export default defineConfig({
           link: "/concepts/usernames",
         },
         {
+          text: "Frames",
+          link: "/concepts/frames",
+        },
+        {
           text: "AI Skills",
           link: "/skills",
           items: [
