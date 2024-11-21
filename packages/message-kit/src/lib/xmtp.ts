@@ -408,7 +408,8 @@ export class XMTPContext {
     const txpayUrl = "https://txpay.vercel.app";
     console.log("sendPayment", amount, token, username);
     let senderInfo = await getUserInfo(username);
-    console.log("senderInfo", senderInfo);
+    if (senderInfo && process.env.MSG_LOG === "true")
+      console.log("senderInfo", senderInfo);
     if (!senderInfo) {
       console.error("Failed to get sender info");
       return;
