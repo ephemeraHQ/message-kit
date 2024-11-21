@@ -50,5 +50,6 @@ export async function handleInfo(context: XMTPContext) {
       `Ah, this domains is in XMTP, you can message it directly: https://converse.xyz/dm/${domain}`,
     );
   }
+
   return { code: 200, message };
 }
