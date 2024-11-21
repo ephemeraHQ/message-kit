@@ -400,13 +400,13 @@ export class XMTPContext {
       logMessage("sent: " + message);
     }
   }
-  async sendPay(
+  async sendPayment(
     amount: number = 1,
     token: string = "usdc",
     username: string = "humanagent.eth",
   ) {
     const txpayUrl = "https://txpay.vercel.app";
-    console.log("sendPay", amount, token, username);
+    console.log("sendPayment", amount, token, username);
     let senderInfo = await getUserInfo(username);
     console.log("senderInfo", senderInfo);
     if (!senderInfo) {
@@ -416,6 +416,22 @@ export class XMTPContext {
 
     let sendUrl = `${txpayUrl}/?&amount=${amount}&token=${token}&receiver=${senderInfo?.address}`;
     await this.send(sendUrl);
+  }
+
+  async sendReceipt(
+    txLink: string,
+    networkLogo: string,
+    networkName: string,
+    tokenName: string,
+    dripAmount: number,
+  ) {
+    networkName = networkName.replaceAll(" ", "-");
+    const txpayUrl = "https://txpay.vercel.app";
+    let receiptUrl = `${txpayUrl}/receipt?txLink=${txLink}&networkLogo=${
+      networkLogo
+    }&networkName=${networkName}&tokenName=${tokenName}&amount=${dripAmount}`;
+
+    await this.send(receiptUrl);
   }
   async sendImage(filePath: string) {
     try {

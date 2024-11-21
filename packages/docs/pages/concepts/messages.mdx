@@ -54,7 +54,15 @@ console.log(`You answered: ${answer}`);
 // Send an image
 await context.sendImage("path/to/image.png");
 // Send a payment url
-await context.sendPayment("https://example.com/payment");
+await context.sendPayment(1, "USDC", address);
+//Send receipt
+await context.sendReceipt(
+  result.value!,
+  selectedNetwork?.networkLogo,
+  selectedNetwork?.networkName.replaceAll(" ", "-"),
+  selectedNetwork?.tokenName,
+  selectedNetwork?.dripAmount,
+);
 ```
 
 ## Receiving

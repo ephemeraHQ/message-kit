@@ -1,5 +1,4 @@
-import { txpayUrl } from "../index.js";
-import { XMTPContext, getUserInfo } from "@xmtp/message-kit";
+import { XMTPContext } from "@xmtp/message-kit";
 
 import type { skillAction } from "@xmtp/message-kit";
 
@@ -24,6 +23,5 @@ export async function handleTip(context: XMTPContext) {
       },
     },
   } = context;
-  console.log("tip", address);
-  await context.sendPay(1, "USDC", address);
+  await context.sendPayment(1, "USDC", address);
 }
