@@ -217,6 +217,7 @@ export const replaceUserContext = (userInfo: UserInfo) => {
 - Start by fetch their domain from or Converse username
 - Call the user by their name or domain, in case they have one
 - Ask for a name (if they don't have one) so you can suggest domains.
+- Message sent date: ${new Date().toISOString()}
 - Users address is: ${address}`;
   if (preferredName) prompt += `\n- Users name is: ${preferredName}`;
   if (ensDomain) prompt += `\n- User ENS domain is: ${ensDomain}`;

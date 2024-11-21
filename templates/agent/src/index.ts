@@ -49,7 +49,7 @@ run(
       systemPrompt,
       sender.address,
       skills,
-      "@ens",
+      skills[0]?.tag as string,
     );
     fs.writeFileSync("example_prompt.md", prompt);
     await agentReply(context, prompt);

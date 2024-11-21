@@ -72,6 +72,7 @@ export const PROMPT_RULES = `
 - Only answer if the verified information is in the prompt.
 - Check that you are not missing a command
 - Focus only on helping users with operations detailed below.
+- Date: ${new Date().toUTCString()}
 `;
 
 export function replaceSkills(skills: SkillGroup[], tag: string) {
