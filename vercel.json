@@ -3,6 +3,5 @@
   "buildCommand": "yarn build",
   "devCommand": "yarn dev:frames",
   "outputDirectory": "./packages/framekit/.next",
-  "installCommand": "yarn install",
-  "monorepo": true
+  "installCommand": "yarn install"
 }
