@@ -447,13 +447,13 @@ export class XMTPContext {
   }
   async sendConverseDmFrame(peer: string, pretext?: string) {
     let url = `https://converse.xyz/dm/${peer}`;
-    if (pretext) url += `&pretext=${pretext}`;
+    if (pretext) url += `&pretext=${encodeURIComponent(pretext)}`;
     await this.send(url);
   }
 
   async sendConverseGroupFrame(groupId: string, pretext?: string) {
     let url = `https://converse.xyz/group/${groupId}`;
-    if (pretext) url += `&pretext=${pretext}`;
+    if (pretext) url += `&pretext=${encodeURIComponent(pretext)}`;
     await this.send(url);
   }
 

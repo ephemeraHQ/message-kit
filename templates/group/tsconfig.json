@@ -1,6 +1,6 @@
 {
   "extends": "@xmtp/tsconfig/base.json",
-  "include": ["src/**/*", "src/handlers/game.ts"],
+  "include": ["src/**/*"],
   "compilerOptions": {
     "outDir": "./dist"
   }
