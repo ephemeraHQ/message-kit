@@ -31,6 +31,18 @@ Properties:
 
 - `url`: URL of the transaction receipt scanner like basescan, etherscan, etc.
 
+## Dm and Groups on Converse
+
+You can send messages to a user or group on Converse using the `sendConverseDmFrame` and `sendConverseGroupFrame` methods.
+
+```typescript
+// Send a message to a user with an optional pretext
+await context.sendConverseDmFrame("userAddress", "Hello, how are you?");
+
+// Send a message to a group with an optional pretext
+await context.sendConverseGroupFrame("groupId", "gm all!");
+```
+
 ## Custom
 
 Custom frames allow you to create interactive UI elements. Here's how to create a token price frame:

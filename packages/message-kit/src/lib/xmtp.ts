@@ -445,6 +445,17 @@ export class XMTPContext {
     let sendUrl = `${frameKitUrl}/payment?amount=${amount}&token=${token}&receiver=${senderInfo?.address}`;
     await this.send(sendUrl);
   }
+  async sendConverseDmFrame(peer: string, pretext?: string) {
+    let url = `https://converse.xyz/dm/${peer}`;
+    if (pretext) url += `&pretext=${pretext}`;
+    await this.send(url);
+  }
+
+  async sendConverseGroupFrame(groupId: string, pretext?: string) {
+    let url = `https://converse.xyz/group/${groupId}`;
+    if (pretext) url += `&pretext=${pretext}`;
+    await this.send(url);
+  }
 
   async sendReceipt(txLink: string) {
     //const tkLink ="https://sepolia.basescan.org/tx/0xd60833f6e38ffce6e19109cf525726f54859593a0716201ae9f6444a04765a37";
