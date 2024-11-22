@@ -1,33 +1,61 @@
 # Frames
 
-FrameKit allows you to generate frames from your backend agent.
+FrameKit allows you to generate frames from your backend agent. Here are some practical examples of how to implement different types of frames.
 
-## Payments
+## Payment
 
-```tsx
-context.requestPayment(payment: Payment)
+You can request payments using the payment frame:
+
+```typescript
+// Request 1 USDC payment to a specific address
+await context.requestPayment(1, "USDC", recipientAddress);
 ```
 
-## Custom Frames
+Properties:
 
-```tsx
-context.sendCustomFrame(frame: string)
+- `amount`: Number representing the payment amount
+- `token`: Supported tokens include "eth", "dai", "usdc", "degen"
+- `address`: Recipient's wallet address or ENS name
+
+## Transaction Receipts
+
+You can request receipts using the receipt frame:
+
+```typescript
+// Request a receipt
+await context.sendReceipt(urlOfTransaction);
+// ie https://sepolia.basescan.org/tx/0x1234567890abcdef
 ```
 
-## Receipts
+Properties:
 
-```tsx
-context.sendReceipt(receipt: Receipt)
+- `url`: URL of the transaction receipt scanner like basescan, etherscan, etc.
+
+## Custom
+
+Custom frames allow you to create interactive UI elements. Here's how to create a token price frame:
+
+```typescript
+const frame = {
+  title: "Bitcoin",
+  buttons: [
+    { content: "Buy", action: "link", target: "https://example.com/buy" },
+    {
+      content: "Price ($30,000)",
+      action: "link",
+      target: "https://example.com/price",
+    },
+  ],
+  image: "https://example.com/bitcoin.png",
+};
+
+await context.sendCustomFrame(frame);
 ```
 
-## Profiles
+Properties:
 
-```tsx
-context.sendProfile(profile: Profile)
-```
-
-## Groups
-
-```tsx
-context.sendGroup(group: Group)
-```
+- `title`: The header text of your frame
+- `buttons`: Array of interactive buttons (max 2)
+- `image`: URL of the image to display
+- `action`: Type of button action ("link" or "post")
+- `target`: Destination URL for button clicks
