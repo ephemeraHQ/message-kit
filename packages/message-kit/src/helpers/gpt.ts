@@ -3,7 +3,7 @@ dotenv.config({ override: true });
 import OpenAI from "openai";
 import { XMTPContext } from "../lib/xmtp";
 import { getUserInfo, replaceUserContext } from "./resolver";
-import type { SkillGroup } from "./types";
+import type { Agent } from "./types";
 
 const isOpenAIConfigured = () => {
   return !!process.env.OPENAI_API_KEY;
@@ -74,10 +74,10 @@ export const PROMPT_RULES = `
 - Date: ${new Date().toUTCString()}
 `;
 
-export function replaceSkills(skills: SkillGroup) {
-  let returnPrompt = `## Commands\n${skills?.skills
+export function replaceSkills(agent: Agent) {
+  let returnPrompt = `## Commands\n${agent?.skills
     .map((skill) => skill.skill + " - " + skill.description)
-    .join("\n")}\n\n## Examples\n${skills?.skills
+    .join("\n")}\n\n## Examples\n${agent?.skills
     .map((skill) => skill.examples?.join("\n"))
     .join("\n")}`;
   return returnPrompt;
@@ -87,7 +87,7 @@ export function replaceSkills(skills: SkillGroup) {
 export async function replaceVariables(
   prompt: string,
   senderAddress: string,
-  skills: SkillGroup,
+  agent: Agent,
 ) {
   // Fetch user information based on the sender's address
   let userInfo = await getUserInfo(senderAddress);
@@ -106,9 +106,9 @@ export async function replaceVariables(
     "You are a helpful agent called {agent_name} that lives inside a web3 messaging app called Converse.",
   );
 
-  prompt = prompt.replace("{agent_name}", skills?.tag);
+  prompt = prompt.replace("{agent_name}", agent?.tag);
   prompt = prompt.replace("{rules}", PROMPT_RULES);
-  prompt = prompt.replace("{skills}", replaceSkills(skills));
+  prompt = prompt.replace("{skills}", replaceSkills(agent));
 
   // Replace variables in the system prompt
   if (userInfo) {

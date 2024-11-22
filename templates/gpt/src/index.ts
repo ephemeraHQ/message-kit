@@ -3,11 +3,11 @@ import {
   agentReply,
   replaceVariables,
   XMTPContext,
-  SkillGroup,
+  Agent,
 } from "@xmtp/message-kit";
 
 import { systemPrompt } from "./prompt.js";
-export const skills: SkillGroup = {
+export const agent: Agent = {
   name: "GPT Bot",
   tag: "@bot",
   description: "Use GPT to answer questions.",

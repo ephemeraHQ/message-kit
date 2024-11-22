@@ -1,6 +1,6 @@
-import type { SkillGroup } from "@xmtp/message-kit";
+import type { Agent } from "@xmtp/message-kit";
 
-export const skills: SkillGroup = {
+export const agent: Agent = {
   name: "Group Id",
   description: "Create and get group id.",
   skills: [

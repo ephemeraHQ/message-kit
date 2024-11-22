@@ -14,7 +14,7 @@ import {
   RunConfig,
   MessageAbstracted,
   GroupAbstracted,
-  SkillGroup,
+  Agent,
   SkillResponse,
   AbstractedMember,
   Frame,
@@ -51,7 +51,7 @@ export class XMTPContext {
   admins?: string[];
   runConfig?: RunConfig;
   superAdmins?: string[];
-  skills: SkillGroup = {
+  agent: Agent = {
     name: "",
     description: "",
     tag: "",
@@ -133,14 +133,14 @@ export class XMTPContext {
       }
 
       //Config
-      context.skills = runConfig?.skills ?? (await loadSkillsFile());
+      context.agent = runConfig?.agent ?? (await loadSkillsFile());
 
       context.getMessageById =
         client.conversations?.getMessageById?.bind(client.conversations) ||
         (() => null);
 
       context.executeSkill = async (text: string) => {
-        const result = await executeSkill(text, context.skills ?? [], context);
+        const result = await executeSkill(text, context.agent ?? [], context);
         return result ?? undefined;
       };
       let typeId = message.contentType?.typeId;
@@ -152,7 +152,7 @@ export class XMTPContext {
           : message.content;
 
       if (message?.contentType?.sameAs(ContentTypeText)) {
-        const skillAction = findSkill(content.content, context.skills.skills);
+        const skillAction = findSkill(content.content, context.agent.skills);
         const extractedValues = skillAction
           ? parseSkill(content.content, skillAction)
           : undefined;

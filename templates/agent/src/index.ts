@@ -3,7 +3,7 @@ import {
   agentReply,
   replaceVariables,
   XMTPContext,
-  SkillGroup,
+  Agent,
 } from "@xmtp/message-kit";
 import { systemPrompt } from "./prompt.js";
 import { registerSkill as checkSkill } from "./handlers/check.js";
@@ -14,6 +14,7 @@ import { registerSkill as renewSkill } from "./handlers/renew.js";
 import { registerSkill as paySkill } from "./handlers/pay.js";
 import { registerSkill as resetSkill } from "./handlers/reset.js";
 import { registerSkill as tokenSkill } from "./handlers/token.js";
+import { registerSkill as gameSkill } from "./handlers/game.js";
 import fs from "fs";
 
 export const frameUrl = "https://ens.steer.fun/";
@@ -21,10 +22,10 @@ export const ensUrl = "https://app.ens.domains/";
 export const txpayUrl = "https://txpay.vercel.app";
 
 // [!region skills]
-export const skills: SkillGroup = {
-  name: "Ens Domain Bot",
-  tag: "@ens",
-  description: "Register ENS domains.",
+export const agent: Agent = {
+  name: "Web3 Agent",
+  tag: "@bot",
+  description: "A web3 agent with a lot of skills.",
   skills: [
     ...checkSkill,
     ...coolSkill,
@@ -34,6 +35,7 @@ export const skills: SkillGroup = {
     ...resetSkill,
     ...paySkill,
     ...tokenSkill,
+    ...gameSkill,
   ],
 };
 // [!endregion skills]
@@ -43,15 +45,15 @@ run(
   async (context: XMTPContext) => {
     const {
       message: { sender },
-      skills,
+      agent,
     } = context;
 
-    let prompt = await replaceVariables(systemPrompt, sender.address, skills);
+    let prompt = await replaceVariables(systemPrompt, sender.address, agent);
 
     fs.writeFileSync("example_prompt.md", prompt);
     await agentReply(context, prompt);
   },
-  { skills },
+  { agent },
 );
 
 // [!endregion run]

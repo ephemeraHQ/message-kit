@@ -3,7 +3,7 @@ dotenv.config({ override: true });
 import { Client } from "@xmtp/node-sdk";
 import { RunConfig } from "./types";
 import { loadSkillsFile } from "../lib/skills";
-import { SkillGroup } from "../helpers/types";
+import { Agent } from "../helpers/types";
 
 export const logMessage = (message: any) => {
   //let msh = message?.substring(0, 60) + (message?.length > 60 ? "..." : "");
@@ -32,10 +32,10 @@ Powered by XMTP \x1b[0m`;
     Send a message to this account on Converse:                              
     🔗 https://converse.xyz/dm/${client.accountAddress}`);
 
-  let skills: SkillGroup;
-  const loadedSkills = (await loadSkillsFile()) as SkillGroup;
-  skills =
-    runConfig?.skills ??
+  let agent: Agent;
+  const loadedSkills = (await loadSkillsFile()) as Agent;
+  agent =
+    runConfig?.agent ??
     (Array.isArray(loadedSkills) && loadedSkills.length > 0
       ? loadedSkills
       : await loadSkillsFile());
@@ -46,8 +46,8 @@ Powered by XMTP \x1b[0m`;
     runConfig?.attachments ||
     runConfig?.memberChange ||
     runConfig?.client?.structuredLogging ||
-    skills === undefined ||
-    skills?.skills.length === 0 ||
+    agent === undefined ||
+    agent?.skills.length === 0 ||
     generatedKey
   ) {
     console.warn(`\x1b[33m\n\tWarnings:`);
@@ -75,7 +75,7 @@ Powered by XMTP \x1b[0m`;
     if (runConfig?.memberChange) {
       console.warn("\t- ⚠️ Member changes are enabled");
     }
-    if (skills === undefined || skills.skills.length === 0) {
+    if (agent === undefined || agent.skills.length === 0) {
       console.warn("\t- ⚠️ No skills found");
     }
     if (runConfig?.experimental) {

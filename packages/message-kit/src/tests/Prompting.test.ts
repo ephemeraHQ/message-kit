@@ -1,7 +1,7 @@
 import { describe } from "vitest";
-import { skills as ensSkills } from "../../../../templates/agent/src/";
+import { agent as ensAgent } from "../../../../templates/agent/src/index";
 import { systemPrompt as ensSystemPrompt } from "../../../../templates/agent/src/prompt";
-import { skills as groupSkills } from "../../../../templates/group/src/index";
+import { agent as groupAgent } from "../../../../templates/group/src/index";
 import { systemPrompt as groupSystemPrompt } from "../../../../templates/group/src/prompt";
 import { testPrompt } from "./utils";
 const humanAgent = {
@@ -15,7 +15,7 @@ const alix = {
 };
 type testCase = [string, string | string[]][];
 
-describe("Ens agent tests", () => {
+describe("Web3 agent tests", () => {
   const testCases: testCase = [
     ["hi", "Fabri"],
     ["I want to get info for vitalik.eth", "/info vitalik.eth"],
@@ -43,7 +43,7 @@ describe("Ens agent tests", () => {
       ],
     ],
   ];
-  testPrompt(testCases, ensSkills, ensSystemPrompt, humanAgent);
+  testPrompt(testCases, ensAgent, ensSystemPrompt, humanAgent);
 }, 15000);
 
 describe("Group bot test", () => {
@@ -51,5 +51,5 @@ describe("Group bot test", () => {
     ["@bot let's play a game", "/game wordle"],
     ["@bot let's tip @alix 10 usdc", ["/tip @alix 10 usdc"]],
   ];
-  testPrompt(testCases, groupSkills, groupSystemPrompt, alix);
+  testPrompt(testCases, groupAgent, groupSystemPrompt, alix);
 }, 15000); // Added 15 second timeout

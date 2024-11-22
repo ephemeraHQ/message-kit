@@ -50,8 +50,11 @@ export default defineConfig({
     "/docs": "/hero.jpg",
   },
   title: "MessageKit",
-  iconUrl: "/messagekit-logo.png",
   rootDir: ".",
+  iconUrl: {
+    light: "/messagekit-logo.png",
+    dark: "/messagekit-logo.png",
+  },
   theme: {
     colorScheme: "dark",
     accentColor: {
@@ -140,7 +143,7 @@ export default defineConfig({
       text: "Use cases",
       items: [
         {
-          text: "Ens agent",
+          text: "Web3 agent",
           link: "/templates/agent",
         },
         {

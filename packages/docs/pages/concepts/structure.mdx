@@ -28,9 +28,9 @@ run(
   async (context: XMTPContext) => {
     // your logic here
   },
-  { skills,
+  {
     /*optional parameters*/
-   },
+  },
 );
 
 ```
@@ -42,7 +42,7 @@ run(
 - `attachments`: to receive attachments. Default is `false`.
 - `gptModel`: model to be used. Default is `gpt-4o`.
 - `client`: Optional parameters to pass to the XMTP client.
-- `skills`: Custom skills to be used. Default is to create the skills in the `src/skills.ts` file.
+- `agent`: Custom agent to be used. Default is to create the skills in the `src/skills.ts` file.
 - `hideInitLogMessage`: hide the init log message with messagekit logo and stuff
 - `memberChange`: if true, member changes will be enabled, like adding members to the group
 

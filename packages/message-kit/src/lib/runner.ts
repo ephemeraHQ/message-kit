@@ -91,12 +91,14 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
       version,
       client,
       v2client,
-      skills,
+      agent,
       runConfig,
       group,
     } = context;
 
-    let Skill = text && skills ? findSkill(text, skills.skills) : undefined;
+    let foundSkill = text?.startsWith("/")
+      ? findSkill(text, agent.skills)
+      : undefined;
 
     const { inboxId: senderInboxId } = client;
     const { address: senderAddress } = v2client;
@@ -106,7 +108,7 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
       (sender.inboxId?.toLowerCase() === senderInboxId.toLowerCase() &&
         typeId !== "group_updated");
 
-    const isSkillTriggered = Skill?.skill;
+    const isSkillTriggered = foundSkill?.skill;
     const isExperimental = runConfig?.experimental ?? false;
 
     const isAddedMemberOrPass =
@@ -119,7 +121,7 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
 
     const isRemoteAttachment = typeId == "remoteStaticAttachment";
 
-    const isAdminSkill = Skill?.adminOnly ?? false;
+    const isAdminSkill = foundSkill?.adminOnly ?? false;
 
     const isAdmin =
       group &&
@@ -144,7 +146,7 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
       "skill",
     ].includes(typeId ?? "");
     // Check if the message content triggers a tag
-    const isTagged = skills ? true : false;
+    const isTagged = text?.includes(`@${agent?.tag}`) ?? false;
     const isMessageValid = isSameAddress
       ? false
       : // v2 only accepts text, remoteStaticAttachment, reply
@@ -189,19 +191,18 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
           isAdminOrPass,
         },
         isAddedMemberOrPass,
-        skillsParsed: skills?.skills?.length,
-        taggingDetails: isTagged
-          ? {
-              tag: skills?.tag,
-            }
-          : "No tag detected",
+        skillsParsed: agent?.skills?.length,
+        taggingDetails: {
+          tag: agent?.tag,
+          isTagged,
+        },
         skillTriggerDetails: isSkillTriggered
           ? {
-              skill: Skill?.skill,
-              examples: Skill?.examples,
-              description: Skill?.description,
-              params: Skill?.params
-                ? Object.entries(Skill.params).map(([key, value]) => ({
+              skill: foundSkill?.skill,
+              examples: foundSkill?.examples,
+              description: foundSkill?.description,
+              params: foundSkill?.params
+                ? Object.entries(foundSkill.params).map(([key, value]) => ({
                     key,
                     value: {
                       type: value.type,
@@ -212,7 +213,9 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
                   }))
                 : undefined,
             }
-          : "No skill trigger detected",
+          : !text?.startsWith("/")
+            ? "Natural prompt, yet to be parsed"
+            : "No skill trigger detected",
         isMessageValid,
       });
     }
@@ -220,7 +223,7 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
 
     return {
       isMessageValid,
-      customHandler: Skill?.handler,
+      customHandler: foundSkill?.handler,
     };
   };
   const getConversation = async (

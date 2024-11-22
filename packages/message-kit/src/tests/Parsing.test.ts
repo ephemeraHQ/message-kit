@@ -1,6 +1,7 @@
 import { describe, test, expect } from "vitest";
 import { parseSkill, findSkill } from "../lib/skills";
-import { skills as skillsGroup } from "../../../../templates/group/src/index";
+import { agent as web3Agent } from "../../../../templates/agent/src/index";
+import { agent as groupAgent } from "../../../../templates/group/src/index";
 
 describe("Parsing extraction tests", () => {
   test.each([
@@ -21,7 +22,7 @@ describe("Parsing extraction tests", () => {
   ])(
     "Compare extracted values from skill: %s",
     (input, expectedSkill, expectedParams) => {
-      const skillAction = findSkill(input, skillsGroup.skills);
+      const skillAction = findSkill(input, groupAgent.skills);
       const extractedValues = skillAction
         ? parseSkill(input, skillAction)
         : undefined;
@@ -46,7 +47,7 @@ describe("Parsing tests", () => {
   ])(
     "Compare extracted values from skill: %s",
     (input, expectedSkill, expectedParams) => {
-      const skillAction = findSkill(input, skillsGroup.skills);
+      const skillAction = findSkill(input, web3Agent.skills);
       const extractedValues = skillAction
         ? parseSkill(input, skillAction)
         : undefined;

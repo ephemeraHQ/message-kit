@@ -1,16 +1,18 @@
-# ENS Agent
+# Web3 Agent
 
 This is a simple yet powerful agent that will help users interact with ENS.
 
 ## Skills
 
-- [Check](/templates/agent/handlers/check): Check if a domain is available
-- [Cool](/templates/agent/handlers/cool): Show cool alternatives
-- [Register](/templates/agent/handlers/register): Register a domain
-- [Reset](/templates/agent/handlers/reset): Reset a domain
-- [Renew](/templates/agent/handlers/renew): Renew a domain
-- [Info](/templates/agent/handlers/info): Get info about a domain
-- [Tip](/templates/agent/handlers/tip): Tip a domain
+- [Check](/templates/agent/handlers/check): Check if a ENS domain is available
+- [Cool](/templates/agent/handlers/cool): Show cool domain alternatives
+- [Register](/templates/agent/handlers/register): Register a ENS domain
+- [Reset](/templates/agent/handlers/reset): Reset your conversation
+- [Renew](/templates/agent/handlers/renew): Renew your ENS domain
+- [Info](/templates/agent/handlers/info): Get info about a ENS domain
+- [Pay](/templates/agent/handlers/pay): Pay in usdc
+- [Token](/templates/agent/handlers/token): Fetch token price
+- [Game](/templates/agent/handlers/game): Play a game
 
 ## Structure
 
@@ -24,7 +26,9 @@ agent/
 │       ├── register.ts    # Register a domain // [!code hl] // [!code focus]
 │       ├── renew.ts       # Renew a domain // [!code hl] // [!code focus]
 │       ├── reset.ts       # Reset a domain // [!code hl] // [!code focus]
-│       ├── tip.ts         # Tip a domain // [!code hl] // [!code focus]
+│       ├── pay.ts         # Pay in usdc // [!code hl] // [!code focus]
+│       ├── token.ts       # Token a domain // [!code hl] // [!code focus]
+│       ├── game.ts        # Game a domain // [!code hl] // [!code focus]
 │   ├── index.ts           # Prompt and stream // [!code hl] // [!code focus]
 │   ├── prompt.ts          # Prompt // [!code hl] // [!code focus]
 ├── package.json

@@ -1,11 +1,11 @@
 import { test, expect } from "vitest";
-import { SkillGroup } from "../helpers/types";
+import { Agent } from "../helpers/types";
 import { clearMemory, replaceVariables, agentParse } from "../helpers/gpt";
 import { clearInfoCache } from "../helpers/resolver";
 
 export function testPrompt(
   testCases: [string, string | string[]][],
-  skills: SkillGroup,
+  agent: Agent,
   systemPrompt: string,
   sender: { address: string; converseUsername: string },
 ) {
@@ -14,7 +14,7 @@ export function testPrompt(
   test.each(testCases)(
     "should handle %s correctly",
     async (userPrompt, expectedPatterns) => {
-      let prompt = await replaceVariables(systemPrompt, sender.address, skills);
+      let prompt = await replaceVariables(systemPrompt, sender.address, agent);
       const reply = await agentParse(
         userPrompt as string,
         sender.address,

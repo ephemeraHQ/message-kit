@@ -1,4 +1,4 @@
-import { SkillGroup, Skill } from "../helpers/types.js";
+import { Agent, Skill } from "../helpers/types.js";
 import { XMTPContext } from "./xmtp.js";
 import path from "path";
 
@@ -14,13 +14,13 @@ export function findSkill(text: string, skills: Skill[]): Skill | undefined {
 
 export async function executeSkill(
   text: string,
-  skills: SkillGroup,
+  agent: Agent,
   context: XMTPContext,
 ) {
   // Use the custom text parameter
   let conversation = context.conversation;
   try {
-    let skillAction = findSkill(text, skills.skills);
+    let skillAction = findSkill(text, agent.skills);
     const extractedValues = skillAction
       ? parseSkill(text, skillAction)
       : undefined;
@@ -231,10 +231,10 @@ export function parseSkill(
   }
 }
 
-export async function loadSkillsFile(): Promise<SkillGroup> {
+export async function loadSkillsFile(): Promise<Agent> {
   const resolvedPath = path.resolve(process.cwd(), "dist/skills.js");
 
-  let skills: SkillGroup = {
+  let agent: Agent = {
     name: "",
     tag: "",
     description: "",
@@ -242,10 +242,10 @@ export async function loadSkillsFile(): Promise<SkillGroup> {
   };
   try {
     const module = await import(resolvedPath);
-    skills = module?.skills;
-    return skills;
+    agent = module?.agent;
+    return agent;
   } catch (error) {
     //console.error(`Error loading command config from ${resolvedPath}:`);
   }
-  return skills;
+  return agent;
 }
