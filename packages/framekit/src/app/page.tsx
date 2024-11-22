@@ -1,14 +1,5 @@
-import localFont from "next/font/local";
-const geistSans = localFont({
-  src: "../../src/app/fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "../../src/app/fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
+"use client";
+import { geistSans, geistMono } from "./fonts";
 
 export default async function Home() {
   const url = `${process.env.NEXT_PUBLIC_URL || "http://localhost:3000"}`;
@@ -19,22 +10,12 @@ export default async function Home() {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width" />
         <meta property="og:title" content="MessageKit" />
-        <meta
-          property="og:image"
-          content="https://messagekit.ephemerahq.com/hero.jpg"
-        />
+        <meta property="og:image" content={image} />
         <meta property="fc:frame" content="vNext" />
         <meta property="of:version" content="vNext" />
         <meta property="of:accepts:xmtp" content="vNext" />
-        <meta
-          property="of:image"
-          content="https://messagekit.ephemerahq.com/hero.jpg"
-        />
-        <meta
-          property="fc:frame:image"
-          content="https://messagekit.ephemerahq.com/hero.jpg"
-        />
-
+        <meta property="of:image" content={image} />
+        <meta property="fc:frame:image" content={image} />
         <meta property="fc:frame:button:1" content="Docs" />
         <meta property="fc:frame:button:1:action" content="link" />
         <meta

@@ -1,18 +1,6 @@
 "use client";
 import { useState } from "react";
-import localFont from "next/font/local";
-
-const geistSans = localFont({
-  src: "../../src/app/fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-
-const geistMono = localFont({
-  src: "../../src/app/fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
+import { geistSans, geistMono } from "../app/fonts";
 
 export default function ReceiptGenerator() {
   const [formData, setFormData] = useState({
@@ -99,8 +87,7 @@ export default function ReceiptGenerator() {
                 onChange={(e) =>
                   setFormData({ ...formData, networkName: e.target.value })
                 }
-                className="select"
-              >
+                className="select">
                 <option value="Base">Base</option>
                 <option value="Ethereum">Ethereum</option>
                 <option value="Polygon">Polygon</option>
@@ -132,8 +119,7 @@ export default function ReceiptGenerator() {
                 <input readOnly value={generatedUrl} className="input" />
                 <button
                   onClick={() => navigator.clipboard.writeText(generatedUrl)}
-                  className="copy-button"
-                >
+                  className="copy-button">
                   Copy
                 </button>
               </div>
@@ -147,14 +133,12 @@ export default function ReceiptGenerator() {
             marginTop: "3rem",
             width: "100%",
             marginBottom: "1rem",
-          }}
-        >
+          }}>
           Powered by{" "}
           <a
             href="https://github.com/ephemeraHQ/message-kit"
             target="_blank"
-            rel="noopener noreferrer"
-          >
+            rel="noopener noreferrer">
             MessageKit
           </a>
         </div>

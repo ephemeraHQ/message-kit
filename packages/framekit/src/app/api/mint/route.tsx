@@ -12,10 +12,13 @@ export interface Network {
   recipientAddress: string;
 }
 
-const interFontPath = join(process.cwd(), "Inter-Regular.ttf");
+const interFontPath = join(process.cwd(), "public/fonts/Inter-Regular.ttf");
 const interFontData = fs.readFileSync(interFontPath);
 
-const interSemiboldFontPath = join(process.cwd(), "Inter-SemiBold.ttf");
+const interSemiboldFontPath = join(
+  process.cwd(),
+  "public/fonts/Inter-SemiBold.ttf",
+);
 const interSemiboldFontData = fs.readFileSync(interSemiboldFontPath);
 
 export async function GET(req: NextRequest) {
@@ -44,8 +47,7 @@ export async function GET(req: NextRequest) {
               justifyContent: "center",
               textAlign: "center",
               width: "100%",
-            }}
-          >
+            }}>
             <div
               style={{
                 color: "white",
@@ -56,8 +58,7 @@ export async function GET(req: NextRequest) {
                 marginTop: 30,
                 padding: "0 120px",
                 whiteSpace: "pre-wrap",
-              }}
-            >
+              }}>
               {`Invalid network!`}
             </div>
           </div>
@@ -73,7 +74,7 @@ export async function GET(req: NextRequest) {
               weight: 400,
             },
           ],
-        }
+        },
       );
     }
     // ... existing code ...
@@ -90,8 +91,7 @@ export async function GET(req: NextRequest) {
             height: "100%",
             width: "100%",
             padding: "48px",
-          }}
-        >
+          }}>
           <div
             style={{
               display: "flex",
@@ -99,8 +99,7 @@ export async function GET(req: NextRequest) {
               alignItems: "center",
               justifyContent: "center",
               gap: "16px",
-            }}
-          >
+            }}>
             <div
               style={{
                 display: "flex",
@@ -108,8 +107,7 @@ export async function GET(req: NextRequest) {
                 alignItems: "center",
                 justifyContent: "center",
                 gap: "16px",
-              }}
-            ></div>
+              }}></div>
             <div style={{ fontSize: "48px", display: "flex" }}>
               Mint NFT id:
               <div
@@ -117,8 +115,7 @@ export async function GET(req: NextRequest) {
                   fontFamily: "Inter-SemiBold",
                   display: "flex",
                   marginLeft: "8px",
-                }}
-              >
+                }}>
                 {tokenId}
               </div>
             </div>
@@ -139,7 +136,7 @@ export async function GET(req: NextRequest) {
             name: "Inter-SemiBold",
           },
         ],
-      }
+      },
     );
   } catch (error) {
     console.error("Error generating image response:", error);
