@@ -1,5 +1,6 @@
 "use client";
-import { geistSans, geistMono } from "./fonts";
+import { GeistMono as geistMono } from "geist/font/mono";
+import { GeistSans as geistSans } from "geist/font/sans";
 
 console.log("Environment Variables:", process.env);
 console.log("NEXT_PUBLIC_URL:", process.env.NEXT_PUBLIC_URL);

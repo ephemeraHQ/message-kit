@@ -3,7 +3,8 @@ import { useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { parseUnits } from "viem";
 
-import { geistSans, geistMono } from "../app/fonts";
+import { GeistMono as geistMono } from "geist/font/mono";
+import { GeistSans as geistSans } from "geist/font/sans";
 
 export default function UrlGenerator({ params }: { params: any }) {
   const [formData, setFormData] = useState(params);

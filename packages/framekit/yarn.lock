@@ -531,6 +531,7 @@ __metadata:
     "@types/node": "npm:^20"
     "@types/react": "npm:^18"
     "@types/react-dom": "npm:^18"
+    geist: "npm:^1.3.1"
     next: "npm:^15.0.3"
     qrcode: "npm:^1.5.4"
     qrcode.react: "npm:^4.1.0"
@@ -540,6 +541,15 @@ __metadata:
     viem: "npm:^2.21.45"
   languageName: unknown
   linkType: soft
+
+"geist@npm:^1.3.1":
+  version: 1.3.1
+  resolution: "geist@npm:1.3.1"
+  peerDependencies:
+    next: ">=13.2.0"
+  checksum: 10/73c6a7a0c8dd27d9f576f77016e19cda6efcd137f6244b07ce6195b39a2d9164688eeb508199f1c36606e7c6c66e7863eee31b6a46932747b3ee7f0d426895a9
+  languageName: node
+  linkType: hard
 
 "get-caller-file@npm:^2.0.1":
   version: 2.0.5

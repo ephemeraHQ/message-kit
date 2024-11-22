@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
-import { geistSans, geistMono } from "../app/fonts";
+import { GeistMono as geistMono } from "geist/font/mono";
+import { GeistSans as geistSans } from "geist/font/sans";
 
 export default function ReceiptGenerator() {
   const [formData, setFormData] = useState({
