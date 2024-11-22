@@ -176,7 +176,7 @@
   filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%)
     contrast(100%);
 }
-.vocs_DesktopSearch_search,
+.dark .vocs_DesktopSearch_search,
 .dark .vocs_Footer,
 .dark .vocs_Sidebar_logoWrapper,
 .dark .vocs_DocsLayout_gutterTop,
@@ -188,7 +188,7 @@
 .dark .vocs_DocsLayout_content,
 .vocs_MobileTopNav_curtain,
 .vocs_MobileTopNav {
-  background: transparent !important;
+  background: black !important;
 }
 .dark body {
   background: black;

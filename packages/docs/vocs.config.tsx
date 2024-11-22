@@ -56,13 +56,11 @@ export default defineConfig({
     dark: "/messagekit-logo.png",
   },
   theme: {
-    colorScheme: "dark",
     accentColor: {
       light: "#FA6977",
       dark: "#FA6977",
     },
   },
-
   socials: [
     {
       icon: "github",
