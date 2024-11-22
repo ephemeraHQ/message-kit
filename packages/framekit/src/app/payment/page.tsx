@@ -6,7 +6,7 @@ export default async function Home({
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const resolvedSearchParams = await searchParams; // Await the promise
+  const resolvedSearchParams = await searchParams; // Await the promises
   //tes sd
   const params = {
     url: `${process.env.NEXT_PUBLIC_URL}`,
