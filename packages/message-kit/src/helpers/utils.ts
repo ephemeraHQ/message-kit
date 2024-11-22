@@ -81,8 +81,20 @@ Powered by XMTP \x1b[0m`;
   console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Logging new messages to console ↴`);
 }
-
-export function extractFrameChain(txLink: string) {
+type Network = {
+  networkId: string;
+  networkName: string;
+  networkLogo: string;
+  tokenName: string;
+  dripAmount: number;
+  address: string;
+  isERC20: boolean;
+  erc20Address: string | null;
+  erc20Decimals: number | null;
+  isActive: boolean;
+  balance: string;
+};
+export function extractFrameChain(txLink: string): Network {
   // if its basescan is base
   // if its seoplia is sepolia
   // if its etherscan is eth
