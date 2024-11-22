@@ -8,7 +8,7 @@
     "shared/*"
   ],
   "scripts": {
-    "prebuild": "cd packages/docs && yarn install && cd ../.. && cd packages/message-kit && yarn install && yarn build && cd ../.. && cd packages/framekit && yarn install && yarn build",
+    "prebuild": "cd packages/docs && yarn install && cd ../.. && cd packages/message-kit && yarn install && yarn build",
     "build": "yarn prebuild && turbo run build --filter='./packages/*'",
     "changeset": "yarn copy && changeset add --type patch",
     "clean": "turbo run clean && rm -rf node_modules && rm -rf .turbo && yarn cache clean",
@@ -18,14 +18,12 @@
     "dev:agent": "cd templates/agent && yarn dev",
     "dev:cli": "cd packages/create-message-kit ",
     "dev:docs": "cd packages/docs && yarn dev",
-    "dev:frames": "cd packages/framekit && yarn dev",
     "dev:gated": "cd templates/gated && yarn dev",
     "dev:gpt": "cd templates/gpt && yarn dev",
     "dev:group": "cd templates/group && yarn dev",
     "format": "turbo run format",
     "format:check": "turbo run format:check",
     "publish": "turbo run build --filter='./packages/*' --filter='!./packages/docs' && yarn copy && changeset publish",
-    "start:frames": "cd packages/framekit && yarn start",
     "test": "FORCE_COLOR=1 turbo run test --force --concurrency=1",
     "test:client": "cd packages/message-kit/src/tests && yarn test:client",
     "test:frames": "cd packages/message-kit/src/tests && yarn test:frames",
