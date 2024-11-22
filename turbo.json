@@ -24,6 +24,10 @@
     "typecheck": {
       "dependsOn": ["^build"],
       "outputs": []
+    },
+    "dev:frames": {
+      "cache": false,
+      "persistent": true
     }
   }
 }
