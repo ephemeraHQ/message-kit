@@ -51,8 +51,7 @@ export default async function Home() {
       </head>
       <body>
         <div
-          className={`container ${geistSans.variable} ${geistMono.variable}`}
-        >
+          className={`container ${geistSans.variable} ${geistMono.variable}`}>
           <div className="wrapper">
             <h1 className={`title ${geistSans.className}`}>FrameKit</h1>
 
@@ -78,14 +77,12 @@ export default async function Home() {
                 marginTop: "3rem",
                 width: "100%",
                 marginBottom: "1rem",
-              }}
-            >
+              }}>
               Powered by{" "}
               <a
                 href="https://github.com/ephemeraHQ/message-kit"
                 target="_blank"
-                rel="noopener noreferrer"
-              >
+                rel="noopener noreferrer">
                 MessageKit
               </a>
             </div>
