@@ -1,7 +1,8 @@
 {
   "framework": "nextjs",
-  "buildCommand": "cd packages/framekit && yarn build",
+  "buildCommand": "yarn turbo run build --filter=framekit...",
   "devCommand": "yarn dev:frames",
   "installCommand": "yarn install",
-  "outputDirectory": "packages/framekit/.next"
+  "outputDirectory": "packages/framekit/.next",
+  "monorepo": true
 }
