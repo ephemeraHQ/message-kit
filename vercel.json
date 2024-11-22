@@ -1,0 +1,7 @@
+{
+  "framework": "nextjs",
+  "buildCommand": "cd packages/framekit && yarn build",
+  "devCommand": "yarn dev:frames",
+  "installCommand": "yarn install",
+  "outputDirectory": "packages/framekit/.next"
+}
