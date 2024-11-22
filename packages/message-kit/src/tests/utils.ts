@@ -6,7 +6,6 @@ export function testPrompt(
   testCases: [string, string | string[]][],
   skills: any,
   systemPrompt: string,
-  tag: string,
   sender: { address: string; converseUsername: string },
 ) {
   clearMemory();
@@ -14,12 +13,7 @@ export function testPrompt(
   test.each(testCases)(
     "should handle %s correctly",
     async (userPrompt, expectedPatterns) => {
-      let prompt = await replaceVariables(
-        systemPrompt,
-        sender.address,
-        skills,
-        tag,
-      );
+      let prompt = await replaceVariables(systemPrompt, sender.address, skills);
       const reply = await agentParse(
         userPrompt as string,
         sender.address,

@@ -20,11 +20,6 @@ run(async (context: XMTPContext) => {
     message: { sender },
   } = context;
 
-  let prompt = await replaceVariables(
-    systemPrompt,
-    sender.address,
-    skills,
-    skills[0].tag,
-  );
+  let prompt = await replaceVariables(systemPrompt, sender.address, skills);
   await agentReply(context, prompt);
 });

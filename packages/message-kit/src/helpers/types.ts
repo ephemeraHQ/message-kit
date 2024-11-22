@@ -79,7 +79,7 @@ export interface SkillGroup {
   name: string;
   image?: boolean;
   description: string;
-  tag?: string;
+  tag: string;
   skills: skillAction[];
 }
 

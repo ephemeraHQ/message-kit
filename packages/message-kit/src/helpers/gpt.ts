@@ -93,8 +93,7 @@ export function replaceSkills(skills: SkillGroup[], tag: string) {
 export async function replaceVariables(
   prompt: string,
   senderAddress: string,
-  skills: SkillGroup[] | undefined,
-  tag: string,
+  skills: SkillGroup,
 ) {
   // Fetch user information based on the sender's address
   let userInfo = await getUserInfo(senderAddress);
@@ -113,9 +112,9 @@ export async function replaceVariables(
     "You are a helpful agent called {agent_name} that lives inside a web3 messaging app called Converse.",
   );
 
-  prompt = prompt.replace("{agent_name}", tag);
+  prompt = prompt.replace("{agent_name}", skills[0]?.tag);
   prompt = prompt.replace("{rules}", PROMPT_RULES);
-  prompt = prompt.replace("{skills}", replaceSkills(skills ?? [], tag));
+  prompt = prompt.replace("{skills}", replaceSkills(skills));
 
   // Replace variables in the system prompt
   if (userInfo) {

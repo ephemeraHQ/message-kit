@@ -45,12 +45,7 @@ run(
       skills,
     } = context;
 
-    let prompt = await replaceVariables(
-      systemPrompt,
-      sender.address,
-      skills,
-      skills[0]?.tag as string,
-    );
+    let prompt = await replaceVariables(systemPrompt, sender.address, skills);
     fs.writeFileSync("example_prompt.md", prompt);
     await agentReply(context, prompt);
   },

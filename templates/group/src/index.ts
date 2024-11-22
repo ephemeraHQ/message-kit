@@ -29,8 +29,7 @@ run(
     let prompt = await replaceVariables(
       systemPrompt,
       sender.address,
-      skills,
-      "@bot",
+      skills[0],
     );
     await agentReply(context, prompt);
   },
