@@ -33,29 +33,11 @@ export async function executeSkill(
       // Mock context for skill execution
       const mockContext: XMTPContext = {
         ...context,
-        conversation,
-        sendImage: context.sendImage.bind(context),
-        getConversationKey: context.getConversationKey.bind(context),
-        isV2Conversation: context.isV2Conversation.bind(context),
-        awaitResponse: context.awaitResponse.bind(context),
-        resetAwaitedState: context.resetAwaitedState.bind(context),
-        getV2MessageById: context.getV2MessageById.bind(context),
-        getCacheCreationDate: context.getCacheCreationDate.bind(context),
         message: {
           ...context.message,
           content: { ...context.message.content, ...extractedValues },
         },
-        executeSkill: context.executeSkill.bind(context),
-        reply: context.reply.bind(context),
-        send: context.send.bind(context),
-        sendTo: context.sendTo.bind(context),
-        sendReceipt: context.sendReceipt.bind(context),
-        requestPayment: context.requestPayment.bind(context),
-        sendCustomFrame: context.sendCustomFrame.bind(context),
-        react: context.react.bind(context),
-        getMessageById: context.getMessageById.bind(context),
-        getReplyChain: context.getReplyChain.bind(context),
-      };
+      } as XMTPContext;
 
       if (skillAction?.handler) return skillAction.handler(mockContext);
     } else if (skillAction) {

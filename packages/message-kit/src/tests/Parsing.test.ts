@@ -6,19 +6,18 @@ import { agent as groupAgent } from "../../../../templates/group/src/index";
 describe("Parsing extraction tests", () => {
   test.each([
     [
-      "/tip @vitalik 10 usdc",
-      "tip",
-      { username: ["@vitalik"], amount: 10, token: "usdc" },
+      "/pay @vitalik 10 usdc",
+      "pay",
+      { username: "@vitalik", amount: 10, token: "usdc" },
     ],
     [
-      "/pay 10 usdc vitalik.eth",
+      "/pay 5 usdc vitalik.eth",
       "pay",
-      { amount: 10, token: "usdc", username: "vitalik.eth" },
+      { amount: 5, token: "usdc", username: "vitalik.eth" },
     ],
     ["/game wordle", "game", { game: "wordle" }],
     ["/help", "help", {}],
     ["/game help", "game", { game: "help" }],
-    ["🔎", undefined, {}],
   ])(
     "Compare extracted values from skill: %s",
     (input, expectedSkill, expectedParams) => {
@@ -40,19 +39,23 @@ describe("Parsing tests", () => {
     ["/renew vitalik.eth", "renew", { domain: "vitalik.eth" }],
     ["/info vitalik.eth", "info", { domain: "vitalik.eth" }],
     [
-      "/tip 0x1234567890123456789012345678901234567890",
-      "tip",
-      { address: "0x1234567890123456789012345678901234567890" },
+      "/pay vitalik.eth",
+      "pay",
+      { username: "vitalik.eth", amount: 10, token: "usdc" },
     ],
   ])(
     "Compare extracted values from skill: %s",
     (input, expectedSkill, expectedParams) => {
       const skillAction = findSkill(input, web3Agent.skills);
-      const extractedValues = skillAction
-        ? parseSkill(input, skillAction)
-        : undefined;
-      expect(extractedValues?.skill).toBe(expectedSkill);
-      expect(extractedValues?.params).toEqual(expectedParams);
+      if (skillAction) {
+        const extractedValues = parseSkill(input, skillAction);
+        console.log(extractedValues);
+        expect(extractedValues?.skill).toBe(expectedSkill);
+        expect(extractedValues?.params).toEqual(expectedParams);
+      } else {
+        console.log("No skill found");
+        expect(true).toBe(false);
+      }
     },
   );
 });

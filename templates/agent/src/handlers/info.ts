@@ -47,8 +47,9 @@ export async function handler(context: XMTPContext) {
 
   if (await isOnXMTP(context.client, context.v2client, sender?.address)) {
     await context.send(
-      `Ah, this domains is in XMTP, you can message it directly: https://converse.xyz/dm/${domain}`,
+      `Ah, this domains is in XMTP, you can message it directly`,
     );
+    await context.sendConverseDmFrame(domain);
   }
 
   return { code: 200, message };

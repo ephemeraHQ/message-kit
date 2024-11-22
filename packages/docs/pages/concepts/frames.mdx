@@ -49,16 +49,20 @@ Custom frames allow you to create interactive UI elements. Here's how to create 
 
 ```typescript
 const frame = {
-  title: "Bitcoin",
+  title: "Weather Update",
   buttons: [
-    { content: "Buy", action: "link", target: "https://example.com/buy" },
     {
-      content: "Price ($30,000)",
+      content: "View Forecast",
       action: "link",
-      target: "https://example.com/price",
+      target: "https://example.com/forecast",
+    },
+    {
+      content: "Current Temperature (75°F)",
+      action: "link",
+      target: "https://example.com/current-temperature",
     },
   ],
-  image: "https://example.com/bitcoin.png",
+  image: "https://example.com/weather.png",
 };
 
 await context.sendCustomFrame(frame);
