@@ -1,6 +1,31 @@
 "use client";
 import { geistSans, geistMono } from "./fonts";
 
+console.log("Environment Variables:", process.env);
+console.log("NEXT_PUBLIC_URL:", process.env.NEXT_PUBLIC_URL);
+
+const url = `${process.env.NEXT_PUBLIC_URL || "http://localhost:3000"}`;
+console.log("Base URL:", url);
+
+let image = `${url}/hero.jpg`;
+console.log("Image URL:", image);
+
+fetch(image)
+  .then((response) => {
+    if (!response.ok) {
+      console.error(
+        "Failed to fetch image:",
+        response.status,
+        response.statusText,
+      );
+    } else {
+      console.log("Image fetched successfully:", response);
+    }
+  })
+  .catch((error) => {
+    console.error("Error fetching image:", error);
+  });
+
 export default async function Home() {
   const url = `${process.env.NEXT_PUBLIC_URL || "http://localhost:3000"}`;
   let image = `${url}/hero.jpg`;
