@@ -3,6 +3,7 @@ import {
   agentReply,
   replaceVariables,
   XMTPContext,
+  SkillGroup,
 } from "@xmtp/message-kit";
 import { systemPrompt } from "./prompt.js";
 import { registerSkill as checkSkill } from "./handlers/check.js";
@@ -19,22 +20,20 @@ export const ensUrl = "https://app.ens.domains/";
 export const txpayUrl = "https://txpay.vercel.app";
 
 // [!region skills]
-export const skills = [
-  {
-    name: "Ens Domain Bot",
-    tag: "@ens",
-    description: "Register ENS domains.",
-    skills: [
-      ...checkSkill,
-      ...coolSkill,
-      ...infoSkill,
-      ...registerSkill,
-      ...renewSkill,
-      ...resetSkill,
-      ...tipSkill,
-    ],
-  },
-];
+export const skills: SkillGroup = {
+  name: "Ens Domain Bot",
+  tag: "@ens",
+  description: "Register ENS domains.",
+  skills: [
+    ...checkSkill,
+    ...coolSkill,
+    ...infoSkill,
+    ...registerSkill,
+    ...renewSkill,
+    ...resetSkill,
+    ...tipSkill,
+  ],
+};
 // [!endregion skills]
 
 // [!region run]

@@ -1,6 +1,5 @@
 import dotenv from "dotenv";
 dotenv.config({ override: true });
-import { findSkillGroupByTag } from "../lib/skills";
 import OpenAI from "openai";
 import { XMTPContext } from "../lib/xmtp";
 import { getUserInfo, replaceUserContext } from "./resolver";
@@ -75,18 +74,13 @@ export const PROMPT_RULES = `
 - Date: ${new Date().toUTCString()}
 `;
 
-export function replaceSkills(skills: SkillGroup[], tag: string) {
-  let skillGroup = findSkillGroupByTag(tag, skills);
-  if (skillGroup) {
-    let returnPrompt = `## Commands\n${skillGroup?.skills
-      .map((skill) => skill.skill)
-      .join("\n")}\n\n## Examples\n${skillGroup?.skills
-      .map((skill) => skill.examples?.join("\n"))
-      .join("\n")}`;
-    return returnPrompt;
-  } else {
-    return "## Commands\n- No commands found\n- Don't make up commands\n- If you don't know the answer, just say so, concisely.\n";
-  }
+export function replaceSkills(skills: SkillGroup) {
+  let returnPrompt = `## Commands\n${skills?.skills
+    .map((skill) => skill.skill)
+    .join("\n")}\n\n## Examples\n${skills?.skills
+    .map((skill) => skill.examples?.join("\n"))
+    .join("\n")}`;
+  return returnPrompt;
 }
 
 // [!region replaceVariables]
@@ -112,7 +106,7 @@ export async function replaceVariables(
     "You are a helpful agent called {agent_name} that lives inside a web3 messaging app called Converse.",
   );
 
-  prompt = prompt.replace("{agent_name}", skills[0]?.tag);
+  prompt = prompt.replace("{agent_name}", skills?.tag);
   prompt = prompt.replace("{rules}", PROMPT_RULES);
   prompt = prompt.replace("{skills}", replaceSkills(skills));
 

@@ -43,7 +43,7 @@ describe("Ens agent tests", () => {
       ],
     ],
   ];
-  testPrompt(testCases, ensSkills, ensSystemPrompt, "@ens", humanAgent);
+  testPrompt(testCases, ensSkills, ensSystemPrompt, humanAgent);
 }, 15000);
 
 describe("Group bot test", () => {
@@ -51,5 +51,5 @@ describe("Group bot test", () => {
     ["@bot let's play a game", "/game wordle"],
     ["@bot let's tip @alix 10 usdc", ["/tip @alix 10 usdc"]],
   ];
-  testPrompt(testCases, groupSkills, groupSystemPrompt, "@bot", alix);
+  testPrompt(testCases, groupSkills, groupSystemPrompt, alix);
 }, 15000); // Added 15 second timeout

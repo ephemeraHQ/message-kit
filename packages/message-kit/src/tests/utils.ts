@@ -1,10 +1,11 @@
 import { test, expect } from "vitest";
+import { SkillGroup } from "../helpers/types";
 import { clearMemory, replaceVariables, agentParse } from "../helpers/gpt";
 import { clearInfoCache } from "../helpers/resolver";
 
 export function testPrompt(
   testCases: [string, string | string[]][],
-  skills: any,
+  skills: SkillGroup,
   systemPrompt: string,
   sender: { address: string; converseUsername: string },
 ) {

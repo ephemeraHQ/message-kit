@@ -47,7 +47,12 @@ export class XMTPContext {
   admins?: string[];
   runConfig?: RunConfig;
   superAdmins?: string[];
-  skills: SkillGroup[] = [];
+  skills: SkillGroup = {
+    name: "",
+    description: "",
+    tag: "",
+    skills: [],
+  };
   sender?: AbstractedMember;
   awaitingResponse: boolean = false;
   awaitedHandler: ((text: string) => Promise<boolean | void>) | null = null;

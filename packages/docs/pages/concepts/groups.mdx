@@ -9,16 +9,14 @@ MessageKit allows agents to interact inside XMTP groups.
 If a message includes a tag like `@ens`, it will be received by your stream like any other message.
 
 ```tsx
-export const skills: SkillGroup[] = [
-  {
-    name: "Ens Domain Bot",
-    tag: "@ens",
-    description: "Register ENS domains.",
-    skills: [
-      /*Your set of skills*/
-    ],
-  },
-];
+export const skills: SkillGroup = {
+  name: "Ens Domain Bot",
+  tag: "@ens",
+  description: "Register ENS domains.",
+  skills: [
+    /*Your set of skills*/
+  ],
+};
 ```
 
 Example:

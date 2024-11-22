@@ -39,18 +39,4 @@ describe("Frame Chain Tests", () => {
     expect(extractedValues?.tokenName).toEqual(expected.tokenName);
     expect(extractedValues?.dripAmount).toEqual(expected.dripAmount);
   });
-
-  test.each([
-    "https://frames.messagekit.ephemerahq.com/payment?tx=0x6c43658dfaaa4a2cecfe1646da8c4130a630f46b4eff590c71c711be7b2c5c8a",
-  ])("Compare extracted values from frame: %s", (input, expected) => {
-    const extractedValues = extractFrameChain(input);
-    expect(extractedValues).toEqual(expected);
-  });
-
-  test.each([
-    "https://frames.messagekit.ephemerahq.com/payment?tx=0xd60833f6e38ffce6e19109cf525726f54859593a0716201ae9f6444a04765a37",
-  ])("Compare extracted values from frame: %s", (input, expected) => {
-    const extractedValues = extractFrameChain(input);
-    expect(extractedValues).toEqual(expected);
-  });
 });

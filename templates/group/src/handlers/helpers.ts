@@ -31,8 +31,7 @@ export async function handleHelp(context: XMTPContext) {
   if (skill == "help") {
     const intro =
       "Available experiences:\n" +
-      skills
-        ?.flatMap((app) => app.skills)
+      skills?.skills
         .map((skill) => `${skill.skill} - ${skill.description}`)
         .join("\n") +
       "\nUse these skills to interact with specific apps.";

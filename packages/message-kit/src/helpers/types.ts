@@ -57,7 +57,7 @@ export type RunConfig = {
   // if true, member changes will be enabled, like adding members to the group
   memberChange?: boolean;
   // skills to be used
-  skills?: SkillGroup[];
+  skills?: SkillGroup;
   // model to be used
   gptModel?: string;
 };
@@ -77,7 +77,6 @@ export interface SkillParamConfig {
 
 export interface SkillGroup {
   name: string;
-  image?: boolean;
   description: string;
   tag: string;
   skills: skillAction[];

@@ -5,7 +5,7 @@ import { DecodedMessage } from "@xmtp/node-sdk";
 import { logMessage } from "../helpers/utils.js";
 import { DecodedMessage as DecodedMessageV2 } from "@xmtp/xmtp-js";
 import { streamMessages } from "./streams.js";
-import { findSkill, findSkillGroup } from "./skills.js";
+import { findSkill } from "./skills.js";
 import { Conversation } from "@xmtp/node-sdk";
 import { Conversation as V2Conversation } from "@xmtp/xmtp-js";
 import { awaitedHandlers } from "./xmtp.js";
@@ -143,12 +143,8 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
       "reply",
       "skill",
     ].includes(typeId ?? "");
-
-    const skillGroup =
-      typeId === "text" && skills
-        ? findSkillGroup(text ?? "", skills)
-        : undefined; // Check if the message content triggers a tag
-    const isTagged = skillGroup ? true : false;
+    // Check if the message content triggers a tag
+    const isTagged = skills ? true : false;
     const isMessageValid = isSameAddress
       ? false
       : // v2 only accepts text, remoteStaticAttachment, reply
@@ -193,10 +189,10 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
           isAdminOrPass,
         },
         isAddedMemberOrPass,
-        skillsParsed: skills?.length,
+        skillsParsed: skills?.skills?.length,
         taggingDetails: isTagged
           ? {
-              tag: skillGroup?.tag,
+              tag: skills?.tag,
             }
           : "No tag detected",
         skillTriggerDetails: isSkillTriggered

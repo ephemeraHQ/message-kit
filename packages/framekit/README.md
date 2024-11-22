@@ -1,4 +1,8 @@
-# Tx Pay
+# GPT example
+
+Here’s a step-by-step guide to get you started.
+
+## Payments
 
 This Frame button uses the standard for EVM transactons [EIP681](https://eips.ethereum.org/EIPS/eip-681)
 
@@ -117,3 +121,6 @@ Example url:
 ```bash
 https://txpay.vercel.app/receipt?txLink=https://sepolia.basescan.org/tx/0x2ec524f740c5831b16ca84053f9b6ae3e3923d3399d527113982e884a75e6bfa&networkLogo=https://avatars.githubusercontent.com/u/108554348?s=280&v=4&networkName=Base&tokenName=usdc&amount=1
 ```
+
+## Custom
+
