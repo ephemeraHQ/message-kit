@@ -34,6 +34,7 @@ import {
 import { ContentTypeReaction } from "@xmtp/content-type-reaction";
 import path from "path";
 
+const frameKitUrl = process.env.FRAMEKIT_URL ?? "https://frameskit.vercel.app/";
 export const awaitedHandlers = new Map<
   string,
   (text: string) => Promise<boolean | undefined>
@@ -425,7 +426,7 @@ export class XMTPContext {
       );
     }
 
-    const frameUrl = `${process.env.FRAMEKIT_URL}/custom?${params.toString()}`;
+    const frameUrl = `${frameKitUrl}/custom?${params.toString()}`;
     await this.send(frameUrl);
   }
   async requestPayment(
@@ -441,7 +442,7 @@ export class XMTPContext {
         return;
       }
 
-    let sendUrl = `${process.env.FRAMEKIT_URL}/payment?amount=${amount}&token=${token}&receiver=${senderInfo?.address}`;
+    let sendUrl = `${frameKitUrl}/payment?amount=${amount}&token=${token}&receiver=${senderInfo?.address}`;
     await this.send(sendUrl);
   }
 
@@ -451,7 +452,7 @@ export class XMTPContext {
     const { networkLogo, networkName, tokenName, dripAmount } =
       extractFrameChain(txLink);
 
-    let receiptUrl = `${process.env.FRAMEKIT_URL}/receipt?txLink=${txLink}&networkLogo=${
+    let receiptUrl = `${frameKitUrl}/receipt?txLink=${txLink}&networkLogo=${
       networkLogo
     }&networkName=${networkName}&tokenName=${tokenName}&amount=${dripAmount}`;
 
