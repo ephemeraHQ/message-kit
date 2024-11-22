@@ -19,7 +19,12 @@ import {
   AbstractedMember,
 } from "../helpers/types.js";
 import { ContentTypeReply } from "@xmtp/content-type-reply";
-import { executeSkill, parseSkill, loadSkillsFile } from "./skills.js";
+import {
+  executeSkill,
+  parseSkill,
+  findSkill,
+  loadSkillsFile,
+} from "./skills.js";
 import {
   ContentTypeAttachment,
   ContentTypeRemoteAttachment,
@@ -148,7 +153,10 @@ export class XMTPContext {
           : message.content;
 
       if (message?.contentType?.sameAs(ContentTypeText)) {
-        const extractedValues = parseSkill(content.content, context.skills);
+        const skillAction = findSkill(content.content, context.skills.skills);
+        const extractedValues = skillAction
+          ? parseSkill(content.content, skillAction)
+          : undefined;
         if (extractedValues?.skill) {
           content = {
             text: content.content,

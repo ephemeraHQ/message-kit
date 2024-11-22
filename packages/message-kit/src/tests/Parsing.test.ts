@@ -1,5 +1,5 @@
 import { describe, test, expect } from "vitest";
-import { parseSkill } from "../lib/skills";
+import { parseSkill, findSkill } from "../lib/skills";
 import { skills as skillsGroup } from "../../../../templates/group/src/index";
 import { skills as skillsEns } from "../../../../templates/agent/src/index";
 
@@ -22,9 +22,12 @@ describe("Parsing extraction tests", () => {
   ])(
     "Compare extracted values from skill: %s",
     (input, expectedSkill, expectedParams) => {
-      const extractedValues = parseSkill(input, skillsGroup);
-      expect(extractedValues.skill).toBe(expectedSkill);
-      expect(extractedValues.params).toEqual(expectedParams);
+      const skillAction = findSkill(input, skillsGroup.skills);
+      const extractedValues = skillAction
+        ? parseSkill(input, skillAction)
+        : undefined;
+      expect(extractedValues?.skill).toBe(expectedSkill);
+      expect(extractedValues?.params).toEqual(expectedParams);
     },
   );
 });
@@ -44,9 +47,12 @@ describe("Parsing tests", () => {
   ])(
     "Compare extracted values from skill: %s",
     (input, expectedSkill, expectedParams) => {
-      const extractedValues = parseSkill(input, skillsEns);
-      expect(extractedValues.skill).toBe(expectedSkill);
-      expect(extractedValues.params).toEqual(expectedParams);
+      const skillAction = findSkill(input, skillsGroup.skills);
+      const extractedValues = skillAction
+        ? parseSkill(input, skillAction)
+        : undefined;
+      expect(extractedValues?.skill).toBe(expectedSkill);
+      expect(extractedValues?.params).toEqual(expectedParams);
     },
   );
 });

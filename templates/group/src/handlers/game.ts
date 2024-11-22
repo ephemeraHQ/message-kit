@@ -1,7 +1,7 @@
 import { XMTPContext } from "@xmtp/message-kit";
-import type { skillAction } from "@xmtp/message-kit";
+import type { SkillAction } from "@xmtp/message-kit";
 
-export const registerSkill: skillAction[] = [
+export const registerSkill: SkillAction[] = [
   {
     skill: "/game [game]",
     handler: handleGames,

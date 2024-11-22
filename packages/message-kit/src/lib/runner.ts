@@ -96,7 +96,8 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
       group,
     } = context;
 
-    let skillAction = text && skills ? findSkill(text, skills) : undefined;
+    let SkillAction =
+      text && skills ? findSkill(text, skills.skills) : undefined;
 
     const { inboxId: senderInboxId } = client;
     const { address: senderAddress } = v2client;
@@ -106,7 +107,7 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
       (sender.inboxId?.toLowerCase() === senderInboxId.toLowerCase() &&
         typeId !== "group_updated");
 
-    const isSkillTriggered = skillAction?.skill;
+    const isSkillTriggered = SkillAction?.skill;
     const isExperimental = runConfig?.experimental ?? false;
 
     const isAddedMemberOrPass =
@@ -119,7 +120,7 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
 
     const isRemoteAttachment = typeId == "remoteStaticAttachment";
 
-    const isAdminSkill = skillAction?.adminOnly ?? false;
+    const isAdminSkill = SkillAction?.adminOnly ?? false;
 
     const isAdmin =
       group &&
@@ -197,11 +198,11 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
           : "No tag detected",
         skillTriggerDetails: isSkillTriggered
           ? {
-              skill: skillAction?.skill,
-              examples: skillAction?.examples,
-              description: skillAction?.description,
-              params: skillAction?.params
-                ? Object.entries(skillAction.params).map(([key, value]) => ({
+              skill: SkillAction?.skill,
+              examples: SkillAction?.examples,
+              description: SkillAction?.description,
+              params: SkillAction?.params
+                ? Object.entries(SkillAction.params).map(([key, value]) => ({
                     key,
                     value: {
                       type: value.type,
@@ -220,7 +221,7 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
 
     return {
       isMessageValid,
-      customHandler: skillAction?.handler,
+      customHandler: SkillAction?.handler,
     };
   };
   const getConversation = async (

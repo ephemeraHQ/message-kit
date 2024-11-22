@@ -2,8 +2,6 @@
   max-height: 800px;
 }
 
-/* Custom Homepage text styles */
-
 .custom-homepage {
   max-width: 1200px;
   margin: 0 auto;
@@ -176,3 +174,23 @@
   justify-content: center;
   outline: none; /* Keep existing style */
 }
+
+/*DARK
+.vocs_Footer,
+.vocs_Sidebar_logoWrapper,
+.vocs_DocsLayout_gutterTop,
+.vocs_DocsLayout_gutterLeft,
+.vocs_DocsLayout,
+.vocs_DocsLayout_gutterTopCurtain,
+.vocs_DocsLayout_gutterRight,
+.vocs_Content,
+.vocs_DocsLayout_content {
+  background: transparent !important;
+}
+body {
+  background: black;
+}
+
+div.vocs_DesktopTopNav_curtain {
+  display: none !important;
+}*/

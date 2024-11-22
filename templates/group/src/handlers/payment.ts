@@ -1,6 +1,6 @@
 import { getUserInfo, XMTPContext } from "@xmtp/message-kit";
-import type { skillAction } from "@xmtp/message-kit";
-export const registerSkill: skillAction[] = [
+import type { SkillAction } from "@xmtp/message-kit";
+export const registerSkill: SkillAction[] = [
   {
     skill: "/pay [amount] [token] [username]",
     examples: ["/pay 10 usdc vitalik.eth", "/pay 1 @alix"],

@@ -79,10 +79,10 @@ export interface SkillGroup {
   name: string;
   description: string;
   tag: string;
-  skills: skillAction[];
+  skills: SkillAction[];
 }
 
-export interface skillAction {
+export interface SkillAction {
   skill: string;
   handler?: SkillHandler | undefined;
   adminOnly?: boolean;

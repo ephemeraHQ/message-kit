@@ -1,9 +1,9 @@
 import { ensUrl } from "../index.js";
 import { XMTPContext, getUserInfo } from "@xmtp/message-kit";
-import type { skillAction } from "@xmtp/message-kit";
+import type { SkillAction } from "@xmtp/message-kit";
 
 // [!region define]
-export const registerSkill: skillAction[] = [
+export const registerSkill: SkillAction[] = [
   {
     skill: "/check [domain]",
     handler: handleCheck,

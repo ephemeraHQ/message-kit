@@ -1,14 +1,14 @@
-import { SkillGroup, skillAction } from "../helpers/types.js";
+import { SkillGroup, SkillAction } from "../helpers/types.js";
 import { XMTPContext } from "./xmtp.js";
 import path from "path";
 
 export function findSkill(
   text: string,
-  skills: SkillGroup,
-): skillAction | undefined {
+  skills: SkillAction[],
+): SkillAction | undefined {
   const trigger = text.split(" ")[0].toLowerCase();
 
-  const handler = skills.skills.find((skill) => {
+  const handler = skills.find((skill) => {
     return skill.skill?.split(" ")[0].toLowerCase() === trigger;
   });
 
@@ -23,8 +23,10 @@ export async function executeSkill(
   // Use the custom text parameter
   let conversation = context.conversation;
   try {
-    let skillAction = findSkill(text, skills);
-    const extractedValues = parseSkill(text, skills);
+    let skillAction = findSkill(text, skills.skills);
+    const extractedValues = skillAction
+      ? parseSkill(text, skillAction)
+      : undefined;
     if (
       (text.startsWith("/") || text.startsWith("@")) &&
       !extractedValues?.skill
@@ -79,7 +81,7 @@ export async function executeSkill(
 
 export function parseSkill(
   text: string,
-  skills: SkillGroup,
+  skillAction: SkillAction,
 ): {
   skill: string | undefined;
   params: { [key: string]: string | number | string[] | undefined };
@@ -103,18 +105,6 @@ export function parseSkill(
       ? parts[0].slice(1).toLowerCase()
       : parts[0].toLowerCase();
 
-    let commandConfig: skillAction | undefined = undefined;
-
-    for (const group of skills.skills) {
-      if (Array.isArray(group)) {
-        commandConfig = group.find((cmd) =>
-          cmd.skill.startsWith(`/${commandName}`),
-        );
-      }
-    }
-
-    if (!commandConfig) return defaultResult;
-
     const values: {
       skill: string;
       params: {
@@ -125,7 +115,7 @@ export function parseSkill(
       params: {},
     };
 
-    const expectedParams = commandConfig.params || {};
+    const expectedParams = skillAction.params || {};
     const usedIndices = new Set();
 
     for (const [param, paramConfig] of Object.entries(expectedParams)) {
