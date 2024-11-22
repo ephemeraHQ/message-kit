@@ -76,7 +76,7 @@ export const PROMPT_RULES = `
 
 export function replaceSkills(skills: SkillGroup) {
   let returnPrompt = `## Commands\n${skills?.skills
-    .map((skill) => skill.skill)
+    .map((skill) => skill.skill + " - " + skill.description)
     .join("\n")}\n\n## Examples\n${skills?.skills
     .map((skill) => skill.examples?.join("\n"))
     .join("\n")}`;

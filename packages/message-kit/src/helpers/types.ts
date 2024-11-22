@@ -75,14 +75,18 @@ export interface SkillParamConfig {
   values?: string[]; // Accepted values for the parameter
 }
 
+export interface Frame {
+  title: string;
+  buttons: { content: string; action: string; target: string }[];
+  image: string;
+}
 export interface SkillGroup {
   name: string;
   description: string;
   tag: string;
-  skills: SkillAction[];
+  skills: Skill[];
 }
-
-export interface SkillAction {
+export interface Skill {
   skill: string;
   handler?: SkillHandler | undefined;
   adminOnly?: boolean;

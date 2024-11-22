@@ -1,7 +1,6 @@
 import { describe, test, expect } from "vitest";
 import { parseSkill, findSkill } from "../lib/skills";
 import { skills as skillsGroup } from "../../../../templates/group/src/index";
-import { skills as skillsEns } from "../../../../templates/agent/src/index";
 
 describe("Parsing extraction tests", () => {
   test.each([

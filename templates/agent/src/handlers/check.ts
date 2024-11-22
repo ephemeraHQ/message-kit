@@ -1,12 +1,12 @@
 import { ensUrl } from "../index.js";
 import { XMTPContext, getUserInfo } from "@xmtp/message-kit";
-import type { SkillAction } from "@xmtp/message-kit";
+import type { Skill } from "@xmtp/message-kit";
 
 // [!region define]
-export const registerSkill: SkillAction[] = [
+export const registerSkill: Skill[] = [
   {
     skill: "/check [domain]",
-    handler: handleCheck,
+    handler: handler,
     examples: ["/check vitalik.eth", "/check fabri.base.eth"],
     description: "Check if a domain is available.",
     params: {
@@ -19,7 +19,7 @@ export const registerSkill: SkillAction[] = [
 // [!endregion define]
 
 // [!region handle]
-export async function handleCheck(context: XMTPContext) {
+export async function handler(context: XMTPContext) {
   const {
     message: {
       content: {

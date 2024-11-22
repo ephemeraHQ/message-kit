@@ -96,8 +96,7 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
       group,
     } = context;
 
-    let SkillAction =
-      text && skills ? findSkill(text, skills.skills) : undefined;
+    let Skill = text && skills ? findSkill(text, skills.skills) : undefined;
 
     const { inboxId: senderInboxId } = client;
     const { address: senderAddress } = v2client;
@@ -107,7 +106,7 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
       (sender.inboxId?.toLowerCase() === senderInboxId.toLowerCase() &&
         typeId !== "group_updated");
 
-    const isSkillTriggered = SkillAction?.skill;
+    const isSkillTriggered = Skill?.skill;
     const isExperimental = runConfig?.experimental ?? false;
 
     const isAddedMemberOrPass =
@@ -120,7 +119,7 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
 
     const isRemoteAttachment = typeId == "remoteStaticAttachment";
 
-    const isAdminSkill = SkillAction?.adminOnly ?? false;
+    const isAdminSkill = Skill?.adminOnly ?? false;
 
     const isAdmin =
       group &&
@@ -198,11 +197,11 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
           : "No tag detected",
         skillTriggerDetails: isSkillTriggered
           ? {
-              skill: SkillAction?.skill,
-              examples: SkillAction?.examples,
-              description: SkillAction?.description,
-              params: SkillAction?.params
-                ? Object.entries(SkillAction.params).map(([key, value]) => ({
+              skill: Skill?.skill,
+              examples: Skill?.examples,
+              description: Skill?.description,
+              params: Skill?.params
+                ? Object.entries(Skill.params).map(([key, value]) => ({
                     key,
                     value: {
                       type: value.type,
@@ -221,7 +220,7 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
 
     return {
       isMessageValid,
-      customHandler: SkillAction?.handler,
+      customHandler: Skill?.handler,
     };
   };
   const getConversation = async (

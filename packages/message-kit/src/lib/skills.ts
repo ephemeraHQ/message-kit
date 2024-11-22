@@ -1,11 +1,8 @@
-import { SkillGroup, SkillAction } from "../helpers/types.js";
+import { SkillGroup, Skill } from "../helpers/types.js";
 import { XMTPContext } from "./xmtp.js";
 import path from "path";
 
-export function findSkill(
-  text: string,
-  skills: SkillAction[],
-): SkillAction | undefined {
+export function findSkill(text: string, skills: Skill[]): Skill | undefined {
   const trigger = text.split(" ")[0].toLowerCase();
 
   const handler = skills.find((skill) => {
@@ -81,7 +78,7 @@ export async function executeSkill(
 
 export function parseSkill(
   text: string,
-  skillAction: SkillAction,
+  skillAction: Skill,
 ): {
   skill: string | undefined;
   params: { [key: string]: string | number | string[] | undefined };

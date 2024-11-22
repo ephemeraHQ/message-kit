@@ -17,6 +17,7 @@ import {
   SkillGroup,
   SkillResponse,
   AbstractedMember,
+  Frame,
 } from "../helpers/types.js";
 import { ContentTypeReply } from "@xmtp/content-type-reply";
 import {
@@ -32,8 +33,6 @@ import {
 } from "@xmtp/content-type-remote-attachment";
 import { ContentTypeReaction } from "@xmtp/content-type-reaction";
 import path from "path";
-
-const txpayUrl = "https://txpay.vercel.app";
 
 export const awaitedHandlers = new Map<
   string,
@@ -416,8 +415,18 @@ export class XMTPContext {
     }
   }
 
-  async sendCustomFrame(frame: string) {
-    await this.send(frame);
+  async sendCustomFrame(frame: Frame) {
+    // Convert the frame object to URL-encoded parameters
+    const params = new URLSearchParams();
+    for (const [key, value] of Object.entries(frame)) {
+      params.append(
+        key,
+        typeof value === "object" ? JSON.stringify(value) : value,
+      );
+    }
+
+    const frameUrl = `${process.env.FRAMEKIT_URL}/custom?${params.toString()}`;
+    await this.send(frameUrl);
   }
   async requestPayment(
     amount: number = 1,
@@ -426,13 +435,13 @@ export class XMTPContext {
   ) {
     let senderInfo = await getUserInfo(username);
     if (senderInfo && process.env.MSG_LOG === "true")
-      console.log("senderInfo", senderInfo);
-    if (!senderInfo) {
-      console.error("Failed to get sender info");
-      return;
-    }
+      if (!senderInfo) {
+        //console.log("senderInfo", senderInfo);
+        console.error("Failed to get sender info");
+        return;
+      }
 
-    let sendUrl = `${txpayUrl}/payment?amount=${amount}&token=${token}&receiver=${senderInfo?.address}`;
+    let sendUrl = `${process.env.FRAMEKIT_URL}/payment?amount=${amount}&token=${token}&receiver=${senderInfo?.address}`;
     await this.send(sendUrl);
   }
 
@@ -442,7 +451,7 @@ export class XMTPContext {
     const { networkLogo, networkName, tokenName, dripAmount } =
       extractFrameChain(txLink);
 
-    let receiptUrl = `${txpayUrl}/receipt?txLink=${txLink}&networkLogo=${
+    let receiptUrl = `${process.env.FRAMEKIT_URL}/receipt?txLink=${txLink}&networkLogo=${
       networkLogo
     }&networkName=${networkName}&tokenName=${tokenName}&amount=${dripAmount}`;
 

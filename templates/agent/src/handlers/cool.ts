@@ -1,12 +1,12 @@
 import { XMTPContext } from "@xmtp/message-kit";
 
-import type { SkillAction } from "@xmtp/message-kit";
+import type { Skill } from "@xmtp/message-kit";
 
-export const registerSkill: SkillAction[] = [
+export const registerSkill: Skill[] = [
   {
     skill: "/cool [domain]",
     examples: ["/cool vitalik.eth"],
-    handler: handleCool,
+    handler: handler,
     description: "Get cool alternatives for a .eth domain.",
     params: {
       domain: {
@@ -15,7 +15,7 @@ export const registerSkill: SkillAction[] = [
     },
   },
 ];
-export async function handleCool(context: XMTPContext) {
+export async function handler(context: XMTPContext) {
   const {
     message: {
       content: {

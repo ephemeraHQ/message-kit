@@ -11,8 +11,9 @@ import { registerSkill as coolSkill } from "./handlers/cool.js";
 import { registerSkill as infoSkill } from "./handlers/info.js";
 import { registerSkill as registerSkill } from "./handlers/register.js";
 import { registerSkill as renewSkill } from "./handlers/renew.js";
+import { registerSkill as paySkill } from "./handlers/pay.js";
 import { registerSkill as resetSkill } from "./handlers/reset.js";
-import { registerSkill as tipSkill } from "./handlers/tip.js";
+import { registerSkill as tokenSkill } from "./handlers/token.js";
 import fs from "fs";
 
 export const frameUrl = "https://ens.steer.fun/";
@@ -31,7 +32,8 @@ export const skills: SkillGroup = {
     ...registerSkill,
     ...renewSkill,
     ...resetSkill,
-    ...tipSkill,
+    ...paySkill,
+    ...tokenSkill,
   ],
 };
 // [!endregion skills]
@@ -45,6 +47,7 @@ run(
     } = context;
 
     let prompt = await replaceVariables(systemPrompt, sender.address, skills);
+
     fs.writeFileSync("example_prompt.md", prompt);
     await agentReply(context, prompt);
   },

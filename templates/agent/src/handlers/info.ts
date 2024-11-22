@@ -1,12 +1,12 @@
 import { ensUrl } from "../index.js";
 import { XMTPContext, getUserInfo, isOnXMTP } from "@xmtp/message-kit";
 
-import type { SkillAction } from "@xmtp/message-kit";
+import type { Skill } from "@xmtp/message-kit";
 
-export const registerSkill: SkillAction[] = [
+export const registerSkill: Skill[] = [
   {
     skill: "/info [domain]",
-    handler: handleInfo,
+    handler: handler,
     description:
       "Get detailed information about an ENS domain including owner, expiry date, and resolver.",
     examples: ["/info nick.eth"],
@@ -18,7 +18,7 @@ export const registerSkill: SkillAction[] = [
   },
 ];
 
-export async function handleInfo(context: XMTPContext) {
+export async function handler(context: XMTPContext) {
   const {
     message: {
       sender,
