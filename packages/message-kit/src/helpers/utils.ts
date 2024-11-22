@@ -390,5 +390,21 @@ export function extractFrameChain(txLink: string): Network {
     inferredNetworkId = "base";
   }
   const network = db.find((n) => n.networkId === inferredNetworkId);
+  if (!network) {
+    console.error(`Network ${inferredNetworkId} not found`);
+    return {
+      networkId: "",
+      networkName: "",
+      networkLogo: "",
+      tokenName: "",
+      dripAmount: 0,
+      address: "",
+      isERC20: false,
+      erc20Address: null,
+      erc20Decimals: null,
+      isActive: false,
+      balance: "0",
+    };
+  }
   return network;
 }
