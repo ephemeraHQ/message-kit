@@ -27,3 +27,4 @@ build
 # Cache and logs
 .turbo
 .vocs
+.vercel
