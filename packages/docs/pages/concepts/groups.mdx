@@ -27,6 +27,19 @@ Example:
 
 > Be aware that you need to add the agent to the group as a member.
 
+## Create a group
+
+To create a group from your agent, you can use the following code:
+
+```tsx
+const group = await client?.conversations.newGroup([
+  address1,
+  address2,
+]);
+```
+
+Check out the [gated group](/templates/gated) template.
+
 ## Add members
 
 As an admin you can add members to the group.
