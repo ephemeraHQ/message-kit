@@ -1,4 +1,4 @@
-import ReceiptGenerator from "../../components/ReceiptGenerator";
+import ReceiptGenerator from "@/components/ReceiptGenerator";
 
 export default async function Home({
   searchParams,
