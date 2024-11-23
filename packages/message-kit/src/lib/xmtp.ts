@@ -97,115 +97,114 @@ export class XMTPContext {
     runConfig: RunConfig,
     version?: "v2" | "v3",
   ): Promise<XMTPContext | null> {
-    try{
-      
-    const context = new XMTPContext(conversation, { client, v2client });
-    if (message && message.id) {
-      //v2
-      const sentAt = "sentAt" in message ? message.sentAt : message.sent;
-      let members: GroupMember[];
-      if (version === "v2") {
-        context.sender = {
-          address: (message as DecodedMessageV2).senderAddress,
-          inboxId: (message as DecodedMessageV2).senderAddress,
-          installationIds: [],
-          accountAddresses: [(message as DecodedMessageV2).senderAddress],
-        } as AbstractedMember;
-      } else {
-        let group = await (conversation as Conversation);
-        await group.sync();
-        members = await group.members();
-        context.members = members.map((member: GroupMember) => ({
-          inboxId: member.inboxId,
-          address: member.accountAddresses[0],
-          accountAddresses: member.accountAddresses,
-          installationIds: member.installationIds,
-        })) as AbstractedMember[];
-
-        let MemberSender = members?.find(
-          (member: GroupMember) =>
-            member.inboxId === (message as DecodedMessage).senderInboxId,
-        );
-
-        context.sender = {
-          address: MemberSender?.accountAddresses[0],
-          inboxId: MemberSender?.inboxId,
-          installationIds: [],
-          accountAddresses: MemberSender?.accountAddresses,
-        } as AbstractedMember;
-      }
-
-      //Config
-      context.agent = runConfig?.agent ?? (await loadSkillsFile());
-
-      context.getMessageById =
-        client.conversations?.getMessageById?.bind(client.conversations) ||
-        (() => null);
-
-      context.executeSkill = async (text: string) => {
-        const result = await executeSkill(text, context.agent, context);
-        return result ?? undefined;
-      };
-      let typeId = message.contentType?.typeId;
-
-      //trim spaces from text
-      let content =
-        typeof message.content === "string"
-          ? { content: message.content.trim(), ...message.contentType }
-          : message.content;
-      if (message?.contentType?.sameAs(ContentTypeText)) {
-        const skillAction = findSkill(content.content, context.agent.skills);
-        const extractedValues = skillAction
-          ? parseSkill(content.content, skillAction)
-          : undefined;
-        if (extractedValues?.skill) {
-          content = {
-            text: content.content,
-            ...extractedValues,
-          };
-          typeId = "skill";
+    try {
+      const context = new XMTPContext(conversation, { client, v2client });
+      if (message && message.id) {
+        //v2
+        const sentAt = "sentAt" in message ? message.sentAt : message.sent;
+        let members: GroupMember[];
+        if (version === "v2") {
+          context.sender = {
+            address: (message as DecodedMessageV2).senderAddress,
+            inboxId: (message as DecodedMessageV2).senderAddress,
+            installationIds: [],
+            accountAddresses: [(message as DecodedMessageV2).senderAddress],
+          } as AbstractedMember;
         } else {
+          let group = await (conversation as Conversation);
+          await group.sync();
+          members = await group.members();
+          context.members = members.map((member: GroupMember) => ({
+            inboxId: member.inboxId,
+            address: member.accountAddresses[0],
+            accountAddresses: member.accountAddresses,
+            installationIds: member.installationIds,
+          })) as AbstractedMember[];
+
+          let MemberSender = members?.find(
+            (member: GroupMember) =>
+              member.inboxId === (message as DecodedMessage).senderInboxId,
+          );
+
+          context.sender = {
+            address: MemberSender?.accountAddresses[0],
+            inboxId: MemberSender?.inboxId,
+            installationIds: [],
+            accountAddresses: MemberSender?.accountAddresses,
+          } as AbstractedMember;
+        }
+
+        //Config
+        context.agent = runConfig?.agent ?? (await loadSkillsFile());
+
+        context.getMessageById =
+          client.conversations?.getMessageById?.bind(client.conversations) ||
+          (() => null);
+
+        context.executeSkill = async (text: string) => {
+          const result = await executeSkill(text, context.agent, context);
+          return result ?? undefined;
+        };
+        let typeId = message.contentType?.typeId;
+
+        //trim spaces from text
+        let content =
+          typeof message.content === "string"
+            ? { content: message.content.trim(), ...message.contentType }
+            : message.content;
+        if (message?.contentType?.sameAs(ContentTypeText)) {
+          const skillAction = findSkill(content.content, context.agent.skills);
+          const extractedValues = skillAction
+            ? parseSkill(content.content, skillAction)
+            : undefined;
+          if (extractedValues?.skill) {
+            content = {
+              text: content.content,
+              ...extractedValues,
+            };
+            typeId = "skill";
+          } else {
+            content = {
+              text: content.content,
+            };
+          }
+        } else if (message?.contentType?.sameAs(ContentTypeReply)) {
+          // Test in grups
+          //const reply=await context.getV3ReplyChain(content.reference,context.sender?.address)
+
           content = {
+            reply: content.content,
             text: content.content,
+            reference: content.reference,
+          };
+        } else if (message?.contentType?.sameAs(ContentTypeReaction)) {
+          content = {
+            reaction: content.content,
+            reference: content.reference,
+          };
+        } else if (message?.contentType?.sameAs(ContentTypeRemoteAttachment)) {
+          const attachment = await RemoteAttachmentCodec.load(content, client);
+          content = {
+            attachment: attachment,
+          };
+        } else if (message?.contentType?.sameAs(ContentTypeAttachment)) {
+          const attachment = await RemoteAttachmentCodec.load(content, client);
+          content = {
+            attachment: attachment,
           };
         }
-      } else if (message?.contentType?.sameAs(ContentTypeReply)) {
-        // Test in grups
-        //const reply=await context.getV3ReplyChain(content.reference,context.sender?.address)
-     
-        content = {
-          reply: content.content,
-          text: content.content,
-          reference: content.reference,
+        context.message = {
+          id: message.id,
+          content,
+          sender: context.sender,
+          sent: sentAt,
+          typeId: typeId ?? "",
+          version: version ?? "v2",
         };
-      } else if (message?.contentType?.sameAs(ContentTypeReaction)) {
-        content = {
-          reaction: content.content,
-          reference: content.reference,
-        };
-      } else if (message?.contentType?.sameAs(ContentTypeRemoteAttachment)) {
-        const attachment = await RemoteAttachmentCodec.load(content, client);
-        content = {
-          attachment: attachment,
-        };
-      } else if (message?.contentType?.sameAs(ContentTypeAttachment)) {
-        const attachment = await RemoteAttachmentCodec.load(content, client);
-        content = {
-          attachment: attachment,
-        };
-      }
-      context.message = {
-        id: message.id,
-        content,
-        sender: context.sender,
-        sent: sentAt,
-        typeId: typeId ?? "",
-        version: version ?? "v2",
-      };
 
-      return context;
-    }
-    return null;
+        return context;
+      }
+      return null;
     } catch (error) {
       console.error("Error creating XMTPContext:", error);
       return null;
@@ -214,7 +213,7 @@ export class XMTPContext {
   async awaitResponse(
     prompt: string,
     validResponses?: string[],
-    attempts?: number 
+    attempts?: number,
   ): Promise<string> {
     await this.send(`${prompt}`);
     let attemptCount = 0;
@@ -236,7 +235,7 @@ export class XMTPContext {
         }
 
         // Check if response is valid
-        if (validResponses.map(r => r.toLowerCase()).includes(response)) {
+        if (validResponses.map((r) => r.toLowerCase()).includes(response)) {
           this.resetAwaitedState();
           resolve(response);
           return true;
@@ -245,13 +244,17 @@ export class XMTPContext {
         // Check if max attempts reached
         if (attemptCount >= attempts) {
           this.resetAwaitedState();
-          reject(new Error(`Max attempts (${attempts}) reached without valid response`));
+          reject(
+            new Error(
+              `Max attempts (${attempts}) reached without valid response`,
+            ),
+          );
           return true;
         }
 
         // Invalid response - send error message and continue waiting
         await this.send(
-          `Invalid response "${text}". Please respond with one of: ${validResponses.join(", ")}. Attempts remaining: ${attempts - attemptCount}`
+          `Invalid response "${text}". Please respond with one of: ${validResponses.join(", ")}. Attempts remaining: ${attempts - attemptCount}`,
         );
         return false;
       };
@@ -286,66 +289,65 @@ export class XMTPContext {
     chain: Array<{ address: string; content: string }>;
     isSenderInChain: boolean;
   }> {
-    try{
-    let msg: DecodedMessage | DecodedMessageV2 | null = null;
-    let senderAddress: string = "";
-    msg = await this.getMessageById(reference);
-    if (!msg) {
-      return {
-        chain: [],
-        isSenderInChain: false,
-      };
-    }
-    let group = await (this.refConv as Conversation);
-    if(group){
-    let members: GroupMember[] = [];
-    console.log('entra:group',group)
     try {
-        await group.sync();
-        members = await group.members();
-      } catch (error) {
-        console.error(
-          "Failed to sync group or fetch members in reply chain:",
-          error,
-        );
-        members = [];
-      }
-      let sender = members?.find(
-        (member: GroupMember) =>
-          member.inboxId === (msg as DecodedMessage).senderInboxId ||
-          member.accountAddresses.includes(
-            (msg as unknown as DecodedMessageV2).senderAddress,
-          ),
-      );
-      senderAddress = sender?.accountAddresses[0] ?? "";
-
-      let content = msg?.content?.content ?? msg?.content;
-      let isSenderBot = senderAddress.toLowerCase() === botAddress?.toLowerCase();
-      let chain = [{ address: senderAddress, content: content }];
-      if (msg?.content?.reference) {
-        const { chain: replyChain, isSenderInChain } = await this.getV3ReplyChain(
-          msg.content.reference,
-          botAddress,
-        );
-        chain = replyChain;
-        isSenderBot = isSenderBot || isSenderInChain;
-
-        chain.push({
-          address: senderAddress,
-          content: content,
-        });
-      }
-      return {
-        chain: chain,
-          isSenderInChain: isSenderBot,
-          };
-      }else{
+      let msg: DecodedMessage | DecodedMessageV2 | null = null;
+      let senderAddress: string = "";
+      msg = await this.getMessageById(reference);
+      if (!msg) {
         return {
           chain: [],
           isSenderInChain: false,
         };
       }
-    } catch (error) {  
+      let group = await (this.refConv as Conversation);
+      if (group) {
+        let members: GroupMember[] = [];
+        console.log("entra:group", group);
+        try {
+          await group.sync();
+          members = await group.members();
+        } catch (error) {
+          console.error(
+            "Failed to sync group or fetch members in reply chain:",
+            error,
+          );
+          members = [];
+        }
+        let sender = members?.find(
+          (member: GroupMember) =>
+            member.inboxId === (msg as DecodedMessage).senderInboxId ||
+            member.accountAddresses.includes(
+              (msg as unknown as DecodedMessageV2).senderAddress,
+            ),
+        );
+        senderAddress = sender?.accountAddresses[0] ?? "";
+
+        let content = msg?.content?.content ?? msg?.content;
+        let isSenderBot =
+          senderAddress.toLowerCase() === botAddress?.toLowerCase();
+        let chain = [{ address: senderAddress, content: content }];
+        if (msg?.content?.reference) {
+          const { chain: replyChain, isSenderInChain } =
+            await this.getV3ReplyChain(msg.content.reference, botAddress);
+          chain = replyChain;
+          isSenderBot = isSenderBot || isSenderInChain;
+
+          chain.push({
+            address: senderAddress,
+            content: content,
+          });
+        }
+        return {
+          chain: chain,
+          isSenderInChain: isSenderBot,
+        };
+      } else {
+        return {
+          chain: [],
+          isSenderInChain: false,
+        };
+      }
+    } catch (error) {
       console.error("Error getting reply chain:", error);
       return {
         chain: [],
@@ -389,7 +391,8 @@ export class XMTPContext {
   }
   getConversationKey() {
     const conversation = this.refConv || this.conversation || this.group;
-    const awaitingSender = this.message?.sender?.inboxId || this.message?.sender?.address;
+    const awaitingSender =
+      this.message?.sender?.inboxId || this.message?.sender?.address;
     return `${(conversation as V2Conversation)?.topic || (conversation as Conversation)?.id}:${awaitingSender}`;
   }
   isV2Conversation(

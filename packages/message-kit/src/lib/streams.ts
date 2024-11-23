@@ -28,7 +28,6 @@ export async function streamMessages(
           handleMessage(version, message);
         }
       }
-
     } catch (err) {
       console.error(`[${version}] Stream encountered an error:`, err);
     }

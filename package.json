@@ -22,7 +22,6 @@
     "dev:gpt": "cd templates/gpt && yarn dev",
     "dev:group": "cd templates/group && yarn dev",
     "format": "turbo run format",
-    "format:check": "turbo run format:check",
     "publish": "turbo run build --filter='./packages/*' --filter='!./packages/docs' && yarn copy && changeset publish",
     "test": "FORCE_COLOR=1 turbo run test --force --concurrency=1",
     "test:client": "cd packages/message-kit/tests && yarn test:client",

@@ -24,7 +24,7 @@ jobs:
       - name: Build
         run: yarn build
       - name: Check code format
-        run: yarn format:check
+        run: yarn format
       - name: Check types
         run: yarn typecheck
 

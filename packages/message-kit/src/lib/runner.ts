@@ -58,11 +58,12 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
           const messageText =
             context.message.content.text || context.message.content.reply || "";
           // Check if the response is from the expected user
-          const expectedUser = context.getConversationKey().split(':')[1];
-          const actualSender = version === 'v3' ? 
-            (message as DecodedMessage).senderInboxId :
-            (message as DecodedMessageV2).senderAddress;
-            
+          const expectedUser = context.getConversationKey().split(":")[1];
+          const actualSender =
+            version === "v3"
+              ? (message as DecodedMessage).senderInboxId
+              : (message as DecodedMessageV2).senderAddress;
+
           if (expectedUser?.toLowerCase() === actualSender?.toLowerCase()) {
             const isValidResponse = await awaitedHandler(messageText);
             // Only remove the handler if we got a valid response
