@@ -8,7 +8,8 @@
     "shared/*"
   ],
   "scripts": {
-    "build": "turbo run build --filter=@xmtp/message-kit... --filter=@xmtp/framekit... --filter='./packages/*' --filter='./templates/*'",
+    "prebuild": "turbo run build --filter=./packages/message-kit --force",
+    "build": "turbo run build --filter='./packages/*' --filter='./templates/*'",
     "changeset": "yarn copy && changeset add --type patch",
     "clean": "turbo run clean && rm -rf node_modules && rm -rf .turbo && yarn cache clean",
     "clean:all": "rm -rf node_modules .turbo .next dist packages/**/node_modules packages/**/dist templates/**/dist && yarn cache clean",
