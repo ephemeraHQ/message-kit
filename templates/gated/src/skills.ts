@@ -2,6 +2,7 @@ import type { Agent } from "@xmtp/message-kit";
 
 export const agent: Agent = {
   name: "Group Id",
+  tag: "@bot",
   description: "Create and get group id.",
   skills: [
     {
