@@ -5922,16 +5922,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"group@workspace:templates/group":
-  version: 0.0.0-use.local
-  resolution: "group@workspace:templates/group"
-  dependencies:
-    "@types/node": "npm:^20.14.2"
-    "@xmtp/message-kit": "workspace:*"
-    typescript: "npm:^5.4.5"
-  languageName: unknown
-  linkType: soft
-
 "has-flag@npm:^4.0.0":
   version: 4.0.0
   resolution: "has-flag@npm:4.0.0"

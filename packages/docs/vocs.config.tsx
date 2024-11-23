@@ -83,6 +83,10 @@ export default defineConfig({
       link: "/examples",
     },
     {
+      text: "Library",
+      link: "/library",
+    },
+    {
       text: "Concepts",
       items: [
         {
@@ -145,10 +149,6 @@ export default defineConfig({
           link: "/templates/agent",
         },
         {
-          text: "Group bot",
-          link: "/templates/group",
-        },
-        {
           text: "Gated group",
           link: "/templates/gated",
         },
@@ -164,7 +164,7 @@ export default defineConfig({
         },
         {
           text: "Deployment",
-          link: "/concepts/deployment",
+          link: "/middleware/railway",
         },
       ],
     },

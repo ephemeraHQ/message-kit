@@ -1,8 +1,6 @@
 import { describe } from "vitest";
 import { agent as ensAgent } from "../../../../templates/agent/src/index";
 import { systemPrompt as ensSystemPrompt } from "../../../../templates/agent/src/prompt";
-import { agent as groupAgent } from "../../../../templates/group/src/index";
-import { systemPrompt as groupSystemPrompt } from "../../../../templates/group/src/prompt";
 import { testPrompt } from "./utils";
 const humanAgent = {
   address: "0x93E2fc3e99dFb1238eB9e0eF2580EFC5809C7204",
@@ -45,11 +43,3 @@ describe("Web3 agent tests", () => {
   ];
   testPrompt(testCases, ensAgent, ensSystemPrompt, humanAgent);
 }, 15000);
-
-describe("Group bot test", () => {
-  const testCases: testCase = [
-    ["@bot let's play a game", "/game wordle"],
-    ["@bot let's tip @alix 10 usdc", ["/tip @alix 10 usdc"]],
-  ];
-  testPrompt(testCases, groupAgent, groupSystemPrompt, alix);
-}, 15000); // Added 15 second timeout

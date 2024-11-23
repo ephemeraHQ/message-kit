@@ -1,0 +1,181 @@
+import { HomePage } from "vocs/components";
+import { CustomHomePage } from "../components/CustomHomePage";
+
+<CustomHomePage.Root>
+<CustomHomePage.Headline>
+  Build with MessageKit
+</CustomHomePage.Headline>
+  <div className="custom-homepage-description" style={{ textAlign: 'center' }}>
+    An interoperable Agent framework for apps built with [XMTP](https://docs.xmtp.org) 
+  </div>
+
+<div className="custom-homepage-tile-grid-container" style={{ 
+  marginTop: '2rem', 
+  marginBottom: '2rem', 
+  width: '75%', 
+  maxWidth: '400px', 
+  margin: '2rem auto',
+  textAlign: 'center',
+  fontSize: '1.5rem'
+}}>
+
+:::code-group
+
+```bash [bun]
+bun create message-kit
+```
+
+```bash [yarn]
+yarn create message-kit
+```
+
+```bash [npx]
+npx create-message-kit
+```
+
+```bash [npm]
+npm init message-kit
+```
+
+:::
+
+</div>
+  <CustomHomePage.TileGrid>
+
+      <CustomHomePage.Tile
+        href="/quickstart"
+        title="Quickstart"
+        description="Get you started with this step-by-step guide"
+        icon="⚡️"
+      />
+
+      <CustomHomePage.Tile
+        href="/examples"
+        title="Examples"
+        description="Examples ready to use"
+        icon="💬"
+      />
+
+      <CustomHomePage.Tile
+        href="/skills"
+        title="AI Skills"
+        description="Learn to build AI skills"
+        icon="🧠"
+      />
+
+      <CustomHomePage.Tile
+        href="/templates/agent"
+        title="Web3 Agent"
+        description="Learn to build an Web3 agent"
+        icon="🔗"
+      />
+
+  </CustomHomePage.TileGrid>
+
+</CustomHomePage.Root>
+
+# Library of Skills
+
+Welcome to the MessageKit skills library. Here you'll find a collection of pre-built handlers that you can use in your XMTP applications.
+
+## Core Skills
+
+<CustomHomePage.TileGrid>
+    <CustomHomePage.Tile
+        href="/templates/agent/handlers/info"
+        title="Info Handler"
+        description="Process information requests from users"
+        icon="ℹ️"
+    />
+
+    <CustomHomePage.Tile
+        href="/templates/agent/handlers/register"
+        title="Register Handler"
+        description="Handle user registration processes"
+        icon="📝"
+    />
+
+    <CustomHomePage.Tile
+        href="/templates/agent/handlers/check"
+        title="Check Handler"
+        description="Verify and validate user requests"
+        icon="✅"
+    />
+
+    <CustomHomePage.Tile
+        href="/templates/agent/handlers/reset"
+        title="Reset Handler"
+        description="Reset user data and settings"
+        icon="🔄"
+    />
+
+</CustomHomePage.TileGrid>
+
+## Web3 Skills
+
+<CustomHomePage.TileGrid>
+    <CustomHomePage.Tile
+        href="/templates/agent/handlers/token"
+        title="Token Handler"
+        description="Manage token-related operations"
+        icon="🪙"
+    />
+
+    <CustomHomePage.Tile
+        href="/templates/agent/handlers/pay"
+        title="Pay Handler"
+        description="Process payment transactions"
+        icon="💰"
+    />
+
+    <CustomHomePage.Tile
+        href="/templates/agent/handlers/renew"
+        title="Renew Handler"
+        description="Handle renewal operations"
+        icon="🔄"
+    />
+
+</CustomHomePage.TileGrid>
+
+## Game Skills
+
+<CustomHomePage.TileGrid>
+    <CustomHomePage.Tile
+        href="/templates/agent/handlers/game"
+        title="Game Handler"
+        description="Process game-related interactions"
+        icon="🎮"
+    />
+
+    <CustomHomePage.Tile
+        href="/templates/agent/handlers/cool"
+        title="Cool Handler"
+        description="Handle fun interactions and commands"
+        icon="😎"
+    />
+
+</CustomHomePage.TileGrid>
+
+## Getting Started
+
+To use any of these skills in your project, you can install MessageKit using your preferred package manager:
+
+:::code-group
+
+```bash [bun]
+bun create message-kit
+```
+
+```bash [yarn]
+yarn create message-kit
+```
+
+```bash [npx]
+npx create-message-kit
+```
+
+```bash [npm]
+npm init message-kit
+```
+
+:::
