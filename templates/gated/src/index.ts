@@ -42,7 +42,7 @@ async function createGroup(
   clientAddress: string,
 ) {
   let senderInboxId = "";
-  const group = await client?.conversations.newConversation([
+  const group = await client?.conversations.newGroup([
     senderAddress,
     clientAddress,
   ]);

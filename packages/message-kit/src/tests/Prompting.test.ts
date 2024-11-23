@@ -40,6 +40,8 @@ describe("Web3 agent tests", () => {
         "/pay",
       ],
     ],
+    ["lets play wordle", "/game wordle"],
+    ["what are my TODOs?", "/todo"],
   ];
   testPrompt(testCases, ensAgent, ensSystemPrompt, humanAgent);
 }, 15000);

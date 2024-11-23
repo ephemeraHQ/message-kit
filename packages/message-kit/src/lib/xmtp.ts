@@ -97,6 +97,8 @@ export class XMTPContext {
     runConfig: RunConfig,
     version?: "v2" | "v3",
   ): Promise<XMTPContext | null> {
+    try{
+      
     const context = new XMTPContext(conversation, { client, v2client });
     if (message && message.id) {
       //v2
@@ -151,7 +153,6 @@ export class XMTPContext {
         typeof message.content === "string"
           ? { content: message.content.trim(), ...message.contentType }
           : message.content;
-
       if (message?.contentType?.sameAs(ContentTypeText)) {
         const skillAction = findSkill(content.content, context.agent.skills);
         const extractedValues = skillAction
@@ -169,12 +170,12 @@ export class XMTPContext {
           };
         }
       } else if (message?.contentType?.sameAs(ContentTypeReply)) {
+        // Test in grups
+        //const reply=await context.getV3ReplyChain(content.reference,context.sender?.address)
+     
         content = {
           reply: content.content,
-          replyChain: await context.getReplyChain(
-            content.reference,
-            version ?? "v2",
-          ),
+          text: content.content,
           reference: content.reference,
         };
       } else if (message?.contentType?.sameAs(ContentTypeReaction)) {
@@ -201,9 +202,14 @@ export class XMTPContext {
         typeId: typeId ?? "",
         version: version ?? "v2",
       };
+
       return context;
     }
     return null;
+    } catch (error) {
+      console.error("Error creating XMTPContext:", error);
+      return null;
+    }
   }
   async awaitResponse(
     prompt: string,
@@ -251,6 +257,7 @@ export class XMTPContext {
   }
 
   async getV2MessageById(reference: string): Promise<DecodedMessageV2 | null> {
+    /*Takes to long, deprecated*/
     const conversations = await this.v2client.conversations.list();
     for (const conversation of conversations) {
       const messages = await conversation.messages();
@@ -260,21 +267,18 @@ export class XMTPContext {
     }
     return null;
   }
-
-  async getReplyChain(
+  /*NEEDS TO BE FIXED*/
+  async getV3ReplyChain(
     reference: string,
-    version: "v2" | "v3",
     botAddress?: string,
   ): Promise<{
     chain: Array<{ address: string; content: string }>;
     isSenderInChain: boolean;
   }> {
+    try{
     let msg: DecodedMessage | DecodedMessageV2 | null = null;
     let senderAddress: string = "";
-
-    if (version === "v3") msg = await this.getMessageById(reference);
-    else if (version === "v2") msg = await this.getV2MessageById(reference);
-    let members: GroupMember[] = [];
+    msg = await this.getMessageById(reference);
     if (!msg) {
       return {
         chain: [],
@@ -282,46 +286,61 @@ export class XMTPContext {
       };
     }
     let group = await (this.refConv as Conversation);
+    if(group){
+    let members: GroupMember[] = [];
+    console.log('entra:group',group)
     try {
-      await group.sync();
-      members = await group.members();
-    } catch (error) {
-      console.error(
-        "Failed to sync group or fetch members in reply chain:",
-        error,
+        await group.sync();
+        members = await group.members();
+      } catch (error) {
+        console.error(
+          "Failed to sync group or fetch members in reply chain:",
+          error,
+        );
+        members = [];
+      }
+      let sender = members?.find(
+        (member: GroupMember) =>
+          member.inboxId === (msg as DecodedMessage).senderInboxId ||
+          member.accountAddresses.includes(
+            (msg as unknown as DecodedMessageV2).senderAddress,
+          ),
       );
-      members = [];
-    }
-    let sender = members?.find(
-      (member: GroupMember) =>
-        member.inboxId === (msg as DecodedMessage).senderInboxId ||
-        member.accountAddresses.includes(
-          (msg as DecodedMessageV2).senderAddress,
-        ),
-    );
-    senderAddress = sender?.accountAddresses[0] ?? "";
+      senderAddress = sender?.accountAddresses[0] ?? "";
 
-    let content = msg?.content?.content ?? msg?.content;
-    let isSenderBot = senderAddress.toLowerCase() === botAddress?.toLowerCase();
-    let chain = [{ address: senderAddress, content: content }];
-    if (msg?.content?.reference) {
-      const { chain: replyChain, isSenderInChain } = await this.getReplyChain(
-        msg.content.reference,
-        version,
-        botAddress,
-      );
-      chain = replyChain;
-      isSenderBot = isSenderBot || isSenderInChain;
+      let content = msg?.content?.content ?? msg?.content;
+      let isSenderBot = senderAddress.toLowerCase() === botAddress?.toLowerCase();
+      let chain = [{ address: senderAddress, content: content }];
+      if (msg?.content?.reference) {
+        const { chain: replyChain, isSenderInChain } = await this.getV3ReplyChain(
+          msg.content.reference,
+          botAddress,
+        );
+        chain = replyChain;
+        isSenderBot = isSenderBot || isSenderInChain;
 
-      chain.push({
-        address: senderAddress,
-        content: content,
-      });
+        chain.push({
+          address: senderAddress,
+          content: content,
+        });
+      }
+      return {
+        chain: chain,
+          isSenderInChain: isSenderBot,
+          };
+      }else{
+        return {
+          chain: [],
+          isSenderInChain: false,
+        };
+      }
+    } catch (error) {  
+      console.error("Error getting reply chain:", error);
+      return {
+        chain: [],
+        isSenderInChain: false,
+      };
     }
-    return {
-      chain: chain,
-      isSenderInChain: isSenderBot,
-    };
   }
   async reply(message: string) {
     if (typeof message !== "string") {

@@ -38,7 +38,6 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
         ) {
           return;
         }
-        console.log(message);
         const context = await XMTPContext.create(
           conversation,
           message,
