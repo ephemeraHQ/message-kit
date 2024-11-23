@@ -201,7 +201,8 @@
 .dark .vocs_Pre_wrapper pre,
 .dark .vocs_Tabs_list,
 .dark .vocs_CodeTitle,
-.dark .vocs_Tabs_content {
+.dark .vocs_Tabs_content,
+.dark .vocs_MobileTopNav_sidebarPopover {
   background: hsla(0, 0%, 4%, 0.6) !important;
 }
 .dark .custom-homepage-tile:hover {
