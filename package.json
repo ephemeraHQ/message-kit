@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "prebuild": "cd packages/docs && yarn install && cd ../.. && cd packages/message-kit && yarn install && yarn build",
-    "build": "yarn prebuild && turbo run build --filter='./packages/*' --filter='./templates/*'",
+    "build": "turbo run build --filter='./packages/*' --filter='./templates/*'",
     "build:frames": "cd packages/framekit && yarn install && yarn build",
     "changeset": "yarn copy && changeset add --type patch",
     "clean": "turbo run clean && rm -rf node_modules && rm -rf .turbo && yarn cache clean",
