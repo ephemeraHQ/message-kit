@@ -39,7 +39,7 @@ export const agent: Agent = {
 };
 // [!endregion skills]
 
-// [!region run]
+// [!region run1]
 run(
   async (context: XMTPContext) => {
     const {
@@ -48,11 +48,13 @@ run(
     } = context;
 
     let prompt = await replaceVariables(systemPrompt, sender.address, agent);
-
+    // [!region run1]
+    //This is only used for to update the docs.
     fs.writeFileSync("example_prompt.md", prompt);
+    // [!region run2]
     await agentReply(context, prompt);
   },
   { agent },
 );
 
-// [!endregion run]
+// [!endregion run2]

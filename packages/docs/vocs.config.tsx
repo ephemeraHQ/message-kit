@@ -83,10 +83,6 @@ export default defineConfig({
       link: "/examples",
     },
     {
-      text: "Library",
-      link: "/library",
-    },
-    {
       text: "Concepts",
       items: [
         {
@@ -109,8 +105,21 @@ export default defineConfig({
           text: "Frames",
           link: "/concepts/frames",
         },
+      ],
+    },
+    {
+      text: "AI Skills",
+      items: [
         {
-          text: "AI Skills",
+          text: "Example",
+          link: "/templates/agent",
+        },
+        {
+          text: "Library",
+          link: "/skills/library",
+        },
+        {
+          text: "Overview",
           link: "/skills",
           items: [
             {
@@ -141,20 +150,6 @@ export default defineConfig({
         },
       ],
     },
-    {
-      text: "Use cases",
-      items: [
-        {
-          text: "Web3 agent",
-          link: "/templates/agent",
-        },
-        {
-          text: "Gated group",
-          link: "/templates/gated",
-        },
-      ],
-    },
-
     {
       text: "Middleware",
       items: [
