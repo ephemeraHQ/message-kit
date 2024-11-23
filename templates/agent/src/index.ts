@@ -15,6 +15,7 @@ import { registerSkill as paySkill } from "./handlers/pay.js";
 import { registerSkill as resetSkill } from "./handlers/reset.js";
 import { registerSkill as tokenSkill } from "./handlers/token.js";
 import { registerSkill as gameSkill } from "./handlers/game.js";
+import { registerSkill as todoSkill } from "./handlers/todo.js";
 import fs from "fs";
 
 export const frameUrl = "https://ens.steer.fun/";
@@ -35,6 +36,7 @@ export const agent: Agent = {
     ...paySkill,
     ...tokenSkill,
     ...gameSkill,
+    ...todoSkill,
   ],
 };
 // [!endregion skills]

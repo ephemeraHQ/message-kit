@@ -19,7 +19,7 @@ This is a simple yet powerful agent that will help users interact with web3 prod
 ```
 agent/
 ├── src/
-│   └── handler/
+│   └── handler/            # Skills
 │       ├── check.ts
 │       ├── cool.ts
 │       ├── info.ts
@@ -29,8 +29,8 @@ agent/
 │       ├── pay.ts
 │       ├── token.ts
 │       ├── game.ts        
-│   ├── index.ts           # Prompt and stream // [!code hl] // [!code focus]
-│   ├── prompt.ts          # Prompt // [!code hl] // [!code focus]
+│   ├── index.ts            # Skill loading
+│   ├── prompt.ts           # Prompt
 ├── package.json
 ├── tsconfig.json
 └── .env

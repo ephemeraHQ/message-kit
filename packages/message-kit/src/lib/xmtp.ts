@@ -207,25 +207,33 @@ export class XMTPContext {
   }
   async awaitResponse(
     prompt: string,
-    validResponses: string[],
+    validResponses?: string[],
   ): Promise<string> {
     await this.send(`${prompt}`);
 
     return new Promise<string>((resolve, reject) => {
-      // Create the handler function
       const handler = async (text: string) => {
         if (!text) return false;
-
+        
         const response = text.trim().toLowerCase();
-
-        if (validResponses.map((r) => r.toLowerCase()).includes(response)) {
+        
+        // If no validResponses provided, accept any non-empty response
+        if (!validResponses) {
           this.resetAwaitedState();
           resolve(response);
           return true;
         }
 
+        // Check if response is valid
+        if (validResponses.map(r => r.toLowerCase()).includes(response)) {
+          this.resetAwaitedState();
+          resolve(response);
+          return true;
+        }
+
+        // Invalid response - send error message and continue waiting
         await this.send(
-          `Invalid response "${text}". Please respond with one of: ${validResponses.join(", ")}`,
+          `Invalid response "${text}". Please respond with one of: ${validResponses.join(", ")}`
         );
         return false;
       };
