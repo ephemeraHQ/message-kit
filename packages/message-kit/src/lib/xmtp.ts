@@ -33,7 +33,7 @@ import {
 } from "@xmtp/content-type-remote-attachment";
 import { ContentTypeReaction } from "@xmtp/content-type-reaction";
 import path from "path";
-
+//com
 const frameKitUrl = process.env.FRAMEKIT_URL ?? "https://frameskit.vercel.app/";
 export const awaitedHandlers = new Map<
   string,
