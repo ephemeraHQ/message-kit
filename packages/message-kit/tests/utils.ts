@@ -1,7 +1,7 @@
 import { test, expect } from "vitest";
-import { Agent } from "../helpers/types";
-import { clearMemory, replaceVariables, agentParse } from "../helpers/gpt";
-import { clearInfoCache } from "../helpers/resolver";
+import { Agent } from "../src/helpers/types";
+import { clearMemory, replaceVariables, agentParse } from "../src/helpers/gpt";
+import { clearInfoCache } from "../src/helpers/resolver";
 
 export function testPrompt(
   testCases: [string, string | string[]][],

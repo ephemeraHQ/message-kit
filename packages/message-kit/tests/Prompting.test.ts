@@ -1,6 +1,6 @@
 import { describe } from "vitest";
-import { agent as ensAgent } from "../../../../templates/agent/src/index";
-import { systemPrompt as ensSystemPrompt } from "../../../../templates/agent/src/prompt";
+import { agent as ensAgent } from "../../../templates/agent/src/index";
+import { systemPrompt as ensSystemPrompt } from "../../../templates/agent/src/prompt";
 import { testPrompt } from "./utils";
 const humanAgent = {
   address: "0x93E2fc3e99dFb1238eB9e0eF2580EFC5809C7204",

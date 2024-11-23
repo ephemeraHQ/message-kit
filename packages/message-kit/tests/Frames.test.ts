@@ -1,5 +1,5 @@
 import { describe, test, expect } from "vitest";
-import { extractFrameChain } from "../helpers/utils";
+import { extractFrameChain } from "../src/helpers/utils";
 
 describe("Frame Chain Tests", () => {
   test.each([
