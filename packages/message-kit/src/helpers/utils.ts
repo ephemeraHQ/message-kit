@@ -59,7 +59,10 @@ Powered by XMTP \x1b[0m`;
         `\t- ⚠️🔒 Invalid private key or not set. Generating a random one in your .env file.`,
       );
     }
-    if (process.env.OPENAI_API_KEY === undefined) {
+    if (
+      process.env.OPENAI_API_KEY === undefined &&
+      runConfig?.agent !== undefined
+    ) {
       console.warn(
         `\t- ⚠️ OPENAI_API_KEY is not set. Please set it in your .env file.`,
       );

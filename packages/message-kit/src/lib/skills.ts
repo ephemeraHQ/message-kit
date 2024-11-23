@@ -37,6 +37,17 @@ export async function executeSkill(
         },
       } as XMTPContext;
 
+      // Copy all methods with proper binding
+      Object.getOwnPropertyNames(Object.getPrototypeOf(context)).forEach(
+        (key) => {
+          const method = context[key as keyof XMTPContext];
+          if (typeof method === "function") {
+            (mockContext[key as keyof XMTPContext] as any) =
+              method.bind(context);
+          }
+        },
+      );
+
       if (skillAction?.handler) return skillAction.handler(mockContext);
     } else if (skillAction) {
       console.warn("No handler for", skillAction.skill);
