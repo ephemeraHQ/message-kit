@@ -1,5 +1,5 @@
 import { parseUnits } from "viem";
-import UrlGenerator from "@/components/UrlGenerator";
+import UrlGenerator from "../../components/UrlGenerator";
 
 export default async function Home({
   searchParams,
