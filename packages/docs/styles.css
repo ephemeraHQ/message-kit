@@ -186,8 +186,9 @@
 .dark .vocs_DocsLayout_gutterRight,
 .dark .vocs_Content,
 .dark .vocs_DocsLayout_content,
-.vocs_MobileTopNav_curtain,
-.vocs_MobileTopNav {
+.dark .vocs_MobileTopNav_curtain,
+.dark .vocs_MobileTopNav,
+.dark .vocs_MobileTopNav_sidebarPopover {
   background: black !important;
 }
 .dark body {
@@ -201,8 +202,7 @@
 .dark .vocs_Pre_wrapper pre,
 .dark .vocs_Tabs_list,
 .dark .vocs_CodeTitle,
-.dark .vocs_Tabs_content,
-.dark .vocs_MobileTopNav_sidebarPopover {
+.dark .vocs_Tabs_content {
   background: hsla(0, 0%, 4%, 0.6) !important;
 }
 .dark .custom-homepage-tile:hover {
