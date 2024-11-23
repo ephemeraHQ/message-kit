@@ -214,13 +214,17 @@ export class XMTPContext {
   async awaitResponse(
     prompt: string,
     validResponses?: string[],
+    attempts?: number 
   ): Promise<string> {
     await this.send(`${prompt}`);
+    let attemptCount = 0;
+    attempts = attempts ?? 2;
 
     return new Promise<string>((resolve, reject) => {
       const handler = async (text: string) => {
         if (!text) return false;
         console.log(text);
+        attemptCount++;
 
         const response = text.trim().toLowerCase();
 
@@ -238,9 +242,16 @@ export class XMTPContext {
           return true;
         }
 
+        // Check if max attempts reached
+        if (attemptCount >= attempts) {
+          this.resetAwaitedState();
+          reject(new Error(`Max attempts (${attempts}) reached without valid response`));
+          return true;
+        }
+
         // Invalid response - send error message and continue waiting
         await this.send(
-          `Invalid response "${text}". Please respond with one of: ${validResponses.join(", ")}`
+          `Invalid response "${text}". Please respond with one of: ${validResponses.join(", ")}. Attempts remaining: ${attempts - attemptCount}`
         );
         return false;
       };

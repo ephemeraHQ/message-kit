@@ -72,6 +72,8 @@ export const PROMPT_RULES = `
 - Check that you are not missing a command
 - Focus only on helping users with operations detailed below.
 - Date: ${new Date().toUTCString()}
+- When mentioning any action related to available skills, you MUST trigger the corresponding command in a new line
+- If you suggest an action that has a command, you must trigger that command
 `;
 
 export function replaceSkills(agent: Agent) {
