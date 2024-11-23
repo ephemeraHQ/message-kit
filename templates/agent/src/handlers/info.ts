@@ -35,13 +35,17 @@ export async function handler(context: XMTPContext) {
       message: "Domain not found.",
     };
   }
+  console.log(data);
   let message = `Domain information:\n\n`;
-  message += `Address: ${data?.address}\n`;
-  message += `Avatar URL: ${data?.ensInfo?.avatar}\n`;
-  message += `Description: ${data?.ensInfo?.description}\n`;
-  message += `ENS: ${data?.ensDomain}\n`;
-  message += `Primary ENS: ${data?.ensInfo?.ens_primary}\n`;
-  message += `GitHub: ${data?.ensInfo?.github}\n`;
+  message += `URL: https://app.ens.domains/${data?.ensDomain}\n`;
+  if (data?.address) message += `Address: ${data?.address}\n`;
+  if (data?.ensInfo?.avatar) message += `Avatar: ${data?.ensInfo?.avatar}\n`;
+  if (data?.ensInfo?.description)
+    message += `Description: ${data?.ensInfo?.description}\n`;
+  if (data?.ensInfo?.ens_primary)
+    message += `Primary ENS: ${data?.ensInfo?.ens_primary}\n`;
+  if (data?.ensInfo?.github) message += `GitHub: ${data?.ensInfo?.github}\n`;
+  if (data?.ensInfo?.twitter) message += `Twitter: ${data?.ensInfo?.twitter}\n`;
   message += `\n\nWould you like to tip the domain owner for getting there first 🤣?`;
   message = message.trim();
 
