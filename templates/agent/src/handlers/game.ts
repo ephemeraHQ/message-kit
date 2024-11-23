@@ -35,23 +35,24 @@ export async function handler(context: XMTPContext) {
     wordle: "https://framedl.xyz",
     slot: "https://slot-machine-frame.vercel.app",
   };
-  // Respond with the appropriate game URL or an error message
+  let returnText = "";
   switch (params.game) {
     case "wordle":
     case "slot":
       // Retrieve the URL for the requested game using a simplified variable assignment
       const gameUrl = gameUrls[params.game];
       // Send the URL for the requested game
-      context.send(gameUrl);
+      returnText = gameUrl;
       break;
 
     case "help":
-      context.send("Available games: \n/game wordle\n/game slot");
+      returnText = "Available games: \n/game wordle\n/game slot";
       break;
     default:
       // Inform the user about unrecognized skills and provide available options
-      context.send(
-        "Skill not recognized. Available games: wordle, slot, or help.",
-      );
+      returnText =
+        "Skill not recognized. Available games: wordle, slot, or help.";
+      break;
   }
+  return { code: 200, message: returnText };
 }
