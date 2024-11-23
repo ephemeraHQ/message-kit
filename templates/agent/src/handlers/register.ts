@@ -37,3 +37,4 @@ export async function handler(context: XMTPContext) {
   let url_ens = ensUrl + domain;
   return { code: 200, message: `${url_ens}` };
 }
+
