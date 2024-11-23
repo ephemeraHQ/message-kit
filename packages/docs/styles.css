@@ -198,7 +198,9 @@
 .dark div.vocs_DesktopTopNav_curtain {
   display: none !important;
 }
-
+.dark .vocs_Code {
+  background: transparent !important;
+}
 .dark .vocs_Pre_wrapper pre,
 .dark .vocs_Tabs_list,
 .dark .vocs_CodeTitle,
@@ -207,5 +209,8 @@
 }
 .dark .custom-homepage-tile:hover {
   border: white 1px solid !important;
+}
+.dark .vocs_CodeBlock .highlighted {
+  background: hsla(0, 0%, 4%, 0.6) !important;
 }
 /*END DARK*/
