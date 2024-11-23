@@ -40,6 +40,10 @@ const TileGrid: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <div className="custom-homepage-grid">{children}</div>
 );
 
+const TileGrid3: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <div className="custom-homepage-grid-3">{children}</div>
+);
+
 interface TileProps {
   href: string;
   title: string;
@@ -96,5 +100,6 @@ export const CustomHomePage = {
   Headline,
   Subhead,
   TileGrid,
+  TileGrid3,
   Tile,
 };

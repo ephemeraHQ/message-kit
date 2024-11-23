@@ -75,6 +75,14 @@
   gap: 1.5rem;
 }
 
+.custom-homepage-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem; /* reduced from 1.5rem */
+}
+.custom-homepage-grid-3 .custom-homepage-tile-title {
+  font-size: 1rem;
+}
 .custom-homepage-tile {
   position: relative; /* Add this line */
   background-color: var(--vocs-color-bg-soft);
