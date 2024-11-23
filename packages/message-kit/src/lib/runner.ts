@@ -38,6 +38,7 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
         ) {
           return;
         }
+        console.log(message);
         const context = await XMTPContext.create(
           conversation,
           message,
@@ -57,10 +58,18 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
         if (awaitedHandler) {
           const messageText =
             context.message.content.text || context.message.content.reply || "";
-          const isValidResponse = await awaitedHandler(messageText);
-          // Only remove the handler if we got a valid response
-          if (isValidResponse) {
-            awaitedHandlers.delete(context.getConversationKey());
+          // Check if the response is from the expected user
+          const expectedUser = context.getConversationKey().split(':')[1];
+          const actualSender = version === 'v3' ? 
+            (message as DecodedMessage).senderInboxId :
+            (message as DecodedMessageV2).senderAddress;
+            
+          if (expectedUser?.toLowerCase() === actualSender?.toLowerCase()) {
+            const isValidResponse = await awaitedHandler(messageText);
+            // Only remove the handler if we got a valid response
+            if (isValidResponse) {
+              awaitedHandlers.delete(context.getConversationKey());
+            }
           }
           return;
         }

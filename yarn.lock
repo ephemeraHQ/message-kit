@@ -3457,7 +3457,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@xmtp/content-type-group-updated@npm:^1.0.0":
+"@xmtp/content-type-group-updated@npm:^1.0.1":
   version: 1.0.1
   resolution: "@xmtp/content-type-group-updated@npm:1.0.1"
   dependencies:
@@ -3543,7 +3543,7 @@ __metadata:
     "@xmtp/content-type-reply": "npm:^1.1.11"
     "@xmtp/content-type-text": "npm:^1.0.0"
     "@xmtp/grpc-api-client": "npm:^0.2.8"
-    "@xmtp/node-sdk": "npm:^0.0.24"
+    "@xmtp/node-sdk": "npm:^0.0.27"
     "@xmtp/xmtp-js": "npm:^13.0.3"
     dotenv: "npm:^16.4.5"
     openai: "npm:^4.52.7"
@@ -3558,27 +3558,27 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@xmtp/node-bindings@npm:^0.0.18":
-  version: 0.0.18
-  resolution: "@xmtp/node-bindings@npm:0.0.18"
-  checksum: 10/5cca0748f163728c013ff17cf7fba81a64a7a6029a9782c6b568fd1044940c8ae641110f0a187ee2ac7787f303552712ebe1d5c515c5dad4dc0baa31506d8b83
+"@xmtp/node-bindings@npm:^0.0.22":
+  version: 0.0.22
+  resolution: "@xmtp/node-bindings@npm:0.0.22"
+  checksum: 10/e8668b2fd30041dff8671625c13d49245d421ac31c0669b9be5365b5f22bf3c28f4d0cc12015a2710b90136423828bcdb1a99a10b37d4d5ac51e3ac47228b960
   languageName: node
   linkType: hard
 
-"@xmtp/node-sdk@npm:^0.0.24":
-  version: 0.0.24
-  resolution: "@xmtp/node-sdk@npm:0.0.24"
+"@xmtp/node-sdk@npm:^0.0.27":
+  version: 0.0.27
+  resolution: "@xmtp/node-sdk@npm:0.0.27"
   dependencies:
-    "@xmtp/content-type-group-updated": "npm:^1.0.0"
-    "@xmtp/content-type-primitives": "npm:^1.0.2"
-    "@xmtp/content-type-text": "npm:^1.0.0"
-    "@xmtp/node-bindings": "npm:^0.0.18"
-    "@xmtp/proto": "npm:^3.62.1"
-  checksum: 10/0da87b706b05e36fca5e92564364f0d6b4e9b9944c0c318c3b626b215b86a990c28a0b1988619b86af1e80203c977607e5f1bfc79ff3f336905b422b59cadadc
+    "@xmtp/content-type-group-updated": "npm:^1.0.1"
+    "@xmtp/content-type-primitives": "npm:^1.0.3"
+    "@xmtp/content-type-text": "npm:^1.0.1"
+    "@xmtp/node-bindings": "npm:^0.0.22"
+    "@xmtp/proto": "npm:^3.72.3"
+  checksum: 10/9937c77d4bd3f3ed8df2f9938e940e2c21a7c8e8f06506d227bb97939f8294e0ae6ec6bc1498f528274257d61f9142e38639aa123c3ddf086a98d9cd041c0161
   languageName: node
   linkType: hard
 
-"@xmtp/proto@npm:^3.61.1, @xmtp/proto@npm:^3.62.1, @xmtp/proto@npm:^3.72.0":
+"@xmtp/proto@npm:^3.61.1, @xmtp/proto@npm:^3.72.0, @xmtp/proto@npm:^3.72.3":
   version: 3.72.3
   resolution: "@xmtp/proto@npm:3.72.3"
   dependencies:

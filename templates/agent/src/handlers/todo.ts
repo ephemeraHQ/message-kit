@@ -47,8 +47,8 @@ export async function handler(context: XMTPContext) {
       `
     }
     console.log(content);
-    const response = await resend.emails.send(content);
-    console.log(response);
+    // const response = await resend.emails.send(content);
+    // console.log(response);
 
     await context.send(`✅ Summary sent successfully to ${email}`);
   } catch (error) {

@@ -214,9 +214,10 @@ export class XMTPContext {
     return new Promise<string>((resolve, reject) => {
       const handler = async (text: string) => {
         if (!text) return false;
-        
+        console.log(text);
+
         const response = text.trim().toLowerCase();
-        
+
         // If no validResponses provided, accept any non-empty response
         if (!validResponses) {
           this.resetAwaitedState();
@@ -358,10 +359,8 @@ export class XMTPContext {
   }
   getConversationKey() {
     const conversation = this.refConv || this.conversation || this.group;
-    return (
-      (conversation as V2Conversation)?.topic ||
-      (conversation as Conversation)?.id
-    );
+    const awaitingSender = this.message?.sender?.inboxId || this.message?.sender?.address;
+    return `${(conversation as V2Conversation)?.topic || (conversation as Conversation)?.id}:${awaitingSender}`;
   }
   isV2Conversation(
     conversation: Conversation | V2Conversation | null,

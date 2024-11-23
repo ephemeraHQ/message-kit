@@ -56,7 +56,7 @@ run(
     // [!region run2]
     await agentReply(context, prompt);
   },
-  { agent },
+  { agent},
 );
 
 // [!endregion run2]
