@@ -141,7 +141,7 @@ export class XMTPContext {
         (() => null);
 
       context.executeSkill = async (text: string) => {
-        const result = await executeSkill(text, context.agent ?? [], context);
+        const result = await executeSkill(text, context.agent, context);
         return result ?? undefined;
       };
       let typeId = message.contentType?.typeId;

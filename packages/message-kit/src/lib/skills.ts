@@ -17,8 +17,6 @@ export async function executeSkill(
   agent: Agent,
   context: XMTPContext,
 ) {
-  // Use the custom text parameter
-  let conversation = context.conversation;
   try {
     let skillAction = findSkill(text, agent.skills);
     const extractedValues = skillAction

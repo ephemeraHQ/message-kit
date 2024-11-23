@@ -19,7 +19,6 @@ import fs from "fs";
 
 export const frameUrl = "https://ens.steer.fun/";
 export const ensUrl = "https://app.ens.domains/";
-export const txpayUrl = "https://txpay.vercel.app";
 
 // [!region skills]
 export const agent: Agent = {
