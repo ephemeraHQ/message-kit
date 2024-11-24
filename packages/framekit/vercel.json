@@ -2,5 +2,7 @@
   "buildCommand": "cd ../.. && yarn build",
   "outputDirectory": ".next",
   "framework": "nextjs",
-  "installCommand": "yarn cache clean && yarn install"
+  "env": {
+    "VERCEL_FORCE_NO_CACHE": "1"
+  }
 }
