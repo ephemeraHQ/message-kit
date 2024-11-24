@@ -1,4 +1,4 @@
-import { describe, test, expect } from "vitest";
+import { describe, test, expect, fail } from "vitest";
 import { parseSkill, findSkill } from "../src/lib/skills";
 import { agent as web3Agent } from "../../../templates/agent/src/index";
 
@@ -24,8 +24,7 @@ describe("Parsing tests", () => {
         expect(extractedValues?.skill).toBe(expectedSkill);
         expect(extractedValues?.params).toEqual(expectedParams);
       } else {
-        console.log("No skill found");
-        expect(true).toBe(false);
+        fail(`No skill found for input: ${input}`);
       }
     },
   );

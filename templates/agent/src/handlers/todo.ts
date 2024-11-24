@@ -1,7 +1,9 @@
 import { Resend } from 'resend';
 import { XMTPContext } from "@xmtp/message-kit";
 import type { Skill } from "@xmtp/message-kit";
-
+if(!process.env.RESEND_API_KEY){
+  console.warn("RESEND_API_KEY is not set");
+}
 const resend = new Resend(process.env.RESEND_API_KEY); // Replace with your Resend API key
 
 export const registerSkill: Skill[] = [
