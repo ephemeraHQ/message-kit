@@ -1,5 +1,4 @@
 {
-  "buildCommand": "yarn build",
   "outputDirectory": "dist",
   "framework": "vite",
   "rewrites": [
