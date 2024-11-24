@@ -20,12 +20,15 @@ export const registerSkill: Skill[] = [
 export async function handler(context: XMTPContext) {
   const {
     message: {
-      content: { reply, previousMsg },
+      content: { previousMsg },
     },
   } = context;
 
   let email = "";
-
+  if (!previousMsg) {
+    await context.send("You need to do it on a reply.");
+    return;
+  }
   let intents = 2;
   while (intents > 0) {
     const emailResponse = await context.awaitResponse(
@@ -51,19 +54,21 @@ export async function handler(context: XMTPContext) {
     return;
   }
   try {
-    let content = {
-      from: "bot@mail.coin-toss.xyz",
-      to: email,
-      subject: "Your TODO Summary from Converse",
-      html: `
+    if (typeof previousMsg === "string") {
+      let content = {
+        from: "bot@mail.coin-toss.xyz",
+        to: email,
+        subject: "Your summary from Converse",
+        html: `
         <h3>Your TODO Summary</h3>
-        <p>${reply}</p>
+        <p>${previousMsg.replace(/\n/g, "<br>")}</p>
       `,
-    };
-    const response = await resend.emails.send(content);
-    console.log(response);
-
-    await context.send(`✅ Summary sent successfully to ${email}`);
+      };
+      await resend.emails.send(content);
+      await context.send(`✅ Summary sent successfully to ${email}`);
+    } else {
+      await context.send("❌ Message not found.");
+    }
   } catch (error) {
     await context.send("❌ Failed to send email. Please try again later.");
     console.error("Error sending email:", error);

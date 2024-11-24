@@ -169,13 +169,8 @@ export class XMTPContext {
             };
           }
         } else if (message?.contentType?.sameAs(ContentTypeReply)) {
-          let previousMsg =
-            version === "v3"
-              ? await context.getMessageById(content.reference)
-              : await context.getV2ReplyChain(
-                  content.reference,
-                  context.conversation.topic,
-                );
+          let previousMsg = await context.getLastMessageById(content.reference);
+          console.log("previousMsg", previousMsg);
           content = {
             previousMsg: previousMsg,
             reply: content.content,
@@ -288,11 +283,8 @@ export class XMTPContext {
     const messages = await conversation.messages();
     return messages.find((m) => m.id === reference) as DecodedMessageV2;
   }
-  /*NEEDS TO BE FIXED*/
-  async getV3ReplyChain(
-    reference: string,
-    botAddress?: string,
-  ): Promise<{
+  /*NEEDS TO BE FIXED
+  async getV3ReplyChain(reference: string): Promise<{
     chain: Array<{ address: string; content: string }>;
     isSenderInChain: boolean;
   }> {
@@ -361,13 +353,13 @@ export class XMTPContext {
         isSenderInChain: false,
       };
     }
-  }
-  async getV2ReplyChain(reference: string, convId: string) {
-    const msg = await this.getV2MessageById(convId, reference);
-    return {
-      chain: [{ address: msg?.senderAddress, content: msg?.content }],
-      isSenderInChain: false,
-    };
+  }*/
+  async getLastMessageById(reference: string) {
+    let msg = await (this.version === "v3"
+      ? this.getMessageById(reference)
+      : this.getV2MessageById(this.conversation.topic, reference));
+    msg = msg?.content;
+    return msg;
   }
   async reply(message: string) {
     if (typeof message !== "string") {

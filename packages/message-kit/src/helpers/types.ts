@@ -8,6 +8,7 @@ export type MessageAbstracted = {
   content: {
     text?: string | undefined;
     reply?: string | undefined;
+    previousMsg?: string | undefined;
     react?: string | undefined;
     content?: any | undefined;
     params?: any | undefined;
