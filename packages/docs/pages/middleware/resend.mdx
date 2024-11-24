@@ -1,6 +1,6 @@
-# Resend middleware
+# Resend
 
-Use Resend to send emails.
+Use [Resend](https://resend.com) to send emails.
 
 ## Install
 
@@ -15,5 +15,20 @@ bun add resend
 Send an email with a list of TODOs.
 
 ```tsx [src/handlers/todo.ts]
-// [!include ~/../../templates/agent/src/handlers/todo.ts]
+if (!process.env.RESEND_API_KEY) {
+  console.warn("RESEND_API_KEY is not set");
+}
+const resend = new Resend(process.env.RESEND_API_KEY); // Replace with your Resend API key
+
+// Replace with your email
+let content = {
+  from: "your@email.com",
+  to: email,
+  subject: "Your summary from Converse",
+  html: `
+        <h3>Your TODO Summary</h3>
+        <p>${previousMsg.replace(/\n/g, "<br>")}</p>
+      `,
+};
+await resend.emails.send(content);
 ```

@@ -9,9 +9,15 @@ run(async (context: XMTPContext) => {
   const {
     message: {
       id,
-      content: { text, skill, params, attachment },
-      reply,
-      reference,
+      content: {
+        reference,
+        reply,
+        previousMsg,
+        text,
+        skill,
+        params,
+        attachment,
+      },
     },
     sender,
     sent,
@@ -53,11 +59,9 @@ const answer = await context.awaitResponse("Please answer with yes or no", [
 console.log(`You answered: ${answer}`);
 // Send an image
 await context.sendImage("path/to/image.png");
-// Send a payment url
-await context.requestPayment(1, "USDC", address);
-//Send receipt
-await context.sendReceipt(link, "logo", "base", "token", 1);
 ```
+
+> Check out [Frames](/concepts/frames) for sending dynamic content.
 
 ## Receiving
 
@@ -68,9 +72,19 @@ run(async (context: XMTPContext) => {
   const {
     message: {
       id,
-      content: { reply, text, skill, params, attachment },
-      reference,
+      sent,
+      sender,
+      version,
       typeId,
+      content: {
+        reference,
+        reply,
+        text,
+        skill,
+        params,
+        attachment,
+        previousMsg,
+      },
     },
   } = context;
 
@@ -83,6 +97,7 @@ run(async (context: XMTPContext) => {
     // Use params
   } else if (typeId === "reply") {
     // Do something with the `reply`
+    console.log(previousMsg);
   } else if (typeId === "attachment") {
     const { data, mimeType, filename } = attachment;
     const base64Image = Buffer.from(data).toString("base64");
