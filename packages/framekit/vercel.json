@@ -1,5 +1,6 @@
 {
   "buildCommand": "cd ../.. && yarn build",
   "outputDirectory": ".next",
-  "framework": "nextjs"
+  "framework": "nextjs",
+  "installCommand": "yarn cache clean && yarn install"
 }
