@@ -1,6 +1,6 @@
 {
   "buildCommand": "yarn build",
-  "outputDirectory": "packages/docs/dist",
+  "outputDirectory": "dist",
   "framework": "vite",
   "rewrites": [
     {
