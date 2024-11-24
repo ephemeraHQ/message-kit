@@ -169,10 +169,15 @@ export class XMTPContext {
             };
           }
         } else if (message?.contentType?.sameAs(ContentTypeReply)) {
-          // Test in grups
-          //const reply=await context.getV3ReplyChain(content.reference,context.sender?.address)
-
+          let previousMsg =
+            version === "v3"
+              ? await context.getMessageById(content.reference)
+              : await context.getV2ReplyChain(
+                  content.reference,
+                  context.conversation.topic,
+                );
           content = {
+            previousMsg: previousMsg,
             reply: content.content,
             text: content.content,
             reference: content.reference,
@@ -270,16 +275,18 @@ export class XMTPContext {
     awaitedHandlers.delete(this.getConversationKey());
   }
 
-  async getV2MessageById(reference: string): Promise<DecodedMessageV2 | null> {
+  async getV2MessageById(
+    conversationId: string,
+    reference: string,
+  ): Promise<DecodedMessageV2 | null> {
     /*Takes to long, deprecated*/
     const conversations = await this.v2client.conversations.list();
-    for (const conversation of conversations) {
-      const messages = await conversation.messages();
-      if (messages.find((m) => m.id === reference)) {
-        return messages.find((m) => m.id === reference) as DecodedMessageV2;
-      }
-    }
-    return null;
+    const conversation = conversations.find(
+      (conv) => conv.topic === conversationId,
+    );
+    if (!conversation) return null;
+    const messages = await conversation.messages();
+    return messages.find((m) => m.id === reference) as DecodedMessageV2;
   }
   /*NEEDS TO BE FIXED*/
   async getV3ReplyChain(
@@ -354,6 +361,13 @@ export class XMTPContext {
         isSenderInChain: false,
       };
     }
+  }
+  async getV2ReplyChain(reference: string, convId: string) {
+    const msg = await this.getV2MessageById(convId, reference);
+    return {
+      chain: [{ address: msg?.senderAddress, content: msg?.content }],
+      isSenderInChain: false,
+    };
   }
   async reply(message: string) {
     if (typeof message !== "string") {
