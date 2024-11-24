@@ -1,6 +1,6 @@
 {
   "buildCommand": "cd ../.. && yarn build",
-  "outputDirectory": ".next",
+  "outputDirectory": "dist",
   "framework": "nextjs",
   "env": {
     "VERCEL_FORCE_NO_CACHE": "1"
