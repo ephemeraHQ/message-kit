@@ -1,7 +1,13 @@
 {
-  "buildCommand": "cd ../.. && yarn build",
-  "outputDirectory": "dist",
-  "framework": "nextjs",
+  "buildCommand": "yarn build",
+  "outputDirectory": "packages/docs/dist",
+  "framework": "vite",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ],
   "env": {
     "VERCEL_FORCE_NO_CACHE": "1"
   }
