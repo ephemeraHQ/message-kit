@@ -6,18 +6,16 @@ import {
   Agent,
 } from "@xmtp/message-kit";
 import { systemPrompt } from "./prompt.js";
-import { registerSkill as paySkill } from "./handlers/pay.js";
-import { registerSkill as resetSkill } from "./handlers/reset.js";
-import { registerSkill as tokenSkill } from "./handlers/token.js";
-import { registerSkill as todoSkill } from "./handlers/todo.js";
-import { registerSkill as infoSkill } from "./handlers/info.js";
-import { registerSkill as gatedSkill } from "./handlers/gated.js";
-import fs from "fs";
+import { registerSkill as paySkill } from "./skills/pay.js";
+import { registerSkill as resetSkill } from "./skills/reset.js";
+import { registerSkill as tokenSkill } from "./skills/token.js";
+import { registerSkill as todoSkill } from "./skills/todo.js";
+import { registerSkill as infoSkill } from "./skills/info.js";
+import { registerSkill as gatedSkill } from "./skills/gated.js";
 
 export const frameUrl = "https://ens.steer.fun/";
 export const ensUrl = "https://app.ens.domains/";
 
-// [!region skills]
 export const agent: Agent = {
   name: "Web3 Agent",
   tag: "@bot",
@@ -31,9 +29,6 @@ export const agent: Agent = {
     ...gatedSkill,
   ],
 };
-// [!endregion skills]
-
-// [!region run1]
 run(
   async (context: XMTPContext) => {
     const {
@@ -42,13 +37,8 @@ run(
     } = context;
 
     let prompt = await replaceVariables(systemPrompt, sender.address, agent);
-    // [!region run1]
-    //This is only used for to update the docs.
-    fs.writeFileSync("example_prompt.md", prompt);
-    // [!region run2]
+
     await agentReply(context, prompt);
   },
   { agent },
 );
-
-// [!endregion run2]

@@ -1,4 +1,3 @@
-import { ensUrl } from "../index.js";
 import { XMTPContext, getUserInfo, isOnXMTP } from "@xmtp/message-kit";
 
 import type { Skill } from "@xmtp/message-kit";

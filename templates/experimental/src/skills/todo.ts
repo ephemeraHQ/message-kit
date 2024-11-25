@@ -1,5 +1,5 @@
 import { Resend } from "resend";
-import { XMTPContext } from "@xmtp/message-kit";
+import { XMTPContext, textGeneration } from "@xmtp/message-kit";
 import type { Skill } from "@xmtp/message-kit";
 
 const resend = new Resend(process.env.RESEND_API_KEY); // Replace with your Resend API key
@@ -18,6 +18,7 @@ export const registerSkill: Skill[] = [
 export async function handler(context: XMTPContext) {
   const {
     message: {
+      sender,
       content: { previousMsg },
     },
   } = context;
@@ -52,13 +53,19 @@ export async function handler(context: XMTPContext) {
     return;
   }
   try {
-    if (typeof previousMsg === "string") {
+    let msg = await textGeneration(
+      sender.address,
+      previousMsg,
+      "Make this summary concise and to the point to be sent in an html email.",
+    );
+
+    if (typeof msg === "string") {
       let content = {
         from: "bot@mail.coin-toss.xyz",
         to: email,
         subject: "Your summary from Converse",
         html: `
-        <h3>Your TODO Summary</h3>
+        <h3>Your Converse Summary</h3>
         <p>${previousMsg.replace(/\n/g, "<br>")}</p>
       `,
       };
