@@ -3,6 +3,5 @@
   "framework": "nextjs",
   "env": {
     "VERCEL_FORCE_NO_CACHE": "1"
-  },
-  "rootDirectory": "packages/framekit/"
+  }
 }

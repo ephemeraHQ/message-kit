@@ -1,5 +1,5 @@
 import { HomePage } from "vocs/components";
-import { CustomHomePage } from "../../components/CustomHomePage";
+import { CustomHomePage } from "../../../components/CustomHomePage";
 
 # Skills Library
 
@@ -9,21 +9,21 @@ Welcome to the MessageKit skills library. Here you'll find a collection of pre-b
 
 <CustomHomePage.TileGrid3>
     <CustomHomePage.Tile
-        href="/templates/agent/handlers/info"
+        href="/skills/library/info"
         title="ENS domain info"
         description="Get information about an ENS domain"
         icon="ℹ️"
     />
 
     <CustomHomePage.Tile
-        href="/templates/agent/handlers/register"
+        href="/skills/library/register"
         title="Register ENS domain"
         description="Register an ENS domain"
         icon="📝"
     />
 
     <CustomHomePage.Tile
-        href="/templates/agent/handlers/check"
+        href="/skills/library/check"
         title="Check ENS domain"
         description="Verify and validate user requests"
         icon="✅"
@@ -31,14 +31,14 @@ Welcome to the MessageKit skills library. Here you'll find a collection of pre-b
 
 
     <CustomHomePage.Tile
-        href="/templates/agent/handlers/renew"
+        href="/skills/library/renew"
         title="Renew ENS domain"
         description="Renew an ENS domain"
         icon="🔄"
     />
 
     <CustomHomePage.Tile
-        href="/templates/agent/handlers/cool"
+        href="/skills/library/cool"
         title="Cool ENS domains"
         description="Suggest fun ENS domains"
         icon="😎"
@@ -50,14 +50,14 @@ Welcome to the MessageKit skills library. Here you'll find a collection of pre-b
 
 <CustomHomePage.TileGrid3>
     <CustomHomePage.Tile
-        href="/templates/agent/handlers/token"
+        href="/skills/library/token"
         title="Token info"
         description="Get information about a token"
         icon="🪙"
     />
 
     <CustomHomePage.Tile
-        href="/templates/agent/handlers/pay"
+        href="/skills/library/pay"
         title="Pay"
         description="Generate a mobile payment link"
         icon="💰"
@@ -69,7 +69,7 @@ Welcome to the MessageKit skills library. Here you'll find a collection of pre-b
 
 <CustomHomePage.TileGrid3>
     <CustomHomePage.Tile
-        href="/templates/agent/handlers/game"
+        href="/skills/library/game"
         title="Wordle"
         description="Play Wordle"
         icon="🎮"
@@ -81,15 +81,22 @@ Welcome to the MessageKit skills library. Here you'll find a collection of pre-b
 
 <CustomHomePage.TileGrid3>
   <CustomHomePage.Tile
-    href="/templates/agent/handlers/reset"
+    href="/skills/library/reset"
     title="Reset state"
     description="Reset user data and settings"
     icon="🔄"
   />{" "}
   <CustomHomePage.Tile
-    href="/templates/agent/handlers/todo"
-    title="Send summary by email"
+    href="/skills/library/todo"
+    title="Summary by email"
     description="Send a summary of the day by email"
     icon="📧"
+  />
+
+  <CustomHomePage.Tile
+    href="/skills/library/gated"
+    title="Gated group"
+    description="Create an nft gated group."
+    icon="🔒"
   />
 </CustomHomePage.TileGrid3>

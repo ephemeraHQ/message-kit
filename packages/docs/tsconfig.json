@@ -20,5 +20,5 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["**/*.ts", "**/*.tsx", "pages/middleware/gpt.mdx", "pages/templates/agent/handlers/check.mdx", "pages/templates/agent/handlers/cool.mdx", "pages/templates/agent/handlers/info.mdx", "pages/templates/agent/handlers/register.mdx", "pages/templates/agent/handlers/renew.mdx", "pages/templates/agent/handlers/reset.mdx", "pages/templates/agent/handlers/pay.mdx"]
+  "include": ["**/*.ts", "**/*.tsx", "pages/middleware/gpt.mdx", "pages/skills/library/check.mdx", "pages/skills/library/cool.mdx", "pages/skills/library/info.mdx", "pages/skills/library/register.mdx", "pages/skills/library/renew.mdx", "pages/skills/library/reset.mdx", "pages/skills/library/pay.mdx"]
 }

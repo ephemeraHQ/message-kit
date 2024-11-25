@@ -7,6 +7,7 @@ import {
 } from "@xmtp/message-kit";
 
 import { systemPrompt } from "./prompt.js";
+
 export const agent: Agent = {
   name: "GPT Bot",
   tag: "@bot",
