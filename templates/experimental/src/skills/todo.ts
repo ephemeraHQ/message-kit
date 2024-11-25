@@ -31,7 +31,7 @@ export async function handler(context: XMTPContext) {
   let intents = 2;
   while (intents > 0) {
     const emailResponse = await context.awaitResponse(
-      "Please provide your email address to receive the TODO summary:",
+      "Please provide your email address to receive the to-dos summary:",
     );
     email = emailResponse;
 
@@ -53,20 +53,20 @@ export async function handler(context: XMTPContext) {
     return;
   }
   try {
-    let msg = await textGeneration(
-      sender.address,
-      previousMsg,
-      "Make this summary concise and to the point to be sent in an html email.",
+    let { reply } = await textGeneration(
+      email,
+      "Make this summary concise and to the point to be sent in an html email. Just return the content inside the body tag.\n msg: " +
+        previousMsg,
+      "You are an expert at summarizing to-dos.",
     );
-
-    if (typeof msg === "string") {
+    if (typeof reply === "string") {
       let content = {
         from: "bot@mail.coin-toss.xyz",
         to: email,
         subject: "Your summary from Converse",
         html: `
         <h3>Your Converse Summary</h3>
-        <p>${previousMsg.replace(/\n/g, "<br>")}</p>
+        <p>${reply}</p>
       `,
       };
       await resend.emails.send(content);

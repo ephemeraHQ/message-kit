@@ -170,7 +170,6 @@ export class XMTPContext {
           }
         } else if (message?.contentType?.sameAs(ContentTypeReply)) {
           let previousMsg = await context.getLastMessageById(content.reference);
-          console.log("previousMsg", previousMsg);
           content = {
             previousMsg: previousMsg,
             reply: content.content,

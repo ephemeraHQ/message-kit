@@ -11,7 +11,7 @@
     "prebuild": "turbo run build --filter=./packages/message-kit --force",
     "build": "yarn prebuild && turbo run build --filter='./packages/*' --filter='./templates/*'",
     "changeset": "yarn copy && changeset add --type patch",
-    "clean": "turbo run clean && rm -rf node_modules && rm -rf .turbo && rm -rf packages/message-kit/dist && rm -rf packages/message-kit/.turbo && yarn cache clean",
+    "clean": "turbo run clean && rm -rf node_modules && rm -rf .turbo && rm -rf packages/message-kit/dist && rm -rf packages/message-kit/.turbo && rm -rf packages/docs/dist && yarn cache clean",
     "copy": "rm -rf packages/create-message-kit/templates && cd packages/create-message-kit && yarn copy && cd ../.. && echo 'Copy completed'",
     "dev": "cd packages/message-kit && yarn build:watch",
     "dev:agent": "cd templates/agent && yarn dev",
