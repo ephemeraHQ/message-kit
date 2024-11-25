@@ -5,13 +5,13 @@
 Each app consists of the following files:
 
 ```
-app-project/              # Optional middleware files
+agent/
 ├── src/
-│   └── index.ts          # Entry point for your agent. // [!code hl] // [!code focus]
-│   └── prompt.ts         # Prompt for your agent. // [!code hl] // [!code focus]
-├── tsconfig.json         // [!code hl] // [!code focus]
-├── package.json          // [!code hl] // [!code focus]
-└── .env                  # Environment variables
+│   └── index.ts
+│   └── prompt.ts
+├── tsconfig.json
+├── package.json
+└── .env
 ```
 
 ## Runner
@@ -104,7 +104,7 @@ const { v2client: newClient } = await xmtpClient({
 );
 ```
 
-> This is used in the [Cron](/middleware/cron) middleware to send updates to the users.
+> This is used in the [Cron](/middleware/cron) plugin to send updates to the users.
 
 ## Manual Installation
 
