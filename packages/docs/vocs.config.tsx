@@ -154,7 +154,7 @@ export default defineConfig({
       text: "Middleware",
       items: [
         {
-          text: "Overview",
+          text: "Plugins",
           link: "/middleware",
         },
         {
