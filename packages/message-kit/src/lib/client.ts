@@ -19,6 +19,13 @@ import { RunConfig } from "../helpers/types";
 import { getRandomValues } from "crypto";
 import path from "path";
 
+// Define the return type interface
+interface UserReturnType {
+  key: string;
+  account: ReturnType<typeof privateKeyToAccount>;
+  wallet: ReturnType<typeof createWalletClient>;
+}
+
 export type User = ReturnType<typeof createUser>;
 
 export async function xmtpClient(
@@ -69,7 +76,7 @@ export async function xmtpClient(
   return { client, v2client };
 }
 
-export const createUser = (key: string) => {
+export const createUser = (key: string): UserReturnType => {
   const account = privateKeyToAccount(key as `0x${string}`);
   return {
     key,
@@ -129,6 +136,7 @@ export const createSigner = (user: User) => {
     getAddress: () => user.account.address,
     signMessage: async (message: string) => {
       const signature = await user.wallet.signMessage({
+        account: user.account,
         message,
       });
       return toBytes(signature);
