@@ -18,7 +18,6 @@
     "dev:cli": "cd packages/create-message-kit ",
     "dev:docs": "cd packages/docs && yarn dev",
     "dev:frames": "cd packages/framekit && yarn dev",
-    "dev:gated": "cd templates/gated && yarn dev",
     "dev:gpt": "cd templates/gpt && yarn dev",
     "dev:group": "cd templates/group && yarn dev",
     "format": "turbo run format",

@@ -12,5 +12,5 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["agent", "gpt", "gated",  "docs", "@xmtp/tsconfig"]
+  "ignore": ["agent", "gpt", "framekit", "docs", "@xmtp/tsconfig"]
 }

@@ -1,6 +1,6 @@
-// Import necessary modules
+//@ts-nocheck
 import express from "express";
-import { XMTPContext, V3Client,  Skill } from "@xmtp/message-kit";
+import { XMTPContext, V3Client, Skill } from "@xmtp/message-kit";
 import { Alchemy, Network } from "alchemy-sdk";
 
 const settings = {
@@ -11,22 +11,21 @@ const settings = {
 export let registerSkill: Skill[] = [
   {
     skill: "/create",
-      examples: ["/create"],
-      handler: handler,
-      adminOnly: true,
-      params: {},
-      description: "Create a new group.",
-    },
-    {
-      skill: "/id",
-      examples: ["/id"],
-      handler: handler,
-      adminOnly: true,
-      params: {},
-      description: "Get group id.",
-    },
-  ],
-};
+    examples: ["/create"],
+    handler: handler,
+    adminOnly: true,
+    params: {},
+    description: "Create a new group.",
+  },
+  {
+    skill: "/id",
+    examples: ["/id"],
+    handler: handler,
+    adminOnly: true,
+    params: {},
+    description: "Get group id.",
+  },
+];
 
 async function handler(context: XMTPContext) {
   const {
