@@ -1,6 +1,6 @@
 {
   "name": "@xmtp/message-kit",
-  "version": "1.1.10-beta.1",
+  "version": "1.2.6",
   "license": "MIT",
   "type": "module",
   "exports": {
@@ -26,10 +26,11 @@
     "format:check": "yarn format:base -c .",
     "prepublishOnly": " cd ../../ && yarn copy && yarn build",
     "test": "vitest",
-    "test:client": "vitest run src/tests/client",
+    "test:client": "vitest run tests/client",
     "test:coverage": "vitest run --coverage",
-    "test:parsing": "vitest run src/tests/parsing",
-    "test:prompting": "vitest run src/tests/prompting",
+    "test:frames": "vitest run tests/frames",
+    "test:parsing": "vitest run tests/parsing",
+    "test:prompting": "vitest run tests/prompting",
     "test:watch": "vitest watch",
     "typecheck": "tsc --noEmit"
   },
@@ -42,7 +43,7 @@
     "@xmtp/content-type-reply": "^1.1.11",
     "@xmtp/content-type-text": "^1.0.0",
     "@xmtp/grpc-api-client": "^0.2.8",
-    "@xmtp/node-sdk": "^0.0.24",
+    "@xmtp/node-sdk": "^0.0.27",
     "@xmtp/xmtp-js": "^13.0.3",
     "dotenv": "^16.4.5",
     "openai": "^4.52.7",

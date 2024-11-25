@@ -5,7 +5,7 @@ import { DecodedMessage } from "@xmtp/node-sdk";
 import { logMessage } from "../helpers/utils.js";
 import { DecodedMessage as DecodedMessageV2 } from "@xmtp/xmtp-js";
 import { streamMessages } from "./streams.js";
-import { findSkill, findSkillGroup } from "./skills.js";
+import { findSkill } from "./skills.js";
 import { Conversation } from "@xmtp/node-sdk";
 import { Conversation as V2Conversation } from "@xmtp/xmtp-js";
 import { awaitedHandlers } from "./xmtp.js";
@@ -57,10 +57,19 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
         if (awaitedHandler) {
           const messageText =
             context.message.content.text || context.message.content.reply || "";
-          const isValidResponse = await awaitedHandler(messageText);
-          // Only remove the handler if we got a valid response
-          if (isValidResponse) {
-            awaitedHandlers.delete(context.getConversationKey());
+          // Check if the response is from the expected user
+          const expectedUser = context.getConversationKey().split(":")[1];
+          const actualSender =
+            version === "v3"
+              ? (message as DecodedMessage).senderInboxId
+              : (message as DecodedMessageV2).senderAddress;
+
+          if (expectedUser?.toLowerCase() === actualSender?.toLowerCase()) {
+            const isValidResponse = await awaitedHandler(messageText);
+            // Only remove the handler if we got a valid response
+            if (isValidResponse) {
+              awaitedHandlers.delete(context.getConversationKey());
+            }
           }
           return;
         }
@@ -91,12 +100,14 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
       version,
       client,
       v2client,
-      skills,
+      agent,
       runConfig,
       group,
     } = context;
 
-    let skillAction = text && skills ? findSkill(text, skills) : undefined;
+    let foundSkill = text?.startsWith("/")
+      ? findSkill(text, agent.skills)
+      : undefined;
 
     const { inboxId: senderInboxId } = client;
     const { address: senderAddress } = v2client;
@@ -106,7 +117,7 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
       (sender.inboxId?.toLowerCase() === senderInboxId.toLowerCase() &&
         typeId !== "group_updated");
 
-    const isSkillTriggered = skillAction?.skill;
+    const isSkillTriggered = foundSkill?.skill;
     const isExperimental = runConfig?.experimental ?? false;
 
     const isAddedMemberOrPass =
@@ -119,7 +130,7 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
 
     const isRemoteAttachment = typeId == "remoteStaticAttachment";
 
-    const isAdminSkill = skillAction?.adminOnly ?? false;
+    const isAdminSkill = foundSkill?.adminOnly ?? false;
 
     const isAdmin =
       group &&
@@ -143,12 +154,8 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
       "reply",
       "skill",
     ].includes(typeId ?? "");
-
-    const skillGroup =
-      typeId === "text" && skills
-        ? findSkillGroup(text ?? "", skills)
-        : undefined; // Check if the message content triggers a tag
-    const isTagged = skillGroup ? true : false;
+    // Check if the message content triggers a tag
+    const isTagged = text?.includes(`@${agent?.tag}`) ?? false;
     const isMessageValid = isSameAddress
       ? false
       : // v2 only accepts text, remoteStaticAttachment, reply
@@ -178,7 +185,7 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
         isSameAddress,
         openai: {
           model: process?.env?.GPT_MODEL,
-          key: process?.env?.OPEN_AI_API_KEY?.slice(0, 5) + "...",
+          key: process?.env?.OPENAI_API_KEY ? "[SET]" : "[NOT SET]",
         },
         content,
         version,
@@ -193,19 +200,18 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
           isAdminOrPass,
         },
         isAddedMemberOrPass,
-        skillsParsed: skills?.length,
-        taggingDetails: isTagged
-          ? {
-              tag: skillGroup?.tag,
-            }
-          : "No tag detected",
+        skillsParsed: agent?.skills?.length,
+        taggingDetails: {
+          tag: agent?.tag,
+          isTagged,
+        },
         skillTriggerDetails: isSkillTriggered
           ? {
-              skill: skillAction?.skill,
-              examples: skillAction?.examples,
-              description: skillAction?.description,
-              params: skillAction?.params
-                ? Object.entries(skillAction.params).map(([key, value]) => ({
+              skill: foundSkill?.skill,
+              examples: foundSkill?.examples,
+              description: foundSkill?.description,
+              params: foundSkill?.params
+                ? Object.entries(foundSkill.params).map(([key, value]) => ({
                     key,
                     value: {
                       type: value.type,
@@ -216,7 +222,9 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
                   }))
                 : undefined,
             }
-          : "No skill trigger detected",
+          : !text?.startsWith("/")
+            ? "Natural prompt, yet to be parsed"
+            : "No skill trigger detected",
         isMessageValid,
       });
     }
@@ -224,7 +232,7 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
 
     return {
       isMessageValid,
-      customHandler: skillAction?.handler,
+      customHandler: foundSkill?.handler,
     };
   };
   const getConversation = async (

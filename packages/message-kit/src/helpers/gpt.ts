@@ -1,18 +1,17 @@
 import dotenv from "dotenv";
 dotenv.config({ override: true });
-import { findSkillGroupByTag } from "../lib/skills";
 import OpenAI from "openai";
 import { XMTPContext } from "../lib/xmtp";
 import { getUserInfo, replaceUserContext } from "./resolver";
-import type { SkillGroup } from "./types";
+import type { Agent } from "./types";
 
 const isOpenAIConfigured = () => {
-  return !!process.env.OPEN_AI_API_KEY;
+  return !!process.env.OPENAI_API_KEY;
 };
 
 // Modify OpenAI initialization to be conditional
 const openai = isOpenAIConfigured()
-  ? new OpenAI({ apiKey: process.env.OPEN_AI_API_KEY })
+  ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
   : null;
 
 type ChatHistoryEntry = {
@@ -65,34 +64,32 @@ export const PROMPT_RULES = `
 # Rules
 - You can respond with multiple messages if needed. Each message should be separated by a newline character.
 - You can trigger skills by only sending the command in a newline message.
+- Each command starts with a slash (/).
 - Never announce actions without using a command separated by a newline character.
-- Don't answer in markdown format, just answer in plaintext.
+- Never use markdown in your responses.
 - Do not make guesses or assumptions
 - Only answer if the verified information is in the prompt.
 - Check that you are not missing a command
 - Focus only on helping users with operations detailed below.
+- Date: ${new Date().toUTCString()}
+- When mentioning any action related to available skills, you MUST trigger the corresponding command in a new line
+- If you suggest an action that has a command, you must trigger that command
 `;
 
-export function replaceSkills(skills: SkillGroup[], tag: string) {
-  let skillGroup = findSkillGroupByTag(tag, skills);
-  if (skillGroup) {
-    let returnPrompt = `## Commands\n${skillGroup?.skills
-      .map((skill) => skill.skill)
-      .join("\n")}\n\n## Examples\n${skillGroup?.skills
-      .map((skill) => skill.examples?.join("\n"))
-      .join("\n")}`;
-    return returnPrompt;
-  } else {
-    return "## Commands\n- No commands found\n- Don't make up commands\n- If you don't know the answer, just say so, concisely.\n";
-  }
+export function replaceSkills(agent: Agent) {
+  let returnPrompt = `## Commands\n${agent?.skills
+    .map((skill) => skill.skill + " - " + skill.description)
+    .join("\n")}\n\n## Examples\n${agent?.skills
+    .map((skill) => skill.examples?.join("\n"))
+    .join("\n")}`;
+  return returnPrompt;
 }
 
 // [!region replaceVariables]
 export async function replaceVariables(
   prompt: string,
   senderAddress: string,
-  skills: SkillGroup[] | undefined,
-  tag: string,
+  agent: Agent,
 ) {
   // Fetch user information based on the sender's address
   let userInfo = await getUserInfo(senderAddress);
@@ -111,9 +108,9 @@ export async function replaceVariables(
     "You are a helpful agent called {agent_name} that lives inside a web3 messaging app called Converse.",
   );
 
-  prompt = prompt.replace("{agent_name}", tag);
+  prompt = prompt.replace("{agent_name}", agent?.tag);
   prompt = prompt.replace("{rules}", PROMPT_RULES);
-  prompt = prompt.replace("{skills}", replaceSkills(skills ?? [], tag));
+  prompt = prompt.replace("{skills}", replaceSkills(agent));
 
   // Replace variables in the system prompt
   if (userInfo) {
@@ -234,17 +231,23 @@ export async function processMultilineResponse(
   console.log(messages);
   // [!region processing]
   for (const message of messages) {
+    // Check if the message is a command (starts with "/")
     if (message.startsWith("/")) {
+      // Execute the skill associated with the command
       const response = await context.executeSkill(message);
       if (response && typeof response.message === "string") {
+        // Parse the response message
         let msg = parseMarkdown(response.message);
+        // Add the parsed message to chat memory as a system message
         chatMemory.addEntry(memoryKey, {
           role: "system",
           content: msg,
         });
+        // Send the response message
         await context.send(response.message);
       }
     } else {
+      // If the message is not a command, send it as is
       await context.send(message);
     }
   }

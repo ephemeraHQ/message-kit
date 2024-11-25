@@ -1,31 +1,27 @@
-import { SkillGroup, skillAction } from "../helpers/types.js";
+import { Agent, Skill } from "../helpers/types.js";
 import { XMTPContext } from "./xmtp.js";
 import path from "path";
 
-export function findSkill(
-  text: string,
-  skills: SkillGroup[],
-): skillAction | undefined {
+export function findSkill(text: string, skills: Skill[]): Skill | undefined {
   const trigger = text.split(" ")[0].toLowerCase();
-  for (const skillGroup of skills) {
-    const handler = skillGroup.skills.find((skill) => {
-      return skill.skill?.split(" ")[0].toLowerCase() === trigger;
-    });
-    if (handler !== undefined) return handler;
-  }
-  return undefined;
+
+  const handler = skills.find((skill) => {
+    return skill.skill?.split(" ")[0].toLowerCase() === trigger;
+  });
+
+  return handler;
 }
 
 export async function executeSkill(
   text: string,
-  skills: SkillGroup[],
+  agent: Agent,
   context: XMTPContext,
 ) {
-  // Use the custom text parameter
-  let conversation = context.conversation;
   try {
-    let skillAction = findSkill(text, skills);
-    const extractedValues = parseSkill(text, skills);
+    let skillAction = findSkill(text, agent.skills);
+    const extractedValues = skillAction
+      ? parseSkill(text, skillAction)
+      : undefined;
     if (
       (text.startsWith("/") || text.startsWith("@")) &&
       !extractedValues?.skill
@@ -35,27 +31,22 @@ export async function executeSkill(
       // Mock context for skill execution
       const mockContext: XMTPContext = {
         ...context,
-        conversation,
-        sendPay: context.sendPay.bind(context),
-        sendImage: context.sendImage.bind(context),
-        getConversationKey: context.getConversationKey.bind(context),
-        isV2Conversation: context.isV2Conversation.bind(context),
-        awaitResponse: context.awaitResponse.bind(context),
-        resetAwaitedState: context.resetAwaitedState.bind(context),
-        getV2MessageById: context.getV2MessageById.bind(context),
-        getCacheCreationDate: context.getCacheCreationDate.bind(context),
         message: {
           ...context.message,
           content: { ...context.message.content, ...extractedValues },
         },
-        executeSkill: context.executeSkill.bind(context),
-        reply: context.reply.bind(context),
-        send: context.send.bind(context),
-        sendTo: context.sendTo.bind(context),
-        react: context.react.bind(context),
-        getMessageById: context.getMessageById.bind(context),
-        getReplyChain: context.getReplyChain.bind(context),
-      };
+      } as XMTPContext;
+
+      // Copy all methods with proper binding
+      Object.getOwnPropertyNames(Object.getPrototypeOf(context)).forEach(
+        (key) => {
+          const method = context[key as keyof XMTPContext];
+          if (typeof method === "function") {
+            (mockContext[key as keyof XMTPContext] as any) =
+              method.bind(context);
+          }
+        },
+      );
 
       if (skillAction?.handler) return skillAction.handler(mockContext);
     } else if (skillAction) {
@@ -75,29 +66,10 @@ export async function executeSkill(
     context.refConv = null;
   }
 }
-export function findSkillGroupByTag(
-  tag?: string,
-  skills: SkillGroup[] = [],
-): SkillGroup | undefined {
-  if (!tag) return skills.find((skill) => skill.skills);
-  return skills.find((skill) => skill.tag === tag);
-}
-export function findSkillGroup(
-  text: string,
-  skills: SkillGroup[],
-): SkillGroup | undefined {
-  let skillList = skills;
-  return skillList?.find((skill) => {
-    if (skill.tag && text?.includes(`${skill.tag}`)) {
-      return true;
-    }
-    return undefined;
-  });
-}
 
 export function parseSkill(
   text: string,
-  skills: SkillGroup[],
+  skillAction: Skill,
 ): {
   skill: string | undefined;
   params: { [key: string]: string | number | string[] | undefined };
@@ -121,17 +93,6 @@ export function parseSkill(
       ? parts[0].slice(1).toLowerCase()
       : parts[0].toLowerCase();
 
-    let commandConfig: skillAction | undefined = undefined;
-
-    for (const group of skills) {
-      commandConfig = group.skills.find((cmd) =>
-        cmd.skill.startsWith(`/${commandName}`),
-      );
-      if (commandConfig) break;
-    }
-
-    if (!commandConfig) return defaultResult;
-
     const values: {
       skill: string;
       params: {
@@ -142,7 +103,7 @@ export function parseSkill(
       params: {},
     };
 
-    const expectedParams = commandConfig.params || {};
+    const expectedParams = skillAction.params || {};
     const usedIndices = new Set();
 
     for (const [param, paramConfig] of Object.entries(expectedParams)) {
@@ -261,16 +222,21 @@ export function parseSkill(
   }
 }
 
-export async function loadSkillsFile(): Promise<SkillGroup[] | []> {
+export async function loadSkillsFile(): Promise<Agent> {
   const resolvedPath = path.resolve(process.cwd(), "dist/skills.js");
 
-  let skills: SkillGroup[] = [];
+  let agent: Agent = {
+    name: "",
+    tag: "",
+    description: "",
+    skills: [],
+  };
   try {
     const module = await import(resolvedPath);
-    skills = module?.skills;
-    return skills;
+    agent = module?.agent;
+    return agent;
   } catch (error) {
     //console.error(`Error loading command config from ${resolvedPath}:`);
   }
-  return [];
+  return agent;
 }

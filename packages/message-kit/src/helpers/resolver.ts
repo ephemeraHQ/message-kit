@@ -111,13 +111,11 @@ export const getUserInfo = async (
         "Hey there! Give me a sec while I fetch info about you first...",
       );
     }
-    console.log("keyToUse", keyToUse);
     // Fetch data based on ENS domain or Converse username
     if (keyToUse.includes(".eth")) {
       // Fetch ENS data
       try {
         const response = await fetch(`https://ensdata.net/${keyToUse}`);
-        console.log("response", response);
         if (!response.ok) {
           console.error(
             `ENS data request failed with status or unable to resolve ${keyToUse}`,
@@ -132,7 +130,7 @@ export const getUserInfo = async (
           }
         }
       } catch (error) {
-        console.error("Failed to fetch ENS data:", error);
+        //console.error(`Failed to fetch ENS data for ${keyToUse}`);
       }
     } else {
       // Fetch Converse profile data
@@ -218,6 +216,7 @@ export const replaceUserContext = (userInfo: UserInfo) => {
 - Start by fetch their domain from or Converse username
 - Call the user by their name or domain, in case they have one
 - Ask for a name (if they don't have one) so you can suggest domains.
+- Message sent date: ${new Date().toISOString()}
 - Users address is: ${address}`;
   if (preferredName) prompt += `\n- Users name is: ${preferredName}`;
   if (ensDomain) prompt += `\n- User ENS domain is: ${ensDomain}`;

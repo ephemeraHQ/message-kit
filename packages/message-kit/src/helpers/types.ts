@@ -8,6 +8,7 @@ export type MessageAbstracted = {
   content: {
     text?: string | undefined;
     reply?: string | undefined;
+    previousMsg?: string | undefined;
     react?: string | undefined;
     content?: any | undefined;
     params?: any | undefined;
@@ -57,7 +58,7 @@ export type RunConfig = {
   // if true, member changes will be enabled, like adding members to the group
   memberChange?: boolean;
   // skills to be used
-  skills?: SkillGroup[];
+  agent?: Agent;
   // model to be used
   gptModel?: string;
 };
@@ -75,15 +76,18 @@ export interface SkillParamConfig {
   values?: string[]; // Accepted values for the parameter
 }
 
-export interface SkillGroup {
-  name: string;
-  image?: boolean;
-  description: string;
-  tag?: string;
-  skills: skillAction[];
+export interface Frame {
+  title: string;
+  buttons: { content: string; action: string; target: string }[];
+  image: string;
 }
-
-export interface skillAction {
+export interface Agent {
+  name: string;
+  description: string;
+  tag: string;
+  skills: Skill[];
+}
+export interface Skill {
   skill: string;
   handler?: SkillHandler | undefined;
   adminOnly?: boolean;

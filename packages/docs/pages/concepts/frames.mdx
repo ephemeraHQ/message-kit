@@ -1,0 +1,102 @@
+# Introduction to FrameKit
+
+MessageKit enables developers to create interactive elements (frames) inside messaging applications. These frames can be used for various purposes such as handling payments, displaying transaction receipts, managing conversations, and creating custom interactive interfaces.
+
+## Frame Types
+
+FrameKit supports several types of frames:
+
+- `Payment Frames`: Request and handle cryptocurrency payments
+- `Receipt Frames`: Display transaction confirmations
+- `Conversation Frames`: Manage DMs and group messages
+- `Custom Frames`: Create custom interactive UI elements
+
+Below are practical examples of implementing each frame type.
+
+## Payment
+
+You can request payments using the payment frame:
+
+```typescript
+// Request 1 USDC payment to a specific address
+await context.requestPayment(1, "USDC", recipientAddress);
+```
+
+Properties:
+
+- `amount`: Number representing the payment amount
+- `token`: Supported tokens include "eth", "dai", "usdc", "degen"
+- `address`: Recipient's wallet address or ENS name
+
+## Transaction Receipts
+
+You can request receipts using the receipt frame:
+
+```typescript
+// Request a receipt
+await context.sendReceipt(urlOfTransaction);
+// ie https://sepolia.basescan.org/tx/0x1234567890abcdef
+```
+
+Properties:
+
+- `url`: URL of the transaction receipt scanner like basescan, etherscan, etc.
+
+## Dm and Groups on Converse
+
+You can send messages to a user or group on Converse using the `sendConverseDmFrame` and `sendConverseGroupFrame` methods.
+
+```typescript
+// Send a message to a user with an optional pretext
+await context.sendConverseDmFrame("userAddress", "Hello, how are you?");
+
+// Send a message to a group with an optional pretext
+await context.sendConverseGroupFrame("groupId", "gm all!");
+```
+
+## Custom
+
+Custom frames allow you to create interactive UI elements. Here's how to create a token price frame:
+
+```typescript
+const frame = {
+  title: "Weather Update",
+  buttons: [
+    {
+      content: "View Forecast",
+      action: "link",
+      target: "https://example.com/forecast",
+    },
+    {
+      content: "Current Temperature (75°F)",
+      action: "link",
+      target: "https://example.com/current-temperature",
+    },
+  ],
+  image: "https://example.com/weather.png",
+};
+
+await context.sendCustomFrame(frame);
+```
+
+Properties:
+
+- `title`: The header text of your frame
+- `buttons`: Array of interactive buttons (max 2)
+- `image`: URL of the image to display
+- `action`: Type of button action ("link" or "post")
+- `target`: Destination URL for button clicks
+
+## Open Frames
+
+In compliance with [Open Frames](https://www.openframes.xyz/), use a meta tag in your frame's HTML to declare the client protocols your frame supports.
+
+```html
+<meta property="of:accepts:xmtp" content="vNext" />
+```
+
+These are quickstarts for different Frameworks that support Open Frames
+
+- [OnchainKit Quickstart](https://github.com/ephemeraHQ/open-frames-starter-onchainkit/): Onchain Kit quickstart that integrates XMTP.
+- [Frog Quickstart](https://github.com/ephemeraHQ/open-frames-starter-frog): Frog XMTP quickstart
+- [Frames.js Quickstart](https://github.com/ephemeraHQ/open-frames-starter-framesjs/): Frames.js quickstart that integrates XMTP.

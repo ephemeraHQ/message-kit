@@ -50,10 +50,12 @@ export default defineConfig({
     "/docs": "/hero.jpg",
   },
   title: "MessageKit",
-  iconUrl: "/messagekit -logo.png",
   rootDir: ".",
+  iconUrl: {
+    light: "/messagekit-logo.png",
+    dark: "/messagekit-logo.png",
+  },
   theme: {
-    colorScheme: "dark",
     accentColor: {
       light: "#FA6977",
       dark: "#FA6977",
@@ -65,10 +67,7 @@ export default defineConfig({
       link: "https://github.com/ephemeraHQ/message-kit",
     },
   ],
-  topNav: [
-    { text: "Guidelines", link: "/concepts/guidelines" },
-    { text: "v1.1.10-beta.1", link: "/changelog" },
-  ],
+  topNav: [{ text: "v1.2.6", link: "/changelog" }],
   editLink: {
     pattern:
       "https://github.com/ephemeraHQ/message-kit/blob/main/packages/docs/pages/:path",
@@ -95,10 +94,6 @@ export default defineConfig({
           link: "/concepts/messages",
         },
         {
-          text: "Types",
-          link: "/concepts/types",
-        },
-        {
           text: "Groups",
           link: "/concepts/groups",
         },
@@ -107,64 +102,54 @@ export default defineConfig({
           link: "/concepts/usernames",
         },
         {
-          text: "Deployment",
-          link: "/concepts/deployment",
+          text: "Frames",
+          link: "/concepts/frames",
         },
       ],
     },
     {
       text: "AI Skills",
-      link: "/skills",
       items: [
         {
-          text: "Reasoning",
-          link: "/skills/reasoning",
-        },
-        {
-          text: "Scenarios",
-          link: "/skills/scenarios",
-        },
-        {
-          text: "Prompting",
-          link: "/skills/prompting",
-        },
-        {
-          text: "Processing",
-          link: "/skills/processing",
-        },
-        {
-          text: "Parsing",
-          link: "/skills/parsing",
-        },
-        {
-          text: "Definition",
-          link: "/skills/definition",
-        },
-      ],
-    },
-
-    {
-      text: "Use cases",
-      items: [
-        {
-          text: "Ens agent",
+          text: "Example",
           link: "/templates/agent",
         },
         {
-          text: "Group bot",
-          link: "/templates/group",
+          text: "Library",
+          link: "/skills/library",
         },
         {
-          text: "Gpt",
-          link: "/templates/gpt",
-        },
-        {
-          text: "Gated group",
-          link: "/templates/gated",
+          text: "Overview",
+          link: "/skills",
+          items: [
+            {
+              text: "Reasoning",
+              link: "/skills/reasoning",
+            },
+            {
+              text: "Scenarios",
+              link: "/skills/scenarios",
+            },
+            {
+              text: "Prompting",
+              link: "/skills/prompting",
+            },
+            {
+              text: "Processing",
+              link: "/skills/processing",
+            },
+            {
+              text: "Parsing",
+              link: "/skills/parsing",
+            },
+            {
+              text: "Definition",
+              link: "/skills/definition",
+            },
+          ],
         },
       ],
     },
-
     {
       text: "Middleware",
       items: [
@@ -173,23 +158,18 @@ export default defineConfig({
           link: "/middleware",
         },
         {
-          text: "Open Frames",
-          items: [
-            {
-              text: "Frames.js",
-              link: "/middleware/open-frames/framesjs",
-            },
-            {
-              text: "OnchainKit",
-              link: "/middleware/open-frames/onchainkit",
-            },
-            {
-              text: "Frog",
-              link: "/middleware/open-frames/frog",
-            },
-          ],
+          text: "Deployment",
+          link: "/middleware/railway",
         },
       ],
+    },
+    {
+      text: "Changelog",
+      link: "/changelog",
+    },
+    {
+      text: "Guidelines",
+      link: "/concepts/guidelines",
     },
   ],
 });

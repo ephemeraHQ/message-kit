@@ -14,23 +14,10 @@ Imagine your users chatting with your agent as naturally as texting a friend.
 
 :::steps
 
-### User request
+### Parsed request
 
 ```bash
 /check vitalik.eth
-```
-
-### Parsing
-
-This is the parameters extracted from the user request:
-
-```json
-{
-  "skill": "check",
-  "params": {
-    "domain": "vitalik.eth"
-  }
-}
 ```
 
 ### Handler
@@ -38,5 +25,5 @@ This is the parameters extracted from the user request:
 The handler function to process check skill requests:
 
 ```tsx [src/handlers/check.ts]
-// [!include ~/../../templates/agent/src/handlers/check.ts]
+// [!include ~/../../templates/agent/src/handlers/check.ts:handle]
 ```

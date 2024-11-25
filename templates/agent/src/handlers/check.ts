@@ -1,11 +1,12 @@
 import { ensUrl } from "../index.js";
 import { XMTPContext, getUserInfo } from "@xmtp/message-kit";
-import type { skillAction } from "@xmtp/message-kit";
+import type { Skill } from "@xmtp/message-kit";
 
-export const registerSkill: skillAction[] = [
+// [!region define]
+export const registerSkill: Skill[] = [
   {
     skill: "/check [domain]",
-    handler: handleCheck,
+    handler: handler,
     examples: ["/check vitalik.eth", "/check fabri.base.eth"],
     description: "Check if a domain is available.",
     params: {
@@ -15,7 +16,10 @@ export const registerSkill: skillAction[] = [
     },
   },
 ];
-export async function handleCheck(context: XMTPContext) {
+// [!endregion define]
+
+// [!region handle]
+export async function handler(context: XMTPContext) {
   const {
     message: {
       content: {
@@ -25,6 +29,7 @@ export async function handleCheck(context: XMTPContext) {
   } = context;
 
   const data = await getUserInfo(domain);
+
   if (!data?.address) {
     let message = `Looks like ${domain} is available! Here you can register it: ${ensUrl}${domain} or would you like to see some cool alternatives?`;
     return {
@@ -40,3 +45,4 @@ export async function handleCheck(context: XMTPContext) {
     };
   }
 }
+// [!endregion handle]

@@ -1,40 +1,29 @@
 # Definition
 
-Each app can have a `skills.ts` file that contains the skills that the app can execute. The skills are defined as an array of objects with the following keys:
+Each app can have a `skills.ts` file that contains the agent skills. The skills are defined as an array of objects with the following keys:
 
-## Overview
+## Skill declaration
 
-Create the skill file `skills.ts` in your project root `src` folder.
+The handler function to process check skill requests:
 
-```tsx [src/skills.ts]
-// Import the handler for the skill
-import { handler as check } from "./handler/check.js";
-import { SkillGroup } from "@xmtp/message-kit";
-
-// Define the skills
-export const skills: SkillGroup[] = [
-  {
-    name: "Ens Domain Bot",
-    tag: "@ens",
-    description: "Register ENS domains.",
-    skills: [
-      {
-        skill: "/check [domain]",
-        handler: handleCheck,
-        examples: ["/check vitalik.eth", "/check fabri.base.eth"],
-        description: "Check if a domain is available.",
-        params: {
-          domain: {
-            type: "string",
-          },
-        },
-      },
-    ],
-  },
-];
+```tsx [src/handlers/check.ts]
+// [!include ~/../../templates/agent/src/handlers/check.ts:define]
 ```
 
-## Properties
+### Converted parameters
+
+This is the parameters extracted from the user request:
+
+```json
+{
+  "skill": "check",
+  "params": {
+    "domain": "vitalik.eth"
+  }
+}
+```
+
+### Properties
 
 - **skill**: The name of the skill.
 - **description**: The description of the skill.

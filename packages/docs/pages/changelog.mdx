@@ -1,16 +1,60 @@
 # Changelog
 
-## [1.1.8] - 2024-11-11
+## 1.1.11
 
 - **New Features**
+  - Updated version numbers across multiple packages to `1.1.11`.
+  - Introduced new skills for handling payments and token queries.
+  - Added a "Game" feature for interactive requests.
+- **Documentation**
 
-  - Introduced new commands for handling group interactions, including `/id` for retrieving group ID.
-  - Added a new section for "AI Skills" in the documentation, detailing a framework for building AI agents.
-  - Enhanced command execution with improved error handling and response structures.
-  - Streamlined command handling for gaming interactions and tipping features.
-  - Expanded example responses in the `agent_prompt` function for ENS domain interactions.
-  - Added a new handler for group commands to manage "help" and "id" requests.
-  - Modified the `/exists` command to allow access for all users, removing the admin-only restriction.
+  - Enhanced documentation for message handling, skills, and payment processing.
+  - Added sections for manual installation and GPT examples.
+  - Updated existing documentation to reflect changes in commands and functionality.
+
+- **Bug Fixes**
+
+  - Improved error handling in various contexts, including payment and message processing.
+
+- **Chores** - Removed outdated files and references to improve codebase clarity. - Updated environment variable names for consistency.
+
+## [1.1.10-beta.2] - 2024-11-21
+
+**Summary of Changes**
+
+The pull request introduces several updates and improvements across multiple files in the project:
+
+- **Template Renaming**: The `gm` template has been renamed to `gpt` throughout the codebase. This reflects a shift to using GPT-based agents for more advanced interactions.
+
+- **Prompt Enhancements**: Agent prompt functions have been updated to use a simplified and more effective prompt generation method. The prompts now leverage a `defaultPromptTemplate`, improving the way agents generate and handle prompts for GPT-based models.
+
+- **Skill Definitions Updates**: Skill definitions in `skills.ts` files have been modified. The `triggers` property has been removed from skill objects, and parameters have been updated to enhance skill parsing and execution.
+
+- **New Test Suites**: New test files have been added to improve testing coverage for agents and skill parsing. These include tests for agent prompting, skill parsing, and group interactions.
+
+- **Codebase Cleanup**: Outdated files and templates, such as the old `gm` template and middleware files, have been removed to streamline the codebase and reduce clutter.
+
+- **Documentation Updates**: Documentation has been extensively updated to reflect all changes. This includes updates to READMEs, code examples, tutorial guides, and the AI Skills framework documentation.
+
+- **Dependency and Configuration Updates**: Several dependencies have been updated to newer versions, and configurations like package versions and build scripts have been adjusted accordingly.
+
+- **Improvements in Handlers and Skills**: Handler functions have been refined for better error handling and functionality, particularly in agent and group templates.
+
+- **User Information Resolution**: Enhancements have been made to how user information is resolved and cached, improving efficiency and consistency when retrieving user data like ENS domains and addresses.
+
+Overall, these changes aim to enhance the functionality of GPT-based agents, improve code quality, update documentation for better developer experience, and streamline the project structure.
+
+## [1.1.8] - 2024-11-11
+
+**Summary of Changes**
+
+- Introduced new commands for handling group interactions, including `/id` for retrieving group ID.
+- Added a new section for "AI Skills" in the documentation, detailing a framework for building AI agents.
+- Enhanced command execution with improved error handling and response structures.
+- Streamlined command handling for gaming interactions and tipping features.
+- Expanded example responses in the `agent_prompt` function for ENS domain interactions.
+- Added a new handler for group commands to manage "help" and "id" requests.
+- Modified the `/exists` command to allow access for all users, removing the admin-only restriction.
 
 - **Bug Fixes**
 
@@ -27,7 +71,7 @@
 
 ## [1.1.5] - 2024-11-02
 
--## AI Skills
+**Summary of Changes**
 
 -Tagline: An open framework for building AI agents ?
 +Tagline: An open framework for building AI agents
@@ -46,7 +90,7 @@
 
 ### MessageKit updates
 
-**Updates:**
+**Summary of Changes**
 
 - Added `adminOnly` skills for group settings for skills enabled only for admin of groups
 - Added `memberChange` as optional runner config for enabling new members added

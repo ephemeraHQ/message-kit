@@ -1,12 +1,12 @@
 import { ensUrl } from "../index.js";
 import { XMTPContext } from "@xmtp/message-kit";
 
-import type { skillAction } from "@xmtp/message-kit";
+import type { Skill } from "@xmtp/message-kit";
 
-export const registerSkill: skillAction[] = [
+export const registerSkill: Skill[] = [
   {
     skill: "/register [domain]",
-    handler: handleRegister,
+    handler: handler,
     description:
       "Register a new ENS domain. Returns a URL to complete the registration process.",
     examples: ["/register vitalik.eth"],
@@ -18,7 +18,7 @@ export const registerSkill: skillAction[] = [
   },
 ];
 
-export async function handleRegister(context: XMTPContext) {
+export async function handler(context: XMTPContext) {
   const {
     message: {
       content: {
@@ -35,6 +35,6 @@ export async function handleRegister(context: XMTPContext) {
   }
   // Generate URL for the ens
   let url_ens = ensUrl + domain;
-  context.send(`${url_ens}`);
   return { code: 200, message: `${url_ens}` };
 }
+

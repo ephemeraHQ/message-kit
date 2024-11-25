@@ -2,8 +2,6 @@
   max-height: 800px;
 }
 
-/* Custom Homepage text styles */
-
 .custom-homepage {
   max-width: 1200px;
   margin: 0 auto;
@@ -77,6 +75,14 @@
   gap: 1.5rem;
 }
 
+.custom-homepage-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem; /* reduced from 1.5rem */
+}
+.custom-homepage-grid-3 .custom-homepage-tile-title {
+  font-size: 1rem;
+}
 .custom-homepage-tile {
   position: relative; /* Add this line */
   background-color: var(--vocs-color-bg-soft);
@@ -110,15 +116,6 @@
   ); /* Default color for light mode */
 }
 
-.dark {
-  --tile-external-icon-color: rgba(
-    207,
-    207,
-    207,
-    0.7
-  ); /* Use the text color in dark mode */
-}
-
 .custom-homepage-tile-external-icon {
   position: absolute;
   top: 0.5rem;
@@ -134,11 +131,6 @@
   display: block; /* Add this line */
 }
 
-.dark .custom-homepage-tile-external-icon {
-  filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%)
-    contrast(100%);
-}
-
 .custom-homepage-tile-title {
   font-size: 1.25rem;
   font-weight: bold;
@@ -150,6 +142,23 @@
   color: var(--vocs-color-text-soft);
   line-height: 1.5; /* Added this line to reduce line height */
   margin: 0; /* Added to remove any default margins */
+}
+
+.custom-homepage-tile-grid-container .vocs_Tabs_list {
+  display: flex;
+  justify-content: center;
+  outline: none; /* Keep existing style */
+}
+
+/*DARK*/
+
+.dark {
+  --tile-external-icon-color: rgba(
+    207,
+    207,
+    207,
+    0.7
+  ); /* Use the text color in dark mode */
 }
 
 /* Dark mode adjustments */
@@ -171,8 +180,48 @@
   border-color: var(--vocs-color-primary);
 }
 
-.custom-homepage-tile-grid-container .vocs_Tabs_list {
-  display: flex;
-  justify-content: center;
-  outline: none; /* Keep existing style */
+.dark .custom-homepage-tile-external-icon {
+  filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%)
+    contrast(100%);
 }
+.dark .vocs_DesktopSearch_search,
+.dark .vocs_Footer,
+.dark .vocs_Sidebar_logoWrapper,
+.dark .vocs_DocsLayout_gutterTop,
+.dark .vocs_DocsLayout_gutterLeft,
+.dark .vocs_DocsLayout,
+.dark .vocs_DocsLayout_gutterTopCurtain,
+.dark .vocs_DocsLayout_gutterRight,
+.dark .vocs_Content,
+.dark .vocs_DocsLayout_content,
+.dark .vocs_MobileTopNav_curtain,
+.dark .vocs_MobileTopNav,
+.dark .vocs_MobileTopNav_sidebarPopover {
+  background: black !important;
+}
+.dark body {
+  background: black;
+}
+
+.dark div.vocs_DesktopTopNav_curtain {
+  display: none !important;
+}
+.dark .vocs_Code {
+  background: transparent !important;
+}
+.dark .vocs_Pre_wrapper pre,
+.dark .vocs_Tabs_list,
+.dark .vocs_CodeTitle,
+.dark .vocs_Tabs_content {
+  background: hsla(0, 0%, 4%, 0.6) !important;
+}
+.dark .custom-homepage-tile:hover {
+  border: white 1px solid !important;
+}
+.dark .vocs_CodeBlock .highlighted {
+  background: hsla(0, 0%, 4%, 0.6) !important;
+}
+html.dark {
+  background: black;
+}
+/*END DARK*/

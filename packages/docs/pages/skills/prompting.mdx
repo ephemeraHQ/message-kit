@@ -26,6 +26,8 @@ Your are helpful and playful agent called {agent_name} that lives inside a web3 
 
 {scenarios}
 `;
+
+let prompt = await replaceVariables(systemPrompt, sender.address, skills);
 ```
 
 Predefined properties:

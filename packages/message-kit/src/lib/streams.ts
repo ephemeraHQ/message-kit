@@ -13,22 +13,21 @@ export async function streamMessages(
 ) {
   let v3client = client as V3Client;
   let v2client = client as V2Client;
-
   while (true) {
     try {
       if (version === "v3") {
         const stream = await v3client.conversations.streamAllMessages();
+        console.warn(`\t- [${version}] Stream started`);
         for await (const message of stream) {
           handleMessage(version, message);
         }
       } else if (version === "v2") {
         const stream = await v2client.conversations.streamAllMessages();
+        console.warn(`\t- [${version}] Stream started`);
         for await (const message of stream) {
           handleMessage(version, message);
         }
       }
-
-      console.warn(`\t- [${version}] Stream started`);
     } catch (err) {
       console.error(`[${version}] Stream encountered an error:`, err);
     }

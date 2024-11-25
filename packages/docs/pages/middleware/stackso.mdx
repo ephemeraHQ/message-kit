@@ -52,7 +52,7 @@ export async function handler(context: XMTPContext, fake?: boolean) {
       content: { skill, params, text },
     },
   } = context;
-  if (typeId === "text" && group) {
+  if (text) {
     if (skill === "points") {
       const points = await stack?.getPoints(sender.address);
       context.reply(`You have ${points} points`);
@@ -73,7 +73,7 @@ export async function handler(context: XMTPContext, fake?: boolean) {
       );
       return;
     }
-  } else if (typeId === "group_updated" && group) {
+  } else if (typeId === "group_updated") {
     const { initiatedByInboxId, addedInboxes } = params;
     const adminAddress = members?.find(
       (member: AbstractedMember) => member.inboxId === initiatedByInboxId,
