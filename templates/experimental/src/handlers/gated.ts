@@ -1,4 +1,3 @@
-//@ts-nocheck
 import express from "express";
 import { XMTPContext, V3Client, Skill } from "@xmtp/message-kit";
 import { Alchemy, Network } from "alchemy-sdk";

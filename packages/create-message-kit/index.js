@@ -85,7 +85,6 @@ async function gatherProjectInfo() {
   const templateOptions = [
     { value: "agent", label: "Web3 Agent" },
     { value: "gpt", label: "Simple Gpt" },
-    { value: "gated", label: "Gated Group" },
   ];
 
   const templateType = await select({
