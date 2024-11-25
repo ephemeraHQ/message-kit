@@ -83,7 +83,7 @@ async function updatePackagejson(destDir, templateType) {
 
 async function gatherProjectInfo() {
   const templateOptions = [
-    { value: "agent", label: "Web3 Agent" },
+    { value: "agent", label: "Agent" },
     { value: "gpt", label: "Simple Gpt" },
   ];
 

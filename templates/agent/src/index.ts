@@ -21,9 +21,9 @@ export const ensUrl = "https://app.ens.domains/";
 
 // [!region skills]
 export const agent: Agent = {
-  name: "Web3 Agent",
+  name: "Ens Agent",
   tag: "@bot",
-  description: "A web3 agent with a lot of skills.",
+  description: "A ens agent with a lot of skills.",
   skills: [
     ...checkSkill,
     ...coolSkill,

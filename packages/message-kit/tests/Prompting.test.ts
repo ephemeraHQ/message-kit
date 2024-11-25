@@ -13,7 +13,7 @@ const alix = {
 };
 type testCase = [string, string | string[]][];
 
-describe("Web3 agent tests", () => {
+describe("Agent tests", () => {
   const testCases: testCase = [
     ["hi", "Fabri"],
     ["I want to get info for vitalik.eth", "/info vitalik.eth"],
