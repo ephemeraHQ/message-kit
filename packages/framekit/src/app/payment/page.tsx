@@ -12,7 +12,7 @@ export default async function Home({
     url: `${process.env.NEXT_PUBLIC_URL}`,
     recipientAddress:
       (resolvedSearchParams?.recipientAddress as string) ||
-      "0x277C0dd35520dB4aaDDB45d4690aB79353D3368b",
+      "0x93E2fc3e99dFb1238eB9e0eF2580EFC5809C7204",
     tokenAddress:
       (resolvedSearchParams?.tokenAddress as string) ||
       "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913", //usdc

@@ -67,7 +67,7 @@ export default defineConfig({
       link: "https://github.com/ephemeraHQ/message-kit",
     },
   ],
-  topNav: [{ text: "v1.2.2", link: "/changelog" }],
+  topNav: [{ text: "v1.2.4", link: "/changelog" }],
   editLink: {
     pattern:
       "https://github.com/ephemeraHQ/message-kit/blob/main/packages/docs/pages/:path",

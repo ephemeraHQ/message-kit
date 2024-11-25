@@ -15,7 +15,7 @@ The frame uses the following default parameters if not specified:
 
 ```typescript
 const defaultParams = {
-  recipientAddress: "0x277C0dd35520dB4aaDDB45d4690aB79353D3368b",
+  recipientAddress: "0x93E2fc3e99dFb1238eB9e0eF2580EFC5809C7204",
   tokenAddress: "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913", // USDC on Base
   chainId: 8453, // Base
   amount: 1, // 1 USDC
@@ -31,7 +31,7 @@ ethereum:{tokenAddress}@{chainId}/transfer?address={recipientAddress}&uint256={a
 For example, a 1 USDC transfer would generate:
 
 ```
-ethereum:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913@8453/transfer?address=0x277C0dd35520dB4aaDDB45d4690aB79353D3368b&uint256=1000000
+ethereum:0x833589fcd6edb6e08f4c7c32d4f71b54bda02913@8453/transfer?address=0x93E2fc3e99dFb1238eB9e0eF2580EFC5809C7204&uint256=1000000
 ```
 
 Note: USDC amounts are converted to wei (6 decimal places) before being included in the URL.
@@ -123,4 +123,3 @@ https://txpay.vercel.app/receipt?txLink=https://sepolia.basescan.org/tx/0x2ec524
 ```
 
 ## Custom
-

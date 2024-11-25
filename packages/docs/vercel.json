@@ -7,6 +7,7 @@
       "destination": "/index.html"
     }
   ],
+  "rootDirectory": "packages/docs/",
   "env": {
     "VERCEL_FORCE_NO_CACHE": "1"
   }

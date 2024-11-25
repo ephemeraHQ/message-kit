@@ -36,7 +36,7 @@ export const agent: Agent = {
     ...paySkill,
     ...tokenSkill,
     ...gameSkill,
-    ...todoSkill,
+    ...(process.env.RESEND_API_KEY ? todoSkill : []),
   ],
 };
 // [!endregion skills]
@@ -56,7 +56,7 @@ run(
     // [!region run2]
     await agentReply(context, prompt);
   },
-  { agent},
+  { agent },
 );
 
 // [!endregion run2]

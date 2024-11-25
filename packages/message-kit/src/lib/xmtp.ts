@@ -488,7 +488,7 @@ export class XMTPContext {
         return;
       }
 
-    let sendUrl = `${frameKitUrl}/payment?amount=${amount}&token=${token}&receiver=${senderInfo?.address}`;
+    let sendUrl = `${frameKitUrl}/payment?amount=${amount}&token=${token}&recipientAddress=${senderInfo?.address}`;
     await this.send(sendUrl);
   }
   async sendConverseDmFrame(peer: string, pretext?: string) {
