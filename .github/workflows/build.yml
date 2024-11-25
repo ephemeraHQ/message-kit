@@ -28,22 +28,22 @@ jobs:
       - name: Check types
         run: yarn typecheck
 
-  # test:
-  #   runs-on: warp-ubuntu-latest-x64-16x
-  #   needs: build
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: actions/setup-node@v4
-  #       with:
-  #         node-version-file: ".node-version"
-  #         cache: "yarn"
-  #       env:
-  #         SKIP_YARN_COREPACK_CHECK: "1"
-  #     - name: Enable corepack
-  #       run: corepack enable
-  #     - name: Install dependencies
-  #       run: yarn
-  #     - name: Test client
-  #       env:
-  #         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-  #       run: yarn test:client
+  test:
+    runs-on: warp-ubuntu-latest-x64-16x
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ".node-version"
+          cache: "yarn"
+        env:
+          SKIP_YARN_COREPACK_CHECK: "1"
+      - name: Enable corepack
+        run: corepack enable
+      - name: Install dependencies
+        run: yarn
+      - name: Test client
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: yarn test:client
