@@ -1,11 +1,7 @@
+import { XMTPContext, Skill, V3Client } from "@xmtp/message-kit";
+import { createGroup } from "../lib/xmtp.js";
 import express from "express";
-import { XMTPContext, V3Client, Skill } from "@xmtp/message-kit";
-import { Alchemy, Network } from "alchemy-sdk";
-
-const settings = {
-  apiKey: process.env.ALCHEMY_API_KEY, // Replace with your Alchemy API key
-  network: Network.BASE_MAINNET, // Use the appropriate network
-};
+import { checkNft } from "../lib/alchemy.js";
 
 export let registerSkill: Skill[] = [
   {
@@ -57,48 +53,14 @@ async function handler(context: XMTPContext) {
   }
 }
 
-export async function verifiedRequest(
-  walletAddress: string,
-  groupId: string,
-): Promise<boolean> {
-  console.log("new-request", {
-    groupId,
-    walletAddress,
-  });
-
-  const alchemy = new Alchemy(settings);
-  try {
-    const nfts = await alchemy.nft.getNftsForOwner(walletAddress);
-    const collectionSlug = "XMTPeople"; // The slug for the collection
-
-    const ownsNft = nfts.ownedNfts.some(
-      (nft: any) =>
-        nft.contract.name.toLowerCase() === collectionSlug.toLowerCase(),
-    );
-    console.log(
-      `NFTs owned on ${Network.BASE_MAINNET}:`,
-      nfts.ownedNfts.length,
-    );
-    console.log("is the nft owned: ", ownsNft);
-    return ownsNft as boolean;
-  } catch (error) {
-    console.error("Error fetching NFTs from Alchemy:", error);
-  }
-
-  return false;
-}
-
-export function startServer(
-  client: V3Client,
-  verifiedRequest: (walletAddress: string, groupId: string) => Promise<boolean>,
-) {
+export function startServer(client: V3Client) {
   async function addWalletToGroup(
     walletAddress: string,
     groupId: string,
   ): Promise<string> {
     const conversation =
       await client.conversations.getConversationById(groupId);
-    const verified = await verifiedRequest(walletAddress, groupId);
+    const verified = await checkNft(walletAddress, "XMTPeople");
     if (!verified) {
       console.log("User cant be added to the group");
       return "not verified";
@@ -126,7 +88,7 @@ export function startServer(
       res.status(400).send(error.message);
     }
   });
-  // Start the server
+  // Start the servfalcheer
   const PORT = process.env.PORT || 3000;
   const url = process.env.URL || `http://localhost:${PORT}`;
   app.listen(PORT, () => {
@@ -134,31 +96,4 @@ export function startServer(
       `Use this endpoint to add a wallet to a group indicated by the groupId\n${url}/add-wallet <body: {walletAddress, groupId}>`,
     );
   });
-}
-
-export async function createGroup(
-  client: V3Client,
-  senderAddress: string,
-  clientAddress: string,
-) {
-  let senderInboxId = "";
-  const group = await client?.conversations.newGroup([
-    senderAddress,
-    clientAddress,
-  ]);
-  const members = await group.members();
-  const senderMember = members.find((member) =>
-    member.accountAddresses.includes(senderAddress.toLowerCase()),
-  );
-  if (senderMember) {
-    const senderInboxId = senderMember.inboxId;
-    console.log("Sender's inboxId:", senderInboxId);
-  } else {
-    console.log("Sender not found in members list");
-  }
-  await group.addSuperAdmin(senderInboxId);
-  console.log("Sender is superAdmin", await group.isSuperAdmin(senderInboxId));
-  await group.send(`Welcome to the new group!`);
-  await group.send(`You are now the admin of this group as well as the bot`);
-  return group;
 }
