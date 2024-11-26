@@ -16,9 +16,6 @@ import { reset } from "./skills/reset.js";
 import { game } from "./skills/game.js";
 import fs from "fs";
 
-export const frameUrl = "https://ens.steer.fun/";
-export const ensUrl = "https://app.ens.domains/";
-
 // [!region skills]
 export const agent: Agent = {
   name: "Ens Agent",

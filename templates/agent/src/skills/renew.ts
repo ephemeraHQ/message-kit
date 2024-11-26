@@ -3,6 +3,8 @@ import { XMTPContext } from "@xmtp/message-kit";
 
 import type { Skill } from "@xmtp/message-kit";
 
+const frameUrl = "https://ens.steer.fun/";
+
 export const renew: Skill[] = [
   {
     skill: "/renew [domain]",

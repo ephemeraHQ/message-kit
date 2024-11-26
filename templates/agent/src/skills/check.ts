@@ -1,6 +1,7 @@
-import { ensUrl } from "../index.js";
 import { XMTPContext } from "@xmtp/message-kit";
 import type { Skill } from "@xmtp/message-kit";
+
+const ensUrl = "https://app.ens.domains/";
 
 // [!region define]
 export const checkDomain: Skill[] = [

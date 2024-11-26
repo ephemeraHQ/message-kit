@@ -28,13 +28,15 @@ async function handler(context: XMTPContext) {
     return await context.send("You are not authorized to send broadcasts.");
   }
   const { message } = params;
-  console.log("Message", message);
-  if (message.length < 100) {
-    console.log("Message is too short", message.length);
-    return {
-      code: 400,
-      message: "Message must be longer than 100 characters",
-    };
+  await context.send("This is how your message will look like:");
+  await context.send(message);
+  const emailResponse = await context.awaitResponse(
+    "Are you sure you want to send this broadcast?\nType 'yes' to confirm.",
+    ["yes", "no"],
+  );
+  if (emailResponse === "yes") {
+    await context.send("Sending broadcast...");
+    await context.sendTo(message, fakeSubscribers);
+    await context.send("Broadcast sent!");
   }
-  return await context.sendTo(message, fakeSubscribers);
 }

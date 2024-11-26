@@ -19,6 +19,7 @@ export async function streamMessages(
         const stream = await v3client.conversations.streamAllMessages();
         console.warn(`\t- [${version}] Stream started`);
         for await (const message of stream) {
+          console.log("entra");
           handleMessage(version, message);
         }
       } else if (version === "v2") {
