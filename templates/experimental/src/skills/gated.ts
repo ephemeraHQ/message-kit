@@ -3,7 +3,7 @@ import { createGroup } from "../lib/xmtp.js";
 import express from "express";
 import { checkNft } from "../lib/alchemy.js";
 
-export let registerSkill: Skill[] = [
+export const gated: Skill[] = [
   {
     skill: "/create",
     examples: ["/create"],

@@ -6,14 +6,14 @@ import {
   Agent,
 } from "@xmtp/message-kit";
 import { systemPrompt } from "./prompt.js";
-import { registerSkill as checkSkill } from "./skills/check.js";
-import { registerSkill as coolSkill } from "./skills/cool.js";
-import { registerSkill as infoSkill } from "./skills/info.js";
-import { registerSkill as registerSkill } from "./skills/register.js";
-import { registerSkill as renewSkill } from "./skills/renew.js";
-import { registerSkill as paySkill } from "./skills/pay.js";
-import { registerSkill as resetSkill } from "./skills/reset.js";
-import { registerSkill as gameSkill } from "./skills/game.js";
+import { checkDomain } from "./skills/check.js";
+import { cool } from "./skills/cool.js";
+import { info } from "./skills/info.js";
+import { register } from "./skills/register.js";
+import { renew } from "./skills/renew.js";
+import { pay } from "./skills/pay.js";
+import { reset } from "./skills/reset.js";
+import { game } from "./skills/game.js";
 import fs from "fs";
 
 export const frameUrl = "https://ens.steer.fun/";
@@ -25,14 +25,14 @@ export const agent: Agent = {
   tag: "@bot",
   description: "A ens agent with a lot of skills.",
   skills: [
-    ...checkSkill,
-    ...coolSkill,
-    ...infoSkill,
-    ...registerSkill,
-    ...renewSkill,
-    ...resetSkill,
-    ...paySkill,
-    ...gameSkill,
+    ...checkDomain,
+    ...cool,
+    ...info,
+    ...register,
+    ...renew,
+    ...reset,
+    ...pay,
+    ...game,
   ],
 };
 // [!endregion skills]

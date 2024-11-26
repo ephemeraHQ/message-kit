@@ -3,7 +3,7 @@ import { XMTPContext } from "@xmtp/message-kit";
 import type { Skill } from "@xmtp/message-kit";
 
 // [!region define]
-export const registerSkill: Skill[] = [
+export const checkDomain: Skill[] = [
   {
     skill: "/check [domain]",
     handler: handler,

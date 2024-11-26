@@ -4,7 +4,7 @@ import type { Skill } from "@xmtp/message-kit";
 
 const resend = new Resend(process.env.RESEND_API_KEY); // Replace with your Resend API key
 
-export const registerSkill: Skill[] = [
+export const todo: Skill[] = [
   {
     skill: "/todo",
     handler: handler,

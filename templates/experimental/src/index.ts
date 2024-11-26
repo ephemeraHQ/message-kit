@@ -8,15 +8,16 @@ import {
 import { systemPrompt } from "./prompt.js";
 import fs from "fs";
 //Local imports
-import { registerSkill as tokenSkill } from "./skills/token.js";
-import { registerSkill as todoSkill } from "./skills/todo.js";
-import { registerSkill as gatedSkill } from "./skills/gated.js";
+import { token } from "./skills/token.js";
+import { todo } from "./skills/todo.js";
+import { gated } from "./skills/gated.js";
+import { broadcast } from "./skills/broadcast.js";
 
 export const agent: Agent = {
   name: "Experimental Agent",
   tag: "@exp",
   description: "An experimental agent with a lot of skills.",
-  skills: [...tokenSkill, ...todoSkill, ...gatedSkill],
+  skills: [...token, ...todo, ...gated, ...broadcast],
 };
 run(
   async (context: XMTPContext) => {

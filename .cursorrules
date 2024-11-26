@@ -1,0 +1,227 @@
+# MessageKit Skill Template
+
+## Examples
+
+### Check if a Domain is Available
+
+```typescript
+import { ensUrl } from "../index.js";
+import { XMTPContext } from "@xmtp/message-kit";
+import type { Skill } from "@xmtp/message-kit";
+
+// Define Skill
+export const checkDomain: Skill[] = [
+  {
+    skill: "/check [domain]",
+    handler: handler,
+    examples: ["/check vitalik.eth", "/check fabri.base.eth"],
+    description: "Check if a domain is available.",
+    params: {
+      domain: {
+        type: "string",
+      },
+    },
+  },
+];
+
+// Handler Implementation
+export async function handler(context: XMTPContext) {
+  const {
+    message: {
+      content: {
+        params: { domain },
+      },
+    },
+  } = context;
+
+  const data = await context.getUserInfo(domain);
+
+  if (!data?.address) {
+    let message = `Looks like ${domain} is available! Here you can register it: ${ensUrl}${domain} or would you like to see some cool alternatives?`;
+    return {
+      code: 200,
+      message,
+    };
+  } else {
+    let message = `Looks like ${domain} is already registered!`;
+    await context.executeSkill("/cool " + domain);
+    return {
+      code: 404,
+      message,
+    };
+  }
+}
+
+### Generate a payment request
+
+```typescript
+import { XMTPContext } from "@xmtp/message-kit";
+import type { Skill } from "@xmtp/message-kit";
+
+// Define Skill
+export const paymentRequest: Skill[] = [
+  {
+    skill: "/pay [amount] [token] [username] [address]",
+    examples: [
+      "/pay 10 vitalik.eth",
+      "/pay 1 usdc to 0xc9925662D36DE3e1bF0fD64e779B2e5F0Aead964",
+    ],
+    description:
+      "Send a specified amount of a cryptocurrency to a destination address. \nWhen tipping, you can assume it's 1 USDC.",
+    handler: handler,
+    params: {
+      amount: {
+        default: 10,
+        type: "number",
+      },
+      token: {
+        default: "usdc",
+        type: "string",
+        values: ["eth", "dai", "usdc", "degen"], // Accepted tokens
+      },
+      username: {
+        default: "",
+        type: "username",
+      },
+      address: {
+        default: "",
+        type: "address",
+      },
+    },
+  },
+];
+
+// Handler Implementation
+export async function handler(context: XMTPContext) {
+  const {
+    message: {
+      content: {
+        params: { amount, token, username, address },
+      },
+    },
+  } = context;
+  let receiverAddress = address;
+  if (username) {
+    receiverAddress = (await context.getUserInfo(username))?.address;
+  }
+  if (address) {
+    // Prioritize address over username
+    receiverAddress = address;
+  }
+
+  await context.requestPayment(amount, token, receiverAddress);
+}
+```
+
+
+## Types
+
+```typescript
+import { XMTPContext } from "../lib/xmtp.js";
+import { ClientOptions, GroupMember } from "@xmtp/node-sdk";
+import { ContentTypeId } from "@xmtp/content-type-primitives";
+
+export type MessageAbstracted = {
+  id: string;
+  sent: Date;
+  content: {
+    text?: string | undefined;
+    reply?: string | undefined;
+    previousMsg?: string | undefined;
+    react?: string | undefined;
+    content?: any | undefined;
+    params?: any | undefined;
+    reference?: string | undefined;
+    skill?: string | undefined;
+  };
+  version: "v2" | "v3";
+  sender: AbstractedMember;
+  typeId: string;
+};
+export type GroupAbstracted = {
+  id: string;
+  sync: () => Promise<void>;
+  addMembers: (addresses: string[]) => Promise<void>;
+  addMembersByInboxId: (inboxIds: string[]) => Promise<void>;
+  send: (content: string, contentType?: ContentTypeId) => Promise<string>;
+  isAdmin: (inboxId: string) => boolean;
+  isSuperAdmin: (inboxId: string) => boolean;
+  admins: string[];
+  superAdmins: string[];
+  createdAt: Date;
+  members: GroupMember[];
+};
+export type SkillResponse = {
+  code: number;
+  message: string;
+  data?: any;
+};
+
+export type SkillHandler = (
+  context: XMTPContext,
+) => Promise<SkillResponse | void>;
+
+export type Handler = (context: XMTPContext) => Promise<void>;
+
+export type RunConfig = {
+  // client options from XMTP client
+  client?: ClientOptions;
+  // private key to be used for the client, if not, default from env
+  privateKey?: string;
+  // if true, the init log message with messagekit logo and stuff will be hidden
+  experimental?: boolean;
+  // hide the init log message with messagekit logo and stuff
+  hideInitLogMessage?: boolean;
+  // if true, attachments will be enabled
+  attachments?: boolean;
+  // if true, member changes will be enabled, like adding members to the group
+  memberChange?: boolean;
+  // skills to be used
+  agent?: Agent;
+  // model to be used
+  gptModel?: string;
+};
+export interface SkillParamConfig {
+  default?: string | number | boolean;
+  type:
+    | "number"
+    | "string"
+    | "username"
+    | "quoted"
+    | "address"
+    | "prompt"
+    | "url";
+  plural?: boolean;
+  values?: string[]; // Accepted values for the parameter
+}
+
+export interface Frame {
+  title: string;
+  buttons: { content: string; action: string; target: string }[];
+  image: string;
+}
+export interface Agent {
+  name: string;
+  description: string;
+  tag: string;
+  skills: Skill[];
+}
+export interface Skill {
+  skill: string;
+  handler?: SkillHandler | undefined;
+  adminOnly?: boolean;
+  description: string;
+  examples: string[];
+  params: Record<string, SkillParamConfig>;
+}
+
+export interface AbstractedMember {
+  inboxId: string;
+  address: string;
+  accountAddresses: string[];
+  installationIds?: string[];
+}
+
+export type MetadataValue = string | number | boolean;
+export type Metadata = Record<string, MetadataValue | MetadataValue[]>;
+```

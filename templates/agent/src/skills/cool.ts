@@ -2,7 +2,7 @@ import { XMTPContext } from "@xmtp/message-kit";
 
 import type { Skill } from "@xmtp/message-kit";
 
-export const registerSkill: Skill[] = [
+export const cool: Skill[] = [
   {
     skill: "/cool [domain]",
     examples: ["/cool vitalik.eth"],
