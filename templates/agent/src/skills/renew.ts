@@ -1,4 +1,3 @@
-import { frameUrl } from "../index.js";
 import { XMTPContext } from "@xmtp/message-kit";
 
 import type { Skill } from "@xmtp/message-kit";

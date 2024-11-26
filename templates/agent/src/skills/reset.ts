@@ -16,7 +16,11 @@ export async function handler(context: XMTPContext) {
   const {
     message: { sender },
   } = context;
-  clearMemory(sender.address);
-  clearInfoCache(sender.address);
-  return { code: 200, message: "Memory and usernames cache cleared." };
+  try {
+    clearMemory(sender.address);
+    clearInfoCache(sender.address);
+    return { code: 200, message: "Memory and usernames cache cleared." };
+  } catch (error) {
+    return { code: 500, message: "Error clearing memory and usernames cache." };
+  }
 }

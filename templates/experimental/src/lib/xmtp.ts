@@ -68,8 +68,9 @@ export async function removeFromGroup(
     if (members) {
       for (const member of members) {
         let lowerMemberAddress = member.accountAddresses[0].toLowerCase();
-        if (lowerMemberAddress !== lowerAddress) {
+        if (lowerMemberAddress === lowerAddress) {
           wasRemoved = false;
+          break;
         }
       }
     }
@@ -96,7 +97,6 @@ export async function addToGroup(
   try {
     let lowerAddress = senderAddress.toLowerCase();
     const { v2, v3 } = await isOnXMTP(client, v2client, lowerAddress);
-    console.warn("Checking if on XMTP: v2", v2, "v3", v3);
     if (!v3)
       return {
         code: 400,
