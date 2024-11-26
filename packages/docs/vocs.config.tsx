@@ -161,6 +161,10 @@ export default defineConfig({
           text: "Deployment",
           link: "/middleware/railway",
         },
+        {
+          text: "Cursor",
+          link: "/middleware/cursor",
+        },
       ],
     },
     {

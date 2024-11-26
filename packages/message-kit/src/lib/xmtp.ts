@@ -39,7 +39,7 @@ import {
 import { ContentTypeReaction } from "@xmtp/content-type-reaction";
 import path from "path";
 //com
-const frameKitUrl = process.env.FRAMEKIT_URL ?? "https://frameskit.vercel.app/";
+const frameKitUrl = process.env.FRAMEKIT_URL ?? "https://frameskit.vercel.app";
 export const awaitedHandlers = new Map<
   string,
   (text: string) => Promise<boolean | undefined>
