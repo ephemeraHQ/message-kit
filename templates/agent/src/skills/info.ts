@@ -1,4 +1,4 @@
-import { XMTPContext, getUserInfo, isOnXMTP } from "@xmtp/message-kit";
+import { XMTPContext } from "@xmtp/message-kit";
 
 import type { Skill } from "@xmtp/message-kit";
 
@@ -27,7 +27,7 @@ export async function handler(context: XMTPContext) {
     },
   } = context;
 
-  const data = await getUserInfo(domain);
+  const data = await context.getUserInfo(domain);
   if (!data?.ensDomain) {
     return {
       code: 404,
@@ -48,7 +48,9 @@ export async function handler(context: XMTPContext) {
   message += `\n\nWould you like to tip the domain owner for getting there first 🤣?`;
   message = message.trim();
 
-  if (await isOnXMTP(context.client, context.v2client, sender?.address)) {
+  if (
+    await context.isOnXMTP(context.client, context.v2client, sender?.address)
+  ) {
     await context.send(
       `Ah, this domains is in XMTP, you can message it directly`,
     );

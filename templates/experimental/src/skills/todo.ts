@@ -1,5 +1,5 @@
 import { Resend } from "resend";
-import { XMTPContext, textGeneration } from "@xmtp/message-kit";
+import { XMTPContext } from "@xmtp/message-kit";
 import type { Skill } from "@xmtp/message-kit";
 
 const resend = new Resend(process.env.RESEND_API_KEY); // Replace with your Resend API key
@@ -53,7 +53,7 @@ export async function handler(context: XMTPContext) {
     return;
   }
   try {
-    let { reply } = await textGeneration(
+    let { reply } = await context.textGeneration(
       email,
       "Make this summary concise and to the point to be sent in an html email. Just return the content inside the body tag.\n msg: " +
         previousMsg,
