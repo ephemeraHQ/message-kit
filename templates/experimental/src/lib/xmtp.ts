@@ -5,26 +5,38 @@ export async function createGroup(
   senderAddress: string,
   clientAddress: string,
 ) {
-  let senderInboxId = "";
-  const group = await client?.conversations.newGroup([
-    senderAddress,
-    clientAddress,
-  ]);
-  const members = await group.members();
-  const senderMember = members.find((member) =>
-    member.accountAddresses.includes(senderAddress.toLowerCase()),
-  );
-  if (senderMember) {
-    const senderInboxId = senderMember.inboxId;
-    console.log("Sender's inboxId:", senderInboxId);
-  } else {
-    console.log("Sender not found in members list");
+  try {
+    let senderInboxId = "";
+    await client.conversations.sync();
+    const conversations = await client.conversations.list();
+    console.log("Conversations", conversations.length);
+    const group = await client?.conversations.newGroup([
+      senderAddress,
+      clientAddress,
+    ]);
+    console.log("Group created", group?.id);
+    const members = await group.members();
+    const senderMember = members.find((member) =>
+      member.accountAddresses.includes(senderAddress.toLowerCase()),
+    );
+    if (senderMember) {
+      const senderInboxId = senderMember.inboxId;
+      console.log("Sender's inboxId:", senderInboxId);
+    } else {
+      console.log("Sender not found in members list");
+    }
+    await group.addSuperAdmin(senderInboxId);
+    console.log(
+      "Sender is superAdmin",
+      await group.isSuperAdmin(senderInboxId),
+    );
+    await group.send(`Welcome to the new group!`);
+    await group.send(`You are now the admin of this group as well as the bot`);
+    return group;
+  } catch (error) {
+    console.log("Error creating group", error);
+    return null;
   }
-  await group.addSuperAdmin(senderInboxId);
-  console.log("Sender is superAdmin", await group.isSuperAdmin(senderInboxId));
-  await group.send(`Welcome to the new group!`);
-  await group.send(`You are now the admin of this group as well as the bot`);
-  return group;
 }
 
 export async function removeFromGroup(

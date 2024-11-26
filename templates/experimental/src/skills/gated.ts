@@ -35,16 +35,17 @@ async function handler(context: XMTPContext) {
   if (skill == "id") {
     console.log(group?.id);
   } else if (skill === "create") {
-    await context.send("Creating group...");
+    console.log(client, sender.address, client.accountAddress);
     const group = await createGroup(
       client,
       sender.address,
       client.accountAddress,
     );
 
-    await context.send(
-      `Group created!\n- ID: ${group.id}\n- Group Frame URL: https://converse.xyz/group/${group.id}: \n- This url will deelink to the group inside Converse\n- Once in the other group you can share the invite with your friends.`,
-    );
+    // await context.send(
+    //   `Group created!\n- ID: ${group.id}\n- Group Frame URL: https://converse.xyz/group/${group.id}: \n- This url will deelink to the group inside Converse\n- Once in the other group you can share the invite with your friends.`,
+    // );
+    //startServer(client);
     return;
   } else {
     await context.send(

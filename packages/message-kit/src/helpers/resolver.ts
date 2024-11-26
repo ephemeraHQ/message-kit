@@ -207,6 +207,7 @@ export const isOnXMTP = async (
     return { v2, v3: v3.get(address || "") };
   } catch (error) {
     console.error("Error checking XMTP availability:", error);
+    return { v2: false, v3: undefined }; // Return default values on error
   }
 };
 
