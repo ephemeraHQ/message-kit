@@ -7,7 +7,7 @@ How to create a gated group chat through an admin agent.
 Send this message to the bot to kickstart the creation of the group.
 
 ```bash
-/create
+create group
 ```
 
 The bot will create a private group where you and the bot are the admins.Then will provide some information like:
@@ -20,6 +20,14 @@ Group created!
 - Once in the other group you can share the invite with your friends.
 ```
 
+## Start the server
+
+The code for the server is the following:
+
+```tsx [src/index.ts]
+// [!include ~/../../templates/experimental/src/index.ts:gated]
+```
+
 ## Endpoint
 
 Once you start the server on your port `3000` by default you can ping this endpoint with the parameters
@@ -27,30 +35,13 @@ Once you start the server on your port `3000` by default you can ping this endpo
 ```bash
 curl -X POST http://localhost:3000/add-wallet \
  -H "Content-Type: application/json" \
- -d '{"walletAddress": "0x7E0b0363404751346930AF92C80D1fef932Cc48a", "groupId": "2bc1d20d2e7ac190bcaff3bba0f012b3"}'
+ -d '{"walletAddress": "0x7E0b0363404751346930AF92C80D1fef932Cc48a", "groupId": "3e1c9c38731df9997a0cb9afa7e7dfbf"}'
 ```
 
-## Logic
+## Skill
 
-Declare the logic that will process the request.
+The code for the skill is the following:
 
-```tsx
-/*more code */
-export async function verifiedRequest() {
-  /*more code */
-  const nfts = await alchemy.nft.getNftsForOwner(walletAddress);
-  const collectionSlug = "XMTPeople"; // The slug for the collection
-
-  const ownsNft = nfts.ownedNfts.some(
-    (nft: any) =>
-      nft.contract.name.toLowerCase() === collectionSlug.toLowerCase(),
-  );
-  console.log(`NFTs owned on ${Network.BASE_MAINNET}:`, nfts.ownedNfts.length);
-  console.log("is the nft owned: ", ownsNft);
-  return ownsNft as boolean;
-}
-```
-
-```tsx [src/handlers/gated.ts]
-// [!include ~/../../templates/experimental/src/handlers/gated.ts]
+```tsx [src/skills/gated.ts]
+// [!include ~/../../templates/experimental/src/skills/gated.ts]
 ```

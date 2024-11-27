@@ -10,18 +10,19 @@
   "scripts": {
     "prebuild": "turbo run build --filter=./packages/message-kit --force",
     "build": "yarn prebuild && turbo run build --filter='./packages/*' --filter='./templates/*'",
+    "bump": "node scripts/update-version.js -t patch",
     "changeset": "yarn copy && changeset add --type patch",
-    "clean": "turbo run clean && rm -rf node_modules && rm -rf .turbo && rm -rf packages/message-kit/dist && rm -rf packages/message-kit/.turbo && yarn cache clean",
-    "copy": "rm -rf packages/create-message-kit/templates && cd packages/create-message-kit && yarn copy && cd ../.. && echo 'Copy completed'",
+    "clean": "turbo run clean && rm -rf node_modules && rm -rf .turbo && rm -rf packages/message-kit/dist && rm -rf packages/message-kit/.turbo && rm -rf packages/docs/dist && yarn cache clean",
+    "copy": "node scripts/copyTemplates.js",
     "dev": "cd packages/message-kit && yarn build:watch",
     "dev:agent": "cd templates/agent && yarn dev",
-    "dev:cli": "cd packages/create-message-kit ",
+    "dev:cli": "cd packages/create-message-kit && yarn link && yarn create message-kit",
     "dev:docs": "cd packages/docs && yarn dev",
     "dev:exp": "cd templates/experimental && yarn dev",
     "dev:frames": "cd packages/framekit && yarn dev",
     "dev:gpt": "cd templates/gpt && yarn dev",
     "format": "turbo run format",
-    "publish": "turbo run build --filter='./packages/*' --filter='!./packages/docs' && yarn copy && changeset publish",
+    "publish": "node scripts/publish.js",
     "test": "FORCE_COLOR=1 turbo run test --force --concurrency=1",
     "test:client": "cd packages/message-kit/tests && yarn test:client",
     "test:frames": "cd packages/message-kit/tests && yarn test:frames",
@@ -35,7 +36,8 @@
   "dependencies": {
     "@changesets/changelog-git": "^0.2.0",
     "@changesets/cli": "^2.27.5",
-    "punycode": "^2.3.1"
+    "punycode": "^2.3.1",
+    "readline-sync": "^1.4.10"
   },
   "devDependencies": {
     "prettier": "^3.3.1",

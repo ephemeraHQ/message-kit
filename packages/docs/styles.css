@@ -215,6 +215,9 @@
 .dark .vocs_Tabs_content {
   background: hsla(0, 0%, 4%, 0.6) !important;
 }
+.dark .vocs_Callout_info {
+  background: hsla(0, 0%, 4%, 0.6) !important;
+}
 .dark .custom-homepage-tile:hover {
   border: white 1px solid !important;
 }

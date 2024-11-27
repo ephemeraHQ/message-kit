@@ -1,0 +1,33 @@
+name: Request a skill
+description: Create a skill request to suggest an idea or enhancement for the skills library.
+title: "Skill request: "
+labels: enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time to request a skill. Community contributions like yours are key to the development and adoption of the skills library. Review the following guidelines for requesting a skill:
+        - Include 1 skill request per issue. Creating 1 issue per request will make it easier to explore and assign a priority to a request.
+        - Check [existing issues](https://github.com/ephemeraHQ/message-kit/issues) to see if the skill has already been requested.
+        - Ensure that the skill is not security-related and can safely be disclosed publicly on GitHub. For information about how to report a security issue, see [Security policy](https://github.com/ephemeraHQ/message-kit/security/policy).
+        - Follow the [XMTP code of conduct](https://github.com/ephemeraHQ/message-kit/blob/main/CODE_OF_CONDUCT.md).
+  - type: textarea
+    id: problem-description
+    attributes:
+      label: Is your skill request related to a problem?
+      description: Provide a clear and concise description of the problem to be solved.
+  - type: textarea
+    id: solution
+    attributes:
+      label: Describe the solution to the problem
+      description: Provide a clear and concise description of what you want to happen to solve the problem.
+  - type: textarea
+    id: usecases
+    attributes:
+      label: Describe the use cases for the skill
+      description: Provide a clear and concise description of the use cases the skill unlocks.
+  - type: textarea
+    id: details
+    attributes:
+      label: Additional details
+      description: Add any other details about your skill request. Attach screenshots, if applicable.

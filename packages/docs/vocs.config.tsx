@@ -67,7 +67,7 @@ export default defineConfig({
       link: "https://github.com/ephemeraHQ/message-kit",
     },
   ],
-  topNav: [{ text: "v1.2.6", link: "/changelog" }],
+  topNav: [{ text: "v1.2.8", link: "/changelog" }],
   editLink: {
     pattern:
       "https://github.com/ephemeraHQ/message-kit/blob/main/packages/docs/pages/:path",
@@ -154,12 +154,16 @@ export default defineConfig({
       text: "Middleware",
       items: [
         {
-          text: "Overview",
+          text: "Plugins",
           link: "/middleware",
         },
         {
           text: "Deployment",
           link: "/middleware/railway",
+        },
+        {
+          text: "Cursor",
+          link: "/middleware/cursor",
         },
       ],
     },

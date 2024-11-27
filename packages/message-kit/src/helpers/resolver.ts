@@ -195,18 +195,22 @@ const fetchWithTimeout = async (
   }
 };
 export const isOnXMTP = async (
-  v3client: V3Client,
-  v2client: V2Client,
+  v3client: V3Client | null,
+  v2client: V2Client | null,
   address: string,
 ) => {
   try {
     const [v2, v3] = await Promise.all([
-      v2client.canMessage(address || ""),
-      v3client.canMessage([address || ""]),
+      v2client ? v2client.canMessage(address) : false,
+      v3client ? v3client.canMessage([address]) : false,
     ]);
-    return { v2, v3: v3.get(address || "") };
+    return {
+      v2,
+      v3: v3 ? (v3 as Map<string, boolean>).get(address) : false,
+    };
   } catch (error) {
     console.error("Error checking XMTP availability:", error);
+    return { v2: false, v3: false }; // Return default values on error
   }
 };
 

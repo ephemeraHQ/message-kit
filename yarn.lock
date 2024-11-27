@@ -3585,7 +3585,7 @@ __metadata:
     "@xmtp/content-type-reply": "npm:^1.1.11"
     "@xmtp/content-type-text": "npm:^1.0.0"
     "@xmtp/grpc-api-client": "npm:^0.2.8"
-    "@xmtp/node-sdk": "npm:^0.0.27"
+    "@xmtp/node-sdk": "npm:^0.0.28"
     "@xmtp/xmtp-js": "npm:^13.0.3"
     dotenv: "npm:^16.4.5"
     openai: "npm:^4.52.7"
@@ -3600,23 +3600,23 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@xmtp/node-bindings@npm:^0.0.22":
-  version: 0.0.22
-  resolution: "@xmtp/node-bindings@npm:0.0.22"
-  checksum: 10/e8668b2fd30041dff8671625c13d49245d421ac31c0669b9be5365b5f22bf3c28f4d0cc12015a2710b90136423828bcdb1a99a10b37d4d5ac51e3ac47228b960
+"@xmtp/node-bindings@npm:^0.0.25":
+  version: 0.0.25
+  resolution: "@xmtp/node-bindings@npm:0.0.25"
+  checksum: 10/336f9b2a4a8b2781f6c53a7dd444428893f5e04a927350c82fcb79e37e0cc69abcb86406ffedeaa28115f1b57801890309546a10c9e806e3ed81b18b9d8f1431
   languageName: node
   linkType: hard
 
-"@xmtp/node-sdk@npm:^0.0.27":
-  version: 0.0.27
-  resolution: "@xmtp/node-sdk@npm:0.0.27"
+"@xmtp/node-sdk@npm:^0.0.28":
+  version: 0.0.28
+  resolution: "@xmtp/node-sdk@npm:0.0.28"
   dependencies:
     "@xmtp/content-type-group-updated": "npm:^1.0.1"
     "@xmtp/content-type-primitives": "npm:^1.0.3"
     "@xmtp/content-type-text": "npm:^1.0.1"
-    "@xmtp/node-bindings": "npm:^0.0.22"
+    "@xmtp/node-bindings": "npm:^0.0.25"
     "@xmtp/proto": "npm:^3.72.3"
-  checksum: 10/9937c77d4bd3f3ed8df2f9938e940e2c21a7c8e8f06506d227bb97939f8294e0ae6ec6bc1498f528274257d61f9142e38639aa123c3ddf086a98d9cd041c0161
+  checksum: 10/86f0d601ae65873b71561aa37a60a8709a9aaee0f0020f3590a1149f10bbe4394d1bc5fd97e4e9c30eb5ec7d544eb33de3dcc6fb8e9cbcbae152ac7cd746ef7c
   languageName: node
   linkType: hard
 
@@ -4688,6 +4688,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"data-uri-to-buffer@npm:^4.0.0":
+  version: 4.0.1
+  resolution: "data-uri-to-buffer@npm:4.0.1"
+  checksum: 10/0d0790b67ffec5302f204c2ccca4494f70b4e2d940fea3d36b09f0bb2b8539c2e86690429eb1f1dc4bcc9e4df0644193073e63d9ee48ac9fce79ec1506e4aa4c
+  languageName: node
+  linkType: hard
+
 "debug@npm:2.6.9, debug@npm:^2.2.0":
   version: 2.6.9
   resolution: "debug@npm:2.6.9"
@@ -5557,6 +5564,7 @@ __metadata:
     "@xmtp/message-kit": "workspace:*"
     alchemy-sdk: "npm:^3.0.0"
     express: "npm:^4.19.2"
+    node-fetch: "npm:^3.3.2"
     resend: "npm:^4.0.1"
     typescript: "npm:^5.4.5"
   languageName: unknown
@@ -5699,6 +5707,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fetch-blob@npm:^3.1.2, fetch-blob@npm:^3.1.4":
+  version: 3.2.0
+  resolution: "fetch-blob@npm:3.2.0"
+  dependencies:
+    node-domexception: "npm:^1.0.0"
+    web-streams-polyfill: "npm:^3.0.3"
+  checksum: 10/5264ecceb5fdc19eb51d1d0359921f12730941e333019e673e71eb73921146dceabcb0b8f534582be4497312d656508a439ad0f5edeec2b29ab2e10c72a1f86b
+  languageName: node
+  linkType: hard
+
 "fill-range@npm:^7.1.1":
   version: 7.1.1
   resolution: "fill-range@npm:7.1.1"
@@ -5795,6 +5813,15 @@ __metadata:
     node-domexception: "npm:1.0.0"
     web-streams-polyfill: "npm:4.0.0-beta.3"
   checksum: 10/29622f75533107c1bbcbe31fda683e6a55859af7f48ec354a9800591ce7947ed84cd3ef2b2fcb812047a884f17a1bac75ce098ffc17e23402cd373e49c1cd335
+  languageName: node
+  linkType: hard
+
+"formdata-polyfill@npm:^4.0.10":
+  version: 4.0.10
+  resolution: "formdata-polyfill@npm:4.0.10"
+  dependencies:
+    fetch-blob: "npm:^3.1.2"
+  checksum: 10/9b5001d2edef3c9449ac3f48bd4f8cc92e7d0f2e7c1a5c8ba555ad4e77535cc5cf621fabe49e97f304067037282dd9093b9160a3cb533e46420b446c4e6bc06f
   languageName: node
   linkType: hard
 
@@ -7409,6 +7436,7 @@ __metadata:
     prettier: "npm:^3.3.1"
     prettier-plugin-packagejson: "npm:^2.5.0"
     punycode: "npm:^2.3.1"
+    readline-sync: "npm:^1.4.10"
     turbo: "npm:^1.13.4"
     typescript: "npm:^5.4.5"
   languageName: unknown
@@ -8217,7 +8245,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-domexception@npm:1.0.0":
+"node-domexception@npm:1.0.0, node-domexception@npm:^1.0.0":
   version: 1.0.0
   resolution: "node-domexception@npm:1.0.0"
   checksum: 10/e332522f242348c511640c25a6fc7da4f30e09e580c70c6b13cb0be83c78c3e71c8d4665af2527e869fc96848924a4316ae7ec9014c091e2156f41739d4fa233
@@ -8235,6 +8263,17 @@ __metadata:
     encoding:
       optional: true
   checksum: 10/b24f8a3dc937f388192e59bcf9d0857d7b6940a2496f328381641cb616efccc9866e89ec43f2ec956bbd6c3d3ee05524ce77fe7b29ccd34692b3a16f237d6676
+  languageName: node
+  linkType: hard
+
+"node-fetch@npm:^3.3.2":
+  version: 3.3.2
+  resolution: "node-fetch@npm:3.3.2"
+  dependencies:
+    data-uri-to-buffer: "npm:^4.0.0"
+    fetch-blob: "npm:^3.1.4"
+    formdata-polyfill: "npm:^4.0.10"
+  checksum: 10/24207ca8c81231c7c59151840e3fded461d67a31cf3e3b3968e12201a42f89ce4a0b5fb7079b1fa0a4655957b1ca9257553200f03a9f668b45ebad265ca5593d
   languageName: node
   linkType: hard
 
@@ -9271,6 +9310,13 @@ __metadata:
   dependencies:
     picomatch: "npm:^2.2.1"
   checksum: 10/196b30ef6ccf9b6e18c4e1724b7334f72a093d011a99f3b5920470f0b3406a51770867b3e1ae9711f227ef7a7065982f6ee2ce316746b2cb42c88efe44297fe7
+  languageName: node
+  linkType: hard
+
+"readline-sync@npm:^1.4.10":
+  version: 1.4.10
+  resolution: "readline-sync@npm:1.4.10"
+  checksum: 10/5eb6465f5c5391e32cb525022a307a910a565828cd53da87ac05fca291607df54099dd65bc9c7a513ac53a5eb4e11454d48f0dcf4ad54126d36dec5fcec4a8f0
   languageName: node
   linkType: hard
 
@@ -11326,6 +11372,13 @@ __metadata:
   version: 4.0.0-beta.3
   resolution: "web-streams-polyfill@npm:4.0.0-beta.3"
   checksum: 10/dcdef67de57d83008f9dc330662b65ba4497315555dd0e4e7bcacb132ffdf8a830eaab8f74ad40a4a44f542461f51223f406e2a446ece1cc29927859b1405853
+  languageName: node
+  linkType: hard
+
+"web-streams-polyfill@npm:^3.0.3":
+  version: 3.3.3
+  resolution: "web-streams-polyfill@npm:3.3.3"
+  checksum: 10/8e7e13501b3834094a50abe7c0b6456155a55d7571312b89570012ef47ec2a46d766934768c50aabad10a9c30dd764a407623e8bfcc74fcb58495c29130edea9
   languageName: node
   linkType: hard
 

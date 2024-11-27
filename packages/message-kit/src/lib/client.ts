@@ -41,7 +41,6 @@ export async function xmtpClient(
 
   const defaultConfig: ClientOptions = {
     env: env,
-    disableAutoRegister: true,
     dbPath: `.data/${user.account?.address}-${env}`,
     codecs: [
       new TextCodec(),

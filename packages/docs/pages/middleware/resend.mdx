@@ -14,7 +14,7 @@ bun add resend
 
 Send an email with a list of TODOs.
 
-```tsx [src/handlers/todo.ts]
+```tsx [src/skills/todo.ts]
 if (!process.env.RESEND_API_KEY) {
   console.warn("RESEND_API_KEY is not set");
 }
@@ -26,7 +26,7 @@ let content = {
   to: email,
   subject: "Your summary from Converse",
   html: `
-        <h3>Your TODO Summary</h3>
+        <h3>Your summary</h3>
         <p>${previousMsg.replace(/\n/g, "<br>")}</p>
       `,
 };

@@ -1,9 +1,10 @@
-import { frameUrl } from "../index.js";
-import { getUserInfo, XMTPContext } from "@xmtp/message-kit";
+import { XMTPContext } from "@xmtp/message-kit";
 
 import type { Skill } from "@xmtp/message-kit";
 
-export const registerSkill: Skill[] = [
+const frameUrl = "https://ens.steer.fun/";
+
+export const renew: Skill[] = [
   {
     skill: "/renew [domain]",
     handler: handler,
@@ -36,7 +37,7 @@ export async function handler(context: XMTPContext) {
     };
   }
 
-  const data = await getUserInfo(domain);
+  const data = await context.getUserInfo(domain);
 
   if (!data?.address || data?.address !== sender?.address) {
     return {

@@ -4,36 +4,37 @@ import {
   replaceVariables,
   XMTPContext,
   Agent,
+  xmtpClient,
 } from "@xmtp/message-kit";
-import { systemPrompt } from "./prompt.js";
-import { registerSkill as paySkill } from "./handlers/pay.js";
-import { registerSkill as resetSkill } from "./handlers/reset.js";
-import { registerSkill as tokenSkill } from "./handlers/token.js";
-import { registerSkill as todoSkill } from "./handlers/todo.js";
-import { registerSkill as infoSkill } from "./handlers/info.js";
-import { registerSkill as gatedSkill } from "./handlers/gated.js";
 import fs from "fs";
+import { systemPrompt } from "./prompt.js";
+import { token } from "./skills/token.js";
+import { todo } from "./skills/todo.js";
+import { gated, startGatedGroupServer } from "./skills/gated.js";
+import { broadcast } from "./skills/broadcast.js";
+import { wordle } from "./skills/wordle.js";
 
-export const frameUrl = "https://ens.steer.fun/";
-export const ensUrl = "https://app.ens.domains/";
-
-// [!region skills]
 export const agent: Agent = {
-  name: "Web3 Agent",
+  name: "Experimental Agent",
   tag: "@bot",
-  description: "A web3 agent with a lot of skills.",
+  description: "An experimental agent with a lot of skills.",
   skills: [
-    ...resetSkill,
-    ...paySkill,
-    ...tokenSkill,
-    ...todoSkill,
-    ...infoSkill,
-    ...gatedSkill,
+    ...token,
+    ...(process?.env?.RESEND_API_KEY ? todo : []),
+    ...(process?.env?.ALCHEMY_SDK ? gated : []),
+    ...broadcast,
+    ...wordle,
   ],
 };
-// [!endregion skills]
 
-// [!region run1]
+// [!region gated]
+const { client } = await xmtpClient({
+  hideInitLogMessage: true,
+});
+
+startGatedGroupServer(client);
+// [!endregion gated]
+
 run(
   async (context: XMTPContext) => {
     const {
@@ -42,13 +43,10 @@ run(
     } = context;
 
     let prompt = await replaceVariables(systemPrompt, sender.address, agent);
-    // [!region run1]
+
     //This is only used for to update the docs.
     fs.writeFileSync("example_prompt.md", prompt);
-    // [!region run2]
     await agentReply(context, prompt);
   },
   { agent },
 );
-
-// [!endregion run2]

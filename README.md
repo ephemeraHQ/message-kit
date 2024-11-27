@@ -8,7 +8,7 @@ This is the official repository for [MessageKit](https://messagekit.ephemerahq.c
 
 - [`message-kit`](/packages/message-kit): A kit for quickly building messaging apps
 - [`create-message-kit`](/packages/create-message-kit): A CLI for creating new apps easily
-- ['framekit`](https://github.com/humanagent/frameskit): A suite for backend frames
+- [`framekit`](https://github.com/humanagent/frameskit): A suite for backend frames
 - [`docs`](/packages/docs): Documentation for MessageKit
 
 ## Contributing

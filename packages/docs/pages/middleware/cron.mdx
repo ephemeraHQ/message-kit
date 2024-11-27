@@ -1,6 +1,6 @@
-## Cron middleware
+## Cron
 
-Cron is a middleware that allows you to schedule tasks.
+Cron is a plugin that allows you to schedule tasks.
 
 ## Install
 
@@ -33,9 +33,7 @@ export async function startCron(redisClient: RedisClientType) {
         if (subscriptionStatus === "subscribed") {
           console.log(`Sending daily update to ${address}`);
           // Logic to send daily updates to each subscriber
-          const conversation = await client?.conversations.newGroup([
-            address,
-          ]);
+          const conversation = await client?.conversations.newGroup([address]);
           await conversation.send("Here is your daily update!");
         }
       }

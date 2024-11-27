@@ -1,11 +1,16 @@
-import { Conversation, DecodedMessage, Client } from "@xmtp/node-sdk";
+import {
+  Conversation,
+  DecodedMessage,
+  Client as V3Client,
+} from "@xmtp/node-sdk";
 import {
   DecodedMessage as DecodedMessageV2,
   Client as V2Client,
   Conversation as V2Conversation,
 } from "@xmtp/xmtp-js";
 import { GroupMember } from "@xmtp/node-sdk";
-import { getUserInfo } from "../helpers/resolver.js";
+import { textGeneration } from "../helpers/gpt.js";
+import { getUserInfo, isOnXMTP } from "../helpers/resolver.js";
 import fs from "fs/promises";
 import type { Reaction } from "@xmtp/content-type-reaction";
 import { ContentTypeText } from "@xmtp/content-type-text";
@@ -34,7 +39,7 @@ import {
 import { ContentTypeReaction } from "@xmtp/content-type-reaction";
 import path from "path";
 //com
-const frameKitUrl = process.env.FRAMEKIT_URL ?? "https://frameskit.vercel.app/";
+const frameKitUrl = process.env.FRAMEKIT_URL ?? "https://frameskit.vercel.app";
 export const awaitedHandlers = new Map<
   string,
   (text: string) => Promise<boolean | undefined>
@@ -45,7 +50,7 @@ export class XMTPContext {
   message!: MessageAbstracted;
   group!: GroupAbstracted;
   conversation!: V2Conversation;
-  client!: Client;
+  client!: V3Client;
   version!: "v2" | "v3";
   v2client!: V2Client;
   members?: AbstractedMember[];
@@ -65,7 +70,7 @@ export class XMTPContext {
   executeSkill!: (text: string) => Promise<SkillResponse | undefined>;
   private constructor(
     conversation: Conversation | V2Conversation,
-    { client, v2client }: { client: Client; v2client: V2Client },
+    { client, v2client }: { client: V3Client; v2client: V2Client },
   ) {
     this.client = client;
     this.v2client = v2client;
@@ -93,7 +98,7 @@ export class XMTPContext {
   static async create(
     conversation: Conversation | V2Conversation,
     message: DecodedMessage | DecodedMessageV2 | null,
-    { client, v2client }: { client: Client; v2client: V2Client },
+    { client, v2client }: { client: V3Client; v2client: V2Client },
     runConfig: RunConfig,
     version?: "v2" | "v3",
   ): Promise<XMTPContext | null> {
@@ -170,7 +175,6 @@ export class XMTPContext {
           }
         } else if (message?.contentType?.sameAs(ContentTypeReply)) {
           let previousMsg = await context.getLastMessageById(content.reference);
-          console.log("previousMsg", previousMsg);
           content = {
             previousMsg: previousMsg,
             reply: content.content,
@@ -301,7 +305,6 @@ export class XMTPContext {
       let group = await (this.refConv as Conversation);
       if (group) {
         let members: GroupMember[] = [];
-        console.log("entra:group", group);
         try {
           await group.sync();
           members = await group.members();
@@ -474,6 +477,19 @@ export class XMTPContext {
 
     const frameUrl = `${frameKitUrl}/custom?${params.toString()}`;
     await this.send(frameUrl);
+  }
+  async getUserInfo(username: string) {
+    return await getUserInfo(username);
+  }
+  async isOnXMTP(v3client: V3Client, v2client: V2Client, address: string) {
+    return await isOnXMTP(v3client, v2client, address);
+  }
+  async textGeneration(
+    memoryKey: string,
+    userPrompt: string,
+    systemPrompt?: string,
+  ) {
+    return await textGeneration(memoryKey, userPrompt, systemPrompt);
   }
   async requestPayment(
     amount: number = 1,

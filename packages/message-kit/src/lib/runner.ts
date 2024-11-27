@@ -155,7 +155,7 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
       "skill",
     ].includes(typeId ?? "");
     // Check if the message content triggers a tag
-    const isTagged = text?.includes(`@${agent?.tag}`) ?? false;
+    const isTagged = text?.includes(`${agent?.tag}`) ?? false;
     const isMessageValid = isSameAddress
       ? false
       : // v2 only accepts text, remoteStaticAttachment, reply

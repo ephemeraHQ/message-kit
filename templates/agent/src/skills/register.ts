@@ -1,9 +1,9 @@
-import { ensUrl } from "../index.js";
 import { XMTPContext } from "@xmtp/message-kit";
 
+const ensUrl = "https://app.ens.domains/";
 import type { Skill } from "@xmtp/message-kit";
 
-export const registerSkill: Skill[] = [
+export const register: Skill[] = [
   {
     skill: "/register [domain]",
     handler: handler,
@@ -37,4 +37,3 @@ export async function handler(context: XMTPContext) {
   let url_ens = ensUrl + domain;
   return { code: 200, message: `${url_ens}` };
 }
-

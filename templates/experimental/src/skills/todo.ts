@@ -4,7 +4,7 @@ import type { Skill } from "@xmtp/message-kit";
 
 const resend = new Resend(process.env.RESEND_API_KEY); // Replace with your Resend API key
 
-export const registerSkill: Skill[] = [
+export const todo: Skill[] = [
   {
     skill: "/todo",
     handler: handler,
@@ -30,7 +30,7 @@ export async function handler(context: XMTPContext) {
   let intents = 2;
   while (intents > 0) {
     const emailResponse = await context.awaitResponse(
-      "Please provide your email address to receive the TODO summary:",
+      "Please provide your email address to receive the to-dos summary:",
     );
     email = emailResponse;
 
@@ -52,14 +52,20 @@ export async function handler(context: XMTPContext) {
     return;
   }
   try {
-    if (typeof previousMsg === "string") {
+    let { reply } = await context.textGeneration(
+      email,
+      "Make this summary concise and to the point to be sent in an email.\n msg: " +
+        previousMsg,
+      "You are an expert at summarizing to-dos.  Return in format html and just the content inside the body tag. Dont return `html` or `body` tags",
+    );
+    if (typeof reply === "string") {
       let content = {
         from: "bot@mail.coin-toss.xyz",
         to: email,
         subject: "Your summary from Converse",
         html: `
-        <h3>Your TODO Summary</h3>
-        <p>${previousMsg.replace(/\n/g, "<br>")}</p>
+        <h3>Your Converse Summary</h3>
+        <p>${reply}</p>
       `,
       };
       await resend.emails.send(content);

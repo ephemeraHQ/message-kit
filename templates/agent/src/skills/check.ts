@@ -1,9 +1,10 @@
-import { ensUrl } from "../index.js";
-import { XMTPContext, getUserInfo } from "@xmtp/message-kit";
+import { XMTPContext } from "@xmtp/message-kit";
 import type { Skill } from "@xmtp/message-kit";
 
+const ensUrl = "https://app.ens.domains/";
+
 // [!region define]
-export const registerSkill: Skill[] = [
+export const checkDomain: Skill[] = [
   {
     skill: "/check [domain]",
     handler: handler,
@@ -28,7 +29,7 @@ export async function handler(context: XMTPContext) {
     },
   } = context;
 
-  const data = await getUserInfo(domain);
+  const data = await context.getUserInfo(domain);
 
   if (!data?.address) {
     let message = `Looks like ${domain} is available! Here you can register it: ${ensUrl}${domain} or would you like to see some cool alternatives?`;

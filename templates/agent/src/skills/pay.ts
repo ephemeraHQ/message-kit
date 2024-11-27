@@ -1,10 +1,13 @@
 import { XMTPContext } from "@xmtp/message-kit";
 import type { Skill } from "@xmtp/message-kit";
 
-export const registerSkill: Skill[] = [
+export const pay: Skill[] = [
   {
-    skill: "/pay [amount] [token] [username]",
-    examples: ["/pay 10 vitalik.eth"],
+    skill: "/pay [amount] [token] [username] [address]",
+    examples: [
+      "/pay 10 vitalik.eth",
+      "/pay 1 usdc to 0xc9925662D36DE3e1bF0fD64e779B2e5F0Aead964",
+    ],
     description:
       "Send a specified amount of a cryptocurrency to a destination address. \nWhen tipping, you can asume its 1 usdc.",
     handler: handler,
@@ -22,6 +25,10 @@ export const registerSkill: Skill[] = [
         default: "",
         type: "username",
       },
+      address: {
+        default: "",
+        type: "address",
+      },
     },
   },
 ];
@@ -29,10 +36,18 @@ export async function handler(context: XMTPContext) {
   const {
     message: {
       content: {
-        params: { address },
+        params: { amount, token, username, address },
       },
     },
   } = context;
+  let receiverAddress = address;
+  if (username) {
+    receiverAddress = (await context.getUserInfo(username))?.address;
+  }
+  if (address) {
+    //Prioritize address over username
+    receiverAddress = address;
+  }
 
-  await context.requestPayment(1, "USDC", address);
+  await context.requestPayment(amount, token, receiverAddress);
 }

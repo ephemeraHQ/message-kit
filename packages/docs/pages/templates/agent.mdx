@@ -1,0 +1,64 @@
+# ENS Agent
+
+This is a simple yet powerful agent that will help users interact with ENS.
+
+## Skills
+
+- [Check](/skills/library/check): Check if a domain is available
+- [Cool](/skills/library/cool): Show cool alternatives
+- [Register](/skills/library/register): Register a domain
+- [Reset](/skills/library/reset): Reset a domain
+- [Renew](/skills/library/renew): Renew a domain
+- [Info](/skills/library/info): Get info about a domain
+- [Pay](/skills/library/pay): Pay for a domain
+
+## Structure
+
+```
+agent/
+├── src/
+│   └── skills/
+│       ├── check.ts
+│       ├── cool.ts
+│       ├── info.ts
+│       ├── register.ts
+│       ├── renew.ts
+│       ├── reset.ts
+│       ├── pay.ts
+│   ├── index.ts
+│   ├── prompt.ts
+├── package.json
+├── tsconfig.json
+└── .env
+```
+
+## Runner
+
+The runner function to start the agent and listen for incoming messages:
+
+```tsx [src/index.ts]
+// [!include ~/../../templates/agent/src/index.ts]
+```
+
+## Prompt
+
+This is the prompt that the agent will use to respond to the user.
+
+```tsx [src/prompt.ts]
+// [!include ~/../../templates/agent/src/prompt.ts]
+```
+
+The end result is a prompt that the model can understand and use to respond to the user.
+
+```md [example_prompt.md]
+// [!include ~/../../templates/agent/example_prompt.md]
+```
+
+### Variables
+
+Set up these variables in your app
+
+```bash [.env]
+KEY= # the private key of the wallet
+OPEN_AI_API_KEY= # sk-proj-...
+```

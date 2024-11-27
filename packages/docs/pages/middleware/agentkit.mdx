@@ -1,0 +1,104 @@
+# AgentKit Integration
+
+A lightweight setup to integrate **CDP AgentKit** with **MessageKit**, enabling communication with the Converse app.
+
+This project consists of two main repositories:
+
+- **Python FastAPI Server**: Implements the agent logic using `cdp-agentkit`.
+- **MessageKit Site**: Receives messages from the Converse app, sends them to the server, and returns the responses.
+
+## Repositories
+
+1. **AgentKit Server**: [github.com/raihankhan-rk/basedagent-server](https://github.com/raihankhan-rk/basedagent-server)
+2. **MessageKit Site**: [github.com/raihankhan-rk/based-agent](https://github.com/raihankhan-rk/based-agent)
+
+## Environment Setup for Server
+
+Before running the server, make sure to set the following environment variables:
+
+```bash
+CDP_API_KEY_NAME=""
+NETWORK_ID=""
+OPENAI_API_KEY=""
+WALLET_REDIS_URL=""
+WALLET_REDIS_HOST=""
+WALLET_REDIS_PORT=""
+CHAT_HISTORY_REDIS_URL=""
+API_KEY=""  # The hard coded API key required to interact with this server
+```
+
+## Endpoint
+
+Once you start the server on your port `8000` by default, you can ping this endpoint with the parameters
+
+```bash
+curl --location 'http://localhost:8000/api/v1/chat' \
+--header 'Content-Type: application/json' \
+--header 'X-API-KEY: <YOUR-API-KEY>' \
+--data '{
+    "prompt": "<YOUR-MESSAGE>",
+    "user": "<USER-IDENTIFIER>"
+}'
+```
+
+### Parameters
+
+`prompt`: User prompt that you want the agent to process.
+`user`: The unique identifier for the user. Wallet Address in this case.
+
+## Skill
+
+```ts
+import axios from "axios";
+
+export async function handleMessage(context: any) {
+  const {
+    message: { content, sender },
+  } = context;
+
+  const messageText = content.text || content;
+
+  console.log("📨 Received message:", {
+    content: messageText,
+    sender: sender.address,
+  });
+
+  try {
+    console.log("🚀 Sending request to API...");
+    const response = await axios.post(
+      "http://localhost:8000/api/v1/chat",
+      {
+        prompt: messageText,
+        user: sender.address,
+      },
+      {
+        headers: {
+          "X-API-KEY": `${process.env.API_KEY}`,
+          "Content-Type": "application/json",
+        },
+      },
+    );
+
+    console.log("✅ API Response:", response.data);
+    return {
+      code: 200,
+      message: response.data,
+    };
+  } catch (error: any) {
+    console.error("❌ API Error:", {
+      message: error.message,
+      response: error.response?.data,
+      status: error.response?.status,
+    });
+
+    return {
+      code: 500,
+      message: "Failed to process message",
+    };
+  }
+}
+
+export const messageHandler = {
+  handler: handleMessage,
+};
+```

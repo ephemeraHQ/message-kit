@@ -1,43 +1,124 @@
-# Middleware
+import { CustomHomePage } from "../../components/CustomHomePage";
 
-Middleware are functions that can be used to modify the behavior of a message. Just copy the middleware you want to use and paste it in your code.
+# Plugins
 
-Databases:
+Welcome to the MessageKit plugins library. Here you'll find a collection of plugins that can be used to modify the behavior of messages.
 
-- [Redis](/middleware/redis): Use Redis as a database.
-- [Lowdb](/middleware/lowdb): Use Lowdb to store data.
+:::info
+Suggest a PR for a plugin [here](https://github.com/ephemeraHQ/message-kit/issues)
+:::
 
-AI:
+## Databases
 
-- [Vision](/middleware/vision): Use Vision to generate images.
+<CustomHomePage.TileGrid3>
+  <CustomHomePage.Tile
+    href="/middleware/redis"
+    title="Redis"
+    description="Use Redis as a database."
+    icon="🗄️"
+  />
+  <CustomHomePage.Tile
+    href="/middleware/lowdb"
+    title="Lowdb"
+    description="Use Lowdb to store data."
+    icon="📦"
+  />
+</CustomHomePage.TileGrid3>
 
-Web3:
+## Web3
 
-- [Learnweb3](/middleware/learnweb3): Use Learnweb3 to earn points in web3.
-- [Stackso](/middleware/stackso): Use Stackso to earning points in web3.
-- [XMTP](/middleware/xmtp): Use XMTP to broadcast or manage groups.
+<CustomHomePage.TileGrid3>
+  <CustomHomePage.Tile
+    href="/middleware/learnweb3"
+    title="Learnweb3"
+    description="Use Learnweb3 to earn points in web3."
+    icon="💻"
+  />
+  <CustomHomePage.Tile
+    href="/middleware/alchemy"
+    title="Alchemy"
+    description="Use Alchemy to interact with the blockchain."
+    icon="🔗"
+  />
+  <CustomHomePage.Tile
+    href="/middleware/stackso"
+    title="Stackso"
+    description="Use Stackso to earn points in web3."
+    icon="📈"
+  />
+  <CustomHomePage.Tile
+    href="/middleware/xmtp"
+    title="XMTP"
+    description="Use XMTP to broadcast or manage groups."
+    icon="💬"
+  />
+  <CustomHomePage.Tile
+    href="/middleware/agentkit"
+    title="AgentKit"
+    description="Use AgentKit to manage agents."
+    icon="🤖"
+  />
+</CustomHomePage.TileGrid3>
 
-Scheduling:
+## Other
 
-- [Cron](/middleware/cron): Schedule messages to be sent at a specific time.
+<CustomHomePage.TileGrid3>
 
-Web2:
+<CustomHomePage.Tile
+  href="/middleware/vision"
+  title="GPT Vision"
+  description="Use Vision to generate images."
+  icon="🖼️"
+/>
 
-- [Notion](/middleware/notion): Use Notion as a database.
+<CustomHomePage.Tile
+  href="/middleware/minilog"
+  title="Minilog"
+  description="Use Minilog to send logs to a remote server."
+  icon="�"
+/>
 
-Included:
+<CustomHomePage.Tile
+  href="/middleware/cron"
+  title="Cron"
+  description="Schedule messages to be sent at a specific time."
+  icon="⏰"
+/>
+<CustomHomePage.Tile
+  href="/middleware/resend"
+  title="Resend"
+  description="Use Resend to send emails."
+  icon="✉️"
+/>
 
-- [Gpt](/middleware/gpt): Use GPT to generate text.
-- [Resolver](/middleware/resolver): Use Resolver to resolve messages.
+<CustomHomePage.Tile
+  href="/middleware/notion"
+  title="Notion"
+  description="Use Notion as a database."
+  icon="📒"
+/>
 
-Email:
+  <CustomHomePage.Tile
+    href="https://github.com/humanagent/message-kit-next-quickstart"
+    title="Next.js example"
+    description="Deploy in a Vercel app."
+    icon="🚀"
+  />
+</CustomHomePage.TileGrid3>
 
-- [Resend](/middleware/resend): Use Resend to send emails.
+## Included
 
-Infrastructure:
-
-- [Next.js example](https://github.com/humanagent/message-kit-next-quickstart): Deploy in a vercel app.
-
-Deployment:
-
-- [Railway](/middleware/railway): deploy your agent in seconds
+<CustomHomePage.TileGrid3>
+  <CustomHomePage.Tile
+    href="/middleware/gpt"
+    title="GPT"
+    description="Use GPT to generate text."
+    icon="🤖"
+  />
+  <CustomHomePage.Tile
+    href="/middleware/resolver"
+    title="Resolver"
+    description="Use Resolver to resolve messages."
+    icon="🔍"
+  />
+</CustomHomePage.TileGrid3>
