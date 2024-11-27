@@ -20,6 +20,14 @@ Group created!
 - Once in the other group you can share the invite with your friends.
 ```
 
+## Start the server
+
+The code for the server is the following:
+
+```tsx [src/index.ts]
+// [!include ~/../../templates/experimental/src/index.ts:gated]
+```
+
 ## Endpoint
 
 Once you start the server on your port `3000` by default you can ping this endpoint with the parameters
@@ -30,7 +38,9 @@ curl -X POST http://localhost:3000/add-wallet \
  -d '{"walletAddress": "0x7E0b0363404751346930AF92C80D1fef932Cc48a", "groupId": "3e1c9c38731df9997a0cb9afa7e7dfbf"}'
 ```
 
-## Logic
+## Skill
+
+The code for the skill is the following:
 
 ```tsx [src/skills/gated.ts]
 // [!include ~/../../templates/experimental/src/skills/gated.ts]

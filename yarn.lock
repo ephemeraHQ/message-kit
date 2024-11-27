@@ -7436,6 +7436,7 @@ __metadata:
     prettier: "npm:^3.3.1"
     prettier-plugin-packagejson: "npm:^2.5.0"
     punycode: "npm:^2.3.1"
+    readline-sync: "npm:^1.4.10"
     turbo: "npm:^1.13.4"
     typescript: "npm:^5.4.5"
   languageName: unknown
@@ -9309,6 +9310,13 @@ __metadata:
   dependencies:
     picomatch: "npm:^2.2.1"
   checksum: 10/196b30ef6ccf9b6e18c4e1724b7334f72a093d011a99f3b5920470f0b3406a51770867b3e1ae9711f227ef7a7065982f6ee2ce316746b2cb42c88efe44297fe7
+  languageName: node
+  linkType: hard
+
+"readline-sync@npm:^1.4.10":
+  version: 1.4.10
+  resolution: "readline-sync@npm:1.4.10"
+  checksum: 10/5eb6465f5c5391e32cb525022a307a910a565828cd53da87ac05fca291607df54099dd65bc9c7a513ac53a5eb4e11454d48f0dcf4ad54126d36dec5fcec4a8f0
   languageName: node
   linkType: hard
 

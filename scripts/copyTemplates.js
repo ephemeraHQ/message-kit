@@ -1,27 +1,31 @@
-import { dirname, resolve } from "node:path";
+import path from "node:path";
+import fs from "fs-extra";
 import { fileURLToPath } from "node:url";
-import { default as fs } from "fs-extra";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const templates = ["gpt", "agent", "experimental"];
-const templateDir = resolve(__dirname, "templates");
+const templateDir = path.resolve(
+  __dirname,
+  "../packages/create-message-kit/templates",
+);
 
 async function copyTemplates() {
   try {
     // Copy root .cursorrules to each template
-    const rootCursorRules = resolve(__dirname, "../../.cursorrules");
+    const rootCursorRules = path.resolve(__dirname, "../.cursorrules");
 
     for (const template of templates) {
-      const srcDir = resolve(__dirname, `../../templates/${template}`);
-      const destDir = resolve(templateDir, template);
+      const srcDir = path.resolve(__dirname, `../templates/${template}`);
+      const destDir = path.resolve(templateDir, template);
 
       // Create destination directory if it doesn't exist
       await fs.ensureDir(destDir);
 
       // Copy root .cursorrules if it exists
       if (fs.existsSync(rootCursorRules)) {
-        const destCursorRules = resolve(destDir, ".cursorrules");
+        const destCursorRules = path.resolve(destDir, ".cursorrules");
         await fs.copy(rootCursorRules, destCursorRules);
         console.log(`Copied root .cursorrules to ${destCursorRules}`);
       }
@@ -35,8 +39,8 @@ async function copyTemplates() {
         ];
 
         for (const item of itemsToCopy) {
-          const srcItem = resolve(srcDir, item);
-          const destItem = resolve(destDir, item);
+          const srcItem = path.resolve(srcDir, item);
+          const destItem = path.resolve(destDir, item);
           if (fs.existsSync(srcItem)) {
             await fs.copy(srcItem, destItem);
             console.log(`Copied ${srcItem} to ${destItem}`);
@@ -53,4 +57,5 @@ async function copyTemplates() {
     console.error("Error copying templates:", error);
   }
 }
+
 copyTemplates();

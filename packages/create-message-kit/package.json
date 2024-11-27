@@ -1,6 +1,6 @@
 {
   "name": "create-message-kit",
-  "version": "1.2.7",
+  "version": "1.2.8",
   "license": "MIT",
   "type": "module",
   "main": "index.js",
@@ -12,7 +12,6 @@
   ],
   "scripts": {
     "clean": "rm -rf .turbo && rm -rf node_modules",
-    "copy": "node copyTemplates.js",
     "format": "yarn format:base -w .",
     "format:base": "prettier --ignore-path ../../.gitignore",
     "format:check": "yarn format:base -c ."

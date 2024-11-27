@@ -28,11 +28,14 @@ export const agent: Agent = {
   ],
 };
 
+// [!region gated]
 const { client } = await xmtpClient({
   hideInitLogMessage: true,
 });
 
 startGatedGroupServer(client);
+// [!endregion gated]
+
 run(
   async (context: XMTPContext) => {
     const {
