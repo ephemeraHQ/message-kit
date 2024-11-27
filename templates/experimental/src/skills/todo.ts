@@ -54,9 +54,9 @@ export async function handler(context: XMTPContext) {
   try {
     let { reply } = await context.textGeneration(
       email,
-      "Make this summary concise and to the point to be sent in an html email. Just return the content inside the body tag.\n msg: " +
+      "Make this summary concise and to the point to be sent in an email.\n msg: " +
         previousMsg,
-      "You are an expert at summarizing to-dos.",
+      "You are an expert at summarizing to-dos.  Return in format html and just the content inside the body tag. Dont return `html` or `body` tags",
     );
     if (typeof reply === "string") {
       let content = {

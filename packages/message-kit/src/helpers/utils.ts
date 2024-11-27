@@ -56,7 +56,7 @@ Powered by XMTP \x1b[0m`;
     }
     if (generatedKey) {
       console.warn(
-        `\t- ⚠️🔒 Invalid private key or not set. Generating a random one in your .env file.`,
+        `\t- ⚠️ Invalid private key or not set. Generating a random one in your .env file.`,
       );
     }
     if (

@@ -18,12 +18,13 @@ export const broadcast: Skill[] = [
 async function handler(context: XMTPContext) {
   const {
     message: {
-      content: { params },
+      content: {
+        params: { message },
+      },
     },
   } = context;
 
   const fakeSubscribers = ["0x93E2fc3e99dFb1238eB9e0eF2580EFC5809C7204"];
-  const { message } = params;
   await context.send("This is how your message will look like:");
   await context.send(message);
   const emailResponse = await context.awaitResponse(

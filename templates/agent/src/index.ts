@@ -13,7 +13,6 @@ import { register } from "./skills/register.js";
 import { renew } from "./skills/renew.js";
 import { pay } from "./skills/pay.js";
 import { reset } from "./skills/reset.js";
-import { game } from "./skills/game.js";
 import fs from "fs";
 
 // [!region skills]
@@ -29,7 +28,6 @@ export const agent: Agent = {
     ...renew,
     ...reset,
     ...pay,
-    ...game,
   ],
 };
 // [!endregion skills]

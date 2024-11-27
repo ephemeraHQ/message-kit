@@ -305,7 +305,6 @@ export class XMTPContext {
       let group = await (this.refConv as Conversation);
       if (group) {
         let members: GroupMember[] = [];
-        console.log("entra:group", group);
         try {
           await group.sync();
           members = await group.members();

@@ -2,7 +2,7 @@ import { XMTPContext, Skill, V3Client } from "@xmtp/message-kit";
 import { createGroup } from "../lib/xmtp.js";
 import express from "express";
 import { checkNft } from "../lib/alchemy.js";
-
+import { addToGroup } from "../lib/xmtp.js";
 export const gated: Skill[] = [
   {
     skill: "/create",
@@ -11,14 +11,6 @@ export const gated: Skill[] = [
     adminOnly: true,
     params: {},
     description: "Create a new group.",
-  },
-  {
-    skill: "/id",
-    examples: ["/id"],
-    handler: handler,
-    adminOnly: true,
-    params: {},
-    description: "Get group id.",
   },
 ];
 
@@ -29,23 +21,18 @@ async function handler(context: XMTPContext) {
       content: { skill },
     },
     client,
-    group,
   } = context;
 
-  if (skill == "id") {
-    console.log(group?.id);
-  } else if (skill === "create") {
-    console.log(client, sender.address, client.accountAddress);
+  if (skill === "create") {
     const group = await createGroup(
       client,
       sender.address,
       client.accountAddress,
     );
 
-    // await context.send(
-    //   `Group created!\n- ID: ${group.id}\n- Group Frame URL: https://converse.xyz/group/${group.id}: \n- This url will deelink to the group inside Converse\n- Once in the other group you can share the invite with your friends.`,
-    // );
-    //startServer(client);
+    await context.send(
+      `Group created!\n- ID: ${group?.id}\n- Group Frame URL: https://converse.xyz/group/${group?.id}: \n- This url will deelink to the group inside Converse\n- Once in the other group you can share the invite with your friends.`,
+    );
     return;
   } else {
     await context.send(
@@ -54,22 +41,24 @@ async function handler(context: XMTPContext) {
   }
 }
 
-export function startServer(client: V3Client) {
+export function startGatedGroupServer(client: V3Client) {
   async function addWalletToGroup(
     walletAddress: string,
     groupId: string,
   ): Promise<string> {
-    const conversation =
-      await client.conversations.getConversationById(groupId);
-    const verified = await checkNft(walletAddress, "XMTPeople");
+    const verified = true; //await checkNft(walletAddress, "XMTPeople");
     if (!verified) {
       console.log("User cant be added to the group");
       return "not verified";
     } else {
       try {
-        await conversation?.addMembers([walletAddress]);
-        console.log(`Added wallet address: ${walletAddress} to the group`);
-        return "success";
+        const added = await addToGroup(groupId, client, walletAddress);
+        if (added.code === 200) {
+          console.log(`Added wallet address: ${walletAddress} to the group`);
+          return "success";
+        } else {
+          return added.message;
+        }
       } catch (error: any) {
         console.log(error.message);
         return "error";

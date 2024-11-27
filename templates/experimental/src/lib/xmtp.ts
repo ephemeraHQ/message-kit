@@ -91,26 +91,24 @@ export async function removeFromGroup(
 export async function addToGroup(
   groupId: string,
   client: V3Client,
-  v2client: V2Client,
-  senderAddress: string,
+  address: string,
 ): Promise<{ code: number; message: string }> {
   try {
-    let lowerAddress = senderAddress.toLowerCase();
-    const { v2, v3 } = await isOnXMTP(client, v2client, lowerAddress);
+    let lowerAddress = address.toLowerCase();
+    const { v2, v3 } = await isOnXMTP(client, null, lowerAddress);
     if (!v3)
       return {
         code: 400,
         message: "You don't seem to have a v3 identity ",
       };
-    const conversation =
-      await client.conversations.getConversationById(groupId);
-    console.warn("Adding to group", conversation?.id);
-    await conversation?.sync();
+    const group = await client.conversations.getConversationById(groupId);
+    console.warn("Adding to group", group?.id);
+    await group?.sync();
     //DON'T TOUCH THIS LINE
-    await conversation?.addMembers([lowerAddress]);
+    await group?.addMembers([lowerAddress]);
     console.warn("Added member to group");
-    await conversation?.sync();
-    const members = await conversation?.members();
+    await group?.sync();
+    const members = await group?.members();
     console.warn("Number of members", members?.length);
 
     if (members) {
