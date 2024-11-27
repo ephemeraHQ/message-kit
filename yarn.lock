@@ -3585,6 +3585,7 @@ __metadata:
     "@xmtp/content-type-reply": "npm:^1.1.11"
     "@xmtp/content-type-text": "npm:^1.0.0"
     "@xmtp/grpc-api-client": "npm:^0.2.8"
+    "@xmtp/node-bindings": "npm:0.0.25-internal-fix-forked-groups"
     "@xmtp/node-sdk": "npm:^0.0.28"
     "@xmtp/xmtp-js": "npm:^13.0.3"
     dotenv: "npm:^16.4.5"
@@ -3599,6 +3600,13 @@ __metadata:
     vitest: "npm:^2.1.4"
   languageName: unknown
   linkType: soft
+
+"@xmtp/node-bindings@npm:0.0.25-internal-fix-forked-groups":
+  version: 0.0.25-internal-fix-forked-groups
+  resolution: "@xmtp/node-bindings@npm:0.0.25-internal-fix-forked-groups"
+  checksum: 10/ec9d789d88409308f5d681aabe86937dcc1318c186cbf656ff9563e770da0d43c49da66133329778829f91586a33d55de5ba7d768cce661469434b1e8849e9d4
+  languageName: node
+  linkType: hard
 
 "@xmtp/node-bindings@npm:^0.0.25":
   version: 0.0.25
