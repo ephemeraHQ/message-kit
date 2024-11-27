@@ -17,7 +17,12 @@ export const agent: Agent = {
   name: "Experimental Agent",
   tag: "@exp",
   description: "An experimental agent with a lot of skills.",
-  skills: [...token, ...todo, ...gated, ...broadcast],
+  skills: [
+    ...token,
+    ...(process?.env?.RESEND_API_KEY ? todo : []),
+    ...(process?.env?.ALCHEMY_SDK ? gated : []),
+    ...broadcast,
+  ],
 };
 run(
   async (context: XMTPContext) => {

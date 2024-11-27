@@ -18,7 +18,6 @@ export const todo: Skill[] = [
 export async function handler(context: XMTPContext) {
   const {
     message: {
-      sender,
       content: { previousMsg },
     },
   } = context;

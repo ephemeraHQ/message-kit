@@ -7,7 +7,7 @@ import { default as fs } from "fs-extra";
 import { isCancel } from "@clack/prompts";
 import { detect } from "detect-package-manager";
 import pc from "picocolors";
-
+const defVersion = "1.2.7";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Read package.json to get the version
@@ -19,13 +19,21 @@ program
   .name("message-kit")
   .description("CLI to initialize projects")
   .action(async () => {
-    // Add Yarn 4 check at the start of the action
-    const pkgManager = await detectPackageManager();
+    try {
+      // Add Yarn 4 check at the start of the action
+      const pkgManager = await detectPackageManager();
 
-    log.info(pc.cyan(`pkgManager detected: ${pkgManager}`));
+      log.info(pc.cyan(`pkgManager detected: ${pkgManager}`));
 
-    log.info(pc.cyan(`Welcome to MessageKit CLI v${version}!`));
-    const coolLogo = `
+      log.info(pc.cyan(`Welcome to MessageKit CLI v${version}!`));
+      if (version !== defVersion) {
+        log.warn(
+          pc.red(
+            "You are using a version of the CLI that is not compatible with the latest MessageKit. Please update to the latest version.",
+          ),
+        );
+      }
+      const coolLogo = `
 ███╗   ███╗███████╗███████╗███████╗ █████╗  ██████╗ ███████╗██╗  ██╗██╗████████╗
 ████╗ ████║██╔════╝██╔════╝██╔════╝██╔══██╗██╔════╝ ██╔════╝██║ ██╔╝██║╚══██╔══╝
 ██╔████╔██║█████╗  ███████╗███████╗███████║██║  ███╗█████╗  █████╔╝ ██║   ██║   
@@ -34,32 +42,37 @@ program
 ╚═╝     ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝╚═╝   ╚═╝   
 Powered by XMTP`;
 
-    log.info(pc.red(coolLogo));
+      log.info(pc.red(coolLogo));
 
-    const { templateType, displayName, destDir } = await gatherProjectInfo();
+      const { templateType, displayName, destDir } = await gatherProjectInfo();
 
-    // Create .gitignore
-    createGitignore(destDir);
+      // Create .gitignore
+      createGitignore(destDir);
 
-    // Create .env file
-    createEnvFile(destDir);
+      // Create .env file
+      createEnvFile(destDir);
 
-    // Create tsconfig.json file
-    createTsconfig(destDir);
+      // Create tsconfig.json file
+      createTsconfig(destDir);
 
-    // Wrap up
-    log.success(`Project launched in ${pc.red(destDir)}!`);
+      // Wrap up
+      log.success(`Project launched in ${pc.red(destDir)}!`);
 
-    // Add package.json
-    updatePackagejson(destDir, templateType);
+      // Add package.json
+      updatePackagejson(destDir, templateType);
 
-    // Create README.md file
-    createReadme(destDir, templateType, displayName, pkgManager);
+      // Create README.md file
+      createReadme(destDir, templateType, displayName, pkgManager);
 
-    // Log next steps
-    logNextSteps(displayName);
+      // Log next steps
+      logNextSteps(displayName);
 
-    outro(pc.red("Made with ❤️  by Ephemera"));
+      outro(pc.red("Made with ❤️  by Ephemera"));
+    } catch (error) {
+      log.error(pc.red("An error occurred while creating your project:"));
+      log.error(error.message);
+      process.exit(1);
+    }
   });
 
 program.parse(process.argv);
@@ -83,8 +96,8 @@ async function updatePackagejson(destDir, templateType) {
 
 async function gatherProjectInfo() {
   const templateOptions = [
-    { value: "agent", label: "Agent" },
     { value: "gpt", label: "Simple Gpt" },
+    { value: "agent", label: "ENS Agent" },
     { value: "experimental", label: "Experimental" },
   ];
 
