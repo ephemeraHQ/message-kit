@@ -46,7 +46,7 @@ export function startGatedGroupServer(client: V3Client) {
     walletAddress: string,
     groupId: string,
   ): Promise<string> {
-    const verified = true; //await checkNft(walletAddress, "XMTPeople");
+    const verified = await checkNft(walletAddress, "XMTPeople");
     if (!verified) {
       console.log("User cant be added to the group");
       return "not verified";

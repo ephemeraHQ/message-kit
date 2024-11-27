@@ -5,7 +5,6 @@ import {
   XMTPContext,
   Agent,
   xmtpClient,
-  V3Client,
 } from "@xmtp/message-kit";
 import fs from "fs";
 import { systemPrompt } from "./prompt.js";

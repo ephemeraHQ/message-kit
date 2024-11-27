@@ -92,6 +92,7 @@ export async function addToGroup(
   groupId: string,
   client: V3Client,
   address: string,
+  asAdmin: boolean = false,
 ): Promise<{ code: number; message: string }> {
   try {
     let lowerAddress = address.toLowerCase();
@@ -104,10 +105,12 @@ export async function addToGroup(
     const group = await client.conversations.getConversationById(groupId);
     console.warn("Adding to group", group?.id);
     await group?.sync();
-    //DON'T TOUCH THIS LINE
     await group?.addMembers([lowerAddress]);
     console.warn("Added member to group");
     await group?.sync();
+    if (asAdmin) {
+      await group?.addSuperAdmin(lowerAddress);
+    }
     const members = await group?.members();
     console.warn("Number of members", members?.length);
 
