@@ -20,7 +20,7 @@ export async function createGroup(
       member.accountAddresses.includes(senderAddress.toLowerCase()),
     );
     if (senderMember) {
-      const senderInboxId = senderMember.inboxId;
+      senderInboxId = senderMember.inboxId;
       console.log("Sender's inboxId:", senderInboxId);
     } else {
       console.log("Sender not found in members list");
