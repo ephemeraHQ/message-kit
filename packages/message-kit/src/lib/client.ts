@@ -38,7 +38,7 @@ export async function xmtpClient(
 
   let env = process.env.XMTP_ENV as XmtpEnv;
   if (!env) env = "production" as XmtpEnv;
-  //v3
+
   const defaultConfig: ClientOptions = {
     env: env,
     dbPath: `.data/${user.account?.address}-${env}`,
