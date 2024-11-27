@@ -1,6 +1,11 @@
 name: Build
 
-on: [pull_request]
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "packages/framekit/**"
 
 jobs:
   build:
