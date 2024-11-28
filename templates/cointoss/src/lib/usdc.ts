@@ -29,20 +29,16 @@ export class AgentWallet {
   constructor(senderAddress: string) {
     this.senderAddress = senderAddress;
     this.walletDir = path.join(process.cwd(), `./.data/agentwallets`);
+    const walletFilePath = path.join(this.walletDir, `${senderAddress}.agent`);
+
     if (!fs.existsSync(this.walletDir)) {
       fs.mkdirSync(this.walletDir, { recursive: true });
       this.privateKey = generatePrivateKey();
       const walletData = `KEY=${this.privateKey}`;
-      fs.writeFileSync(
-        path.join(this.walletDir, `${senderAddress}.agent`),
-        walletData,
-      );
+      fs.writeFileSync(walletFilePath, walletData);
       console.warn("Agent wallet created and saved successfully.");
     } else {
-      const walletData = fs.readFileSync(
-        path.join(this.walletDir, `${senderAddress}.agent`),
-        "utf8",
-      );
+      const walletData = fs.readFileSync(walletFilePath, "utf8");
       this.privateKey = walletData.split("=")[1];
     }
 
@@ -63,12 +59,20 @@ export class AgentWallet {
       return 0;
     }
   }
-
   async transferUsdc(to: string, amount: number) {
+    if (!ethers.isAddress(to)) {
+      throw new Error("Invalid recipient address");
+    }
+    if (typeof amount !== "number" || amount <= 0) {
+      throw new Error("Invalid transfer amount");
+    }
     try {
       const amountInWei = ethers.parseUnits(amount.toString(), 6); // USDC has 6 decimals
       const tx = await this.usdcContract.transfer(to, amountInWei);
-      await tx.wait();
+      const receipt = await tx.wait();
+      if (receipt.status !== 1) {
+        throw new Error("Transaction failed or was reverted");
+      }
       console.warn(`Transferred ${amount} USDC to ${to}.`);
       return `Transferred ${amount} USDC to ${to}.`;
     } catch (error) {

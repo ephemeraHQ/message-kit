@@ -1,4 +1,4 @@
-# Gm Example
+# Cointoss example
 
 ## Running locally
 
@@ -10,7 +10,7 @@ Follow the steps below to run the app
 # Clone the repo
 git clone https://github.com/ephemeraHQ/message-kit
 # Go to the example folder
-cd templates/gpt
+cd templates/cointoss
 # Install the dependencies
 yarn install
 # Run the app
@@ -23,4 +23,5 @@ Set up these variables in your app
 
 ```bash [cmd]
 KEY= # the private key of the agent wallet
+OPENAI_API_KEY= # the API key for OpenAI
 ```

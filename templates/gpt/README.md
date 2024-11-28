@@ -1,4 +1,4 @@
-# Gm Example
+# GPT Example
 
 ## Running locally
 
@@ -23,4 +23,5 @@ Set up these variables in your app
 
 ```bash [cmd]
 KEY= # the private key of the agent wallet
+OPENAI_API_KEY= # the API key for OpenAI
 ```
