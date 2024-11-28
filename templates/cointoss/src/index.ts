@@ -7,7 +7,7 @@ import {
 } from "@xmtp/message-kit";
 
 import { systemPrompt } from "./prompt.js";
-import { guessToss } from "./skills/cointoss.js";
+import { toss } from "./skills/cointoss.js";
 import { cash } from "./skills/cash.js";
 import fs from "fs";
 
@@ -15,7 +15,7 @@ export const agent: Agent = {
   name: "GPT Bot",
   tag: "@bot",
   description: "Use GPT to answer questions.",
-  skills: [...guessToss, ...cash],
+  skills: [...toss, ...cash],
 };
 
 run(
