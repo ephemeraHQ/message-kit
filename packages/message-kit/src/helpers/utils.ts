@@ -41,14 +41,15 @@ Powered by XMTP \x1b[0m`;
       : await loadSkillsFile());
 
   if (
-    runConfig?.experimental ||
-    process?.env?.OPENAI_API_KEY === undefined ||
     runConfig?.attachments ||
-    runConfig?.memberChange ||
+    (process.env.OPENAI_API_KEY === undefined &&
+      runConfig?.agent !== undefined) ||
     runConfig?.client?.structuredLogging ||
+    runConfig?.privateKey ||
+    runConfig?.memberChange ||
     agent === undefined ||
-    agent?.skills.length === 0 ||
-    generatedKey
+    agent.skills.length === 0 ||
+    runConfig?.experimental
   ) {
     console.warn(`\x1b[33m\n\tWarnings:`);
     if (runConfig?.attachments) {
