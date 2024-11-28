@@ -8,13 +8,14 @@ import {
 
 import { systemPrompt } from "./prompt.js";
 import { guessToss } from "./skills/cointoss.js";
-
+import { cash } from "./skills/cash.js";
 import fs from "fs";
+
 export const agent: Agent = {
   name: "GPT Bot",
   tag: "@bot",
   description: "Use GPT to answer questions.",
-  skills: [...guessToss],
+  skills: [...guessToss, ...cash],
 };
 
 run(
