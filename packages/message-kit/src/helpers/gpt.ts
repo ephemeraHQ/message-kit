@@ -175,19 +175,18 @@ export async function agentReply(context: XMTPContext, systemPrompt?: string) {
 export async function textGeneration(
   memoryKey: string,
   userPrompt: string,
-  systemPrompt?: string,
+  systemPrompt: string = "",
 ) {
   // Early validation
   if (!openai) {
     return { reply: "No OpenAI API key found in .env" };
   }
-
-  // Handle memory management
-  if (!memoryKey) clearMemory();
-
-  // Initialize or get chat history
-  chatMemory.initializeWithSystem(memoryKey, systemPrompt ?? "");
-  let messages = chatMemory.getHistory(memoryKey);
+  let messages: ChatHistoryEntry[] = [];
+  if (memoryKey) {
+    // Initialize or get chat history
+    chatMemory.initializeWithSystem(memoryKey, systemPrompt);
+    messages = chatMemory.getHistory(memoryKey);
+  }
 
   // Add user's prompt
   messages.push({ role: "user", content: userPrompt });
@@ -204,10 +203,13 @@ export async function textGeneration(
     const cleanedReply = parseMarkdown(reply);
 
     // Update chat memory
-    chatMemory.addEntry(memoryKey, {
-      role: "assistant",
-      content: cleanedReply,
-    });
+    if (memoryKey) {
+      chatMemory.addEntry(memoryKey, {
+        role: "assistant",
+        content: cleanedReply,
+      });
+      messages = chatMemory.getHistory(memoryKey);
+    }
 
     return { reply: cleanedReply, history: messages };
   } catch (error) {

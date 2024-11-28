@@ -1,0 +1,20 @@
+{
+  "name": "cointoss",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc -w & sleep 1 && NODE_NO_WARNINGS=1 node --watch dist/index.js",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@xmtp/message-kit": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.2",
+    "typescript": "^5.4.5"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

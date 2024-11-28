@@ -16,6 +16,7 @@
     "agent",
     "experimental",
     "gpt",
+    "cointoss",
     "framekit",
     "docs",
     "@xmtp/tsconfig"
