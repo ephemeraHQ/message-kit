@@ -11,6 +11,8 @@ Follow the steps below to run the app
 git clone https://github.com/ephemeraHQ/message-kit
 # Install the dependencies
 yarn install
+# Build the project
+yarn build
 # Run the app directly from root
 yarn dev:exp
 ```
