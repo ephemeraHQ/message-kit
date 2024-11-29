@@ -15,7 +15,7 @@ export const toss: Skill[] = [
       },
     },
     handler: handleJoinToss,
-    examples: ["/join 72", "/join 80"],
+    examples: ["/join 72 yes", "/join 80 no"],
   },
   {
     skill:
@@ -84,9 +84,10 @@ export async function handleTossCreation(context: XMTPContext) {
       judge?.address ?? sender.address,
     );
     const redis = await getRedisClient();
-    let tossId = (await redis.get("tossId"))?.length ?? 0;
+    const keys = await redis.keys("*");
+    let tossId = keys.length + 1;
     await redis.set(
-      (tossId + 1).toString(),
+      tossId.toString(),
       JSON.stringify({
         description: params.description,
         options: params.options,
@@ -129,6 +130,14 @@ export async function handleJoinToss(context: XMTPContext) {
       },
     },
   } = context;
+
+  if (!response) {
+    await context.reply("Please specify your response.");
+    return;
+  } else if (!tossId) {
+    await context.reply("Please specify the toss ID.");
+    return;
+  }
 
   const redis = await getRedisClient();
   const tossDataString = await redis.get(tossId);
