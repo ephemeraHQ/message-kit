@@ -1,4 +1,4 @@
-# Agent example
+# Cointoss example
 
 ## Running locally
 
@@ -12,7 +12,7 @@ git clone https://github.com/ephemeraHQ/message-kit
 # Install the dependencies
 yarn install
 # Run the app directly from root
-yarn dev:exp
+yarn dev:toss
 ```
 
 ### Variables
@@ -20,10 +20,6 @@ yarn dev:exp
 Set up these variables in your app
 
 ```bash [cmd]
+KEY= # the private key of the agent wallet
 OPENAI_API_KEY= # the API key for OpenAI
-KEY= # the private key of the wallet
-TEST_ENCRYPTION_KEY= # the encryption key for the xmtp wallet
-RESEND_API_KEY= # the API key for Resend
-FRAMEDL_API_KEY= # the API key for Framedl
-ALCHEMY_SDK= # the API key for Alchemy
 ```

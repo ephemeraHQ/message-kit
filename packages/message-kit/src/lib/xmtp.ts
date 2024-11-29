@@ -8,6 +8,7 @@ import {
   Client as V2Client,
   Conversation as V2Conversation,
 } from "@xmtp/xmtp-js";
+import { chatMemory } from "../helpers/gpt.js";
 import { GroupMember } from "@xmtp/node-sdk";
 import { textGeneration } from "../helpers/gpt.js";
 import { getUserInfo, isOnXMTP } from "../helpers/resolver.js";
@@ -242,6 +243,10 @@ export class XMTPContext {
         if (validResponses.map((r) => r.toLowerCase()).includes(response)) {
           this.resetAwaitedState();
           resolve(response);
+          chatMemory.addEntry(this.sender?.address ?? "", {
+            role: "user",
+            content: text,
+          });
           return true;
         }
 
