@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import { generatePrivateKey } from "viem/accounts";
 import { ethers } from "ethers";
+import { parseEnv } from "node:util";
 
 // Define the Base network RPC URL
 const baseRpcUrl = "https://mainnet.base.org";
@@ -29,17 +30,21 @@ export class AgentWallet {
   constructor(senderAddress: string) {
     this.senderAddress = senderAddress;
     this.walletDir = path.join(process.cwd(), `./.data/agentwallets`);
-    const walletFilePath = path.join(this.walletDir, `${senderAddress}.agent`);
-
     if (!fs.existsSync(this.walletDir)) {
       fs.mkdirSync(this.walletDir, { recursive: true });
-      this.privateKey = generatePrivateKey();
-      const walletData = `KEY=${this.privateKey}`;
-      fs.writeFileSync(walletFilePath, walletData);
       console.warn("Agent wallet created and saved successfully.");
-    } else {
+    }
+
+    const walletFilePath = path.join(this.walletDir, `${senderAddress}.agent`);
+
+    if (fs.existsSync(walletFilePath)) {
       const walletData = fs.readFileSync(walletFilePath, "utf8");
-      this.privateKey = walletData.split("=")[1];
+      this.privateKey = walletData.match(/KEY=(.+)/)?.[1]?.trim() ?? "";
+    } else {
+      this.privateKey = generatePrivateKey();
+      let agentWallet = new ethers.Wallet(this.privateKey, provider);
+      const walletData = `KEY=${this.privateKey}\nADDRESS=${agentWallet.address}`;
+      fs.writeFileSync(walletFilePath, walletData);
     }
 
     // Initialize wallet and USDC contract
@@ -48,27 +53,41 @@ export class AgentWallet {
     this.usdcContract = new ethers.Contract(usdcAddress, erc20Abi, this.wallet);
   }
 
-  async checkUsdcBalance(): Promise<number> {
+  async checkBalances(): Promise<{ usdc: number; eth: number }> {
     try {
-      const balance = await this.usdcContract.balanceOf(this.agentAddress);
-      const formattedBalance = ethers.formatUnits(balance, 6); // USDC has 6 decimals
-      console.warn(`USDC Balance: ${formattedBalance}`);
-      return parseFloat(formattedBalance);
+      // Check USDC balance
+      console.log(this.agentAddress);
+      const usdcBalance = await this.usdcContract.balanceOf(this.agentAddress);
+      const formattedUsdcBalance = ethers.formatUnits(usdcBalance, 6); // USDC has 6 decimals
+      console.warn(`USDC Balance: ${formattedUsdcBalance}`);
+
+      // Check ETH balance
+      const ethBalance = await provider.getBalance(this.agentAddress);
+      const formattedEthBalance = ethers.formatUnits(ethBalance, 18);
+      console.warn(`ETH Balance: ${formattedEthBalance}`);
+
+      return {
+        usdc: parseFloat(formattedUsdcBalance),
+        eth: parseFloat(formattedEthBalance),
+      };
     } catch (error) {
-      console.error("Error fetching USDC balance:", error);
-      return 0;
+      console.error("Error fetching balances:", error);
+      return { usdc: 0, eth: 0 };
     }
   }
   async transferUsdc(to: string, amount: number) {
     if (!ethers.isAddress(to)) {
       throw new Error("Invalid recipient address");
-    }
-    if (typeof amount !== "number" || amount <= 0) {
+    } else if (typeof amount !== "number" || amount <= 0) {
       throw new Error("Invalid transfer amount");
     }
     try {
       const amountInWei = ethers.parseUnits(amount.toString(), 6); // USDC has 6 decimals
-      const tx = await this.usdcContract.transfer(to, amountInWei);
+      const adminAgent = new AgentWallet(to);
+      const tx = await this.usdcContract.transfer(
+        adminAgent.agentAddress,
+        amountInWei,
+      );
       const receipt = await tx.wait();
       if (receipt.status !== 1) {
         throw new Error("Transaction failed or was reverted");
@@ -76,8 +95,7 @@ export class AgentWallet {
       console.warn(`Transferred ${amount} USDC to ${to}.`);
       return `Transferred ${amount} USDC to ${to}.`;
     } catch (error) {
-      console.error("Error transferring USDC:", error);
-      return "Error transferring USDC.";
+      throw error;
     }
   }
 }

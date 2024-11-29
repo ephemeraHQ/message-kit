@@ -36,9 +36,9 @@ async function balanceHandler(context: XMTPContext) {
     message: { sender },
   } = context;
   const agentWallet = new AgentWallet(sender.address);
-  const balance = await agentWallet.checkUsdcBalance();
+  const { usdc } = await agentWallet.checkBalances();
   await context.send(
-    `Your balance is ${balance} USDC. let me know if you want check again or to fund your wallet.`,
+    `Your balance is ${usdc} USDC. let me know if you want check again or to fund your wallet.`,
   );
 }
 
@@ -52,9 +52,9 @@ async function fundHandler(context: XMTPContext) {
     },
   } = context;
   const agentWallet = new AgentWallet(sender.address);
-  const balance = await agentWallet.checkUsdcBalance();
-  if (!amount && balance >= 0 && balance < 10) {
-    const min = balance;
+  const { usdc } = await agentWallet.checkBalances();
+  if (!amount && usdc >= 0 && usdc < 10) {
+    const min = usdc;
     const max = 10;
     const response = await context.awaitResponse(
       `Please specify the amount of USDC to prefund. \nFrom: ${min} to ${max}.`,
@@ -70,10 +70,10 @@ async function fundHandler(context: XMTPContext) {
       "After funding, let me know so i can check your balance.",
     );
     return;
-  } else if (balance && balance >= 10) {
+  } else if (usdc && usdc >= 10) {
     await context.send("Your balance is maxed out at 10 USDC.");
     return;
-  } else if (parseInt(amount) > 0 && balance + parseInt(amount) <= 10) {
+  } else if (parseInt(amount) > 0 && usdc + parseInt(amount) <= 10) {
     await context.requestPayment(
       parseInt(amount),
       "USDC",
