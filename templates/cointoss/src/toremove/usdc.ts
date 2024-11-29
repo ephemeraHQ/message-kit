@@ -95,8 +95,7 @@ export class AgentWallet {
       console.warn(`Transferred ${amount} USDC to ${to}.`);
       return `Transferred ${amount} USDC to ${to}.`;
     } catch (error) {
-      console.error("Error transferring USDC:", error);
-      return "Error transferring USDC.";
+      throw error;
     }
   }
 }

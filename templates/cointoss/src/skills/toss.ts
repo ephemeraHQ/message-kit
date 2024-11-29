@@ -195,9 +195,14 @@ export async function handleJoinToss(context: XMTPContext) {
     return;
   } else {
     await context.reply("Transferring funds...");
-    await agentWallet.transferUsdc(tossData.admin, tossData.amount);
-    await context.reply("Funds transferred successfully");
-
+    try {
+      await agentWallet.transferUsdc(tossData.admin, tossData.amount);
+      await context.reply("Funds transferred successfully");
+    } catch (error) {
+      console.error(error);
+      await context.reply("An error occurred while transferring funds.");
+      return;
+    }
     // Add participant and their response to the array
     tossData.participants.push({ address: sender.address, response });
     await redis.set(tossId.toString(), JSON.stringify(tossData));
@@ -268,20 +273,25 @@ export async function handleEndToss(context: XMTPContext) {
     )
   ).filter((winner) => winner !== null);
 
+  let prize = tossData.amount / winners.length;
   if (winners.length > 0) {
-    const amountPerWinner = BigInt(tossData.amount) / BigInt(winners.length);
     for (const winner of winners) {
-      console.log("transferring", winner.address, amountPerWinner);
-
-      await agentWallet.transferUsdc(winner.address, Number(amountPerWinner));
+      try {
+        await agentWallet.transferUsdc(winner.address, prize);
+      } catch (error) {
+        console.error(error);
+        await context.reply("An error occurred while transferring funds.");
+        return;
+      }
     }
-    await redis.set(tossId, JSON.stringify({ ...tossData, closed: true }));
+    let data = { ...tossData, closed: true };
+    await redis.set(tossId.toString(), JSON.stringify(data));
 
     await context.reply(
       `🏆 Winners have been rewarded! 🏆\n\n🎉 Winners: \n${winners
         .map(
           (winner: { name: string; address: string }) =>
-            `- ${winner.name} - $${amountPerWinner} 💰\n`,
+            `- ${winner.name} - $${prize} 💰\n`,
         )
         .join("")}
 😢 Losers: \n${participants
