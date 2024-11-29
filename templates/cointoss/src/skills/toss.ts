@@ -140,7 +140,11 @@ export async function handleJoinToss(context: XMTPContext) {
   }
 
   // Check if the participant has already joined
-  if (tossData.participants.some((p) => p.address === sender.address)) {
+  if (
+    tossData.participants.some(
+      (p: { address: string }) => p.address === sender.address,
+    )
+  ) {
     await context.reply("You have already joined this toss.");
     return;
   }

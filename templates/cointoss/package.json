@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@redis/client": "^1.6.0",
-    "@xmtp/message-kit": "workspace:*",
+    "@xmtp/message-kit": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^20.14.2",
