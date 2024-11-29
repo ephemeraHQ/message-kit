@@ -1,17 +1,16 @@
 import { Skill, XMTPContext, getUserInfo } from "@xmtp/message-kit";
-import { privateKeyToAccount } from "viem/accounts";
-import { base } from "viem/chains";
 import { getRedisClient } from "../lib/redis.js";
-import { createPublicClient, createWalletClient, http, parseUnits } from "viem";
-import { COINTOSSBOT_ABI } from "../toremove/abi.js";
 import { AgentWallet } from "../toremove/usdc.js";
 
 export const toss: Skill[] = [
   {
-    skill: "/join [tossId]",
+    skill: "/join [tossId] [response]",
     description: "Join a toss.",
     params: {
       tossId: {
+        type: "string",
+      },
+      response: {
         type: "string",
       },
     },
@@ -55,9 +54,12 @@ export const toss: Skill[] = [
     skill: "/end [tossId] [option]",
     description: "End a toss.",
     handler: handleEndToss,
-    examples: ["/end 72 Yes"],
+    examples: ["/end 72 yes", "/end 72 No", "/end 81 yes"],
     params: {
       tossId: {
+        type: "string",
+      },
+      option: {
         type: "string",
       },
     },
@@ -78,35 +80,31 @@ export async function handleTossCreation(context: XMTPContext) {
     if (params.judge) {
       judge = await getUserInfo(params.judge);
     }
-    console.log(
-      "Creating toss...",
-      params.options,
-      params.amount,
-      params.description,
-      judge?.address ?? sender.address,
-      params?.endTime ?? BigInt(0),
-    );
-    const tossId = await createToss(
-      context,
-      params.options,
-      params.amount,
-      params.description,
-      judge?.address ?? sender.address,
-      params?.endTime ?? undefined,
-    );
     let judgeUsername = await context.getUserInfo(
       judge?.address ?? sender.address,
     );
+    const redis = await getRedisClient();
+    let tossId = (await redis.get("tossId"))?.length ?? 0;
+    await redis.set(
+      (tossId + 1).toString(),
+      JSON.stringify({
+        description: params.description,
+        options: params.options,
+        amount: params.amount,
+        admin: judge,
+        participants: [],
+      }),
+    );
     if (tossId !== undefined) {
       await context.send(
-        `Here is your toss!\n\nHow it works:\n- The creator of the toss is one who can modify and settle the toss. \n- The pool will be split evenly with the winners. \n- Remember, with great power comes great responsibility\n\nHere are the details:
-- Options - ${params.options}
-- Amount - ${params.amount}
-- Description - ${params.description}
-- Judge - ${judgeUsername?.preferredName ?? judge?.address}
-- End Time - ${params?.endTime ?? "Not specified (default 24 hours)"}
-- Toss ID - ${tossId}
-\n\nCommands:
+        `Here is your toss! 🪙\n\n✨ How it works:\n- The creator of the toss is one who can modify and settle the toss. \n- The pool will be split evenly with the winners. \n- Remember, with great power comes great responsibility 💪\n\n📋 Here are the details:
+- Options: ${params.options}
+- Amount: ${params.amount}
+- Description: ${params.description}
+- Judge: ${judgeUsername?.preferredName ?? judge?.address}
+- End Time: ${params?.endTime ?? "Not specified (default 24 hours)"}
+- Toss ID: ${tossId}
+\n🛠️ Commands:
 - @toss join <tossId>
 - @toss end <tossId> <option>
 
@@ -122,93 +120,12 @@ You can also interact by replying to this message in natural language.
   }
 }
 
-export const createToss = async (
-  context: XMTPContext,
-  options: string,
-  amount: string,
-  description: string,
-  judge: string,
-  endTime?: string | bigint,
-) => {
-  try {
-    const amountString = `${amount}`;
-    const redis = await getRedisClient();
-
-    const account = privateKeyToAccount(process.env.KEY! as `0x${string}`);
-    const walletClient = createWalletClient({
-      account,
-      chain: base,
-      transport: http(),
-    });
-
-    const parsedAmount = BigInt(parseUnits(amountString, 6));
-
-    if (endTime) {
-      const date = new Date(endTime as string);
-      const timestamp = Math.floor(date.getTime() / 1000);
-      if (isNaN(timestamp)) {
-        console.error("Invalid endTime provided:", endTime);
-        // Fix: Correctly set a default endTime if the provided one is invalid
-        endTime = BigInt(Math.floor(new Date().getTime() / 1000) + 34 * 60);
-      } else {
-        endTime = BigInt(timestamp);
-      }
-    } else {
-      // Fix: Set a default endTime if none is provided
-      endTime = BigInt(Math.floor(new Date().getTime() / 1000) + 34 * 60);
-    }
-    const createTossTx = await walletClient.writeContract({
-      account: account,
-      abi: COINTOSSBOT_ABI,
-      address: process.env.COINTOSS_CONTRACT_ADDRESS! as `0x${string}`,
-      functionName: "createToss",
-      args: [
-        judge as `0x${string}`,
-        description as string,
-        (options as string).split(","),
-        [parsedAmount, parsedAmount],
-        endTime,
-        BigInt(0),
-      ],
-    });
-    const publicClient = createPublicClient({
-      chain: base,
-      transport: http(),
-    });
-
-    await publicClient.waitForTransactionReceipt({
-      hash: createTossTx,
-    });
-    const tossId = await publicClient.readContract({
-      address: process.env.COINTOSS_CONTRACT_ADDRESS! as `0x${string}`,
-      abi: COINTOSSBOT_ABI,
-      functionName: "tossId",
-    });
-    await redis.set(
-      tossId.toString(),
-      JSON.stringify({
-        description: description,
-        options: options,
-        amount: amount,
-        admin: judge,
-        participants: [],
-      }),
-    );
-    return tossId;
-  } catch (error) {
-    console.error("Error creating toss:", error);
-    await context.send(
-      "An error occurred while creating the toss. Please try again later.",
-    );
-  }
-};
-
 export async function handleJoinToss(context: XMTPContext) {
   const {
     message: {
       sender,
       content: {
-        params: { tossId },
+        params: { tossId, response },
       },
     },
   } = context;
@@ -223,7 +140,7 @@ export async function handleJoinToss(context: XMTPContext) {
   }
 
   // Check if the participant has already joined
-  if (tossData.participants.includes(sender.address)) {
+  if (tossData.participants.some((p) => p.address === sender.address)) {
     await context.reply("You have already joined this toss.");
     return;
   }
@@ -246,8 +163,8 @@ export async function handleJoinToss(context: XMTPContext) {
     await agentWallet.transferUsdc(tossData.admin, tossData.amount);
     await context.reply("Funds transferred successfully");
 
-    // Add participant to the array
-    tossData.participants.push(sender.address);
+    // Add participant and their response to the array
+    tossData.participants.push({ address: sender.address, response });
     await redis.set(tossId, JSON.stringify(tossData));
   }
 }
@@ -255,9 +172,76 @@ export async function handleJoinToss(context: XMTPContext) {
 export async function handleEndToss(context: XMTPContext) {
   const {
     message: {
+      sender,
       content: {
         params: { tossId, option },
       },
     },
   } = context;
+  const redis = await getRedisClient();
+  const tossDataString = await redis.get(tossId);
+  const tossData = tossDataString ? JSON.parse(tossDataString) : null;
+  const agentWallet = new AgentWallet(sender.address);
+  if (!tossData) {
+    await context.reply("Toss not found");
+    return;
+  }
+
+  // Check if the sender is the admin of the toss
+  if (tossData.admin !== sender.address) {
+    await context.reply("Only the admin can end the toss.");
+    return;
+  }
+
+  let optsArray: string[];
+  if (typeof tossData.options === "string") {
+    optsArray = tossData.options.split(",");
+  } else {
+    optsArray = tossData.options;
+  }
+
+  if (!optsArray.includes(option.toLowerCase())) {
+    await context.reply("Invalid option selected.");
+    return;
+  }
+
+  // Logic to distribute the pool among winners
+  const winners = tossData.participants.filter(
+    (participant: { response: string; address: string }) => {
+      if (participant.response === option) {
+        return participant.address;
+      }
+    },
+  );
+
+  if (winners.length > 0) {
+    const amountPerWinner = BigInt(tossData.amount) / BigInt(winners.length);
+    for (const winner of winners) {
+      // Transfer the amount to each winner
+      // Assume transferUsdc is a function to transfer USDC
+      console.log("transferring", winner.address, amountPerWinner);
+      //await agentWallet.transferUsdc(winner.address, Number(amountPerWinner));
+    }
+    await context.reply(
+      `Toss ended. Winners have been rewarded.\nWinners: ${winners.map(
+        async (winner: { address: string }) =>
+          (await context.getUserInfo(winner.address))?.preferredName ??
+          winner.address,
+      )}\nAmount per winner: ${amountPerWinner}\nLosers: ${tossData.participants
+        .filter(
+          (participant: { response: string; address: string }) =>
+            participant.response !== option,
+        )
+        .map(
+          async (loser: { address: string }) =>
+            (await context.getUserInfo(loser.address))?.preferredName ??
+            loser.address,
+        )}`,
+    );
+  } else {
+    await context.reply("No winners for this toss.");
+  }
+
+  // await redis.set(tossId, JSON.stringify({ ...tossData, closed: true }));
+  await context.reply("Toss has been closed.");
 }
