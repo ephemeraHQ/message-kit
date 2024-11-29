@@ -29,17 +29,21 @@ export class AgentWallet {
   constructor(senderAddress: string) {
     this.senderAddress = senderAddress;
     this.walletDir = path.join(process.cwd(), `./.data/agentwallets`);
-    const walletFilePath = path.join(this.walletDir, `${senderAddress}.agent`);
-
     if (!fs.existsSync(this.walletDir)) {
       fs.mkdirSync(this.walletDir, { recursive: true });
-      this.privateKey = generatePrivateKey();
-      const walletData = `KEY=${this.privateKey}`;
-      fs.writeFileSync(walletFilePath, walletData);
       console.warn("Agent wallet created and saved successfully.");
-    } else {
+    }
+
+    const walletFilePath = path.join(this.walletDir, `${senderAddress}.agent`);
+
+    if (fs.existsSync(walletFilePath)) {
       const walletData = fs.readFileSync(walletFilePath, "utf8");
       this.privateKey = walletData.split("=")[1];
+    } else {
+      this.privateKey = generatePrivateKey();
+      let agentWallet = new ethers.Wallet(this.privateKey, provider);
+      const walletData = `KEY=${this.privateKey}\nADDRESS=${agentWallet.address}`;
+      fs.writeFileSync(walletFilePath, walletData);
     }
 
     // Initialize wallet and USDC contract

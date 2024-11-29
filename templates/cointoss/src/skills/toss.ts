@@ -130,6 +130,7 @@ export async function handleJoinToss(context: XMTPContext) {
       },
     },
   } = context;
+  const agentWallet = new AgentWallet(sender.address);
 
   if (!response) {
     await context.reply("Please specify your response.");
@@ -158,7 +159,6 @@ export async function handleJoinToss(context: XMTPContext) {
     return;
   }
 
-  const agentWallet = new AgentWallet(sender.address);
   const { usdc, eth } = await agentWallet.checkBalances();
 
   if (usdc < BigInt(tossData.amount)) {
