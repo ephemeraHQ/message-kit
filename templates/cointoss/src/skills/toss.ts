@@ -5,7 +5,7 @@ import { base } from "viem/chains";
 import { getRedisClient } from "../lib/redis.js";
 import { createPublicClient, createWalletClient, http, parseUnits } from "viem";
 import { COINTOSSBOT_ABI } from "../toremove/abi.js";
-import { AgentWallet } from "../../../experimental/src/lib/usdc.js";
+import { AgentWallet } from "../toremove/cdp-fake.js";
 
 export const toss: Skill[] = [
   {
@@ -210,7 +210,7 @@ export async function handleJoinToss(context: XMTPContext) {
   console.log(tossData);
   const agentWallet = new AgentWallet(sender.address);
   if (tossData) {
-    const balance = await agentWallet.checkUsdcBalance();
+    const balance = await agentWallet.checkBalance();
     if (balance < BigInt(tossData.amount)) {
       await context.send("You don't have enough USDC to join the toss.");
       return;
