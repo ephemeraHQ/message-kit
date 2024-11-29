@@ -8,14 +8,25 @@ export const toss: Skill[] = [
     description: "Join a toss.",
     params: {
       tossId: {
-        type: "string",
+        type: "number",
       },
       response: {
         type: "string",
       },
     },
     handler: handleJoinToss,
-    examples: ["/join 72 yes", "/join 80 no"],
+    examples: ["/join {number} yes", "/join {number} no"],
+  },
+  {
+    skill: "/status [tossId]",
+    description: "Check the status of the toss.",
+    handler: handleTossStatus,
+    examples: ["/status 1"],
+    params: {
+      tossId: {
+        type: "number",
+      },
+    },
   },
   {
     skill:
@@ -57,7 +68,7 @@ export const toss: Skill[] = [
     examples: ["/end 72 yes", "/end 72 No", "/end 81 yes"],
     params: {
       tossId: {
-        type: "string",
+        type: "number",
       },
       option: {
         type: "string",
@@ -75,7 +86,6 @@ export async function handleTossCreation(context: XMTPContext) {
   } = context;
 
   if (params.description && params.options && !isNaN(Number(params.amount))) {
-    //await context.send("one sec...");
     let judge = params.judge ?? sender.address;
     if (params.judge) {
       judge = await getUserInfo(params.judge);
@@ -114,7 +124,7 @@ You can also interact by replying to this message in natural language.
 - @toss end <option>`,
       );
     } else {
-      await context.send(
+      await context.reply(
         `An error occurred while creating the toss. ${JSON.stringify(tossId)}`,
       );
     }
@@ -141,7 +151,7 @@ export async function handleJoinToss(context: XMTPContext) {
   }
 
   const redis = await getRedisClient();
-  const tossDataString = await redis.get(tossId);
+  const tossDataString = await redis.get(tossId.toString());
   const tossData = tossDataString ? JSON.parse(tossDataString) : null;
 
   if (!tossData) {
@@ -173,12 +183,13 @@ export async function handleJoinToss(context: XMTPContext) {
     await context.reply("After funding, please try again.");
     return;
   } else {
+    await context.reply("Transferring funds...");
     await agentWallet.transferUsdc(tossData.admin, tossData.amount);
     await context.reply("Funds transferred successfully");
 
     // Add participant and their response to the array
     tossData.participants.push({ address: sender.address, response });
-    await redis.set(tossId, JSON.stringify(tossData));
+    await redis.set(tossId.toString(), JSON.stringify(tossData));
   }
 }
 
@@ -192,7 +203,7 @@ export async function handleEndToss(context: XMTPContext) {
     },
   } = context;
   const redis = await getRedisClient();
-  const tossDataString = await redis.get(tossId);
+  const tossDataString = await redis.get(tossId.toString());
   const tossData = tossDataString ? JSON.parse(tossDataString) : null;
   const agentWallet = new AgentWallet(sender.address);
   if (!tossData) {
@@ -257,4 +268,36 @@ export async function handleEndToss(context: XMTPContext) {
 
   // await redis.set(tossId, JSON.stringify({ ...tossData, closed: true }));
   await context.reply("Toss has been closed.");
+}
+
+export async function handleTossStatus(context: XMTPContext) {
+  const {
+    message: {
+      content: {
+        params: { tossId },
+      },
+    },
+  } = context;
+
+  const redis = await getRedisClient();
+  const tossDataString = await redis.get(tossId.toString());
+  const tossData = tossDataString ? JSON.parse(tossDataString) : null;
+
+  if (!tossData) {
+    await context.reply("Toss not found");
+    return;
+  }
+
+  const participants = tossData.participants.map(
+    async (participant: { address: string }) =>
+      (await context.getUserInfo(participant.address))?.preferredName ??
+      participant.address,
+  );
+
+  const amount = tossData.amount;
+  const pool = amount * tossData.participants.length;
+
+  await context.reply(
+    `Toss Status:\nParticipants: ${await Promise.all(participants)}\nAmount: $${amount}\nPool: $${pool}`,
+  );
 }

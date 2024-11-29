@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import { generatePrivateKey } from "viem/accounts";
 import { ethers } from "ethers";
+import { parseEnv } from "node:util";
 
 // Define the Base network RPC URL
 const baseRpcUrl = "https://mainnet.base.org";
@@ -38,7 +39,7 @@ export class AgentWallet {
 
     if (fs.existsSync(walletFilePath)) {
       const walletData = fs.readFileSync(walletFilePath, "utf8");
-      this.privateKey = walletData.split("=")[1];
+      this.privateKey = walletData.match(/KEY=(.+)/)?.[1]?.trim() ?? "";
     } else {
       this.privateKey = generatePrivateKey();
       let agentWallet = new ethers.Wallet(this.privateKey, provider);
