@@ -83,8 +83,13 @@ export async function handleTossCreation(context: XMTPContext) {
       content: { params },
       sender,
     },
+    group,
   } = context;
 
+  if (!group) {
+    await context.reply("This command can only be used in a group.");
+    return;
+  }
   if (params.description && params.options && !isNaN(Number(params.amount))) {
     let judge = params.judge ?? sender.address;
     if (params.judge) {
@@ -102,26 +107,28 @@ export async function handleTossCreation(context: XMTPContext) {
         description: params.description,
         options: params.options,
         amount: params.amount,
-        admin: judge,
+        groupId: group?.id,
+        admin: judge.toLowerCase(),
+        createdAt: new Date().toLocaleString(),
+        endTime: params.endTime
+          ? new Date(params.endTime).toLocaleString()
+          : new Date(Date.now() + 24 * 60 * 60 * 1000).toLocaleString(),
         participants: [],
       }),
     );
     if (tossId !== undefined) {
       await context.send(
-        `Here is your toss! 🪙\n\n✨ How it works:\n- The creator of the toss is one who can modify and settle the toss. \n- The pool will be split evenly with the winners. \n- Remember, with great power comes great responsibility 💪\n\n📋 Here are the details:
+        `Here is your toss! 🪙 ID: ${tossId}\n\n✨ How it works:\n- The creator of the toss is one who can modify and settle the toss. \n- The pool will be split evenly with the winners. \n- Remember, with great power comes great responsibility 💪\n\n📋 Here are the details:
+- Toss ID: ${tossId}
 - Options: ${params.options}
 - Amount: ${params.amount}
 - Description: ${params.description}
 - Judge: ${judgeUsername?.preferredName ?? judge?.address}
-- End Time: ${params?.endTime ?? "Not specified (default 24 hours)"}
-- Toss ID: ${tossId}
+- Ends on: ${params?.endTime ?? "24 hours"}
 \n🛠️ Commands:
 - @toss join <tossId>
-- @toss end <tossId> <option>
-
-You can also interact by replying to this message in natural language.
-- @toss join
-- @toss end <option>`,
+- @toss end <tossId> <option> (only the judge can end the toss)
+- @toss status <tossId>`,
       );
     } else {
       await context.reply(
@@ -139,10 +146,12 @@ export async function handleJoinToss(context: XMTPContext) {
         params: { tossId, response },
       },
     },
+    group,
   } = context;
-  const agentWallet = new AgentWallet(sender.address);
-
-  if (!response) {
+  if (!group) {
+    await context.reply("This command can only be used in a group.");
+    return;
+  } else if (!response) {
     await context.reply("Please specify your response.");
     return;
   } else if (!tossId) {
@@ -157,18 +166,20 @@ export async function handleJoinToss(context: XMTPContext) {
   if (!tossData) {
     await context.reply("Toss not found");
     return;
-  }
-
-  // Check if the participant has already joined
-  if (
+  } else if (tossData.groupId !== group.id) {
+    await context.reply("This toss is not in this group.");
+    return;
+  } else if (
     tossData.participants.some(
       (p: { address: string }) => p.address === sender.address,
     )
   ) {
+    // Check if the participant has already joined
     await context.reply("You have already joined this toss.");
     return;
   }
 
+  const agentWallet = new AgentWallet(sender.address);
   const { usdc, eth } = await agentWallet.checkBalances();
 
   if (usdc < BigInt(tossData.amount)) {
@@ -202,82 +213,101 @@ export async function handleEndToss(context: XMTPContext) {
       },
     },
   } = context;
+  if (!tossId) {
+    await context.reply("Please specify the toss ID.");
+    return;
+  } else if (!option) {
+    await context.reply("Please specify the option.");
+    return;
+  }
   const redis = await getRedisClient();
   const tossDataString = await redis.get(tossId.toString());
   const tossData = tossDataString ? JSON.parse(tossDataString) : null;
-  const agentWallet = new AgentWallet(sender.address);
   if (!tossData) {
     await context.reply("Toss not found");
     return;
   }
 
   // Check if the sender is the admin of the toss
-  if (tossData.admin !== sender.address) {
+  if (tossData.admin.toLowerCase() !== sender.address.toLowerCase()) {
     await context.reply("Only the admin can end the toss.");
     return;
   }
 
-  let optsArray: string[];
-  if (typeof tossData.options === "string") {
-    optsArray = tossData.options.split(",");
-  } else {
-    optsArray = tossData.options;
-  }
-
-  if (!optsArray.includes(option.toLowerCase())) {
+  let optArray = tossData.options.split(",");
+  if (!optArray.includes(option.toLowerCase())) {
     await context.reply("Invalid option selected.");
     return;
   }
 
+  const agentWallet = new AgentWallet(sender.address);
+  await agentWallet.checkBalances();
+
   // Logic to distribute the pool among winners
-  const winners = tossData.participants.filter(
-    (participant: { response: string; address: string }) => {
-      if (participant.response === option) {
-        return participant.address;
-      }
-    },
+  let participants = await Promise.all(
+    tossData.participants.map(
+      async (participant: { address: string }) =>
+        (await context.getUserInfo(participant.address))?.preferredName ??
+        participant.address,
+    ),
   );
+
+  let winners: { name: string; address: string }[] = (
+    await Promise.all(
+      tossData.participants.map(
+        async (participant: { address: string; response: string }) =>
+          participant.response.toLowerCase() === option.toLowerCase()
+            ? {
+                name:
+                  (await context.getUserInfo(participant.address))
+                    ?.preferredName ?? participant.address,
+                address: participant.address,
+              }
+            : null,
+      ),
+    )
+  ).filter((winner) => winner !== null);
 
   if (winners.length > 0) {
     const amountPerWinner = BigInt(tossData.amount) / BigInt(winners.length);
     for (const winner of winners) {
-      // Transfer the amount to each winner
-      // Assume transferUsdc is a function to transfer USDC
       console.log("transferring", winner.address, amountPerWinner);
-      //await agentWallet.transferUsdc(winner.address, Number(amountPerWinner));
+
+      await agentWallet.transferUsdc(winner.address, Number(amountPerWinner));
     }
+    await redis.set(tossId, JSON.stringify({ ...tossData, closed: true }));
+
     await context.reply(
-      `Toss ended. Winners have been rewarded.\nWinners: ${winners.map(
-        async (winner: { address: string }) =>
-          (await context.getUserInfo(winner.address))?.preferredName ??
-          winner.address,
-      )}\nAmount per winner: ${amountPerWinner}\nLosers: ${tossData.participants
-        .filter(
-          (participant: { response: string; address: string }) =>
-            participant.response !== option,
-        )
+      `🏆 Winners have been rewarded! 🏆\n\n🎉 Winners: \n${winners
         .map(
-          async (loser: { address: string }) =>
-            (await context.getUserInfo(loser.address))?.preferredName ??
-            loser.address,
-        )}`,
+          (winner: { name: string; address: string }) =>
+            `- ${winner.name} - $${amountPerWinner} 💰\n`,
+        )
+        .join("")}
+😢 Losers: \n${participants
+        .map((participant: string) => `- ${participant} 😢\n`)
+        .join("")}
+The pool has been distributed among the winners. The toss has been closed now.`,
     );
   } else {
     await context.reply("No winners for this toss.");
   }
-
-  // await redis.set(tossId, JSON.stringify({ ...tossData, closed: true }));
-  await context.reply("Toss has been closed.");
 }
 
 export async function handleTossStatus(context: XMTPContext) {
   const {
     message: {
+      sender,
       content: {
         params: { tossId },
       },
     },
+    group,
   } = context;
+  if (!group) {
+    await context.reply("This command can only be used in a group.");
+    return;
+  }
 
   const redis = await getRedisClient();
   const tossDataString = await redis.get(tossId.toString());
@@ -286,18 +316,43 @@ export async function handleTossStatus(context: XMTPContext) {
   if (!tossData) {
     await context.reply("Toss not found");
     return;
+  } else if (tossData.groupId !== group.id) {
+    await context.reply("This toss is not in this group.");
+    return;
   }
 
-  const participants = tossData.participants.map(
-    async (participant: { address: string }) =>
-      (await context.getUserInfo(participant.address))?.preferredName ??
-      participant.address,
+  let participants = await Promise.all(
+    tossData.participants.map(
+      async (participant: { address: string }) =>
+        (await context.getUserInfo(participant.address))?.preferredName ??
+        participant.address,
+    ),
   );
-
+  let optArray = tossData.options.split(",");
   const amount = tossData.amount;
   const pool = amount * tossData.participants.length;
+  await context.reply(`Here are the details:
+- Amount: ${amount}
+- Description: ${tossData.description}
+- Judge: ${
+    (await context.getUserInfo(tossData.admin))?.preferredName ?? tossData.admin
+  }
+- End Time: ${tossData.endTime ?? "24 hours"}
 
-  await context.reply(
-    `Toss Status:\nParticipants: ${await Promise.all(participants)}\nAmount: $${amount}\nPool: $${pool}`,
-  );
+📊 Status:
+👥 Participants:\n${participants
+    .map((participant: string) => `\t- ${participant}\n`)
+    .join("")}
+💵 Amount: $${amount}
+🏦 Pool: $${pool}
+📋 Options:
+${optArray
+  .map((option: string) => {
+    const voteCount = tossData.participants.filter(
+      (participant: { response: string }) =>
+        participant.response.toLowerCase() === option.toLowerCase(),
+    ).length;
+    return `\t- ${option}: ${voteCount} votes`;
+  })
+  .join("\n")} `);
 }

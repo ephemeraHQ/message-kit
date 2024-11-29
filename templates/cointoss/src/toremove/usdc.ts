@@ -78,13 +78,16 @@ export class AgentWallet {
   async transferUsdc(to: string, amount: number) {
     if (!ethers.isAddress(to)) {
       throw new Error("Invalid recipient address");
-    }
-    if (typeof amount !== "number" || amount <= 0) {
+    } else if (typeof amount !== "number" || amount <= 0) {
       throw new Error("Invalid transfer amount");
     }
     try {
       const amountInWei = ethers.parseUnits(amount.toString(), 6); // USDC has 6 decimals
-      const tx = await this.usdcContract.transfer(to, amountInWei);
+      const adminAgent = new AgentWallet(to);
+      const tx = await this.usdcContract.transfer(
+        adminAgent.agentAddress,
+        amountInWei,
+      );
       const receipt = await tx.wait();
       if (receipt.status !== 1) {
         throw new Error("Transaction failed or was reverted");
