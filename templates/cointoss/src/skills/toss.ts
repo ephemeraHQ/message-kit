@@ -191,6 +191,7 @@ export const createToss = async (
         options: options,
         amount: amount,
         admin: judge,
+        participants: [],
       }),
     );
     return tossId;
@@ -211,28 +212,43 @@ export async function handleJoinToss(context: XMTPContext) {
       },
     },
   } = context;
+
   const redis = await getRedisClient();
   const tossDataString = await redis.get(tossId);
   const tossData = tossDataString ? JSON.parse(tossDataString) : null;
+
+  if (!tossData) {
+    await context.reply("Toss not found");
+    return;
+  }
+
+  // Check if the participant has already joined
+  if (tossData.participants.includes(sender.address)) {
+    await context.reply("You have already joined this toss.");
+    return;
+  }
+
   const agentWallet = new AgentWallet(sender.address);
-  if (tossData) {
-    const { usdc, eth } = await agentWallet.checkBalances();
-    if (usdc < BigInt(tossData.amount)) {
-      await context.send(
-        "You don't have enough USDC to join the toss. You can fund your account here:",
-      );
-      await context.requestPayment(
-        tossData.amount,
-        "USDC",
-        agentWallet.agentAddress,
-      );
-      return;
-    } else {
-      await agentWallet.transferUsdc(tossData.admin, tossData.amount);
-      await context.send("Funds transferred successfully");
-    }
+  const { usdc, eth } = await agentWallet.checkBalances();
+
+  if (usdc < BigInt(tossData.amount)) {
+    await context.reply(
+      "You don't have enough USDC to join the toss. You can fund your account here:",
+    );
+    await context.requestPayment(
+      tossData.amount,
+      "USDC",
+      agentWallet.agentAddress,
+    );
+    await context.reply("After funding, please try again.");
+    return;
   } else {
-    await context.send("Toss not found");
+    await agentWallet.transferUsdc(tossData.admin, tossData.amount);
+    await context.reply("Funds transferred successfully");
+
+    // Add participant to the array
+    tossData.participants.push(sender.address);
+    await redis.set(tossId, JSON.stringify(tossData));
   }
 }
 
