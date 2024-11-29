@@ -12,7 +12,7 @@ import fs from "fs";
 
 export const agent: Agent = {
   name: "Toss Bot",
-  tag: "@cointoss",
+  tag: "@toss",
   description: "Create a coin toss.",
   skills: [...toss],
 };

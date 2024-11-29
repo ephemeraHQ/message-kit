@@ -1,11 +1,10 @@
-import { v4 as uuidv4 } from "uuid";
 import { Skill, XMTPContext, getUserInfo } from "@xmtp/message-kit";
 import { privateKeyToAccount } from "viem/accounts";
 import { base } from "viem/chains";
 import { getRedisClient } from "../lib/redis.js";
 import { createPublicClient, createWalletClient, http, parseUnits } from "viem";
 import { COINTOSSBOT_ABI } from "../toremove/abi.js";
-import { AgentWallet } from "../toremove/cdp-fake.js";
+import { AgentWallet } from "../toremove/usdc.js";
 
 export const toss: Skill[] = [
   {
@@ -17,7 +16,7 @@ export const toss: Skill[] = [
       },
     },
     handler: handleJoinToss,
-    examples: ["/join 72"],
+    examples: ["/join 72", "/join 80"],
   },
   {
     skill:
@@ -49,6 +48,17 @@ export const toss: Skill[] = [
       },
       endTime: {
         type: "quoted",
+      },
+    },
+  },
+  {
+    skill: "/end [tossId] [option]",
+    description: "End a toss.",
+    handler: handleEndToss,
+    examples: ["/end 72 Yes"],
+    params: {
+      tossId: {
+        type: "string",
       },
     },
   },
@@ -84,22 +94,25 @@ export async function handleTossCreation(context: XMTPContext) {
       judge?.address ?? sender.address,
       params?.endTime ?? undefined,
     );
+    let judgeUsername = await context.getUserInfo(
+      judge?.address ?? sender.address,
+    );
     if (tossId !== undefined) {
-      await context.send(`Here is your toss!`);
       await context.send(
-        `Here are the details:
-Options - ${params.options}
-Amount - ${params.amount}
-Description - ${params.description}
-Judge - ${judge?.address ?? sender.address}
-End Time - ${params?.endTime ?? "Not specified (default 24 hours)"}
-Toss ID - ${tossId}
+        `Here is your toss!\n\nHow it works:\n- The creator of the toss is one who can modify and settle the toss. \n- The pool will be split evenly with the winners. \n- Remember, with great power comes great responsibility\n\nHere are the details:
+- Options - ${params.options}
+- Amount - ${params.amount}
+- Description - ${params.description}
+- Judge - ${judgeUsername?.preferredName ?? judge?.address}
+- End Time - ${params?.endTime ?? "Not specified (default 24 hours)"}
+- Toss ID - ${tossId}
+\n\nCommands:
+- @toss join <tossId>
+- @toss end <tossId> <option>
 
-Commands:
-@cointoss join <tossId>
-@cointoss leave <tossId>
-@cointoss result <tossId>
-@cointoss end <tossId>`,
+You can also interact by replying to this message in natural language.
+- @toss join
+- @toss end <option>`,
       );
     } else {
       await context.send(
@@ -119,18 +132,7 @@ export const createToss = async (
 ) => {
   try {
     const amountString = `${amount}`;
-    const uuid = uuidv4();
     const redis = await getRedisClient();
-
-    redis.set(
-      uuid,
-      JSON.stringify({
-        description: description,
-        options: options,
-        amount: amount,
-        admin: judge,
-      }),
-    );
 
     const account = privateKeyToAccount(process.env.KEY! as `0x${string}`);
     const walletClient = createWalletClient({
@@ -182,7 +184,15 @@ export const createToss = async (
       abi: COINTOSSBOT_ABI,
       functionName: "tossId",
     });
-
+    await redis.set(
+      tossId.toString(),
+      JSON.stringify({
+        description: description,
+        options: options,
+        amount: amount,
+        admin: judge,
+      }),
+    );
     return tossId;
   } catch (error) {
     console.error("Error creating toss:", error);
@@ -202,24 +212,36 @@ export async function handleJoinToss(context: XMTPContext) {
     },
   } = context;
   const redis = await getRedisClient();
-  console.log(redis, tossId);
-  await context.send(`Joining toss ${tossId}`);
   const tossDataString = await redis.get(tossId);
-  console.log(tossDataString);
   const tossData = tossDataString ? JSON.parse(tossDataString) : null;
-  console.log(tossData);
   const agentWallet = new AgentWallet(sender.address);
   if (tossData) {
-    const balance = await agentWallet.checkBalance();
-    if (balance < BigInt(tossData.amount)) {
-      await context.send("You don't have enough USDC to join the toss.");
+    const { usdc, eth } = await agentWallet.checkBalances();
+    if (usdc < BigInt(tossData.amount)) {
+      await context.send(
+        "You don't have enough USDC to join the toss. You can fund your account here:",
+      );
+      await context.requestPayment(
+        tossData.amount,
+        "USDC",
+        agentWallet.agentAddress,
+      );
       return;
+    } else {
+      await agentWallet.transferUsdc(tossData.admin, tossData.amount);
+      await context.send("Funds transferred successfully");
     }
-    await context.send("Toss found");
-    console.log(toss);
   } else {
     await context.send("Toss not found");
   }
 }
 
-export const GROUP_MESSAGE_FIRST = `\n\nThe creator of the toss is one who can modify and settle the toss. \n\nThe pool will be split evenly with the winners. \n\nRemember, with great power comes great responsibility!`;
+export async function handleEndToss(context: XMTPContext) {
+  const {
+    message: {
+      content: {
+        params: { tossId, option },
+      },
+    },
+  } = context;
+}
