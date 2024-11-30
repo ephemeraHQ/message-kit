@@ -184,7 +184,7 @@ export async function handleJoinToss(context: XMTPContext) {
 
   const userWallet = await WalletService.getUserWallet(sender.address);
   const tossWallet = await WalletService.getTossWallet(tossId.toString());
-  
+
   if (!tossWallet) {
     await context.reply("Toss not found or expired");
     return;
