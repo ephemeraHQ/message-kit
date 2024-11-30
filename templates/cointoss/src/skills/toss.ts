@@ -200,8 +200,7 @@ export async function handleJoinToss(context: XMTPContext) {
     await context.requestPayment(
       tossData.amount,
       "USDC",
-      // TODO: Change this to the user's wallet address
-      "0xc2799A24285f91610438AB1aa2087Ebf4516fcaF",
+      userWalletAddress.id,
     );
     await context.reply("After funding, please try again.");
     return;
