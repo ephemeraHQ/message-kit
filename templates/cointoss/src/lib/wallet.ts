@@ -16,83 +16,83 @@ export class WalletService {
   static async getUserWallet(userAddress: string): Promise<any> {
     const redis = await getUserWalletRedis();
     const walletData = await redis.get(`wallet:${userAddress}`);
-    
+
     if (walletData) {
       console.log(`Retrieved wallet data for user ${userAddress}:`, walletData);
       return JSON.parse(walletData);
     }
 
     console.log(`Creating new wallet for user ${userAddress}...`);
-    const wallet = await Wallet.create({ 
-      networkId: Coinbase.networks.BaseMainnet 
+    const wallet = await Wallet.create({
+      networkId: Coinbase.networks.BaseMainnet,
     });
 
     const data = wallet.export();
-    console.log('Exported wallet data:', data);
-    
+    console.log("Exported wallet data:", data);
+
     await redis.set(`wallet:${userAddress}`, JSON.stringify(data));
     return data;
   }
 
   static async createTossWallet(tossId: string): Promise<any> {
     const redis = await getTossWalletRedis();
-    
+
     try {
       console.log(`Creating wallet for toss ${tossId}...`);
-      
-      const wallet = await Wallet.create({ 
-        networkId: Coinbase.networks.BaseMainnet 
+
+      const wallet = await Wallet.create({
+        networkId: Coinbase.networks.BaseMainnet,
       });
 
       const data = wallet.export();
-      const address = (await wallet.getDefaultAddress()).toString();
-      console.log('Toss wallet created:', { data, address });
+      const address = await wallet.getDefaultAddress();
+      console.log("Toss wallet created:", { data, address: address.toString() });
 
       await redis.set(`toss:${tossId}`, JSON.stringify(data));
       return { data, address };
     } catch (error) {
-      console.error('Error creating toss wallet:', error);
+      console.error("Error creating toss wallet:", error);
       throw error;
     }
   }
 
-  static async getWalletAddress(walletData: any): Promise<string> {
-    console.log('Getting wallet address from data:', walletData);
+  static async getWalletAddress(walletData: any): Promise<any> {
+    console.log("Getting wallet address from data:", walletData);
     const wallet = await Wallet.import(walletData);
     const address = await wallet.getDefaultAddress();
-    console.log('Wallet address:', address.toString());
-    return address.toString();
+    console.log("Wallet address:", address.toString());
+    return address;
   }
 
   static async checkBalance(walletData: any): Promise<number> {
-    console.log('Checking balance for wallet:', walletData);
+    console.log("Checking balance for wallet:", walletData);
     const wallet = await Wallet.import(walletData);
     let balance = await wallet.getBalance(Coinbase.assets.Usdc);
-    console.log('Wallet balance:', balance);
+    console.log("Wallet balance:", balance);
     return Number(balance);
   }
 
   static async transfer(
     fromWalletData: any,
-    toAddress: string,
+    toWalletData: any,
     amount: number
   ): Promise<void> {
     console.log('Transfer initiated:', {
       fromWallet: fromWalletData,
-      toAddress,
+      toWallet: toWalletData,
       amount
     });
 
     const fromWallet = await Wallet.import(fromWalletData);
-    console.log('From wallet imported successfully');
+    const toWallet = await Wallet.import(toWalletData);
+    console.log('Both wallets imported successfully');
     
     try {
-      // Try direct address transfer
       await fromWallet.createTransfer({
         amount,
         assetId: Coinbase.assets.Usdc,
-        destination: toAddress,  // Using address string directly
-        gasless: true
+        destination: toWallet,
+        gasless: true,
       });
       console.log('Transfer completed successfully');
     } catch (error) {
@@ -115,6 +115,8 @@ export class WalletService {
   static async deleteTossWallet(tossId: string) {
     console.log(`Deleting wallet for toss ${tossId}`);
     const redis = await getTossWalletRedis();
+    const walletData = await redis.get(`toss:${tossId}`);
+    console.log(`Deleting tossID ${tossId}`, walletData);
     await redis.del(`toss:${tossId}`);
     console.log(`Wallet deleted for toss ${tossId}`);
   }
