@@ -2,7 +2,6 @@ import fs from "fs";
 import path from "path";
 import { generatePrivateKey } from "viem/accounts";
 import { ethers } from "ethers";
-import { parseEnv } from "node:util";
 
 // Define the Base network RPC URL
 const baseRpcUrl = "https://mainnet.base.org";
@@ -92,9 +91,8 @@ export class AgentWallet {
       if (receipt.status !== 1) {
         throw new Error("Transaction failed or was reverted");
       }
-      console.warn(`Transferred ${amount} USDC to ${to}.`);
-      return `Transferred ${amount} USDC to ${to}.`;
     } catch (error) {
+      console.warn(`Transferred ${amount} USDC to ${to}.`);
       throw error;
     }
   }

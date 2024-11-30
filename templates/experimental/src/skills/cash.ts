@@ -43,49 +43,56 @@ async function balanceHandler(context: XMTPContext) {
 }
 
 async function fundHandler(context: XMTPContext) {
-  const {
-    message: {
-      sender,
-      content: {
-        params: { amount },
+  try {
+    const {
+      message: {
+        sender,
+        content: {
+          params: { amount },
+        },
       },
-    },
-  } = context;
-  const agentWallet = new AgentWallet(sender.address);
-  const { usdc } = await agentWallet.checkBalances();
-  if (!amount && usdc >= 0 && usdc < 10) {
-    const min = usdc;
-    const max = 10;
-    const response = await context.awaitResponse(
-      `Please specify the amount of USDC to prefund. \nFrom: ${min} to ${max}.`,
-      Array.from({ length: max - min + 1 }, (_, i) => (i + min).toString()),
-    );
+    } = context;
+    const agentWallet = new AgentWallet(sender.address);
+    const { usdc } = await agentWallet.checkBalances();
+    const MAX_USDC = 10;
 
-    await context.requestPayment(
-      parseInt(response),
-      "USDC",
-      agentWallet?.agentAddress,
-    );
+    if (usdc >= MAX_USDC) {
+      await context.send(`Your balance is maxed out at ${MAX_USDC} USDC.`);
+      return;
+    }
+
+    const remainingLimit = MAX_USDC - usdc;
+    let fundAmount: number;
+
+    if (!amount) {
+      const options = Array.from(
+        { length: Math.floor(remainingLimit) },
+        (_, i) => (i + 1).toString(),
+      );
+      const response = await context.awaitResponse(
+        `Please specify the amount of USDC to prefund (1 to ${remainingLimit}):`,
+        options,
+      );
+      fundAmount = parseInt(response);
+    } else {
+      fundAmount = parseInt(amount);
+    }
+
+    if (isNaN(fundAmount) || fundAmount <= 0 || fundAmount > remainingLimit) {
+      await context.send(
+        `Invalid amount. Please specify a value between 1 and ${remainingLimit} USDC.`,
+      );
+      return;
+    }
+
+    await context.requestPayment(fundAmount, "USDC", agentWallet.agentAddress);
     await context.send(
-      "After funding, let me know so i can check your balance.",
+      "After funding, let me know so I can check your balance.",
     );
-    return;
-  } else if (usdc && usdc >= 10) {
-    await context.send("Your balance is maxed out at 10 USDC.");
-    return;
-  } else if (parseInt(amount) > 0 && usdc + parseInt(amount) <= 10) {
-    await context.requestPayment(
-      parseInt(amount),
-      "USDC",
-      agentWallet?.agentAddress,
-    );
+  } catch (error) {
     await context.send(
-      "After funding, let me know so i can check your balance.",
+      "An error occurred while processing your request. Please try again.",
     );
-    return;
-  } else {
-    await context.send("Invalid amount. Max 10 USDC. Please try again.");
-    return;
   }
 }
 
