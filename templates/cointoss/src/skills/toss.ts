@@ -1,6 +1,6 @@
 import { Skill, XMTPContext, getUserInfo } from "@xmtp/message-kit";
 import { getRedisClient } from "../lib/redis.js";
-import { AgentWallet } from "../toremove/usdc.js";
+import { WalletService } from "../lib/wallet.js";
 
 export const toss: Skill[] = [
   {
@@ -101,6 +101,8 @@ export async function handleTossCreation(context: XMTPContext) {
     const redis = await getRedisClient();
     const keys = await redis.keys("*");
     let tossId = keys.length + 1;
+    const tossWallet = await WalletService.createTossWallet(tossId.toString());
+
     await redis.set(
       tossId.toString(),
       JSON.stringify({
@@ -114,6 +116,7 @@ export async function handleTossCreation(context: XMTPContext) {
           ? new Date(params.endTime).toLocaleString()
           : new Date(Date.now() + 24 * 60 * 60 * 1000).toLocaleString(),
         participants: [],
+        walletAddress: tossWallet.address,
       }),
     );
     if (tossId !== undefined) {
@@ -179,33 +182,42 @@ export async function handleJoinToss(context: XMTPContext) {
     return;
   }
 
-  const agentWallet = new AgentWallet(sender.address);
-  const { usdc, eth } = await agentWallet.checkBalances();
+  const userWallet = await WalletService.getUserWallet(sender.address);
+  const tossWallet = await WalletService.getTossWallet(tossId.toString());
+  
+  if (!tossWallet) {
+    await context.reply("Toss not found or expired");
+    return;
+  }
 
-  if (usdc < BigInt(tossData.amount)) {
+  const balance = await WalletService.checkBalance(userWallet);
+  const userWalletAddress = await WalletService.getWalletAddress(userWallet);
+
+  if (balance < tossData.amount) {
     await context.reply(
       "You don't have enough USDC to join the toss. You can fund your account here:",
     );
     await context.requestPayment(
       tossData.amount,
       "USDC",
-      agentWallet.agentAddress,
+      // TODO: Change this to the user's wallet address
+      "0xc2799A24285f91610438AB1aa2087Ebf4516fcaF",
     );
     await context.reply("After funding, please try again.");
     return;
-  } else {
-    await context.reply("Transferring funds...");
-    try {
-      await agentWallet.transferUsdc(tossData.admin, tossData.amount);
-      await context.reply("Funds transferred successfully");
-    } catch (error) {
-      console.error(error);
-      await context.reply("An error occurred while transferring funds.");
-      return;
-    }
+  }
+
+  try {
+    await WalletService.transfer(userWallet, tossWallet, tossData.amount);
+    
     // Add participant and their response to the array
     tossData.participants.push({ address: sender.address, response });
     await redis.set(tossId.toString(), JSON.stringify(tossData));
+    
+    await context.reply("Successfully joined the toss!");
+  } catch (error) {
+    console.error(error);
+    await context.reply("Failed to process your entry. Please try again.");
   }
 }
 
@@ -245,10 +257,37 @@ export async function handleEndToss(context: XMTPContext) {
     return;
   }
 
-  const agentWallet = new AgentWallet(sender.address);
-  await agentWallet.checkBalances();
+  // Calculate winners and prize amounts
+  let winners = tossData.participants.filter(
+    (p: { response: string }) =>
+      p.response.toLowerCase() === option.toLowerCase(),
+  );
 
-  // Logic to distribute the pool among winners
+  const prize = tossData.amount * tossData.participants.length / winners.length;
+
+  // Distribute prizes
+  for (const winner of winners) {
+    try {
+      const winnerWallet = await WalletService.getUserWallet(winner.address);
+      const tossWallet = await WalletService.getTossWallet(tossId.toString());
+      
+      if (!tossWallet) {
+        await context.reply("Toss wallet not found");
+        return;
+      }
+
+      await WalletService.transfer(tossWallet, winnerWallet, prize);
+    } catch (error) {
+      console.error(`Failed to send prize to ${winner.address}:`, error);
+      await context.reply(`Failed to send prize to ${winner.address}`);
+    }
+  }
+
+  // Clean up
+  await WalletService.deleteTossWallet(tossId.toString());
+  tossData.closed = true;
+  await redis.set(tossId.toString(), JSON.stringify(tossData));
+
   let participants = await Promise.all(
     tossData.participants.map(
       async (participant: { address: string }) =>
@@ -257,36 +296,7 @@ export async function handleEndToss(context: XMTPContext) {
     ),
   );
 
-  let winners: { name: string; address: string }[] = (
-    await Promise.all(
-      tossData.participants.map(
-        async (participant: { address: string; response: string }) =>
-          participant.response.toLowerCase() === option.toLowerCase()
-            ? {
-                name:
-                  (await context.getUserInfo(participant.address))
-                    ?.preferredName ?? participant.address,
-                address: participant.address,
-              }
-            : null,
-      ),
-    )
-  ).filter((winner) => winner !== null);
-
-  let prize = tossData.amount / winners.length;
   if (winners.length > 0) {
-    for (const winner of winners) {
-      try {
-        await agentWallet.transferUsdc(winner.address, prize);
-      } catch (error) {
-        console.error(error);
-        await context.reply("An error occurred while transferring funds.");
-        return;
-      }
-    }
-    let data = { ...tossData, closed: true };
-    await redis.set(tossId.toString(), JSON.stringify(data));
-
     await context.reply(
       `🏆 Winners have been rewarded! 🏆\n\n🎉 Winners: \n${winners
         .map(
