@@ -48,14 +48,9 @@ Powered by XMTP \x1b[0m`;
     runConfig?.privateKey ||
     runConfig?.memberChange ||
     agent === undefined ||
-<<<<<<< HEAD
-    agent.skills.length === 0 ||
-    runConfig?.experimental
-=======
     agent?.skills.length === 0 ||
     generatedKey ||
     runConfig?.walletService
->>>>>>> copilot
   ) {
     console.warn(`\x1b[33m\n\tWarnings:`);
     if (runConfig?.attachments) {
