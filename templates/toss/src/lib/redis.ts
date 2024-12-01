@@ -3,7 +3,7 @@ import type { RedisClientType } from "@redis/client";
 
 let userWalletClient: RedisClientType | null = null;
 let tossWalletClient: RedisClientType | null = null;
-let generalClient: RedisClientType | null = null;
+let tossDBClient: RedisClientType | null = null;
 
 export const getUserWalletRedis = async (): Promise<RedisClientType> => {
   if (userWalletClient?.isOpen) {
@@ -57,8 +57,8 @@ export const getTossWalletRedis = async (): Promise<RedisClientType> => {
 };
 
 export const getTossDBClient = async (): Promise<RedisClientType> => {
-  if (generalClient?.isOpen) {
-    return generalClient;
+  if (tossDBClient?.isOpen) {
+    return tossDBClient;
   }
 
   if (!process.env.TOSS_DB_REDIS_URL) {
@@ -77,7 +77,7 @@ export const getTossDBClient = async (): Promise<RedisClientType> => {
     console.log("Connected to Toss DB Redis");
   });
   await client.connect();
-  generalClient = client as RedisClientType;
+  tossDBClient = client as RedisClientType;
   return client as RedisClientType;
 };
 
@@ -85,12 +85,13 @@ export const getTossDBClient = async (): Promise<RedisClientType> => {
 export const closeRedisConnections = async () => {
   if (userWalletClient?.isOpen) await userWalletClient.quit();
   if (tossWalletClient?.isOpen) await tossWalletClient.quit();
-  if (generalClient?.isOpen) await generalClient.quit();
+  if (tossDBClient?.isOpen) await tossDBClient.quit();
 
   userWalletClient = null;
   tossWalletClient = null;
-  generalClient = null;
+  tossDBClient = null;
 };
+
 export async function updateField(
   client: RedisClientType,
   key: string,

@@ -14,7 +14,7 @@ const coinbase = new Coinbase({
 });
 
 export class WalletService {
-  static async getUserWallet(userAddress: string): Promise<any> {
+  static async createUserWallet(userAddress: string): Promise<any> {
     const redis = await getUserWalletRedis();
     const walletData = await redis.get(`wallet:${userAddress}`);
 
