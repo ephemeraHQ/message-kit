@@ -189,7 +189,7 @@ export async function handleJoinToss(context: XMTPContext) {
 
   try {
     await walletService.transfer(userWallet, tossWallet, amount);
-    await updateField(tossId.toString(), { response: true });
+    await updateField(tossDBClient, tossId.toString(), { response: true });
 
     await context.reply("Successfully joined the toss!");
   } catch (error) {
@@ -260,7 +260,7 @@ export async function handleEndToss(context: XMTPContext) {
 
   // Clean up
   //await WalletService.deleteTempWallet(tossWalletRedis, tossId.toString());
-  await updateField(tossId.toString(), { status: "closed" });
+  await updateField(tossDBClient, tossId.toString(), { status: "closed" });
 
   if (winners.length > 0) {
     await context.reply(

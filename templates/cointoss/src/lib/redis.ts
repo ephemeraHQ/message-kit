@@ -92,10 +92,11 @@ export const closeRedisConnections = async () => {
   tossDBClient = null;
 };
 
-const redis = require("redis");
-const client = redis.createClient();
-
-export async function updateField(key: string, updateObject: any) {
+export async function updateField(
+  client: RedisClientType,
+  key: string,
+  updateObject: any,
+) {
   // Check if the key exists
   const data = await client.get(key);
 
