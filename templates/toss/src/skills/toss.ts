@@ -1,10 +1,6 @@
 import { Skill, XMTPContext, getUserInfo } from "@xmtp/message-kit";
-import {
-  getTossDBClient,
-  getTossWalletRedis,
-  getUserWalletRedis,
-  updateField,
-} from "../lib/redis.js";
+import { getTossDBClient, updateField } from "../lib/redis.js";
+import { WalletService } from "../lib/cdp.js";
 import { checkTossCorrect, extractWinners } from "../lib/helpers.js";
 
 export const toss: Skill[] = [
@@ -72,8 +68,6 @@ export const toss: Skill[] = [
   },
 ];
 
-const userWalletRedis = await getUserWalletRedis();
-const tossWalletRedis = await getTossWalletRedis();
 const tossDBClient = await getTossDBClient();
 
 export async function handleTossCreation(context: XMTPContext) {
@@ -83,7 +77,6 @@ export async function handleTossCreation(context: XMTPContext) {
       sender,
     },
     group,
-    walletService,
   } = context;
 
   if (!group) {
@@ -100,10 +93,7 @@ export async function handleTossCreation(context: XMTPContext) {
     );
     const keys = await tossDBClient.keys("*");
     let tossId = keys.length + 1;
-    const tossWallet = await walletService.createTempWallet(
-      tossWalletRedis,
-      tossId.toString(),
-    );
+    const tossWallet = await WalletService.createTempWallet(tossId.toString());
 
     await tossDBClient.set(
       tossId.toString(),
@@ -156,25 +146,18 @@ export async function handleJoinToss(context: XMTPContext) {
         params: { response },
       },
     },
-    walletService,
   } = context;
 
-  const userWallet = await walletService.getUserWallet(
-    userWalletRedis,
-    sender.address,
-  );
-  const tossWallet = await walletService.getTempWallet(
-    tossWalletRedis,
-    tossId.toString(),
-  );
+  const userWallet = await WalletService.getUserWallet(sender.address);
+  const tossWallet = await WalletService.getTempWallet(tossId.toString());
 
   if (!tossWallet) {
     await context.reply("Toss not found or expired");
     return;
   }
 
-  const balance = await walletService.checkBalance(userWallet);
-  const userWalletAddress = await walletService.getWalletAddress(userWallet);
+  const balance = await WalletService.checkBalance(userWallet);
+  const userWalletAddress = await WalletService.getWalletAddress(userWallet);
 
   if (balance < amount) {
     await context.reply(
@@ -188,7 +171,7 @@ export async function handleJoinToss(context: XMTPContext) {
   }
 
   try {
-    await walletService.transfer(userWallet, tossWallet, amount);
+    await WalletService.transfer(userWallet, tossWallet, amount);
     await updateField(tossDBClient, tossId.toString(), { response: true });
 
     await context.reply("Successfully joined the toss!");
@@ -213,7 +196,6 @@ export async function handleEndToss(context: XMTPContext) {
         params: { option },
       },
     },
-    walletService,
   } = context;
 
   if (participants.length === 0) {
@@ -237,21 +219,15 @@ export async function handleEndToss(context: XMTPContext) {
   const prize = (tossData.amount * participants.length) / (winners.length ?? 1);
   for (const winner of winners) {
     try {
-      const winnerWallet = await walletService.getUserWallet(
-        userWalletRedis,
-        winner.address,
-      );
-      const tossWallet = await walletService.getTempWallet(
-        tossWalletRedis,
-        tossId.toString(),
-      );
+      const winnerWallet = await WalletService.getUserWallet(winner.address);
+      const tossWallet = await WalletService.getTempWallet(tossId.toString());
 
       if (!tossWallet) {
         await context.reply("Toss wallet not found");
         return;
       }
 
-      await walletService.transfer(tossWallet, winnerWallet, prize);
+      await WalletService.transfer(tossWallet, winnerWallet, prize);
     } catch (error) {
       console.error(`Failed to send prize to ${winner.address}:`, error);
       await context.reply(`Failed to send prize to ${winner.address}`);

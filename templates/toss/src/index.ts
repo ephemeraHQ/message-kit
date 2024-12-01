@@ -28,5 +28,5 @@ run(
     fs.writeFileSync("example_prompt.md", prompt);
     await agentReply(context, prompt);
   },
-  { agent, walletService: true },
+  { agent },
 );

@@ -146,7 +146,7 @@ export class XMTPContext {
         context.agent = runConfig?.agent ?? (await loadSkillsFile());
         if (runConfig?.walletService) {
           try {
-            context.walletService = await WalletService.create();
+            context.walletService = new WalletService();
           } catch (error) {
             console.error("Error creating WalletService:", error);
           }
