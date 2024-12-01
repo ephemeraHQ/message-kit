@@ -116,6 +116,10 @@ export default defineConfig({
           text: "Frames",
           link: "/concepts/frames",
         },
+        {
+          text: "Agent Wallet",
+          link: "/concepts/wallet",
+        },
       ],
     },
     {

@@ -1,3 +1,5 @@
+import { CustomHomePage } from "../../components/CustomHomePage";
+
 # Structure
 
 ## File structure
@@ -41,6 +43,7 @@ run(
 - `experimental`: experimental features like logging all group messages. Default is `false`.
 - `attachments`: to receive attachments. Default is `false`.
 - `gptModel`: model to be used. Default is `gpt-4o`.
+- `walletService`: if true, the agent cdp wallet will be used. Default is `false`.
 - `client`: Optional parameters to pass to the XMTP client.
 - `agent`: Custom agent to be used. Default is to create the skills in the `src/skills.ts` file.
 - `hideInitLogMessage`: hide the init log message with messagekit logo and stuff
@@ -104,7 +107,7 @@ const { v2client: newClient } = await xmtpClient({
 );
 ```
 
-> This is used in the [Cron](/middleware/cron) plugin to send updates to the users.
+> This can be used in the [Cron](/middleware/cron) plugin to send updates to the users.
 
 ## Manual Installation
 
@@ -125,3 +128,28 @@ yarn add @xmtp/message-kit
 ```
 
 :::
+
+## Included
+
+This is a list of the plugins that are included in MessageKit.
+
+<CustomHomePage.TileGrid3>
+  <CustomHomePage.Tile
+    href="/middleware/gpt"
+    title="GPT"
+    description="Use GPT to generate text."
+    icon="🤖"
+  />
+  <CustomHomePage.Tile
+    href="/middleware/resolver"
+    title="Resolver"
+    description="Use Resolver to resolve messages."
+    icon="🔍"
+  />
+  <CustomHomePage.Tile
+    href="/middleware/cdp"
+    title="CDP"
+    description="Use CDP to create agent wallets."
+    icon="💳"
+  />
+</CustomHomePage.TileGrid3>

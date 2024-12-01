@@ -53,6 +53,8 @@ export type RunConfig = {
   experimental?: boolean;
   // hide the init log message with messagekit logo and stuff
   hideInitLogMessage?: boolean;
+  // agent wallet
+  walletService?: boolean;
   // if true, attachments will be enabled
   attachments?: boolean;
   // if true, member changes will be enabled, like adding members to the group
