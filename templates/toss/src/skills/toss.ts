@@ -1,6 +1,6 @@
 import { Skill, XMTPContext, getUserInfo } from "@xmtp/message-kit";
 import { getTossDBClient, updateField } from "../lib/redis.js";
-import { WalletService } from "../lib/cdp.js";
+import { WalletService } from "../lib/wallet.js";
 import { checkTossCorrect, extractWinners } from "../lib/helpers.js";
 
 export const toss: Skill[] = [
