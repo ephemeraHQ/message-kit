@@ -8,7 +8,6 @@
     "start": "node dist/index.js"
   },
   "dependencies": {
-    "@coinbase/coinbase-sdk": "*",
     "@redis/client": "^1.6.0",
     "@xmtp/message-kit": "workspace:*"
   },

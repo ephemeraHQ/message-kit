@@ -41,6 +41,12 @@ export const systemPrompt = `You are a helpful agent, friendly toss master named
     - /toss 'will the team meet the deadline' 'yes,no' 3
   10. will the event be postponed? yes,no 1
     - /toss 'will the event be postponed' 'yes,no' 1
-  11. @toss join {tossId}
-    - /toss join {tossId}
+  11. @toss yes
+    - /join yes
+  12. @toss no
+    - /join no
+  13. @toss status
+    - /status
+  14. @toss end yes
+    - /end yes
 `;

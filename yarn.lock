@@ -3640,6 +3640,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@xmtp/message-kit@workspace:packages/message-kit"
   dependencies:
+    "@coinbase/coinbase-sdk": "npm:*"
     "@rollup/plugin-typescript": "npm:^11.1.6"
     "@types/node": "npm:^20.14.2"
     "@vitest/coverage-v8": "npm:^2.1.4"
@@ -4622,7 +4623,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "cointoss@workspace:templates/cointoss"
   dependencies:
-    "@coinbase/coinbase-sdk": "npm:*"
     "@redis/client": "npm:^1.6.0"
     "@types/node": "npm:^20.14.2"
     "@xmtp/message-kit": "workspace:*"
