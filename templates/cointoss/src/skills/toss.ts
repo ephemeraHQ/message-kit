@@ -3,6 +3,7 @@ import {
   getTossDBClient,
   getTossWalletRedis,
   getUserWalletRedis,
+  updateField,
 } from "../lib/redis.js";
 import { checkTossCorrect, extractWinners } from "../lib/helpers.js";
 
@@ -147,7 +148,7 @@ export async function handleJoinToss(context: XMTPContext) {
   if (!tossData) {
     return;
   }
-  const { tossId, participants, amount } = tossData;
+  const { tossId, amount } = tossData;
   const {
     message: {
       sender,
@@ -188,7 +189,7 @@ export async function handleJoinToss(context: XMTPContext) {
 
   try {
     await walletService.transfer(userWallet, tossWallet, amount);
-    await tossDBClient.set(tossId.toString(), JSON.stringify(tossData));
+    await updateField(tossId.toString(), { response: true });
 
     await context.reply("Successfully joined the toss!");
   } catch (error) {
@@ -259,8 +260,7 @@ export async function handleEndToss(context: XMTPContext) {
 
   // Clean up
   //await WalletService.deleteTempWallet(tossWalletRedis, tossId.toString());
-  //status = "closed";
-  //await tossDBClient.set(tossId.toString(), JSON.stringify(tossData));
+  await updateField(tossId.toString(), { status: "closed" });
 
   if (winners.length > 0) {
     await context.reply(

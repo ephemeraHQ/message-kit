@@ -91,3 +91,24 @@ export const closeRedisConnections = async () => {
   tossWalletClient = null;
   tossDBClient = null;
 };
+
+const redis = require("redis");
+const client = redis.createClient();
+
+export async function updateField(key: string, updateObject: any) {
+  // Check if the key exists
+  const data = await client.get(key);
+
+  let updatedData;
+  if (data) {
+    // If the key exists, parse it and merge the updates
+    const parsedData = JSON.parse(data);
+    updatedData = { ...parsedData, ...updateObject };
+  } else {
+    // If the key doesn't exist, use the updateObject as the initial value
+    updatedData = updateObject;
+  }
+
+  // Save the updated or new data back to Redis
+  await client.set(key, JSON.stringify(updatedData));
+}
