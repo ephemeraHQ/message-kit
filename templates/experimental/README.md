@@ -9,12 +9,12 @@ Follow the steps below to run the app
 ```bash [cmd]
 # Clone the repo
 git clone https://github.com/ephemeraHQ/message-kit
-# Go to the example folder
-cd templates/agent
 # Install the dependencies
 yarn install
-# Run the app
-yarn dev
+# Build the project
+yarn build
+# Run the app directly from root
+yarn dev:exp
 ```
 
 ### Variables
@@ -22,6 +22,10 @@ yarn dev
 Set up these variables in your app
 
 ```bash [cmd]
+OPENAI_API_KEY= # the API key for OpenAI
 KEY= # the private key of the wallet
-OPENAI_API_KEY= # sk-proj-...
+TEST_ENCRYPTION_KEY= # the encryption key for the xmtp wallet
+RESEND_API_KEY= # the API key for Resend
+FRAMEDL_API_KEY= # the API key for Framedl
+ALCHEMY_SDK= # the API key for Alchemy
 ```

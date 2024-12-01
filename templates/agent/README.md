@@ -9,12 +9,12 @@ Follow the steps below to run the app
 ```bash [cmd]
 # Clone the repo
 git clone https://github.com/ephemeraHQ/message-kit
-# Go to the example folder
-cd templates/agent
 # Install the dependencies
 yarn install
-# Run the app
-yarn dev
+# Build the project
+yarn build
+# Run the app directly from root
+yarn dev:agent
 ```
 
 ### Variables

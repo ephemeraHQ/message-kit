@@ -23,4 +23,30 @@ export const getRedisClient = async () => {
   await client.connect();
   return client;
 };
+
+export async function updateField(
+  client: RedisClientType,
+  key: string,
+  updateObject: any,
+) {
+  try {
+    // Check if the key exists
+    const data = await client.get(key);
+
+    let updatedData;
+    if (data) {
+      // If the key exists, parse it and merge the updates
+      const parsedData = JSON.parse(data);
+      updatedData = { ...parsedData, ...updateObject };
+    } else {
+      // If the key doesn't exist, use the updateObject as the initial value
+      updatedData = updateObject;
+    }
+
+    // Save the updated or new data back to Redis
+    await client.set(key, JSON.stringify(updatedData));
+  } catch (error) {
+    console.error("Error updating field in Redis:", error);
+  }
+}
 ```

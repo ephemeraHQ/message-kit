@@ -10,7 +10,7 @@ const templateDir = path.resolve(
   __dirname,
   "../packages/create-message-kit/templates",
 );
-
+//test
 async function copyTemplates() {
   try {
     // Copy root .cursorrules to each template

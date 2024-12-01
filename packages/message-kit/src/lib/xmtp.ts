@@ -8,12 +8,14 @@ import {
   Client as V2Client,
   Conversation as V2Conversation,
 } from "@xmtp/xmtp-js";
+import { chatMemory } from "../helpers/gpt.js";
 import { GroupMember } from "@xmtp/node-sdk";
 import { textGeneration } from "../helpers/gpt.js";
 import { getUserInfo, isOnXMTP } from "../helpers/resolver.js";
 import fs from "fs/promises";
 import type { Reaction } from "@xmtp/content-type-reaction";
 import { ContentTypeText } from "@xmtp/content-type-text";
+import { WalletService } from "../helpers/cdp.js";
 import { logMessage, extractFrameChain } from "../helpers/utils.js";
 import {
   RunConfig,
@@ -63,6 +65,7 @@ export class XMTPContext {
     tag: "",
     skills: [],
   };
+  walletService!: WalletService;
   sender?: AbstractedMember;
   awaitingResponse: boolean = false;
   awaitedHandler: ((text: string) => Promise<boolean | void>) | null = null;
@@ -141,7 +144,13 @@ export class XMTPContext {
 
         //Config
         context.agent = runConfig?.agent ?? (await loadSkillsFile());
-
+        if (runConfig?.walletService) {
+          try {
+            context.walletService = await WalletService.create();
+          } catch (error) {
+            console.error("Error creating WalletService:", error);
+          }
+        }
         context.getMessageById =
           client.conversations?.getMessageById?.bind(client.conversations) ||
           (() => null);
@@ -242,6 +251,14 @@ export class XMTPContext {
         if (validResponses.map((r) => r.toLowerCase()).includes(response)) {
           this.resetAwaitedState();
           resolve(response);
+          try {
+            chatMemory.addEntry(this.sender?.address ?? "", {
+              role: "user",
+              content: text,
+            });
+          } catch (error) {
+            console.error("Error adding entry to chatMemory:", error);
+          }
           return true;
         }
 

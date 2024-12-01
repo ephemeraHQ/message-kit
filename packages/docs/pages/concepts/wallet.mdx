@@ -1,0 +1,109 @@
+# Agent Wallet
+
+The `WalletService` class in MessageKit context provides a way to create an agent wallet for each user that can perform payments and transfers gassless on Base.
+
+## Introduction
+
+To use the `WalletService`, you need to add the `walletService` to the runner.
+
+```typescript
+run(
+  async () => {
+    /*Your logic*/
+  },
+  {
+    walletService: true,
+  },
+);
+```
+
+Then you can access the wallet service in the context.
+
+```typescript
+const { walletService } = context;
+```
+
+**Requirements**:
+
+- `@coinbase/coinbase-sdk`: Already included in MessageKit.
+- `@redis/redis`: WalletService uses [Redis](../middleware/redis) to save the wallets.
+- Env:
+  - `COINBASE_API_KEY`
+  - `COINBASE_API_SECRET`
+  - `COINBASE_API_PASSPHRASE`
+  - `REDIS_WALLETS_DB`: The database number where the wallets are saved.
+  - `REDIS_TEMP_DB`: The database number where the temporary wallets are saved.
+
+## Agent user wallets
+
+### Creating an agent wallet
+
+To create a new wallet, you can use the `createTempWallet` method. This is useful for generating temporary wallets for specific purposes, such as a toss or a transaction.
+
+```typescript
+const tempWallet = await walletService.createTempWallet(
+  redisClient,
+  "uniqueTempId",
+);
+console.log("Temporary wallet created:", tempWallet);
+```
+
+### Retrieving a wallet
+
+To retrieve a user's wallet data, use the `getUserWallet` method. This method checks if the wallet data is cached in Redis and retrieves it; otherwise, it creates a new wallet.
+
+```typescript
+const userWallet = await walletService.getUserWallet(redisClient, userAddress);
+console.log("User wallet data:", userWallet);
+```
+
+### Checking balance
+
+To check the balance of a wallet, use the `checkBalance` method. This method returns the balance of a specified asset, such as USDC.
+
+```typescript
+const balance = await walletService.checkBalance(userWalletData);
+console.log("Wallet balance:", balance);
+```
+
+### Transferring funds
+
+To transfer funds between wallets, use the `transfer` method. This method requires the wallet data of both the sender and the receiver, as well as the amount to be transferred.
+
+```typescript
+await walletService.transfer(fromWalletData, toWalletData, amount);
+console.log("Transfer completed successfully");
+```
+
+## Temporary wallets
+
+### Creating a temporary wallet
+
+To create a temporary wallet, use the `createTempWallet` method. This is useful for generating temporary wallets for specific purposes, such as a toss or a transaction.
+
+```typescript
+const tempWallet = await walletService.createTempWallet(
+  redisClient,
+  "uniqueTempId",
+);
+```
+
+### Retrieving a temporary wallet
+
+To retrieve a temporary wallet, use the `getTempWallet` method.
+
+```typescript
+const tempWallet = await walletService.getTempWallet(
+  redisClient,
+  "uniqueTempId",
+);
+```
+
+### Deleting a temporary wallet
+
+To delete a temporary wallet, use the `deleteTempWallet` method. This is useful for cleaning up after a temporary wallet is no longer needed.
+
+```typescript
+await WalletService.deleteTempWallet(redisClient, "uniqueTempId");
+console.log("Temporary wallet deleted");
+```

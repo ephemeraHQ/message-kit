@@ -36,7 +36,18 @@ export default defineConfig({
           property="fc:frame:button:2:target"
           content="https://github.com/ephemeraHQ/message-kit"
         />
-
+        <meta property="og:site_name" content="MessageKit" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="@MessageKit" />
+        <meta name="twitter:title" content="MessageKit" />
+        <meta
+          name="twitter:description"
+          content="MessageKit is a powerful tool for managing your messages."
+        />
+        <meta
+          name="twitter:image"
+          content="https://messagekit.ephemerahq.com/hero.jpg"
+        />
         <script
           src="https://plausible.io/js/script.outbound-links.js"
           data-domain="messagekit.ephemerahq.com"
@@ -104,6 +115,10 @@ export default defineConfig({
         {
           text: "Frames",
           link: "/concepts/frames",
+        },
+        {
+          text: "Agent Wallet",
+          link: "/concepts/wallet",
         },
       ],
     },

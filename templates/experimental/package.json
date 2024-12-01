@@ -10,6 +10,7 @@
   "dependencies": {
     "@xmtp/message-kit": "workspace:*",
     "alchemy-sdk": "^3.0.0",
+    "ethers": "^6.0.0",
     "express": "^4.19.2",
     "node-fetch": "^3.3.2",
     "resend": "^4.0.1"

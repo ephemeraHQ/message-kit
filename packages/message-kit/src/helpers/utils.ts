@@ -41,14 +41,16 @@ Powered by XMTP \x1b[0m`;
       : await loadSkillsFile());
 
   if (
-    runConfig?.experimental ||
-    process?.env?.OPENAI_API_KEY === undefined ||
     runConfig?.attachments ||
-    runConfig?.memberChange ||
+    (process.env.OPENAI_API_KEY === undefined &&
+      runConfig?.agent !== undefined) ||
     runConfig?.client?.structuredLogging ||
+    runConfig?.privateKey ||
+    runConfig?.memberChange ||
     agent === undefined ||
     agent?.skills.length === 0 ||
-    generatedKey
+    generatedKey ||
+    runConfig?.walletService
   ) {
     console.warn(`\x1b[33m\n\tWarnings:`);
     if (runConfig?.attachments) {
@@ -84,6 +86,11 @@ Powered by XMTP \x1b[0m`;
     if (runConfig?.experimental) {
       console.warn(
         `\t- ☣️ EXPERIMENTAL MODE ENABLED:\n\t\t⚠️ All group messages will be exposed — proceed with caution.\n\t\tℹ Guidelines: https://messagekit.ephemerahq.com/concepts/guidelines`,
+      );
+    }
+    if (runConfig?.walletService) {
+      console.warn(
+        `\t- ⚠️ Wallet Service ENABLED:\n\t\t⚠️ Save wallets at your discretion.\n\t\tℹ️ An agent wallet will be available for every user.\n\t\tℹ️ MessageKit does not have access to these wallets or is responsible for them.`,
       );
     }
     console.warn("\x1b[0m"); // Reset color to default

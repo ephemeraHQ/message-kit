@@ -12,6 +12,7 @@ import { awaitedHandlers } from "./xmtp.js";
 
 export async function run(handler: Handler, runConfig?: RunConfig) {
   const { client, v2client } = await xmtpClient(runConfig);
+
   const { inboxId: address } = client;
   const { address: addressV2 } = v2client;
 

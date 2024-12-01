@@ -4,7 +4,7 @@
 
 ### Check if a Domain is Available
 
-```typescript
+
 import { ensUrl } from "../index.js";
 import { XMTPContext } from "@xmtp/message-kit";
 import type { Skill } from "@xmtp/message-kit";
@@ -54,7 +54,7 @@ export async function handler(context: XMTPContext) {
 
 ### Generate a payment request
 
-```typescript
+
 import { XMTPContext } from "@xmtp/message-kit";
 import type { Skill } from "@xmtp/message-kit";
 
@@ -111,12 +111,10 @@ export async function handler(context: XMTPContext) {
 
   await context.requestPayment(amount, token, receiverAddress);
 }
-```
 
 
 ## Types
 
-```typescript
 import { XMTPContext } from "../lib/xmtp.js";
 import { ClientOptions, GroupMember } from "@xmtp/node-sdk";
 import { ContentTypeId } from "@xmtp/content-type-primitives";
@@ -224,4 +222,4 @@ export interface AbstractedMember {
 
 export type MetadataValue = string | number | boolean;
 export type Metadata = Record<string, MetadataValue | MetadataValue[]>;
-```
+

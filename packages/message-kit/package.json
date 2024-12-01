@@ -35,6 +35,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@coinbase/coinbase-sdk": "*",
     "@types/node": "^20.14.2",
     "@vitest/coverage-v8": "^2.1.4",
     "@xmtp/content-type-primitives": "^1.0.2",
@@ -43,6 +44,7 @@
     "@xmtp/content-type-reply": "^1.1.11",
     "@xmtp/content-type-text": "^1.0.0",
     "@xmtp/grpc-api-client": "^0.2.8",
+    "@xmtp/node-bindings": "0.0.25-internal-fix-forked-groups",
     "@xmtp/node-sdk": "^0.0.28",
     "@xmtp/xmtp-js": "^13.0.3",
     "dotenv": "^16.4.5",

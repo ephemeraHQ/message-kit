@@ -14,6 +14,7 @@ const external = [
   "@xmtp/proto",
   "@xmtp/node-bindings",
   "@xmtp/grpc-api-client",
+  "@coinbase/coinbase-sdk",
   "path",
   "crypto",
   "viem",
