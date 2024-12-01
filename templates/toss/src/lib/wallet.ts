@@ -8,7 +8,10 @@ if (!apiKeyName || !privateKey) {
   throw new Error("Missing Coinbase API credentials");
 }
 
-const coinbase = new Coinbase({ apiKeyName, privateKey });
+const coinbase = new Coinbase({
+  apiKeyName: apiKeyName as string,
+  privateKey: privateKey as string,
+});
 
 export class WalletService {
   static async getUserWallet(userAddress: string): Promise<any> {
