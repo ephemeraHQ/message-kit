@@ -1,6 +1,8 @@
 import { Coinbase, Wallet } from "@coinbase/coinbase-sdk";
 
 export class WalletService {
+  coinbase!: Coinbase;
+
   static async create(): Promise<WalletService> {
     const apiKeyName = process.env.COINBASE_API_KEY_NAME;
     const privateKey = process.env.COINBASE_API_KEY_PRIVATE_KEY;
@@ -9,8 +11,9 @@ export class WalletService {
       throw new Error("Missing Coinbase API credentials");
     }
     const coinbase = new Coinbase({ apiKeyName, privateKey });
-
-    return new WalletService();
+    const service = new WalletService();
+    service.coinbase = coinbase;
+    return service;
   }
 
   async getUserWallet(redis: any, userAddress: string): Promise<any> {
