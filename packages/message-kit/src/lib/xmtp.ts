@@ -145,7 +145,11 @@ export class XMTPContext {
         //Config
         context.agent = runConfig?.agent ?? (await loadSkillsFile());
         if (runConfig?.walletService) {
-          context.walletService = await WalletService.create();
+          try {
+            context.walletService = await WalletService.create();
+          } catch (error) {
+            console.error("Error creating WalletService:", error);
+          }
         }
         context.getMessageById =
           client.conversations?.getMessageById?.bind(client.conversations) ||
@@ -247,10 +251,14 @@ export class XMTPContext {
         if (validResponses.map((r) => r.toLowerCase()).includes(response)) {
           this.resetAwaitedState();
           resolve(response);
-          chatMemory.addEntry(this.sender?.address ?? "", {
-            role: "user",
-            content: text,
-          });
+          try {
+            chatMemory.addEntry(this.sender?.address ?? "", {
+              role: "user",
+              content: text,
+            });
+          } catch (error) {
+            console.error("Error adding entry to chatMemory:", error);
+          }
           return true;
         }
 
