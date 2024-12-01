@@ -21,6 +21,7 @@
     "dev:exp": "cd templates/experimental && yarn dev",
     "dev:frames": "cd packages/framekit && yarn dev",
     "dev:gpt": "cd templates/gpt && yarn dev",
+    "dev:toss": "cd templates/toss && yarn dev",
     "format": "turbo run format",
     "publish": "node scripts/publish.js",
     "test": "FORCE_COLOR=1 turbo run test --force --concurrency=1",
