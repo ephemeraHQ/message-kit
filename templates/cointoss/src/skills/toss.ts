@@ -188,9 +188,6 @@ export async function handleJoinToss(context: XMTPContext) {
 
   try {
     await walletService.transfer(userWallet, tossWallet, amount);
-
-    // Add participant and their response to the array
-    participants.push({ address: sender.address, response });
     await tossDBClient.set(tossId.toString(), JSON.stringify(tossData));
 
     await context.reply("Successfully joined the toss!");
