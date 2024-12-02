@@ -3809,6 +3809,7 @@ __metadata:
   resolution: "@xmtp/message-kit@workspace:packages/message-kit"
   dependencies:
     "@coinbase/coinbase-sdk": "npm:*"
+    "@redis/client": "npm:^1.6.0"
     "@rollup/plugin-typescript": "npm:^11.1.6"
     "@types/node": "npm:^20.14.2"
     "@vitest/coverage-v8": "npm:^2.1.4"
@@ -4783,17 +4784,6 @@ __metadata:
   checksum: 10/516ed8b5e1a14d9c3a9c96c72ef6de2d70dfcdbaa0ec3a90bc7b9216c5457e39c09a5775750c272369070308542e671146120153062ab5f2f481bed5de2c925f
   languageName: node
   linkType: hard
-
-"cointoss@workspace:templates/toss":
-  version: 0.0.0-use.local
-  resolution: "cointoss@workspace:templates/toss"
-  dependencies:
-    "@redis/client": "npm:^1.6.0"
-    "@types/node": "npm:^20.14.2"
-    "@xmtp/message-kit": "workspace:*"
-    typescript: "npm:^5.4.5"
-  languageName: unknown
-  linkType: soft
 
 "collapse-white-space@npm:^2.0.0":
   version: 2.1.0
@@ -11152,6 +11142,17 @@ __metadata:
   checksum: 10/cfef0966868d552bd02e741f30945a611f70841b7cddb07ea2b17441fe32543985bc0a7c0dcf7971af26fcaf8a17712a485d911f46bfe28644536e9a71a2bd09
   languageName: node
   linkType: hard
+
+"toss@workspace:templates/toss":
+  version: 0.0.0-use.local
+  resolution: "toss@workspace:templates/toss"
+  dependencies:
+    "@redis/client": "npm:^1.6.0"
+    "@types/node": "npm:^20.14.2"
+    "@xmtp/message-kit": "workspace:*"
+    typescript: "npm:^5.4.5"
+  languageName: unknown
+  linkType: soft
 
 "tr46@npm:~0.0.3":
   version: 0.0.3
