@@ -1,4 +1,10 @@
-import { Coinbase, Wallet } from "@coinbase/coinbase-sdk";
+import {
+  Coinbase,
+  Wallet,
+  Transfer,
+  Trade,
+  TimeoutError,
+} from "@coinbase/coinbase-sdk";
 import { XMTPContext } from "../lib/xmtp";
 import { keccak256, toHex } from "viem";
 
@@ -144,7 +150,7 @@ export class WalletService {
     await context.sendTo(`You can fund your account here:`, [to]);
     await context.requestPayment(amount, "USDC", agentWallet.address, [to]);
   }
-  async withdrawFunds(userAddress: string, amount?: number): Promise<void> {
+  async withdrawFunds(userAddress: string, amount?: number): Promise<Transfer> {
     let walletData = await this.getUserWallet(userAddress);
     if (!walletData) {
       throw new Error("Wallet not found");
@@ -159,7 +165,18 @@ export class WalletService {
       destination: userAddress,
       gasless: true,
     });
+    // Wait for transfer to land on-chain.
+    try {
+      await transfer.wait();
+    } catch (err) {
+      if (err instanceof TimeoutError) {
+        console.log("Waiting for transfer timed out");
+      } else {
+        console.error("Error while waiting for transfer to complete: ", err);
+      }
+    }
     console.log(`Withdrawal completed successfully`);
+    return transfer;
   }
   async checkBalance(senderAddress: string): Promise<number> {
     let walletData = await this.getUserWallet(senderAddress);
@@ -175,7 +192,7 @@ export class WalletService {
     fromWallet: WalletServiceData,
     toWallet: WalletServiceData,
     amount: number,
-  ): Promise<boolean> {
+  ): Promise<Transfer> {
     console.log("Transfer initiated:", {
       fromWallet: fromWallet.address,
       toWallet: toWallet.address,
@@ -189,8 +206,17 @@ export class WalletService {
         destination: toWallet.address,
         gasless: true,
       });
+      try {
+        await transfer.wait();
+      } catch (err) {
+        if (err instanceof TimeoutError) {
+          console.log("Waiting for transfer timed out");
+        } else {
+          console.error("Error while waiting for transfer to complete: ", err);
+        }
+      }
       console.log(`Transfer completed successfully`);
-      return true;
+      return transfer;
     } catch (error) {
       console.error("Transfer failed:", error);
       throw error;
@@ -262,7 +288,7 @@ export class WalletService {
     fromAssetId: string,
     toAssetId: string,
     amount: number,
-  ): Promise<void> {
+  ): Promise<Trade> {
     console.log(
       `Initiating swap from ${fromAssetId} to ${toAssetId} for amount: ${amount}`,
     );
@@ -277,10 +303,16 @@ export class WalletService {
       toAssetId,
     });
 
-    if (trade.getStatus() === "complete") {
-      console.log(`Trade successfully completed: `, trade.toString());
-    } else {
-      console.log(`Trade failed on-chain: `, trade.toString());
+    try {
+      await trade.wait();
+    } catch (err) {
+      if (err instanceof TimeoutError) {
+        console.log("Waiting for trade timed out");
+      } else {
+        console.error("Error while waiting for trade to complete: ", err);
+      }
     }
+    console.log(`Trade completed successfully`);
+    return trade;
   }
 }
