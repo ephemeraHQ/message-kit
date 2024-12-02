@@ -1,5 +1,5 @@
 import { Coinbase, WalletData, Wallet } from "@coinbase/coinbase-sdk";
-import { XMTPContext } from "@xmtp/message-kit";
+import { XMTPContext } from "../lib/xmtp";
 import { keccak256, toHex } from "viem";
 
 const apiKeyName = process.env.COINBASE_API_KEY_NAME;
