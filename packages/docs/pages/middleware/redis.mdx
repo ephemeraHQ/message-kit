@@ -10,8 +10,20 @@ Copy paste the following code in your `lib/redis.ts` file.
 
 ```tsx [src/lib/redis.ts]
 import { createClient } from "@redis/client";
+import type { RedisClientType } from "@redis/client";
+
+let redisClient: RedisClientType | null = null;
 
 export const getRedisClient = async () => {
+  if (redisClient?.isOpen) {
+    return redisClient;
+  }
+
+  if (!process.env.REDIS_CONNECTION_STRING) {
+    throw new Error(
+      "REDIS_CONNECTION_STRING not found in environment variables",
+    );
+  }
   const client = createClient({
     url: process.env.REDIS_CONNECTION_STRING,
   });
@@ -21,7 +33,8 @@ export const getRedisClient = async () => {
   });
 
   await client.connect();
-  return client;
+  redisClient = client as RedisClientType;
+  return client as RedisClientType;
 };
 
 export async function updateField(

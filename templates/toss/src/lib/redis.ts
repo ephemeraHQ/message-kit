@@ -1,47 +1,46 @@
 import { createClient } from "@redis/client";
 import type { RedisClientType } from "@redis/client";
 
-let userWalletClient: RedisClientType | null = null;
-let tossWalletClient: RedisClientType | null = null;
-let tossDBClient: RedisClientType | null = null;
+let redisClient: RedisClientType | null = null;
 
-export const getUserWalletRedis = async (): Promise<RedisClientType> => {
-  if (userWalletClient?.isOpen) {
-    return userWalletClient;
+export const getRedisClient = async () => {
+  if (redisClient?.isOpen) {
+    return redisClient;
   }
 
-  if (!process.env.USER_WALLET_REDIS_URL) {
-    throw new Error("USER_WALLET_REDIS_URL not found in environment variables");
+  if (!process.env.REDIS_CONNECTION_STRING) {
+    throw new Error(
+      "REDIS_CONNECTION_STRING not found in environment variables",
+    );
   }
-
   const client = createClient({
-    url: process.env.USER_WALLET_REDIS_URL,
+    url: process.env.REDIS_CONNECTION_STRING,
   });
 
-  client.on("error", (error: Error) => {
-    console.error("User wallet Redis client error:", error);
-  });
-
-  client.on("connect", () => {
-    console.log("Connected to User Wallet Redis");
+  client.on("error", (err) => {
+    console.error("Redis client error:", err);
   });
 
   await client.connect();
-  userWalletClient = client as RedisClientType;
+  redisClient = client as RedisClientType;
   return client as RedisClientType;
 };
 
-export const getTossWalletRedis = async (): Promise<RedisClientType> => {
-  if (tossWalletClient?.isOpen) {
-    return tossWalletClient;
+let walletService: RedisClientType | null = null;
+
+export const getWalletService = async (): Promise<RedisClientType> => {
+  if (walletService?.isOpen) {
+    return walletService;
   }
 
-  if (!process.env.TOSS_WALLET_REDIS_URL) {
-    throw new Error("TOSS_WALLET_REDIS_URL not found in environment variables");
+  if (!process.env.COINBASE_API_REDIS_URL) {
+    throw new Error(
+      "COINBASE_API_REDIS_URL not found in environment variables",
+    );
   }
 
   const client = createClient({
-    url: process.env.TOSS_WALLET_REDIS_URL,
+    url: process.env.COINBASE_API_REDIS_URL,
   });
 
   client.on("error", (error: Error) => {
@@ -52,44 +51,8 @@ export const getTossWalletRedis = async (): Promise<RedisClientType> => {
     console.log("Connected to Toss Wallet Redis");
   });
   await client.connect();
-  tossWalletClient = client as RedisClientType;
+  walletService = client as RedisClientType;
   return client as RedisClientType;
-};
-
-export const getTossDBClient = async (): Promise<RedisClientType> => {
-  if (tossDBClient?.isOpen) {
-    return tossDBClient;
-  }
-
-  if (!process.env.TOSS_DB_REDIS_URL) {
-    throw new Error("TOSS_DB_REDIS_URL not found in environment variables");
-  }
-
-  const client = createClient({
-    url: process.env.TOSS_DB_REDIS_URL,
-  });
-
-  client.on("error", (error: Error) => {
-    console.error("General Redis client error:", error);
-  });
-
-  client.on("connect", () => {
-    console.log("Connected to Toss DB Redis");
-  });
-  await client.connect();
-  tossDBClient = client as RedisClientType;
-  return client as RedisClientType;
-};
-
-// Cleanup function
-export const closeRedisConnections = async () => {
-  if (userWalletClient?.isOpen) await userWalletClient.quit();
-  if (tossWalletClient?.isOpen) await tossWalletClient.quit();
-  if (tossDBClient?.isOpen) await tossDBClient.quit();
-
-  userWalletClient = null;
-  tossWalletClient = null;
-  tossDBClient = null;
 };
 
 export async function updateField(

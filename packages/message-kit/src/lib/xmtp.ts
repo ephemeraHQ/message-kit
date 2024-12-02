@@ -512,6 +512,7 @@ export class XMTPContext {
     amount: number = 1,
     token: string = "usdc",
     username: string = "humanagent.eth",
+    sendTo: string[] = [],
   ) {
     let senderInfo = await getUserInfo(username);
     if (senderInfo && process.env.MSG_LOG === "true")
@@ -522,7 +523,11 @@ export class XMTPContext {
       }
 
     let sendUrl = `${frameKitUrl}/payment?amount=${amount}&token=${token}&recipientAddress=${senderInfo?.address}`;
-    await this.send(sendUrl);
+    if (sendTo.length > 0) {
+      await this.sendTo(sendUrl, sendTo);
+    } else {
+      await this.send(sendUrl);
+    }
   }
   async sendConverseDmFrame(peer: string, pretext?: string) {
     let url = `https://converse.xyz/dm/${peer}`;

@@ -6,10 +6,14 @@ const privateKey = process.env.COINBASE_API_KEY_PRIVATE_KEY;
 if (!apiKeyName || !privateKey) {
   throw new Error("Missing Coinbase API credentials");
 }
-const coinbase = new Coinbase({ apiKeyName, privateKey });
+
+const coinbase = new Coinbase({
+  apiKeyName: apiKeyName as string,
+  privateKey: privateKey as string,
+});
 
 export class WalletService {
-  async getUserWallet(redis: any, userAddress: string): Promise<any> {
+  static async getUserWallet(redis: any, userAddress: string): Promise<any> {
     const walletData = await redis.get(`wallet:${userAddress}`);
 
     if (walletData) {
@@ -29,7 +33,7 @@ export class WalletService {
     return data;
   }
 
-  async getWalletAddress(walletData: any): Promise<any> {
+  static async getWalletAddress(walletData: any): Promise<any> {
     console.log("Getting wallet address from data:", walletData);
     const wallet = await Wallet.import(walletData);
     const address = await wallet.getDefaultAddress();
@@ -37,7 +41,7 @@ export class WalletService {
     return address;
   }
 
-  async checkBalance(walletData: any): Promise<number> {
+  static async checkBalance(walletData: any): Promise<number> {
     console.log("Checking balance for wallet:", walletData);
     const wallet = await Wallet.import(walletData);
     let balance = await wallet.getBalance(Coinbase.assets.Usdc);
@@ -45,7 +49,7 @@ export class WalletService {
     return Number(balance);
   }
 
-  async transfer(
+  static async transfer(
     fromWalletData: any,
     toWalletData: any,
     amount: number,
@@ -74,9 +78,9 @@ export class WalletService {
     }
   }
 
-  async createTempWallet(redis: any, tempId: string): Promise<any> {
+  static async createTempWallet(redis: any, tossId: string): Promise<any> {
     try {
-      console.log(`Creating temporary wallet for ID ${tempId}...`);
+      console.log(`Creating wallet for toss ${tossId}...`);
 
       const wallet = await Wallet.create({
         networkId: Coinbase.networks.BaseMainnet,
@@ -84,34 +88,56 @@ export class WalletService {
 
       const data = wallet.export();
       const address = await wallet.getDefaultAddress();
-      console.log(redis);
-      console.log("Temporary wallet created:", {
-        data,
-        address: address.toString(),
-      });
-      await redis.set(`temp:${tempId}`, JSON.stringify(data));
+
+      await redis.set(`toss:${tossId}`, JSON.stringify(data));
       return { data, address };
     } catch (error) {
-      console.error("Error creating temporary wallet:", error);
+      console.error("Error creating toss wallet:", error);
       throw error;
     }
   }
 
-  async getTempWallet(redis: any, tempId: string): Promise<any | null> {
-    const walletData = await redis.get(`temp:${tempId}`);
+  static async getTempWallet(redis: any, tossId: string): Promise<any | null> {
+    const walletData = await redis.get(`temp:${tossId}`);
     if (!walletData) {
-      console.log(`No wallet found for temporary ID ${tempId}`);
+      console.log(`No wallet found for toss ${tossId}`);
       return null;
     }
-    console.log(`Retrieved temporary wallet data:`, walletData);
+    console.log(`Retrieved toss wallet data:`, walletData);
     return JSON.parse(walletData);
   }
 
-  static async deleteTempWallet(redis: any, tempId: string) {
-    console.log(`Deleting wallet for temporary ID ${tempId}`);
-    const walletData = await redis.get(`temp:${tempId}`);
-    console.log(`Deleting temporary ID ${tempId}`, walletData);
-    await redis.del(`temp:${tempId}`);
-    console.log(`Wallet deleted for temporary ID ${tempId}`);
+  static async deleteTempWallet(redis: any, tossId: string) {
+    console.log(`Deleting wallet for toss ${tossId}`);
+    const walletData = await redis.get(`toss:${tossId}`);
+    console.log(`Deleting tossID ${tossId}`, walletData);
+    await redis.del(`toss:${tossId}`);
+    console.log(`Wallet deleted for toss ${tossId}`);
+  }
+
+  static async swap(
+    walletData: any,
+    fromAssetId: string,
+    toAssetId: string,
+    amount: number,
+  ): Promise<void> {
+    console.log(
+      `Initiating swap from ${fromAssetId} to ${toAssetId} for amount: ${amount}`,
+    );
+
+    const wallet = await Wallet.import(walletData);
+    const trade = await wallet.createTrade({
+      amount,
+      fromAssetId,
+      toAssetId,
+    });
+
+    await trade.wait();
+
+    if (trade.getStatus() === "complete") {
+      console.log(`Trade successfully completed: `, trade.toString());
+    } else {
+      console.log(`Trade failed on-chain: `, trade.toString());
+    }
   }
 }

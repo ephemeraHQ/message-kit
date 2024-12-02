@@ -21,6 +21,7 @@ run(
   async (context: XMTPContext) => {
     const {
       message: { sender },
+      group,
     } = context;
 
     let prompt = await replaceVariables(systemPrompt, sender.address, agent);

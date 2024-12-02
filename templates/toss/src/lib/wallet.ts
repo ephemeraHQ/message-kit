@@ -1,5 +1,6 @@
-import { Coinbase, Wallet } from "@coinbase/coinbase-sdk";
-import { getUserWalletRedis, getTossWalletRedis } from "./redis.js";
+import { Coinbase, WalletData, Wallet } from "@coinbase/coinbase-sdk";
+import { XMTPContext } from "@xmtp/message-kit";
+import { keccak256, toHex } from "viem";
 
 const apiKeyName = process.env.COINBASE_API_KEY_NAME;
 const privateKey = process.env.COINBASE_API_KEY_PRIVATE_KEY;
@@ -7,20 +8,66 @@ const privateKey = process.env.COINBASE_API_KEY_PRIVATE_KEY;
 if (!apiKeyName || !privateKey) {
   throw new Error("Missing Coinbase API credentials");
 }
-
+interface WalletServiceData {
+  data: WalletData;
+  adminAddress: string;
+  address: string;
+}
 const coinbase = new Coinbase({
-  apiKeyName: apiKeyName as string,
-  privateKey: privateKey as string,
+  apiKeyName,
+  privateKey,
 });
 
 export class WalletService {
-  static async createUserWallet(userAddress: string): Promise<any> {
-    const redis = await getUserWalletRedis();
-    const walletData = await redis.get(`wallet:${userAddress}`);
+  private walletService: any;
+
+  constructor(walletService: any) {
+    this.walletService = walletService;
+  }
+
+  static encrypt(data: any, stringKey: string): string {
+    const dataString = JSON.stringify(data);
+    const key = keccak256(toHex(stringKey.toLowerCase()));
+    // Simple XOR encryption with the key
+    const encrypted = Buffer.from(dataString).map(
+      (byte, i) => byte ^ parseInt(key.slice(2 + (i % 64), 4 + (i % 64)), 16),
+    );
+    return toHex(encrypted);
+  }
+
+  private static hexToBytes(hex: string): Uint8Array {
+    if (hex.startsWith("0x")) {
+      hex = hex.slice(2);
+    }
+    const bytes = new Uint8Array(hex.length / 2);
+    for (let i = 0; i < hex.length; i += 2) {
+      bytes[i / 2] = parseInt(hex.substr(i, 2), 16);
+    }
+    return bytes;
+  }
+
+  static decrypt(encryptedData: string, stringKey: string): any {
+    const key = keccak256(toHex(stringKey.toLowerCase()));
+    const encrypted = this.hexToBytes(encryptedData);
+    const decrypted = encrypted.map(
+      (byte, i) => byte ^ parseInt(key.slice(2 + (i % 64), 4 + (i % 64)), 16),
+    );
+    return JSON.parse(Buffer.from(decrypted).toString());
+  }
+
+  async getUserWallet(userAddress: string): Promise<WalletServiceData> {
+    const encryptedKey = `${WalletService.encrypt(userAddress, userAddress)}`;
+    const walletData = await this.walletService.get(`wallet:${encryptedKey}`);
 
     if (walletData) {
-      console.log(`Retrieved wallet data for user ${userAddress}:`, walletData);
-      return JSON.parse(walletData);
+      try {
+        const decrypted = WalletService.decrypt(walletData, userAddress);
+        console.log(`Retrieved wallet data for user ${userAddress}`);
+        return decrypted;
+      } catch (error) {
+        console.error("Failed to decrypt wallet data:", error);
+        throw new Error("Invalid wallet access");
+      }
     }
 
     console.log(`Creating new wallet for user ${userAddress}...`);
@@ -29,46 +76,59 @@ export class WalletService {
     });
 
     const data = wallet.export();
-    console.log("Exported wallet data:", data);
-
-    await redis.set(`wallet:${userAddress}`, JSON.stringify(data));
-    return data;
-  }
-
-  static async createTempWallet(tossId: string): Promise<any> {
-    const redis = await getTossWalletRedis();
-
-    try {
-      console.log(`Creating wallet for toss ${tossId}...`);
-
-      const wallet = await Wallet.create({
-        networkId: Coinbase.networks.BaseMainnet,
-      });
-
-      const data = wallet.export();
-      const address = await wallet.getDefaultAddress();
-      console.log("Toss wallet created:", {
-        data,
-        address: address.toString(),
-      });
-
-      await redis.set(`toss:${tossId}`, JSON.stringify(data));
-      return { data, address };
-    } catch (error) {
-      console.error("Error creating toss wallet:", error);
-      throw error;
-    }
-  }
-
-  static async getWalletAddress(walletData: any): Promise<any> {
-    console.log("Getting wallet address from data:", walletData);
-    const wallet = await Wallet.import(walletData);
     const address = await wallet.getDefaultAddress();
-    console.log("Wallet address:", address.toString());
-    return address;
-  }
+    console.log("Address ID:", address.getId());
+    console.log("Saved wallet data:", {
+      data,
+      userAddress,
+      address: address.getId(),
+    });
 
-  static async checkBalance(walletData: any): Promise<number> {
+    await this.walletService.set(
+      `wallet:${encryptedKey}`,
+      WalletService.encrypt(
+        { data, userAddress, address: address.getId() },
+        userAddress,
+      ),
+    );
+    return { data, adminAddress: userAddress, address: address.getId() };
+  }
+  async requestFunds(
+    context: XMTPContext,
+    amount: number,
+    to: string,
+  ): Promise<void> {
+    let from = context.message.sender.address;
+    await context.reply("Check your DMs");
+    await context.sendTo(
+      "You don't have enough USDC. You can fund your account here:",
+      [from],
+    );
+    await context.requestPayment(amount, "USDC", to, [from]);
+    await context.sendTo(
+      "After funding, please try again replying to the original message.",
+      [from],
+    );
+  }
+  async withdrawFunds(
+    walletData: WalletData,
+    userAddress: string,
+    amount?: number,
+  ): Promise<void> {
+    const wallet = await Wallet.import(walletData);
+    const balance = await wallet.getBalance(Coinbase.assets.Usdc);
+    if (Number(balance) === 0) {
+      throw new Error("Insufficient balance");
+    }
+    await wallet.createTransfer({
+      amount: amount || balance,
+      assetId: Coinbase.assets.Usdc,
+      destination: userAddress,
+      gasless: true,
+    });
+    console.log("Withdrawal completed successfully");
+  }
+  async checkBalance(walletData: WalletData): Promise<number> {
     console.log("Checking balance for wallet:", walletData);
     const wallet = await Wallet.import(walletData);
     let balance = await wallet.getBalance(Coinbase.assets.Usdc);
@@ -76,20 +136,18 @@ export class WalletService {
     return Number(balance);
   }
 
-  static async transfer(
-    fromWalletData: any,
-    toWalletData: any,
+  async transfer(
+    fromWalletData: WalletData,
+    toWalletData: WalletData,
     amount: number,
-  ): Promise<void> {
-    console.log("Transfer initiated:", {
-      fromWallet: fromWalletData,
-      toWallet: toWalletData,
-      amount,
-    });
-
+  ): Promise<boolean> {
     const fromWallet = await Wallet.import(fromWalletData);
     const toWallet = await Wallet.import(toWalletData);
-    console.log("Both wallets imported successfully");
+    console.log("Transfer initiated:", {
+      fromWallet: fromWalletData.walletId,
+      toWallet: toWalletData.walletId,
+      amount,
+    });
 
     try {
       await fromWallet.createTransfer({
@@ -99,29 +157,99 @@ export class WalletService {
         gasless: true,
       });
       console.log("Transfer completed successfully");
+      return true;
     } catch (error) {
       console.error("Transfer failed:", error);
       throw error;
     }
   }
 
-  static async getTempWallet(tossId: string): Promise<any | null> {
-    const redis = await getTossWalletRedis();
-    const walletData = await redis.get(`toss:${tossId}`);
-    if (!walletData) {
-      console.log(`No wallet found for toss ${tossId}`);
-      return null;
+  async createTempWallet(
+    tempId: string,
+    adminAddress: string,
+    groupId: string,
+  ): Promise<WalletServiceData> {
+    try {
+      console.log(`Creating temporary wallet...`);
+      const wallet = await Wallet.create({
+        networkId: Coinbase.networks.BaseMainnet,
+      });
+
+      const data = wallet.export();
+      const address = await wallet.getDefaultAddress();
+      const walletInfo = { data, address: address.getId(), adminAddress };
+
+      await this.walletService.set(
+        `temp:${WalletService.encrypt(tempId, groupId + adminAddress)}`,
+        WalletService.encrypt(walletInfo, groupId + adminAddress),
+      );
+      return walletInfo;
+    } catch (error) {
+      console.error("Error creating temp wallet:", error);
+      throw error;
     }
-    console.log(`Retrieved toss wallet data:`, walletData);
-    return JSON.parse(walletData);
   }
 
-  static async deleteTempWallet(tossId: string) {
-    console.log(`Deleting wallet for toss ${tossId}`);
-    const redis = await getTossWalletRedis();
-    const walletData = await redis.get(`toss:${tossId}`);
-    console.log(`Deleting tossID ${tossId}`, walletData);
-    await redis.del(`toss:${tossId}`);
-    console.log(`Wallet deleted for toss ${tossId}`);
+  async getTempWallet(
+    tempId: string,
+    groupId: string,
+    adminAddress: string,
+  ): Promise<WalletServiceData> {
+    const encryptedKey = WalletService.encrypt(tempId, groupId + adminAddress);
+    const encryptedData = await this.walletService.get(`temp:${encryptedKey}`);
+    console.log(`temp:${encryptedKey}`, encryptedData);
+    if (!encryptedData) {
+      throw new Error("Temp wallet not found");
+    }
+
+    try {
+      const decrypted = WalletService.decrypt(
+        encryptedData,
+        groupId + adminAddress,
+      );
+      return decrypted;
+    } catch (error) {
+      console.error("Failed to access temp wallet:", error);
+      throw new Error("Invalid wallet access");
+    }
+  }
+
+  async deleteTempWallet(
+    tempId: string,
+    groupId: string,
+    adminAddress: string,
+  ): Promise<void> {
+    console.log(`Deleting wallet for temp ${tempId}`);
+    const encryptedKey = WalletService.encrypt(tempId, groupId + adminAddress);
+    const walletData = await this.walletService.get(`temp:${encryptedKey}`);
+    console.log(`Deleting tempID ${tempId}`, walletData);
+    await this.walletService.del(`temp:${encryptedKey}`);
+    console.log(`Wallet deleted for temp ${tempId}`);
+  }
+
+  async swap(
+    walletData: WalletData,
+    fromAssetId: string,
+    toAssetId: string,
+    amount: number,
+  ): Promise<void> {
+    console.log(
+      `Initiating swap from ${fromAssetId} to ${toAssetId} for amount: ${amount}`,
+    );
+
+    const wallet = await Wallet.import(walletData);
+    const trade = await wallet.createTrade({
+      amount,
+      fromAssetId,
+      toAssetId,
+    });
+
+    await trade.wait();
+
+    if (trade.getStatus() === "complete") {
+      console.log(`Trade successfully completed: `, trade.toString());
+    } else {
+      console.log(`Trade failed on-chain: `, trade.toString());
+    }
   }
 }

@@ -1,25 +1,33 @@
 import { XMTPContext } from "@xmtp/message-kit";
-import { getTossDBClient } from "./redis.js";
+import { getRedisClient } from "./redis.js";
+import { WalletService } from "./wallet.js";
+import { toss } from "../skills/toss.js";
+
+const tossDBClient = await getRedisClient();
 
 export interface TossData {
   groupId: string;
-  admin: string;
+  adminName: string;
+  adminAddress: string;
   options: string;
   tossId: string;
   amount: number;
-  endTime: Date;
-  prize: number;
-  pool: number;
+  createdAt: string;
+  endTime: string;
   description: string;
-  participants: { address: string; response: string; name: string }[];
+  participants: string[];
+  decryptedParticipants?: {
+    response: string;
+    name: string;
+    address: string;
+  }[];
+  tossWalletAddress: string;
 }
-const tossDBClient = await getTossDBClient();
 export async function checkTossCorrect(
   context: XMTPContext,
 ): Promise<TossData | undefined> {
   const {
     message: {
-      sender,
       content: { previousMsg },
     },
     group,
@@ -31,54 +39,57 @@ export async function checkTossCorrect(
     await context.reply("You must reply to a toss.");
     return undefined;
   }
+
   let tossId = extractTossId(previousMsg);
-  if (!tossId) {
+  let creatorAddress = extractCreatorAddress(previousMsg);
+  if (!tossId || !creatorAddress) {
     await context.reply("Invalid toss ID.");
     return undefined;
   }
-  const tossDataString = await tossDBClient.get(tossId.toString());
-  const tossData = tossDataString ? JSON.parse(tossDataString) : null;
+  let encryptedKey = WalletService.encrypt(tossId, group.id + creatorAddress);
+  const tossDataString = await tossDBClient.get(`toss:${encryptedKey}`);
+  const hexString = tossDataString?.replace(/"/g, "");
+  let tossData = hexString
+    ? WalletService.decrypt(hexString, group.id + creatorAddress)
+    : null;
 
+  if (typeof tossData === "string") {
+    tossData = JSON.parse(tossData);
+  }
   if (!tossData) {
     await context.reply("Toss not found");
+    return undefined;
+  } else if (tossData.status === "closed") {
+    await context.reply("Toss has already ended.");
     return undefined;
   } else if (tossData.groupId !== group.id) {
     await context.reply("This toss is not in this group.");
     return undefined;
-  } else if (
-    tossData.participants.some(
-      (p: { address: string }) => p.address === sender.address,
-    )
-  ) {
-    // Check if the participant has already joined
-    await context.reply("You have already joined this toss.");
-    return;
   }
-  tossData.tossId = tossId;
-
-  let participants = await Promise.all(
-    tossData.participants.map(
-      async (participant: { address: string; response: string }) => ({
-        name:
-          (await context.getUserInfo(participant.address))?.preferredName ??
-          participant.address,
-        address: participant.address,
-        response: participant.response,
-      }),
-    ),
+  tossData.decryptedParticipants = tossData.participants?.map((p: string) =>
+    WalletService.decrypt(p, group.id + tossData.adminAddress),
   );
 
-  const pool = tossData.amount * participants.length;
-  return { ...tossData, participants, pool };
+  const pool = tossData.amount * (tossData?.decryptedParticipants?.length || 0);
+  return { ...tossData, pool };
 }
 
 export function extractTossId(message: string): string | null {
-  const match = message.match(/ID:\s*(\d+)/);
+  try {
+    const match = message.match(/ID:\s*(\d+)/);
+    return match ? match[1] : null;
+  } catch (error) {
+    return null;
+  }
+}
+
+export function extractCreatorAddress(message: string): string | null {
+  const match = message.match(/Creator:\s*(\w+)/);
   return match ? match[1] : null;
 }
 
 export async function extractWinners(
-  participants: { address: string; name: string; response: string }[],
+  participants: { response: string; name: string; address: string }[],
   option: string,
 ): Promise<{
   winners: { name: string; address: string }[];
@@ -97,4 +108,74 @@ export async function extractWinners(
     }),
   );
   return { winners, losers };
+}
+
+export function generateTossMessage(tossData: TossData): string {
+  return `Here is your toss! 🪙\n\n✨ How it works:\n- The creator of the toss is one who can modify and settle the toss. \n- The pool will be split evenly with the winners. \n- Remember, with great power comes great responsibility 💪\n\n📋 Here are the details:
+- ID: ${tossData.tossId}
+- Creator: ${tossData.adminAddress}
+- Options: ${tossData.options}
+- Amount: ${tossData.amount}
+- Description: ${tossData.description}
+- Judge: ${tossData.adminName}
+- Ends on: ${tossData.endTime}
+- Toss Wallet: ${tossData.tossWalletAddress}
+\n🛠️ Reply with:
+@toss <option>
+@toss end <option> (only the judge can end the toss)
+@toss cancel (only the creator can cancel the toss)
+@toss status`;
+}
+
+export function generateEndTossMessage(
+  winners: { name: string; address: string }[],
+  losers: { name: string; address: string }[],
+  prize: number,
+): string {
+  if (!winners.length) {
+    return `The toss has been closed and no winners were found.`;
+  }
+  let message = `🏆 Winners have been rewarded! 🏆\n\n🎉 Winners: \n${winners
+    .map((winner) => `- ${winner.name} - $${prize} 💰\n`)
+    .join("")}`;
+  if (losers.length > 0) {
+    message += `\n😢 Losers: \n${losers
+      .map((loser) => `- ${loser.name} 😢\n`)
+      .join("")}`;
+  }
+  return (
+    message +
+    `\nThe pool has been distributed among the winners. The toss has been closed now.`
+  );
+}
+
+export async function generateTossStatusMessage(
+  tossData: TossData,
+): Promise<string> {
+  return `Here are the details:
+- Amount: ${tossData.amount}
+- Description: ${tossData.description}
+- Judge: ${tossData.adminName}
+- End Time: ${tossData.endTime}
+
+📊 Status:
+👥 Participants:\n${tossData.decryptedParticipants
+    ?.map(
+      (participant: any) =>
+        `- ${participant.name ?? participant.address} - ${participant.response}\n`,
+    )
+    .join("")}
+💵 Amount: $${tossData.amount}
+🏦 Pool: $${(tossData?.decryptedParticipants?.length || 0) * tossData.amount}
+📋 Options:
+${tossData.options
+  .split(",")
+  .map((option: string) => {
+    const voteCount = tossData.decryptedParticipants?.filter(
+      (participant: any) =>
+        participant.response.toLowerCase() === option.toLowerCase(),
+    ).length;
+    return `\t- ${option}: ${voteCount} votes`;
+  })
+  .join("\n")} `;
 }
