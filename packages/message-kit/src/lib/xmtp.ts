@@ -149,7 +149,8 @@ export class XMTPContext {
         if (runConfig?.walletServiceDB)
           context.walletService = new WalletService(
             runConfig?.walletServiceDB,
-            context.getConversationKey() + sender?.address,
+            context.getConversationKey(),
+            sender?.address,
           );
         context.getMessageById =
           client.conversations?.getMessageById?.bind(client.conversations) ||

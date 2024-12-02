@@ -4,7 +4,7 @@ The `WalletService` class in MessageKit provides a way to create an agent wallet
 
 ## Introduction
 
-To use the `WalletService`, you need to initialize it with a Redis client:
+To use the `WalletService`, you need to initialize it with a Redis client and encryption keys:
 
 ### Requirements
 
@@ -36,105 +36,101 @@ The `walletService` object is available in the `context` object:
 
 ```typescript
 const { walletService } = context;
+// Use it in your code
+await walletService.someMethod();
 ```
 
 ## User Wallets
 
-### Creating and Retrieving a Wallet
-
-The `getUserWallet` method will either retrieve an existing wallet or create a new one:
+The `getUserWallet` method will retrieve an existing wallet, or you can explicitly create one:
 
 ```typescript
+// Get or create a wallet
 const userWallet = await walletService.getUserWallet(userAddress);
-console.log("User wallet data:", userWallet);
-// Returns { data: WalletData, address: string }
-```
 
-### Checking Balance
-
-```typescript
-const balance = await walletService.checkBalance(walletData);
-console.log("Wallet balance:", balance); // Returns number in USDC
-```
-
-### Transferring Funds
-
-```typescript
-await walletService.transfer(fromWalletData, toWalletData, amount);
-```
-
-### Withdrawing Funds
-
-```typescript
-// Withdraw specific amount
-await walletService.withdrawFunds(walletData, userAddress, amount);
-
-// Withdraw entire balance
-await walletService.withdrawFunds(walletData, userAddress);
-```
-
-### Swapping Assets
-
-```typescript
-await walletService.swap(walletData, fromAssetId, toAssetId, amount);
-// Returns void, logs trade status on completion
+// Explicitly create a new wallet
+const newWallet = await walletService.createUserWallet(userAddress);
+// Returns { wallet, address, userAddress, identifier }
 ```
 
 ## Temporary Wallets
 
-### Creating a Temporary Wallet
+Temporary wallets use a separate encryption key for additional security:
 
 ```typescript
+// Create a temporary wallet
 const tempWallet = await walletService.createTempWallet(tempId);
-// Returns { data: WalletData, address: string }
-```
+// Returns { wallet, address, userAddress, identifier }
 
-### Retrieving a Temporary Wallet
+// Retrieve an existing temporary wallet
+const existingWallet = await walletService.getTempWallet(tempId);
 
-```typescript
-const tempWallet = await walletService.getTempWallet(tempId);
-```
-
-### Deleting a Temporary Wallet
-
-```typescript
+// Delete when no longer needed
 await walletService.deleteTempWallet(tempId);
 ```
 
-### Requesting Funds
+## Actions
 
-When a user needs funds, you can use the requestFunds helper:
-
-```typescript
-await walletService.requestFunds(context, amount, toAddress);
-// Sends DM to user with payment request and instructions
-```
-
-## Encryption
-
-The WalletService uses a simple but effective encryption system to protect wallet data. The encryption is performed using XOR operations with a key derived from the user's address or provided encryption key.
-
-### Encryption Methods
+### Requesting and Withdrawing Funds
 
 ```typescript
-// Encrypt data
-const encrypted = WalletService.encrypt(data);
+// Request funds
+await walletService.requestFunds(context, amount);
+// This will send a payment request to the user with funding instructions
 
-// Decrypt data
-const decrypted = WalletService.decrypt(encryptedData);
+// Withdraw funds (optional amount parameter)
+await walletService.withdrawFunds(userAddress, amount);
+// If amount is not specified, withdraws entire balance
 ```
 
-The encryption process:
+### Transfers and Swaps
 
-1. Converts the data to a JSON string
-2. Creates a key by hashing the encryption key with keccak256
-3. Performs XOR encryption using the hashed key
-4. Returns the encrypted data as a hex string
+```typescript
+// Transfer between wallets
+await walletService.transfer(fromWallet, toWallet, amount);
 
-For user wallets, the user's address is used as both the data identifier and encryption key. For temporary wallets, a separate encryption key must be provided.
+// Swap assets
+await walletService.swap(userAddress, fromAssetId, toAssetId, amount);
+```
 
-### Security Considerations
+### Checking balance
 
-- The encryption key should be kept secure and not shared
-- For user wallets, the encryption is tied to their Ethereum address
-- Failed decryption will throw an "Invalid wallet access" error
+```typescript
+const balance = await walletService.checkBalance(userAddress);
+```
+
+## Security Architecture
+
+The WalletService uses a dual-key encryption system:
+
+### Default Encryption
+
+- **User Wallets**: Encrypted with `userEncryptionKey` (user address)
+- **Temporary Wallets**: Encrypted with `tempEncryptionKey` (conversationId + admin of the toss)
+
+```typescript
+// Default encryption
+const encrypted = walletService.encrypt(data);
+const decrypted = walletService.decrypt(encrypted);
+
+// Specifying a key for a custom encryption
+const userEncrypted = walletService.encrypt(data, userEncryptionKey);
+const userDecrypted = walletService.decrypt(userEncrypted, userEncryptionKey);
+```
+
+Note: All string data is converted to lowercase before encryption.
+
+### Encryption Process
+
+1. Convert data to JSON string
+2. Generate a key using keccak256
+3. Perform XOR encryption
+4. Return encrypted hex string
+
+### Security Best Practices
+
+- Keep encryption keys secure
+- Monitor wallet operations
+- Implement error handling
+- Use separate environments for development and production
+- Conduct regular security audits
