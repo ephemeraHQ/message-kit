@@ -11143,6 +11143,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"toss@workspace:templates/toss":
+  version: 0.0.0-use.local
+  resolution: "toss@workspace:templates/toss"
+  dependencies:
+    "@redis/client": "npm:^1.6.0"
+    "@types/node": "npm:^20.14.2"
+    "@xmtp/message-kit": "workspace:*"
+    typescript: "npm:^5.4.5"
+  languageName: unknown
+  linkType: soft
+
 "tr46@npm:~0.0.3":
   version: 0.0.3
   resolution: "tr46@npm:0.0.3"
