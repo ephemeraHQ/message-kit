@@ -3,7 +3,9 @@
   "version": "0.0.1",
   "private": true,
   "workspaces": [
-    "templates/*",
+    "templates/agent",
+    "templates/experimental",
+    "templates/gpt",
     "packages/*",
     "shared/*"
   ],
