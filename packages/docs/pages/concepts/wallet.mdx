@@ -6,18 +6,37 @@ The `WalletService` class in MessageKit provides a way to create an agent wallet
 
 To use the `WalletService`, you need to initialize it with a Redis client:
 
-```typescript
-import { WalletService } from "@xmtp/message-kit";
-const walletService = new WalletService(redisClient);
-```
-
-**Requirements**:
+### Requirements
 
 - `@coinbase/coinbase-sdk`: Already included in MessageKit
-- A Redis client for wallet storage
+- `@redis/client`: A Redis client for wallet storage
 - Environment variables:
-  - `COINBASE_API_KEY_NAME`
-  - `COINBASE_API_KEY_PRIVATE_KEY`
+  - `COINBASE_API_KEY_NAME`: The Coinbase API key name
+  - `COINBASE_API_KEY_PRIVATE_KEY`: The Coinbase API private key
+  - `COINBASE_API_REDIS_URL`: The Redis URL
+
+### Activation
+
+Start by importing the `getWalletService` function from the `redis.js` file:
+
+```typescript
+import { getWalletService } from "./lib/redis.js";
+const walletServiceDB = await getWalletService();
+run(
+  async (context: XMTPContext) => {
+    // ...
+  },
+  { walletServiceDB },
+);
+```
+
+### Usage
+
+The `walletService` object is available in the `context` object:
+
+```typescript
+const { walletService } = context;
+```
 
 ## User Wallets
 
@@ -66,20 +85,20 @@ await walletService.swap(walletData, fromAssetId, toAssetId, amount);
 ### Creating a Temporary Wallet
 
 ```typescript
-const tempWallet = await walletService.createTempWallet(tempId, encryptionKey);
+const tempWallet = await walletService.createTempWallet(tempId);
 // Returns { data: WalletData, address: string }
 ```
 
 ### Retrieving a Temporary Wallet
 
 ```typescript
-const tempWallet = await walletService.getTempWallet(tempId, encryptionKey);
+const tempWallet = await walletService.getTempWallet(tempId);
 ```
 
 ### Deleting a Temporary Wallet
 
 ```typescript
-await walletService.deleteTempWallet(tempId, encryptionKey);
+await walletService.deleteTempWallet(tempId);
 ```
 
 ### Requesting Funds
@@ -99,10 +118,10 @@ The WalletService uses a simple but effective encryption system to protect walle
 
 ```typescript
 // Encrypt data
-const encrypted = WalletService.encrypt(data, encryptionKey);
+const encrypted = WalletService.encrypt(data);
 
 // Decrypt data
-const decrypted = WalletService.decrypt(encryptedData, encryptionKey);
+const decrypted = WalletService.decrypt(encryptedData);
 ```
 
 The encryption process:

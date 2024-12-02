@@ -36,6 +36,7 @@
   },
   "dependencies": {
     "@coinbase/coinbase-sdk": "*",
+    "@redis/client": "^1.6.0",
     "@types/node": "^20.14.2",
     "@vitest/coverage-v8": "^2.1.4",
     "@xmtp/content-type-primitives": "^1.0.2",

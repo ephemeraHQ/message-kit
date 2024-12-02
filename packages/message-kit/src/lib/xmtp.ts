@@ -40,6 +40,7 @@ import {
 } from "@xmtp/content-type-remote-attachment";
 import { ContentTypeReaction } from "@xmtp/content-type-reaction";
 import path from "path";
+import { RedisClientType } from "@redis/client";
 //com
 const frameKitUrl = process.env.FRAMEKIT_URL ?? "https://frameskit.vercel.app";
 export const awaitedHandlers = new Map<
@@ -111,8 +112,9 @@ export class XMTPContext {
         //v2
         const sentAt = "sentAt" in message ? message.sentAt : message.sent;
         let members: GroupMember[];
+        let sender: AbstractedMember | null = null;
         if (version === "v2") {
-          context.sender = {
+          sender = {
             address: (message as DecodedMessageV2).senderAddress,
             inboxId: (message as DecodedMessageV2).senderAddress,
             installationIds: [],
@@ -134,7 +136,7 @@ export class XMTPContext {
               member.inboxId === (message as DecodedMessage).senderInboxId,
           );
 
-          context.sender = {
+          sender = {
             address: MemberSender?.accountAddresses[0],
             inboxId: MemberSender?.inboxId,
             installationIds: [],
@@ -144,7 +146,11 @@ export class XMTPContext {
 
         //Config
         context.agent = runConfig?.agent ?? (await loadSkillsFile());
-
+        if (runConfig?.walletServiceDB)
+          context.walletService = new WalletService(
+            runConfig?.walletServiceDB,
+            context.getConversationKey() + sender?.address,
+          );
         context.getMessageById =
           client.conversations?.getMessageById?.bind(client.conversations) ||
           (() => null);
@@ -203,7 +209,7 @@ export class XMTPContext {
         context.message = {
           id: message.id,
           content,
-          sender: context.sender,
+          sender: sender,
           sent: sentAt,
           typeId: typeId ?? "",
           version: version ?? "v2",

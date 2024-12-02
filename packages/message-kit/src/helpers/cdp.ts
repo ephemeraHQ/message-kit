@@ -18,15 +18,17 @@ const coinbase = new Coinbase({
 });
 
 export class WalletService {
-  private walletService: any;
+  private walletDb: any;
+  private encryptionKey: string;
 
-  constructor(walletService: any) {
-    this.walletService = walletService;
+  constructor(walletDb: any, encryptionKey: string) {
+    this.walletDb = walletDb;
+    this.encryptionKey = encryptionKey;
   }
 
-  static encrypt(data: any, stringKey: string): string {
+  encrypt(data: any): string {
     const dataString = JSON.stringify(data);
-    const key = keccak256(toHex(stringKey.toLowerCase()));
+    const key = keccak256(toHex(this.encryptionKey.toLowerCase()));
     // Simple XOR encryption with the key
     const encrypted = Buffer.from(dataString).map(
       (byte, i) => byte ^ parseInt(key.slice(2 + (i % 64), 4 + (i % 64)), 16),
@@ -34,7 +36,7 @@ export class WalletService {
     return toHex(encrypted);
   }
 
-  private static hexToBytes(hex: string): Uint8Array {
+  private hexToBytes(hex: string): Uint8Array {
     if (hex.startsWith("0x")) {
       hex = hex.slice(2);
     }
@@ -45,8 +47,8 @@ export class WalletService {
     return bytes;
   }
 
-  static decrypt(encryptedData: string, stringKey: string): any {
-    const key = keccak256(toHex(stringKey.toLowerCase()));
+  decrypt(encryptedData: string): any {
+    const key = keccak256(toHex(this.encryptionKey.toLowerCase()));
     const encrypted = this.hexToBytes(encryptedData);
     const decrypted = encrypted.map(
       (byte, i) => byte ^ parseInt(key.slice(2 + (i % 64), 4 + (i % 64)), 16),
@@ -55,12 +57,12 @@ export class WalletService {
   }
 
   async getUserWallet(userAddress: string): Promise<WalletServiceData> {
-    const encryptedKey = `${WalletService.encrypt(userAddress, userAddress)}`;
-    const walletData = await this.walletService.get(`wallet:${encryptedKey}`);
+    const encryptedKey = `${this.encrypt(userAddress)}`;
+    const walletData = await this.walletDb.get(`wallet:${encryptedKey}`);
 
     if (walletData) {
       try {
-        const decrypted = WalletService.decrypt(walletData, userAddress);
+        const decrypted = this.decrypt(walletData);
         console.log(`Retrieved wallet data for user ${userAddress}`);
         return decrypted;
       } catch (error) {
@@ -83,12 +85,9 @@ export class WalletService {
       address: address.getId(),
     });
 
-    await this.walletService.set(
+    await this.walletDb.set(
       `wallet:${encryptedKey}`,
-      WalletService.encrypt(
-        { data, userAddress, address: address.getId() },
-        userAddress,
-      ),
+      this.encrypt({ data, userAddress, address: address.getId() }),
     );
     return { data, address: address.getId() };
   }
@@ -163,10 +162,7 @@ export class WalletService {
     }
   }
 
-  async createTempWallet(
-    tempId: string,
-    encryptionKey: string,
-  ): Promise<WalletServiceData> {
+  async createTempWallet(tempId: string): Promise<WalletServiceData> {
     try {
       console.log(`Creating temporary wallet...`);
       const wallet = await Wallet.create({
@@ -177,9 +173,9 @@ export class WalletService {
       const address = await wallet.getDefaultAddress();
       const walletInfo = { data, address: address.getId() };
 
-      await this.walletService.set(
-        `temp:${WalletService.encrypt(tempId, encryptionKey)}`,
-        WalletService.encrypt(walletInfo, encryptionKey),
+      await this.walletDb.set(
+        `temp:${this.encrypt(tempId)}`,
+        this.encrypt(walletInfo),
       );
       return walletInfo;
     } catch (error) {
@@ -188,19 +184,16 @@ export class WalletService {
     }
   }
 
-  async getTempWallet(
-    tempId: string,
-    encryptionKey: string,
-  ): Promise<WalletServiceData> {
-    const encryptedKey = WalletService.encrypt(tempId, encryptionKey);
-    const encryptedData = await this.walletService.get(`temp:${encryptedKey}`);
+  async getTempWallet(tempId: string): Promise<WalletServiceData> {
+    const encryptedKey = this.encrypt(tempId);
+    const encryptedData = await this.walletDb.get(`temp:${encryptedKey}`);
     console.log(`temp:${encryptedKey}`, encryptedData);
     if (!encryptedData) {
       throw new Error("Temp wallet not found");
     }
 
     try {
-      const decrypted = WalletService.decrypt(encryptedData, encryptionKey);
+      const decrypted = this.decrypt(encryptedData);
       return decrypted;
     } catch (error) {
       console.error("Failed to access temp wallet:", error);
@@ -208,12 +201,12 @@ export class WalletService {
     }
   }
 
-  async deleteTempWallet(tempId: string, encryptionKey: string): Promise<void> {
+  async deleteTempWallet(tempId: string): Promise<void> {
     console.log(`Deleting wallet for temp ${tempId}`);
-    const encryptedKey = WalletService.encrypt(tempId, encryptionKey);
-    const walletData = await this.walletService.get(`temp:${encryptedKey}`);
+    const encryptedKey = this.encrypt(tempId);
+    const walletData = await this.walletDb.get(`temp:${encryptedKey}`);
     console.log(`Deleting tempID ${tempId}`, walletData);
-    await this.walletService.del(`temp:${encryptedKey}`);
+    await this.walletDb.del(`temp:${encryptedKey}`);
     console.log(`Wallet deleted for temp ${tempId}`);
   }
 
