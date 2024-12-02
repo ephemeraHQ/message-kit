@@ -144,13 +144,7 @@ export class XMTPContext {
 
         //Config
         context.agent = runConfig?.agent ?? (await loadSkillsFile());
-        if (runConfig?.walletService) {
-          try {
-            context.walletService = new WalletService();
-          } catch (error) {
-            console.error("Error creating WalletService:", error);
-          }
-        }
+
         context.getMessageById =
           client.conversations?.getMessageById?.bind(client.conversations) ||
           (() => null);

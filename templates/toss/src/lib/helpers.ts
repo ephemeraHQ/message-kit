@@ -1,7 +1,5 @@
-import { XMTPContext } from "@xmtp/message-kit";
+import { XMTPContext, WalletService } from "@xmtp/message-kit";
 import { getRedisClient } from "./redis.js";
-import { WalletService } from "./wallet.js";
-import { toss } from "../skills/toss.js";
 
 const tossDBClient = await getRedisClient();
 

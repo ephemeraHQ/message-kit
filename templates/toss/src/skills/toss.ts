@@ -1,6 +1,10 @@
-import { Skill, XMTPContext, getUserInfo } from "@xmtp/message-kit";
-import { getRedisClient, getWalletService, updateField } from "../lib/redis.js";
-import { WalletService } from "../lib/wallet.js";
+import {
+  Skill,
+  WalletService,
+  XMTPContext,
+  getUserInfo,
+} from "@xmtp/message-kit";
+import { getRedisClient, getWalletService } from "../lib/redis.js";
 import {
   checkTossCorrect,
   extractWinners,
@@ -106,8 +110,7 @@ export async function handleTossCreation(context: XMTPContext) {
 
     const createdTossWallet = await walletService.createTempWallet(
       tossId.toString(),
-      sender.address,
-      group.id,
+      group.id + sender.address,
     );
 
     let tossData: TossData = {
@@ -169,8 +172,7 @@ export async function handleJoinToss(context: XMTPContext) {
 
   const tossWallet = await walletService.getTempWallet(
     tossId.toString(),
-    group.id,
-    adminAddress,
+    group.id + adminAddress,
   );
   const userWallet = await walletService.getUserWallet(sender.address);
   const balance = await walletService.checkBalance(userWallet.data);
@@ -254,8 +256,7 @@ export async function handleEndToss(context: XMTPContext) {
       const winnerWallet = await walletService.getUserWallet(winner.address);
       const tossWallet = await walletService.getTempWallet(
         tossId.toString(),
-        group.id,
-        adminAddress,
+        group.id + adminAddress,
       );
 
       if (!tossWallet) {
@@ -323,8 +324,7 @@ export async function handleCancelToss(context: XMTPContext) {
       const userWallet = await walletService.getUserWallet(participant.address);
       const tossWallet = await walletService.getTempWallet(
         tossId.toString(),
-        group.id,
-        adminAddress,
+        group.id + adminAddress,
       );
 
       if (!tossWallet) {
