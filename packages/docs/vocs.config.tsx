@@ -117,7 +117,7 @@ export default defineConfig({
           link: "/concepts/frames",
         },
         {
-          text: "Agent Wallet",
+          text: "Wallet Service",
           link: "/concepts/wallet",
         },
       ],
