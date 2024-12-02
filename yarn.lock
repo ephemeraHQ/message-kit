@@ -4788,7 +4788,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "cointoss@workspace:templates/toss"
   dependencies:
-    "@coinbase/coinbase-sdk": "npm:*"
     "@redis/client": "npm:^1.6.0"
     "@types/node": "npm:^20.14.2"
     "@xmtp/message-kit": "workspace:*"
