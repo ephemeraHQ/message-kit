@@ -10,27 +10,24 @@ const Chat = dynamic(() => import("../../components/Chat"), {
 
 // Create a wrapper component that will render the full HTML
 function FrameHTML({ children }: { children: React.ReactNode }) {
+  const params = {
+    url: `${process.env.NEXT_PUBLIC_URL}`,
+    address: "0xc9925662D36DE3e1bF0fD64e779B2e5F0Aead964",
+  };
+  const image = `${params.url}/api/chat?address=${params.address}`;
+  console.log("image", image);
   return (
     <html>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>Chat Frame</title>
+        <meta property="og:image" content={image} />
         <meta property="fc:frame" content="vNext" />
-        <meta property="fc:frame:image" content="https://your-image-url.png" />
+        <meta property="of:version" content="vNext" />
+        <meta property="of:accepts:xmtp" content="vNext" />
+        <meta property="fc:frame:image" content={image} />
         <meta property="fc:frame:button:1" content="Start Chat" />
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-            body { 
-              margin: 0; 
-              padding: 0; 
-              width: 100%; 
-              height: 100vh; 
-            }
-          `,
-          }}
-        />
       </head>
       <body>{children}</body>
     </html>
@@ -42,8 +39,8 @@ function ChatContent(): JSX.Element {
   const [context, setContext] = useState<FrameContext>();
   const searchParams = useSearchParams();
 
-  const recipient =
-    searchParams?.get("recipient") ||
+  const address =
+    searchParams?.get("address") ||
     "0xc9925662D36DE3e1bF0fD64e779B2e5F0Aead964";
 
   useEffect(() => {
@@ -60,7 +57,7 @@ function ChatContent(): JSX.Element {
 
   return (
     <div style={{ height: "100vh", width: "100%" }}>
-      <Chat recipientAddress={recipient} frameContext={context} />
+      <Chat recipientAddress={address} />
     </div>
   );
 }

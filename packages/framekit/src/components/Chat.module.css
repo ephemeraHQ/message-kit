@@ -2,30 +2,40 @@
 .chatContainer {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100%;
+  height: -webkit-fill-available; /* iOS viewport fix */
   background-color: #1a1a1a;
   color: #f0f0f0;
   font-family: monospace;
-  padding: 1rem;
+  padding: 0.75rem;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 /* Wallet Info Section */
 .walletInfo {
   background-color: #2a2a2a;
-  padding: 0.5rem;
-  margin-bottom: 1rem;
-  border-radius: 4px;
-  font-size: 0.9rem;
+  padding: 0.75rem;
+  margin-bottom: 0.75rem;
+  border-radius: 8px;
+  font-size: 1rem;
 }
 
 /* Messages Container */
 .messagesContainer {
   flex: 1;
   overflow-y: auto;
-  padding: 1rem;
+  padding: 0.5rem;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  margin-bottom: env(safe-area-inset-bottom);
+  -webkit-overflow-scrolling: touch;
+  position: relative;
+  height: auto;
 }
 
 /* Message Bubbles */
@@ -33,38 +43,49 @@
   display: flex;
   align-items: flex-start;
   padding: 0.5rem;
-  line-height: 1.4;
-  font-size: 0.9rem;
+  line-height: 1.3;
+  font-size: 0.95rem;
   white-space: pre-wrap;
 }
 
 .sender {
   color: #fa6977;
-  margin-right: 0.5rem;
+  margin-right: 0.375rem;
   font-weight: bold;
 }
 
 /* Message Form */
 .messageForm {
-  display: flex;
-  gap: 0.5rem;
-  padding: 1rem 0;
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 0.75rem;
+  background-color: #1a1a1a;
+  margin: 0 -0.75rem -0.75rem;
+  padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
 }
 
 /* Input Field */
+.inputWrapper {
+  display: flex;
+  gap: 0.5rem;
+  width: 100%;
+}
+
 .input {
   flex: 1;
   background-color: #2a2a2a;
   border: 1px solid #3a3a3a;
   color: #f0f0f0;
-  padding: 0;
-  padding-left: 0.5rem;
+  padding: 0 1rem;
   font-family: monospace;
-  font-size: 0.9rem;
-  height: 40px;
-  border-radius: 4px;
-  line-height: 40px;
-  box-sizing: border-box;
+  font-size: 1rem;
+  height: 48px;
+  border-radius: 8px;
+  line-height: 48px;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .input:focus {
@@ -72,23 +93,20 @@
   border-color: #fa6977;
 }
 
-.input:disabled {
-  cursor: not-allowed;
-}
-
 /* Send Button */
 .sendButton {
   background-color: #fa6977;
   color: white;
   border: none;
-  padding: 0 1rem;
+  padding: 0 1.25rem;
   cursor: pointer;
   font-family: monospace;
-  height: 40px;
-  border-radius: 4px;
-  font-size: 0.9rem;
+  height: 48px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  min-width: 80px;
   transition: background-color 0.2s;
-  box-sizing: border-box;
 }
 
 .sendButton:hover {
@@ -99,7 +117,59 @@
   background-color: #e55d6a;
 }
 
-.sendButton:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+/* Add these new mobile-specific styles */
+@media (max-width: 768px) {
+  .chatContainer {
+    padding: 0.375rem;
+    height: 100%;
+    position: absolute;
+  }
+
+  .messageForm {
+    position: sticky;
+    bottom: 0;
+    background-color: #1a1a1a;
+    padding: 0.5rem;
+    padding-bottom: calc(0.5rem + env(safe-area-inset-bottom));
+    margin: 0 -0.375rem -0.375rem;
+    z-index: 2;
+  }
+
+  .messagesContainer {
+    padding-bottom: 0;
+    margin-bottom: 0;
+    flex: 1 1 auto;
+  }
+
+  .walletInfo {
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  /* Prevent zoom on input focus for iOS */
+  .input {
+    font-size: 16px;
+  }
+}
+
+/* Add support for iOS safe areas */
+@supports (padding: max(0px)) {
+  .chatContainer {
+    padding-left: max(0.75rem, env(safe-area-inset-left));
+    padding-right: max(0.75rem, env(safe-area-inset-right));
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+  }
+}
+
+/* iOS viewport height fix */
+@supports (-webkit-touch-callout: none) {
+  .chatContainer {
+    height: -webkit-fill-available;
+  }
+
+  .messagesContainer {
+    height: auto;
+    min-height: 0;
+  }
 }

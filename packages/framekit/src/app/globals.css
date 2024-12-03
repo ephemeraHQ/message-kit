@@ -142,3 +142,8 @@ body {
 .powered-by a:hover {
   text-decoration: underline;
 }
+
+.nextjs-toast,
+.nextjs-static-indicator-toast-wrapper {
+  display: none !important;
+}

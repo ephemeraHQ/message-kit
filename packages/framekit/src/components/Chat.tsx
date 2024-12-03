@@ -2,21 +2,19 @@ import { useState, useEffect } from "react";
 import { Client as V2Client } from "@xmtp/xmtp-js";
 import { Wallet } from "ethers";
 import styles from "./Chat.module.css";
-import { FrameContext } from "@farcaster/frame-sdk";
 
 interface ChatProps {
   recipientAddress: string;
-  frameContext?: FrameContext;
 }
 
-export default function Chat({ recipientAddress, frameContext }: ChatProps) {
-  const [isLoading, setIsLoading] = useState(true);
+export default function Chat({ recipientAddress }: ChatProps) {
   const [messages, setMessages] = useState<
     { content: string; sender: string }[]
   >([]);
   const [newMessage, setNewMessage] = useState("");
   const [wallet, setWallet] = useState<any | null>(null);
   const [xmtp, setXmtp] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const newWallet = Wallet.createRandom();
@@ -34,23 +32,43 @@ export default function Chat({ recipientAddress, frameContext }: ChatProps) {
 
         // Load existing messages
         const messages = await conversation.messages();
-        setMessages(
-          messages.map((msg: any) => ({
+        console.log("Initial messages loaded:", messages.length);
+
+        const formattedMessages = messages.map((msg: any) => {
+          console.log("Processing message:", msg.id, msg.content);
+          return {
             content: msg.content,
             sender: msg.senderAddress === wallet.address ? "Human" : "Agent",
-          })),
-        );
+          };
+        });
+
+        // Set initial messages
+        setMessages(formattedMessages);
+        console.log("Initial messages set:", formattedMessages.length);
+
+        // Create a Set to track message IDs we've already seen
+        const processedMessageIds = new Set(messages.map((msg: any) => msg.id));
 
         // Listen for new messages
         for await (const message of await conversation.streamMessages()) {
-          setMessages((prevMessages) => [
-            ...prevMessages,
-            {
-              content: message.content,
-              sender:
-                message.senderAddress === wallet.address ? "Human" : "Agent",
-            },
-          ]);
+          console.log("New message received:", message.id, message.content);
+          // Only add message if we haven't processed it before
+          if (!processedMessageIds.has(message.id)) {
+            processedMessageIds.add(message.id);
+            setMessages((prevMessages) => {
+              console.log("Adding new message to UI");
+              return [
+                ...prevMessages,
+                {
+                  content: message.content,
+                  sender:
+                    message.senderAddress === wallet.address
+                      ? "Human"
+                      : "Agent",
+                },
+              ];
+            });
+          }
         }
       } catch (error) {
         console.error("Error streaming messages:", error);
@@ -67,7 +85,6 @@ export default function Chat({ recipientAddress, frameContext }: ChatProps) {
       setIsLoading(false);
     } catch (error) {
       console.error("Error initializing XMTP:", error);
-      setIsLoading(false);
     }
   };
 
@@ -114,20 +131,24 @@ export default function Chat({ recipientAddress, frameContext }: ChatProps) {
         ))}
       </div>
       <form onSubmit={sendMessage} className={styles.messageForm}>
-        <input
-          type="text"
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          placeholder={isLoading ? "Initializing XMTP..." : "Type a message..."}
-          className={styles.input}
-          disabled={isLoading}
-        />
-        <button
-          type="submit"
-          className={styles.sendButton}
-          disabled={isLoading}>
-          Send
-        </button>
+        <div className={styles.inputWrapper}>
+          <input
+            type="text"
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            placeholder={
+              isLoading ? "Initializing XMTP..." : "Type a message..."
+            }
+            className={styles.input}
+            disabled={isLoading}
+          />
+          <button
+            type="submit"
+            className={styles.sendButton}
+            disabled={isLoading}>
+            Send
+          </button>
+        </div>
       </form>
     </div>
   );

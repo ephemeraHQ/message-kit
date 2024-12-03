@@ -11,6 +11,7 @@
   "dependencies": {
     "@farcaster/frame-sdk": "latest",
     "@types/next": "^9.0.0",
+    "@xmtp/message-kit": "latest",
     "geist": "^1.3.1",
     "next": "^15.0.3",
     "qrcode": "^1.5.4",
