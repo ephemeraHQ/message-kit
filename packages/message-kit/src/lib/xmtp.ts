@@ -68,7 +68,8 @@ import {
 import { ContentTypeReaction } from "@xmtp/content-type-reaction";
 import path from "path";
 //com
-const frameKitUrl = process.env.FRAMEKIT_URL ?? "https://web.message-kit.org/";
+const frameKitUrl =
+  process.env.FRAMEKIT_URL ?? "https://frames.message-kit.org/";
 export const awaitedHandlers = new Map<
   string,
   (text: string) => Promise<boolean | undefined>
