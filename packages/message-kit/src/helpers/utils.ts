@@ -85,7 +85,7 @@ Powered by XMTP \x1b[0m`;
     }
     if (runConfig?.experimental) {
       console.warn(
-        `\t- ☣️ EXPERIMENTAL MODE ENABLED:\n\t\t⚠️ All group messages will be exposed — proceed with caution.\n\t\tℹ Guidelines: https://messagekit.ephemerahq.com/concepts/guidelines`,
+        `\t- ☣️ EXPERIMENTAL MODE ENABLED:\n\t\t⚠️ All group messages will be exposed — proceed with caution.\n\t\tℹ Guidelines: https://message-kit.org/concepts/guidelines`,
       );
     }
     if (runConfig?.walletService) {

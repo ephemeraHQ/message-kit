@@ -21,7 +21,7 @@ export default function Home() {
         <meta property="fc:frame:button:1:action" content="link" />
         <meta
           property="fc:frame:button:1:target"
-          content="https://messagekit.ephemerahq.com/"
+          content="https://message-kit.org/"
         />
 
         <meta property="fc:frame:button:2" content="Drop a ⭐️" />

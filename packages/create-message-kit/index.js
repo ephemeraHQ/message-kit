@@ -253,7 +253,7 @@ function createReadme(destDir, templateType, projectName, packageManager) {
 
   const readmeContent = `# ${projectName}
 
-This project is powered by [MessageKit](https://messagekit.ephemerahq.com/) 
+This project is powered by [MessageKit](https://message-kit.org/) 
 
 ## Setup
 

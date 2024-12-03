@@ -1,6 +1,6 @@
 # MessageKit
 
-This is the official repository for [MessageKit](https://messagekit.ephemerahq.com/). Powered by [XMTP](http://xmtp.org)
+This is the official repository for [MessageKit](https://message-kit.org/). Powered by [XMTP](http://xmtp.org)
 
 ## What's inside?
 
