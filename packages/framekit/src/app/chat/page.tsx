@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { useSearchParams } from "next/navigation";
 import sdk, { type FrameContext } from "@farcaster/frame-sdk";
@@ -37,7 +37,7 @@ function FrameHTML({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function ChatFrame(): JSX.Element {
+function ChatContent(): JSX.Element {
   const [isSDKLoaded, setIsSDKLoaded] = useState(false);
   const [context, setContext] = useState<FrameContext>();
   const searchParams = useSearchParams();
@@ -58,20 +58,19 @@ export default function ChatFrame(): JSX.Element {
     }
   }, [isSDKLoaded]);
 
-  // Loading state
-  if (!isSDKLoaded) {
-    return (
-      <FrameHTML>
-        <div>Loading...</div>
-      </FrameHTML>
-    );
-  }
+  return (
+    <div style={{ height: "100vh", width: "100%" }}>
+      <Chat recipientAddress={recipient} frameContext={context} />
+    </div>
+  );
+}
 
+export default function ChatFrame(): JSX.Element {
   return (
     <FrameHTML>
-      <div style={{ height: "100vh", width: "100%" }}>
-        <Chat recipientAddress={recipient} frameContext={context} />
-      </div>
+      <Suspense fallback={<div>Loading...</div>}>
+        <ChatContent />
+      </Suspense>
     </FrameHTML>
   );
 }
