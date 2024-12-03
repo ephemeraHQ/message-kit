@@ -2,7 +2,7 @@
 import { GeistMono as geistMono } from "geist/font/mono";
 import { GeistSans as geistSans } from "geist/font/sans";
 
-export default async function Home() {
+export default function Home() {
   const url = `${process.env.NEXT_PUBLIC_URL || "http://localhost:3000"}`;
   let image = `${url}/hero.jpg`;
   return (
@@ -48,6 +48,11 @@ export default async function Home() {
               </a>
             </div>
 
+            <div className="powered-by" style={{ marginTop: "1rem" }}>
+              <a href="/chat" rel="noopener noreferrer">
+                Chat
+              </a>
+            </div>
             <div className="powered-by" style={{ marginTop: "1rem" }}>
               <a href="/custom" rel="noopener noreferrer">
                 Custom

@@ -1,0 +1,105 @@
+/* Chat Container */
+.chatContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #1a1a1a;
+  color: #f0f0f0;
+  font-family: monospace;
+  padding: 1rem;
+}
+
+/* Wallet Info Section */
+.walletInfo {
+  background-color: #2a2a2a;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+/* Messages Container */
+.messagesContainer {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Message Bubbles */
+.message {
+  display: flex;
+  align-items: flex-start;
+  padding: 0.5rem;
+  line-height: 1.4;
+  font-size: 0.9rem;
+  white-space: pre-wrap;
+}
+
+.sender {
+  color: #fa6977;
+  margin-right: 0.5rem;
+  font-weight: bold;
+}
+
+/* Message Form */
+.messageForm {
+  display: flex;
+  gap: 0.5rem;
+  padding: 1rem 0;
+}
+
+/* Input Field */
+.input {
+  flex: 1;
+  background-color: #2a2a2a;
+  border: 1px solid #3a3a3a;
+  color: #f0f0f0;
+  padding: 0;
+  padding-left: 0.5rem;
+  font-family: monospace;
+  font-size: 0.9rem;
+  height: 40px;
+  border-radius: 4px;
+  line-height: 40px;
+  box-sizing: border-box;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #fa6977;
+}
+
+.input:disabled {
+  cursor: not-allowed;
+}
+
+/* Send Button */
+.sendButton {
+  background-color: #fa6977;
+  color: white;
+  border: none;
+  padding: 0 1rem;
+  cursor: pointer;
+  font-family: monospace;
+  height: 40px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+  box-sizing: border-box;
+}
+
+.sendButton:hover {
+  background-color: #ff7a87;
+}
+
+.sendButton:active {
+  background-color: #e55d6a;
+}
+
+.sendButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
