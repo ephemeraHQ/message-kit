@@ -14,8 +14,10 @@ import { textGeneration } from "../helpers/gpt.js";
 import { getUserInfo, isOnXMTP } from "../helpers/resolver.js";
 
 // Only import fs in Node.js environment
+import { promises as fsPromises } from "fs";
 //@ts-ignore
-const fs = typeof window === "undefined" ? require("fs").promises : null;
+const fs = typeof window === "undefined" ? fsPromises : null;
+
 const fileHandling = {
   async getCacheCreationDate() {
     if (!fs) return null;

@@ -3819,8 +3819,7 @@ __metadata:
     "@xmtp/content-type-reply": "npm:^1.1.11"
     "@xmtp/content-type-text": "npm:^1.0.0"
     "@xmtp/grpc-api-client": "npm:^0.2.8"
-    "@xmtp/node-bindings": "npm:0.0.25-internal-fix-forked-groups"
-    "@xmtp/node-sdk": "npm:^0.0.28"
+    "@xmtp/node-sdk": "npm:^0.0.30"
     "@xmtp/xmtp-js": "npm:^13.0.3"
     dotenv: "npm:^16.4.5"
     openai: "npm:^4.52.7"
@@ -3835,30 +3834,23 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@xmtp/node-bindings@npm:0.0.25-internal-fix-forked-groups":
-  version: 0.0.25-internal-fix-forked-groups
-  resolution: "@xmtp/node-bindings@npm:0.0.25-internal-fix-forked-groups"
-  checksum: 10/ec9d789d88409308f5d681aabe86937dcc1318c186cbf656ff9563e770da0d43c49da66133329778829f91586a33d55de5ba7d768cce661469434b1e8849e9d4
-  languageName: node
-  linkType: hard
-
-"@xmtp/node-bindings@npm:^0.0.25":
-  version: 0.0.25
-  resolution: "@xmtp/node-bindings@npm:0.0.25"
-  checksum: 10/336f9b2a4a8b2781f6c53a7dd444428893f5e04a927350c82fcb79e37e0cc69abcb86406ffedeaa28115f1b57801890309546a10c9e806e3ed81b18b9d8f1431
-  languageName: node
-  linkType: hard
-
-"@xmtp/node-sdk@npm:^0.0.28":
+"@xmtp/node-bindings@npm:^0.0.28":
   version: 0.0.28
-  resolution: "@xmtp/node-sdk@npm:0.0.28"
+  resolution: "@xmtp/node-bindings@npm:0.0.28"
+  checksum: 10/0ceea72582926dcce03c8e3839b7101d7ce4aef56a55b46421c2e46e96f65c90a224b1649ff765c1f3cb1e2e21a730d1891bb369260c94712066b85d358fb6f4
+  languageName: node
+  linkType: hard
+
+"@xmtp/node-sdk@npm:^0.0.30":
+  version: 0.0.30
+  resolution: "@xmtp/node-sdk@npm:0.0.30"
   dependencies:
     "@xmtp/content-type-group-updated": "npm:^1.0.1"
     "@xmtp/content-type-primitives": "npm:^1.0.3"
     "@xmtp/content-type-text": "npm:^1.0.1"
-    "@xmtp/node-bindings": "npm:^0.0.25"
+    "@xmtp/node-bindings": "npm:^0.0.28"
     "@xmtp/proto": "npm:^3.72.3"
-  checksum: 10/86f0d601ae65873b71561aa37a60a8709a9aaee0f0020f3590a1149f10bbe4394d1bc5fd97e4e9c30eb5ec7d544eb33de3dcc6fb8e9cbcbae152ac7cd746ef7c
+  checksum: 10/533ea8a801296358ab2aec41a97d135545bfb877a5cc3bc1a57670b91ec68f7ab39b9e0eab5fe0cf3765166a9e54662bea4adc860c610d289f763709948ed626
   languageName: node
   linkType: hard
 

@@ -11,24 +11,26 @@ import { keccak256, toHex } from "viem";
 const apiKeyName = process.env.COINBASE_API_KEY_NAME;
 const privateKey = process.env.COINBASE_API_KEY_PRIVATE_KEY;
 
-if (!apiKeyName || !privateKey) {
-  throw new Error("Missing Coinbase API credentials");
-}
+const coinbase =
+  apiKeyName && privateKey
+    ? new Coinbase({
+        apiKeyName,
+        privateKey,
+      })
+    : null;
+
 interface WalletServiceData {
   wallet: Wallet;
   address: string;
   userAddress: string;
   identifier: string;
 }
-const coinbase = new Coinbase({
-  apiKeyName,
-  privateKey,
-});
 
 export class WalletService {
   private walletDb: any;
   private tempEncryptionKey: string;
   private userEncryptionKey: string;
+  private enabled: boolean;
 
   constructor(
     walletDb: any,
@@ -38,6 +40,15 @@ export class WalletService {
     this.walletDb = walletDb;
     this.tempEncryptionKey = tempEncryptionKey.toLowerCase();
     this.userEncryptionKey = userEncryptionKey.toLowerCase();
+    this.enabled = Boolean(coinbase);
+  }
+
+  private checkEnabled() {
+    if (!this.enabled) {
+      throw new Error(
+        "Wallet service is not enabled - missing Coinbase API credentials",
+      );
+    }
   }
 
   encrypt(data: any, encryptionKey?: string): string {
@@ -79,6 +90,7 @@ export class WalletService {
     return JSON.parse(Buffer.from(decrypted).toString());
   }
   async createUserWallet(userAddress: string): Promise<WalletServiceData> {
+    this.checkEnabled();
     console.log(`Creating new wallet for user ${userAddress}...`);
     const wallet = await Wallet.create({
       networkId: Coinbase.networks.BaseMainnet,

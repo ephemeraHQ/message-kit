@@ -12,7 +12,11 @@ import {
 } from "@xmtp/content-type-remote-attachment";
 // Only import fs in Node.js environment
 //@ts-ignore
-const fs = typeof window === "undefined" ? require("fs") : null;
+// Replace require with dynamic import for fs
+import * as fsSync from "fs";
+//@ts-ignore
+const fs = typeof window === "undefined" ? fsSync : null;
+
 import { createWalletClient, http, toBytes, toHex } from "viem";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { mainnet } from "viem/chains";
