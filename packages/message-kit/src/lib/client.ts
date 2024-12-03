@@ -10,7 +10,9 @@ import {
   AttachmentCodec,
   RemoteAttachmentCodec,
 } from "@xmtp/content-type-remote-attachment";
-import * as fs from "fs";
+// Only import fs in Node.js environment
+//@ts-ignore
+const fs = typeof window === "undefined" ? require("fs") : null;
 import { createWalletClient, http, toBytes, toHex } from "viem";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { mainnet } from "viem/chains";
@@ -106,12 +108,14 @@ function setupPrivateKey(customKey?: string): {
     key = generatePrivateKey();
     isRandom = true;
 
-    // Write new key to .env only if it was randomly generated
-    const envContent = `\nKEY=${key.substring(2)}\n`;
-    if (fs.existsSync(envFilePath)) {
-      fs.appendFileSync(envFilePath, envContent);
-    } else {
-      fs.writeFileSync(envFilePath, envContent);
+    // Write new key to .env only if in Node.js environment
+    if (fs) {
+      const envContent = `\nKEY=${key.substring(2)}\n`;
+      if (fs.existsSync(envFilePath)) {
+        fs.appendFileSync(envFilePath, envContent);
+      } else {
+        fs.writeFileSync(envFilePath, envContent);
+      }
     }
   }
 
@@ -130,7 +134,11 @@ function checkPrivateKey(key: string) {
 }
 
 export const createSigner = (user: User) => {
-  if (!fs.existsSync(`.data`)) fs.mkdirSync(`.data`);
+  // Only create directory in Node.js environment
+  if (fs && !fs.existsSync(`.data`)) {
+    fs.mkdirSync(`.data`);
+  }
+
   return {
     getAddress: () => user.account.address,
     signMessage: async (message: string) => {
@@ -147,21 +155,26 @@ async function setupTestEncryptionKey(): Promise<Uint8Array> {
   const envFilePath = path.resolve(process.cwd(), ".env");
 
   if (!process.env.TEST_ENCRYPTION_KEY) {
-    if (fs.existsSync(`.data`)) fs.rmSync(`.data`, { recursive: true });
+    // Only perform file operations in Node.js environment
+    if (fs) {
+      if (fs.existsSync(`.data`)) {
+        fs.rmSync(`.data`, { recursive: true });
+      }
 
-    // Generate new test encryption key
-    const testEncryptionKey = toHex(getRandomValues(new Uint8Array(32)));
+      // Generate new test encryption key
+      const testEncryptionKey = toHex(getRandomValues(new Uint8Array(32)));
 
-    // Prepare the env content
-    const envContent = `\nTEST_ENCRYPTION_KEY=${testEncryptionKey}\n`;
+      // Prepare the env content
+      const envContent = `\nTEST_ENCRYPTION_KEY=${testEncryptionKey}\n`;
 
-    // Append or create .env file
-    if (fs.existsSync(envFilePath)) {
-      fs.appendFileSync(envFilePath, envContent);
-    } else {
-      fs.writeFileSync(envFilePath, envContent);
+      // Append or create .env file
+      if (fs.existsSync(envFilePath)) {
+        fs.appendFileSync(envFilePath, envContent);
+      } else {
+        fs.writeFileSync(envFilePath, envContent);
+      }
+      dotenv.config();
     }
-    dotenv.config();
   }
 
   // Return as Uint8Array

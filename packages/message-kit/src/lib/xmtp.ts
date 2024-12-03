@@ -12,7 +12,32 @@ import { chatMemory } from "../helpers/gpt.js";
 import { GroupMember } from "@xmtp/node-sdk";
 import { textGeneration } from "../helpers/gpt.js";
 import { getUserInfo, isOnXMTP } from "../helpers/resolver.js";
-import fs from "fs/promises";
+
+// Only import fs in Node.js environment
+//@ts-ignore
+const fs = typeof window === "undefined" ? require("fs").promises : null;
+const fileHandling = {
+  async getCacheCreationDate() {
+    if (!fs) return null;
+    try {
+      const stats = await fs.stat(".data");
+      return new Date(stats.birthtime);
+    } catch (err) {
+      console.error("Error getting cache creation date:", err);
+      return null;
+    }
+  },
+
+  async readFile(filePath: string) {
+    if (!fs) return null;
+    try {
+      return await fs.readFile(filePath);
+    } catch (err) {
+      console.error("Error reading file:", err);
+      return null;
+    }
+  },
+};
 import type { Reaction } from "@xmtp/content-type-reaction";
 import { ContentTypeText } from "@xmtp/content-type-text";
 import { WalletService } from "../helpers/cdp.js";
@@ -40,7 +65,6 @@ import {
 } from "@xmtp/content-type-remote-attachment";
 import { ContentTypeReaction } from "@xmtp/content-type-reaction";
 import path from "path";
-import { RedisClientType } from "@redis/client";
 //com
 const frameKitUrl = process.env.FRAMEKIT_URL ?? "https://frameskit.vercel.app";
 export const awaitedHandlers = new Map<
@@ -446,16 +470,7 @@ export class XMTPContext {
   }
 
   async getCacheCreationDate() {
-    //Gets the creation date of the cache folder
-    //Could be used to check if the cache is outdated
-    //Generally indicates the deployment date of the bot
-    try {
-      const stats = await fs.stat(".data");
-      const cacheCreationDate = new Date(stats.birthtime);
-      return cacheCreationDate;
-    } catch (err) {
-      console.error(err);
-    }
+    return await fileHandling.getCacheCreationDate();
   }
   async sendTo(message: string, receivers: string[]) {
     if (typeof message !== "string") {
@@ -556,8 +571,13 @@ export class XMTPContext {
   }
   async sendImage(filePath: string) {
     try {
-      // Read local file and extract its details
-      const file = await fs.readFile(filePath);
+      // Check if we can handle files
+      const file = await fileHandling.readFile(filePath);
+      if (!file) {
+        console.error("File operations not supported in this environment");
+        return;
+      }
+
       const filename = path.basename(filePath);
       const extname = path.extname(filePath);
       console.log(`Filename: ${filename}`);
@@ -569,7 +589,7 @@ export class XMTPContext {
 
       const attachment = {
         filename: filename,
-        mimeType: extname, // image, video, or audio
+        mimeType: extname,
         data: imgArray,
       };
 
