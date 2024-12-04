@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Client as V2Client } from "@xmtp/xmtp-js";
 import { Wallet } from "ethers";
 import styles from "./Chat.module.css";
+import { getUserInfo, UserInfo } from "@/app/utils/resolver";
 
 interface ChatProps {
   recipientAddress: string;
@@ -15,20 +16,40 @@ export default function Chat({ recipientAddress }: ChatProps) {
   const [wallet, setWallet] = useState<any | null>(null);
   const [xmtp, setXmtp] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [recipientInfo, setRecipientInfo] = useState<UserInfo | null>(null);
 
   useEffect(() => {
-    const newWallet = Wallet.createRandom();
-    setWallet(newWallet);
-    initXmtp(newWallet);
-  }, []);
+    const init = async () => {
+      const newWallet = Wallet.createRandom();
+      setWallet(newWallet);
+
+      try {
+        const userInfo = await getUserInfo(recipientAddress);
+        setRecipientInfo(userInfo);
+
+        if (userInfo?.address) {
+          await initXmtp(newWallet);
+        } else {
+          console.error("Could not resolve recipient address");
+          setIsLoading(false);
+        }
+      } catch (error) {
+        console.error("Error resolving recipient:", error);
+        setIsLoading(false);
+      }
+    };
+
+    init();
+  }, [recipientAddress]);
 
   useEffect(() => {
     const streamMessages = async () => {
-      if (!xmtp || !recipientAddress) return;
+      if (!xmtp || !recipientInfo?.address) return;
 
       try {
-        const conversation =
-          await xmtp.conversations.newConversation(recipientAddress);
+        const conversation = await xmtp.conversations.newConversation(
+          recipientInfo.address,
+        );
 
         // Load existing messages
         const messages = await conversation.messages();
@@ -76,7 +97,7 @@ export default function Chat({ recipientAddress }: ChatProps) {
     };
 
     streamMessages();
-  }, [xmtp, recipientAddress, wallet]);
+  }, [xmtp, recipientInfo, wallet]);
 
   const initXmtp = async (wallet: any) => {
     try {
@@ -91,18 +112,19 @@ export default function Chat({ recipientAddress }: ChatProps) {
   const sendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!xmtp || !newMessage || !recipientAddress) {
+    if (!xmtp || !newMessage || !recipientInfo?.address) {
       console.log("Missing required data:", {
         xmtp: !!xmtp,
         newMessage,
-        recipientAddress,
+        recipientAddress: recipientInfo?.address,
       });
       return;
     }
 
     try {
-      const conversation =
-        await xmtp.conversations.newConversation(recipientAddress);
+      const conversation = await xmtp.conversations.newConversation(
+        recipientInfo.address,
+      );
       await conversation.send(newMessage);
       setNewMessage("");
     } catch (error) {
@@ -113,13 +135,15 @@ export default function Chat({ recipientAddress }: ChatProps) {
   return (
     <div className={styles.chatContainer}>
       <div className={styles.walletInfo}>
-        <div>
+        {/*<div>
+           Display the user's wallet address 
           Your Wallet: {wallet?.address?.slice(0, 6)}...
           {wallet?.address?.slice(-4)}
-        </div>
+        </div>*/}
         <div>
-          Recipient: {recipientAddress.slice(0, 6)}...
-          {recipientAddress.slice(-4)}
+          Agent:
+          {recipientInfo?.preferredName ||
+            recipientAddress.slice(0, 6) + "..." + recipientAddress.slice(-4)}
         </div>
       </div>
       <div className={styles.messagesContainer}>

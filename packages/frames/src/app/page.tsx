@@ -49,7 +49,7 @@ export default function Home() {
             </div>
 
             <div className="powered-by" style={{ marginTop: "1rem" }}>
-              <a href="/chat" rel="noopener noreferrer">
+              <a href="/dm/0xC60E6Bb79322392761BFe3081E302aEB79B30B03" rel="noopener noreferrer">
                 Chat
               </a>
             </div>

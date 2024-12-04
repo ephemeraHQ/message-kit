@@ -144,6 +144,7 @@ body {
 }
 
 .nextjs-toast,
+nextjs-portal,
 .nextjs-static-indicator-toast-wrapper {
   display: none !important;
 }

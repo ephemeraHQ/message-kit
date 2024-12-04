@@ -32,6 +32,10 @@ Powered by XMTP \x1b[0m`;
     Send a message to this account on Converse:                              
     🔗 https://converse.xyz/dm/${client.accountAddress}`);
 
+  console.log(`\x1b[38;2;128;0;128m
+    Share it as a frame in Farcaster:                              
+    🔗 https://frames.message-kit.org/dm/${client.accountAddress}\x1b[0m`);
+
   let agent: Agent;
   const loadedSkills = (await loadSkillsFile()) as Agent;
   agent =

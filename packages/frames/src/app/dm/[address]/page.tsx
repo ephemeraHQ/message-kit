@@ -1,23 +1,38 @@
 "use client";
 import { Suspense, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import { useSearchParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import sdk, { type FrameContext } from "@farcaster/frame-sdk";
 
-const Chat = dynamic(() => import("../../components/Chat"), {
+const Chat = dynamic(() => import("../../../components/Chat"), {
   ssr: false,
 });
 
+export default function ChatFrame(): JSX.Element {
+  const params = useParams();
+  const address = params.address as string;
+
+  return (
+    <FrameHTML address={address}>
+      <Suspense fallback={<div>Loading...</div>}>
+        <ChatContent />
+      </Suspense>
+    </FrameHTML>
+  );
+}
+
 // Create a wrapper component that will render the full HTML
-function FrameHTML({ children }: { children: React.ReactNode }) {
-  const params = {
-    url: `${process.env.NEXT_PUBLIC_URL ?? "http://localhost:3000"}`,
-    address: "0xC60E6Bb79322392761BFe3081E302aEB79B30B03",
-  };
-  const image = `${params.url}/api/chat?address=${params.address}`;
-  console.log("=== Frame HTML Component ===");
-  console.log("Base URL:", params.url);
-  console.log("Generated image URL:", image);
+function FrameHTML({
+  children,
+  address,
+}: {
+  children: React.ReactNode;
+  address: string;
+}) {
+  const baseUrl = `${process.env.NEXT_PUBLIC_URL ?? "http://localhost:3000"}`;
+  const image = `${baseUrl}/api/dm?address=${address}`;
+
+  console.log(image);
   return (
     <html>
       <head>
@@ -39,11 +54,8 @@ function FrameHTML({ children }: { children: React.ReactNode }) {
 function ChatContent(): JSX.Element {
   const [isSDKLoaded, setIsSDKLoaded] = useState(false);
   const [context, setContext] = useState<FrameContext>();
-  const searchParams = useSearchParams();
-
-  const address =
-    searchParams?.get("address") ||
-    "0xC60E6Bb79322392761BFe3081E302aEB79B30B03";
+  const params = useParams();
+  const address = params.address as string;
 
   useEffect(() => {
     const initFrame = async () => {
@@ -61,15 +73,5 @@ function ChatContent(): JSX.Element {
     <div style={{ height: "100vh", width: "100%" }}>
       <Chat recipientAddress={address} />
     </div>
-  );
-}
-
-export default function ChatFrame(): JSX.Element {
-  return (
-    <FrameHTML>
-      <Suspense fallback={<div>Loading...</div>}>
-        <ChatContent />
-      </Suspense>
-    </FrameHTML>
   );
 }

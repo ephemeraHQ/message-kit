@@ -139,12 +139,23 @@ export const getUserInfo = async (
           },
           5000,
         );
-        if (!response?.ok) {
-          console.error(
-            `Converse profile request failed with status ${response?.status}`,
+
+        // Handle null response from fetchWithTimeout
+        if (!response) {
+          console.warn(
+            `Unable to fetch Converse profile for ${username} - skipping`,
           );
+          return data;
         }
-        const converseData = (await response?.json()) as ConverseProfile;
+
+        if (!response.ok) {
+          console.warn(
+            `Converse profile request failed for ${username} with status ${response.status}`,
+          );
+          return data;
+        }
+
+        const converseData = (await response.json()) as ConverseProfile;
         if (converseData) {
           data.converseUsername =
             converseData.formattedName ||
@@ -155,11 +166,22 @@ export const getUserInfo = async (
           data.converseEndpoint = converseEndpoint;
         }
       } catch (error) {
-        console.error("Failed to fetch Converse profile:", error);
+        // Improved error handling
+        if (error instanceof Error) {
+          console.warn(
+            `Converse profile fetch failed for ${keyToUse}: ${error.message}`,
+          );
+        } else {
+          console.warn(
+            `Unknown error while fetching Converse profile for ${keyToUse}`,
+          );
+        }
+        // Return existing data instead of failing completely
+        return data;
       }
     }
 
-    data.preferredName = data.ensDomain || data.converseUsername || "Friend";
+    data.preferredName = data.ensDomain || data.converseUsername || "Agent";
     infoCache.set(keyToUse, data);
     return data;
   }
@@ -172,6 +194,7 @@ const fetchWithTimeout = async (
 ) => {
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), timeout);
+
   try {
     const response = await fetch(url, {
       ...options,
@@ -181,6 +204,23 @@ const fetchWithTimeout = async (
     return response;
   } catch (error) {
     clearTimeout(id);
-    console.error("fetching");
+
+    if (error instanceof Error) {
+      if (error.name === "AbortError") {
+        console.warn(`Request timed out after ${timeout}ms: ${url}`);
+      } else if (
+        error.name === "TypeError" &&
+        error.message === "Failed to fetch"
+      ) {
+        console.warn(`Network error or CORS issue when fetching ${url}`);
+      } else {
+        console.warn(`Fetch error for ${url}: ${error.message}`);
+      }
+    } else {
+      console.warn(`Unknown error while fetching ${url}`);
+    }
+
+    // Return null to indicate fetch failure
+    return null;
   }
 };
