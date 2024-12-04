@@ -16,11 +16,16 @@ const interSemiboldFontData = fs.readFileSync(interSemiboldFontPath);
 
 export async function GET(req: NextRequest) {
   try {
-    console.log("req", req);
-    const user = await getUserInfo(
-      req.nextUrl.searchParams.get("address") ?? "",
-    );
-    console.log("user", user);
+    console.log("=== Chat Route Handler ===");
+    console.log("Request URL:", req.nextUrl.toString());
+    console.log("Search Params:", Object.fromEntries(req.nextUrl.searchParams));
+
+    const address = req.nextUrl.searchParams.get("address") ?? "";
+    console.log("Requested address:", address);
+
+    const user = await getUserInfo(address);
+    console.log("Resolved user info:", user);
+
     const params = {
       url: process.env.NEXT_PUBLIC_URL || "http://localhost:3000",
       ...user,

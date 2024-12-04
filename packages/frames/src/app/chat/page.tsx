@@ -15,7 +15,9 @@ function FrameHTML({ children }: { children: React.ReactNode }) {
     address: "0xC60E6Bb79322392761BFe3081E302aEB79B30B03",
   };
   const image = `${params.url}/api/chat?address=${params.address}`;
-  console.log("image", image);
+  console.log("=== Frame HTML Component ===");
+  console.log("Base URL:", params.url);
+  console.log("Generated image URL:", image);
   return (
     <html>
       <head>
