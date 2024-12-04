@@ -7,7 +7,7 @@ export default async function Home({
 
   // Extract meta tags from searchParams
   const {
-    title = "FrameKit",
+    title = "frames",
     frame = "custom",
     version = "vNext",
     accepts = "vNext",

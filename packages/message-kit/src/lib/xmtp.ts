@@ -68,8 +68,7 @@ import {
 import { ContentTypeReaction } from "@xmtp/content-type-reaction";
 import path from "path";
 //com
-const frameKitUrl =
-  process.env.FRAMEKIT_URL ?? "https://frames.message-kit.org/";
+const framesUrl = process.env.frames_URL ?? "https://frames.message-kit.org/";
 export const awaitedHandlers = new Map<
   string,
   (text: string) => Promise<boolean | undefined>
@@ -511,7 +510,7 @@ export class XMTPContext {
       );
     }
 
-    const frameUrl = `${frameKitUrl}/custom?${params.toString()}`;
+    const frameUrl = `${framesUrl}/custom?${params.toString()}`;
     await this.send(frameUrl);
   }
   async getUserInfo(username: string) {
@@ -541,7 +540,7 @@ export class XMTPContext {
         return;
       }
 
-    let sendUrl = `${frameKitUrl}/payment?amount=${amount}&token=${token}&recipientAddress=${senderInfo?.address}`;
+    let sendUrl = `${framesUrl}/payment?amount=${amount}&token=${token}&recipientAddress=${senderInfo?.address}`;
     if (sendTo.length > 0) {
       await this.sendTo(sendUrl, sendTo);
     } else {
@@ -566,7 +565,7 @@ export class XMTPContext {
     const { networkLogo, networkName, tokenName, dripAmount } =
       extractFrameChain(txLink);
 
-    let receiptUrl = `${frameKitUrl}/receipt?txLink=${txLink}&networkLogo=${
+    let receiptUrl = `${framesUrl}/receipt?txLink=${txLink}&networkLogo=${
       networkLogo
     }&networkName=${networkName}&tokenName=${tokenName}&amount=${dripAmount}`;
 

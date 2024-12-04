@@ -35,7 +35,7 @@ export default function Home() {
         <div
           className={`container ${geistSans.variable} ${geistMono.variable}`}>
           <div className="wrapper">
-            <h1 className={`title ${geistSans.className}`}>FrameKit</h1>
+            <h1 className={`title ${geistSans.className}`}>frames</h1>
 
             <div className="powered-by" style={{ marginTop: "1rem" }}>
               <a href="/payment" rel="noopener noreferrer">

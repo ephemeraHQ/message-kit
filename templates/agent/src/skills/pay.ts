@@ -6,7 +6,7 @@ export const pay: Skill[] = [
     skill: "/pay [amount] [token] [username] [address]",
     examples: [
       "/pay 10 vitalik.eth",
-      "/pay 1 usdc to 0xc9925662D36DE3e1bF0fD64e779B2e5F0Aead964",
+      "/pay 1 usdc to 0xC60E6Bb79322392761BFe3081E302aEB79B30B03",
     ],
     description:
       "Send a specified amount of a cryptocurrency to a destination address. \nWhen tipping, you can asume its 1 usdc.",

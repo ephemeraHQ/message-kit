@@ -21,7 +21,7 @@
     "dev:cli": "cd packages/create-message-kit && yarn link && yarn create message-kit",
     "dev:docs": "cd packages/docs && yarn dev",
     "dev:exp": "cd templates/experimental && yarn dev",
-    "dev:frames": "cd packages/framekit && yarn dev",
+    "dev:frames": "cd packages/frames && yarn dev",
     "dev:gpt": "cd templates/gpt && yarn dev",
     "dev:toss": "cd templates/toss && yarn dev",
     "format": "turbo run format",

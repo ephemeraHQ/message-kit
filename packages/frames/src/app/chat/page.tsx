@@ -11,8 +11,8 @@ const Chat = dynamic(() => import("../../components/Chat"), {
 // Create a wrapper component that will render the full HTML
 function FrameHTML({ children }: { children: React.ReactNode }) {
   const params = {
-    url: `${process.env.NEXT_PUBLIC_URL}`,
-    address: "0xc9925662D36DE3e1bF0fD64e779B2e5F0Aead964",
+    url: `${process.env.NEXT_PUBLIC_URL ?? "http://localhost:3000"}`,
+    address: "0xC60E6Bb79322392761BFe3081E302aEB79B30B03",
   };
   const image = `${params.url}/api/chat?address=${params.address}`;
   console.log("image", image);
@@ -41,7 +41,7 @@ function ChatContent(): JSX.Element {
 
   const address =
     searchParams?.get("address") ||
-    "0xc9925662D36DE3e1bF0fD64e779B2e5F0Aead964";
+    "0xC60E6Bb79322392761BFe3081E302aEB79B30B03";
 
   useEffect(() => {
     const initFrame = async () => {

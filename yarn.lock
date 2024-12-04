@@ -6366,9 +6366,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"framekit@workspace:packages/framekit":
+"frames@workspace:packages/frames":
   version: 0.0.0-use.local
-  resolution: "framekit@workspace:packages/framekit"
+  resolution: "frames@workspace:packages/frames"
   dependencies:
     "@farcaster/frame-sdk": "npm:latest"
     "@types/next": "npm:^9.0.0"

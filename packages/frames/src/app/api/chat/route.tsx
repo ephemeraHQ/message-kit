@@ -1,6 +1,7 @@
 import { ImageResponse } from "next/og";
 import { NextRequest } from "next/server";
 import fs from "fs";
+import { isAddress } from "viem";
 import { join } from "path";
 import { getUserInfo } from "@/app/utils/resolver";
 
@@ -15,14 +16,16 @@ const interSemiboldFontData = fs.readFileSync(interSemiboldFontPath);
 
 export async function GET(req: NextRequest) {
   try {
+    console.log("req", req);
     const user = await getUserInfo(
       req.nextUrl.searchParams.get("address") ?? "",
     );
+    console.log("user", user);
     const params = {
-      url: process.env.NEXT_PUBLIC_URL,
+      url: process.env.NEXT_PUBLIC_URL || "http://localhost:3000",
       ...user,
     };
-    if (!params.address) {
+    if (!isAddress(params.address ?? "")) {
       return new ImageResponse(
         (
           <div
@@ -48,7 +51,7 @@ export async function GET(req: NextRequest) {
                 padding: "0 120px",
                 whiteSpace: "pre-wrap",
               }}>
-              {`Invalid network!`}
+              {`Invalid address!`}
             </div>
           </div>
         ),
@@ -66,7 +69,6 @@ export async function GET(req: NextRequest) {
         },
       );
     }
-    // ... existing code ...
     return new ImageResponse(
       (
         <div
