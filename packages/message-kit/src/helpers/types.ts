@@ -1,6 +1,7 @@
 import { XMTPContext } from "../lib/xmtp.js";
 import { ClientOptions, GroupMember } from "@xmtp/node-sdk";
 import { ContentTypeId } from "@xmtp/content-type-primitives";
+import type { RedisClientType } from "@redis/client";
 
 export type MessageAbstracted = {
   id: string;
@@ -63,6 +64,8 @@ export type RunConfig = {
   agent?: Agent;
   // model to be used
   gptModel?: string;
+  // wallet service db
+  walletServiceDB?: RedisClientType;
 };
 export interface SkillParamConfig {
   default?: string | number | boolean;

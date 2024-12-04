@@ -1,5 +1,31 @@
 # Changelog
 
+## 1.2.11
+
+- Framesv2 integration: Now every agent can have its own landing page for interaction via web and v2 frames via farcaster.
+
+## 1.1.10
+
+- CDP integration: Create agents with CDP SDK for swaps, mints and payments.
+
+## 1.2.9
+
+- **New Features**
+
+  - Added USDC management features, allowing users to check balances, fund wallets, and transfer USDC.
+  - Enhanced documentation for various components, including new sections for USDC and toss management.
+  - New environment variables added for improved configuration options.
+  - Added a new "Agent Wallet" section in the documentation to facilitate wallet management.
+  - Introduced the `WalletService` class for managing agent wallets, enabling gasless payments and transfers.
+
+- **Bug Fixes**
+
+  - Improved error handling and logging for wallet operations and toss management.
+
+- **Documentation**
+  - Updated README files and documentation pages to provide clearer instructions and new environment variable requirements, including detailed setup for the USDC and AgentService functionalities.
+  - Added a new section in the sidebar for "Agent Wallet" to enhance navigation.
+
 ## 1.2.8
 
 - **New Features**
@@ -51,7 +77,7 @@
 
 - **Chores** - Removed outdated files and references to improve codebase clarity. - Updated environment variable names for consistency.
 
-## [1.1.10-beta.2] - 2024-11-21
+## 1.1.10
 
 **Summary of Changes**
 
@@ -77,7 +103,7 @@ The pull request introduces several updates and improvements across multiple fil
 
 Overall, these changes aim to enhance the functionality of GPT-based agents, improve code quality, update documentation for better developer experience, and streamline the project structure.
 
-## [1.1.8] - 2024-11-11
+## 1.1.8
 
 **Summary of Changes**
 
@@ -102,7 +128,7 @@ Overall, these changes aim to enhance the functionality of GPT-based agents, imp
 
 - **Chores** - Removed outdated files and consolidated functionality to improve code organization. - Simplified development setup by removing unnecessary dependencies and replacing `nodemon` with `node --watch`. - Introduced post-install scripts for TypeScript compilation.
 
-## [1.1.5] - 2024-11-02
+## 1.1.5
 
 **Summary of Changes**
 
@@ -114,11 +140,11 @@ Overall, these changes aim to enhance the functionality of GPT-based agents, imp
 - Each agent can have its own landing in messagekit (devs can do PRs)
 - Quickstarts section
   - Skills: There is a 4-step approach to AI Skills:
-  - [Definition](https://messagekit.ephemerahq.com/skills/definition): Define the skills
-  - [Parsing](https://messagekit.ephemerahq.com/skills/parsing): From @base please let swap 1 eth to usdc to /swap 1 eth usdc
-  - [Processing](https://messagekit.ephemerahq.com/skills/processing): For an agent to process new lines
-  - [Scenarios](https://messagekit.ephemerahq.com/skills/scenarios): For the agent to understand the context and perform skills autonomously.
-- [Reasoning](https://messagekit.ephemerahq.com/skills/reasoning): For the agent to understand all context and perform skills autonomously.
+  - [Definition](https://message-kit.org/skills/definition): Define the skills
+  - [Parsing](https://message-kit.org/skills/parsing): From @base please let swap 1 eth to usdc to /swap 1 eth usdc
+  - [Processing](https://message-kit.org/skills/processing): For an agent to process new lines
+  - [Scenarios](https://message-kit.org/skills/scenarios): For the agent to understand the context and perform skills autonomously.
+- [Reasoning](https://message-kit.org/skills/reasoning): For the agent to understand all context and perform skills autonomously.
 - Resolver: Fetches context from the user like ENS domain or Converse username
 
 ### MessageKit updates

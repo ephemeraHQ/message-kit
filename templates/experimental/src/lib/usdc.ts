@@ -18,7 +18,7 @@ const erc20Abi = [
   "function transfer(address to, uint256 amount) returns (bool)",
 ];
 
-export class AgentWallet {
+export class USDCWallet {
   walletDir: string;
   senderAddress: string;
   privateKey: string;
@@ -28,21 +28,21 @@ export class AgentWallet {
 
   constructor(senderAddress: string) {
     this.senderAddress = senderAddress;
-    this.walletDir = path.join(process.cwd(), `./.data/agentwallets`);
+    this.walletDir = path.join(process.cwd(), `./.data/usdcwallets`);
     if (!fs.existsSync(this.walletDir)) {
       fs.mkdirSync(this.walletDir, { recursive: true });
-      console.warn("Agent wallet created and saved successfully.");
+      console.warn("USDC wallet created and saved successfully.");
     }
 
-    const walletFilePath = path.join(this.walletDir, `${senderAddress}.agent`);
+    const walletFilePath = path.join(this.walletDir, `${senderAddress}.usdc`);
 
     if (fs.existsSync(walletFilePath)) {
       const walletData = fs.readFileSync(walletFilePath, "utf8");
       this.privateKey = walletData.match(/KEY=(.+)/)?.[1]?.trim() ?? "";
     } else {
       this.privateKey = generatePrivateKey();
-      let agentWallet = new ethers.Wallet(this.privateKey, provider);
-      const walletData = `KEY=${this.privateKey}\nADDRESS=${agentWallet.address}`;
+      let usdcWallet = new ethers.Wallet(this.privateKey, provider);
+      const walletData = `KEY=${this.privateKey}\nADDRESS=${usdcWallet.address}`;
       fs.writeFileSync(walletFilePath, walletData);
     }
 
@@ -82,7 +82,7 @@ export class AgentWallet {
     }
     try {
       const amountInWei = ethers.parseUnits(amount.toString(), 6); // USDC has 6 decimals
-      const adminAgent = new AgentWallet(to);
+      const adminAgent = new USDCWallet(to);
       const tx = await this.usdcContract.transfer(
         adminAgent.agentAddress,
         amountInWei,

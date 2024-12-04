@@ -7,27 +7,21 @@ export default defineConfig({
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width" />
         <meta property="og:title" content="MessageKit" />
-        <meta
-          property="og:image"
-          content="https://messagekit.ephemerahq.com/hero.jpg"
-        />
+        <meta property="og:image" content="https://message-kit.org/hero.jpg" />
         <meta property="fc:frame" content="vNext" />
         <meta property="of:version" content="vNext" />
         <meta property="of:accepts:xmtp" content="vNext" />
-        <meta
-          property="of:image"
-          content="https://messagekit.ephemerahq.com/hero.jpg"
-        />
+        <meta property="of:image" content="https://message-kit.org/hero.jpg" />
         <meta
           property="fc:frame:image"
-          content="https://messagekit.ephemerahq.com/hero.jpg"
+          content="https://message-kit.org/hero.jpg"
         />
 
         <meta property="fc:frame:button:1" content="Docs" />
         <meta property="fc:frame:button:1:action" content="link" />
         <meta
           property="fc:frame:button:1:target"
-          content="https://messagekit.ephemerahq.com/"
+          content="https://message-kit.org/"
         />
 
         <meta property="fc:frame:button:2" content="Drop a ⭐️" />
@@ -44,13 +38,10 @@ export default defineConfig({
           name="twitter:description"
           content="MessageKit is a powerful tool for managing your messages."
         />
-        <meta
-          name="twitter:image"
-          content="https://messagekit.ephemerahq.com/hero.jpg"
-        />
+        <meta name="twitter:image" content="https://message-kit.org/hero.jpg" />
         <script
           src="https://plausible.io/js/script.outbound-links.js"
-          data-domain="messagekit.ephemerahq.com"
+          data-domain="message-kit.org"
           defer
         />
       </>
@@ -78,7 +69,7 @@ export default defineConfig({
       link: "https://github.com/ephemeraHQ/message-kit",
     },
   ],
-  topNav: [{ text: "v1.2.8", link: "/changelog" }],
+  topNav: [{ text: "v1.2.11", link: "/changelog" }],
   editLink: {
     pattern:
       "https://github.com/ephemeraHQ/message-kit/blob/main/packages/docs/pages/:path",
@@ -117,7 +108,7 @@ export default defineConfig({
           link: "/concepts/frames",
         },
         {
-          text: "Agent Wallet",
+          text: "Wallet Service",
           link: "/concepts/wallet",
         },
       ],

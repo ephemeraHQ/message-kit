@@ -1440,6 +1440,30 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@farcaster/frame-core@npm:^0.0.5":
+  version: 0.0.5
+  resolution: "@farcaster/frame-core@npm:0.0.5"
+  dependencies:
+    ox: "npm:^0.1.6"
+    zod: "npm:^3.23.8"
+  checksum: 10/34266f14941bc20a4bf5a1409fe2a3dcd31477599c792d27a086269c54085be72b98be400b0ac108c15c1abd12c9c4a02bf2f3d4ce640bb3577c103700e863f2
+  languageName: node
+  linkType: hard
+
+"@farcaster/frame-sdk@npm:latest":
+  version: 0.0.6
+  resolution: "@farcaster/frame-sdk@npm:0.0.6"
+  dependencies:
+    "@farcaster/frame-core": "npm:^0.0.5"
+    comlink: "npm:^4.4.2"
+    eventemitter3: "npm:^5.0.1"
+    ox: "npm:^0.2.2"
+  peerDependencies:
+    ox: ^0.2.2
+  checksum: 10/4f01f9d96753bf3fd8b830dde70f2e8989ae1ca422e60df00f1e69eaed4d188417d1ff32533dca2d63add20ddc60b6918883038ec952898d739860de30104ae4
+  languageName: node
+  linkType: hard
+
 "@fastify/busboy@npm:^2.0.0":
   version: 2.1.1
   resolution: "@fastify/busboy@npm:2.1.1"
@@ -2825,6 +2849,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@redis/client@npm:^1.6.0":
+  version: 1.6.0
+  resolution: "@redis/client@npm:1.6.0"
+  dependencies:
+    cluster-key-slot: "npm:1.1.2"
+    generic-pool: "npm:3.9.0"
+    yallist: "npm:4.0.0"
+  checksum: 10/ad375bd685dc34163304872e611ad31dc09a20f4dc8416e5dd588e8a9d2a42a6882f5c8f83d6388ba04ada71513c461b211c3146bcd8ab4da20b3f7edf08fb63
+  languageName: node
+  linkType: hard
+
 "@remix-run/router@npm:1.21.0":
   version: 1.21.0
   resolution: "@remix-run/router@npm:1.21.0"
@@ -3793,11 +3828,37 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@xmtp/message-kit@npm:latest":
+  version: 1.2.10
+  resolution: "@xmtp/message-kit@npm:1.2.10"
+  dependencies:
+    "@coinbase/coinbase-sdk": "npm:*"
+    "@redis/client": "npm:^1.6.0"
+    "@types/node": "npm:^20.14.2"
+    "@vitest/coverage-v8": "npm:^2.1.4"
+    "@xmtp/content-type-primitives": "npm:^1.0.2"
+    "@xmtp/content-type-reaction": "npm:^1.1.10-beta.1"
+    "@xmtp/content-type-remote-attachment": "npm:1.1.11"
+    "@xmtp/content-type-reply": "npm:^1.1.11"
+    "@xmtp/content-type-text": "npm:^1.0.0"
+    "@xmtp/grpc-api-client": "npm:^0.2.8"
+    "@xmtp/node-sdk": "npm:^0.0.30"
+    "@xmtp/xmtp-js": "npm:^13.0.3"
+    dotenv: "npm:^16.4.5"
+    openai: "npm:^4.52.7"
+    typescript: "npm:^5.4.5"
+    viem: "npm:^2.16.3"
+    vitest: "npm:^2.1.4"
+  checksum: 10/ff6b317067b1109d6f2fc4f9142feb8d38d46e7f1e908af918d5631d2c1b0579c6e22360aa3a695bd08522f3bb4bc1abfcacf01c86588b28ace1ed8dcbcd3e55
+  languageName: node
+  linkType: hard
+
 "@xmtp/message-kit@workspace:*, @xmtp/message-kit@workspace:packages/message-kit":
   version: 0.0.0-use.local
   resolution: "@xmtp/message-kit@workspace:packages/message-kit"
   dependencies:
     "@coinbase/coinbase-sdk": "npm:*"
+    "@redis/client": "npm:^1.6.0"
     "@rollup/plugin-typescript": "npm:^11.1.6"
     "@types/node": "npm:^20.14.2"
     "@vitest/coverage-v8": "npm:^2.1.4"
@@ -3807,8 +3868,7 @@ __metadata:
     "@xmtp/content-type-reply": "npm:^1.1.11"
     "@xmtp/content-type-text": "npm:^1.0.0"
     "@xmtp/grpc-api-client": "npm:^0.2.8"
-    "@xmtp/node-bindings": "npm:0.0.25-internal-fix-forked-groups"
-    "@xmtp/node-sdk": "npm:^0.0.28"
+    "@xmtp/node-sdk": "npm:^0.0.30"
     "@xmtp/xmtp-js": "npm:^13.0.3"
     dotenv: "npm:^16.4.5"
     openai: "npm:^4.52.7"
@@ -3823,30 +3883,23 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@xmtp/node-bindings@npm:0.0.25-internal-fix-forked-groups":
-  version: 0.0.25-internal-fix-forked-groups
-  resolution: "@xmtp/node-bindings@npm:0.0.25-internal-fix-forked-groups"
-  checksum: 10/ec9d789d88409308f5d681aabe86937dcc1318c186cbf656ff9563e770da0d43c49da66133329778829f91586a33d55de5ba7d768cce661469434b1e8849e9d4
-  languageName: node
-  linkType: hard
-
-"@xmtp/node-bindings@npm:^0.0.25":
-  version: 0.0.25
-  resolution: "@xmtp/node-bindings@npm:0.0.25"
-  checksum: 10/336f9b2a4a8b2781f6c53a7dd444428893f5e04a927350c82fcb79e37e0cc69abcb86406ffedeaa28115f1b57801890309546a10c9e806e3ed81b18b9d8f1431
-  languageName: node
-  linkType: hard
-
-"@xmtp/node-sdk@npm:^0.0.28":
+"@xmtp/node-bindings@npm:^0.0.28":
   version: 0.0.28
-  resolution: "@xmtp/node-sdk@npm:0.0.28"
+  resolution: "@xmtp/node-bindings@npm:0.0.28"
+  checksum: 10/0ceea72582926dcce03c8e3839b7101d7ce4aef56a55b46421c2e46e96f65c90a224b1649ff765c1f3cb1e2e21a730d1891bb369260c94712066b85d358fb6f4
+  languageName: node
+  linkType: hard
+
+"@xmtp/node-sdk@npm:^0.0.30":
+  version: 0.0.30
+  resolution: "@xmtp/node-sdk@npm:0.0.30"
   dependencies:
     "@xmtp/content-type-group-updated": "npm:^1.0.1"
     "@xmtp/content-type-primitives": "npm:^1.0.3"
     "@xmtp/content-type-text": "npm:^1.0.1"
-    "@xmtp/node-bindings": "npm:^0.0.25"
+    "@xmtp/node-bindings": "npm:^0.0.28"
     "@xmtp/proto": "npm:^3.72.3"
-  checksum: 10/86f0d601ae65873b71561aa37a60a8709a9aaee0f0020f3590a1149f10bbe4394d1bc5fd97e4e9c30eb5ec7d544eb33de3dcc6fb8e9cbcbae152ac7cd746ef7c
+  checksum: 10/533ea8a801296358ab2aec41a97d135545bfb877a5cc3bc1a57670b91ec68f7ab39b9e0eab5fe0cf3765166a9e54662bea4adc860c610d289f763709948ed626
   languageName: node
   linkType: hard
 
@@ -4766,6 +4819,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cluster-key-slot@npm:1.1.2":
+  version: 1.1.2
+  resolution: "cluster-key-slot@npm:1.1.2"
+  checksum: 10/516ed8b5e1a14d9c3a9c96c72ef6de2d70dfcdbaa0ec3a90bc7b9216c5457e39c09a5775750c272369070308542e671146120153062ab5f2f481bed5de2c925f
+  languageName: node
+  linkType: hard
+
 "collapse-white-space@npm:^2.0.0":
   version: 2.1.0
   resolution: "collapse-white-space@npm:2.1.0"
@@ -4815,6 +4875,13 @@ __metadata:
   dependencies:
     delayed-stream: "npm:~1.0.0"
   checksum: 10/2e969e637d05d09fa50b02d74c83a1186f6914aae89e6653b62595cc75a221464f884f55f231b8f4df7a49537fba60bdc0427acd2bf324c09a1dbb84837e36e4
+  languageName: node
+  linkType: hard
+
+"comlink@npm:^4.4.2":
+  version: 4.4.2
+  resolution: "comlink@npm:4.4.2"
+  checksum: 10/ecee53b5b4536b3aa3f7636c383f831e68fbc013def77665cc7fad873d72cfa23b994e1ec4b49e83e4e909c1089a03acae03a523e33a5e5ed938cdb613456434
   languageName: node
   linkType: hard
 
@@ -5969,7 +6036,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eventemitter3@npm:5.0.1":
+"eventemitter3@npm:5.0.1, eventemitter3@npm:^5.0.1":
   version: 5.0.1
   resolution: "eventemitter3@npm:5.0.1"
   checksum: 10/ac6423ec31124629c84c7077eed1e6987f6d66c31cf43c6fcbf6c87791d56317ce808d9ead483652436df171b526fc7220eccdc9f3225df334e81582c3cf7dd5
@@ -6299,14 +6366,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"framekit@workspace:packages/framekit":
+"frames@workspace:packages/frames":
   version: 0.0.0-use.local
-  resolution: "framekit@workspace:packages/framekit"
+  resolution: "frames@workspace:packages/frames"
   dependencies:
+    "@farcaster/frame-sdk": "npm:latest"
     "@types/next": "npm:^9.0.0"
     "@types/node": "npm:^20"
     "@types/react": "npm:^18"
     "@types/react-dom": "npm:^18"
+    "@xmtp/message-kit": "npm:latest"
     geist: "npm:^1.3.1"
     next: "npm:^15.0.3"
     qrcode: "npm:^1.5.4"
@@ -6408,6 +6477,13 @@ __metadata:
   peerDependencies:
     next: ">=13.2.0"
   checksum: 10/73c6a7a0c8dd27d9f576f77016e19cda6efcd137f6244b07ce6195b39a2d9164688eeb508199f1c36606e7c6c66e7863eee31b6a46932747b3ee7f0d426895a9
+  languageName: node
+  linkType: hard
+
+"generic-pool@npm:3.9.0":
+  version: 3.9.0
+  resolution: "generic-pool@npm:3.9.0"
+  checksum: 10/3c632d30a6a7d47412dc67ddc517992691e0fde819c0cb6b5871bc87d10f61a7c09f12a60dbd77c78ae3e6ca10db41e2eaee28985ce724d9620354a006205ce1
   languageName: node
   linkType: hard
 
@@ -9038,6 +9114,46 @@ __metadata:
     typescript:
       optional: true
   checksum: 10/cba00f13289599ff03cee3dbc19167c1d0f01829379d119f962b4e951ee2bf0d14491c7a45974e6a2a745117b13b22e9e4131d285e1f5247ea4e1cbc43c5c3d8
+  languageName: node
+  linkType: hard
+
+"ox@npm:^0.1.6":
+  version: 0.1.8
+  resolution: "ox@npm:0.1.8"
+  dependencies:
+    "@adraffy/ens-normalize": "npm:^1.10.1"
+    "@noble/curves": "npm:^1.6.0"
+    "@noble/hashes": "npm:^1.5.0"
+    "@scure/bip32": "npm:^1.5.0"
+    "@scure/bip39": "npm:^1.4.0"
+    abitype: "npm:^1.0.6"
+    eventemitter3: "npm:5.0.1"
+  peerDependencies:
+    typescript: ">=5.4.0"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 10/3b818f73c0e5925fd8ed11f4ee151dfb03942613595325d8418eb5fd57467a2458281a0cca7296265ee4d5ef640f96ca4c956de1e1be94f496d80f3d1b5cc76d
+  languageName: node
+  linkType: hard
+
+"ox@npm:^0.2.2":
+  version: 0.2.2
+  resolution: "ox@npm:0.2.2"
+  dependencies:
+    "@adraffy/ens-normalize": "npm:^1.10.1"
+    "@noble/curves": "npm:^1.6.0"
+    "@noble/hashes": "npm:^1.5.0"
+    "@scure/bip32": "npm:^1.5.0"
+    "@scure/bip39": "npm:^1.4.0"
+    abitype: "npm:^1.0.6"
+    eventemitter3: "npm:5.0.1"
+  peerDependencies:
+    typescript: ">=5.4.0"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 10/f97ad3dadaa8699ad2e30f57d4ccb30a41a83b9e238df07ded255816e4da1ec02d606bd5e2a45ce39eb707ceceac7c78b82fc7a82334741ecefb411136d006c2
   languageName: node
   linkType: hard
 
@@ -12217,17 +12333,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"yallist@npm:4.0.0, yallist@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "yallist@npm:4.0.0"
+  checksum: 10/4cb02b42b8a93b5cf50caf5d8e9beb409400a8a4d85e83bb0685c1457e9ac0b7a00819e9f5991ac25ffabb56a78e2f017c1acc010b3a1babfe6de690ba531abd
+  languageName: node
+  linkType: hard
+
 "yallist@npm:^3.0.2":
   version: 3.1.1
   resolution: "yallist@npm:3.1.1"
   checksum: 10/9af0a4329c3c6b779ac4736c69fae4190ac03029fa27c1aef4e6bcc92119b73dea6fe5db5fe881fb0ce2a0e9539a42cdf60c7c21eda04d1a0b8c082e38509efb
-  languageName: node
-  linkType: hard
-
-"yallist@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "yallist@npm:4.0.0"
-  checksum: 10/4cb02b42b8a93b5cf50caf5d8e9beb409400a8a4d85e83bb0685c1457e9ac0b7a00819e9f5991ac25ffabb56a78e2f017c1acc010b3a1babfe6de690ba531abd
   languageName: node
   linkType: hard
 
@@ -12316,6 +12432,13 @@ __metadata:
   version: 2.1.2
   resolution: "yoctocolors-cjs@npm:2.1.2"
   checksum: 10/d731e3ba776a0ee19021d909787942933a6c2eafb2bbe85541f0c59aa5c7d475ce86fcb860d5803105e32244c3dd5ba875b87c4c6bf2d6f297da416aa54e556f
+  languageName: node
+  linkType: hard
+
+"zod@npm:^3.23.8":
+  version: 3.23.8
+  resolution: "zod@npm:3.23.8"
+  checksum: 10/846fd73e1af0def79c19d510ea9e4a795544a67d5b34b7e1c4d0425bf6bfd1c719446d94cdfa1721c1987d891321d61f779e8236fde517dc0e524aa851a6eff1
   languageName: node
   linkType: hard
 

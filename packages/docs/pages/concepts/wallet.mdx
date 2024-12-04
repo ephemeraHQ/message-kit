@@ -1,109 +1,136 @@
-# Agent Wallet
+# Wallet as a Service
 
-The `WalletService` class in MessageKit context provides a way to create an agent wallet for each user that can perform payments and transfers gassless on Base.
+The `WalletService` class in MessageKit provides a way to create an agent wallet for each user that can perform gasless payments and transfers on Base.
 
 ## Introduction
 
-To use the `WalletService`, you need to add the `walletService` to the runner.
+To use the `WalletService`, you need to initialize it with a Redis client and encryption keys:
+
+### Requirements
+
+- `@coinbase/coinbase-sdk`: Already included in MessageKit
+- `@redis/client`: A Redis client for wallet storage
+- Environment variables:
+  - `COINBASE_API_KEY_NAME`: The Coinbase API key name
+  - `COINBASE_API_KEY_PRIVATE_KEY`: The Coinbase API private key
+  - `COINBASE_API_REDIS_URL`: The Redis URL
+
+### Activation
+
+Start by importing the `getWalletService` function from the `redis.js` file:
 
 ```typescript
+import { getWalletService } from "./lib/redis.js";
+const walletServiceDB = await getWalletService();
 run(
-  async () => {
-    /*Your logic*/
+  async (context: XMTPContext) => {
+    // ...
   },
-  {
-    walletService: true,
-  },
+  { walletServiceDB },
 );
 ```
 
-Then you can access the wallet service in the context.
+### Usage
+
+The `walletService` object is available in the `context` object:
 
 ```typescript
 const { walletService } = context;
+// Use it in your code
+await walletService.someMethod();
 ```
 
-**Requirements**:
+## User Wallets
 
-- `@coinbase/coinbase-sdk`: Already included in MessageKit.
-- `@redis/redis`: WalletService uses [Redis](../middleware/redis) to save the wallets.
-- Env:
-  - `COINBASE_API_KEY`
-  - `COINBASE_API_SECRET`
-  - `COINBASE_API_PASSPHRASE`
-  - `REDIS_WALLETS_DB`: The database number where the wallets are saved.
-  - `REDIS_TEMP_DB`: The database number where the temporary wallets are saved.
-
-## Agent user wallets
-
-### Creating an agent wallet
-
-To create a new wallet, you can use the `createTempWallet` method. This is useful for generating temporary wallets for specific purposes, such as a toss or a transaction.
+The `getUserWallet` method will retrieve an existing wallet, or you can explicitly create one:
 
 ```typescript
-const tempWallet = await walletService.createTempWallet(
-  redisClient,
-  "uniqueTempId",
-);
-console.log("Temporary wallet created:", tempWallet);
+// Get or create a wallet
+const userWallet = await walletService.getUserWallet(userAddress);
+
+// Explicitly create a new wallet
+const newWallet = await walletService.createUserWallet(userAddress);
+// Returns { wallet, address, userAddress, identifier }
 ```
 
-### Retrieving a wallet
+## Temporary Wallets
 
-To retrieve a user's wallet data, use the `getUserWallet` method. This method checks if the wallet data is cached in Redis and retrieves it; otherwise, it creates a new wallet.
+Temporary wallets use a separate encryption key for additional security:
 
 ```typescript
-const userWallet = await walletService.getUserWallet(redisClient, userAddress);
-console.log("User wallet data:", userWallet);
+// Create a temporary wallet
+const tempWallet = await walletService.createTempWallet(tempId);
+// Returns { wallet, address, userAddress, identifier }
+
+// Retrieve an existing temporary wallet
+const existingWallet = await walletService.getTempWallet(tempId);
+
+// Delete when no longer needed
+await walletService.deleteTempWallet(tempId);
+```
+
+## Actions
+
+### Requesting and Withdrawing Funds
+
+```typescript
+// Request funds
+await walletService.requestFunds(context, amount);
+// This will send a payment request to the user with funding instructions
+
+// Withdraw funds (optional amount parameter)
+await walletService.withdrawFunds(userAddress, amount);
+// If amount is not specified, withdraws entire balance
+```
+
+### Transfers and Swaps
+
+```typescript
+// Transfer between wallets
+await walletService.transfer(fromWallet, toWallet, amount);
+
+// Swap assets
+await walletService.swap(userAddress, fromAssetId, toAssetId, amount);
 ```
 
 ### Checking balance
 
-To check the balance of a wallet, use the `checkBalance` method. This method returns the balance of a specified asset, such as USDC.
-
 ```typescript
-const balance = await walletService.checkBalance(userWalletData);
-console.log("Wallet balance:", balance);
+const balance = await walletService.checkBalance(userAddress);
 ```
 
-### Transferring funds
+## Security Architecture
 
-To transfer funds between wallets, use the `transfer` method. This method requires the wallet data of both the sender and the receiver, as well as the amount to be transferred.
+The WalletService uses a dual-key encryption system:
 
-```typescript
-await walletService.transfer(fromWalletData, toWalletData, amount);
-console.log("Transfer completed successfully");
-```
+### Default Encryption
 
-## Temporary wallets
-
-### Creating a temporary wallet
-
-To create a temporary wallet, use the `createTempWallet` method. This is useful for generating temporary wallets for specific purposes, such as a toss or a transaction.
+- **User Wallets**: Encrypted with `userEncryptionKey` (user address)
+- **Temporary Wallets**: Encrypted with `tempEncryptionKey` (conversationId + admin of the toss)
 
 ```typescript
-const tempWallet = await walletService.createTempWallet(
-  redisClient,
-  "uniqueTempId",
-);
+// Default encryption
+const encrypted = walletService.encrypt(data);
+const decrypted = walletService.decrypt(encrypted);
+
+// Specifying a key for a custom encryption
+const userEncrypted = walletService.encrypt(data, userEncryptionKey);
+const userDecrypted = walletService.decrypt(userEncrypted, userEncryptionKey);
 ```
 
-### Retrieving a temporary wallet
+Note: All string data is converted to lowercase before encryption.
 
-To retrieve a temporary wallet, use the `getTempWallet` method.
+### Encryption Process
 
-```typescript
-const tempWallet = await walletService.getTempWallet(
-  redisClient,
-  "uniqueTempId",
-);
-```
+1. Convert data to JSON string
+2. Generate a key using keccak256
+3. Perform XOR encryption
+4. Return encrypted hex string
 
-### Deleting a temporary wallet
+### Security Best Practices
 
-To delete a temporary wallet, use the `deleteTempWallet` method. This is useful for cleaning up after a temporary wallet is no longer needed.
-
-```typescript
-await WalletService.deleteTempWallet(redisClient, "uniqueTempId");
-console.log("Temporary wallet deleted");
-```
+- Keep encryption keys secure
+- Monitor wallet operations
+- Implement error handling
+- Use separate environments for development and production
+- Conduct regular security audits

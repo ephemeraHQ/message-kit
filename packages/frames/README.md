@@ -41,7 +41,7 @@ Note: USDC amounts are converted to wei (6 decimal places) before being included
 1. **Basic USDC Payment (Using Defaults)**
 
 ```
-https://txpay.vercel.app/
+https://frames.message-kit.org/
 ```
 
 This uses all default values:
@@ -54,7 +54,7 @@ This uses all default values:
 2. **Custom Amount**
 
 ```
-https://txpay.vercel.app/?amount=5
+https://frames.message-kit.org/?amount=5
 ```
 
 Sends 5.5 USDC to the default recipient
@@ -62,7 +62,7 @@ Sends 5.5 USDC to the default recipient
 3. **Custom Recipient**
 
 ```
-https://txpay.vercel.app/?recipientAddress=0x742d35Cc6634C0532925a3b844Bc454e4438f44e
+https://frames.message-kit.org/?recipientAddress=0x742d35Cc6634C0532925a3b844Bc454e4438f44e
 ```
 
 Sends to a different recipient address
@@ -70,7 +70,7 @@ Sends to a different recipient address
 4. **Full Custom Parameters**
 
 ```
-https://txpay.vercel.app/?recipientAddress=0x742d35Cc6634C0532925a3b844Bc454e4438f44e&tokenAddress=0x833589fcd6edb6e08f4c7c32d4f71b54bda02913&chainId=8453&amount=10
+https://frames.message-kit.org/?recipientAddress=0x742d35Cc6634C0532925a3b844Bc454e4438f44e&tokenAddress=0x833589fcd6edb6e08f4c7c32d4f71b54bda02913&chainId=8453&amount=10
 ```
 
 This example:
@@ -83,7 +83,7 @@ This example:
 5. **Different Chain and Token**
 
 ```bash
-https://txpay.vercel.app/?chainId=1&tokenAddress=0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48&amount=2
+https://frames.message-kit.org/?chainId=1&tokenAddress=0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48&amount=2
 ```
 
 This example:
@@ -99,7 +99,7 @@ You can mix and match any of these parameters as needed. Any parameter not speci
 1. **Default Parameters**
 
 ```bash
-https://txpay.vercel.app/mint?collectionId=0x73a333cb82862d4f66f0154229755b184fb4f5b0&tokenId=1
+https://frames.message-kit.org/mint?collectionId=0x73a333cb82862d4f66f0154229755b184fb4f5b0&tokenId=1
 ```
 
 ## Receipts
@@ -119,7 +119,7 @@ http://localhost:3001/receipt?txLink={txLink}&networkLogo={networkLogo}&amount={
 Example url:
 
 ```bash
-https://txpay.vercel.app/receipt?txLink=https://sepolia.basescan.org/tx/0x2ec524f740c5831b16ca84053f9b6ae3e3923d3399d527113982e884a75e6bfa&networkLogo=https://avatars.githubusercontent.com/u/108554348?s=280&v=4&networkName=Base&tokenName=usdc&amount=1
+https://frames.message-kit.org/receipt?txLink=https://sepolia.basescan.org/tx/0x2ec524f740c5831b16ca84053f9b6ae3e3923d3399d527113982e884a75e6bfa&networkLogo=https://avatars.githubusercontent.com/u/108554348?s=280&v=4&networkName=Base&tokenName=usdc&amount=1
 ```
 
 ## Custom

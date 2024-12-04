@@ -11,6 +11,7 @@ const external = [
   "@xmtp/node-sdk",
   "@xmtp/message-kit",
   "@xmtp/xmtp-js",
+  "@redis/client",
   "@xmtp/proto",
   "@xmtp/node-bindings",
   "@xmtp/grpc-api-client",

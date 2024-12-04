@@ -1,6 +1,6 @@
 import { XMTPContext } from "@xmtp/message-kit";
 import type { Skill } from "@xmtp/message-kit";
-import { AgentWallet } from "../lib/usdc.js";
+import { USDCWallet } from "../lib/usdc.js";
 
 export const cash: Skill[] = [
   {
@@ -35,8 +35,8 @@ async function balanceHandler(context: XMTPContext) {
   const {
     message: { sender },
   } = context;
-  const agentWallet = new AgentWallet(sender.address);
-  const { usdc } = await agentWallet.checkBalances();
+  const usdcWallet = new USDCWallet(sender.address);
+  const { usdc } = await usdcWallet.checkBalances();
   await context.send(
     `Your balance is ${usdc} USDC. let me know if you want check again or to fund your wallet.`,
   );
@@ -52,8 +52,8 @@ async function fundHandler(context: XMTPContext) {
         },
       },
     } = context;
-    const agentWallet = new AgentWallet(sender.address);
-    const { usdc } = await agentWallet.checkBalances();
+    const usdcWallet = new USDCWallet(sender.address);
+    const { usdc } = await usdcWallet.checkBalances();
     const MAX_USDC = 10;
 
     if (usdc >= MAX_USDC) {
@@ -85,7 +85,7 @@ async function fundHandler(context: XMTPContext) {
       return;
     }
 
-    await context.requestPayment(fundAmount, "USDC", agentWallet.agentAddress);
+    await context.requestPayment(fundAmount, "USDC", usdcWallet.agentAddress);
     await context.send(
       "After funding, let me know so I can check your balance.",
     );
@@ -105,10 +105,10 @@ async function transferHandler(context: XMTPContext) {
       },
     },
   } = context;
-  const agentWallet = new AgentWallet(sender.address);
+  const usdcWallet = new USDCWallet(sender.address);
   if (amount > 10) {
     await context.send("You can only transfer up to 10 USDC at a time.");
     return;
   }
-  await agentWallet.transferUsdc(address, amount);
+  await usdcWallet.transferUsdc(address, amount);
 }

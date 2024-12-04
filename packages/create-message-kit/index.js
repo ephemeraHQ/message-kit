@@ -7,7 +7,7 @@ import { default as fs } from "fs-extra";
 import { isCancel } from "@clack/prompts";
 import { detect } from "detect-package-manager";
 import pc from "picocolors";
-const defVersion = "1.2.8";
+const defVersion = "1.2.11";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Read package.json to get the version
@@ -253,7 +253,7 @@ function createReadme(destDir, templateType, projectName, packageManager) {
 
   const readmeContent = `# ${projectName}
 
-This project is powered by [MessageKit](https://messagekit.ephemerahq.com/) 
+This project is powered by [MessageKit](https://message-kit.org/) 
 
 ## Setup
 

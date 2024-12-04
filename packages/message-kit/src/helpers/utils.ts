@@ -32,6 +32,10 @@ Powered by XMTP \x1b[0m`;
     Send a message to this account on Converse:                              
     🔗 https://converse.xyz/dm/${client.accountAddress}`);
 
+  console.log(`\x1b[38;2;128;0;128m
+    Share it as a frame in Farcaster:                              
+    🔗 https://frames.message-kit.org/dm/${client.accountAddress}\x1b[0m`);
+
   let agent: Agent;
   const loadedSkills = (await loadSkillsFile()) as Agent;
   agent =
@@ -85,7 +89,7 @@ Powered by XMTP \x1b[0m`;
     }
     if (runConfig?.experimental) {
       console.warn(
-        `\t- ☣️ EXPERIMENTAL MODE ENABLED:\n\t\t⚠️ All group messages will be exposed — proceed with caution.\n\t\tℹ Guidelines: https://messagekit.ephemerahq.com/concepts/guidelines`,
+        `\t- ☣️ EXPERIMENTAL MODE ENABLED:\n\t\t⚠️ All group messages will be exposed — proceed with caution.\n\t\tℹ Guidelines: https://message-kit.org/concepts/guidelines`,
       );
     }
     if (runConfig?.walletService) {

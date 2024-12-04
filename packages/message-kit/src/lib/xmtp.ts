@@ -12,7 +12,34 @@ import { chatMemory } from "../helpers/gpt.js";
 import { GroupMember } from "@xmtp/node-sdk";
 import { textGeneration } from "../helpers/gpt.js";
 import { getUserInfo, isOnXMTP } from "../helpers/resolver.js";
-import fs from "fs/promises";
+
+// Only import fs in Node.js environment
+import { promises as fsPromises } from "fs";
+//@ts-ignore
+const fs = typeof window === "undefined" ? fsPromises : null;
+
+const fileHandling = {
+  async getCacheCreationDate() {
+    if (!fs) return null;
+    try {
+      const stats = await fs.stat(".data");
+      return new Date(stats.birthtime);
+    } catch (err) {
+      console.error("Error getting cache creation date:", err);
+      return null;
+    }
+  },
+
+  async readFile(filePath: string) {
+    if (!fs) return null;
+    try {
+      return await fs.readFile(filePath);
+    } catch (err) {
+      console.error("Error reading file:", err);
+      return null;
+    }
+  },
+};
 import type { Reaction } from "@xmtp/content-type-reaction";
 import { ContentTypeText } from "@xmtp/content-type-text";
 import { WalletService } from "../helpers/cdp.js";
@@ -41,7 +68,7 @@ import {
 import { ContentTypeReaction } from "@xmtp/content-type-reaction";
 import path from "path";
 //com
-const frameKitUrl = process.env.FRAMEKIT_URL ?? "https://frameskit.vercel.app";
+const framesUrl = process.env.frames_URL ?? "https://frames.message-kit.org/";
 export const awaitedHandlers = new Map<
   string,
   (text: string) => Promise<boolean | undefined>
@@ -111,8 +138,9 @@ export class XMTPContext {
         //v2
         const sentAt = "sentAt" in message ? message.sentAt : message.sent;
         let members: GroupMember[];
+        let sender: AbstractedMember | null = null;
         if (version === "v2") {
-          context.sender = {
+          sender = {
             address: (message as DecodedMessageV2).senderAddress,
             inboxId: (message as DecodedMessageV2).senderAddress,
             installationIds: [],
@@ -134,7 +162,7 @@ export class XMTPContext {
               member.inboxId === (message as DecodedMessage).senderInboxId,
           );
 
-          context.sender = {
+          sender = {
             address: MemberSender?.accountAddresses[0],
             inboxId: MemberSender?.inboxId,
             installationIds: [],
@@ -144,13 +172,12 @@ export class XMTPContext {
 
         //Config
         context.agent = runConfig?.agent ?? (await loadSkillsFile());
-        if (runConfig?.walletService) {
-          try {
-            context.walletService = await WalletService.create();
-          } catch (error) {
-            console.error("Error creating WalletService:", error);
-          }
-        }
+        if (runConfig?.walletServiceDB)
+          context.walletService = new WalletService(
+            runConfig?.walletServiceDB,
+            context.getConversationKey(),
+            sender?.address,
+          );
         context.getMessageById =
           client.conversations?.getMessageById?.bind(client.conversations) ||
           (() => null);
@@ -209,7 +236,7 @@ export class XMTPContext {
         context.message = {
           id: message.id,
           content,
-          sender: context.sender,
+          sender: sender,
           sent: sentAt,
           typeId: typeId ?? "",
           version: version ?? "v2",
@@ -445,16 +472,7 @@ export class XMTPContext {
   }
 
   async getCacheCreationDate() {
-    //Gets the creation date of the cache folder
-    //Could be used to check if the cache is outdated
-    //Generally indicates the deployment date of the bot
-    try {
-      const stats = await fs.stat(".data");
-      const cacheCreationDate = new Date(stats.birthtime);
-      return cacheCreationDate;
-    } catch (err) {
-      console.error(err);
-    }
+    return await fileHandling.getCacheCreationDate();
   }
   async sendTo(message: string, receivers: string[]) {
     if (typeof message !== "string") {
@@ -492,7 +510,7 @@ export class XMTPContext {
       );
     }
 
-    const frameUrl = `${frameKitUrl}/custom?${params.toString()}`;
+    const frameUrl = `${framesUrl}/custom?${params.toString()}`;
     await this.send(frameUrl);
   }
   async getUserInfo(username: string) {
@@ -512,6 +530,7 @@ export class XMTPContext {
     amount: number = 1,
     token: string = "usdc",
     username: string = "humanagent.eth",
+    sendTo: string[] = [],
   ) {
     let senderInfo = await getUserInfo(username);
     if (senderInfo && process.env.MSG_LOG === "true")
@@ -521,8 +540,12 @@ export class XMTPContext {
         return;
       }
 
-    let sendUrl = `${frameKitUrl}/payment?amount=${amount}&token=${token}&recipientAddress=${senderInfo?.address}`;
-    await this.send(sendUrl);
+    let sendUrl = `${framesUrl}/payment?amount=${amount}&token=${token}&recipientAddress=${senderInfo?.address}`;
+    if (sendTo.length > 0) {
+      await this.sendTo(sendUrl, sendTo);
+    } else {
+      await this.send(sendUrl);
+    }
   }
   async sendConverseDmFrame(peer: string, pretext?: string) {
     let url = `https://converse.xyz/dm/${peer}`;
@@ -542,7 +565,7 @@ export class XMTPContext {
     const { networkLogo, networkName, tokenName, dripAmount } =
       extractFrameChain(txLink);
 
-    let receiptUrl = `${frameKitUrl}/receipt?txLink=${txLink}&networkLogo=${
+    let receiptUrl = `${framesUrl}/receipt?txLink=${txLink}&networkLogo=${
       networkLogo
     }&networkName=${networkName}&tokenName=${tokenName}&amount=${dripAmount}`;
 
@@ -550,8 +573,13 @@ export class XMTPContext {
   }
   async sendImage(filePath: string) {
     try {
-      // Read local file and extract its details
-      const file = await fs.readFile(filePath);
+      // Check if we can handle files
+      const file = await fileHandling.readFile(filePath);
+      if (!file) {
+        console.error("File operations not supported in this environment");
+        return;
+      }
+
       const filename = path.basename(filePath);
       const extname = path.extname(filePath);
       console.log(`Filename: ${filename}`);
@@ -563,7 +591,7 @@ export class XMTPContext {
 
       const attachment = {
         filename: filename,
-        mimeType: extname, // image, video, or audio
+        mimeType: extname,
         data: imgArray,
       };
 

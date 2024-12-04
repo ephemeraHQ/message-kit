@@ -1,26 +1,26 @@
-# GPT
+# CDP
 
-Interact with GPT and use it for your agents.
+Interact with Coinbase Developer Platform (CDP) and use it for your agents.
 
 > This functionality is already included in MessageKit, but you can import it directly in your files for more customization.
-
-## Code
-
-```tsx [src/helpers/cdp.ts]
-// [!include ~/../../packages/message-kit/src/helpers/cdp.ts]
-```
 
 ## Required
 
 This functionality requires the following packages:
 
-- `@coinbase/coinbase-sdk`
-- `@redis/redis`
+- `@coinbase/coinbase-sdk`: The Coinbase SDK.
+- `@redis/redis`: The Redis client.
 
 ## Env
 
-- `REDIS_DB`: The database number where the wallets are saved.
-- `REDIS_TEMP_DB`: The database number where the temporary wallets are saved.
-- `COINBASE_API_KEY`: The Coinbase API key.
-- `COINBASE_API_SECRET`: The Coinbase API secret.
-- `COINBASE_API_PASSPHRASE`: The Coinbase API passphrase.
+- `COINBASE_API_REDIS_URL`: The database number where the wallets are saved.
+- `COINBASE_API_KEY_NAME`: The Coinbase API key.
+- `COINBASE_API_KEY_PRIVATE_KEY`: The Coinbase API secret.
+
+## Code
+
+This code is included in MessageKit, but you can import it directly in your files for more customization.
+
+```tsx [src/helpers/cdp.ts]
+// [!include ~/../../packages/message-kit/src/helpers/cdp.ts]
+```

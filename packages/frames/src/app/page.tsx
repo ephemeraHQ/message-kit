@@ -2,7 +2,7 @@
 import { GeistMono as geistMono } from "geist/font/mono";
 import { GeistSans as geistSans } from "geist/font/sans";
 
-export default async function Home() {
+export default function Home() {
   const url = `${process.env.NEXT_PUBLIC_URL || "http://localhost:3000"}`;
   let image = `${url}/hero.jpg`;
   return (
@@ -21,7 +21,7 @@ export default async function Home() {
         <meta property="fc:frame:button:1:action" content="link" />
         <meta
           property="fc:frame:button:1:target"
-          content="https://messagekit.ephemerahq.com/"
+          content="https://message-kit.org/"
         />
 
         <meta property="fc:frame:button:2" content="Drop a ⭐️" />
@@ -35,7 +35,7 @@ export default async function Home() {
         <div
           className={`container ${geistSans.variable} ${geistMono.variable}`}>
           <div className="wrapper">
-            <h1 className={`title ${geistSans.className}`}>FrameKit</h1>
+            <h1 className={`title ${geistSans.className}`}>frames</h1>
 
             <div className="powered-by" style={{ marginTop: "1rem" }}>
               <a href="/payment" rel="noopener noreferrer">
@@ -48,6 +48,11 @@ export default async function Home() {
               </a>
             </div>
 
+            <div className="powered-by" style={{ marginTop: "1rem" }}>
+              <a href="/dm/0xC60E6Bb79322392761BFe3081E302aEB79B30B03" rel="noopener noreferrer">
+                Chat
+              </a>
+            </div>
             <div className="powered-by" style={{ marginTop: "1rem" }}>
               <a href="/custom" rel="noopener noreferrer">
                 Custom
