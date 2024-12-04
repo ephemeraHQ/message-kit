@@ -8,15 +8,21 @@ interface ChatProps {
   recipientAddress: string;
 }
 
+interface Message {
+  id: string;
+  content: string;
+  sender: string;
+}
+
 export default function Chat({ recipientAddress }: ChatProps) {
-  const [messages, setMessages] = useState<
-    { content: string; sender: string }[]
-  >([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [wallet, setWallet] = useState<any | null>(null);
   const [xmtp, setXmtp] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [recipientInfo, setRecipientInfo] = useState<UserInfo | null>(null);
+  const [conversation, setConversation] = useState<any>(null);
+  const [processedMessageIds] = useState(new Set<string>());
 
   useEffect(() => {
     const init = async () => {
@@ -43,52 +49,60 @@ export default function Chat({ recipientAddress }: ChatProps) {
   }, [recipientAddress]);
 
   useEffect(() => {
-    const streamMessages = async () => {
+    const initConversation = async () => {
       if (!xmtp || !recipientInfo?.address) return;
 
       try {
-        const conversation = await xmtp.conversations.newConversation(
+        const conv = await xmtp.conversations.newConversation(
           recipientInfo.address,
         );
+        setConversation(conv);
 
         // Load existing messages
-        const messages = await conversation.messages();
+        const messages = await conv.messages();
         console.log("Initial messages loaded:", messages.length);
 
-        const formattedMessages = messages.map((msg: any) => {
-          console.log("Processing message:", msg.id, msg.content);
-          return {
-            content: msg.content,
-            sender: msg.senderAddress === wallet.address ? "Human" : "Agent",
-          };
-        });
+        const formattedMessages = messages.map((msg: any) => ({
+          id: msg.id,
+          content: msg.content,
+          sender: msg.senderAddress === wallet.address ? "Human" : "Agent",
+        }));
 
-        // Set initial messages
+        // Add message IDs to processed set
+        formattedMessages.forEach((msg: any) =>
+          processedMessageIds.add(msg.id),
+        );
+
         setMessages(formattedMessages);
-        console.log("Initial messages set:", formattedMessages.length);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error initializing conversation:", error);
+        setIsLoading(false);
+      }
+    };
 
-        // Create a Set to track message IDs we've already seen
-        const processedMessageIds = new Set(messages.map((msg: any) => msg.id));
+    initConversation();
+  }, [xmtp, recipientInfo, wallet]);
 
-        // Listen for new messages
+  useEffect(() => {
+    const streamMessages = async () => {
+      if (!conversation) return;
+
+      try {
+        // Stream new messages
         for await (const message of await conversation.streamMessages()) {
-          console.log("New message received:", message.id, message.content);
-          // Only add message if we haven't processed it before
+          console.log("Received message:", message.id, message.content);
           if (!processedMessageIds.has(message.id)) {
             processedMessageIds.add(message.id);
-            setMessages((prevMessages) => {
-              console.log("Adding new message to UI");
-              return [
-                ...prevMessages,
-                {
-                  content: message.content,
-                  sender:
-                    message.senderAddress === wallet.address
-                      ? "Human"
-                      : "Agent",
-                },
-              ];
-            });
+            setMessages((prevMessages) => [
+              ...prevMessages,
+              {
+                id: message.id,
+                content: message.content,
+                sender:
+                  message.senderAddress === wallet.address ? "Human" : "Agent",
+              },
+            ]);
           }
         }
       } catch (error) {
@@ -97,7 +111,7 @@ export default function Chat({ recipientAddress }: ChatProps) {
     };
 
     streamMessages();
-  }, [xmtp, recipientInfo, wallet]);
+  }, [conversation, wallet]);
 
   const initXmtp = async (wallet: any) => {
     try {
@@ -112,9 +126,9 @@ export default function Chat({ recipientAddress }: ChatProps) {
   const sendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!xmtp || !newMessage || !recipientInfo?.address) {
+    if (!conversation || !newMessage || !recipientInfo?.address) {
       console.log("Missing required data:", {
-        xmtp: !!xmtp,
+        conversation: !!conversation,
         newMessage,
         recipientAddress: recipientInfo?.address,
       });
@@ -122,13 +136,24 @@ export default function Chat({ recipientAddress }: ChatProps) {
     }
 
     try {
-      const conversation = await xmtp.conversations.newConversation(
-        recipientInfo.address,
-      );
-      await conversation.send(newMessage);
+      console.log("Sending message:", newMessage);
+      const sentMessage = await conversation.send(newMessage);
+      console.log("Message sent with ID:", sentMessage.id);
+
+      // Add message immediately to UI and processed set
+      processedMessageIds.add(sentMessage.id);
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        {
+          id: sentMessage.id,
+          content: newMessage,
+          sender: "Human",
+        },
+      ]);
+
       setNewMessage("");
     } catch (error) {
-      console.error("Detailed error in sendMessage:", error);
+      console.error("Error sending message:", error);
     }
   };
 
@@ -148,7 +173,7 @@ export default function Chat({ recipientAddress }: ChatProps) {
       </div>
       <div className={styles.messagesContainer}>
         {messages.map((msg, index) => (
-          <div key={index} className={styles.message}>
+          <div key={msg.id || index} className={styles.message}>
             <span className={styles.sender}>{msg.sender}</span>
             {msg.content}
           </div>

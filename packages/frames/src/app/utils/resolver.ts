@@ -11,32 +11,40 @@ export type ConverseProfile = {
   name: string | null;
 };
 export type UserInfo = {
-  ensDomain?: string | undefined;
-  address?: string | undefined;
-  preferredName: string | undefined;
-  converseUsername?: string | undefined;
-  ensInfo?: EnsData | undefined;
-  avatar?: string | undefined;
-  converseEndpoint?: string | undefined;
+  address?: string;
+  preferredName?: string;
+  avatar?: string;
+  bio?: string;
 };
 
-export interface EnsData {
-  address?: string;
-  avatar?: string;
-  avatar_small?: string;
-  converse?: string;
-  avatar_url?: string;
-  contentHash?: string;
-  description?: string;
-  ens?: string;
-  ens_primary?: string;
-  github?: string;
-  resolverAddress?: string;
-  twitter?: string;
-  url?: string;
-  wallets?: {
-    eth?: string;
-  };
+export async function getUserInfo(identifier: string): Promise<UserInfo> {
+  try {
+    // Add CORS proxy or use environment variable for the API endpoint
+    const response = await fetch(`/api/resolve?identifier=${identifier}`, {
+      headers: {
+        Accept: "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return {
+      address: data.address,
+      preferredName: data.preferredName || identifier,
+      avatar: data.avatar,
+      bio: data.bio,
+    };
+  } catch (error) {
+    console.error("Error fetching user info:", error);
+    // Return basic info if resolution fails
+    return {
+      address: identifier,
+      preferredName: identifier,
+    };
+  }
 }
 
 let infoCache: InfoCache = new Map();
@@ -46,144 +54,6 @@ export const clearInfoCache = (address?: string) => {
     infoCache.delete(address);
   } else {
     infoCache.clear();
-  }
-};
-export const getUserInfo = async (
-  key: string,
-  clientAddress?: string,
-): Promise<UserInfo | null> => {
-  let data: UserInfo = {
-    ensDomain: undefined,
-    address: undefined,
-    converseUsername: undefined,
-    ensInfo: undefined,
-    avatar: undefined,
-    converseEndpoint: undefined,
-    preferredName: undefined,
-  };
-  if (typeof key !== "string") {
-    console.error("userinfo key must be a string");
-    return data;
-  }
-  if (infoCache.get(key)) return infoCache.get(key) as UserInfo;
-  key = key?.toLowerCase();
-  clientAddress = clientAddress?.toLowerCase();
-  // Determine user information based on provided key
-  if (isAddress(clientAddress || "")) {
-    data.address = clientAddress;
-  } else if (isAddress(key || "")) {
-    data.address = key;
-  } else if (key.includes(".eth")) {
-    data.ensDomain = key;
-  } else if (["@user", "@me", "@bot"].includes(key)) {
-    data.address = clientAddress;
-    data.ensDomain = key.replace("@", "") + ".eth";
-    data.converseUsername = key.replace("@", "");
-  } else if (key === "@alix") {
-    data.address = "0x3a044b218BaE80E5b9E16609443A192129A67BeA";
-    data.converseUsername = "alix";
-  } else if (key === "@bo") {
-    data.address = "0xbc3246461ab5e1682baE48fa95172CDf0689201a";
-    data.converseUsername = "bo";
-  } else {
-    data.converseUsername = key;
-  }
-
-  data.preferredName = data.ensDomain || data.converseUsername || "Friend";
-  const keyToUse = data.address || data.ensDomain || data.converseUsername;
-
-  if (!keyToUse) {
-    console.log("Unable to determine a valid key for fetching user info.");
-    return data;
-  } else {
-    // Check cache for existing data
-    const cacheData = infoCache.get(keyToUse);
-    if (cacheData) {
-      return cacheData;
-    }
-    // Fetch data based on ENS domain or Converse username
-    if (keyToUse.includes(".eth")) {
-      // Fetch ENS data
-      try {
-        const response = await fetch(`https://ensdata.net/${keyToUse}`);
-        if (!response.ok) {
-          console.error(
-            `ENS data request failed with status or unable to resolve ${keyToUse}`,
-          );
-        } else {
-          const ensData = (await response.json()) as EnsData;
-          if (ensData) {
-            data.ensInfo = ensData;
-            data.ensDomain = ensData.ens || data.ensDomain;
-            data.address = ensData.address || data.address;
-            data.avatar = ensData.avatar_url || data.avatar;
-          }
-        }
-      } catch (error) {
-        //console.error(`Failed to fetch ENS data for ${keyToUse}`);
-      }
-    } else {
-      // Fetch Converse profile data
-      try {
-        const username = keyToUse.replace("@", "");
-        const converseEndpoint = `${converseEndpointURL}${username}`;
-        const response = await fetchWithTimeout(
-          converseEndpoint,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Accept: "application/json",
-            },
-            body: JSON.stringify({ peer: username }),
-          },
-          5000,
-        );
-
-        // Handle null response from fetchWithTimeout
-        if (!response) {
-          console.warn(
-            `Unable to fetch Converse profile for ${username} - skipping`,
-          );
-          return data;
-        }
-
-        if (!response.ok) {
-          console.warn(
-            `Converse profile request failed for ${username} with status ${response.status}`,
-          );
-          return data;
-        }
-
-        const converseData = (await response.json()) as ConverseProfile;
-        if (converseData) {
-          data.converseUsername =
-            converseData.formattedName ||
-            converseData.name ||
-            data.converseUsername;
-          data.address = converseData.address || data.address;
-          data.avatar = converseData.avatar || data.avatar;
-          data.converseEndpoint = converseEndpoint;
-        }
-      } catch (error) {
-        // Improved error handling
-        if (error instanceof Error) {
-          console.warn(
-            `Converse profile fetch failed for ${keyToUse}: ${error.message}`,
-          );
-        } else {
-          console.warn(
-            `Unknown error while fetching Converse profile for ${keyToUse}`,
-          );
-        }
-        // Return existing data instead of failing completely
-        return data;
-      }
-    }
-
-    data.preferredName = data.ensDomain || data.converseUsername || "Agent";
-    infoCache.set(keyToUse, data);
-    return data;
   }
 };
 
