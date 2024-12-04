@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 import { NextRequest } from "next/server";
 import fs from "fs";
 import { join } from "path";
-import { getUserInfo } from "../resolver/route";
+import { getUserInfo } from "@/app/utils/resolver";
 
 const interFontPath = join(process.cwd(), "public/fonts/Inter-Regular.ttf");
 const interFontData = fs.readFileSync(interFontPath);
