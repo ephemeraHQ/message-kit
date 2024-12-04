@@ -3,6 +3,7 @@ import { Client as V2Client } from "@xmtp/xmtp-js";
 import { Wallet } from "ethers";
 import styles from "./Chat.module.css";
 import { getUserInfo, UserInfo } from "@/app/utils/resolver";
+import { isAddress } from "viem";
 
 interface ChatProps {
   recipientAddress: string;
@@ -168,7 +169,11 @@ export default function Chat({ recipientAddress }: ChatProps) {
         <div>
           Agent:
           {recipientInfo?.preferredName ||
-            recipientAddress.slice(0, 6) + "..." + recipientAddress.slice(-4)}
+            (isAddress(recipientAddress)
+              ? recipientAddress.slice(0, 6) +
+                "..." +
+                recipientAddress.slice(-4)
+              : recipientAddress)}
         </div>
       </div>
       <div className={styles.messagesContainer}>
