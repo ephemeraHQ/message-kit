@@ -8,8 +8,6 @@ export async function createGroup(
   try {
     let senderInboxId = "";
     await client.conversations.sync();
-    const conversations = await client.conversations.list();
-    console.log("Conversations", conversations.length);
     const group = await client?.conversations.newGroup([
       senderAddress,
       clientAddress,

@@ -28,9 +28,9 @@ export async function logInitMessage(
 ╚═╝     ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝╚═╝   ╚═╝   
 Powered by XMTP \x1b[0m`;
   console.log(coolLogo);
-  console.log(`
+  console.log(`\x1b[38;2;211;211;211m
     Send a message to this account on Converse:                              
-    🔗 https://converse.xyz/dm/${client.accountAddress}`);
+    🔗 https://converse.xyz/dm/${client.accountAddress}\x1b[0m`);
 
   console.log(`\x1b[38;2;128;0;128m
     Share it as a frame in Farcaster:                              

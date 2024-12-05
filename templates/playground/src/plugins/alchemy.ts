@@ -17,10 +17,6 @@ export async function checkNft(
       (nft: any) =>
         nft.contract.name.toLowerCase() === collectionSlug.toLowerCase(),
     );
-    // console.log(
-    //   `NFTs owned on ${Network.BASE_MAINNET}:`,
-    //   nfts.ownedNfts.length,
-    // );
     console.log("is the nft owned: ", ownsNft);
     return ownsNft as boolean;
   } catch (error) {
