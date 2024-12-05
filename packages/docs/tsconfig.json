@@ -20,5 +20,16 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["**/*.ts", "**/*.tsx", "pages/middleware/gpt.mdx", "pages/skills/library/check.mdx", "pages/skills/library/cool.mdx", "pages/skills/library/info.mdx", "pages/skills/library/register.mdx", "pages/skills/library/renew.mdx", "pages/skills/library/reset.mdx", "pages/skills/library/pay.mdx"]
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "pages/plugins/gpt.mdx",
+    "pages/skills/check.mdx",
+    "pages/skills/cool.mdx",
+    "pages/skills/info.mdx",
+    "pages/skills/register.mdx",
+    "pages/skills/renew.mdx",
+    "pages/skills/reset.mdx",
+    "pages/skills/pay.mdx"
+  ]
 }

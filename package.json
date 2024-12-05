@@ -5,7 +5,7 @@
   "workspaces": [
     "templates/agent",
     "templates/community",
-    "templates/gpt",
+    "templates/simple",
     "packages/*",
     "shared/*"
   ],
@@ -22,7 +22,7 @@
     "dev:docs": "cd packages/docs && yarn dev",
     "dev:exp": "cd templates/community && yarn dev",
     "dev:frames": "cd packages/frames && yarn dev",
-    "dev:gpt": "cd templates/gpt && yarn dev",
+    "dev:gpt": "cd templates/simple && yarn dev",
     "dev:toss": "cd templates/toss && yarn dev",
     "format": "turbo run format",
     "publish": "node scripts/publish.js",

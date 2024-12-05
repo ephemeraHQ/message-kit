@@ -1,4 +1,4 @@
-# GPT Example
+# Simple Agent
 
 ## Running locally
 

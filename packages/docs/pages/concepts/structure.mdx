@@ -47,7 +47,7 @@ run(
 - `agent`: Custom agent to be used. Default is to create the skills in the `src/skills.ts` file.
 - `hideInitLogMessage`: hide the init log message with messagekit logo and stuff
 - `memberChange`: if true, member changes will be enabled, like adding members to the group
-- `walletServiceDB`: the redis client for the wallet [service](/middleware/cdp).
+- `walletServiceDB`: the redis client for the wallet [service](/plugins/cdp).
 
 ## XMTPContext
 
@@ -107,7 +107,7 @@ const { v2client: newClient } = await xmtpClient({
 );
 ```
 
-> This can be used in the [Cron](/middleware/cron) plugin to send updates to the users.
+> This can be used in the [Cron](/plugins/cron) plugin to send updates to the users.
 
 ## Manual Installation
 
@@ -135,19 +135,19 @@ This is a list of the plugins that are included in MessageKit.
 
 <CustomHomePage.TileGrid3>
   <CustomHomePage.Tile
-    href="/middleware/gpt"
+    href="/plugins/gpt"
     title="GPT"
     description="Use GPT to generate text."
     icon="🤖"
   />
   <CustomHomePage.Tile
-    href="/middleware/resolver"
+    href="/plugins/resolver"
     title="Resolver"
     description="Use Resolver to resolve messages."
     icon="🔍"
   />
   <CustomHomePage.Tile
-    href="/middleware/cdp"
+    href="/plugins/cdp"
     title="CDP"
     description="Use CDP to create agent wallets."
     icon="💳"

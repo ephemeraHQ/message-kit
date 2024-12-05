@@ -6635,9 +6635,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"gpt@workspace:templates/gpt":
+"gpt@workspace:templates/simple":
   version: 0.0.0-use.local
-  resolution: "gpt@workspace:templates/gpt"
+  resolution: "gpt@workspace:templates/simple"
   dependencies:
     "@types/node": "npm:^20.14.2"
     "@xmtp/message-kit": "workspace:*"

@@ -77,12 +77,16 @@ export default defineConfig({
   },
   sidebar: [
     {
-      text: "Quickstart",
-      link: "/quickstart",
-    },
-    {
       text: "Examples",
       link: "/examples",
+    },
+    {
+      text: "Skills",
+      link: "/skills/library",
+    },
+    {
+      text: "Plugins",
+      link: "/plugins",
     },
     {
       text: "Concepts",
@@ -108,70 +112,18 @@ export default defineConfig({
           link: "/concepts/frames",
         },
         {
-          text: "Wallet Service",
+          text: "Wallets",
           link: "/concepts/wallet",
         },
-      ],
-    },
-    {
-      text: "AI Skills",
-      items: [
         {
-          text: "Example",
-          link: "/templates/agent",
-        },
-        {
-          text: "Library",
-          link: "/skills/library",
-        },
-        {
-          text: "Overview",
-          link: "/skills",
-          items: [
-            {
-              text: "Reasoning",
-              link: "/skills/reasoning",
-            },
-            {
-              text: "Scenarios",
-              link: "/skills/scenarios",
-            },
-            {
-              text: "Prompting",
-              link: "/skills/prompting",
-            },
-            {
-              text: "Processing",
-              link: "/skills/processing",
-            },
-            {
-              text: "Parsing",
-              link: "/skills/parsing",
-            },
-            {
-              text: "Definition",
-              link: "/skills/definition",
-            },
-          ],
+          text: "AI Skills",
+          link: "/concepts/skills",
         },
       ],
     },
     {
-      text: "Middleware",
-      items: [
-        {
-          text: "Plugins",
-          link: "/middleware",
-        },
-        {
-          text: "Deployment",
-          link: "/middleware/railway",
-        },
-        {
-          text: "Cursor",
-          link: "/middleware/cursor",
-        },
-      ],
+      text: "Deployment",
+      link: "/plugins/railway",
     },
     {
       text: "Changelog",
@@ -179,7 +131,7 @@ export default defineConfig({
     },
     {
       text: "Guidelines",
-      link: "/concepts/guidelines",
+      link: "/guidelines",
     },
   ],
 });

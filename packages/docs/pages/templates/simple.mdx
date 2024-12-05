@@ -1,4 +1,4 @@
-# GPT example
+# Simple Agent
 
 Here’s a step-by-step guide to get you started.
 
@@ -51,7 +51,7 @@ group/
 Here is the prompt that the agent will use to reply to messages.
 
 ```tsx [src/prompt.ts]
-// [!include ~/../../templates/gpt/src/prompt.ts]
+// [!include ~/../../templates/simple/src/prompt.ts]
 ```
 
 ### Runner
@@ -59,7 +59,7 @@ Here is the prompt that the agent will use to reply to messages.
 The process that starts listening to messages and replying to them.
 
 ```tsx [src/index.ts]
-// [!include ~/../../templates/gpt/src/index.ts]
+// [!include ~/../../templates/simple/src/index.ts]
 ```
 
 ### Variables
@@ -110,5 +110,45 @@ npm run start
 ### Test
 
 Send a message to the app from [Converse](https://converse.xyz/), and it will reply `gm`!
+
+::::
+
+This is the simplest example of a GPT bot.
+
+## Structure
+
+```
+group/
+├── src/
+│   ├── index.ts                # Index file of the app. // [!code hl] // [!code focus]
+│   ├── prompt.ts               # Prompt for the agent. // [!code hl] // [!code focus]
+├── package.json
+├── tsconfig.json
+└── .env
+```
+
+## Runner
+
+The process that starts listening to messages and replying to them.
+
+```tsx [src/index.ts]
+// [!include ~/../../templates/simple/src/index.ts]
+```
+
+## Prompt
+
+Here is the prompt that the agent will use to reply to messages.
+
+```tsx [src/prompt.ts]
+// [!include ~/../../templates/simple/src/prompt.ts]
+```
+
+### Variables
+
+Set up these variables in your app
+
+```bash [cmd]
+KEY= # the private key of the agent wallet
+```
 
 ::::
