@@ -106,7 +106,7 @@ The WalletService uses a dual-key encryption system:
 ### Default Encryption
 
 - **User Wallets**: Encrypted with `userEncryptionKey` (user address)
-- **Temporary Wallets**: Encrypted with `tempEncryptionKey` (conversationId + admin of the toss)
+- **Temporary Wallets**: Encrypted with `tempEncryptionKey` (conversationId + creator of the agent)
 
 ```typescript
 // Default encryption

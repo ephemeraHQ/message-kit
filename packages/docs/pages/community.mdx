@@ -1,0 +1,154 @@
+import { HomePage } from "vocs/components";
+import { CustomHomePage } from "../components/CustomHomePage";
+
+# Contributing to MessageKit
+
+Welcome to the MessageKit community! We're excited to have you contribute to making MessageKit better. There are several ways you can contribute:
+
+:::info
+Like the repo ⭐️ [MessageKit](https://github.com/ephemeraHQ/message-kit)
+:::
+
+## Ways to Contribute
+
+### Skills
+
+Skills are the building blocks of MessageKit agents. Share your skills with the community:
+
+```tsx
+// Example skill structure
+export const yourSkill: Skill[] = [
+  {
+    skill: "/yourskill [param]",
+    handler: handler,
+    examples: ["/yourskill example"],
+    description: "Description of what your skill does",
+    params: {
+      param: {
+        type: "string",
+        description: "What this parameter does",
+      },
+    },
+  },
+];
+```
+
+**Skill Guidelines:**
+
+- Clear documentation of parameters
+- Include usage examples
+- Handle errors gracefully
+- Follow naming conventions
+- Add tests for edge cases
+
+### Templates
+
+Templates help developers quickly bootstrap new MessageKit applications. Here's how to contribute a template:
+
+```bash
+message-kit/
+└── templates/
+    └── your-template/
+        ├── src/
+        │   ├── index.ts
+        │   ├── prompt.ts
+        │   └── skills/
+        ├── package.json
+        └── README.md
+```
+
+**Template Guidelines:**
+
+- Include clear documentation in the README
+- Provide example skills and use cases
+- Follow the MessageKit [guidelines](/guidelines)
+- Add tests for core functionality
+- Include environment variable examples
+
+### 3. Plugins
+
+Plugins extend MessageKit's functionality. Here's how to contribute a plugin:
+
+```tsx
+// Example plugin structure
+export class YourPlugin {
+  constructor(config: YourPluginConfig) {
+    // Initialize plugin
+  }
+
+  async someMethod() {
+    // Plugin functionality
+  }
+}
+```
+
+**Plugin Guidelines:**
+
+- Document dependencies clearly
+- Provide usage examples
+- Include error handling
+- Add TypeScript types
+- Write tests
+
+## Contribution Process
+
+1. **Fork & Clone**
+
+   ```bash
+   git clone https://github.com/ephemeraHQ/message-kit.git
+   cd message-kit
+   ```
+
+2. **Create a Branch**
+
+   ```bash
+   git checkout -b community/your-feature-name
+   ```
+
+3. **Make Changes**
+
+   - Write your code
+   - Add tests
+   - Update documentation
+
+4. **Test**
+
+   ```bash
+   yarn test
+   ```
+
+5. **Submit PR**
+   - Create a pull request
+   - Describe your changes
+   - Link related issues
+
+## Featured Contributors
+
+<CustomHomePage.TileGrid3>
+  <CustomHomePage.Tile
+    href="https://github.com/ephemeraHQ/message-kit/graphs/contributors"
+    title="Core Contributors"
+    description="The amazing people behind MessageKit"
+    icon="👥"
+  />
+  <CustomHomePage.Tile
+    href="/templates"
+    title="Template Authors"
+    description="Creators of MessageKit templates"
+    icon="📝"
+  />
+  <CustomHomePage.Tile
+    href="/plugins"
+    title="Plugin Developers"
+    description="Builders extending MessageKit"
+    icon="🔌"
+  />
+</CustomHomePage.TileGrid3>
+
+---
+
+Ready to contribute? Check out our [open issues](https://github.com/ephemeraHQ/message-kit/issues) or propose your own enhancement!
+
+:::info
+Questions? Join our [XMTP Devs 💪 group chat](https://converse.xyz/group-invite/a0XKzl9oVpWNXcuYDZLMf)
+:::

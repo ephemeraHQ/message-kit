@@ -4926,22 +4926,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"community@workspace:templates/community":
-  version: 0.0.0-use.local
-  resolution: "community@workspace:templates/community"
-  dependencies:
-    "@types/express": "npm:^4.17.20"
-    "@types/node": "npm:^20.14.2"
-    "@xmtp/message-kit": "workspace:*"
-    alchemy-sdk: "npm:^3.0.0"
-    ethers: "npm:^6.0.0"
-    express: "npm:^4.19.2"
-    node-fetch: "npm:^3.3.2"
-    resend: "npm:^4.0.1"
-    typescript: "npm:^5.4.5"
-  languageName: unknown
-  linkType: soft
-
 "compressible@npm:~2.0.18":
   version: 2.0.18
   resolution: "compressible@npm:2.0.18"
@@ -5537,6 +5521,17 @@ __metadata:
   checksum: 10/b3726486cd98f0d458a851a03326a2a5dd4d84f37ff94ff2a2960c915e0fc865865da3b78f0877dc36ac5c1189069eca603e82ec63d5bc6b0dd9985bf6426d7a
   languageName: node
   linkType: hard
+
+"ens-agent@workspace:templates/ens":
+  version: 0.0.0-use.local
+  resolution: "ens-agent@workspace:templates/ens"
+  dependencies:
+    "@types/node": "npm:^20.14.2"
+    "@xmtp/message-kit": "workspace:*"
+    resend: "npm:^4.0.1"
+    typescript: "npm:^5.4.5"
+  languageName: unknown
+  linkType: soft
 
 "entities@npm:^4.2.0, entities@npm:^4.4.0":
   version: 4.5.0
@@ -9447,6 +9442,22 @@ __metadata:
   checksum: 10/d61f4b7a2351b55b22f1d08f5f9b4236928d5660886131cc0e11576362e2b3bfcb54084bb4a0ba79147b707a27dcae87444a86e731113e152ffd3b6155ce5a5a
   languageName: node
   linkType: hard
+
+"playground@workspace:templates/playground":
+  version: 0.0.0-use.local
+  resolution: "playground@workspace:templates/playground"
+  dependencies:
+    "@types/express": "npm:^4.17.20"
+    "@types/node": "npm:^20.14.2"
+    "@xmtp/message-kit": "workspace:*"
+    alchemy-sdk: "npm:^3.0.0"
+    ethers: "npm:^6.0.0"
+    express: "npm:^4.19.2"
+    node-fetch: "npm:^3.3.2"
+    resend: "npm:^4.0.1"
+    typescript: "npm:^5.4.5"
+  languageName: unknown
+  linkType: soft
 
 "pngjs@npm:^5.0.0":
   version: 5.0.0

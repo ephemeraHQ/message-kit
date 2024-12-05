@@ -77,17 +77,35 @@ export default defineConfig({
   },
   sidebar: [
     {
-      text: "Templates",
-      link: "/templates",
+      text: "Quickstart",
+      link: "/quickstart",
     },
     {
-      text: "Skills",
-      link: "/skills",
+      text: "Community",
+      items: [
+        {
+          text: "Templates",
+          link: "/templates",
+        },
+        {
+          text: "Skills",
+          link: "/skills",
+        },
+        {
+          text: "Plugins",
+          link: "/plugins",
+        },
+        {
+          text: "Contribute",
+          link: "/community",
+        },
+        {
+          text: "Guidelines",
+          link: "/guidelines",
+        },
+      ],
     },
-    {
-      text: "Plugins",
-      link: "/plugins",
-    },
+
     {
       text: "Concepts",
       items: [
@@ -128,10 +146,6 @@ export default defineConfig({
     {
       text: "Deployment",
       link: "/plugins/railway",
-    },
-    {
-      text: "Guidelines",
-      link: "/guidelines",
     },
     {
       text: "Changelog",

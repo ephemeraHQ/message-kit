@@ -16,9 +16,9 @@ import { wordle } from "./skills/wordle.js";
 import { dalle } from "./skills/dalle.js";
 
 export const agent: Agent = {
-  name: "community Agent",
+  name: "Playground Agent",
   tag: "@bot",
-  description: "An community agent with a lot of skills.",
+  description: "An playground agent with a lot of skills.",
   skills: [
     ...token,
     ...(process?.env?.RESEND_API_KEY ? todo : []),

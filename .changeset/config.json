@@ -12,5 +12,5 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["ens", "community", "simple", "frames", "docs", "@xmtp/tsconfig"]
+  "ignore": ["ens", "playground", "simple", "frames", "docs", "@xmtp/tsconfig"]
 }
