@@ -80,31 +80,6 @@ export default defineConfig({
       text: "Quickstart",
       link: "/quickstart",
     },
-    {
-      text: "Community",
-      items: [
-        {
-          text: "Templates",
-          link: "/templates",
-        },
-        {
-          text: "Skills",
-          link: "/skills",
-        },
-        {
-          text: "Plugins",
-          link: "/plugins",
-        },
-        {
-          text: "Contribute",
-          link: "/community",
-        },
-        {
-          text: "Guidelines",
-          link: "/guidelines",
-        },
-      ],
-    },
 
     {
       text: "Concepts",
@@ -140,8 +115,33 @@ export default defineConfig({
       ],
     },
     {
-      text: "Examples",
-      link: "/examples",
+      text: "Community",
+      items: [
+        {
+          text: "Templates",
+          link: "/community/templates",
+        },
+        {
+          text: "Skills",
+          link: "/community/skills",
+        },
+        {
+          text: "Plugins",
+          link: "/community/plugins",
+        },
+        {
+          text: "Contribute",
+          link: "/community/contribute",
+        },
+        {
+          text: "Examples",
+          link: "/community/examples",
+        },
+        {
+          text: "Guidelines",
+          link: "/community/guidelines",
+        },
+      ],
     },
     {
       text: "Deployment",

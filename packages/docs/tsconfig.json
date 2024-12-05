@@ -20,16 +20,5 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "pages/plugins/gpt.mdx",
-    "pages/skills/check.mdx",
-    "pages/skills/cool.mdx",
-    "pages/skills/info.mdx",
-    "pages/skills/register.mdx",
-    "pages/skills/renew.mdx",
-    "pages/skills/reset.mdx",
-    "pages/skills/pay.mdx"
-  ]
+  "include": ["**/*.ts", "**/*.tsx"]
 }
