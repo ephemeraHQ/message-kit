@@ -119,7 +119,7 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
         typeId !== "group_updated");
 
     const isSkillTriggered = foundSkill?.skill;
-    const iscommunity = runConfig?.community ?? false;
+    const iscommunity = runConfig?.experimental ?? false;
 
     const isAddedMemberOrPass =
       typeId === "group_updated" &&

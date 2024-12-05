@@ -50,5 +50,5 @@ run(
     fs.writeFileSync("example_prompt.md", prompt);
     await agentReply(context, prompt);
   },
-  { agent, community: true },
+  { agent, experimental: true },
 );
