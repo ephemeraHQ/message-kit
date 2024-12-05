@@ -9,9 +9,7 @@ Welcome to the MessageKit community! We're excited to have you contribute to mak
 Contribute to [MessageKit ⭐️](https://github.com/ephemeraHQ/message-kit)
 :::
 
-## Ways to Contribute
-
-### Skills
+## Skills
 
 Skills are the building blocks of MessageKit agents. Share your skills with the community:
 
@@ -33,17 +31,43 @@ export const yourSkill: Skill[] = [
 ];
 ```
 
-**Skill Guidelines:**
+### Guidelines
 
-- Clear documentation of parameters
-- Include usage examples
-- Handle errors gracefully
-- Follow naming conventions
-- Add tests for edge cases
+- Make it work in the playground
 
-### Templates
+```bash
+message-kit/
+└── templates/
+    └── playground/
+        ├── skills/
+        │   └── your-skill.ts
+        ├── package.json
+        └── README.md
+```
+
+- See how other skills are structured in the docs
+- Add the skill to the [skills](https://github.com/ephemeraHQ/message-kit/blob/community/packages/docs/pages/community/skills.mdx) community page
+
+```bash
+message-kit/
+└── packages/
+    └── docs/
+        └── pages/
+            └── skills/
+                └── your-skill.mdx
+            └── community/
+                └── skills.mdx
+        ├── package.json
+        └── README.md
+```
+
+## Templates
 
 Templates help developers quickly bootstrap new agents. Here's how to contribute a template:
+
+### Guidelines
+
+- Make it work in the playground
 
 ```bash
 message-kit/
@@ -52,77 +76,108 @@ message-kit/
         ├── src/
         │   ├── index.ts
         │   ├── prompt.ts
-        │   └── skills/
+        │   └── skills/ # Optional
+        │   └── plugins/ # Optional
         ├── package.json
         └── README.md
 ```
 
-**Template Guidelines:**
+- See how other templates are structured in the docs
+- Add the template to the [templates](https://github.com/ephemeraHQ/message-kit/blob/community/packages/docs/pages/community/templates.mdx) community page
 
-- Include clear documentation in the README
-- Provide example skills and use cases
-- Follow the MessageKit [guidelines](/community/guidelines)
-- Add tests for core functionality
-- Include environment variable examples
-
-### 3. Plugins
-
-Plugins extend MessageKit's functionality. Here's how to contribute a plugin:
-
-```tsx
-// Example plugin structure
-export class YourPlugin {
-  constructor(config: YourPluginConfig) {
-    // Initialize plugin
-  }
-
-  async someMethod() {
-    // Plugin functionality
-  }
-}
+```bash
+message-kit/
+└── packages/
+    └── docs/
+        └── pages/
+            └── templates/
+                └── your-template.mdx
+            └── community/
+                └── templates.mdx
+        ├── package.json
+        └── README.md
 ```
 
-**Plugin Guidelines:**
+## Plugins
 
-- Document dependencies clearly
-- Provide usage examples
-- Include error handling
-- Add TypeScript types
-- Write tests
+Plugins extend MessageKit's skills functionality. Here's how a plugin is structured:
+
+### Guidelines
+
+- Clear documentation of parameters
+- Make it work in the playground
+
+```bash
+message-kit/
+└── templates/
+    └── playground/
+        ├── plugins/
+        │   └── your-plugin.ts
+        ├── package.json
+        └── README.md
+```
+
+- See how other plugins are structured in the docs
+- Add the plugin to the [plugins](https://github.com/ephemeraHQ/message-kit/blob/community/packages/docs/pages/community/plugins.mdx) community page
+
+```bash
+message-kit/
+└── packages/
+    └── docs/
+        └── pages/
+            └── plugins/
+                └── your-plugin.mdx
+            └── community/
+                └── plugins.mdx
+        ├── package.json
+        └── README.md
+```
 
 ## Development workflow
 
-1. **Fork & Clone**
+:::steps
 
-   ```bash
-   git clone https://github.com/ephemeraHQ/message-kit.git
-   cd message-kit
-   ```
+#### Fork & Clone
 
-2. **Create a Branch**
+```bash
+git clone https://github.com/ephemeraHQ/message-kit.git
+cd message-kit
+```
 
-   ```bash
-   git checkout -b community/your-feature-name
-   ```
+#### Create a Branch
 
-3. **Make Changes**
+```bash
+git checkout -b community/your-feature-name
+```
 
-   - Write your code
-   - Add tests
-   - Update documentation
+#### Make Changes
 
-4. **Test**
+- Write your code
+- Add tests
+- Update documentation
 
-   ```bash
-   yarn test
-   ```
+#### Build
 
-5. **Submit PR**
-   - Create a pull request
-   - Describe your changes
-   - Link related issues
+```bash
+# Install dependencies
+yarn install
 
-## Featured Contributors
+# Build
+yarn build
+
+# Run tests
+yarn test
+```
+
+#### Submit PR
+
+- Create a pull request
+- Describe your changes
+- Link related issues
+
+:::
+
+---
 
 <CustomHomePage.TileGrid3>
   <CustomHomePage.Tile
@@ -132,23 +187,9 @@ export class YourPlugin {
     icon="👥"
   />
   <CustomHomePage.Tile
-    href="/templates"
-    title="Template Authors"
-    description="Creators of MessageKit templates"
-    icon="📝"
-  />
-  <CustomHomePage.Tile
-    href="/plugins"
-    title="Plugin Developers"
-    description="Builders extending MessageKit"
-    icon="🔌"
+    href="https://converse.xyz/group-invite/a0XKzl9oVpWNXcuYDZLMf"
+    title="Questions? "
+    description="Join the XMTP Devs group chat"
+    icon="💬"
   />
 </CustomHomePage.TileGrid3>
-
----
-
-Ready to contribute? Check out our [open issues](https://github.com/ephemeraHQ/message-kit/issues) or propose your own enhancement!
-
-:::info
-Questions? Join our [XMTP Devs 💪 group chat](https://converse.xyz/group-invite/a0XKzl9oVpWNXcuYDZLMf)
-:::
