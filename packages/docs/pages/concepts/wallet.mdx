@@ -20,7 +20,7 @@ To use the `WalletService`, you need to initialize it with a Redis client and en
 Start by importing the `getWalletService` function from the `redis.js` file:
 
 ```typescript
-import { getWalletService } from "./lib/redis.js";
+import { getWalletService } from "./plugins/redis.js";
 const walletServiceDB = await getWalletService();
 run(
   async (context: XMTPContext) => {

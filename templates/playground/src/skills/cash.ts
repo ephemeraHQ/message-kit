@@ -1,6 +1,6 @@
 import { XMTPContext } from "@xmtp/message-kit";
 import type { Skill } from "@xmtp/message-kit";
-import { USDCWallet } from "../lib/usdc.js";
+import { USDCWallet } from "../plugins/usdc.js";
 
 export const cash: Skill[] = [
   {

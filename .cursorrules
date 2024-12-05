@@ -115,7 +115,7 @@ export async function handler(context: XMTPContext) {
 
 ## Types
 
-import { XMTPContext } from "../lib/xmtp.js";
+import { XMTPContext } from "../plugins/xmtp.js";
 import { ClientOptions, GroupMember } from "@xmtp/node-sdk";
 import { ContentTypeId } from "@xmtp/content-type-primitives";
 

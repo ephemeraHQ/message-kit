@@ -14,7 +14,7 @@ Instructions
 
 Connect to Stack.so
 
-```tsx [src/lib/stack.ts]
+```tsx [src/plugins/stack.ts]
 import { StackClient } from "@stackso/js-core";
 
 let stack: StackClient | null = null;
@@ -39,7 +39,7 @@ export type { StackClient };
 
 ```tsx [src/handler/loyalty.ts]
 import { XMTPContext, AbstractedMember } from "@xmtp/message-kit";
-import { getStackClient } from "../lib/stack.js";
+import { getStackClient } from "../plugins/stack.js";
 
 export async function handler(context: XMTPContext, fake?: boolean) {
   const stack = getStackClient();

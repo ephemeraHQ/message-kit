@@ -1,8 +1,8 @@
 import { XMTPContext, Skill, V3Client } from "@xmtp/message-kit";
-import { createGroup } from "../lib/xmtp.js";
+import { createGroup } from "../plugins/xmtp.js";
 import express from "express";
-import { checkNft } from "../lib/alchemy.js";
-import { addToGroup } from "../lib/xmtp.js";
+import { checkNft } from "../plugins/alchemy.js";
+import { addToGroup } from "../plugins/xmtp.js";
 export const gated: Skill[] = [
   {
     skill: "/create",
@@ -46,7 +46,7 @@ export function startGatedGroupServer(client: V3Client) {
     walletAddress: string,
     groupId: string,
   ): Promise<string> {
-    const verified = true; //await checkNft(walletAddress, "XMTPeople");
+    const verified = await checkNft(walletAddress, "XMTPeople");
     if (!verified) {
       console.log("User cant be added to the group");
       return "not verified";
