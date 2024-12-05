@@ -77,12 +77,12 @@ export default defineConfig({
   },
   sidebar: [
     {
-      text: "Examples",
-      link: "/examples",
+      text: "Templates",
+      link: "/templates",
     },
     {
       text: "Skills",
-      link: "/skills/library",
+      link: "/skills",
     },
     {
       text: "Plugins",
@@ -120,6 +120,10 @@ export default defineConfig({
           link: "/concepts/skills",
         },
       ],
+    },
+    {
+      text: "Examples",
+      link: "/examples",
     },
     {
       text: "Deployment",

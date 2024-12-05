@@ -3868,7 +3868,7 @@ __metadata:
     "@xmtp/content-type-reply": "npm:^1.1.11"
     "@xmtp/content-type-text": "npm:^1.0.0"
     "@xmtp/grpc-api-client": "npm:^0.2.8"
-    "@xmtp/node-sdk": "npm:^0.0.30"
+    "@xmtp/node-sdk": "npm:^0.0.31"
     "@xmtp/xmtp-js": "npm:^13.0.3"
     dotenv: "npm:^16.4.5"
     openai: "npm:^4.52.7"
@@ -3900,6 +3900,19 @@ __metadata:
     "@xmtp/node-bindings": "npm:^0.0.28"
     "@xmtp/proto": "npm:^3.72.3"
   checksum: 10/533ea8a801296358ab2aec41a97d135545bfb877a5cc3bc1a57670b91ec68f7ab39b9e0eab5fe0cf3765166a9e54662bea4adc860c610d289f763709948ed626
+  languageName: node
+  linkType: hard
+
+"@xmtp/node-sdk@npm:^0.0.31":
+  version: 0.0.31
+  resolution: "@xmtp/node-sdk@npm:0.0.31"
+  dependencies:
+    "@xmtp/content-type-group-updated": "npm:^1.0.1"
+    "@xmtp/content-type-primitives": "npm:^1.0.3"
+    "@xmtp/content-type-text": "npm:^1.0.1"
+    "@xmtp/node-bindings": "npm:^0.0.28"
+    "@xmtp/proto": "npm:^3.72.3"
+  checksum: 10/e1a1afaa9821ef2f893183cee63543e00ddb8cf53ff7912be4cc0665523f488eb42eb77e270db3dba9cd36d6e3e5e1ee9d3f9324c118c14fe9bb58c554098dfd
   languageName: node
   linkType: hard
 
@@ -4038,17 +4051,6 @@ __metadata:
   checksum: 10/c478fec8f79953f118704d007a38f2a185458853f5c45579b9669372bd0e12602e88dc2ad0233077831504f7cd6fcc8251c383375bba5eaaf563b102938bda26
   languageName: node
   linkType: hard
-
-"agent@workspace:templates/agent":
-  version: 0.0.0-use.local
-  resolution: "agent@workspace:templates/agent"
-  dependencies:
-    "@types/node": "npm:^20.14.2"
-    "@xmtp/message-kit": "workspace:*"
-    resend: "npm:^4.0.1"
-    typescript: "npm:^5.4.5"
-  languageName: unknown
-  linkType: soft
 
 "agentkeepalive@npm:^4.2.1":
   version: 4.5.0
@@ -6634,16 +6636,6 @@ __metadata:
   checksum: 10/94e296d69f92dc1c0768fcfeecfb3855582ab59a7c75e969d5f96ce50c3d201fd86d5a2857c22565764d5bb8a816c7b1e58f133ec318cd56274da36c5e3fb1a1
   languageName: node
   linkType: hard
-
-"gpt@workspace:templates/simple":
-  version: 0.0.0-use.local
-  resolution: "gpt@workspace:templates/simple"
-  dependencies:
-    "@types/node": "npm:^20.14.2"
-    "@xmtp/message-kit": "workspace:*"
-    typescript: "npm:^5.4.5"
-  languageName: unknown
-  linkType: soft
 
 "graceful-fs@npm:^4.1.2, graceful-fs@npm:^4.1.5, graceful-fs@npm:^4.1.6, graceful-fs@npm:^4.2.0, graceful-fs@npm:^4.2.6":
   version: 4.2.11
@@ -10708,6 +10700,16 @@ __metadata:
   checksum: 10/c9fa63bbbd7431066174a48ba2dd9986dfd930c3a8b59de9c29d7b6854ec1c12a80d15310869ea5166d413b99f041bfa3dd80a7947bcd44ea8e6eb3ffeabfa1f
   languageName: node
   linkType: hard
+
+"simple-agent@workspace:templates/simple":
+  version: 0.0.0-use.local
+  resolution: "simple-agent@workspace:templates/simple"
+  dependencies:
+    "@types/node": "npm:^20.14.2"
+    "@xmtp/message-kit": "workspace:*"
+    typescript: "npm:^5.4.5"
+  languageName: unknown
+  linkType: soft
 
 "simple-swizzle@npm:^0.2.2":
   version: 0.2.2
