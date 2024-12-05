@@ -1,5 +1,5 @@
 {
-  "name": "gpt",
+  "name": "simple-agent",
   "private": true,
   "type": "module",
   "scripts": {

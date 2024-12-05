@@ -89,7 +89,7 @@ Powered by XMTP \x1b[0m`;
     }
     if (runConfig?.community) {
       console.warn(
-        `\t- ☣️ community MODE ENABLED:\n\t\t⚠️ All group messages will be exposed — proceed with caution.\n\t\tℹ Guidelines: https://message-kit.org/concepts/guidelines`,
+        `\t- ☣️ community MODE ENABLED:\n\t\t⚠️ All group messages will be exposed — proceed with caution.\n\t\tℹ Guidelines: https://message-kit.org/guidelines`,
       );
     }
     if (runConfig?.walletService) {

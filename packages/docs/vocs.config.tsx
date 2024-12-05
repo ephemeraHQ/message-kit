@@ -126,12 +126,12 @@ export default defineConfig({
       link: "/plugins/railway",
     },
     {
-      text: "Changelog",
-      link: "/changelog",
-    },
-    {
       text: "Guidelines",
       link: "/guidelines",
+    },
+    {
+      text: "Changelog",
+      link: "/changelog",
     },
   ],
 });

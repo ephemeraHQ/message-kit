@@ -228,3 +228,7 @@ html.dark {
   background: black;
 }
 /*END DARK*/
+.custom-homepage .vocs_Callout_info {
+  background: none !important;
+  border: 0px !important;
+}

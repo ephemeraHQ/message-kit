@@ -2,17 +2,39 @@
 
 This is a simple yet powerful agent that will help users interact with ENS.
 
-## Skills
+::::steps
 
-- [Check](/skills/check): Check if a domain is available
-- [Cool](/skills/cool): Show cool alternatives
-- [Register](/skills/register): Register a domain
-- [Reset](/skills/reset): Reset a domain
-- [Renew](/skills/renew): Renew a domain
-- [Info](/skills/info): Get info about a domain
-- [Pay](/skills/pay): Pay for a domain
+### CLI
 
-## Structure
+This tool simplifies the creation and configuration of new apps.
+
+:::code-group
+
+```bash [bun]
+bun create message-kit
+```
+
+```bash [yarn]
+yarn create message-kit
+```
+
+```bash [npx]
+npx create-message-kit
+```
+
+```bash [npm]
+npm init message-kit
+```
+
+:::
+
+_Refer to [structure](/concepts/structure) of the app so see the folder is created._
+
+### Templates
+
+Lets choose the `GPT` template as an example
+
+### Structure
 
 ```
 agent/
@@ -32,33 +54,69 @@ agent/
 └── .env
 ```
 
-## Runner
+### Prompt
 
-The runner function to start the agent and listen for incoming messages:
-
-```tsx [src/index.ts]
-// [!include ~/../../templates/agent/src/index.ts]
-```
-
-## Prompt
-
-This is the prompt that the agent will use to respond to the user.
+Here is the prompt that the agent will use to reply to messages.
 
 ```tsx [src/prompt.ts]
-// [!include ~/../../templates/agent/src/prompt.ts]
+// [!include ~/../../templates/ens/src/prompt.ts]
 ```
 
-The end result is a prompt that the model can understand and use to respond to the user.
+### Runner
 
-```md [example_prompt.md]
-// [!include ~/../../templates/agent/example_prompt.md]
+The process that starts listening to messages and replying to them.
+
+```tsx [src/index.ts]
+// [!include ~/../../templates/ens/src/index.ts]
 ```
 
 ### Variables
 
 Set up these variables in your app
 
-```bash [.env]
-KEY= # the private key of the wallet
-OPEN_AI_API_KEY= # sk-proj-...
+```bash [cmd]
+KEY= # the private key of the agent wallet
+OPENAI_API_KEY= # the API key for OpenAI
 ```
+
+### Run the bot
+
+Follow the steps below to run the bot
+
+:::code-group
+
+```bash [bun]
+# Install the dependencies
+bun install
+# run the app
+bun dev
+```
+
+```bash [yarn]
+# Install the dependencies
+yarn install
+# run the app
+yarn dev
+```
+
+```bash [npm]
+# Install the dependencies
+npm install
+# run the app
+npm run dev
+# or
+npm run start
+```
+
+:::
+
+### Download Converse
+
+- IOS & Mac: https://testflight.apple.com/join/Q27zugWe
+- Android: https://play.google.com/store/apps/details?id=com.converse.prod
+
+### Test
+
+Send a message to the app from [Converse](https://converse.xyz/), and it will reply `gm`!
+
+::::
