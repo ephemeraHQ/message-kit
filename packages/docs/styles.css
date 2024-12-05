@@ -232,3 +232,8 @@ html.dark {
   background: none !important;
   border: 0px !important;
 }
+@media (max-width: 768px) {
+  .vocs_Footer_container {
+    display: none;
+  }
+}
