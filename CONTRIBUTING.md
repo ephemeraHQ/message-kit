@@ -97,7 +97,6 @@ Plugins extend MessageKit's skills functionality. Here's how a plugin is structu
 
 ### Guidelines
 
-- Clear documentation of parameters
 - Make it work in the playground
 
 ```bash
