@@ -87,9 +87,9 @@ Powered by XMTP \x1b[0m`;
     if (agent === undefined || agent.skills.length === 0) {
       console.warn("\t- ⚠️ No skills found");
     }
-    if (runConfig?.experimental) {
+    if (runConfig?.community) {
       console.warn(
-        `\t- ☣️ EXPERIMENTAL MODE ENABLED:\n\t\t⚠️ All group messages will be exposed — proceed with caution.\n\t\tℹ Guidelines: https://message-kit.org/concepts/guidelines`,
+        `\t- ☣️ community MODE ENABLED:\n\t\t⚠️ All group messages will be exposed — proceed with caution.\n\t\tℹ Guidelines: https://message-kit.org/concepts/guidelines`,
       );
     }
     if (runConfig?.walletService) {

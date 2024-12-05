@@ -96,9 +96,14 @@ async function updatePackagejson(destDir, templateType) {
 
 async function gatherProjectInfo() {
   const templateOptions = [
-    { value: "gpt", label: "Simple Gpt" },
-    { value: "agent", label: "ENS Agent" },
-    { value: "experimental", label: "Experimental" },
+    {
+      value: "gpt",
+      label: "Simple Agent: A starter template for building an agent",
+    },
+    {
+      value: "agent",
+      label: "ENS Agent: An example of an agent using ENS skills",
+    },
   ];
 
   const templateType = await select({

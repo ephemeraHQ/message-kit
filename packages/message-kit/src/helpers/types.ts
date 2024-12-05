@@ -51,7 +51,7 @@ export type RunConfig = {
   // private key to be used for the client, if not, default from env
   privateKey?: string;
   // if true, the init log message with messagekit logo and stuff will be hidden
-  experimental?: boolean;
+  community?: boolean;
   // hide the init log message with messagekit logo and stuff
   hideInitLogMessage?: boolean;
   // agent wallet

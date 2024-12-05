@@ -119,7 +119,7 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
         typeId !== "group_updated");
 
     const isSkillTriggered = foundSkill?.skill;
-    const isExperimental = runConfig?.experimental ?? false;
+    const iscommunity = runConfig?.community ?? false;
 
     const isAddedMemberOrPass =
       typeId === "group_updated" &&
@@ -168,7 +168,7 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
           : //If its not an admin, nope
             !isAdminOrPass
             ? false
-            : isExperimental
+            : iscommunity
               ? true
               : //If its a group update but its not an added member, nope
                 !isAddedMemberOrPass

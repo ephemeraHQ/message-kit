@@ -13,17 +13,19 @@ import { todo } from "./skills/todo.js";
 import { gated, startGatedGroupServer } from "./skills/gated.js";
 import { broadcast } from "./skills/broadcast.js";
 import { wordle } from "./skills/wordle.js";
+import { dalle } from "./skills/dalle.js";
 
 export const agent: Agent = {
-  name: "Experimental Agent",
+  name: "community Agent",
   tag: "@bot",
-  description: "An experimental agent with a lot of skills.",
+  description: "An community agent with a lot of skills.",
   skills: [
     ...token,
     ...(process?.env?.RESEND_API_KEY ? todo : []),
     ...(process?.env?.ALCHEMY_SDK ? gated : []),
     ...broadcast,
     ...wordle,
+    ...dalle,
   ],
 };
 
@@ -48,5 +50,5 @@ run(
     fs.writeFileSync("example_prompt.md", prompt);
     await agentReply(context, prompt);
   },
-  { agent, experimental: true },
+  { agent, community: true },
 );

@@ -4,7 +4,7 @@
   "private": true,
   "workspaces": [
     "templates/agent",
-    "templates/experimental",
+    "templates/community",
     "templates/gpt",
     "packages/*",
     "shared/*"
@@ -20,7 +20,7 @@
     "dev:agent": "cd templates/agent && yarn dev",
     "dev:cli": "cd packages/create-message-kit && yarn link && yarn create message-kit",
     "dev:docs": "cd packages/docs && yarn dev",
-    "dev:exp": "cd templates/experimental && yarn dev",
+    "dev:exp": "cd templates/community && yarn dev",
     "dev:frames": "cd packages/frames && yarn dev",
     "dev:gpt": "cd templates/gpt && yarn dev",
     "dev:toss": "cd templates/toss && yarn dev",
