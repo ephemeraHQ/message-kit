@@ -1,3 +1,3 @@
-# Ens Agent
+# Simple Agent
 
-Check out the quickstart guide at [Ens Agent](https://message-kit.org/templates/templates/ens)
+Check out the guide at [Simple Agent](https://message-kit.org/templates/templates/simple)

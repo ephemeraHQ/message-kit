@@ -5,6 +5,7 @@
   "workspaces": [
     "templates/ens",
     "templates/playground",
+    "templates/gm",
     "templates/simple",
     "packages/*",
     "shared/*"
@@ -21,6 +22,7 @@
     "dev:docs": "cd packages/docs && yarn dev",
     "dev:ens": "cd templates/ens && yarn dev",
     "dev:frames": "cd packages/frames && yarn dev",
+    "dev:gm": "cd templates/gm && yarn dev",
     "dev:play": "cd templates/playground && yarn dev",
     "dev:simple ": "cd templates/simple && yarn dev",
     "format": "turbo run format",
