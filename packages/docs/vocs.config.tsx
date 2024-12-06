@@ -134,8 +134,8 @@ export default defineConfig({
           link: "/community/contribute",
         },
         {
-          text: "Examples",
-          link: "/community/examples",
+          text: "Projects",
+          link: "/community/projects",
         },
         {
           text: "Guidelines",
