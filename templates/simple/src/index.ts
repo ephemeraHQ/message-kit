@@ -11,7 +11,7 @@ import { systemPrompt } from "./prompt.js";
 export const agent: Agent = {
   name: "GPT Bot",
   tag: "@bot",
-  description: "Use GPT to answer questions.",
+  description: "Use GPT to generate text responses.",
   skills: [],
 };
 
