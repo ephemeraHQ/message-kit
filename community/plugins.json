@@ -1,0 +1,114 @@
+[
+  {
+    "href": "/plugins/redis",
+    "title": "Redis",
+    "description": "Use Redis as a database.",
+    "icon": "🗄️",
+    "author": "ephemeraHQ"
+  },
+  {
+    "href": "/plugins/lowdb",
+    "title": "Lowdb",
+    "description": "Use Lowdb to store data.",
+    "icon": "📦",
+    "author": "ephemeraHQ"
+  },
+  {
+    "href": "/plugins/usdc",
+    "title": "USDC",
+    "description": "Interact with the USDC token.",
+    "icon": "💰",
+    "author": "ephemeraHQ"
+  },
+  {
+    "href": "/plugins/learnweb3",
+    "title": "Learnweb3",
+    "description": "Use Learnweb3 to earn points in web3.",
+    "icon": "💻",
+    "author": "ephemeraHQ"
+  },
+  {
+    "href": "/plugins/alchemy",
+    "title": "Alchemy",
+    "description": "Use Alchemy to interact with the blockchain.",
+    "icon": "🔗",
+    "author": "humanagent"
+  },
+  {
+    "href": "/plugins/stackso",
+    "title": "Stackso",
+    "description": "Use Stackso to earn points in web3.",
+    "icon": "📈",
+    "author": "humanagent"
+  },
+  {
+    "href": "/plugins/xmtp",
+    "title": "XMTP",
+    "description": "Use XMTP to broadcast or manage groups.",
+    "icon": "💬",
+    "author": "ephemeraHQ"
+  },
+  {
+    "href": "/plugins/agentkit",
+    "title": "AgentKit",
+    "description": "Use AgentKit to manage agents.",
+    "icon": "🤖",
+    "author": "raihankhan-rk"
+  },
+  {
+    "href": "/plugins/vision",
+    "title": "GPT Vision",
+    "description": "Use Vision to generate images.",
+    "icon": "🖼️",
+    "author": "ephemeraHQ"
+  },
+  {
+    "href": "/plugins/minilog",
+    "title": "Minilog",
+    "description": "Use Minilog to send logs to a remote server.",
+    "icon": "�",
+    "author": "ephemeraHQ"
+  },
+  {
+    "href": "/plugins/cron",
+    "title": "Cron",
+    "description": "Schedule messages to be sent at a specific time.",
+    "icon": "⏰",
+    "author": "ephemeraHQ"
+  },
+  {
+    "href": "/plugins/resend",
+    "title": "Resend",
+    "description": "Use Resend to send emails.",
+    "icon": "✉️",
+    "author": "ephemeraHQ"
+  },
+  {
+    "href": "/plugins/notion",
+    "title": "Notion",
+    "description": "Use Notion as a database.",
+    "icon": "📒",
+    "author": "humanagent"
+  },
+  {
+    "href": "/plugins/gpt",
+    "title": "GPT",
+    "description": "Use GPT to generate text responses.",
+    "icon": "🤖",
+    "author": "ephemeraHQ"
+  },
+  {
+    "href": "/plugins/resolver",
+    "title": "Resolver",
+    "description": "Use Resolver to resolve messages.",
+    "icon": "🔍",
+    "author": "ephemeraHQ"
+  },
+  {
+    "href": "/plugins/cdp",
+    "title": "CDP",
+    "description": "Use CDP to create agent wallets.",
+    "icon": "💳",
+    "author": "raihankhan-rk"
+  }
+]

@@ -61,6 +61,7 @@ interface TileProps {
   icon?: string;
   isExternal?: boolean;
   author?: string;
+  onClick?: () => void;
 }
 
 const Tile: React.FC<TileProps> = ({
@@ -70,6 +71,7 @@ const Tile: React.FC<TileProps> = ({
   icon,
   isExternal,
   author,
+  onClick,
 }) => (
   <a
     href={href}
@@ -81,7 +83,8 @@ const Tile: React.FC<TileProps> = ({
       flexDirection: "column",
       justifyContent: "space-between",
       height: "100%",
-    }}>
+    }}
+    onClick={onClick}>
     {icon && <span className="custom-homepage-tile-icon">{icon}</span>}
     <h2 className="custom-homepage-tile-title">{title}</h2>
     <p className="custom-homepage-tile-description">{description}</p>

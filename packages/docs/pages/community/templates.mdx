@@ -1,26 +1,13 @@
-import { CustomHomePage } from "../../components/CustomHomePage";
+import { HomePage } from "vocs/components";
+import List from "../../components/List";
+import templatesData from "../../../../community/templates.json";
 
-# Templates
+# Templates library
 
-Welcome to the MessageKit templates library. Here you'll find a collection of templates that can be used to modify the behavior of messages.
+Welcome to the MessageKit templates library. Here you'll find a collection of pre-built templates that you can use in your agents.
 
 :::info
 Contribute templates [here](/community/contribute)
 :::
 
-<CustomHomePage.TileGrid3>
-  <CustomHomePage.Tile
-    href="/templates/simple"
-    title="Simple Agent"
-    description="An agent that uses Redis as a database."
-    icon="🤖"
-    author="ephemeraHQ"
-  />
-  <CustomHomePage.Tile
-    href="/templates/ens"
-    title="ENS Agent"
-    description="An agent that uses ENS as a database."
-    icon="🔗"
-    author="ephemeraHQ"
-  />
-</CustomHomePage.TileGrid3>
+<List items={templatesData} />
