@@ -4,14 +4,13 @@ import { USDCWallet } from "../plugins/usdc.js";
 
 export const cash: Skill[] = [
   {
-    skill: "/balance",
+    skill: "balance",
     handler: balanceHandler,
     examples: ["/balance"],
-    params: {},
     description: "Check your balance.",
   },
   {
-    skill: "/fund [amount]",
+    skill: "fund",
     handler: fundHandler,
     examples: ["/fund 1", "/fund 10"],
     params: {
@@ -23,10 +22,19 @@ export const cash: Skill[] = [
     description: "Fund your wallet. Returns a url to fund your wallet.",
   },
   {
-    skill: "/transfer [address] [amount]",
+    skill: "transfer",
     handler: transferHandler,
     examples: ["/transfer 0x40f08f0f853d1c42c61815652b7ccd5a50f0be09 1"],
-    params: {},
+    params: {
+      address: {
+        type: "address",
+        default: "",
+      },
+      amount: {
+        type: "number",
+        default: "",
+      },
+    },
     description: "Transfer USDC to another address.",
   },
 ];

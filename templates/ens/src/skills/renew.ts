@@ -6,7 +6,7 @@ const frameUrl = "https://ens.steer.fun/";
 
 export const renew: Skill[] = [
   {
-    skill: "/renew [domain]",
+    skill: "renew",
     handler: handler,
     description:
       "Extend the registration period of your ENS domain. Returns a URL to complete the renewal.",

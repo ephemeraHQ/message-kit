@@ -86,7 +86,7 @@ export function replaceSkills(agent: Agent) {
         Object.keys(skill.params ?? {})
           .map((key) => {
             const paramConfig = skill.params?.[key];
-            return `[${key}${paramConfig?.optional ? "(optional)" : ""}]`;
+            return `[${key}${paramConfig?.optional ? " (optional)" : ""}]`;
           })
           .join(" ") +
         " - " +

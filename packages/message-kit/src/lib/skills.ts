@@ -6,7 +6,10 @@ export function findSkill(text: string, skills: Skill[]): Skill | undefined {
   const trigger = text.split(" ")[0].toLowerCase();
 
   const handler = skills.find((skill) => {
-    return skill.skill?.split(" ")[0].toLowerCase() === trigger;
+    return (
+      "/" + skill.skill?.replace("/", "").split(" ")[0].toLowerCase() ===
+      trigger
+    );
   });
 
   return handler;

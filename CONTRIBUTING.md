@@ -10,14 +10,13 @@ Skills are the building blocks of MessageKit agents. Share your skills with the 
 // Example skill structure
 export const yourSkill: Skill[] = [
   {
-    skill: "/yourskill [param]",
+    skill: "yourskill",
     handler: handler,
     examples: ["/yourskill example"],
     description: "Description of what your skill does",
     params: {
       param: {
         type: "string",
-        description: "What this parameter does",
       },
     },
   },

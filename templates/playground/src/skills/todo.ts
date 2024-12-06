@@ -6,12 +6,11 @@ const resend = new Resend(process.env.RESEND_API_KEY); // Replace with your Rese
 
 export const todo: Skill[] = [
   {
-    skill: "/todo",
+    skill: "todo",
     handler: handler,
     examples: ["/todo"],
     description:
       "Summarize your TODOs and send an email with the summary. Receives no parameters.",
-    params: {},
   },
 ];
 

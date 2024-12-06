@@ -4,7 +4,7 @@ import type { Skill } from "@xmtp/message-kit";
 
 export const info: Skill[] = [
   {
-    skill: "/info [domain]",
+    skill: "info",
     handler: handler,
     description:
       "Get detailed information about an ENS domain including owner, expiry date, and resolver.",

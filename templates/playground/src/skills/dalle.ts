@@ -9,7 +9,7 @@ const openai = new OpenAI({
 
 export const dalle: Skill[] = [
   {
-    skill: "/image [prompt]",
+    skill: "image",
     handler: handler,
     description: "Generate an image based on a prompt.",
     examples: ["/image dog with a ball"],

@@ -2,7 +2,7 @@ import { XMTPContext, Skill } from "@xmtp/message-kit";
 
 export const broadcast: Skill[] = [
   {
-    skill: "/send",
+    skill: "send",
     adminOnly: true,
     handler: handler,
     examples: ["/send Hello everyone, the event is starting now!"],

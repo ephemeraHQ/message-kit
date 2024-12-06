@@ -5,11 +5,10 @@ import { checkNft } from "../plugins/alchemy.js";
 import { addToGroup } from "../plugins/xmtp.js";
 export const gated: Skill[] = [
   {
-    skill: "/create",
+    skill: "create",
     examples: ["/create"],
     handler: handler,
     adminOnly: true,
-    params: {},
     description: "Create a new group.",
   },
 ];

@@ -5,11 +5,10 @@ import type { Skill } from "@xmtp/message-kit";
 
 export const reset: Skill[] = [
   {
-    skill: "/reset",
+    skill: "reset",
     examples: ["/reset"],
     handler: handler,
     description: "Reset the conversation clearing memory and usernames cache.",
-    params: {},
   },
 ];
 export async function handler(context: XMTPContext) {

@@ -12,7 +12,6 @@ export const checkDomain: Skill[] = [
     description: "Check if a domain is available.",
     params: {
       domain: {
-        optional: true,
         type: "string",
       },
     },

@@ -3,14 +3,13 @@ import type { Skill } from "@xmtp/message-kit";
 
 export const wordle: Skill[] = [
   {
-    skill: "/wordle",
+    skill: "wordle",
     handler: handler,
     examples: ["/wordle"],
     description: "Play wordle.",
-    params: {},
   },
   {
-    skill: "/arena [word count] [audience size]",
+    skill: "arena",
     examples: ["/arena 3 15"],
     handler: handler,
     description: "Play arena.",

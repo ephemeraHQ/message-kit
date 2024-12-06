@@ -4,7 +4,7 @@ import type { Skill } from "@xmtp/message-kit";
 
 export const cool: Skill[] = [
   {
-    skill: "/cool [domain]",
+    skill: "cool",
     examples: ["/cool vitalik.eth"],
     handler: handler,
     description: "Get cool alternatives for a .eth domain.",

@@ -3,7 +3,7 @@ import type { Skill } from "@xmtp/message-kit";
 
 export const pay: Skill[] = [
   {
-    skill: "/pay [amount] [token] [username] [address]",
+    skill: "pay",
     examples: [
       "/pay 10 vitalik.eth",
       "/pay 1 usdc to 0xC60E6Bb79322392761BFe3081E302aEB79B30B03",
