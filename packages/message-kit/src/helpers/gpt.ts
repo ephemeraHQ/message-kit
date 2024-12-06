@@ -78,7 +78,20 @@ export const PROMPT_RULES = `
 
 export function replaceSkills(agent: Agent) {
   let returnPrompt = `## Commands\n${agent?.skills
-    .map((skill) => skill.skill + " - " + skill.description)
+    .map(
+      (skill) =>
+        "/" +
+        skill.skill.replace("/", "").split(" ")[0] +
+        " " +
+        Object.keys(skill.params ?? {})
+          .map((key) => {
+            const paramConfig = skill.params?.[key];
+            return `[${key}${paramConfig?.optional ? " (optional)" : ""}]`;
+          })
+          .join(" ") +
+        " - " +
+        skill.description,
+    )
     .join("\n")}\n\n## Examples\n${agent?.skills
     .map((skill) => skill.examples?.join("\n"))
     .join("\n")}`;

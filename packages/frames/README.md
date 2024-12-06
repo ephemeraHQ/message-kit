@@ -1,4 +1,4 @@
-# GPT example
+# Frames
 
 Here’s a step-by-step guide to get you started.
 

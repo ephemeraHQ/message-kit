@@ -69,7 +69,7 @@ export default defineConfig({
       link: "https://github.com/ephemeraHQ/message-kit",
     },
   ],
-  topNav: [{ text: "v1.2.11", link: "/changelog" }],
+  topNav: [{ text: "v1.2.14", link: "/changelog" }],
   editLink: {
     pattern:
       "https://github.com/ephemeraHQ/message-kit/blob/main/packages/docs/pages/:path",
@@ -80,10 +80,7 @@ export default defineConfig({
       text: "Quickstart",
       link: "/quickstart",
     },
-    {
-      text: "Examples",
-      link: "/examples",
-    },
+
     {
       text: "Concepts",
       items: [
@@ -108,78 +105,51 @@ export default defineConfig({
           link: "/concepts/frames",
         },
         {
-          text: "Wallet Service",
+          text: "Wallets",
           link: "/concepts/wallet",
         },
-      ],
-    },
-    {
-      text: "AI Skills",
-      items: [
         {
-          text: "Example",
-          link: "/templates/agent",
-        },
-        {
-          text: "Library",
-          link: "/skills/library",
-        },
-        {
-          text: "Overview",
-          link: "/skills",
-          items: [
-            {
-              text: "Reasoning",
-              link: "/skills/reasoning",
-            },
-            {
-              text: "Scenarios",
-              link: "/skills/scenarios",
-            },
-            {
-              text: "Prompting",
-              link: "/skills/prompting",
-            },
-            {
-              text: "Processing",
-              link: "/skills/processing",
-            },
-            {
-              text: "Parsing",
-              link: "/skills/parsing",
-            },
-            {
-              text: "Definition",
-              link: "/skills/definition",
-            },
-          ],
+          text: "AI Skills",
+          link: "/concepts/skills",
         },
       ],
     },
     {
-      text: "Middleware",
+      text: "Community",
       items: [
+        {
+          text: "Templates",
+          link: "/community/templates",
+        },
+        {
+          text: "Skills",
+          link: "/community/skills",
+        },
         {
           text: "Plugins",
-          link: "/middleware",
+          link: "/community/plugins",
         },
         {
-          text: "Deployment",
-          link: "/middleware/railway",
+          text: "Contribute",
+          link: "/community/contribute",
         },
         {
-          text: "Cursor",
-          link: "/middleware/cursor",
+          text: "Projects",
+          link: "/community/projects",
+        },
+        {
+          text: "Guidelines",
+          link: "/community/guidelines",
         },
       ],
+    },
+    {
+      text: "Deployment",
+      link: "/plugins/railway",
     },
     {
       text: "Changelog",
       link: "/changelog",
-    },
-    {
-      text: "Guidelines",
-      link: "/concepts/guidelines",
     },
   ],
 });

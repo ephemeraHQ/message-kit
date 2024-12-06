@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const templates = ["gpt", "agent", "experimental"];
+const templates = ["simple", "ens"];
 const templateDir = path.resolve(
   __dirname,
   "../packages/create-message-kit/templates",

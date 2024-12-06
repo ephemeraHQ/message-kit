@@ -1,0 +1,213 @@
+import { HomePage } from "vocs/components";
+import { CustomHomePage } from "../../components/CustomHomePage";
+
+# Contributing to MessageKit
+
+Welcome to the MessageKit community! We're excited to have you contribute to making MessageKit better. There are several ways you can contribute:
+
+## Skills
+
+Skills are the building blocks of MessageKit agents. Share your skills with the community:
+
+```tsx
+// Example skill structure
+export const yourSkill: Skill[] = [
+  {
+    skill: "yourskill",
+    handler: handler,
+    examples: ["/yourskill example"],
+    description: "Description of what your skill does",
+    params: {
+      param: {
+        type: "string",
+      },
+    },
+  },
+];
+function handler(context: XMTPContext) {
+  /**
+   * Your code here
+   */
+}
+```
+
+### Guidelines
+
+:::steps
+
+#### Test it
+
+Make it work in the playground:
+
+```bash
+message-kit/
+└── templates/
+    └── playground/
+        ├── skills/
+        │   ├── other skills...
+        │   └── your-skill.ts
+        ├── package.json
+        └── README.md
+```
+
+Run it:
+
+```bash
+yarn dev:play
+```
+
+> ⚠️ Feel free to edit the `index.ts` file but don't remove the existing skills.
+
+#### Create the docs
+
+- Add the Doc file to the [skills](https://github.com/ephemeraHQ/message-kit/blob/community/packages/docs/pages/skills) folder
+
+#### Update the community file
+
+- **Update the [`community/skills.json`](https://github.com/ephemeraHQ/message-kit/blob/community/community/skills.json) file** to include your new skill.
+
+:::
+
+## Templates
+
+Templates help developers quickly bootstrap new agents. Here's how to contribute a template:
+
+### Guidelines
+
+:::steps
+
+#### Test it
+
+Make it work in the playground:
+
+```bash
+message-kit/
+└── templates/
+    ├── other templates...
+    └── your-template/
+        ├── src/
+        │   ├── index.ts
+        │   ├── prompt.ts
+        │   └── skills/ # Optional
+        │   └── plugins/ # Optional
+        ├── package.json
+        └── README.md
+```
+
+Run it:
+
+```bash
+yarn dev:play
+```
+
+#### Create the docs
+
+- Add the Doc file to the [templates](https://github.com/ephemeraHQ/message-kit/blob/community/packages/docs/pages/templates) folder
+
+#### Update the community file
+
+- **Update the [`community/templates.json`](https://github.com/ephemeraHQ/message-kit/blob/community/community/templates.json) file** to include your new template.
+
+:::
+
+## Plugins
+
+Plugins extend MessageKit's skills functionality. Here's how a plugin is structured:
+
+### Guidelines
+
+:::steps
+
+#### Test it
+
+Make it work in the playground:
+
+```bash
+message-kit/
+└── templates/
+    └── playground/
+        ├── plugins/
+        │   ├── other plugins...
+        │   └── your-plugin.ts
+        ├── package.json
+        └── README.md
+```
+
+Run it:
+
+```bash
+yarn dev:play
+```
+
+> ⚠️ Feel free to edit the `index.ts` file to test but don't remove the existing plugins.
+
+#### Create the docs
+
+- Add the Doc file to the [plugins](https://github.com/ephemeraHQ/message-kit/blob/community/packages/docs/pages/plugins) folder
+
+#### Update the community file
+
+- **Update the [`community/plugins.json`](https://github.com/ephemeraHQ/message-kit/blob/community/community/plugins.json) file** to include your new plugin.
+
+:::
+
+## Development workflow
+
+:::steps
+
+#### Fork & Clone
+
+```bash
+git clone https://github.com/ephemeraHQ/message-kit.git
+cd message-kit
+```
+
+#### Create a Branch
+
+```bash
+git checkout -b community/your-feature-name
+```
+
+#### Make Changes
+
+- Write your code
+- Add tests
+- Update documentation
+
+#### Build
+
+```bash
+# Install dependencies
+yarn install
+
+# Build
+yarn build
+
+# Run tests
+yarn test
+```
+
+#### Submit PR
+
+- Create a pull request
+- Describe your changes
+- Link related issues
+
+:::
+
+---
+
+<CustomHomePage.TileGrid3>
+  <CustomHomePage.Tile
+    href="https://github.com/ephemeraHQ/message-kit/graphs/contributors"
+    title="Core Contributors"
+    description="The amazing people behind MessageKit"
+    icon="👥"
+  />
+  <CustomHomePage.Tile
+    href="https://converse.xyz/group-invite/a0XKzl9oVpWNXcuYDZLMf"
+    title="Questions? "
+    description="Join the XMTP Devs group chat"
+    icon="💬"
+  />
+</CustomHomePage.TileGrid3>

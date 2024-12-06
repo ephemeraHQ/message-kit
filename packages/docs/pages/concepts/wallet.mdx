@@ -20,7 +20,7 @@ To use the `WalletService`, you need to initialize it with a Redis client and en
 Start by importing the `getWalletService` function from the `redis.js` file:
 
 ```typescript
-import { getWalletService } from "./lib/redis.js";
+import { getWalletService } from "./plugins/redis.js";
 const walletServiceDB = await getWalletService();
 run(
   async (context: XMTPContext) => {
@@ -106,7 +106,7 @@ The WalletService uses a dual-key encryption system:
 ### Default Encryption
 
 - **User Wallets**: Encrypted with `userEncryptionKey` (user address)
-- **Temporary Wallets**: Encrypted with `tempEncryptionKey` (conversationId + admin of the toss)
+- **Temporary Wallets**: Encrypted with `tempEncryptionKey` (conversationId + creator of the agent)
 
 ```typescript
 // Default encryption
@@ -119,18 +119,3 @@ const userDecrypted = walletService.decrypt(userEncrypted, userEncryptionKey);
 ```
 
 Note: All string data is converted to lowercase before encryption.
-
-### Encryption Process
-
-1. Convert data to JSON string
-2. Generate a key using keccak256
-3. Perform XOR encryption
-4. Return encrypted hex string
-
-### Security Best Practices
-
-- Keep encryption keys secure
-- Monitor wallet operations
-- Implement error handling
-- Use separate environments for development and production
-- Conduct regular security audits

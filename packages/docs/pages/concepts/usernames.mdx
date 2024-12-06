@@ -16,18 +16,7 @@ The resolver provides a `getUserInfo` function that returns detailed information
 const userInfo = await getUserInfo(identifier);
 ```
 
-### Return Data
-
 The resolver returns a `UserInfo` object containing:
-
-```typescript
-// Resolve an ENS domain
-const ensUser = await getUserInfo("vitalik.eth");
-// Resolve a Converse username
-const converseUser = await getUserInfo("@fabri");
-// Resolve an Ethereum address
-const addressUser = await getUserInfo("0x123...");
-```
 
 - `ensDomain` - User's ENS domain if available
 - `address` - Ethereum address
@@ -55,4 +44,4 @@ You can check if a user has XMTP enabled:
 const { v2, v3 } = await isOnXMTP(v3client, v2client, address);
 ```
 
-> For more information visit [Resolver](/middleware/resolver.mdx)
+> For more information visit [Resolver](/plugins/resolver.mdx)

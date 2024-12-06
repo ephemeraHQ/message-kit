@@ -1,5 +1,32 @@
 # Changelog
 
+## 1.2.14
+
+- **New Features**
+
+  - Introduced a new "ENS Agent" documentation, detailing its functionality and usage.
+  - Added a new skill for generating images using DALL-E.
+  - New "Contribute" guide for community contributions, including skills, templates, and plugins.
+
+- **Documentation Updates**
+
+  - Updated various documentation files to reflect new paths and improved clarity.
+  - Enhanced the "Frames" documentation with detailed parameters and examples for payments and receipts.
+  - Streamlined the community examples section for better organization and clarity.
+  - Introduced a new documentation page for the MessageKit templates library.
+
+- **Bug Fixes**
+
+  - Corrected hyperlink references throughout the documentation to reflect updated paths.
+
+- **Style Improvements**
+
+  - Enhanced CSS for improved responsiveness and dark mode compatibility.
+  - Updated README files to provide clearer guidance and links to resources.
+
+- **Chores**
+  - Renamed and reorganized package names and paths for better alignment with current functionality.
+
 ## 1.2.11
 
 - Framesv2 integration: Now every agent can have its own landing page for interaction via web and v2 frames via farcaster.
@@ -13,14 +40,9 @@
 - **New Features**
 
   - Added USDC management features, allowing users to check balances, fund wallets, and transfer USDC.
-  - Enhanced documentation for various components, including new sections for USDC and toss management.
   - New environment variables added for improved configuration options.
   - Added a new "Agent Wallet" section in the documentation to facilitate wallet management.
   - Introduced the `WalletService` class for managing agent wallets, enabling gasless payments and transfers.
-
-- **Bug Fixes**
-
-  - Improved error handling and logging for wallet operations and toss management.
 
 - **Documentation**
   - Updated README files and documentation pages to provide clearer instructions and new environment variable requirements, including detailed setup for the USDC and AgentService functionalities.
@@ -140,11 +162,11 @@ Overall, these changes aim to enhance the functionality of GPT-based agents, imp
 - Each agent can have its own landing in messagekit (devs can do PRs)
 - Quickstarts section
   - Skills: There is a 4-step approach to AI Skills:
-  - [Definition](https://message-kit.org/skills/definition): Define the skills
-  - [Parsing](https://message-kit.org/skills/parsing): From @base please let swap 1 eth to usdc to /swap 1 eth usdc
-  - [Processing](https://message-kit.org/skills/processing): For an agent to process new lines
-  - [Scenarios](https://message-kit.org/skills/scenarios): For the agent to understand the context and perform skills autonomously.
-- [Reasoning](https://message-kit.org/skills/reasoning): For the agent to understand all context and perform skills autonomously.
+  - [Definition](https://message-kit.org/concepts/skills/definition): Define the skills
+  - [Parsing](https://message-kit.org/concepts/skills/parsing): From @base please let swap 1 eth to usdc to /swap 1 eth usdc
+  - [Processing](https://message-kit.org/concepts/skills/processing): For an agent to process new lines
+  - [Scenarios](https://message-kit.org/concepts/skills/scenarios): For the agent to understand the context and perform skills autonomously.
+  - [Reasoning](https://message-kit.org/concepts/skills/reasoning): For the agent to understand all context and perform skills autonomously.
 - Resolver: Fetches context from the user like ENS domain or Converse username
 
 ### MessageKit updates

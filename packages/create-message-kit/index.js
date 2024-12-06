@@ -7,7 +7,7 @@ import { default as fs } from "fs-extra";
 import { isCancel } from "@clack/prompts";
 import { detect } from "detect-package-manager";
 import pc from "picocolors";
-const defVersion = "1.2.11";
+const defVersion = "1.2.14";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Read package.json to get the version
@@ -96,9 +96,14 @@ async function updatePackagejson(destDir, templateType) {
 
 async function gatherProjectInfo() {
   const templateOptions = [
-    { value: "gpt", label: "Simple Gpt" },
-    { value: "agent", label: "ENS Agent" },
-    { value: "experimental", label: "Experimental" },
+    {
+      value: "simple",
+      label: "Simple Agent: A starter template for building an agent",
+    },
+    {
+      value: "ens",
+      label: "ENS Agent: An example of an agent using ENS skills",
+    },
   ];
 
   const templateType = await select({

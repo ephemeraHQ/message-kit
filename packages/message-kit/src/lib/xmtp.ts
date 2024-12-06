@@ -194,9 +194,12 @@ export class XMTPContext {
             ? { content: message.content.trim(), ...message.contentType }
             : message.content;
         if (message?.contentType?.sameAs(ContentTypeText)) {
-          const skillAction = findSkill(content.content, context.agent.skills);
+          const skillAction = findSkill(
+            content?.content,
+            context?.agent?.skills,
+          );
           const extractedValues = skillAction
-            ? parseSkill(content.content, skillAction)
+            ? parseSkill(content?.content, skillAction)
             : undefined;
           if (extractedValues?.skill) {
             content = {
