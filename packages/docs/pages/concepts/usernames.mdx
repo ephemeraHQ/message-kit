@@ -16,18 +16,7 @@ The resolver provides a `getUserInfo` function that returns detailed information
 const userInfo = await getUserInfo(identifier);
 ```
 
-### Return Data
-
 The resolver returns a `UserInfo` object containing:
-
-```typescript
-// Resolve an ENS domain
-const ensUser = await getUserInfo("vitalik.eth");
-// Resolve a Converse username
-const converseUser = await getUserInfo("@fabri");
-// Resolve an Ethereum address
-const addressUser = await getUserInfo("0x123...");
-```
 
 - `ensDomain` - User's ENS domain if available
 - `address` - Ethereum address
