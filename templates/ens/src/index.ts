@@ -41,7 +41,7 @@ run(
     } = context;
 
     let prompt = await replaceVariables(systemPrompt, sender.address, agent);
-    // [!region run1]
+    // [!endregion run1]
     //This is only used for to update the docs.
     fs.writeFileSync("example_prompt.md", prompt);
     // [!region run2]
