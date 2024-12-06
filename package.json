@@ -4,8 +4,8 @@
   "private": true,
   "workspaces": [
     "templates/ens",
-    "templates/playground",
     "templates/gm",
+    "templates/playground",
     "templates/simple",
     "packages/*",
     "shared/*"

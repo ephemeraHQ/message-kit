@@ -1,4 +1,4 @@
-# Cointoss example
+# GM example
 
 ## Running locally
 
@@ -14,7 +14,7 @@ yarn install
 # Build the project
 yarn build
 # Run the app directly from root
-yarn dev:toss
+yarn dev:gm
 ```
 
 ### Variables
