@@ -6,12 +6,13 @@ const ensUrl = "https://app.ens.domains/";
 // [!region define]
 export const checkDomain: Skill[] = [
   {
-    skill: "/check [domain]",
+    skill: "check",
     handler: handler,
     examples: ["/check vitalik.eth", "/check fabri.base.eth"],
     description: "Check if a domain is available.",
     params: {
       domain: {
+        optional: true,
         type: "string",
       },
     },

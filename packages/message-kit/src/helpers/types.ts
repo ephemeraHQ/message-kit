@@ -79,6 +79,7 @@ export interface SkillParamConfig {
     | "url";
   plural?: boolean;
   values?: string[]; // Accepted values for the parameter
+  optional?: boolean;
 }
 
 export interface Frame {
@@ -98,7 +99,7 @@ export interface Skill {
   adminOnly?: boolean;
   description: string;
   examples: string[];
-  params: Record<string, SkillParamConfig>;
+  params?: Record<string, SkillParamConfig>;
 }
 
 export interface AbstractedMember {
