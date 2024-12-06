@@ -8,24 +8,13 @@ import {
 } from "@xmtp/message-kit";
 import fs from "fs";
 import { systemPrompt } from "./prompt.js";
-import { token } from "./skills/token.js";
-import { todo } from "./skills/todo.js";
-import { gated, startGatedGroupServer } from "./skills/gated.js";
-import { broadcast } from "./skills/broadcast.js";
-import { wordle } from "./skills/wordle.js";
-import { dalle } from "./skills/dalle.js";
-
+import { web } from "./skills/web.js";
 export const agent: Agent = {
   name: "Playground Agent",
   tag: "@bot",
-  description: "An playground agent with a lot of skills.",
+  description: "A playground agent with a lot of skills.",
   skills: [
-    ...token,
-    ...(process?.env?.RESEND_API_KEY ? todo : []),
-    ...(process?.env?.ALCHEMY_SDK ? gated : []),
-    ...broadcast,
-    ...wordle,
-    ...dalle,
+    ...web,
   ],
 };
 
@@ -34,8 +23,6 @@ const { client } = await xmtpClient({
   hideInitLogMessage: true,
 });
 
-startGatedGroupServer(client);
-// [!endregion gated]
 
 run(
   async (context: XMTPContext) => {
