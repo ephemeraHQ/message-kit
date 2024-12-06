@@ -4,13 +4,13 @@
     "title": "ENS Template",
     "description": "A template for working with ENS domains.",
     "icon": "🔗",
-    "author": "AuthorName"
+    "author": "humanagent"
   },
   {
     "href": "/templates/simple",
     "title": "Simple Template",
     "description": "A simple template for basic operations.",
     "icon": "🤖",
-    "author": "AuthorName"
+    "author": "humanagent"
   }
 ]

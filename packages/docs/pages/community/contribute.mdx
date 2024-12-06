@@ -5,10 +5,6 @@ import { CustomHomePage } from "../../components/CustomHomePage";
 
 Welcome to the MessageKit community! We're excited to have you contribute to making MessageKit better. There are several ways you can contribute:
 
-:::info
-Contribute to [MessageKit ⭐️](https://github.com/ephemeraHQ/message-kit)
-:::
-
 ## Skills
 
 Skills are the building blocks of MessageKit agents. Share your skills with the community:
@@ -37,7 +33,11 @@ function handler(context: XMTPContext) {
 
 ### Guidelines
 
-- Make it work in the playground
+:::steps
+
+#### Test it
+
+Make it work in the playground:
 
 ```bash
 message-kit/
@@ -49,21 +49,15 @@ message-kit/
         └── README.md
 ```
 
-- See how other skills are structured in the docs
-- Add the skill to the [skills](https://github.com/ephemeraHQ/message-kit/blob/community/packages/docs/pages/community/skills.mdx) community page
+#### Add docs
 
-```bash
-message-kit/
-└── packages/
-    └── docs/
-        └── pages/
-            └── skills/
-                └── your-skill.mdx
-            └── community/
-                └── skills.mdx
-        ├── package.json
-        └── README.md
-```
+- Add the skill Docs to the [skills](https://github.com/ephemeraHQ/message-kit/blob/community/packages/docs/pages/skills) folder
+
+#### Update the community file
+
+- **Update the [`community/skills.json`](https://github.com/ephemeraHQ/message-kit/blob/community/community/skills.json) file** to include your new skill.
+
+:::
 
 ## Templates
 
@@ -71,7 +65,11 @@ Templates help developers quickly bootstrap new agents. Here's how to contribute
 
 ### Guidelines
 
-- Make it work in the playground
+:::steps
+
+#### Test it
+
+Make it work in the playground:
 
 ```bash
 message-kit/
@@ -86,21 +84,15 @@ message-kit/
         └── README.md
 ```
 
-- See how other templates are structured in the docs
-- Add the template to the [templates](https://github.com/ephemeraHQ/message-kit/blob/community/packages/docs/pages/community/templates.mdx) community page
+#### Add docs
 
-```bash
-message-kit/
-└── packages/
-    └── docs/
-        └── pages/
-            └── templates/
-                └── your-template.mdx
-            └── community/
-                └── templates.mdx
-        ├── package.json
-        └── README.md
-```
+- Add the skill Docs to the [templates](https://github.com/ephemeraHQ/message-kit/blob/community/packages/docs/pages/templates) folder
+
+#### Update the community file
+
+- **Update the [`community/templates.json`](https://github.com/ephemeraHQ/message-kit/blob/community/community/templates.json) file** to include your new template.
+
+:::
 
 ## Plugins
 
@@ -108,7 +100,11 @@ Plugins extend MessageKit's skills functionality. Here's how a plugin is structu
 
 ### Guidelines
 
-- Make it work in the playground
+:::steps
+
+#### Test it
+
+Make it work in the playground:
 
 ```bash
 message-kit/
@@ -120,21 +116,15 @@ message-kit/
         └── README.md
 ```
 
-- See how other plugins are structured in the docs
-- Add the plugin to the [plugins](https://github.com/ephemeraHQ/message-kit/blob/community/packages/docs/pages/community/plugins.mdx) community page
+#### Add docs
 
-```bash
-message-kit/
-└── packages/
-    └── docs/
-        └── pages/
-            └── plugins/
-                └── your-plugin.mdx
-            └── community/
-                └── plugins.mdx
-        ├── package.json
-        └── README.md
-```
+- Add the skill Docs to the [plugins](https://github.com/ephemeraHQ/message-kit/blob/community/packages/docs/pages/plugins) folder
+
+#### Update the community file
+
+- **Update the [`community/plugins.json`](https://github.com/ephemeraHQ/message-kit/blob/community/community/plugins.json) file** to include your new plugin.
+
+:::
 
 ## Development workflow
 

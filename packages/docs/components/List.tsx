@@ -8,7 +8,7 @@ const TemplateList: React.FC<{ items: any[] }> = ({ items }) => {
     <div>
       <input
         type="text"
-        placeholder="Search templates..."
+        placeholder="Search ..."
         onChange={(e) => setSearchTerm(e.target.value)}
         style={{ marginBottom: "20px", padding: "10px", width: "100%" }}
       />
