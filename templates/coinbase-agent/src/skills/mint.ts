@@ -77,16 +77,16 @@ export async function handler(context: XMTPContext) {
       return;
     } else {
       await context.send(
-        "Error: Unable to parse the provided URL. Please ensure you're sending a valid Zora or Coinbase Wallet URL."
+        "Error: Unable to parse the provided URL. Please ensure you're sending a valid Zora or Coinbase Wallet URL.",
       );
       return;
     }
   } else {
-    const { collection, token_id } = params; // [!code hl] // [!code focus]
+    const { collection, token_id } = params;
     console.log(collection, token_id);
     if (!collection || !token_id) {
       context.reply(
-        "Missing required parameters. Please provide collection and token_id."
+        "Missing required parameters. Please provide collection and token_id.",
       );
       return;
     }

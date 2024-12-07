@@ -145,7 +145,7 @@ export default defineConfig({
     },
     {
       text: "Deployment",
-      link: "/plugins/railway",
+      link: "/deployment",
     },
     {
       text: "Changelog",

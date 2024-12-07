@@ -17,6 +17,7 @@
     "cli": "node packages/create-message-kit/index.js",
     "copy": "node scripts/copyTemplates.js",
     "dev": "cd packages/message-kit && yarn build:watch",
+    "docs": "cd packages/docs && yarn dev",
     "format": "turbo run format",
     "play": "cd templates/playground && yarn dev",
     "publish": "node scripts/publish.js",

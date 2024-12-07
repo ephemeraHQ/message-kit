@@ -1,14 +1,14 @@
-# Simple Agent
+# Toss
 
-Here’s a step-by-step guide to get you started.
+A fun game to play with your friends.
 
 ### Structure
 
 ```
-group/
+toss/
+
 ├── src/
-│   ├── index.ts
-│   ├── prompt.ts
+│   ├── toss.ts
 ├── package.json
 ├── tsconfig.json
 └── .env
@@ -19,7 +19,7 @@ group/
 Here is the prompt that the agent will use to reply to messages.
 
 ```tsx [src/prompt.ts]
-// [!include ~/../../templates/simple/src/prompt.ts]
+// [!include ~/../../templates/toss/src/prompt.ts]
 ```
 
 ### Runner
@@ -27,7 +27,7 @@ Here is the prompt that the agent will use to reply to messages.
 The process that starts listening to messages and replying to them.
 
 ```tsx [src/index.ts]
-// [!include ~/../../templates/simple/src/index.ts]
+// [!include ~/../../templates/toss/src/index.ts]
 ```
 
 ### Variables
@@ -35,5 +35,5 @@ The process that starts listening to messages and replying to them.
 Set up these variables in your app
 
 ```bash [cmd]
-// [!include ~/../../templates/simple/.env.example]
+// [!include ~/../../templates/toss/.env.example]
 ```
