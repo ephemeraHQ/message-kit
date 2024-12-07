@@ -96,13 +96,13 @@ async function updatePackagejson(destDir, templateType) {
 
 async function gatherProjectInfo() {
   const templateOptions = fs.readJsonSync(
-    resolve(__dirname, "../../community/templates.json"),
+    resolve(__dirname, "./templates.json"),
   );
 
   const templateType = await select({
     message: "Select the type of template to initialize:",
-    options: templateOptions.map(({ title, description, author }) => ({
-      value: title,
+    options: templateOptions.map(({ title, description, author, href }) => ({
+      value: href,
       label: `${title} - ${description} - by @${author}`,
     })),
   });
@@ -111,11 +111,15 @@ async function gatherProjectInfo() {
     process.exit(0);
   }
 
-  const templateDir = resolve(__dirname, `./templates/${templateType}`);
+  // Fix: Use templates directory with the selected href
+  const templateDir = resolve(__dirname, `./${templateType}`);
+
+  // Add debug logging
+  log.info(`Looking for template in: ${templateDir}`);
 
   // Ensure the template directory exists
   if (!fs.existsSync(templateDir)) {
-    console.error("Template directory does not exist.");
+    log.error(`Template directory not found: ${templateDir}`);
     process.exit(1);
   }
 
@@ -137,7 +141,7 @@ async function gatherProjectInfo() {
   // Copy template files
   fs.copySync(templateDir, destDir);
 
-  return { templateType, displayName, destDir, templateDir };
+  return { templateType: templateType, displayName, destDir, templateDir };
 }
 
 function createTsconfig(destDir) {

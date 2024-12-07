@@ -17,6 +17,7 @@ const templates = fs.readdirSync(templatesDir).filter((file) => {
 //test
 async function copyTemplates() {
   try {
+    // Copy templates
     for (const template of templates) {
       const srcDir = path.resolve(__dirname, `../templates/${template}`);
       const destDir = path.resolve(templateDestinationDir, template);
@@ -53,7 +54,33 @@ async function copyTemplates() {
         console.warn(`Source directory ${srcDir} does not exist.`);
       }
     }
-    console.log("All templates copied successfully.");
+
+    // Copy community folder
+    const communitySourceDir = path.resolve(__dirname, "../community");
+
+    if (fs.existsSync(communitySourceDir)) {
+      await fs.ensureDir(templateDestinationDir);
+      // Instead of copying the entire community folder, just copy templates.json
+      const templatesJsonSrc = path.resolve(
+        communitySourceDir,
+        "templates.json",
+      );
+      const templatesJsonDest = path.resolve(
+        templateDestinationDir,
+        "../templates.json",
+      );
+
+      if (fs.existsSync(templatesJsonSrc)) {
+        await fs.copyFile(templatesJsonSrc, templatesJsonDest);
+        console.log(`Copied templates.json to ${templateDestinationDir}`);
+      } else {
+        console.warn(`templates.json not found in ${communitySourceDir}`);
+      }
+    } else {
+      console.warn(`Community directory ${communitySourceDir} does not exist.`);
+    }
+
+    console.log("All templates and templates.json copied successfully.");
   } catch (error) {
     console.error("Error copying templates:", error);
   }
