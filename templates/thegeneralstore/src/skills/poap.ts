@@ -1,5 +1,5 @@
 import { XMTPContext } from "@xmtp/message-kit";
-import { db } from "../plugins/db.js";
+import { db } from "../plugins/lowdb.js";
 await db.read();
 
 export async function handlePoap(context: XMTPContext) {

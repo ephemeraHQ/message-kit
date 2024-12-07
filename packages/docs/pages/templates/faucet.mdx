@@ -2,7 +2,7 @@
 
 Get some testnet tokens.
 
-### Structure
+## Structure
 
 ```
 ens/
@@ -19,13 +19,16 @@ ens/
 └── .env
 ```
 
-References:
+### Skills
 
 - [Faucet](/skills/faucet): Get some testnet tokens.
-- [Redis](/plugins/redis): Store and retrieve data from Redis.
-- [LearnWeb3](/plugins/learnweb3): Interact with Ethereum-compatible networks.
 
-### Prompt
+### Plugins
+
+- [LearnWeb3](/plugins/learnweb3): Interact with Ethereum-compatible networks.
+- [Redis](/plugins/redis): Store and retrieve data from Redis.
+
+## Prompt
 
 Here is the prompt that the agent will use to reply to messages.
 
@@ -33,7 +36,7 @@ Here is the prompt that the agent will use to reply to messages.
 // [!include ~/../../templates/faucet/src/prompt.ts]
 ```
 
-### Runner
+## Runner
 
 The process that starts listening to messages and replying to them.
 
@@ -41,7 +44,7 @@ The process that starts listening to messages and replying to them.
 // [!include ~/../../templates/faucet/src/index.ts]
 ```
 
-### Variables
+## Variables
 
 Set up these variables in your app
 

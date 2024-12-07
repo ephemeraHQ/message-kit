@@ -2,11 +2,16 @@
 
 A bot that creates an onboard to a gated NFT group
 
-### Structure
+## Structure
 
 ```
 gated-group/
 ├── src/
+│   ├── plugins/
+│       ├── alchemy.ts
+│       ├── xmtp.ts
+│   ├── skills/
+│       ├── gated.ts
 │   ├── index.ts
 │   ├── prompt.ts
 ├── package.json
@@ -14,7 +19,16 @@ gated-group/
 └── .env
 ```
 
-### Prompt
+### Plugins
+
+- [Alchemy](/plugins/alchemy): Interact with Alchemy
+- [Xmtp](/plugins/xmtp): Interact with Xmtp
+
+### Skills
+
+- [Gated](/skills/gated): Create an onboard to a gated NFT group
+
+## Prompt
 
 Here is the prompt that the agent will use to reply to messages.
 
@@ -22,7 +36,7 @@ Here is the prompt that the agent will use to reply to messages.
 // [!include ~/../../templates/simple/src/prompt.ts]
 ```
 
-### Runner
+## Runner
 
 The process that starts listening to messages and replying to them.
 
@@ -30,7 +44,7 @@ The process that starts listening to messages and replying to them.
 // [!include ~/../../templates/simple/src/index.ts]
 ```
 
-### Variables
+## Variables
 
 Set up these variables in your app
 

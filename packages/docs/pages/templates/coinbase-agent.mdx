@@ -2,11 +2,14 @@
 
 This is a simple yet powerful agent that will help users interact with Coinbase.
 
-### Structure
+## Structure
 
 ```
 coinbase-agent/
 ├── src/
+│   ├── plugins/
+│       ├── learnweb3.ts
+│       ├── redis.ts
 │   └── skills/
 │       ├── drip.ts
 │       ├── mint.ts
@@ -19,14 +22,19 @@ coinbase-agent/
 └── .env
 ```
 
-## Skills
+### Skills
 
 - [Drip](/skills/drip): Drip a coin
 - [Mint](/skills/mint): Mint a coin
 - [Pay](/skills/pay): Pay for a coin
 - [Swap](/skills/swap): Swap a coin
 
-### Prompt
+## Plugins
+
+- [LearnWeb3](/plugins/learnweb3): Interact with LearnWeb3
+- [Redis](/plugins/redis): Interact with Redis
+
+## Prompt
 
 Here is the prompt that the agent will use to reply to messages.
 
@@ -34,7 +42,7 @@ Here is the prompt that the agent will use to reply to messages.
 // [!include ~/../../templates/coinbase-agent/src/prompt.ts]
 ```
 
-### Runner
+## Runner
 
 The process that starts listening to messages and replying to them.
 
@@ -42,7 +50,7 @@ The process that starts listening to messages and replying to them.
 // [!include ~/../../templates/coinbase-agent/src/index.ts]
 ```
 
-### Variables
+## Variables
 
 Set up these variables in your app
 
