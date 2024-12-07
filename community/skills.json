@@ -103,5 +103,12 @@
     "description": "Get information about a website.",
     "icon": "🌐",
     "author": "raihankhan_rk"
+  },
+  {
+    "href": "/skills/cryptoPrice",
+    "title": "Crypto price",
+    "description": "Get the current price of a cryptocurrency in a currency.",
+    "icon": "💰",
+    "author": "raihankhan_rk"
   }
 ]
