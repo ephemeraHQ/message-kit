@@ -1,8 +1,12 @@
 # Railway
 
+:::tip{title="One Click Deploy with Replit"}
+The fastest way to deploy the agent and get started is using our [Replit Quickstart Template](https://replit.com/@raihankhan-rk/MessageKit-Quickstart-Template). While it requires a Replit Core subscription, we offer MessageKit Community Sponsorships - reach out to [humanagent.eth](https://converse.xyz/humanagent.eth) to learn more!
+:::
+
 ## Introduction
 
-Here’s how to easily deploy this app:
+Here's how to easily deploy this app:
 
 - Sign up at [Railway](https://railway.app/).
 - Click 'New Project' and select 'Node.js'.
@@ -28,38 +32,3 @@ Here’s how to easily deploy this app:
 ![](/img/railway/6.gif)
 
 Add the variable to the env editor in Railway.
-
-```bash [.env]
-KEY= # the private key of the agent wallet
-REDIS_CONNECTION_STRING= # the connection string for the Redis database
-```
-
-3. **Repository**: Connect your GitHub repository where your app code resides and deploy the repo.
-
-![](/img/railway/5.png)
-
-4. **Environment Variables**: Set up environment variables in Railway.
-
-![](/img/railway/5.gif)
-
-5. **Cache**:
-
-:::warning
-Installing a persistent cache is crucial for maintaining agent functionality and efficiency
-:::
-
-- Preserves conversation history between deployments
-- Prevents creation of new installations on each restart
-- Ensures faster group additions by retaining past installations
-- Avoids the 256-installation limit, preventing agent failure
-- Reduces the risk of missing messages during redeployment
-
-To implement:
-
-- Use Railway's feature to attach a persistent volume to your container
-- Set the database path to a location on this volume
-- Ensure the `.data` folder is stored on the persistent volume
-
-![](/img/railway/volume.png)
-
-This approach creates a continuous installation, preventing message loss and maintaining agent functionality across redeployments.
