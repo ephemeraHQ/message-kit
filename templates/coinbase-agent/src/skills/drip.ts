@@ -15,7 +15,7 @@ export const registerSkill: Skill[] = [
       "Drip a default amount of testnet tokens to a specified address.",
     params: {
       network: {
-        default: "base",
+        default: "base_sepolia",
         type: "string",
         values: ["base_sepolia", "base_goerli"],
       },
@@ -46,32 +46,31 @@ export async function handler(context: XMTPContext) {
   const learnWeb3Client = new LearnWeb3Client();
   // Fetch supported networks from Redis cache or API
   let supportedNetworks: Network[];
-  const cachedSupportedNetworksData = await redisClient.get(
-    "supported-networks"
-  );
+  const cachedSupportedNetworksData =
+    await redisClient.get("supported-networks");
   supportedNetworks = JSON.parse(
-    cachedSupportedNetworksData!
+    cachedSupportedNetworksData!,
   ).supportedNetworks;
   await context.send(
-    "Your testnet tokens are being processed. Please wait a moment for the transaction to process."
+    "Your testnet tokens are being processed. Please wait a moment for the transaction to process.",
   );
   const selectedNetwork = supportedNetworks.find(
-    (n) => n.networkId.toLowerCase() === network.toLowerCase()
+    (n) => n.networkId.toLowerCase() === network.toLowerCase(),
   );
   if (!selectedNetwork) {
     await context.send(
-      "The network currently does not have funds provided by web3 api's\nTry again later..."
+      "The network currently does not have funds provided by web3 api's\nTry again later...",
     );
     return;
   }
   const result = await learnWeb3Client.dripTokens(
     selectedNetwork!.networkId,
-    sender.address
+    sender.address,
   );
 
   if (!result.ok) {
     await context.send(
-      `❌ Sorry, there was an error processing your request:\n\n"${result.error!}"`
+      `❌ Sorry, there was an error processing your request:\n\n"${result.error!}"`,
     );
     return;
   }

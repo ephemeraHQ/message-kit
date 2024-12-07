@@ -9,7 +9,7 @@ thegeneralstore/
 ├── src/
 │   ├── plugins/
 │       ├── notion.ts
-│       ├── db.ts
+│       ├── lowdb.ts
 │       ├── redis.ts
 │       ├── learnweb3.ts
 │   └── skills/
@@ -42,7 +42,7 @@ thegeneralstore/
 Here is the prompt that the agent will use to reply to messages.
 
 ```tsx [src/prompt.ts]
-// [!include ~/../../templates/coinbase-agent/src/prompt.ts]
+// [!include ~/../../templates/thegeneralstore/src/prompt.ts]
 ```
 
 ## Runner
@@ -50,7 +50,7 @@ Here is the prompt that the agent will use to reply to messages.
 The process that starts listening to messages and replying to them.
 
 ```tsx [src/index.ts]
-// [!include ~/../../templates/coinbase-agent/src/index.ts]
+// [!include ~/../../templates/thegeneralstore/src/index.ts]
 ```
 
 ## Variables
@@ -58,5 +58,5 @@ The process that starts listening to messages and replying to them.
 Set up these variables in your app
 
 ```bash [cmd]
-// [!include ~/../../templates/coinbase-agent/.env.example]
+// [!include ~/../../templates/thegeneralstore/.env.example]
 ```

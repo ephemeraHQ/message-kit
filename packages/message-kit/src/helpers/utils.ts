@@ -29,9 +29,9 @@ export async function logInitMessage(
 Powered by XMTP \x1b[0m`;
   console.log(coolLogo);
   console.log(`Send a message to this account on :                              
-    \x1b[38;2;211;211;211m🔗 Converse: https://converse.xyz/dm/${client.accountAddress}\x1b[0m
-    \x1b[38;2;0;0;255m🔗 Coinbase Wallet: https://go.cb-w.com/messaging?address=${client.accountAddress}\x1b[0m
-    \x1b[38;2;128;0;128m 🖥️ Share it as a frame in Farcaster: https://frames.message-kit.org/dm/${client.accountAddress}\x1b[0m`);
+    \x1b[38;2;211;211;211m Converse: https://converse.xyz/dm/${client.accountAddress}\x1b[0m
+    \x1b[38;2;0;0;255m Coinbase Wallet: https://go.cb-w.com/messaging?address=${client.accountAddress}\x1b[0m
+    \x1b[38;2;128;0;128m Share it as a frame in Farcaster: https://frames.message-kit.org/dm/${client.accountAddress}\x1b[0m`);
 
   let agent: Agent;
   const loadedSkills = (await loadSkillsFile()) as Agent;
