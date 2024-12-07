@@ -4,28 +4,21 @@ import {
   replaceVariables,
   XMTPContext,
   Agent,
-  xmtpClient,
 } from "@xmtp/message-kit";
-import fs from "fs";
 import { systemPrompt } from "./prompt.js";
-import { web } from "./skills/web.js";
-import { cryptoPrice } from "./skills/cryptoPrice.js";
+import { faucet } from "./skills/faucet.js";
+import fs from "fs";
+
+// [!region skills]
 export const agent: Agent = {
-  name: "Playground Agent",
+  name: "Faucet Agent",
   tag: "@bot",
-  description: "A playground agent with a lot of skills.",
-  skills: [
-    ...web,
-    ...cryptoPrice,
-  ],
+  description: "A faucet delivery agent.",
+  skills: [...faucet],
 };
+// [!endregion skills]
 
-// [!region gated]
-const { client } = await xmtpClient({
-  hideInitLogMessage: true,
-});
-
-
+// [!region run1]
 run(
   async (context: XMTPContext) => {
     const {
@@ -34,10 +27,13 @@ run(
     } = context;
 
     let prompt = await replaceVariables(systemPrompt, sender.address, agent);
-
+    // [!endregion run1]
     //This is only used for to update the docs.
     fs.writeFileSync("example_prompt.md", prompt);
+    // [!region run2]
     await agentReply(context, prompt);
   },
-  { agent, experimental: true },
+  { agent },
 );
+
+// [!endregion run2]
