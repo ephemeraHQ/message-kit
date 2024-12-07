@@ -101,9 +101,9 @@ async function gatherProjectInfo() {
 
   const templateType = await select({
     message: "Select the type of template to initialize:",
-    options: templateOptions.map(({ title, description }) => ({
+    options: templateOptions.map(({ title, description, author }) => ({
       value: title,
-      label: `${title} - ${description}`,
+      label: `${title} - ${description} - by @${author}`,
     })),
   });
 
