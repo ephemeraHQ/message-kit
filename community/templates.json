@@ -1,7 +1,7 @@
 [
   {
     "href": "/templates/ens",
-    "title": "ENS Template",
+    "title": "ENS Agent",
     "description": "A template for working with ENS domains.",
     "icon": "🔗",
     "author": "humanagent"
@@ -16,7 +16,7 @@
   {
     "href": "/templates/coinbase-agent",
     "title": "Coinbase Agent",
-    "description": "A template for a Coinbase and Base .",
+    "description": "A template for a Coinbase features.",
     "icon": "💰",
     "author": "humanagent"
   },
@@ -29,7 +29,7 @@
   },
   {
     "href": "/templates/faucet",
-    "title": "Faucet",
+    "title": "Faucet Agent",
     "description": "A template for requesting testnet funds.",
     "icon": "💧",
     "author": "humanagent"

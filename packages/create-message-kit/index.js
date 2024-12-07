@@ -95,15 +95,18 @@ async function updatePackagejson(destDir, templateType) {
 }
 
 async function gatherProjectInfo() {
-  const templateOptions = fs.readJsonSync(
-    resolve(__dirname, "./templates.json"),
-  );
+  const templateOptions = fs
+    .readJsonSync(resolve(__dirname, "./templates.json"))
+    .filter(
+      (template) =>
+        template.href.includes("ens") || template.href.includes("simple"),
+    );
 
   const templateType = await select({
     message: "Select the type of template to initialize:",
-    options: templateOptions.map(({ title, description, author, href }) => ({
+    options: templateOptions.map(({ title, description, href }) => ({
       value: href,
-      label: `${title} - ${description} - by @${author}`,
+      label: `${title} - ${description}`,
     })),
   });
 
@@ -113,9 +116,6 @@ async function gatherProjectInfo() {
 
   // Fix: Use templates directory with the selected href
   const templateDir = resolve(__dirname, `./${templateType}`);
-
-  // Add debug logging
-  log.info(`Looking for template in: ${templateDir}`);
 
   // Ensure the template directory exists
   if (!fs.existsSync(templateDir)) {
