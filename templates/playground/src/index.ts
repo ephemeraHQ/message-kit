@@ -10,6 +10,8 @@ import fs from "fs";
 import { systemPrompt } from "./prompt.js";
 import { web } from "./skills/web.js";
 import { cryptoPrice } from "./skills/cryptoPrice.js";
+import { search } from "./skills/search.js";
+
 export const agent: Agent = {
   name: "Playground Agent",
   tag: "@bot",
@@ -17,6 +19,7 @@ export const agent: Agent = {
   skills: [
     ...web,
     ...cryptoPrice,
+    ...search,
   ],
 };
 
