@@ -1,6 +1,10 @@
-const fs = require("fs");
-const path = require("path");
-const { program } = require("commander");
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import fs from "fs";
+import { program } from "commander";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 program
   .option("-v, --version <type>", "version number to update")

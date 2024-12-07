@@ -7,7 +7,7 @@ import { default as fs } from "fs-extra";
 import { isCancel } from "@clack/prompts";
 import { detect } from "detect-package-manager";
 import pc from "picocolors";
-const defVersion = "1.2.14";
+const defVersion = "1.2.16";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Read package.json to get the version
@@ -78,8 +78,9 @@ Powered by XMTP`;
 program.parse(process.argv);
 
 async function updatePackagejson(destDir, templateType) {
-  // Create package.json based on the template
-  const templateDir = resolve(__dirname, `./templates/${templateType}`);
+  // Remove 'templates/' prefix if it exists in templateType
+  const cleanTemplatePath = templateType.replace("templates/", "");
+  const templateDir = resolve(__dirname, `templates/${cleanTemplatePath}`);
   const packageTemplate = fs.readJsonSync(`${templateDir}/package.json`);
 
   packageTemplate.dependencies["@xmtp/message-kit"] = "latest";
@@ -95,31 +96,32 @@ async function updatePackagejson(destDir, templateType) {
 }
 
 async function gatherProjectInfo() {
-  const templateOptions = [
-    {
-      value: "simple",
-      label: "Simple Agent: A starter template for building an agent",
-    },
-    {
-      value: "ens",
-      label: "ENS Agent: An example of an agent using ENS skills",
-    },
-  ];
+  const templateOptions = fs
+    .readJsonSync(resolve(__dirname, "./templates.json"))
+    .filter(
+      (template) =>
+        template.href.includes("ens") || template.href.includes("simple"),
+    );
 
   const templateType = await select({
     message: "Select the type of template to initialize:",
-    options: templateOptions,
+    options: templateOptions.map(({ title, description, href }) => ({
+      value: href,
+      label: `${title} - ${description}`,
+    })),
   });
 
   if (isCancel(templateType)) {
     process.exit(0);
   }
 
-  const templateDir = resolve(__dirname, `./templates/${templateType}`);
+  // Clean up template path and ensure correct directory structure
+  const cleanTemplatePath = templateType.replace("templates/", "");
+  const templateDir = resolve(__dirname, `templates/${cleanTemplatePath}`);
 
   // Ensure the template directory exists
   if (!fs.existsSync(templateDir)) {
-    console.error("Template directory does not exist.");
+    log.error(`Template directory not found: ${templateDir}`);
     process.exit(1);
   }
 
@@ -141,7 +143,7 @@ async function gatherProjectInfo() {
   // Copy template files
   fs.copySync(templateDir, destDir);
 
-  return { templateType, displayName, destDir, templateDir };
+  return { templateType: templateType, displayName, destDir, templateDir };
 }
 
 function createTsconfig(destDir) {

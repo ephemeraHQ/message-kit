@@ -69,7 +69,7 @@ export default defineConfig({
       link: "https://github.com/ephemeraHQ/message-kit",
     },
   ],
-  topNav: [{ text: "v1.2.14", link: "/changelog" }],
+  topNav: [{ text: "v1.2.16", link: "/changelog" }],
   editLink: {
     pattern:
       "https://github.com/ephemeraHQ/message-kit/blob/main/packages/docs/pages/:path",
@@ -118,16 +118,16 @@ export default defineConfig({
       text: "Community",
       items: [
         {
-          text: "Templates",
-          link: "/community/templates",
-        },
-        {
           text: "Skills",
           link: "/community/skills",
         },
         {
           text: "Plugins",
           link: "/community/plugins",
+        },
+        {
+          text: "Templates",
+          link: "/community/templates",
         },
         {
           text: "Contribute",
@@ -145,7 +145,7 @@ export default defineConfig({
     },
     {
       text: "Deployment",
-      link: "/plugins/railway",
+      link: "/deployment",
     },
     {
       text: "Changelog",

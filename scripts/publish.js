@@ -1,5 +1,4 @@
-const readlineSync = require("readline-sync");
-const { execSync } = require("child_process");
+import { execSync } from "child_process";
 
 // Get the version type from command line arguments
 const versionType = process.argv[2] || "patch"; // Default to 'patch' if no argument is provided

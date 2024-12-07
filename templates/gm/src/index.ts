@@ -1,5 +1,8 @@
 import { run } from "@xmtp/message-kit";
 
 run(async (context) => {
-  await context.send(`gm`);
+  const { group } = context;
+  if (!group) {
+    await context.send(`gm`);
+  }
 });

@@ -1,0 +1,39 @@
+# Toss
+
+A fun game to play with your friends.
+
+## Structure
+
+```
+toss/
+
+├── src/
+│   ├── toss.ts
+├── package.json
+├── tsconfig.json
+└── .env
+```
+
+## Prompt
+
+Here is the prompt that the agent will use to reply to messages.
+
+```tsx [src/prompt.ts]
+// [!include ~/../../templates/toss/src/prompt.ts]
+```
+
+## Runner
+
+The process that starts listening to messages and replying to them.
+
+```tsx [src/index.ts]
+// [!include ~/../../templates/toss/src/index.ts]
+```
+
+## Variables
+
+Set up these variables in your app
+
+```bash [cmd]
+// [!include ~/../../templates/toss/.env.example]
+```

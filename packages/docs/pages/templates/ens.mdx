@@ -2,7 +2,7 @@
 
 This is a simple yet powerful agent that will help users interact with ENS.
 
-### Structure
+## Structure
 
 ```
 ens/
@@ -22,7 +22,7 @@ ens/
 └── .env
 ```
 
-## Skills
+### Skills
 
 - [Check](/skills/check): Check if a domain is available
 - [Cool](/skills/cool): Show cool alternatives
@@ -32,7 +32,7 @@ ens/
 - [Info](/skills/info): Get info about a domain
 - [Pay](/skills/pay): Pay for a domain
 
-### Prompt
+## Prompt
 
 Here is the prompt that the agent will use to reply to messages.
 
@@ -40,7 +40,7 @@ Here is the prompt that the agent will use to reply to messages.
 // [!include ~/../../templates/ens/src/prompt.ts]
 ```
 
-### Runner
+## Runner
 
 The process that starts listening to messages and replying to them.
 
@@ -48,11 +48,10 @@ The process that starts listening to messages and replying to them.
 // [!include ~/../../templates/ens/src/index.ts]
 ```
 
-### Variables
+## Variables
 
 Set up these variables in your app
 
 ```bash [cmd]
-KEY= # the private key of the agent wallet
-OPENAI_API_KEY= # the API key for OpenAI
+// [!include ~/../../templates/ens/.env.example]
 ```

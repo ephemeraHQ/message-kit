@@ -59,7 +59,21 @@ export const chatMemory = new ChatMemory();
 export const clearMemory = (address?: string) => {
   chatMemory.clear(address);
 };
-
+export const COMMON_ISSUES = `
+# Common Issues
+1. Missing commands in responses
+   **Issue**: Sometimes responses are sent without the required command.
+   **Example**:
+   Incorrect:
+   > "Looks like vitalik.eth is registered! What about these cool alternatives?"
+   Correct:
+   > "Looks like vitalik.eth is registered! What about these cool alternatives?
+   > /cool vitalik.eth"
+   Incorrect:
+   > Here is a summary of your TODOs. I will now send it via email.
+   Correct:
+   > /todo
+`;
 export const PROMPT_RULES = `
 # Rules
 - You can respond with multiple messages if needed. Each message should be separated by a newline character.
@@ -124,6 +138,7 @@ export async function replaceVariables(
   prompt = prompt.replace("{agent_name}", agent?.tag);
   prompt = prompt.replace("{rules}", PROMPT_RULES);
   prompt = prompt.replace("{skills}", replaceSkills(agent));
+  prompt = prompt.replace("{issues}", COMMON_ISSUES);
 
   // Replace variables in the system prompt
   if (userInfo) {

@@ -117,5 +117,12 @@
     "description": "Search the internet for information.",
     "icon": "🔍",
     "author": "raihankhan_rk"
+  },
+  {
+    "href": "/skills/faucet",
+    "title": "Faucet",
+    "description": "Fund your wallet for testing.",
+    "icon": "💰",
+    "author": "humanagent"
   }
 ]

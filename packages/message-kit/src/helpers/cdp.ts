@@ -6,7 +6,7 @@ import {
   TimeoutError,
 } from "@coinbase/coinbase-sdk";
 import { XMTPContext } from "../lib/xmtp";
-import { keccak256, toHex } from "viem";
+import { keccak256, toHex, toBytes } from "viem";
 
 const apiKeyName = process.env.COINBASE_API_KEY_NAME;
 const privateKey = process.env.COINBASE_API_KEY_PRIVATE_KEY;
@@ -65,17 +65,6 @@ export class WalletService {
     return toHex(encrypted);
   }
 
-  private hexToBytes(hex: string): Uint8Array {
-    if (hex.startsWith("0x")) {
-      hex = hex.slice(2);
-    }
-    const bytes = new Uint8Array(hex.length / 2);
-    for (let i = 0; i < hex.length; i += 2) {
-      bytes[i / 2] = parseInt(hex.substr(i, 2), 16);
-    }
-    return bytes;
-  }
-
   decrypt(data: string, encryptionKey?: string): any {
     if (typeof data === "string") {
       data = data.toLowerCase();
@@ -83,12 +72,13 @@ export class WalletService {
 
     const encKey = encryptionKey ?? this.tempEncryptionKey;
     const key = keccak256(toHex(encKey));
-    const encrypted = this.hexToBytes(data);
+    const encrypted = toBytes(data);
     const decrypted = encrypted.map(
       (byte, i) => byte ^ parseInt(key.slice(2 + (i % 64), 4 + (i % 64)), 16),
     );
     return JSON.parse(Buffer.from(decrypted).toString());
   }
+
   async createUserWallet(userAddress: string): Promise<WalletServiceData> {
     this.checkEnabled();
     console.log(`Creating new wallet for user ${userAddress}...`);

@@ -1,0 +1,53 @@
+# Faucet
+
+Get some testnet tokens.
+
+## Structure
+
+```
+ens/
+├── src/
+│   ├── plugins/
+│   │   ├── learnweb3.ts
+│   │   ├── redis.ts
+│   └── skills/
+│       ├── faucet.ts
+│   ├── index.ts
+│   ├── prompt.ts
+├── package.json
+├── tsconfig.json
+└── .env
+```
+
+### Skills
+
+- [Faucet](/skills/faucet): Get some testnet tokens.
+
+### Plugins
+
+- [LearnWeb3](/plugins/learnweb3): Interact with Ethereum-compatible networks.
+- [Redis](/plugins/redis): Store and retrieve data from Redis.
+
+## Prompt
+
+Here is the prompt that the agent will use to reply to messages.
+
+```tsx [src/prompt.ts]
+// [!include ~/../../templates/faucet/src/prompt.ts]
+```
+
+## Runner
+
+The process that starts listening to messages and replying to them.
+
+```tsx [src/index.ts]
+// [!include ~/../../templates/faucet/src/index.ts]
+```
+
+## Variables
+
+Set up these variables in your app
+
+```bash [cmd]
+// [!include ~/../../templates/faucet/.env.example]
+```

@@ -25,6 +25,8 @@ Your are a helpful and playful agent called {agent_name} that lives inside a web
 {skills}
 
 {scenarios}
+
+{issues}
 `;
 
 let prompt = await replaceVariables(systemPrompt, sender.address, skills);
@@ -37,6 +39,7 @@ This properties are predefined in MessageKit and will be replaced by the agent w
 - `{rules}`: The rules of the agent.
 - `{user_context}`: The user context.
 - `{skills}`: The skills of the agent.
+- `{issues}`: Most common issues of the agent.
 - `{scenarios}`: The scenarios of the agent.
 - `{agent_name}`: The name of the agent.
 - `{name}`: The name of the user.
