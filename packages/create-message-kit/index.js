@@ -95,20 +95,16 @@ async function updatePackagejson(destDir, templateType) {
 }
 
 async function gatherProjectInfo() {
-  const templateOptions = [
-    {
-      value: "simple",
-      label: "Simple Agent: A starter template for building an agent",
-    },
-    {
-      value: "ens",
-      label: "ENS Agent: An example of an agent using ENS skills",
-    },
-  ];
+  const templateOptions = fs.readJsonSync(
+    resolve(__dirname, "../../community/templates.json"),
+  );
 
   const templateType = await select({
     message: "Select the type of template to initialize:",
-    options: templateOptions,
+    options: templateOptions.map(({ title, description }) => ({
+      value: title,
+      label: `${title} - ${description}`,
+    })),
   });
 
   if (isCancel(templateType)) {

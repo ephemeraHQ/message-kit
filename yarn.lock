@@ -1877,6 +1877,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@notionhq/client@npm:^2.2.15":
+  version: 2.2.15
+  resolution: "@notionhq/client@npm:2.2.15"
+  dependencies:
+    "@types/node-fetch": "npm:^2.5.10"
+    node-fetch: "npm:^2.6.1"
+  checksum: 10/18e8812f1630d7f6a93e058695101853b2db980b2003ca6b1e451c93bca330b8d1c1a7fe2c9769ac5a07ab36bdfe33d9458a244ecc3c171331153872384f0cae
+  languageName: node
+  linkType: hard
+
 "@npmcli/agent@npm:^3.0.0":
   version: 3.0.0
   resolution: "@npmcli/agent@npm:3.0.0"
@@ -2672,7 +2682,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@redis/client@npm:^1.6.0":
+"@redis/client@npm:^1.5.14, @redis/client@npm:^1.6.0":
   version: 1.6.0
   resolution: "@redis/client@npm:1.6.0"
   dependencies:
@@ -3199,7 +3209,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node-fetch@npm:^2.6.4":
+"@types/node-fetch@npm:^2.5.10, @types/node-fetch@npm:^2.6.4":
   version: 2.6.12
   resolution: "@types/node-fetch@npm:2.6.12"
   dependencies:
@@ -4061,7 +4071,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.6.8, axios@npm:^1.7.4":
+"axios@npm:^1.6.8, axios@npm:^1.7.4, axios@npm:^1.7.7":
   version: 1.7.9
   resolution: "axios@npm:1.7.9"
   dependencies:
@@ -4608,6 +4618,18 @@ __metadata:
   checksum: 10/516ed8b5e1a14d9c3a9c96c72ef6de2d70dfcdbaa0ec3a90bc7b9216c5457e39c09a5775750c272369070308542e671146120153062ab5f2f481bed5de2c925f
   languageName: node
   linkType: hard
+
+"coinbase-agent@workspace:templates/coinbase-agent":
+  version: 0.0.0-use.local
+  resolution: "coinbase-agent@workspace:templates/coinbase-agent"
+  dependencies:
+    "@redis/client": "npm:^1.6.0"
+    "@types/node": "npm:^20.14.2"
+    "@xmtp/message-kit": "workspace:*"
+    axios: "npm:^1.7.7"
+    typescript: "npm:^5.4.5"
+  languageName: unknown
+  linkType: soft
 
 "collapse-white-space@npm:^2.0.0":
   version: 2.1.0
@@ -5908,6 +5930,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"faucet-agent@workspace:templates/faucet":
+  version: 0.0.0-use.local
+  resolution: "faucet-agent@workspace:templates/faucet"
+  dependencies:
+    "@redis/client": "npm:^1.5.14"
+    "@types/node": "npm:^20.14.2"
+    "@xmtp/message-kit": "workspace:*"
+    axios: "npm:^1.6.8"
+    typescript: "npm:^5.4.5"
+  languageName: unknown
+  linkType: soft
+
 "fault@npm:^2.0.0":
   version: 2.0.1
   resolution: "fault@npm:2.0.1"
@@ -6156,6 +6190,19 @@ __metadata:
   checksum: 10/185e20d20f10c8d661d59aac0f3b63b31132d492e1b11fcc2a93cb2c47257ebaee7407c38513efd2b35cafdf972d9beb2ea4593c1e0f3bf8f2744836928d7454
   languageName: node
   linkType: hard
+
+"gated-group@workspace:templates/gated-group":
+  version: 0.0.0-use.local
+  resolution: "gated-group@workspace:templates/gated-group"
+  dependencies:
+    "@types/express": "npm:^4.17.20"
+    "@types/node": "npm:^20.14.2"
+    "@xmtp/message-kit": "workspace:*"
+    alchemy-sdk: "npm:^3.0.0"
+    express: "npm:^4.19.2"
+    typescript: "npm:^5.4.5"
+  languageName: unknown
+  linkType: soft
 
 "geist@npm:^1.3.1":
   version: 1.3.1
@@ -7260,6 +7307,15 @@ __metadata:
   version: 3.1.2
   resolution: "loupe@npm:3.1.2"
   checksum: 10/8f5734e53fb64cd914aa7d986e01b6d4c2e3c6c56dcbd5428d71c2703f0ab46b5ab9f9eeaaf2b485e8a1c43f865bdd16ec08ae1a661c8f55acdbd9f4d59c607a
+  languageName: node
+  linkType: hard
+
+"lowdb@npm:^7.0.1":
+  version: 7.0.1
+  resolution: "lowdb@npm:7.0.1"
+  dependencies:
+    steno: "npm:^4.0.2"
+  checksum: 10/089cb878515b3b4634980c77b1697991571832a440f0fbc8cabe410ff9bb22b377387fc6cf6ebd9a6430707a835ebd69561f89d30aae7def43c93410b6f82b58
   languageName: node
   linkType: hard
 
@@ -8490,7 +8546,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-fetch@npm:^2.6.7":
+"node-fetch@npm:^2.6.1, node-fetch@npm:^2.6.7":
   version: 2.7.0
   resolution: "node-fetch@npm:2.7.0"
   dependencies:
@@ -10574,6 +10630,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"steno@npm:^4.0.2":
+  version: 4.0.2
+  resolution: "steno@npm:4.0.2"
+  checksum: 10/cb8beb6b6da410f6a307261da813e57569ff3c85b11695437259f49f081fc6b0eeb26c059f0ec661c4098a09f361057fe834b04d3f94ece885e96a9e0eeba697
+  languageName: node
+  linkType: hard
+
 "streamsearch@npm:^1.1.0":
   version: 1.1.0
   resolution: "streamsearch@npm:1.1.0"
@@ -10822,6 +10885,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"thegeneralstore@workspace:templates/thegeneralstore":
+  version: 0.0.0-use.local
+  resolution: "thegeneralstore@workspace:templates/thegeneralstore"
+  dependencies:
+    "@notionhq/client": "npm:^2.2.15"
+    "@redis/client": "npm:^1.6.0"
+    "@types/node": "npm:^20.14.2"
+    "@xmtp/message-kit": "workspace:*"
+    axios: "npm:^1.7.7"
+    lowdb: "npm:^7.0.1"
+    typescript: "npm:^5.4.5"
+  languageName: unknown
+  linkType: soft
+
 "thenify-all@npm:^1.0.0":
   version: 1.6.0
   resolution: "thenify-all@npm:1.6.0"
@@ -10925,6 +11002,17 @@ __metadata:
   checksum: 10/cfef0966868d552bd02e741f30945a611f70841b7cddb07ea2b17441fe32543985bc0a7c0dcf7971af26fcaf8a17712a485d911f46bfe28644536e9a71a2bd09
   languageName: node
   linkType: hard
+
+"toss@workspace:templates/toss":
+  version: 0.0.0-use.local
+  resolution: "toss@workspace:templates/toss"
+  dependencies:
+    "@redis/client": "npm:^1.6.0"
+    "@types/node": "npm:^20.14.2"
+    "@xmtp/message-kit": "workspace:*"
+    typescript: "npm:^5.4.5"
+  languageName: unknown
+  linkType: soft
 
 "tr46@npm:~0.0.3":
   version: 0.0.3

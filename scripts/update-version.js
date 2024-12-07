@@ -1,6 +1,6 @@
-const fs = require("fs");
-const path = require("path");
-const { program } = require("commander");
+import fs from "fs";
+import path from "path";
+import { program } from "commander";
 
 program
   .option("-v, --version <type>", "version number to update")
