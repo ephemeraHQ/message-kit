@@ -110,5 +110,12 @@
     "description": "Get the current price of a cryptocurrency in a currency.",
     "icon": "🪙",
     "author": "raihankhan_rk"
+  },
+  {
+    "href": "/skills/search",
+    "title": "Search",
+    "description": "Search the internet for information.",
+    "icon": "🔍",
+    "author": "raihankhan_rk"
   }
 ]
