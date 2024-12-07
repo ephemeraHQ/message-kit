@@ -1,0 +1,27 @@
+# Faucet
+
+A simple faucet to give out testnet tokens to your users.
+
+### Prompt
+
+Here is the prompt that the agent will use to reply to messages.
+
+```tsx [src/prompt.ts]
+// [!include ~/../../templates/faucet/src/prompt.ts]
+```
+
+### Runner
+
+The process that starts listening to messages and replying to them.
+
+```tsx [src/index.ts]
+// [!include ~/../../templates/faucet/src/index.ts]
+```
+
+### Variables
+
+Set up these variables in your app
+
+```bash [cmd]
+// [!include ~/../../templates/faucet/.env.example]
+```

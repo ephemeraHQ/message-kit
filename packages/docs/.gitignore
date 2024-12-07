@@ -1,0 +1,13 @@
+# yarn
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+.yarn
+dist
+node_modules
+.vocs
+.turbo

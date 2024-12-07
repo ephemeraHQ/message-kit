@@ -1,0 +1,40 @@
+{
+  "name": "create-message-kit",
+  "version": "1.2.14",
+  "license": "MIT",
+  "type": "module",
+  "main": "index.js",
+  "module": "index.js",
+  "bin": "index.js",
+  "files": [
+    "index.js",
+    "templates/**/*"
+  ],
+  "scripts": {
+    "clean": "rm -rf .turbo && rm -rf node_modules",
+    "format": "yarn format:base -w .",
+    "format:base": "prettier --ignore-path ../../.gitignore",
+    "format:check": "yarn format:base -c ."
+  },
+  "dependencies": {
+    "@clack/prompts": "^0.7.0",
+    "cac": "^6.7.14",
+    "commander": "^12.1.0",
+    "detect-package-manager": "^3.0.1",
+    "fs-extra": "^11.1.1",
+    "inquirer": "^9.2.23",
+    "picocolors": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.2",
+    "prettier": "^3.3.1"
+  },
+  "packageManager": "yarn@4.5.1",
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
+}

@@ -1,0 +1,290 @@
+# MessageKit Skill Template
+
+## Examples
+
+### Check if a Domain is Available
+
+
+import { ensUrl } from "../index.js";
+import { XMTPContext } from "@xmtp/message-kit";
+import type { Skill } from "@xmtp/message-kit";
+
+// Define Skill
+export const checkDomain: Skill[] = [
+  {
+    skill: "check",
+    handler: handler,
+    examples: ["/check vitalik.eth", "/check fabri.base.eth"],
+    description: "Check if a domain is available.",
+    params: {
+      domain: {
+        type: "string",
+      },
+    },
+  },
+];
+
+// Handler Implementation
+export async function handler(context: XMTPContext) {
+  const {
+    message: {
+      content: {
+        params: { domain },
+      },
+    },
+  } = context;
+
+  const data = await context.getUserInfo(domain);
+
+  if (!data?.address) {
+    let message = `Looks like ${domain} is available! Here you can register it: ${ensUrl}${domain} or would you like to see some cool alternatives?`;
+    return {
+      code: 200,
+      message,
+    };
+  } else {
+    let message = `Looks like ${domain} is already registered!`;
+    await context.executeSkill("/cool " + domain);
+    return {
+      code: 404,
+      message,
+    };
+  }
+}
+
+### Generate a payment request
+
+
+import { XMTPContext } from "@xmtp/message-kit";
+import type { Skill } from "@xmtp/message-kit";
+
+// Define Skill
+export const paymentRequest: Skill[] = [
+  {
+    skill: "pay",
+    examples: [
+      "/pay 10 vitalik.eth",
+      "/pay 1 usdc to 0xC60E6Bb79322392761BFe3081E302aEB79B30B03",
+    ],
+    description:
+      "Send a specified amount of a cryptocurrency to a destination address. \nWhen tipping, you can assume it's 1 USDC.",
+    handler: handler,
+    params: {
+      amount: {
+        default: 10,
+        type: "number",
+      },
+      token: {
+        default: "usdc",
+        type: "string",
+        values: ["eth", "dai", "usdc", "degen"], // Accepted tokens
+      },
+      username: {
+        default: "",
+        type: "username",
+      },
+      address: {
+        default: "",
+        type: "address",
+      },
+    },
+  },
+];
+
+// Handler Implementation
+export async function handler(context: XMTPContext) {
+  const {
+    message: {
+      content: {
+        params: { amount, token, username, address },
+      },
+    },
+  } = context;
+  let receiverAddress = address;
+  if (username) {
+    receiverAddress = (await context.getUserInfo(username))?.address;
+  }
+  if (address) {
+    // Prioritize address over username
+    receiverAddress = address;
+  }
+
+  await context.requestPayment(amount, token, receiverAddress);
+}
+
+
+## Types
+
+import { XMTPContext } from "../plugins/xmtp.js";
+import { ClientOptions, GroupMember } from "@xmtp/node-sdk";
+import { ContentTypeId } from "@xmtp/content-type-primitives";
+
+export type MessageAbstracted = {
+  id: string;
+  sent: Date;
+  content: {
+    text?: string | undefined;
+    reply?: string | undefined;
+    previousMsg?: string | undefined;
+    react?: string | undefined;
+    content?: any | undefined;
+    params?: any | undefined;
+    reference?: string | undefined;
+    skill?: string | undefined;
+  };
+  version: "v2" | "v3";
+  sender: AbstractedMember;
+  typeId: string;
+};
+export type GroupAbstracted = {
+  id: string;
+  sync: () => Promise<void>;
+  addMembers: (addresses: string[]) => Promise<void>;
+  addMembersByInboxId: (inboxIds: string[]) => Promise<void>;
+  send: (content: string, contentType?: ContentTypeId) => Promise<string>;
+  isAdmin: (inboxId: string) => boolean;
+  isSuperAdmin: (inboxId: string) => boolean;
+  admins: string[];
+  superAdmins: string[];
+  createdAt: Date;
+  members: GroupMember[];
+};
+export type SkillResponse = {
+  code: number;
+  message: string;
+  data?: any;
+};
+
+export type SkillHandler = (
+  context: XMTPContext,
+) => Promise<SkillResponse | void>;
+
+export type Handler = (context: XMTPContext) => Promise<void>;
+
+export type RunConfig = {
+  // client options from XMTP client
+  client?: ClientOptions;
+  // private key to be used for the client, if not, default from env
+  privateKey?: string;
+  // if true, the init log message with messagekit logo and stuff will be hidden
+  experimental?: boolean;
+  // hide the init log message with messagekit logo and stuff
+  hideInitLogMessage?: boolean;
+  // if true, attachments will be enabled
+  attachments?: boolean;
+  // if true, member changes will be enabled, like adding members to the group
+  memberChange?: boolean;
+  // skills to be used
+  agent?: Agent;
+  // model to be used
+  gptModel?: string;
+};
+export interface SkillParamConfig {
+  default?: string | number | boolean;
+  type:
+    | "number"
+    | "string"
+    | "username"
+    | "quoted"
+    | "address"
+    | "prompt"
+    | "url";
+  plural?: boolean;
+  values?: string[]; // Accepted values for the parameter
+}
+
+export interface Frame {
+  title: string;
+  buttons: { content: string; action: string; target: string }[];
+  image: string;
+}
+export interface Agent {
+  name: string;
+  description: string;
+  tag: string;
+  skills: Skill[];
+}
+export interface Skill {
+  skill: string;
+  handler?: SkillHandler | undefined;
+  adminOnly?: boolean;
+  description: string;
+  examples: string[];
+  params: Record<string, SkillParamConfig>;
+}
+
+export interface AbstractedMember {
+  inboxId: string;
+  address: string;
+  accountAddresses: string[];
+  installationIds?: string[];
+}
+
+export type MetadataValue = string | number | boolean;
+export type Metadata = Record<string, MetadataValue | MetadataValue[]>;
+
+
+## Example final prompt
+
+Your are a helpful and playful ens agent called @bot that lives inside a messaging app called Converse.
+
+
+# Rules
+- You can respond with multiple messages if needed. Each message should be separated by a newline character.
+- You can trigger skills by only sending the command in a newline message.
+- Each command starts with a slash (/).
+- Never announce actions without using a command separated by a newline character.
+- Never use markdown in your responses.
+- Do not make guesses or assumptions
+- Only answer if the verified information is in the prompt.
+- Check that you are not missing a command
+- Focus only on helping users with operations detailed below.
+- Date: Fri, 06 Dec 2024 16:03:22 GMT
+- When mentioning any action related to available skills, you MUST trigger the corresponding command in a new line
+- If you suggest an action that has a command, you must trigger that command
+
+
+## User context
+- Start by fetch their domain from or Converse username
+- Call the user by their name or domain, in case they have one
+- Ask for a name (if they don't have one) so you can suggest domains.
+- Message sent date: 2024-12-06T16:03:36.582Z
+- Users address is: 0x40f08f0f853d1c42c61815652b7ccd5a50f0be09
+- Users name is: ArizonaOregon
+- Converse username is: ArizonaOregon
+
+## Commands
+/check [domain] - Check if a domain is available.
+/cool [domain] - Get cool alternatives for a .eth domain.
+/info [domain] - Get detailed information about an ENS domain including owner, expiry date, and resolver.
+/register [domain] - Register a new ENS domain. Returns a URL to complete the registration process.
+/renew [domain] - Extend the registration period of your ENS domain. Returns a URL to complete the renewal.
+/reset  - Reset the conversation clearing memory and usernames cache.
+/pay [amount] [token] [username] [address] - Send a specified amount of a cryptocurrency to a destination address. 
+When tipping, you can asume its 1 usdc.
+
+## Examples
+/check vitalik.eth
+/check fabri.base.eth
+/cool vitalik.eth
+/info nick.eth
+/register vitalik.eth
+/renew fabri.base.eth
+/reset
+/pay 10 vitalik.eth
+/pay 1 usdc to 0xC60E6Bb79322392761BFe3081E302aEB79B30B03
+
+## Scenarios
+1. Missing commands in responses
+   **Issue**: Sometimes responses are sent without the required command.
+   **Example**:
+   Incorrect:
+   > "Looks like vitalik.eth is registered! What about these cool alternatives?"
+   Correct:
+   > "Looks like vitalik.eth is registered! What about these cool alternatives?
+   > /cool vitalik.eth"
+
+   Incorrect:
+   > Here is a summary of your TODOs. I will now send it via email.
+   Correct:
+   > /todo

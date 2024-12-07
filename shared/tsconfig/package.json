@@ -1,0 +1,20 @@
+{
+  "name": "@xmtp/tsconfig",
+  "private": true,
+  "files": [
+    "base.json"
+  ],
+  "scripts": {
+    "clean": "rm -rf .turbo && rm -rf node_modules",
+    "format": "yarn format:base -w .",
+    "format:base": "prettier --ignore-path ../../.gitignore",
+    "format:check": "yarn format:base -c ."
+  },
+  "devDependencies": {
+    "prettier": "^3.3.1"
+  },
+  "packageManager": "yarn@4.5.1",
+  "engines": {
+    "node": ">=20"
+  }
+}

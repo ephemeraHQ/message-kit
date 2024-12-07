@@ -1,0 +1,47 @@
+# Username resolution
+
+Message Kit provides powerful username resolution capabilities through its resolver system. This allows applications to handle various types of identifiers including ENS domain and Converse usernames.
+
+## Supported Username Types
+
+- **Ethereum Addresses** - Standard hex addresses (e.g., `0x123...`)
+- **ENS Domains** - Ethereum Name Service domains (e.g., `vitalik.eth`)
+- **Converse Usernames** - Social usernames from Converse (e.g., `@fabri`)
+
+## Using the Resolver
+
+The resolver provides a `getUserInfo` function that returns detailed information about a user:
+
+```typescript
+const userInfo = await getUserInfo(identifier);
+```
+
+The resolver returns a `UserInfo` object containing:
+
+- `ensDomain` - User's ENS domain if available
+- `address` - Ethereum address
+- `preferredName` - Best available name to display
+- `converseUsername` - Converse username if available
+- `avatar` - Profile picture URL if available
+- `converseEndpoint` - Converse profile endpoint
+
+## Caching
+
+The resolver implements automatic caching to improve performance and reduce API calls. You can manage the cache using:
+
+```typescript
+// Clear cache for specific address
+clearInfoCache(address);
+// Clear entire cache
+clearInfoCache();
+```
+
+## XMTP Availability Check
+
+You can check if a user has XMTP enabled:
+
+```typescript
+const { v2, v3 } = await isOnXMTP(v3client, v2client, address);
+```
+
+> For more information visit [Resolver](/plugins/resolver.mdx)

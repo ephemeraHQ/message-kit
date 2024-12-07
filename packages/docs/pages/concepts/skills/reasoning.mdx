@@ -1,0 +1,78 @@
+# Reasoning
+
+Agents can handle complex conversations by managing multiple steps in sequence, maintaining context, and waiting for user responses. This creates a more natural interaction flow.
+
+## Overview
+
+For full reasoning we need to combine the following skills:
+
+- [Scenarios](/concepts/skills/scenarios): Train your agent for reliable responses.
+- [Prompting](/concepts/skills/prompting): System prompt to teach available skills to the agent.
+- [Processing](/concepts/skills/processing): Handle multiple skills in a single conversation.
+- [Parsing](/concepts/skills/parsing): Interpret user intent and translate it into a defined skill.
+- [Definition](/concepts/skills/definition): Define skills, parameters and handlers.
+
+## Example: Ens domain registration
+
+Now let's put all these powerfull pieces together to create a more complex interaction.
+
+Let's walk through a complete ENS domain registration flow:
+
+:::steps
+
+### User initiates the conversation
+
+```bash
+let's register humanagent.eth
+```
+
+### Agent creates a response
+
+The agent processes the natural language input "let's register fabriethsf.eth" and breaks it down into sequential steps:
+
+```bash
+[
+  "Hello! I'll help you get your domain.",
+  "Let's start by checking your ENS domain. Give me a moment.",
+  "/check humanagent.eth",
+]
+```
+
+### Skills
+
+These are some of the skills the agent can use with its definition and handler implementation:
+
+:::code-group
+
+```tsx check [src/skills/check.ts]
+// [!include ~/../../templates/ens/src/skills/check.ts]
+```
+
+```tsx register [src/skills/register.ts]
+// [!include ~/../../templates/ens/src/skills/register.ts]
+```
+
+```tsx info [src/skills/info.ts]
+// [!include ~/../../templates/ens/src/skills/info.ts]
+```
+
+:::
+
+### Skills declaration
+
+The agent processes the natural language input "let's register fabriethsf.eth" and breaks it down into sequential steps:
+
+```tsx [src/index.ts]
+// [!include ~/../../templates/ens/src/index.ts:skills]
+```
+
+### Return a resposonse
+
+The agent returns a response to the user:
+
+```tsx [src/index.ts]
+// [!include ~/../../templates/ens/src/index.ts:run1]
+// [!include ~/../../templates/ens/src/index.ts:run2]
+```
+
+This is a very simple example, but it shows how the agent can handle complex interactions by managing multiple steps in sequence, maintaining context, and waiting for user responses.

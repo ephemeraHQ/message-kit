@@ -1,0 +1,121 @@
+# Wallet as a Service
+
+The `WalletService` class in MessageKit provides a way to create an agent wallet for each user that can perform gasless payments and transfers on Base.
+
+## Introduction
+
+To use the `WalletService`, you need to initialize it with a Redis client and encryption keys:
+
+### Requirements
+
+- `@coinbase/coinbase-sdk`: Already included in MessageKit
+- `@redis/client`: A Redis client for wallet storage
+- Environment variables:
+  - `COINBASE_API_KEY_NAME`: The Coinbase API key name
+  - `COINBASE_API_KEY_PRIVATE_KEY`: The Coinbase API private key
+  - `COINBASE_API_REDIS_URL`: The Redis URL
+
+### Activation
+
+Start by importing the `getWalletService` function from the `redis.js` file:
+
+```typescript
+import { getWalletService } from "./plugins/redis.js";
+const walletServiceDB = await getWalletService();
+run(
+  async (context: XMTPContext) => {
+    // ...
+  },
+  { walletServiceDB },
+);
+```
+
+### Usage
+
+The `walletService` object is available in the `context` object:
+
+```typescript
+const { walletService } = context;
+// Use it in your code
+await walletService.someMethod();
+```
+
+## User Wallets
+
+The `getUserWallet` method will retrieve an existing wallet, or you can explicitly create one:
+
+```typescript
+// Get or create a wallet
+const userWallet = await walletService.getUserWallet(userAddress);
+
+// Explicitly create a new wallet
+const newWallet = await walletService.createUserWallet(userAddress);
+// Returns { wallet, address, userAddress, identifier }
+```
+
+## Temporary Wallets
+
+Temporary wallets use a separate encryption key for additional security:
+
+```typescript
+// Create a temporary wallet
+const tempWallet = await walletService.createTempWallet(tempId);
+// Returns { wallet, address, userAddress, identifier }
+
+// Retrieve an existing temporary wallet
+const existingWallet = await walletService.getTempWallet(tempId);
+
+// Delete when no longer needed
+await walletService.deleteTempWallet(tempId);
+```
+
+## Actions
+
+### Requesting and Withdrawing Funds
+
+```typescript
+// Request funds
+await walletService.requestFunds(context, amount);
+// This will send a payment request to the user with funding instructions
+
+// Withdraw funds (optional amount parameter)
+await walletService.withdrawFunds(userAddress, amount);
+// If amount is not specified, withdraws entire balance
+```
+
+### Transfers and Swaps
+
+```typescript
+// Transfer between wallets
+await walletService.transfer(fromWallet, toWallet, amount);
+
+// Swap assets
+await walletService.swap(userAddress, fromAssetId, toAssetId, amount);
+```
+
+### Checking balance
+
+```typescript
+const balance = await walletService.checkBalance(userAddress);
+```
+
+## Security Architecture
+
+The WalletService uses a dual-key encryption system:
+
+### Default Encryption
+
+- **User Wallets**: Encrypted with `userEncryptionKey` (user address)
+- **Temporary Wallets**: Encrypted with `tempEncryptionKey` (conversationId + creator of the agent)
+
+```typescript
+// Default encryption
+const encrypted = walletService.encrypt(data);
+const decrypted = walletService.decrypt(encrypted);
+
+// Specifying a key for a custom encryption
+const userEncrypted = walletService.encrypt(data, userEncryptionKey);
+const userDecrypted = walletService.decrypt(userEncrypted, userEncryptionKey);
+```
+
+Note: All string data is converted to lowercase before encryption.

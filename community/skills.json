@@ -1,0 +1,114 @@
+[
+  {
+    "href": "/skills/info",
+    "title": "ENS domain info",
+    "description": "Get information about an ENS domain",
+    "icon": "ℹ️",
+    "author": "ephemeraHQ"
+  },
+  {
+    "href": "/skills/register",
+    "title": "Register ENS domain",
+    "description": "Register an ENS domain",
+    "icon": "📝",
+    "author": "ephemeraHQ"
+  },
+  {
+    "href": "/skills/check",
+    "title": "Check ENS domain",
+    "description": "Check if an ENS domain is registered",
+    "icon": "✅",
+    "author": "ephemeraHQ"
+  },
+  {
+    "href": "/skills/renew",
+    "title": "Renew ENS domain",
+    "description": "Renew an ENS domain",
+    "icon": "🔄",
+    "author": "ephemeraHQ"
+  },
+  {
+    "href": "/skills/cool",
+    "title": "Cool ENS domains",
+    "description": "Suggest fun ENS domains",
+    "icon": "😎",
+    "author": "ephemeraHQ"
+  },
+  {
+    "href": "/skills/token",
+    "title": "Token info",
+    "description": "Get information about a token in a frame",
+    "icon": "🪙",
+    "author": "humanagent"
+  },
+  {
+    "href": "/skills/pay",
+    "title": "Pay Link",
+    "description": "Generate a mobile payment link",
+    "icon": "💳",
+    "author": "humanagent"
+  },
+  {
+    "href": "/skills/cash",
+    "title": "Cash (USDC)",
+    "description": "Balance, fund, and transfer USDC",
+    "icon": "💰",
+    "author": "humanagent"
+  },
+  {
+    "href": "/skills/wordle",
+    "title": "Wordle",
+    "description": "Play Wordle",
+    "icon": "🎮",
+    "author": "cryptods8"
+  },
+  {
+    "href": "/skills/dalle",
+    "title": "Generate image",
+    "description": "Generate an image based on a prompt with DALL-E",
+    "icon": "🎨",
+    "author": "ephemeraHQ"
+  },
+  {
+    "href": "/skills/reset",
+    "title": "Reset state",
+    "description": "Reset user data and settings",
+    "icon": "🔄",
+    "author": "ephemeraHQ"
+  },
+  {
+    "href": "/skills/todo",
+    "title": "Summary by email",
+    "description": "Send a summary of the day by email",
+    "icon": "📧",
+    "author": "ephemeraHQ"
+  },
+  {
+    "href": "/skills/gated",
+    "title": "Gated group",
+    "description": "Create an nft gated group.",
+    "icon": "🔒",
+    "author": "humanagent"
+  },
+  {
+    "href": "/skills/broadcast",
+    "title": "Broadcast",
+    "description": "Send a message to a list of addresses.",
+    "icon": "📢",
+    "author": "humanagent"
+  },
+  {
+    "href": "/skills/web",
+    "title": "Web",
+    "description": "Get information about a website.",
+    "icon": "🌐",
+    "author": "raihankhan_rk"
+  },
+  {
+    "href": "/skills/cryptoPrice",
+    "title": "Crypto price",
+    "description": "Get the current price of a cryptocurrency in a currency.",
+    "icon": "🪙",
+    "author": "raihankhan_rk"
+  }
+]

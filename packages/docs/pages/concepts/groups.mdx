@@ -1,0 +1,70 @@
+# Groups
+
+MessageKit allows agents to interact inside XMTP groups.
+
+> Make sure you follow the [guidelines](/community/guidelines) for building responsible group agents on XMTP.
+
+## Tag an agent
+
+If a message includes a tag like `@bot`, it will be received by your stream like any other message.
+
+```tsx
+export const agent: Agent = {
+  name: "Web3 Domain Bot",
+  tag: "@bot",
+  description: "Register Web3 domains.",
+  skills: [
+    /*Your set of skills*/
+  ],
+};
+```
+
+Example:
+
+```bash
+@bot who owns vitalik.eth
+```
+
+> Be aware that you need to add the agent to the group as a member.
+
+## Create a group
+
+To create a group from your agent, you can use the following code:
+
+```tsx
+const group = await client?.conversations.newGroup([address1, address2]);
+```
+
+Check out the [gated group](/skills/gated) template.
+
+## Add members
+
+As an admin you can add members to the group.
+
+```tsx
+// get the group
+const { group } = context;
+await group.sync();
+//By address
+await group.addMembers([userAddresses]);
+//By inboxId
+await group.addMembersByInboxId([addedInboxes]);
+```
+
+## Added member event
+
+When a member is added to a group it will emit a `group_updated` event with a `addedInboxes` array containing the addresses of the users added.
+
+```tsx
+if (typeId === "group_updated") {
+  const { addedInboxes } = context.message.content;
+
+  if (addedInboxes?.length > 0) {
+    for (const inbox of addedInboxes) {
+      console.log(`User added: ${inbox.inboxId}`);
+    }
+  }
+}
+```
+
+> For more reliable functions visit [Plugins](/community/plugins)

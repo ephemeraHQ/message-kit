@@ -1,0 +1,239 @@
+.vocs_Code {
+  max-height: 800px;
+}
+
+.custom-homepage {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.custom-homepage-headline {
+  margin-bottom: 1rem;
+  text-align: center;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.2;
+}
+.sup {
+  top: 0;
+}
+
+.custom-homepage-headline-text {
+  font-size: 2.5rem;
+  font-weight: bold;
+  display: inline-block;
+}
+
+.custom-homepage-headline * {
+  line-height: inherit;
+  margin: 0;
+  padding: 0;
+}
+
+/* For smaller screens */
+@media (max-width: 768px) {
+  .custom-homepage-headline-text {
+    font-size: 2rem;
+    line-height: 1.3;
+  }
+}
+
+.custom-homepage-subhead {
+  margin-bottom: 1rem;
+  text-align: center;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.custom-homepage-subhead-text {
+  font-size: 1.25rem;
+  line-height: 1.5;
+  display: inline-block;
+}
+
+.custom-homepage-subhead * {
+  line-height: inherit;
+  margin: 0;
+  padding: 0;
+}
+
+/* For smaller screens */
+@media (max-width: 768px) {
+  .custom-homepage-subhead-text {
+    font-size: 1.1rem;
+  }
+}
+
+/* Custom Homepage tiles */
+
+.custom-homepage-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.custom-homepage-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem; /* reduced from 1.5rem */
+}
+.custom-homepage-grid-3 .custom-homepage-tile-title {
+  font-size: 1rem;
+}
+.custom-homepage-tile {
+  position: relative; /* Add this line */
+  background-color: var(--vocs-color-bg-soft);
+  border: 1px solid var(--vocs-color-border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  text-decoration: none;
+  color: var(--vocs-color-text);
+  transition: all 0.3s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.custom-homepage-tile:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: var(--vocs-color-primary);
+}
+
+.custom-homepage-tile-icon {
+  font-size: 1.5rem;
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
+:root {
+  --tile-external-icon-color: rgba(
+    76,
+    76,
+    76,
+    0.7
+  ); /* Default color for light mode */
+}
+
+.custom-homepage-tile-external-icon {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 0.75rem;
+  height: 0.75rem;
+  opacity: 0.7;
+  transition:
+    opacity 0.3s ease,
+    filter 0.3s ease;
+  filter: invert(0%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(0%)
+    contrast(100%);
+  display: block; /* Add this line */
+}
+
+.custom-homepage-tile-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.custom-homepage-tile-description {
+  font-size: 0.9rem;
+  color: var(--vocs-color-text-soft);
+  line-height: 1.5; /* Added this line to reduce line height */
+  margin: 0; /* Added to remove any default margins */
+}
+
+.custom-homepage-tile-grid-container .vocs_Tabs_list {
+  display: flex;
+  justify-content: center;
+  outline: none; /* Keep existing style */
+}
+
+/*DARK*/
+
+.dark {
+  --tile-external-icon-color: rgba(
+    207,
+    207,
+    207,
+    0.7
+  ); /* Use the text color in dark mode */
+}
+
+/* Dark mode adjustments */
+.dark .custom-homepage-tile {
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.01
+  ); /* Slightly lighter than the background */
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 1px 3px rgba(255, 255, 255, 0.05);
+}
+
+.dark .custom-homepage-tile:hover {
+  transform: translateY(-5px);
+  background-color: rgba(255, 255, 255, 0.01); /* Slightly lighter on hover */
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.02);
+  border-color: var(--vocs-color-primary);
+}
+
+.dark .custom-homepage-tile-external-icon {
+  filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%)
+    contrast(100%);
+}
+.dark .vocs_DesktopSearch_search,
+.dark .vocs_Footer,
+.dark .vocs_Sidebar_logoWrapper,
+.dark .vocs_DocsLayout_gutterTop,
+.dark .vocs_DocsLayout_gutterLeft,
+.dark .vocs_DocsLayout,
+.dark .vocs_DocsLayout_gutterTopCurtain,
+.dark .vocs_DocsLayout_gutterRight,
+.dark .vocs_Content,
+.dark .vocs_DocsLayout_content,
+.dark .vocs_MobileTopNav_curtain,
+.dark .vocs_MobileTopNav,
+.dark .vocs_MobileTopNav_sidebarPopover {
+  background: black !important;
+}
+.dark body {
+  background: black;
+}
+
+.dark div.vocs_DesktopTopNav_curtain {
+  display: none !important;
+}
+.dark .vocs_Code {
+  background: transparent !important;
+}
+.dark .vocs_Pre_wrapper pre,
+.dark .vocs_Tabs_list,
+.dark .vocs_CodeTitle,
+.dark .vocs_Tabs_content {
+  background: hsla(0, 0%, 4%, 0.6) !important;
+}
+.dark .vocs_Callout_info {
+  background: hsla(0, 0%, 4%, 0.6) !important;
+}
+.dark .custom-homepage-tile:hover {
+  border: white 1px solid !important;
+}
+.dark .vocs_CodeBlock .highlighted {
+  background: hsla(0, 0%, 4%, 0.6) !important;
+}
+html.dark {
+  background: black;
+}
+/*END DARK*/
+.custom-homepage .vocs_Callout_info {
+  background: none !important;
+  border: 0px !important;
+}
+@media (max-width: 768px) {
+  .vocs_Footer_container {
+    display: none;
+  }
+}

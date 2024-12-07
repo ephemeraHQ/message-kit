@@ -1,0 +1,36 @@
+# Guidelines for MessageKit Agents
+
+MessageKit is framework for building AI agents that work seamlessly within the Converse Messenger platform built with XMTP.
+
+Today, agents can easily become untrustworthy members of group chats. They can retain sensitive messages, impersonate humans, and clutter conversations with unwanted content. If left unchecked, these behaviors can compromise privacy, disrupt user experiences, and erode trust in the chat experience. We
+
+To ensure safe, private, and trustworthy chat experiences, MessageKit agents follow a set of trusted principles that determine how they can behave in group conversations with the goal of protecting users and ensuring the long-term health of the MessageKit bot, Converse Messenger, and XMTP ecosystem.
+
+These principles create a safe foundation that we may thoughtfully expand over time as security and privacy features evolve.
+
+## **The trusted principles**
+
+Agents built with MessageKit SDK follow the trusted principles detailed here. These principles are built into MessageKit to make responsible agent development straightforward and effortless.
+
+- **Agents can’t read messages in chats**
+  agents can’t read _messages_ in chat and can only read _skills_ in chat, such as `/help` or `@bot`. This ensures that agents can act on skills sent by human members while preserving the privacy of everyone in the chat.
+- **Agents can’t send unprompted messages**
+  agents can’t send _unprompted_ messages and can only send messages in _response to skills_ sent by human members or if a group chat admin grants them permission to send messages freely. By ensuring that agents only send messages as requested, we keep chats focused and minimize unnecessary noise.
+- **Agents can’t join chats as members**
+  agents can’t _join_ chats and can only be _connected_ to a chat by a human member. This ensures that if a agent autonomously joins a chat instead of being connected by a human member, it can be considered a threat.
+- **Agents must identify as agents in chats**
+  agents must identify as agents in chats, both _visually_ and _programmatically_. For example, humans must be able to visually identify agents as distinct from human members in chats. If a agent appears as a human member, it can be considered a threat.
+
+## For everyone and for the long-term
+
+We understand that these principles upheld by MessageKit may seem restrictive and could limit some of the more engaging or interactive agent features developers might want to implement. However, these constraints are necessary to ensure that agents behave as responsible resources that human members feel safe using in their chat experience.
+
+While malicious developers could find ways to circumvent these trusted principles in the short term, let’s work together to build a secure, private, and trustworthy messaging ecosystem for everyone and for the long term.
+
+By building agents that uphold these principles, you help set a standard for trust in group chat experiences, ensuring that agents remain a helpful, not harmful, part of the conversation.
+
+---
+
+Have feedback on these trusted principles?
+
+Share it in the [XMTP Devs 💪 group chat](https://converse.xyz/group-invite/a0XKzl9oVpWNXcuYDZLMf) on Converse, powered by [XMTP](https://docs.xmtp.org/).

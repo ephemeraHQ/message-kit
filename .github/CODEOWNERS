@@ -1,0 +1,4 @@
+# Global rule for message-kit package
+packages/message-kit/* @ephemeraHQ/engineering
+
+# No specific code owners for other files, meaning no approval required

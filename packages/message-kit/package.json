@@ -1,0 +1,72 @@
+{
+  "name": "@xmtp/message-kit",
+  "version": "1.2.14",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.js"
+    }
+  },
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "build:watch": "yarn build -w",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "dev": "yarn build:watch",
+    "format": "yarn format:base -w .",
+    "format:base": "prettier --ignore-path ../../.gitignore",
+    "format:check": "yarn format:base -c .",
+    "prepublishOnly": " cd ../../ && yarn copy && yarn build",
+    "test": "vitest",
+    "test:client": "vitest run tests/client",
+    "test:coverage": "vitest run --coverage",
+    "test:frames": "vitest run tests/frames",
+    "test:parsing": "vitest run tests/parsing",
+    "test:prompting": "vitest run tests/prompting",
+    "test:watch": "vitest watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@coinbase/coinbase-sdk": "*",
+    "@redis/client": "^1.6.0",
+    "@types/node": "^20.14.2",
+    "@vitest/coverage-v8": "^2.1.4",
+    "@xmtp/content-type-primitives": "^1.0.2",
+    "@xmtp/content-type-reaction": "^1.1.10-beta.1",
+    "@xmtp/content-type-remote-attachment": "1.1.11",
+    "@xmtp/content-type-reply": "^1.1.11",
+    "@xmtp/content-type-text": "^1.0.0",
+    "@xmtp/grpc-api-client": "^0.2.8",
+    "@xmtp/node-sdk": "^0.0.31",
+    "@xmtp/xmtp-js": "^13.0.3",
+    "dotenv": "^16.4.5",
+    "openai": "^4.52.7",
+    "typescript": "^5.4.5",
+    "viem": "^2.16.3",
+    "vitest": "^2.1.4"
+  },
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^11.1.6",
+    "prettier": "^3.3.1",
+    "rollup": "^4.18.0",
+    "rollup-plugin-dts": "^6.1.1",
+    "ts-node": "^10.9.2",
+    "turbo": "^2.2.3"
+  },
+  "packageManager": "yarn@4.5.1",
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
+}
