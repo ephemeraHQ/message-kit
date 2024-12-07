@@ -1,7 +1,20 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Global ignores
+node_modules/
+.DS_Store
 
-# dependencies
-node_modules
+# Template specific ignores
+templates/**/data/
+templates/**/.data/
+templates/**/.turbo/
+templates/**/dist/
+templates/**/.env
+
+# Specific template paths
+templates/*/data/
+templates/*/.data/
+templates/*/.turbo/
+templates/*/dist/
+templates/*/.env
 
 # testing
 coverage
@@ -63,7 +76,4 @@ next-env.d.ts
 # remix
 .data
 
-packages/create-message-kit/templates/**
 packages/create-message-kit/templates/**/*
-packages/create-message-kit/templates
-templates/toss/**/*
