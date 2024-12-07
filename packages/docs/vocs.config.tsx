@@ -118,16 +118,16 @@ export default defineConfig({
       text: "Community",
       items: [
         {
-          text: "Templates",
-          link: "/community/templates",
-        },
-        {
           text: "Skills",
           link: "/community/skills",
         },
         {
           text: "Plugins",
           link: "/community/plugins",
+        },
+        {
+          text: "Templates",
+          link: "/community/templates",
         },
         {
           text: "Contribute",

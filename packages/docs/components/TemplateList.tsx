@@ -1,9 +1,14 @@
 import templateOptions from "../../../community/templates.json";
 
 export default function TemplateList() {
+  const filteredTemplates = templateOptions.filter(
+    (template) =>
+      template.href.includes("ens") || template.href.includes("simple"),
+  );
+
   return (
     <ul className="vocs_List vocs_List_unordered">
-      {templateOptions.map(
+      {filteredTemplates.map(
         ({
           title,
           description,
