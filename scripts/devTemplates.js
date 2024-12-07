@@ -25,7 +25,7 @@ async function runSelectedTemplate() {
     })),
   });
 
-  if (!selectedTemplate) {
+  if (typeof selectedTemplate === "symbol" || !selectedTemplate) {
     console.log("No template selected. Exiting.");
     return;
   }

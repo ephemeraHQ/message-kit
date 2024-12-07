@@ -1,5 +1,6 @@
 {
   "name": "faucet-agent",
+  "private": true,
   "type": "module",
   "scripts": {
     "build": "tsc",
