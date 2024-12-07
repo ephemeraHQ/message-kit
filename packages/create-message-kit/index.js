@@ -7,7 +7,7 @@ import { default as fs } from "fs-extra";
 import { isCancel } from "@clack/prompts";
 import { detect } from "detect-package-manager";
 import pc from "picocolors";
-const defVersion = "1.2.15";
+const defVersion = "1.2.16";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Read package.json to get the version
@@ -78,8 +78,9 @@ Powered by XMTP`;
 program.parse(process.argv);
 
 async function updatePackagejson(destDir, templateType) {
-  // Create package.json based on the template
-  const templateDir = resolve(__dirname, `./templates/${templateType}`);
+  // Remove 'templates/' prefix if it exists in templateType
+  const cleanTemplatePath = templateType.replace("templates/", "");
+  const templateDir = resolve(__dirname, `templates/${cleanTemplatePath}`);
   const packageTemplate = fs.readJsonSync(`${templateDir}/package.json`);
 
   packageTemplate.dependencies["@xmtp/message-kit"] = "latest";
@@ -114,8 +115,9 @@ async function gatherProjectInfo() {
     process.exit(0);
   }
 
-  // Fix: Use templates directory with the selected href
-  const templateDir = resolve(__dirname, `./${templateType}`);
+  // Clean up template path and ensure correct directory structure
+  const cleanTemplatePath = templateType.replace("templates/", "");
+  const templateDir = resolve(__dirname, `templates/${cleanTemplatePath}`);
 
   // Ensure the template directory exists
   if (!fs.existsSync(templateDir)) {
