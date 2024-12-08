@@ -47,6 +47,7 @@
     "@xmtp/grpc-api-client": "^0.2.8",
     "@xmtp/node-sdk": "^0.0.31",
     "@xmtp/xmtp-js": "^13.0.3",
+    "axios": "^1.7.2",
     "dotenv": "^16.4.5",
     "openai": "^4.52.7",
     "typescript": "^5.4.5",
