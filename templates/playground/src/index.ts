@@ -28,16 +28,10 @@ run(
       agent,
     } = context;
 
-    if (text == "image") {
-      await context.sendImage("hero.jpg");
-    } else if (text == "remote") {
-      await context.sendImage("https://picsum.photos/200/300");
-    } else {
-      let prompt = await replaceVariables(systemPrompt, sender.address, agent);
-      //This is only used for to update the docs.
-      fs.writeFileSync("example_prompt.md", prompt);
-      await agentReply(context, prompt);
-    }
+    let prompt = await replaceVariables(systemPrompt, sender.address, agent);
+    //This is only used for to update the docs.
+    fs.writeFileSync("example_prompt.md", prompt);
+    await agentReply(context, prompt);
   },
   { agent, experimental: true },
 );
