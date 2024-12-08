@@ -52,6 +52,8 @@ import { promises as fsPromises } from "fs";
 //@ts-ignore
 const fs = typeof window === "undefined" ? fsPromises : null;
 
+import fetch from "cross-fetch";
+
 const fileHandling = {
   async getCacheCreationDate() {
     if (!fs) return null;
@@ -577,32 +579,79 @@ export class XMTPContext {
 
     await this.send(receiptUrl);
   }
-  async sendImage(filePath: string) {
+
+  async sendImage(source: string) {
     try {
-      // Check if we can handle files
-      const file = await fileHandling.readFile(filePath);
-      if (!file) {
-        console.error("File operations not supported in this environment");
-        return;
+      let imgArray: Uint8Array;
+      let mimeType: string;
+      let filename: string;
+
+      const MAX_SIZE = 1024 * 1024; // 1MB in bytes
+
+      // Check if source is a URL
+      if (source.startsWith("http://") || source.startsWith("https://")) {
+        try {
+          // Handle URL
+          const response = await fetch(source);
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          // Check Content-Length header first if available
+          const contentLength = response.headers.get("content-length");
+          if (contentLength && parseInt(contentLength) > MAX_SIZE) {
+            throw new Error("Image size exceeds 1MB limit");
+          }
+
+          const arrayBuffer = await response.arrayBuffer();
+
+          // Double check actual size
+          if (arrayBuffer.byteLength > MAX_SIZE) {
+            throw new Error("Image size exceeds 1MB limit");
+          }
+
+          imgArray = new Uint8Array(arrayBuffer);
+          mimeType = response.headers.get("content-type") || "image/jpeg";
+          filename = source.split("/").pop() || "image";
+
+          // If filename doesn't have an extension, add one based on mime type
+          if (!filename.includes(".")) {
+            const ext = mimeType.split("/")[1];
+            filename = `${filename}.${ext}`;
+          }
+        } catch (error) {
+          console.error("Error fetching image from URL:", error);
+          throw error;
+        }
+      } else {
+        // Handle file path
+        const file = await fileHandling.readFile(source);
+        if (!file) {
+          console.error("File operations not supported in this environment");
+          return;
+        }
+
+        // Check file size
+        if (file.length > MAX_SIZE) {
+          throw new Error("Image size exceeds 1MB limit");
+        }
+
+        filename = path.basename(source);
+        const extname = path.extname(source);
+        mimeType = `image/${extname.replace(".", "").replace("jpg", "jpeg")}`;
+        imgArray = new Uint8Array(file);
       }
 
-      const filename = path.basename(filePath);
-      const extname = path.extname(filePath);
-
-      // Convert the file to a Uint8Array
-      const blob = new Blob([file], { type: extname });
-      let imgArray = new Uint8Array(await blob.arrayBuffer());
-
       const attachment = {
-        filename: filename,
-        mimeType: "image/" + extname.replace(".", "").replace("jpg", "jpeg"),
+        filename,
+        mimeType,
         data: imgArray,
       };
 
-      console.log("Attachment created", attachment);
       await this.send(attachment, ContentTypeAttachment);
     } catch (error) {
       console.error("Failed to send image:", error);
+      throw error;
     }
   }
 }

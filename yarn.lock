@@ -3682,7 +3682,7 @@ __metadata:
     "@xmtp/grpc-api-client": "npm:^0.2.8"
     "@xmtp/node-sdk": "npm:^0.0.31"
     "@xmtp/xmtp-js": "npm:^13.0.3"
-    axios: "npm:^1.7.2"
+    cross-fetch: "npm:^4.0.0"
     dotenv: "npm:^16.4.5"
     openai: "npm:^4.52.7"
     prettier: "npm:^3.3.1"
@@ -4072,7 +4072,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.6.8, axios@npm:^1.7.2, axios@npm:^1.7.4, axios@npm:^1.7.7":
+"axios@npm:^1.6.8, axios@npm:^1.7.4, axios@npm:^1.7.7":
   version: 1.7.9
   resolution: "axios@npm:1.7.9"
   dependencies:
@@ -4847,6 +4847,15 @@ __metadata:
   bin:
     create-vocs: _lib/bin.js
   checksum: 10/7f4506e574d60f72015b298ba3467bcb406dcf6c63709dff3213a7a47bbb2eb77e1c0e1cadc1031b0c3c3b9cb8e126bd4c788d8e1d633c96ac0225f85887d940
+  languageName: node
+  linkType: hard
+
+"cross-fetch@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "cross-fetch@npm:4.0.0"
+  dependencies:
+    node-fetch: "npm:^2.6.12"
+  checksum: 10/e231a71926644ef122d334a3a4e73d9ba3ba4b480a8a277fb9badc434c1ba905b3d60c8034e18b348361a09afbec40ba9371036801ba2b675a7b84588f9f55d8
   languageName: node
   linkType: hard
 
@@ -8550,7 +8559,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-fetch@npm:^2.6.1, node-fetch@npm:^2.6.7":
+"node-fetch@npm:^2.6.1, node-fetch@npm:^2.6.12, node-fetch@npm:^2.6.7":
   version: 2.7.0
   resolution: "node-fetch@npm:2.7.0"
   dependencies:

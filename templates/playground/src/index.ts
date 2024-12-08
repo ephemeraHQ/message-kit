@@ -28,8 +28,10 @@ run(
       agent,
     } = context;
 
-    if (text == "remote") {
-      await context.sendRemoteAttachment("https://picsum.photos/200/300");
+    if (text == "image") {
+      await context.sendImage("hero.jpg");
+    } else if (text == "remote") {
+      await context.sendImage("https://picsum.photos/200/300");
     } else {
       let prompt = await replaceVariables(systemPrompt, sender.address, agent);
       //This is only used for to update the docs.
