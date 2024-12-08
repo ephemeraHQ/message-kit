@@ -57,8 +57,10 @@ const answer = await context.awaitResponse("Please answer with yes or no", [
   "no",
 ]);
 console.log(`You answered: ${answer}`);
-// Send an image
+// Send an image (max 1MB)
 await context.sendImage("path/to/image.png");
+// Send a remote image (max 1MB)
+await context.sendImage("https://picsum.photos/200/300");
 ```
 
 > Check out [Frames](/concepts/frames) for sending dynamic content.

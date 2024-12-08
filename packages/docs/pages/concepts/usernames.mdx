@@ -2,13 +2,13 @@
 
 Message Kit provides powerful username resolution capabilities through its resolver system. This allows applications to handle various types of identifiers including ENS domain and Converse usernames.
 
-## Supported Username Types
+## Supported identifiers
 
 - **Ethereum Addresses** - Standard hex addresses (e.g., `0x123...`)
 - **ENS Domains** - Ethereum Name Service domains (e.g., `vitalik.eth`)
 - **Converse Usernames** - Social usernames from Converse (e.g., `@fabri`)
 
-## Using the Resolver
+## Usage
 
 The resolver provides a `getUserInfo` function that returns detailed information about a user:
 
@@ -36,7 +36,7 @@ clearInfoCache(address);
 clearInfoCache();
 ```
 
-## XMTP Availability Check
+## XMTP availability check
 
 You can check if a user has XMTP enabled:
 
@@ -44,4 +44,7 @@ You can check if a user has XMTP enabled:
 const { v2, v3 } = await isOnXMTP(v3client, v2client, address);
 ```
 
-> For more information visit [Resolver](/plugins/resolver.mdx)
+This will return an object with `v2` and `v3` booleans indicating if the user has XMTP enabled
+
+- `v2:true` If the user has XMTP v2 enabled
+- `v3:true` If the user has XMTP v3 enabled

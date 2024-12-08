@@ -18,20 +18,17 @@ export const agent: Agent = {
   skills: [...web, ...cryptoPrice, ...search],
 };
 
-// [!region gated]
-const { client } = await xmtpClient({
-  hideInitLogMessage: true,
-});
-
 run(
   async (context: XMTPContext) => {
     const {
-      message: { sender },
+      message: {
+        sender,
+        content: { text },
+      },
       agent,
     } = context;
 
     let prompt = await replaceVariables(systemPrompt, sender.address, agent);
-
     //This is only used for to update the docs.
     fs.writeFileSync("example_prompt.md", prompt);
     await agentReply(context, prompt);

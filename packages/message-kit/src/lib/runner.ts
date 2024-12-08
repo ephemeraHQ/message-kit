@@ -248,7 +248,7 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
   };
   // Run both clients' streams concurrently
   await Promise.all([
-    streamMessages("v3", handleMessage, client),
     streamMessages("v2", handleMessage, v2client),
+    streamMessages("v3", handleMessage, client),
   ]);
 }

@@ -12,11 +12,47 @@ import { chatMemory } from "../helpers/gpt.js";
 import { GroupMember } from "@xmtp/node-sdk";
 import { textGeneration } from "../helpers/gpt.js";
 import { getUserInfo, isOnXMTP } from "../helpers/resolver.js";
+import type { ContentTypeId } from "@xmtp/content-type-primitives";
+import { ContentTypeText } from "@xmtp/content-type-text";
+import { WalletService } from "../helpers/cdp.js";
+import { logMessage, extractFrameChain } from "../helpers/utils.js";
+import {
+  RunConfig,
+  MessageAbstracted,
+  GroupAbstracted,
+  Agent,
+  SkillResponse,
+  AbstractedMember,
+  Frame,
+} from "../helpers/types.js";
+import { ContentTypeReply, type Reply } from "@xmtp/content-type-reply";
+import {
+  executeSkill,
+  parseSkill,
+  findSkill,
+  loadSkillsFile,
+} from "./skills.js";
+import {
+  ContentTypeAttachment,
+  ContentTypeRemoteAttachment,
+  RemoteAttachmentCodec,
+  AttachmentCodec,
+  type RemoteAttachment,
+  type Attachment,
+} from "@xmtp/content-type-remote-attachment";
+
+import {
+  ContentTypeReaction,
+  type Reaction,
+} from "@xmtp/content-type-reaction";
+import path from "path";
 
 // Only import fs in Node.js environment
 import { promises as fsPromises } from "fs";
 //@ts-ignore
 const fs = typeof window === "undefined" ? fsPromises : null;
+
+import fetch from "cross-fetch";
 
 const fileHandling = {
   async getCacheCreationDate() {
@@ -40,33 +76,7 @@ const fileHandling = {
     }
   },
 };
-import type { Reaction } from "@xmtp/content-type-reaction";
-import { ContentTypeText } from "@xmtp/content-type-text";
-import { WalletService } from "../helpers/cdp.js";
-import { logMessage, extractFrameChain } from "../helpers/utils.js";
-import {
-  RunConfig,
-  MessageAbstracted,
-  GroupAbstracted,
-  Agent,
-  SkillResponse,
-  AbstractedMember,
-  Frame,
-} from "../helpers/types.js";
-import { ContentTypeReply } from "@xmtp/content-type-reply";
-import {
-  executeSkill,
-  parseSkill,
-  findSkill,
-  loadSkillsFile,
-} from "./skills.js";
-import {
-  ContentTypeAttachment,
-  ContentTypeRemoteAttachment,
-  RemoteAttachmentCodec,
-} from "@xmtp/content-type-remote-attachment";
-import { ContentTypeReaction } from "@xmtp/content-type-reaction";
-import path from "path";
+
 //com
 const framesUrl = process.env.frames_URL ?? "https://frames.message-kit.org/";
 export const awaitedHandlers = new Map<
@@ -231,9 +241,13 @@ export class XMTPContext {
             attachment: attachment,
           };
         } else if (message?.contentType?.sameAs(ContentTypeAttachment)) {
-          const attachment = await RemoteAttachmentCodec.load(content, client);
+          const blobdecoded = new Blob([message.content.data], {
+            type: message.content.mimeType,
+          });
+          const url = URL.createObjectURL(blobdecoded);
+
           content = {
-            attachment: attachment,
+            attachment: { url: url },
           };
         }
         context.message = {
@@ -421,28 +435,26 @@ export class XMTPContext {
       contentType: ContentTypeText,
       reference: this.message.id,
     };
-    const conversation = this.refConv || this.conversation || this.group;
-
-    if (conversation) {
-      if (this.isV2Conversation(conversation)) {
-        await conversation.send(reply, { contentType: ContentTypeReply });
-        logMessage("sent: " + reply.content);
-      } else {
-        await conversation.send(reply, ContentTypeReply);
-        logMessage("sent: " + reply.content);
-      }
-    }
+    this.send(reply, ContentTypeReply);
   }
 
-  async send(message: string) {
-    if (typeof message !== "string") {
+  async send(
+    message: string | Reply | Reaction | RemoteAttachment | Attachment,
+    contentType: ContentTypeId = ContentTypeText,
+  ) {
+    if (contentType === ContentTypeText && typeof message !== "string") {
       console.error("Message must be a string");
       return;
     }
     const conversation = this.refConv || this.conversation || this.group;
     if (conversation) {
-      await conversation.send(message);
-      logMessage("sent: " + message);
+      if (this.isV2Conversation(conversation)) {
+        await conversation.send(message, {
+          contentType: contentType,
+        });
+      } else if (conversation instanceof Conversation) {
+        await conversation.send(message, contentType);
+      }
     }
   }
   getConversationKey() {
@@ -464,14 +476,7 @@ export class XMTPContext {
       reference: this.message.id,
       content: emoji,
     };
-    const conversation = this.refConv || this.conversation || this.group;
-    if (conversation) {
-      if (this.isV2Conversation(conversation)) {
-        await conversation.send(reaction, { contentType: ContentTypeReaction });
-      } else if (conversation instanceof Conversation) {
-        await conversation.send(reaction, ContentTypeReaction);
-      }
-    }
+    this.send(reaction, ContentTypeReaction);
   }
 
   async getCacheCreationDate() {
@@ -574,44 +579,79 @@ export class XMTPContext {
 
     await this.send(receiptUrl);
   }
-  async sendImage(filePath: string) {
+
+  async sendImage(source: string) {
     try {
-      // Check if we can handle files
-      const file = await fileHandling.readFile(filePath);
-      if (!file) {
-        console.error("File operations not supported in this environment");
-        return;
+      let imgArray: Uint8Array;
+      let mimeType: string;
+      let filename: string;
+
+      const MAX_SIZE = 1024 * 1024; // 1MB in bytes
+
+      // Check if source is a URL
+      if (source.startsWith("http://") || source.startsWith("https://")) {
+        try {
+          // Handle URL
+          const response = await fetch(source);
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          // Check Content-Length header first if available
+          const contentLength = response.headers.get("content-length");
+          if (contentLength && parseInt(contentLength) > MAX_SIZE) {
+            throw new Error("Image size exceeds 1MB limit");
+          }
+
+          const arrayBuffer = await response.arrayBuffer();
+
+          // Double check actual size
+          if (arrayBuffer.byteLength > MAX_SIZE) {
+            throw new Error("Image size exceeds 1MB limit");
+          }
+
+          imgArray = new Uint8Array(arrayBuffer);
+          mimeType = response.headers.get("content-type") || "image/jpeg";
+          filename = source.split("/").pop() || "image";
+
+          // If filename doesn't have an extension, add one based on mime type
+          if (!filename.includes(".")) {
+            const ext = mimeType.split("/")[1];
+            filename = `${filename}.${ext}`;
+          }
+        } catch (error) {
+          console.error("Error fetching image from URL:", error);
+          throw error;
+        }
+      } else {
+        // Handle file path
+        const file = await fileHandling.readFile(source);
+        if (!file) {
+          console.error("File operations not supported in this environment");
+          return;
+        }
+
+        // Check file size
+        if (file.length > MAX_SIZE) {
+          throw new Error("Image size exceeds 1MB limit");
+        }
+
+        filename = path.basename(source);
+        const extname = path.extname(source);
+        mimeType = `image/${extname.replace(".", "").replace("jpg", "jpeg")}`;
+        imgArray = new Uint8Array(file);
       }
 
-      const filename = path.basename(filePath);
-      const extname = path.extname(filePath);
-      console.log(`Filename: ${filename}`);
-      console.log(`File Type: ${extname}`);
-
-      // Convert the file to a Uint8Array
-      const blob = new Blob([file], { type: extname });
-      let imgArray = new Uint8Array(await blob.arrayBuffer());
-
       const attachment = {
-        filename: filename,
-        mimeType: extname,
+        filename,
+        mimeType,
         data: imgArray,
       };
 
-      console.log("Attachment created", attachment);
-
-      const conversation = this.refConv || this.conversation || this.group;
-      if (conversation) {
-        if (this.isV2Conversation(conversation)) {
-          await conversation.send(attachment, {
-            contentType: ContentTypeAttachment,
-          });
-        } else if (conversation instanceof Conversation) {
-          await conversation.send(attachment, ContentTypeAttachment);
-        }
-      }
+      await this.send(attachment, ContentTypeAttachment);
     } catch (error) {
       console.error("Failed to send image:", error);
+      throw error;
     }
   }
 }

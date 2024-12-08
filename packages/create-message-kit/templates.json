@@ -42,6 +42,13 @@
     "author": "humanagent"
   },
   {
+    "href": "/templates/gm",
+    "title": "GM Bot",
+    "description": "A template for a GM bot.",
+    "icon": "👑",
+    "author": "humanagent"
+  },
+  {
     "href": "/templates/toss",
     "title": "Toss",
     "description": "A friendly game for groups.",

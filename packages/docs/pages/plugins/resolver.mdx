@@ -1,8 +1,19 @@
 # Resolver
 
-Fetch ens information about the users, including Converse profile data.
+Message Kit provides powerful username resolution capabilities through its resolver system. This allows applications to handle various types of identifiers including ENS domain and Converse usernames.
 
-> Is already includes in MessageKit but you could import this one in your files for more customization
+> Is already included in [MessageKit](/concepts/usernames)
+
+## Caching
+
+The resolver implements automatic caching to improve performance and reduce API calls. You can manage the cache using:
+
+```typescript
+// Clear cache for specific address
+clearInfoCache(address);
+// Clear entire cache
+clearInfoCache();
+```
 
 ## Code
 

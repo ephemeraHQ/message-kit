@@ -16,6 +16,7 @@ const external = [
   "@xmtp/node-bindings",
   "@xmtp/grpc-api-client",
   "@coinbase/coinbase-sdk",
+  "cross-fetch",
   "path",
   "crypto",
   "viem",
