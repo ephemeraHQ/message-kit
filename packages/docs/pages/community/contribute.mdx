@@ -5,7 +5,7 @@ import { CustomHomePage } from "../../components/CustomHomePage";
 
 Welcome to the MessageKit community! We're excited to have you contribute to making MessageKit better. There are several ways you can contribute:
 
-## Skills
+## Skills & Plugins
 
 Skills are the building blocks of MessageKit agents. Share your skills with the community:
 
@@ -43,7 +43,10 @@ Make it work in the playground:
 message-kit/
 └── templates/
     └── playground/
-        ├── skills/
+        ├── plugins/ # Optional
+        │   ├── other plugins...
+        │   └── your-plugin.ts
+        ├── skills/ # Optional
         │   ├── other skills...
         │   └── your-skill.ts
         ├── package.json
@@ -60,7 +63,8 @@ yarn dev:play
 
 #### Create the docs
 
-- Add the Doc file to the [skills](https://github.com/ephemeraHQ/message-kit/blob/community/packages/docs/pages/skills) folder
+- Add the plugin Docs file to the [plugins](https://github.com/ephemeraHQ/message-kit/blob/community/packages/docs/pages/plugins) folder
+- Add the skill Docs file to the [skills](https://github.com/ephemeraHQ/message-kit/blob/community/packages/docs/pages/skills) folder
 
 #### Update the community file
 
@@ -106,52 +110,14 @@ yarn dev:play
 
 #### Update the community file
 
+- **Update the [`community/plugins.json`](https://github.com/ephemeraHQ/message-kit/blob/community/community/plugins.json) file** to include your new plugin.
 - **Update the [`community/templates.json`](https://github.com/ephemeraHQ/message-kit/blob/community/community/templates.json) file** to include your new template.
 
 :::
 
-## Plugins
+## Development
 
-Plugins extend MessageKit's skills functionality. Here's how a plugin is structured:
-
-### Guidelines
-
-:::steps
-
-#### Test it
-
-Make it work in the playground:
-
-```bash
-message-kit/
-└── templates/
-    └── playground/
-        ├── plugins/
-        │   ├── other plugins...
-        │   └── your-plugin.ts
-        ├── package.json
-        └── README.md
-```
-
-Run it:
-
-```bash
-yarn dev:play
-```
-
-> ⚠️ Feel free to edit the `index.ts` file to test but don't remove the existing plugins.
-
-#### Create the docs
-
-- Add the Doc file to the [plugins](https://github.com/ephemeraHQ/message-kit/blob/community/packages/docs/pages/plugins) folder
-
-#### Update the community file
-
-- **Update the [`community/plugins.json`](https://github.com/ephemeraHQ/message-kit/blob/community/community/plugins.json) file** to include your new plugin.
-
-:::
-
-## Development workflow
+Follow these steps to contribute to MessageKit monorepo:
 
 :::steps
 
@@ -167,12 +133,6 @@ cd message-kit
 ```bash
 git checkout -b community/your-feature-name
 ```
-
-#### Make Changes
-
-- Write your code
-- Add tests
-- Update documentation
 
 #### Build
 
@@ -194,9 +154,9 @@ yarn test
 
 #### Submit PR
 
-- Create a pull request
-- Describe your changes
-- Link related issues, if any
+- Create a skill, plugin or template PR
+- Create your Docs
+- Update the community files
 
 :::
 
