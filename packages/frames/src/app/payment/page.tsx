@@ -42,7 +42,7 @@ export default async function Home({
 
         <meta property="fc:frame:button:1" content={`Pay in USDC (Mobile)`} />
         <meta property="fc:frame:button:1:action" content="link" />
-        <meta property="fc:frame:button:1:target" content={params.onRampURL} />
+        <meta property="fc:frame:button:1:target" content={ethereumUrl} />
 
         {params.onRampURL && (
           <>

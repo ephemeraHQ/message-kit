@@ -12,17 +12,6 @@ import {
 
 export const toss: Skill[] = [
   {
-    skill: "end",
-    description: "End a toss.",
-    handler: handleEndToss,
-    examples: ["/end yes", "/end no"],
-    params: {
-      option: {
-        type: "string",
-      },
-    },
-  },
-  {
     skill: "create",
     description: "Create an agent wallet.",
     handler: handleDM,
@@ -57,16 +46,27 @@ export const toss: Skill[] = [
     examples: ["/help"],
   },
   {
-    skill: "cancel",
-    description: "Cancel a toss.",
-    handler: handleCancelToss,
-    examples: ["/cancel"],
-  },
-  {
     skill: "balance",
     description: "Check your balance.",
     handler: handleDM,
     examples: ["/balance"],
+  },
+  {
+    skill: "end",
+    description: "End a toss.",
+    handler: handleEndToss,
+    examples: ["/end yes", "/end no"],
+    params: {
+      option: {
+        type: "string",
+      },
+    },
+  },
+  {
+    skill: "cancel",
+    description: "Cancel a toss.",
+    handler: handleCancelToss,
+    examples: ["/cancel"],
   },
   {
     skill: "join",
