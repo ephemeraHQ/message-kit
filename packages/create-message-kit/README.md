@@ -9,7 +9,7 @@ bun create message-kit
 ```
 
 ```bash
-npx create-message-kit
+npx create-message-kit@latest
 ```
 
 ```bash
