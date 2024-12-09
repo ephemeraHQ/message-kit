@@ -4,31 +4,14 @@ The `WalletService` class in MessageKit provides a way to create an agent wallet
 
 ## Introduction
 
-To use the `WalletService`, you need to initialize it with a Redis client and encryption keys:
+To use the `WalletService`, you need to initialize it with encryption keys:
 
 ### Requirements
 
 - `@coinbase/coinbase-sdk`: Already included in MessageKit
-- `@redis/client`: A Redis client for wallet storage
 - Environment variables:
   - `COINBASE_API_KEY_NAME`: The Coinbase API key name
   - `COINBASE_API_KEY_PRIVATE_KEY`: The Coinbase API private key
-  - `COINBASE_API_REDIS_URL`: The Redis URL
-
-### Activation
-
-Start by importing the `getWalletService` function from the `redis.js` file:
-
-```typescript
-import { getWalletService } from "./plugins/redis.js";
-const walletServiceDB = await getWalletService();
-run(
-  async (context: XMTPContext) => {
-    // ...
-  },
-  { walletServiceDB },
-);
-```
 
 ### Usage
 
@@ -101,21 +84,32 @@ const balance = await walletService.checkBalance(userAddress);
 
 ## Security Architecture
 
-The WalletService uses a dual-key encryption system:
+The WalletService uses a dual-key encryption system with local file storage:
 
-### Default Encryption
+### Encryption System
 
 - **User Wallets**: Encrypted with `userEncryptionKey` (user address)
 - **Temporary Wallets**: Encrypted with `tempEncryptionKey` (conversationId + creator of the agent)
+- Data is stored locally in `.data/wallet-storage` directory
 
 ```typescript
 // Default encryption
 const encrypted = walletService.encrypt(data);
 const decrypted = walletService.decrypt(encrypted);
 
-// Specifying a key for a custom encryption
+// Specifying a key for custom encryption
 const userEncrypted = walletService.encrypt(data, userEncryptionKey);
 const userDecrypted = walletService.decrypt(userEncrypted, userEncryptionKey);
 ```
 
-Note: All string data is converted to lowercase before encryption.
+### Storage implementation
+
+Wallet data is stored locally using a simple file-based system:
+
+```typescript
+// Data is stored in .data/wallet-storage directory
+// Each wallet is stored in a separate encrypted file
+// File names are encrypted using the appropriate encryption key
+```
+
+Note: All string data is converted to lowercase before encryption for consistency.

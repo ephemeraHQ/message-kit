@@ -182,12 +182,16 @@ export class XMTPContext {
 
         //Config
         context.agent = runConfig?.agent ?? (await loadSkillsFile());
-        if (runConfig?.walletServiceDB)
+        if (
+          process.env.COINBASE_API_KEY_NAME &&
+          process.env.COINBASE_API_KEY_PRIVATE_KEY
+        ) {
           context.walletService = new WalletService(
-            runConfig?.walletServiceDB,
             context.getConversationKey(),
             sender?.address,
           );
+        }
+
         context.getMessageById =
           client.conversations?.getMessageById?.bind(client.conversations) ||
           (() => null);
@@ -452,7 +456,7 @@ export class XMTPContext {
         await conversation.send(message, {
           contentType: contentType,
         });
-      } else if (conversation instanceof Conversation) {
+      } else if (this.isV3Conversation(conversation)) {
         await conversation.send(message, contentType);
       }
     }
@@ -467,6 +471,11 @@ export class XMTPContext {
     conversation: Conversation | V2Conversation | null,
   ): conversation is V2Conversation {
     return (conversation as V2Conversation)?.topic !== undefined;
+  }
+  isV3Conversation(
+    conversation: Conversation | V2Conversation | null,
+  ): conversation is Conversation {
+    return (conversation as Conversation)?.id !== undefined;
   }
 
   async react(emoji: string) {

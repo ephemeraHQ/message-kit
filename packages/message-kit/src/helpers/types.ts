@@ -64,8 +64,6 @@ export type RunConfig = {
   agent?: Agent;
   // model to be used
   gptModel?: string;
-  // wallet service db
-  walletServiceDB?: RedisClientType;
 };
 export interface SkillParamConfig {
   default?: string | number | boolean;

@@ -1,5 +1,4 @@
 import { Skill, XMTPContext, getUserInfo } from "@xmtp/message-kit";
-import { TimeoutError } from "@coinbase/coinbase-sdk";
 import { getRedisClient } from "../plugins/redis.js";
 import {
   checkTossCorrect,
@@ -11,11 +10,9 @@ import {
   DM_HELP_MESSAGE,
 } from "../plugins/helpers.js";
 
-const tossDBClient = await getRedisClient();
-
 export const toss: Skill[] = [
   {
-    skill: "/end [option]",
+    skill: "end",
     description: "End a toss.",
     handler: handleEndToss,
     examples: ["/end yes", "/end no"],
@@ -26,14 +23,13 @@ export const toss: Skill[] = [
     },
   },
   {
-    skill: "/create",
+    skill: "create",
     description: "Create an agent wallet.",
     handler: handleDM,
     examples: ["/create"],
-    params: {},
   },
   {
-    skill: "/fund [amount]",
+    skill: "fund",
     description: "Fund your account.",
     handler: handleDM,
     examples: ["/fund 10"],
@@ -44,7 +40,7 @@ export const toss: Skill[] = [
     },
   },
   {
-    skill: "/withdraw [amount]",
+    skill: "withdraw",
     description: "Withdraw funds from your account.",
     handler: handleDM,
     examples: ["/withdraw 10"],
@@ -55,28 +51,25 @@ export const toss: Skill[] = [
     },
   },
   {
-    skill: "/help",
+    skill: "help",
     description: "Get help with tossing.",
     handler: handleDM,
     examples: ["/help"],
-    params: {},
   },
   {
-    skill: "/cancel",
+    skill: "cancel",
     description: "Cancel a toss.",
     handler: handleCancelToss,
     examples: ["/cancel"],
-    params: {},
   },
   {
-    skill: "/balance",
+    skill: "balance",
     description: "Check your balance.",
     handler: handleDM,
     examples: ["/balance"],
-    params: {},
   },
   {
-    skill: "/join [response]",
+    skill: "join",
     description: "Join a toss.",
     params: {
       response: {
@@ -87,15 +80,13 @@ export const toss: Skill[] = [
     examples: ["/join yes", "/join no"],
   },
   {
-    skill: "/status",
+    skill: "status",
     description: "Check the status of the toss.",
     handler: handleTossStatus,
     examples: ["/status"],
-    params: {},
   },
   {
-    skill:
-      "/toss [description] [options (separated by comma)] [amount] [judge(optional)] [endTime(optional)]",
+    skill: "toss",
     description:
       "Create a toss with a description, options, amount and judge(optional).",
     handler: handleTossCreation,
@@ -120,9 +111,11 @@ export const toss: Skill[] = [
       },
       judge: {
         type: "username",
+        optional: true,
       },
       endTime: {
         type: "quoted",
+        optional: true,
       },
     },
   },
@@ -142,6 +135,7 @@ export async function handleTossCreation(context: XMTPContext) {
     return;
   }
 
+  const tossDBClient = await getRedisClient();
   if (params.description && params.options && !isNaN(Number(params.amount))) {
     const keys = await tossDBClient.keys("*");
     let tossId = keys.length + 1;
@@ -163,17 +157,18 @@ export async function handleTossCreation(context: XMTPContext) {
       end_time: params.endTime
         ? new Date(params.endTime).toLocaleString()
         : new Date(Date.now() + 24 * 60 * 60 * 1000).toLocaleString(),
-      encrypted_participants: [],
       participants: [],
       toss_wallet_address: createdTossWallet?.address,
     };
     await tossDBClient.set(
-      "toss:" + walletService.encrypt(tossId.toString()),
-      walletService.encrypt(tossData),
+      "toss:" + tossId.toString(),
+      JSON.stringify(tossData),
     );
-
+    console.log(tossData);
     if (tossId !== undefined) {
-      await context.send(generateTossMessage(tossData));
+      let msg = generateTossMessage(tossData);
+      console.log(msg);
+      await context.send(msg);
     } else {
       await context.reply(
         `An error occurred while creating the toss. ${JSON.stringify(tossId)}`,
@@ -188,7 +183,7 @@ export async function handleJoinToss(context: XMTPContext) {
     return;
   }
 
-  const { toss_id, participants, encrypted_participants, amount } = tossData;
+  const { toss_id, participants, amount } = tossData;
 
   const {
     message: {
@@ -201,6 +196,7 @@ export async function handleJoinToss(context: XMTPContext) {
     walletService,
   } = context;
 
+  const tossDBClient = await getRedisClient();
   if (participants?.some((p) => p.address === sender.address)) {
     await context.reply("You have already joined this toss.");
     return;
@@ -231,21 +227,19 @@ export async function handleJoinToss(context: XMTPContext) {
       amount,
     );
     console.log("Transfer:", transfer.getTransactionHash());
-    const encryptedParticipant = walletService.encrypt({
+    const participant = {
       address: sender.address,
       agent_address: senderWallet.address,
       response: response,
       name:
         (await context.getUserInfo(sender.address))?.preferredName ??
         sender.address,
-    });
-    encrypted_participants.push(encryptedParticipant as string);
+    };
+    participants.push(participant);
 
     await tossDBClient.set(
-      `toss:${walletService.encrypt(toss_id)}`,
-      walletService.encrypt(
-        JSON.stringify({ ...tossData, encrypted_participants }),
-      ),
+      `toss:${toss_id}`,
+      JSON.stringify({ ...tossData, participants }),
     );
 
     await context.reply("Successfully joined the toss!");
@@ -275,6 +269,7 @@ export async function handleEndToss(context: XMTPContext) {
     walletService,
   } = context;
 
+  const tossDBClient = await getRedisClient();
   if (participants?.length === 0) {
     await context.reply("No participants for this toss.");
     return;
@@ -323,10 +318,8 @@ export async function handleEndToss(context: XMTPContext) {
       );
       console.log("Transfer:", transfer.getTransactionHash());
       await tossDBClient.set(
-        `toss:${walletService.encrypt(toss_id)}`,
-        walletService.encrypt(
-          JSON.stringify({ ...tossData, status: "closed" }),
-        ),
+        `toss:${toss_id}`,
+        JSON.stringify({ ...tossData, status: "closed" }),
       );
     }
     // Clean up
@@ -355,6 +348,7 @@ export async function handleCancelToss(context: XMTPContext) {
     walletService,
   } = context;
 
+  const tossDBClient = await getRedisClient();
   if (participants?.length === 0) {
     await context.reply("No participants for this toss.");
     return;
@@ -395,8 +389,8 @@ export async function handleCancelToss(context: XMTPContext) {
   //await walletService.deleteTempWallet(tossWalletRedis, tossId.toString());
 
   await tossDBClient.set(
-    `toss:${walletService.encrypt(toss_id)}`,
-    walletService.encrypt(JSON.stringify({ ...tossData, status: "cancelled" })),
+    `toss:${toss_id}`,
+    JSON.stringify({ ...tossData, status: "cancelled" }),
   );
 
   await context.reply(

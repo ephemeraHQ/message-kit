@@ -1,6 +1,6 @@
 {
   "name": "message-kit-monorepo",
-  "version": "0.0.1",
+  "version": "1.2.20",
   "private": true,
   "type": "module",
   "workspaces": [

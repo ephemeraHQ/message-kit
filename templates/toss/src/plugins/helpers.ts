@@ -1,7 +1,6 @@
 import { XMTPContext } from "@xmtp/message-kit";
 import { getRedisClient } from "./redis.js";
 
-const tossDBClient = await getRedisClient();
 interface Participant {
   response: string;
   name: string;
@@ -18,8 +17,7 @@ export interface TossData {
   created_at: string;
   end_time: string;
   description: string;
-  encrypted_participants: string[];
-  participants?: Participant[];
+  participants: Participant[];
   toss_wallet_address: string;
 }
 export async function checkTossCorrect(
@@ -29,9 +27,9 @@ export async function checkTossCorrect(
     message: {
       content: { previousMsg },
     },
-    walletService,
     group,
   } = context;
+
   if (!group) {
     await context.reply("This command can only be used in a group.");
     return undefined;
@@ -47,15 +45,14 @@ export async function checkTossCorrect(
     );
     return undefined;
   }
-  let encryptedKey = walletService.encrypt(toss_id);
-  const tossDataString = await tossDBClient.get(`toss:${encryptedKey}`);
-  const hexString = tossDataString?.replace(/"/g, "");
-  let tossData = hexString ? walletService.decrypt(hexString) : null;
+  const tossDBClient = await getRedisClient();
+  const tossDataString = await tossDBClient.get(`toss:${toss_id}`);
+  let tossData = tossDataString ? JSON.parse(tossDataString) : null;
 
   if (typeof tossData === "string") {
     tossData = JSON.parse(tossData) as TossData;
   }
-  console.log("tossData", tossData);
+
   if (!tossData) {
     await context.reply("Toss not found");
     return undefined;
@@ -66,13 +63,8 @@ export async function checkTossCorrect(
     await context.reply("This toss is not in this group.");
     return undefined;
   }
-  tossData.participants = [];
-  if (tossData.encrypted_participants?.length) {
-    tossData.participants = tossData.encrypted_participants?.map((p: string) =>
-      walletService.decrypt(p),
-    );
-  }
-  const pool = tossData.amount * (tossData?.participants?.length || 0);
+
+  const pool = tossData.amount * (tossData.participants?.length || 0);
   return { ...tossData, toss_id, pool };
 }
 

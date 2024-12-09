@@ -1877,16 +1877,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@notionhq/client@npm:^2.2.15":
-  version: 2.2.15
-  resolution: "@notionhq/client@npm:2.2.15"
-  dependencies:
-    "@types/node-fetch": "npm:^2.5.10"
-    node-fetch: "npm:^2.6.1"
-  checksum: 10/18e8812f1630d7f6a93e058695101853b2db980b2003ca6b1e451c93bca330b8d1c1a7fe2c9769ac5a07ab36bdfe33d9458a244ecc3c171331153872384f0cae
-  languageName: node
-  linkType: hard
-
 "@npmcli/agent@npm:^3.0.0":
   version: 3.0.0
   resolution: "@npmcli/agent@npm:3.0.0"
@@ -3209,7 +3199,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node-fetch@npm:^2.5.10, @types/node-fetch@npm:^2.6.4":
+"@types/node-fetch@npm:^2.6.4":
   version: 2.6.12
   resolution: "@types/node-fetch@npm:2.6.12"
   dependencies:
@@ -7323,15 +7313,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lowdb@npm:^7.0.1":
-  version: 7.0.1
-  resolution: "lowdb@npm:7.0.1"
-  dependencies:
-    steno: "npm:^4.0.2"
-  checksum: 10/089cb878515b3b4634980c77b1697991571832a440f0fbc8cabe410ff9bb22b377387fc6cf6ebd9a6430707a835ebd69561f89d30aae7def43c93410b6f82b58
-  languageName: node
-  linkType: hard
-
 "lru-cache@npm:^10.0.1, lru-cache@npm:^10.2.0, lru-cache@npm:^10.4.3":
   version: 10.4.3
   resolution: "lru-cache@npm:10.4.3"
@@ -8559,7 +8540,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-fetch@npm:^2.6.1, node-fetch@npm:^2.6.12, node-fetch@npm:^2.6.7":
+"node-fetch@npm:^2.6.12, node-fetch@npm:^2.6.7":
   version: 2.7.0
   resolution: "node-fetch@npm:2.7.0"
   dependencies:
@@ -10643,13 +10624,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"steno@npm:^4.0.2":
-  version: 4.0.2
-  resolution: "steno@npm:4.0.2"
-  checksum: 10/cb8beb6b6da410f6a307261da813e57569ff3c85b11695437259f49f081fc6b0eeb26c059f0ec661c4098a09f361057fe834b04d3f94ece885e96a9e0eeba697
-  languageName: node
-  linkType: hard
-
 "streamsearch@npm:^1.1.0":
   version: 1.1.0
   resolution: "streamsearch@npm:1.1.0"
@@ -10897,20 +10871,6 @@ __metadata:
   checksum: 10/e6f6f4e1df2e7810e082e8d7dfc53be51a931e6e87925f5e1c2ef92cc1165246ba3bf2dae6b5d86251c16925683dba906bd41e40169ebc77120a2d1b5a0dbbe0
   languageName: node
   linkType: hard
-
-"thegeneralstore@workspace:templates/thegeneralstore":
-  version: 0.0.0-use.local
-  resolution: "thegeneralstore@workspace:templates/thegeneralstore"
-  dependencies:
-    "@notionhq/client": "npm:^2.2.15"
-    "@redis/client": "npm:^1.6.0"
-    "@types/node": "npm:^20.14.2"
-    "@xmtp/message-kit": "workspace:*"
-    axios: "npm:^1.7.7"
-    lowdb: "npm:^7.0.1"
-    typescript: "npm:^5.4.5"
-  languageName: unknown
-  linkType: soft
 
 "thenify-all@npm:^1.0.0":
   version: 1.6.0

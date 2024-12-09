@@ -9,8 +9,7 @@ import {
 import { systemPrompt } from "./prompt.js";
 import { toss } from "./skills/toss.js";
 import fs from "fs";
-import { getWalletService } from "./plugins/redis.js";
-const walletServiceDB = await getWalletService();
+
 export const agent: Agent = {
   name: "Toss Bot",
   tag: "@toss",
@@ -29,5 +28,5 @@ run(
     fs.writeFileSync("example_prompt.md", prompt);
     await agentReply(context, prompt);
   },
-  { agent, walletServiceDB },
+  { agent },
 );

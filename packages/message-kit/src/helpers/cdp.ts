@@ -7,6 +7,8 @@ import {
 } from "@coinbase/coinbase-sdk";
 import { XMTPContext } from "../lib/xmtp";
 import { keccak256, toHex, toBytes } from "viem";
+import * as fs from "fs/promises";
+import * as path from "path";
 
 const apiKeyName = process.env.COINBASE_API_KEY_NAME;
 const privateKey = process.env.COINBASE_API_KEY_PRIVATE_KEY;
@@ -26,18 +28,50 @@ interface WalletServiceData {
   identifier: string;
 }
 
+class LocalStorage {
+  private baseDir: string;
+
+  constructor() {
+    this.baseDir = path.join(process.cwd(), ".data/wallet-storage");
+  }
+
+  private async ensureDir() {
+    await fs.mkdir(this.baseDir, { recursive: true });
+  }
+
+  async set(key: string, value: string): Promise<void> {
+    await this.ensureDir();
+    const filePath = path.join(this.baseDir, `${key}.dat`);
+    await fs.writeFile(filePath, value, "utf8");
+  }
+
+  async get(key: string): Promise<string | null> {
+    try {
+      const filePath = path.join(this.baseDir, `${key}.dat`);
+      return await fs.readFile(filePath, "utf8");
+    } catch (error) {
+      return null;
+    }
+  }
+
+  async del(key: string): Promise<void> {
+    try {
+      const filePath = path.join(this.baseDir, `${key}.dat`);
+      await fs.unlink(filePath);
+    } catch (error) {
+      // Ignore if file doesn't exist
+    }
+  }
+}
+
 export class WalletService {
-  private walletDb: any;
+  private walletStorage: LocalStorage;
   private tempEncryptionKey: string;
   private userEncryptionKey: string;
   private enabled: boolean;
 
-  constructor(
-    walletDb: any,
-    tempEncryptionKey: string,
-    userEncryptionKey: string,
-  ) {
-    this.walletDb = walletDb;
+  constructor(tempEncryptionKey: string, userEncryptionKey: string) {
+    this.walletStorage = new LocalStorage();
     this.tempEncryptionKey = tempEncryptionKey.toLowerCase();
     this.userEncryptionKey = userEncryptionKey.toLowerCase();
     this.enabled = Boolean(coinbase);
@@ -89,18 +123,16 @@ export class WalletService {
     const data = wallet.export();
     const address = await wallet.getDefaultAddress();
     console.log("Address ID:", address.getId());
-    console.log("Saved wallet data:", {
+
+    const walletInfo = {
       data,
       userAddress,
       address: address.getId(),
-    });
+    };
 
-    await this.walletDb.set(
+    await this.walletStorage.set(
       `wallet:${this.encrypt(userAddress, this.userEncryptionKey)}`,
-      this.encrypt(
-        { data, userAddress, address: address.getId() },
-        this.userEncryptionKey,
-      ),
+      this.encrypt(walletInfo, this.userEncryptionKey),
     );
 
     let importedWallet = await Wallet.import(data);
@@ -111,6 +143,7 @@ export class WalletService {
       identifier: userAddress,
     };
   }
+
   async getUserWallet(
     userAddress: string,
     encryptionKey?: string,
@@ -119,7 +152,7 @@ export class WalletService {
       userAddress,
       encryptionKey ?? this.userEncryptionKey,
     )}`;
-    const walletData = await this.walletDb.get(encryptedKey);
+    const walletData = await this.walletStorage.get(encryptedKey);
 
     if (walletData) {
       try {
@@ -143,6 +176,7 @@ export class WalletService {
     }
     return undefined;
   }
+
   async requestFunds(context: XMTPContext, amount: number): Promise<void> {
     let to = context.message.sender.address;
     let agentWallet = await this.getUserWallet(to);
@@ -152,6 +186,7 @@ export class WalletService {
     await context.sendTo(`You can fund your account here:`, [to]);
     await context.requestPayment(amount, "USDC", agentWallet.address, [to]);
   }
+
   async withdrawFunds(userAddress: string, amount?: number): Promise<Transfer> {
     let walletData = await this.getUserWallet(userAddress);
     if (!walletData) {
@@ -180,6 +215,7 @@ export class WalletService {
     console.log(`Withdrawal completed successfully`);
     return transfer;
   }
+
   async checkBalance(senderAddress: string): Promise<number> {
     let walletData = await this.getUserWallet(senderAddress);
     if (!walletData) {
@@ -236,7 +272,7 @@ export class WalletService {
       const walletInfo = { data, address: address.getId() };
       console.log("Creating temporary wallet", walletInfo);
 
-      await this.walletDb.set(
+      await this.walletStorage.set(
         `temp:${this.encrypt(tempId, this.tempEncryptionKey)}`,
         this.encrypt(walletInfo, this.tempEncryptionKey),
       );
@@ -254,7 +290,7 @@ export class WalletService {
 
   async getTempWallet(tempId: string): Promise<WalletServiceData | undefined> {
     const encryptedKey = this.encrypt(tempId, this.tempEncryptionKey);
-    const encryptedData = await this.walletDb.get(`temp:${encryptedKey}`);
+    const encryptedData = await this.walletStorage.get(`temp:${encryptedKey}`);
     if (!encryptedData) {
       console.log(`Temp wallet not found for ${tempId}`);
       return undefined;
@@ -279,9 +315,9 @@ export class WalletService {
   async deleteTempWallet(tempId: string): Promise<void> {
     console.log(`Deleting wallet for temp ${tempId}`);
     const encryptedKey = this.encrypt(tempId, this.tempEncryptionKey);
-    const walletData = await this.walletDb.get(`temp:${encryptedKey}`);
+    const walletData = await this.walletStorage.get(`temp:${encryptedKey}`);
     console.log(`Deleting tempID ${tempId}`, walletData);
-    await this.walletDb.del(`temp:${encryptedKey}`);
+    await this.walletStorage.del(`temp:${encryptedKey}`);
     console.log(`Wallet deleted for temp ${tempId}`);
   }
 
