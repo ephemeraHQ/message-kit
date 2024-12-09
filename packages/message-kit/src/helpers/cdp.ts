@@ -187,20 +187,23 @@ export class WalletService {
       throw new Error("COINBASE_APP_ID is not set");
     }
 
-    await this.context.sendTo(`You can fund your account here:`, [to]);
-    await this.context.requestPayment(amount, "USDC", wallet?.agent_address, [
-      to,
-    ]);
-
     const onRampURL = generateOnRampURL({
       appId: process.env.COINBASE_APP_ID,
       presetCryptoAmount: amount,
-      defaultNetwork: "base",
       addresses: {
         [wallet.agent_address]: ["base"],
       },
       assets: ["USDC"],
     });
+    await this.context.sendTo(`You can fund your account here:`, [to]);
+    await this.context.requestPayment(
+      amount,
+      "USDC",
+      wallet?.agent_address,
+      [to],
+      onRampURL,
+    );
+
     await this.context.sendTo(`Or you can Onramp here: ${onRampURL}`, [to]);
 
     await this.context.reply(

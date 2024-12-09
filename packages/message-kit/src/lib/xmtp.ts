@@ -546,6 +546,7 @@ export class XMTPContext {
     token: string = "usdc",
     username: string = "humanagent.eth",
     sendTo: string[] = [],
+    onRampURL?: string,
   ) {
     let senderInfo = await getUserInfo(username);
     if (senderInfo && process.env.MSG_LOG === "true")
@@ -556,6 +557,9 @@ export class XMTPContext {
       }
 
     let sendUrl = `${framesUrl}/payment?amount=${amount}&token=${token}&recipientAddress=${senderInfo?.address}`;
+    if (onRampURL) {
+      sendUrl = sendUrl + "&onRampURL=" + encodeURIComponent(onRampURL);
+    }
     if (sendTo.length > 0) {
       await this.sendTo(sendUrl, sendTo);
     } else {
