@@ -22,7 +22,7 @@ The `getWallet` method will retrieve an existing wallet or create a new one if i
 const { walletService } = context;
 
 // Get or create a wallet
-const wallet = await walletService.getWallet(identifier);
+const wallet = await walletService.getWallet(walletAddress);
 /*
 Returns interface WalletServiceData {
   wallet: Wallet;
@@ -33,10 +33,10 @@ Returns interface WalletServiceData {
 */
 
 // Explicitly create a new wallet
-const isCreated = await walletService.createWallet(identifier);
+const isCreated = await walletService.createWallet(walletAddress);
 
 // Delete a wallet
-await walletService.deleteWallet(identifier);
+await walletService.deleteWallet(walletAddress);
 ```
 
 ## Funds
@@ -65,13 +65,13 @@ Perform actions on the Agent Wallet like transfers and swaps or checking the bal
 const { walletService } = context;
 
 // Check balance
-const balance = await walletService.checkBalance(identifier);
+const balance = await walletService.checkBalance(walletAddress);
 
 // Transfer between wallets
-await walletService.transfer(fromWallet, toAddress, amount);
+await walletService.transfer(walletAddress, walletAddress, amount);
 
 // Swap assets
-await walletService.swap(address, fromAssetId, toAssetId, amount);
+await walletService.swap(walletAddress, fromAssetId, toAssetId, amount);
 ```
 
 ## Security Architecture
@@ -79,5 +79,5 @@ await walletService.swap(address, fromAssetId, toAssetId, amount);
 The WalletService uses encryption with local file storage:
 
 - Wallets are encrypted using the groupId as the encryption key
-- Only people with the groupId can access the wallets
+- Only people
 - Data is stored locally in `.data/wallet-storage` directory
