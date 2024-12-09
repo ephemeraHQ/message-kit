@@ -251,26 +251,9 @@ export async function handleEndToss(context: XMTPContext) {
     await context.reply("No participants for this toss.");
     return;
   } else if (admin_address.toLowerCase() !== sender.address.toLowerCase()) {
-    await context.reply("Only the admin can end the toss.");
-    return;
-  } else if (
-    !options
-      .split(",")
-      .map((o) => o.toLowerCase())
-      .includes(option.toLowerCase())
-  ) {
-    await context.reply("Invalid option selected.");
+    await context.reply("Only the admin can cancel the toss.");
     return;
   }
-  const { winners, losers } = await extractWinners(participants, option);
-
-  if (winners.length === 0) {
-    await context.reply("No winners for this toss.");
-    return;
-  }
-
-  const prize =
-    (tossData.amount * (participants?.length ?? 0)) / (winners.length ?? 1);
 
   let tempWalletID = toss_id + ":" + admin_address;
   const balance = await walletService.checkBalance(tempWalletID);
@@ -281,6 +264,14 @@ export async function handleEndToss(context: XMTPContext) {
     );
     return;
   }
+
+  //Winners
+
+  const { winners, losers } = await extractWinners(participants, option);
+
+  const prize =
+    (tossData.amount * (participants?.length ?? 0)) / (winners.length ?? 1);
+
   try {
     for (const winner of winners) {
       await walletService.transfer(tempWalletID, winner.address, prize);
@@ -326,9 +317,10 @@ export async function handleCancelToss(context: XMTPContext) {
 
   let tempWalletID = toss_id + ":" + admin_address;
   const balance = await walletService.checkBalance(tempWalletID);
-  if (balance < tossData.amount * participants?.length) {
+  const fundsNeeded = tossData.amount * participants?.length;
+  if (balance < fundsNeeded) {
     await context.reply(
-      `Toss wallet does not have enough funds ${tossData.amount * participants?.length}, has ${balance}`,
+      `Toss wallet does not have enough funds ${fundsNeeded}, has ${balance}`,
     );
     return;
   }

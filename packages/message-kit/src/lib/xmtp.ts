@@ -182,15 +182,6 @@ export class XMTPContext {
 
         //Config
         context.agent = runConfig?.agent ?? (await loadSkillsFile());
-        if (
-          process.env.COINBASE_API_KEY_NAME &&
-          process.env.COINBASE_API_KEY_PRIVATE_KEY
-        ) {
-          context.walletService = new WalletService(
-            context.getConversationKey(),
-            sender?.address,
-          );
-        }
 
         context.getMessageById =
           client.conversations?.getMessageById?.bind(client.conversations) ||
@@ -262,6 +253,12 @@ export class XMTPContext {
           typeId: typeId ?? "",
           version: version ?? "v2",
         };
+        if (
+          process.env.COINBASE_API_KEY_NAME &&
+          process.env.COINBASE_API_KEY_PRIVATE_KEY
+        ) {
+          context.walletService = new WalletService(context);
+        }
 
         return context;
       }

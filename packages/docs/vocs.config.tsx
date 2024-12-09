@@ -109,7 +109,7 @@ export default defineConfig({
           link: "/concepts/wallet",
         },
         {
-          text: "AI Skills",
+          text: "Skills",
           link: "/concepts/skills",
         },
       ],

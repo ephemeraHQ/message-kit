@@ -1,10 +1,10 @@
-# Wallet as a Service
+# Agent Wallets
 
-The `WalletService` class in MessageKit provides a way to create an agent wallet for each user that can perform gasless payments and transfers on Base.
+The `WalletService` class in MessageKit provides a way to create agent wallets that can perform gasless payments and transfers on Base.
 
 ## Introduction
 
-To use the `WalletService`, you need to initialize it with encryption keys:
+To use the `WalletService`, you need to initialize it with Coinbase API credentials:
 
 ### Requirements
 
@@ -13,103 +13,71 @@ To use the `WalletService`, you need to initialize it with encryption keys:
   - `COINBASE_API_KEY_NAME`: The Coinbase API key name
   - `COINBASE_API_KEY_PRIVATE_KEY`: The Coinbase API private key
 
-### Usage
+## Wallet Management
 
-The `walletService` object is available in the `context` object:
+The `getWallet` method will retrieve an existing wallet or create a new one if it doesn't exist:
 
 ```typescript
+// Get the wallet service
 const { walletService } = context;
-// Use it in your code
-await walletService.someMethod();
-```
 
-## User Wallets
-
-The `getUserWallet` method will retrieve an existing wallet, or you can explicitly create one:
-
-```typescript
 // Get or create a wallet
-const userWallet = await walletService.getUserWallet(userAddress);
+const wallet = await walletService.getWallet(identifier);
+/*
+Returns interface WalletServiceData {
+  wallet: Wallet;
+  address: string;
+  agent_address: string;
+  key: string;
+}
+*/
 
 // Explicitly create a new wallet
-const newWallet = await walletService.createUserWallet(userAddress);
-// Returns { wallet, address, userAddress, identifier }
+const isCreated = await walletService.createWallet(identifier);
+
+// Delete a wallet
+await walletService.deleteWallet(identifier);
 ```
 
-## Temporary Wallets
+## Funds
 
-Temporary wallets use a separate encryption key for additional security:
-
-```typescript
-// Create a temporary wallet
-const tempWallet = await walletService.createTempWallet(tempId);
-// Returns { wallet, address, userAddress, identifier }
-
-// Retrieve an existing temporary wallet
-const existingWallet = await walletService.getTempWallet(tempId);
-
-// Delete when no longer needed
-await walletService.deleteTempWallet(tempId);
-```
-
-## Actions
-
-### Requesting and Withdrawing Funds
+Requesting and Withdrawing Funds from or to the Agent Wallet
 
 ```typescript
+// Get the wallet service
+const { walletService } = context;
+
 // Request funds
-await walletService.requestFunds(context, amount);
+await walletService.requestFunds(amount);
 // This will send a payment request to the user with funding instructions
 
 // Withdraw funds (optional amount parameter)
-await walletService.withdrawFunds(userAddress, amount);
+await walletService.withdrawFunds(amount);
 // If amount is not specified, withdraws entire balance
 ```
 
-### Transfers and Swaps
+### Actions
+
+Perform actions on the Agent Wallet like transfers and swaps or checking the balance.
 
 ```typescript
+// Get the wallet service
+const { walletService } = context;
+
+// Check balance
+const balance = await walletService.checkBalance(identifier);
+
 // Transfer between wallets
-await walletService.transfer(fromWallet, toWallet, amount);
+await walletService.transfer(fromWallet, toAddress, amount);
 
 // Swap assets
-await walletService.swap(userAddress, fromAssetId, toAssetId, amount);
-```
-
-### Checking balance
-
-```typescript
-const balance = await walletService.checkBalance(userAddress);
+await walletService.swap(address, fromAssetId, toAssetId, amount);
 ```
 
 ## Security Architecture
 
-The WalletService uses a dual-key encryption system with local file storage:
+The WalletService uses encryption with local file storage:
 
-### Encryption System
-
-- **User Wallets**: Encrypted with `userEncryptionKey` (user address)
-- **Temporary Wallets**: Encrypted with `tempEncryptionKey` (conversationId + creator of the agent)
+- Wallets are encrypted using the groupId as the encryption key
+- Only people with the groupId can access the wallets
 - Data is stored locally in `.data/wallet-storage` directory
-
-```typescript
-// Default encryption
-const encrypted = walletService.encrypt(data);
-const decrypted = walletService.decrypt(encrypted);
-
-// Specifying a key for custom encryption
-const userEncrypted = walletService.encrypt(data, userEncryptionKey);
-const userDecrypted = walletService.decrypt(userEncrypted, userEncryptionKey);
-```
-
-### Storage implementation
-
-Wallet data is stored locally using a simple file-based system:
-
-```typescript
-// Data is stored in .data/wallet-storage directory
-// Each wallet is stored in a separate encrypted file
-// File names are encrypted using the appropriate encryption key
-```
-
-Note: All string data is converted to lowercase before encryption for consistency.
