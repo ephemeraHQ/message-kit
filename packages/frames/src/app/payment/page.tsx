@@ -40,13 +40,23 @@ export default async function Home({
         <meta property="fc:frame:image" content={image} />
         <meta property="fc:frame:ratio" content="1.91:1" />
 
-        <meta property="fc:frame:button:1" content={`Pay in USDC (Mobile)`} />
+        <meta property="fc:frame:button:1" content={`Pay in USD`} />
         <meta property="fc:frame:button:1:action" content="link" />
-        <meta property="fc:frame:button:1:target" content={params.onRampURL} />
+        <meta property="fc:frame:button:1:target" content={ethereumUrl} />
 
-        <meta property="fc:frame:button:2" content={`Pay in USD`} />
-        <meta property="fc:frame:button:2:action" content="link" />
-        <meta property="fc:frame:button:2:target" content={ethereumUrl} />
+        {params.onRampURL && (
+          <>
+            <meta
+              property="fc:frame:button:2"
+              content={`Pay in USDC (Mobile)`}
+            />
+            <meta property="fc:frame:button:2:action" content="link" />
+            <meta
+              property="fc:frame:button:2:target"
+              content={params.onRampURL}
+            />
+          </>
+        )}
       </head>
       <body>
         <UrlGenerator params={params} />
