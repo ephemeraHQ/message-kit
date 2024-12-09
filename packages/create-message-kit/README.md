@@ -14,5 +14,5 @@ npx create-message-kit@latest
 
 ```bash
 yarn create message-kit
-// use @latest in yarn > v2
+// use yarn create message-kit@latest in yarn > v2
 ```
