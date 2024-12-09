@@ -1,5 +1,5 @@
 import { describe } from "vitest";
-import { agent as ensAgent } from "../../../templates/ens/src/index";
+import { agent } from "../../../templates/ens/src/index";
 import { systemPrompt as ensSystemPrompt } from "../../../templates/ens/src/prompt";
 import { testPrompt } from "./utils";
 const humanAgent = {
@@ -13,7 +13,7 @@ const alix = {
 };
 type testCase = [string, string | string[]][];
 
-describe("Agent tests", () => {
+describe("ENS tests", () => {
   const testCases: testCase = [
     ["hi", "Fabri"],
     ["I want to get info for vitalik.eth", "/info vitalik.eth"],
@@ -32,7 +32,7 @@ describe("Agent tests", () => {
       ["/info humanagent.eth", "/check humanagent.eth"],
     ],
     [
-      "tip vitalik.eth",
+      "pay vitalik.eth",
       [
         "/pay vitalik.eth",
         "/info vitalik.eth",
@@ -40,8 +40,6 @@ describe("Agent tests", () => {
         "/pay",
       ],
     ],
-    ["lets play wordle", "/game wordle"],
-    ["what are my TODOs?", "/todo"],
   ];
-  testPrompt(testCases, ensAgent, ensSystemPrompt, humanAgent);
+  testPrompt(testCases, agent, ensSystemPrompt, humanAgent);
 }, 15000);

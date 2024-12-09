@@ -31,6 +31,8 @@
     "test:frames": "vitest run tests/frames",
     "test:parsing": "vitest run tests/parsing",
     "test:prompting": "vitest run tests/prompting",
+    "test:v2": "vitest run tests/V2",
+    "test:v3": "vitest run tests/V3",
     "test:watch": "vitest watch",
     "typecheck": "tsc --noEmit"
   },
