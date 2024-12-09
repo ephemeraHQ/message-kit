@@ -204,7 +204,7 @@ export class WalletService {
       onRampURL,
     );
 
-    await this.context.sendTo(`Or you can Onramp here: ${onRampURL}`, [to]);
+    //await this.context.sendTo(`Or you can Onramp here: ${onRampURL}`, [to]);
 
     await this.context.reply(
       `You need to fund your account. Check your DMs https://converse.xyz/${this.context.client.accountAddress}`,
