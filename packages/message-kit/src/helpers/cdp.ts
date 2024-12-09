@@ -11,6 +11,7 @@ import { generateOnRampURL } from "@coinbase/cbpay-js";
 import * as fs from "fs/promises";
 import * as path from "path";
 
+const appId = process.env.COINBASE_APP_ID;
 const apiKeyName = process.env.COINBASE_API_KEY_NAME;
 const privateKey = process.env.COINBASE_API_KEY_PRIVATE_KEY;
 
@@ -182,7 +183,6 @@ export class WalletService {
     if (!wallet) {
       throw new Error("Wallet not found");
     }
-    const appId = process.env.COINBASE_APP_ID;
     if (!appId) {
       throw new Error("COINBASE_APP_ID is not set");
     }
