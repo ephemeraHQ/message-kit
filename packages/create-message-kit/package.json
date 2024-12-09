@@ -1,13 +1,13 @@
 {
   "name": "create-message-kit",
-  "version": "1.2.21",
+  "version": "1.2.22",
   "license": "MIT",
   "type": "module",
   "main": "index.js",
   "module": "index.js",
   "bin": "index.js",
   "files": [
-    "index.js",
+    "templates.json",
     "templates/**/*"
   ],
   "scripts": {

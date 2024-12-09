@@ -516,6 +516,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@coinbase/cbpay-js@npm:^2.4.0":
+  version: 2.4.0
+  resolution: "@coinbase/cbpay-js@npm:2.4.0"
+  peerDependencies:
+    regenerator-runtime: ^0.13.9
+  peerDependenciesMeta:
+    regenerator-runtime:
+      optional: true
+  checksum: 10/afb40657083724e51fcd7c5957dead3ab439d45139cc9c41d1dadd13671687cea49be8343cdc3d0800abb7a7b574cd71d178347c5f8c6d483259a865a3c971a8
+  languageName: node
+  linkType: hard
+
 "@coinbase/coinbase-sdk@npm:*":
   version: 0.11.2
   resolution: "@coinbase/coinbase-sdk@npm:0.11.2"
@@ -3659,6 +3671,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@xmtp/message-kit@workspace:packages/message-kit"
   dependencies:
+    "@coinbase/cbpay-js": "npm:^2.4.0"
     "@coinbase/coinbase-sdk": "npm:*"
     "@redis/client": "npm:^1.6.0"
     "@rollup/plugin-typescript": "npm:^11.1.6"

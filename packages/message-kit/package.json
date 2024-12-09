@@ -1,6 +1,6 @@
 {
   "name": "@xmtp/message-kit",
-  "version": "1.2.21",
+  "version": "1.2.22",
   "license": "MIT",
   "type": "module",
   "exports": {
@@ -37,6 +37,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@coinbase/cbpay-js": "^2.4.0",
     "@coinbase/coinbase-sdk": "*",
     "@redis/client": "^1.6.0",
     "@types/node": "^20.14.2",

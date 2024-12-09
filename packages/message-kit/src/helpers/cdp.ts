@@ -7,6 +7,7 @@ import {
 } from "@coinbase/coinbase-sdk";
 import { XMTPContext } from "../lib/xmtp";
 import { keccak256, toHex, toBytes } from "viem";
+import { generateOnRampURL } from "@coinbase/cbpay-js";
 import * as fs from "fs/promises";
 import * as path from "path";
 
@@ -178,10 +179,30 @@ export class WalletService {
   async requestFunds(amount: number): Promise<void> {
     let to = this.context.message.sender.address;
     let wallet = await this.getWallet(to);
+    if (!wallet) {
+      throw new Error("Wallet not found");
+    }
+    const appId = process.env.COINBASE_APP_ID;
+    if (!appId) {
+      throw new Error("COINBASE_APP_ID is not set");
+    }
+
     await this.context.sendTo(`You can fund your account here:`, [to]);
     await this.context.requestPayment(amount, "USDC", wallet?.agent_address, [
       to,
     ]);
+
+    const onRampURL = generateOnRampURL({
+      appId: process.env.COINBASE_APP_ID,
+      presetCryptoAmount: amount,
+      defaultNetwork: "base",
+      addresses: {
+        [wallet.agent_address]: ["base"],
+      },
+      assets: ["USDC"],
+    });
+    await this.context.sendTo(`Or you can Onramp here: ${onRampURL}`, [to]);
+
     await this.context.reply(
       `You need to fund your account. Check your DMs https://converse.xyz/${this.context.client.accountAddress}`,
     );
@@ -315,34 +336,5 @@ export class WalletService {
     const encryptedKey = this.encrypt(key);
     await this.walletStorage.del(`wallet:${encryptedKey}`);
     console.log(`Wallet deleted for key ${key}`);
-  }
-
-  async generateOnrampUrl(address: string, amount?: number): Promise<string> {
-    this.checkEnabled();
-    const baseUrl = "https://pay.coinbase.com/buy/select-asset";
-
-    // Construct query parameters
-    const params = new URLSearchParams({
-      appId: apiKeyName || "", // Using the existing API key name as appId
-      defaultExperience: "buy",
-      defaultNetwork: "base", // Since we're primarily using Base network
-      defaultAsset: "USDC", // Default to USDC
-    });
-
-    // Add preset amount if provided
-    if (amount) {
-      params.append("presetFiatAmount", amount.toString());
-    }
-
-    // Add addresses parameter as a JSON string
-    const addressConfig = {
-      [address]: ["base"], // Specifying Base network for the address
-    };
-    params.append("addresses", JSON.stringify(addressConfig));
-
-    // Add supported assets
-    params.append("assets", JSON.stringify(["USDC", "ETH"]));
-
-    return `${baseUrl}?${params.toString()}`;
   }
 }

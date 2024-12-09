@@ -7,7 +7,7 @@ import { default as fs } from "fs-extra";
 import { isCancel } from "@clack/prompts";
 import { detect } from "detect-package-manager";
 import pc from "picocolors";
-const defVersion = "1.2.21";
+const defVersion = "1.2.22";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Read package.json to get the version
@@ -140,6 +140,11 @@ async function gatherProjectInfo() {
   const name = kebabcase(displayName);
   const destDir = resolve(process.cwd(), name);
 
+  // Remove existing directory if it exists
+  if (fs.existsSync(destDir)) {
+    fs.removeSync(destDir);
+  }
+
   // Copy template files
   fs.copySync(templateDir, destDir);
 
@@ -214,8 +219,7 @@ async function detectPackageManager() {
 
     const userAgent = process.env.npm_config_user_agent;
 
-    // Check if running through npm init
-    if (userAgent?.startsWith("npm")) {
+    if (userAgent?.startsWith("npm") || userAgent?.startsWith("npx")) {
       return "npm";
     }
 
