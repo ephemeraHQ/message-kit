@@ -139,9 +139,13 @@ export async function handleTossCreation(context: XMTPContext) {
   if (params.description && params.options && !isNaN(Number(params.amount))) {
     const keys = await tossDBClient.keys("*");
     let tossId = keys.length + 1;
-    const createdTossWallet = await walletService.createTempWallet(
-      tossId.toString(),
+    const isCreated = await walletService.createWallet(
+      tossId + ":" + sender.address,
     );
+    if (!isCreated) {
+      await context.reply("Failed to create toss wallet");
+      return;
+    }
 
     let tossData: TossData = {
       toss_id: tossId.toString(),
@@ -158,20 +162,13 @@ export async function handleTossCreation(context: XMTPContext) {
         ? new Date(params.endTime).toLocaleString()
         : new Date(Date.now() + 24 * 60 * 60 * 1000).toLocaleString(),
       participants: [],
-      toss_wallet_address: createdTossWallet?.address,
     };
-    await tossDBClient.set(
-      "toss:" + tossId.toString(),
-      JSON.stringify(tossData),
-    );
-    console.log(tossData);
+    await tossDBClient.set("toss:" + tossId, JSON.stringify(tossData));
     if (tossId !== undefined) {
-      let msg = generateTossMessage(tossData);
-      console.log(msg);
-      await context.send(msg);
+      await context.send(generateTossMessage(tossData));
     } else {
       await context.reply(
-        `An error occurred while creating the toss. ${JSON.stringify(tossId)}`,
+        `An error occurred while creating the toss. ${tossId}`,
       );
     }
   }
@@ -183,7 +180,7 @@ export async function handleJoinToss(context: XMTPContext) {
     return;
   }
 
-  const { toss_id, participants, amount } = tossData;
+  const { toss_id, participants, amount, admin_address } = tossData;
 
   const {
     message: {
@@ -192,7 +189,6 @@ export async function handleJoinToss(context: XMTPContext) {
         params: { response },
       },
     },
-    group,
     walletService,
   } = context;
 
@@ -201,35 +197,16 @@ export async function handleJoinToss(context: XMTPContext) {
     await context.reply("You have already joined this toss.");
     return;
   }
-
-  const tossWallet = await walletService.getTempWallet(toss_id);
-  if (!tossWallet) {
-    await context.reply("Toss wallet not found");
-    return;
-  }
+  //Create wallet for sender
+  await walletService.createWallet(sender.address);
   const balance = await walletService.checkBalance(sender.address);
-
-  if (balance < amount) {
-    await context.send("You need to fund your account. Check your DMs:");
-    await walletService.requestFunds(context, amount);
-    return;
-  }
+  if (balance < amount) return walletService.requestFunds(amount);
 
   try {
-    const senderWallet = await walletService.getUserWallet(sender.address);
-    if (!senderWallet) {
-      await context.reply("Sender wallet not found");
-      return;
-    }
-    const transfer = await walletService.transfer(
-      senderWallet,
-      tossWallet,
-      amount,
-    );
-    console.log("Transfer:", transfer.getTransactionHash());
+    let tempWalletID = toss_id + ":" + admin_address;
+    await walletService.transfer(sender.address, tempWalletID, amount);
     const participant = {
       address: sender.address,
-      agent_address: senderWallet.address,
       response: response,
       name:
         (await context.getUserInfo(sender.address))?.preferredName ??
@@ -285,7 +262,7 @@ export async function handleEndToss(context: XMTPContext) {
     await context.reply("Invalid option selected.");
     return;
   }
-  const { winners, losers } = await extractWinners(participants ?? [], option);
+  const { winners, losers } = await extractWinners(participants, option);
 
   if (winners.length === 0) {
     await context.reply("No winners for this toss.");
@@ -295,28 +272,18 @@ export async function handleEndToss(context: XMTPContext) {
   const prize =
     (tossData.amount * (participants?.length ?? 0)) / (winners.length ?? 1);
 
+  let tempWalletID = toss_id + ":" + admin_address;
+  const balance = await walletService.checkBalance(tempWalletID);
+  const fundsNeeded = tossData.amount * participants?.length;
+  if (balance < fundsNeeded) {
+    await context.reply(
+      `Toss wallet does not have enough funds ${fundsNeeded}, has ${balance}`,
+    );
+    return;
+  }
   try {
     for (const winner of winners) {
-      const tossWallet = await walletService.getTempWallet(toss_id);
-
-      if (!tossWallet) {
-        await context.reply("Toss wallet not found");
-        return;
-      }
-      const winnerWallet = await walletService.getUserWallet(
-        winner.address,
-        winner.address,
-      );
-      if (!winnerWallet) {
-        await context.reply("Winner wallet not found");
-        return;
-      }
-      const transfer = await walletService.transfer(
-        tossWallet,
-        winnerWallet,
-        prize,
-      );
-      console.log("Transfer:", transfer.getTransactionHash());
+      await walletService.transfer(tempWalletID, winner.address, prize);
       await tossDBClient.set(
         `toss:${toss_id}`,
         JSON.stringify({ ...tossData, status: "closed" }),
@@ -357,31 +324,25 @@ export async function handleCancelToss(context: XMTPContext) {
     return;
   }
 
-  for (const participant of participants ?? []) {
+  let tempWalletID = toss_id + ":" + admin_address;
+  const balance = await walletService.checkBalance(tempWalletID);
+  if (balance < tossData.amount * participants?.length) {
+    await context.reply(
+      `Toss wallet does not have enough funds ${tossData.amount * participants?.length}, has ${balance}`,
+    );
+    return;
+  }
+  for (const participant of participants) {
     try {
-      const tossWallet = await walletService.getTempWallet(toss_id);
-
-      if (!tossWallet) {
-        await context.reply("Toss wallet not found");
-        return;
-      }
-
-      const participantWallet = await walletService.getUserWallet(
-        participant.address,
-      );
-      if (!participantWallet) {
-        await context.reply("Participant wallet not found");
-        return;
-      }
-      const transfer = await walletService.transfer(
-        tossWallet,
-        participantWallet,
-        amount,
-      );
-      console.log("Transfer:", transfer.getTransactionHash());
+      await walletService.transfer(tempWalletID, participant.address, amount);
     } catch (error) {
-      console.error(`Failed to send prize to ${participant.address}:`, error);
-      await context.reply(`Failed to send prize to ${participant.address}`);
+      console.error(
+        `Failed to send prize to ${participant.address} agent wallet:`,
+        error,
+      );
+      await context.reply(
+        `Failed to send prize to ${participant.address} agent wallet`,
+      );
     }
   }
 
@@ -424,20 +385,17 @@ export async function handleDM(context: XMTPContext) {
   if (skill === "help") {
     await context.send(DM_HELP_MESSAGE);
   } else if (skill === "create") {
-    const walletExist = await walletService.getUserWallet(sender.address);
+    const walletExist = await walletService.getWallet(sender.address);
     if (walletExist) {
       await context.reply("You already have an agent wallet.");
       return;
     }
-    const userWallet = await walletService.createUserWallet(sender.address);
-    await context.reply(
-      `Your agent wallet address is ${userWallet.address}\nBalance: $${await walletService.checkBalance(sender.address)}`,
-    );
+    await walletService.createWallet(sender.address);
   } else if (skill === "balance") {
-    const userWallet = await walletService.getUserWallet(sender.address);
+    const userWallet = await walletService.getWallet(sender.address);
 
     context.sendTo(
-      `Your agent wallet address is ${userWallet?.address}\nBalance: $${await walletService.checkBalance(sender.address)}`,
+      `Your agent wallet for address is ${sender.address}\nBalance: $${await walletService.checkBalance(sender.address)}`,
       [sender.address],
     );
   } else if (skill === "fund") {
@@ -447,8 +405,7 @@ export async function handleDM(context: XMTPContext) {
       return;
     } else if (amount) {
       if (amount + balance <= 10) {
-        await walletService.requestFunds(context, Number(amount));
-        return;
+        return walletService.requestFunds(Number(amount));
       } else {
         await context.send("Wrong amount. Max 10 USDC.");
         return;
@@ -464,7 +421,7 @@ export async function handleDM(context: XMTPContext) {
       `Please specify the amount of USDC to prefund (1 to ${10 - balance}):`,
       options,
     );
-    await walletService.requestFunds(context, Number(response));
+    return walletService.requestFunds(Number(response));
   } else if (skill === "withdraw") {
     const balance = await walletService.checkBalance(sender.address);
     if (balance === 0) {
@@ -478,6 +435,6 @@ export async function handleDM(context: XMTPContext) {
       `Please specify the amount of USDC to withdraw (1 to ${balance}):`,
       options,
     );
-    await walletService.withdrawFunds(sender.address, Number(response));
+    await walletService.withdrawFunds(Number(response));
   }
 }

@@ -5,7 +5,6 @@ interface Participant {
   response: string;
   name: string;
   address: string;
-  agent_address: string;
 }
 export interface TossData {
   group_id: string;
@@ -18,7 +17,6 @@ export interface TossData {
   end_time: string;
   description: string;
   participants: Participant[];
-  toss_wallet_address: string;
 }
 export async function checkTossCorrect(
   context: XMTPContext,
@@ -64,8 +62,7 @@ export async function checkTossCorrect(
     return undefined;
   }
 
-  const pool = tossData.amount * (tossData.participants?.length || 0);
-  return { ...tossData, toss_id, pool };
+  return { ...tossData, toss_id };
 }
 
 export function extractTossId(message: string): string | null {
