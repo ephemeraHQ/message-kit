@@ -91,7 +91,7 @@ Powered by XMTP \x1b[0m`;
     }
     if (runConfig?.walletService) {
       console.warn(
-        `\t- ⚠️ CDP ENABLED:\n\t\t⚠️ Save wallets at your discretion.\n\t\tℹ️ An agent wallet will be available for every user.\n\t\tℹ️ MessageKit does not have access to these wallets or is responsible for them.`,
+        `\t- ⚠️ Wallet Service ENABLED:\n\t\t⚠️ Save wallets at your discretion.\n\t\tℹ️ An agent wallet will be available for every user.\n\t\tℹ️ MessageKit does not have access to these wallets or is responsible for them.`,
       );
     }
     console.warn("\x1b[0m"); // Reset color to default

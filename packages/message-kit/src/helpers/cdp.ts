@@ -316,4 +316,33 @@ export class WalletService {
     await this.walletStorage.del(`wallet:${encryptedKey}`);
     console.log(`Wallet deleted for key ${key}`);
   }
+
+  async generateOnrampUrl(address: string, amount?: number): Promise<string> {
+    this.checkEnabled();
+    const baseUrl = "https://pay.coinbase.com/buy/select-asset";
+
+    // Construct query parameters
+    const params = new URLSearchParams({
+      appId: apiKeyName || "", // Using the existing API key name as appId
+      defaultExperience: "buy",
+      defaultNetwork: "base", // Since we're primarily using Base network
+      defaultAsset: "USDC", // Default to USDC
+    });
+
+    // Add preset amount if provided
+    if (amount) {
+      params.append("presetFiatAmount", amount.toString());
+    }
+
+    // Add addresses parameter as a JSON string
+    const addressConfig = {
+      [address]: ["base"], // Specifying Base network for the address
+    };
+    params.append("addresses", JSON.stringify(addressConfig));
+
+    // Add supported assets
+    params.append("assets", JSON.stringify(["USDC", "ETH"]));
+
+    return `${baseUrl}?${params.toString()}`;
+  }
 }

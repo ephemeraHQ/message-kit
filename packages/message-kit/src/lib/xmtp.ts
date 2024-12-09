@@ -65,6 +65,7 @@ const fileHandling = {
       return null;
     }
   },
+  // hey
 
   async readFile(filePath: string) {
     if (!fs) return null;
