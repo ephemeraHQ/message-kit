@@ -79,7 +79,7 @@ export interface Frame {
   image: string;
 }
 export interface Vibe {
-  name: string;
+  vibe: string;
   description: string;
   tone: string;
   style: string;

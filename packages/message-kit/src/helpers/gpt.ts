@@ -61,8 +61,7 @@ export const chatMemory = new ChatMemory();
 export const clearMemory = (address?: string) => {
   chatMemory.clear(address);
 };
-export const COMMON_ISSUES = `
-# Common Issues
+export const COMMON_ISSUES = `# Common Issues
 1. Missing commands in responses
    **Issue**: Sometimes responses are sent without the required command.
    **Example**:
@@ -76,8 +75,7 @@ export const COMMON_ISSUES = `
    Correct:
    > /todo
 `;
-export const PROMPT_RULES = `
-# Rules
+export const PROMPT_RULES = `# Rules
 - You can respond with multiple messages if needed. Each message should be separated by a newline character.
 - You can trigger skills by only sending the command in a newline message.
 - Each command starts with a slash (/).
@@ -109,17 +107,19 @@ export async function replaceVariables(
       converseUsername: senderAddress,
     };
   }
+  let vibe =
+    "You are a helpful agent called {agent_name} that lives inside a web3 messaging app called Converse.";
+  if (agent?.vibe) {
+    let params = agent.vibe;
+    // Construct a more detailed personality description from the vibe object
+    vibe = `You are ${params.vibe} agent called {agent_name} that lives inside a web3 messaging app called Converse.\n\nVibe: ${params.description}\nTone: ${params.tone}\nStyle: ${params.style}`;
+  }
 
-  prompt = prompt.replace(
-    "{vibe}",
-    agent?.vibe?.toString() ||
-      "You are a helpful agent called {agent_name} that lives inside a web3 messaging app called Converse.",
-  );
-
-  prompt = prompt.replace("{agent_name}", agent?.tag);
+  prompt = prompt.replace("{vibe}", vibe);
   prompt = prompt.replace("{rules}", PROMPT_RULES);
   prompt = prompt.replace("{skills}", replaceSkills(agent));
   prompt = prompt.replace("{issues}", COMMON_ISSUES);
+  prompt = prompt.replace("{agent_name}", agent?.tag);
 
   // Replace variables in the system prompt
   if (userInfo) {
@@ -135,7 +135,7 @@ export async function replaceVariables(
   }
   const { fs } = getFS();
   if (fs) {
-    // fs.writeFileSync("example_prompt.md", prompt);
+    fs.writeFileSync("example_prompt.md", prompt);
   }
   return prompt;
 }

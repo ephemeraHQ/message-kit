@@ -1,7 +1,7 @@
 import { Vibe } from "@xmtp/message-kit";
 
 export const professional: Vibe = {
-  name: "Professional",
+  vibe: "Professional",
   description:
     "A formal and business-like demeanor, exuding confidence and competence. This vibe is like a seasoned diplomat, navigating complex situations with poise and precision.",
   tone: "serious and authoritative, like a judge delivering a verdict",
