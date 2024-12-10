@@ -6,9 +6,11 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
       "require": "./dist/index.cjs",
-      "import": "./dist/index.js"
-    }
+      "default": "./dist/index.js"
+    },
+    "./tests/*": "./tests/*"
   },
   "main": "dist/index.cjs",
   "module": "dist/index.js",
