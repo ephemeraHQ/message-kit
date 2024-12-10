@@ -5,7 +5,7 @@
 When you start the app, you can listen for incoming messages using the `run` function.
 
 ```tsx [src/index.ts]
-run(async (context: XMTPContext) => {
+onMessage(async (context: XMTPContext) => {
   const {
     message: {
       id,
@@ -70,7 +70,7 @@ await context.sendImage("https://picsum.photos/200/300");
 Attachments are files that are sent with the message. They can be images, videos, or any other file type.
 
 ```tsx
-run(async (context: XMTPContext) => {
+onMessage(async (context: XMTPContext) => {
   const {
     message: {
       id,

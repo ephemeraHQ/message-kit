@@ -10,7 +10,6 @@ import { findSkill } from "./skills.js";
 import { Conversation } from "@xmtp/node-sdk";
 import { Conversation as V2Conversation } from "@xmtp/xmtp-js";
 import { awaitedHandlers } from "./xmtp.js";
-import { a } from "vitest/dist/chunks/suite.B2jumIFP.js";
 
 export async function run(agent: Agent) {
   const { client, v2client } = await xmtpClient(agent.config);

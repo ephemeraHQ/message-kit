@@ -25,23 +25,23 @@ agent/
 This is the main function that runs the listener.
 
 ```jsx
-import {
-  run,
-  XMTPContext,
-} from "@xmtp/message-kit";
-
-run(
-  async (context: XMTPContext) => {
-    // your logic here
-  },
-  {
-    /*optional parameters*/
-  },
-);
-
+const agent: Agent =[
+    name: "Agent Name",
+    tag: "@bot",
+    description: "Agent Description",
+    skills: [...skills],
+    onMessage: async (context: XMTPContext) => {
+        // your logic here
+    },
+    config: {
+        // your config here
+    }
+]
+//starts the agent
+run(agent);
 ```
 
-#### Optional parameters
+#### Config parameters
 
 - `privateKey`: the private key of the agent wallet, like any normal wallet private key.
 - `experimental`: experimental features like logging all group messages. Default is `false`.
@@ -57,22 +57,18 @@ run(
 XMTPContext bridges the skills to the XMTP protocol. It's aware of conversations, groups and users.
 
 ```tsx
-import { XMTPContext } from "@xmtp/message-kit";
-
-run(async (context: XMTPContext) => {
-  const {
-    message,
-    group,
-    conversation,
-    client,
-    version,
-    v2client,
-    members,
-    admins,
-    runConfig,
-    superAdmins,
-  } = context;
-});
+const {
+  message,
+  group,
+  conversation,
+  client,
+  version,
+  v2client,
+  members,
+  admins,
+  runConfig,
+  superAdmins,
+} = context;
 ```
 
 ### Context properties
