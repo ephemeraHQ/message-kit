@@ -80,9 +80,10 @@ export const awaitedHandlers = new Map<
   (text: string) => Promise<boolean | undefined>
 >();
 
+/* XMTPContext description*/
 export class XMTPContext {
   refConv: Conversation | V2Conversation | null = null;
-  message!: MessageAbstracted;
+  message!: MessageAbstracted; // A message from XMTP abstracted for agent use;
   group!: GroupAbstracted;
   conversation!: V2Conversation;
   client!: V3Client;

@@ -15,6 +15,8 @@ agent/
 │       └── ...
 │   └── skills/
 │       └── ...
+│   └── vibes/
+│       └── ...
 ├── tsconfig.json
 ├── package.json
 └── .env
@@ -25,8 +27,10 @@ agent/
 This is the main function that runs the listener.
 
 ```jsx
-const agent: Agent =[
-    name: "Agent Name",
+import { Agent, run, XMTPContext } from "@xmtp/message-kit";
+
+const agent: Agent = {
+  name: "Agent Name",
     tag: "@bot",
     description: "Agent Description",
     skills: [skill1, skill2],
@@ -43,6 +47,8 @@ const agent: Agent =[
 run(agent);
 ```
 
+> See [`XMTP Context`](/concepts/xmtp) for more information.
+
 #### Config parameters
 
 - `privateKey`: the private key of the agent wallet, like any normal wallet private key.
@@ -54,61 +60,27 @@ run(agent);
 - `hideInitLogMessage`: hide the init log message with messagekit logo and stuff
 - `memberChange`: if true, member changes will be enabled, like adding members to the group
 
-## XMTPContext
-
-XMTPContext bridges the skills to the XMTP protocol. It's aware of conversations, groups and users.
-
-```tsx
-const {
-  message,
-  group,
-  conversation,
-  client,
-  version,
-  v2client,
-  members,
-  admins,
-  agentConfig,
-  superAdmins,
-} = context;
-```
-
-### Context properties
-
-- `message`: the [message](/concepts/messages) object
-- `group`: the group object
-- `conversation`: the conversation object
-- `client`: the client object
-- `version`: the version of the client
-- `v2client`: the v2 client object
-- `members`: the members of the group
-- `admins`: the admins of the group
-- `superAdmins`: the super admins of the group
-- `agentConfig`: the optional parameters of the agent
-- `sender`: the sender of the message
-
-## Clients
-
-Use this instead of XMTP sdks for compatibility with MessageKit
-
-```tsx
-import { V2Client, V3Client } from "@xmtp/message-kit";
-```
-
-You can export other clients on run time by importing the `xmtpClient` function.
-
-```jsx
-import { xmtpClient } from "@xmtp/message-kit";
-
-const { v2client: newClient } = await xmtpClient({
-  {
-    privateKey: /*Your private key*/,
-    /*optional parameters*/
-  },
-);
-```
-
 > This can be used in the [Cron](/plugins/cron) plugin to send updates to the users.
+
+## Skills
+
+Skills are the actions of the agent. They are defined in the `src/skills/your-skill.ts` file.
+
+```tsx
+import { Skill } from "@xmtp/message-kit";
+
+export const checkDomain: Skill[] = [
+  {
+    skill: // name of the skill
+    handler: // function to handle the skill
+    examples: // examples of the skill
+    description: // description of the skill
+    params: // params of the skill
+  },
+];
+```
+
+> See [Skills](/community/skills) for more information.
 
 ## Vibes
 
@@ -118,33 +90,14 @@ Vibes are the personalities of the agent. They are defined in the `src/vibes/you
 import { Vibe } from "@xmtp/message-kit";
 
 export const chill: Vibe = {
-  vibe: "Chill",
-  description:
-    "A relaxed and easy-going personality, embodying the essence of tranquility and serenity. This vibe exudes a sense of calmness that soothes the soul and invites a peaceful atmosphere.",
-  tone: "calm and composed, like a gentle breeze on a warm summer day",
-  style: "laid-back, with an effortless grace that flows like a serene river",
+  vibe: // name of the vibe
+  description: // description of the vibe
+  tone: // tone of the vibe
+  style: // style of the vibe
 };
 ```
 
-## Manual Installation
-
-You can also install the package manually using your preferred package manager.
-
-:::code-group
-
-```bash [bun]
-bun i @xmtp/message-kit
-```
-
-```bash [npm]
-npm i @xmtp/message-kit
-```
-
-```bash [yarn]
-yarn add @xmtp/message-kit
-```
-
-:::
+> See [Vibes](/community/vibes) for more information.
 
 ## Included
 

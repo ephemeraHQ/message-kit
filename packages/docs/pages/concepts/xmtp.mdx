@@ -1,0 +1,66 @@
+# XMTP
+
+XMTP is the protocol that MessageKit uses to send and receive messages.
+
+## XMTPContext
+
+XMTPContext bridges the XMTP protocol. It's aware of conversations, groups and users.
+
+```tsx
+import { XMTPContext } from "@xmtp/message-kit";
+```
+
+**Properties**
+
+- `message`: the [message](/concepts/messages) object
+  - `sender`: the sender of the message
+  - `content`: the content of the message
+- `version`: the version of the client
+- `client`: the v3 client object
+- `v2client`: the v2 client object
+- `conversation`: the v2 conversation object
+
+Groups:
+
+- `group`: the v3 group object
+- `members`: the members of the group
+- `admins`: the admins of the group
+- `superAdmins`: the super admins of the group
+
+Other:
+
+- `agentConfig`: the optional parameters of the agent
+
+## Clients
+
+Use this instead of XMTP sdks for compatibility with MessageKit
+
+```tsx
+import { V2Client, V3Client } from "@xmtp/message-kit";
+```
+
+You can export other clients on run time by importing the `xmtpClient` function.
+
+```jsx
+import { xmtpClient } from "@xmtp/message-kit";
+
+const { v2client: newClient } = await xmtpClient({
+  {
+    privateKey: /*Your private key*/,
+    /*optional parameters*/
+  },
+);
+```
+
+## XMTP check
+
+You can check if a user has XMTP enabled:
+
+```typescript
+const { v2, v3 } = await isOnXMTP(v3client, v2client, address);
+```
+
+This will return an object with `v2` and `v3` booleans indicating if the user has XMTP enabled
+
+- `v2:true` If the user has XMTP v2 enabled
+- `v3:true` If the user has XMTP v3 enabled
