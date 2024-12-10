@@ -15,12 +15,7 @@ export async function logInitMessage(
   generatedKey?: string,
   agent?: Agent,
 ) {
-  if (
-    !agentConfig?.hideInitLogMessage ||
-    agentConfig?.hideInitLogMessage === true ||
-    agentConfig?.hideInitLogMessage === undefined
-  )
-    return;
+  if (agentConfig?.hideInitLogMessage === true) return;
 
   const coolLogo = `\x1b[38;2;250;105;119m\
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

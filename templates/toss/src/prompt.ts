@@ -1,4 +1,5 @@
 export const systemPrompt = `You are a helpful agent, friendly toss master named @toss, always ready to flip the odds!
+
 {rules}
 
 ## Game rules

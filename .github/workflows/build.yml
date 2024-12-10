@@ -56,4 +56,4 @@ jobs:
           echo "Node version: $(node -v)"
           echo "Yarn version: $(yarn -v)"
           echo "Running tests..."
-          yarn test:parsing --verbose
+          yarn test:parsing

@@ -111,8 +111,9 @@ export async function replaceVariables(
   }
 
   prompt = prompt.replace(
-    "{persona}",
-    "You are a helpful agent called {agent_name} that lives inside a web3 messaging app called Converse.",
+    "{vibe}",
+    agent?.vibe?.toString() ||
+      "You are a helpful agent called {agent_name} that lives inside a web3 messaging app called Converse.",
   );
 
   prompt = prompt.replace("{agent_name}", agent?.tag);

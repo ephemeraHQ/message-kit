@@ -1,4 +1,4 @@
-import { run, XMTPContext, Agent, xmtpClient } from "@xmtp/message-kit";
+import { run, Agent, xmtpClient } from "@xmtp/message-kit";
 import { gated } from "./skills/gated.js";
 import { startGatedGroupServer } from "./skills/gated.js";
 
