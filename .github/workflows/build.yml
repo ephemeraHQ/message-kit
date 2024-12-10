@@ -46,4 +46,4 @@ jobs:
       - name: Test client
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: yarn test:client
+        run: yarn test
