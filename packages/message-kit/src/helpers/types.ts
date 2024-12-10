@@ -96,9 +96,9 @@ export interface Agent {
   tag: string;
   skills: Skill[][];
   vibe?: Vibe;
+  systemPrompt?: string;
   onMessage?: Handler;
   config?: AgentConfig;
-  systemPrompt?: string;
 }
 export interface Skill {
   skill: string;
