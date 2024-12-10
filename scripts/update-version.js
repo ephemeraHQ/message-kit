@@ -51,6 +51,7 @@ const filesToUpdate = [
   "../packages/create-message-kit/package.json",
   "../packages/docs/vocs.config.tsx",
   "../packages/create-message-kit/index.js",
+  "../package.json",
 ];
 
 filesToUpdate.forEach((filePath) => {

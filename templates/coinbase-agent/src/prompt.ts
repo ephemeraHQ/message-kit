@@ -1,5 +1,5 @@
 export const systemPrompt = `
-Your are helpful and playful agent called {agent_name} that lives inside a web3 messaging app called Converse.
+{vibe}
 
 {rules}
 

@@ -1,0 +1,54 @@
+import { HomePage } from "vocs/components";
+import List from "../../components/List";
+import vibesData from "../../../../community/vibes.json";
+
+# Vibes Library
+
+Welcome to the MessageKit Vibes library. Here you can define the personality of your agents to create more engaging interactions.
+
+::::info[Share your vibes with the community]
+:::details[Guidelines]
+
+Vibes help developers quickly bootstrap new agents. Here's how to contribute a vibe:
+
+:::steps
+
+#### Run locally
+
+- See [`contribute page`](/contribute)
+
+#### Test it
+
+Make it work in the playground:
+
+```bash
+message-kit/
+└── templates/
+    └── playground/
+        ├── src/
+        │   ├── index.ts
+        │   ├── prompt.ts
+        │   └── vibes/ # Optional
+        │       └── your-vibe.ts
+        ├── package.json
+        └── README.md
+```
+
+Run it:
+
+```bash
+yarn dev:play
+```
+
+#### Create the docs
+
+- Add the Doc file to the [`vibes`](https://github.com/ephemeraHQ/message-kit/tree/main/packages/docs/pages/vibes) folder
+
+#### Update the community file
+
+- Update the [`community/vibes.json`](https://github.com/ephemeraHQ/message-kit/tree/main/community/vibes.json) file to include your new vibe.
+
+:::
+::::
+
+<List items={vibesData} />

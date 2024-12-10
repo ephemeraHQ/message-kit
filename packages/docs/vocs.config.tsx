@@ -69,7 +69,7 @@ export default defineConfig({
       link: "https://github.com/ephemeraHQ/message-kit",
     },
   ],
-  topNav: [{ text: "v1.2.19", link: "/changelog" }],
+  topNav: [{ text: "v1.2.24", link: "/changelog" }],
   editLink: {
     pattern:
       "https://github.com/ephemeraHQ/message-kit/blob/main/packages/docs/pages/:path",
@@ -109,7 +109,7 @@ export default defineConfig({
           link: "/concepts/wallet",
         },
         {
-          text: "AI Skills",
+          text: "Skills",
           link: "/concepts/skills",
         },
       ],
@@ -130,22 +130,26 @@ export default defineConfig({
           link: "/community/templates",
         },
         {
-          text: "Contribute",
-          link: "/community/contribute",
+          text: "Vibes",
+          link: "/community/vibes",
         },
         {
           text: "Projects",
           link: "/community/projects",
         },
-        {
-          text: "Guidelines",
-          link: "/community/guidelines",
-        },
       ],
+    },
+    {
+      text: "Contribute",
+      link: "/contribute",
     },
     {
       text: "Deployment",
       link: "/deployment",
+    },
+    {
+      text: "Guidelines",
+      link: "/guidelines",
     },
     {
       text: "Changelog",

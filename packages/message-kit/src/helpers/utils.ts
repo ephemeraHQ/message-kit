@@ -1,8 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config({ override: true });
 import { Client } from "@xmtp/node-sdk";
-import { RunConfig } from "./types";
-import { loadSkillsFile } from "../lib/skills";
+import { AgentConfig } from "../helpers/types";
 import { Agent } from "../helpers/types";
 
 export const logMessage = (message: any) => {
@@ -12,10 +11,11 @@ export const logMessage = (message: any) => {
 
 export async function logInitMessage(
   client: Client,
-  runConfig?: RunConfig,
+  agentConfig?: AgentConfig,
   generatedKey?: string,
+  agent?: Agent,
 ) {
-  if (runConfig?.hideInitLogMessage === true) return;
+  if (agentConfig?.hideInitLogMessage === true) return;
 
   const coolLogo = `\x1b[38;2;250;105;119m\
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -28,33 +28,24 @@ export async function logInitMessage(
 ╚═╝     ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝╚═╝   ╚═╝   
 Powered by XMTP \x1b[0m`;
   console.log(coolLogo);
-  console.log(`\nSend a message to this account on :                              
-    \x1b[38;2;211;211;211m Converse: https://converse.xyz/dm/${client.accountAddress}\x1b[0m
+  console.log(`\nSend a message to this account on:                              
+    \x1b[90m Converse: https://converse.xyz/dm/${client.accountAddress}\x1b[0m
     \x1b[38;2;0;0;255m Coinbase Wallet: https://go.cb-w.com/messaging?address=${client.accountAddress}\x1b[0m
     \x1b[38;2;128;0;128m Share in Farcaster (Framev2): https://frames.message-kit.org/dm/${client.accountAddress}\x1b[0m`);
 
-  let agent: Agent;
-  const loadedSkills = (await loadSkillsFile()) as Agent;
-  agent =
-    runConfig?.agent ??
-    (Array.isArray(loadedSkills) && loadedSkills.length > 0
-      ? loadedSkills
-      : await loadSkillsFile());
-
   if (
-    runConfig?.attachments ||
-    (process.env.OPENAI_API_KEY === undefined &&
-      runConfig?.agent !== undefined) ||
-    runConfig?.client?.structuredLogging ||
-    runConfig?.privateKey ||
-    runConfig?.memberChange ||
+    agentConfig?.attachments ||
+    process.env.OPENAI_API_KEY === undefined ||
+    agentConfig?.client?.structuredLogging ||
+    agentConfig?.privateKey ||
+    agentConfig?.memberChange ||
     agent === undefined ||
-    agent?.skills.length === 0 ||
+    agent?.skills.flat().length === 0 ||
     generatedKey ||
-    runConfig?.walletService
+    agentConfig?.walletService
   ) {
     console.warn(`\x1b[33m\n\tWarnings:`);
-    if (runConfig?.attachments) {
+    if (agentConfig?.attachments) {
       console.warn("\t- ⚠️ Attachments are enabled");
     }
     if (generatedKey) {
@@ -62,34 +53,31 @@ Powered by XMTP \x1b[0m`;
         `\t- ⚠️ Invalid private key or not set. Generating a random one in your .env file.`,
       );
     }
-    if (
-      process.env.OPENAI_API_KEY === undefined &&
-      runConfig?.agent !== undefined
-    ) {
+    if (process.env.OPENAI_API_KEY === undefined) {
       console.warn(
         `\t- ⚠️ OPENAI_API_KEY is not set. Please set it in your .env file.`,
       );
     }
-    if (runConfig?.client?.structuredLogging) {
+    if (agentConfig?.client?.structuredLogging) {
       console.warn(
-        `\t- ⚠️ Structured logging is set to ${runConfig.client.structuredLogging}`,
+        `\t- ⚠️ Structured logging is set to ${agentConfig.client.structuredLogging}`,
       );
     }
-    if (runConfig?.privateKey) {
+    if (agentConfig?.privateKey) {
       console.warn("\t- ⚠️ Private key is set from the code");
     }
-    if (runConfig?.memberChange) {
+    if (agentConfig?.memberChange) {
       console.warn("\t- ⚠️ Member changes are enabled");
     }
-    if (agent === undefined || agent.skills.length === 0) {
+    if (agent === undefined || agent.skills.flat().length === 0) {
       console.warn("\t- ⚠️ No skills found");
     }
-    if (runConfig?.experimental) {
+    if (agentConfig?.experimental) {
       console.warn(
-        `\t- ☣️ community MODE ENABLED:\n\t\t⚠️ All group messages will be exposed — proceed with caution.\n\t\tℹ Guidelines: https://message-kit.org/community/guidelines`,
+        `\t- ☣️ EXPERIMENTAL MODE ENABLED:\n\t\t⚠️ All group messages will be exposed — proceed with caution.\n\t\tℹ Guidelines: https://message-kit.org/guidelines`,
       );
     }
-    if (runConfig?.walletService) {
+    if (agentConfig?.walletService) {
       console.warn(
         `\t- ⚠️ Wallet Service ENABLED:\n\t\t⚠️ Save wallets at your discretion.\n\t\tℹ️ An agent wallet will be available for every user.\n\t\tℹ️ MessageKit does not have access to these wallets or is responsible for them.`,
       );
@@ -425,4 +413,13 @@ export function extractFrameChain(txLink: string): Network {
     };
   }
   return network;
+}
+
+import { promises as fsPromisesModule } from "fs";
+import * as fsSync from "fs";
+
+export function getFS() {
+  const fs = typeof window === "undefined" ? fsSync : null;
+  const fsPromises = typeof window === "undefined" ? fsPromisesModule : null;
+  return { fs, fsPromises };
 }

@@ -1,7 +1,6 @@
 import { XMTPContext } from "../lib/xmtp.js";
 import { ClientOptions, GroupMember } from "@xmtp/node-sdk";
 import { ContentTypeId } from "@xmtp/content-type-primitives";
-import type { RedisClientType } from "@redis/client";
 
 export type MessageAbstracted = {
   id: string;
@@ -39,13 +38,7 @@ export type SkillResponse = {
   data?: any;
 };
 
-export type SkillHandler = (
-  context: XMTPContext,
-) => Promise<SkillResponse | void>;
-
-export type Handler = (context: XMTPContext) => Promise<void>;
-
-export type RunConfig = {
+export type AgentConfig = {
   // client options from XMTP client
   client?: ClientOptions;
   // private key to be used for the client, if not, default from env
@@ -64,8 +57,6 @@ export type RunConfig = {
   agent?: Agent;
   // model to be used
   gptModel?: string;
-  // wallet service db
-  walletServiceDB?: RedisClientType;
 };
 export interface SkillParamConfig {
   default?: string | number | boolean;
@@ -87,15 +78,31 @@ export interface Frame {
   buttons: { content: string; action: string; target: string }[];
   image: string;
 }
+export interface Vibe {
+  vibe: string;
+  description: string;
+  tone: string;
+  style: string;
+}
+export type SkillHandler = (
+  context: XMTPContext,
+) => Promise<SkillResponse | void>;
+
+export type Handler = (context: XMTPContext) => Promise<void>;
+
 export interface Agent {
   name: string;
   description: string;
   tag: string;
-  skills: Skill[];
+  skills: Skill[][];
+  vibe?: Vibe;
+  systemPrompt?: string;
+  onMessage?: Handler;
+  config?: AgentConfig;
 }
 export interface Skill {
   skill: string;
-  handler?: SkillHandler | undefined;
+  handler?: SkillHandler;
   adminOnly?: boolean;
   description: string;
   examples: string[];

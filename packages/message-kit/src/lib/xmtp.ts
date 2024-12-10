@@ -17,7 +17,7 @@ import { ContentTypeText } from "@xmtp/content-type-text";
 import { WalletService } from "../helpers/cdp.js";
 import { logMessage, extractFrameChain } from "../helpers/utils.js";
 import {
-  RunConfig,
+  AgentConfig,
   MessageAbstracted,
   GroupAbstracted,
   Agent,
@@ -36,40 +36,36 @@ import {
   ContentTypeAttachment,
   ContentTypeRemoteAttachment,
   RemoteAttachmentCodec,
-  AttachmentCodec,
   type RemoteAttachment,
   type Attachment,
 } from "@xmtp/content-type-remote-attachment";
-
+import { getFS } from "../helpers/utils";
 import {
   ContentTypeReaction,
   type Reaction,
 } from "@xmtp/content-type-reaction";
 import path from "path";
-
-// Only import fs in Node.js environment
-import { promises as fsPromises } from "fs";
-//@ts-ignore
-const fs = typeof window === "undefined" ? fsPromises : null;
-
 import fetch from "cross-fetch";
 
 const fileHandling = {
   async getCacheCreationDate() {
-    if (!fs) return null;
+    const { fsPromises } = getFS();
+    if (!fsPromises) return null;
     try {
-      const stats = await fs.stat(".data");
+      const stats = await fsPromises.stat(".data");
       return new Date(stats.birthtime);
     } catch (err) {
       console.error("Error getting cache creation date:", err);
       return null;
     }
   },
+  // hey
 
   async readFile(filePath: string) {
+    const { fs } = getFS();
     if (!fs) return null;
     try {
-      return await fs.readFile(filePath);
+      return await fs.readFileSync(filePath);
     } catch (err) {
       console.error("Error reading file:", err);
       return null;
@@ -94,7 +90,7 @@ export class XMTPContext {
   v2client!: V2Client;
   members?: AbstractedMember[];
   admins?: string[];
-  runConfig?: RunConfig;
+  agentConfig?: AgentConfig;
   superAdmins?: string[];
   agent: Agent = {
     name: "",
@@ -139,7 +135,7 @@ export class XMTPContext {
     conversation: Conversation | V2Conversation,
     message: DecodedMessage | DecodedMessageV2 | null,
     { client, v2client }: { client: V3Client; v2client: V2Client },
-    runConfig: RunConfig,
+    agent: Agent,
     version?: "v2" | "v3",
   ): Promise<XMTPContext | null> {
     try {
@@ -181,13 +177,9 @@ export class XMTPContext {
         }
 
         //Config
-        context.agent = runConfig?.agent ?? (await loadSkillsFile());
-        if (runConfig?.walletServiceDB)
-          context.walletService = new WalletService(
-            runConfig?.walletServiceDB,
-            context.getConversationKey(),
-            sender?.address,
-          );
+        context.agent = agent;
+        context.agentConfig = agent.config;
+
         context.getMessageById =
           client.conversations?.getMessageById?.bind(client.conversations) ||
           (() => null);
@@ -258,6 +250,12 @@ export class XMTPContext {
           typeId: typeId ?? "",
           version: version ?? "v2",
         };
+        if (
+          process.env.COINBASE_API_KEY_NAME &&
+          process.env.COINBASE_API_KEY_PRIVATE_KEY
+        ) {
+          context.walletService = new WalletService(context);
+        }
 
         return context;
       }
@@ -452,7 +450,7 @@ export class XMTPContext {
         await conversation.send(message, {
           contentType: contentType,
         });
-      } else if (conversation instanceof Conversation) {
+      } else if (this.isV3Conversation(conversation)) {
         await conversation.send(message, contentType);
       }
     }
@@ -467,6 +465,11 @@ export class XMTPContext {
     conversation: Conversation | V2Conversation | null,
   ): conversation is V2Conversation {
     return (conversation as V2Conversation)?.topic !== undefined;
+  }
+  isV3Conversation(
+    conversation: Conversation | V2Conversation | null,
+  ): conversation is Conversation {
+    return (conversation as Conversation)?.id !== undefined;
   }
 
   async react(emoji: string) {
@@ -539,6 +542,7 @@ export class XMTPContext {
     token: string = "usdc",
     username: string = "humanagent.eth",
     sendTo: string[] = [],
+    onRampURL?: string,
   ) {
     let senderInfo = await getUserInfo(username);
     if (senderInfo && process.env.MSG_LOG === "true")
@@ -549,6 +553,9 @@ export class XMTPContext {
       }
 
     let sendUrl = `${framesUrl}/payment?amount=${amount}&token=${token}&recipientAddress=${senderInfo?.address}`;
+    if (onRampURL) {
+      sendUrl = sendUrl + "&onRampURL=" + encodeURIComponent(onRampURL);
+    }
     if (sendTo.length > 0) {
       await this.sendTo(sendUrl, sendTo);
     } else {

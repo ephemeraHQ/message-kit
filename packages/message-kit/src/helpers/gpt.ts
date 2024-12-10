@@ -1,9 +1,11 @@
 import dotenv from "dotenv";
 dotenv.config({ override: true });
 import OpenAI from "openai";
+import { getFS } from "./utils";
 import { XMTPContext } from "../lib/xmtp";
 import { getUserInfo, replaceUserContext } from "./resolver";
 import type { Agent } from "./types";
+import { replaceSkills } from "../lib/skills";
 
 const isOpenAIConfigured = () => {
   return !!process.env.OPENAI_API_KEY;
@@ -59,8 +61,7 @@ export const chatMemory = new ChatMemory();
 export const clearMemory = (address?: string) => {
   chatMemory.clear(address);
 };
-export const COMMON_ISSUES = `
-# Common Issues
+export const COMMON_ISSUES = `# Common Issues
 1. Missing commands in responses
    **Issue**: Sometimes responses are sent without the required command.
    **Example**:
@@ -74,8 +75,7 @@ export const COMMON_ISSUES = `
    Correct:
    > /todo
 `;
-export const PROMPT_RULES = `
-# Rules
+export const PROMPT_RULES = `# Rules
 - You can respond with multiple messages if needed. Each message should be separated by a newline character.
 - You can trigger skills by only sending the command in a newline message.
 - Each command starts with a slash (/).
@@ -89,28 +89,6 @@ export const PROMPT_RULES = `
 - When mentioning any action related to available skills, you MUST trigger the corresponding command in a new line
 - If you suggest an action that has a command, you must trigger that command
 `;
-
-export function replaceSkills(agent: Agent) {
-  let returnPrompt = `## Commands\n${agent?.skills
-    .map(
-      (skill) =>
-        "/" +
-        skill.skill.replace("/", "").split(" ")[0] +
-        " " +
-        Object.keys(skill.params ?? {})
-          .map((key) => {
-            const paramConfig = skill.params?.[key];
-            return `[${key}${paramConfig?.optional ? " (optional)" : ""}]`;
-          })
-          .join(" ") +
-        " - " +
-        skill.description,
-    )
-    .join("\n")}\n\n## Examples\n${agent?.skills
-    .map((skill) => skill.examples?.join("\n"))
-    .join("\n")}`;
-  return returnPrompt;
-}
 
 // [!region replaceVariables]
 export async function replaceVariables(
@@ -129,16 +107,19 @@ export async function replaceVariables(
       converseUsername: senderAddress,
     };
   }
+  let vibe =
+    "You are a helpful agent called {agent_name} that lives inside a web3 messaging app called Converse.";
+  if (agent?.vibe) {
+    let params = agent.vibe;
+    // Construct a more detailed personality description from the vibe object
+    vibe = `You are ${params.vibe} agent called {agent_name} that lives inside a web3 messaging app called Converse.\n\nVibe: ${params.description}\nTone: ${params.tone}\nStyle: ${params.style}`;
+  }
 
-  prompt = prompt.replace(
-    "{persona}",
-    "You are a helpful agent called {agent_name} that lives inside a web3 messaging app called Converse.",
-  );
-
-  prompt = prompt.replace("{agent_name}", agent?.tag);
+  prompt = prompt.replace("{vibe}", vibe);
   prompt = prompt.replace("{rules}", PROMPT_RULES);
   prompt = prompt.replace("{skills}", replaceSkills(agent));
   prompt = prompt.replace("{issues}", COMMON_ISSUES);
+  prompt = prompt.replace("{agent_name}", agent?.tag);
 
   // Replace variables in the system prompt
   if (userInfo) {
@@ -151,6 +132,10 @@ export async function replaceVariables(
 
   if (process.env.MSG_LOG === "true") {
     //console.log("System Prompt", prompt);
+  }
+  const { fs } = getFS();
+  if (fs) {
+    fs.writeFileSync("example_prompt.md", prompt);
   }
   return prompt;
 }

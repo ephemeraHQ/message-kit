@@ -1,4 +1,4 @@
-import { run, XMTPContext, Agent, xmtpClient } from "@xmtp/message-kit";
+import { run, Agent, xmtpClient } from "@xmtp/message-kit";
 import { gated } from "./skills/gated.js";
 import { startGatedGroupServer } from "./skills/gated.js";
 
@@ -12,6 +12,6 @@ export const agent: Agent = {
   name: "Gated Group Creator Agent",
   tag: "@bot",
   description: "A gated group creator agent.",
-  skills: [...gated],
+  skills: [gated],
 };
-run(async (context: XMTPContext) => {}, { agent });
+run(agent);

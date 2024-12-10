@@ -21,6 +21,7 @@ export default async function Home({
     baseLogo: "https://avatars.githubusercontent.com/u/108554348?s=280&v=4",
     networkName: "base",
     tokenName: "usdc",
+    onRampURL: resolvedSearchParams?.onRampURL as string,
   };
   const amountUint256 = parseUnits(params.amount.toString(), 6);
   const ethereumUrl = `ethereum:${params.tokenAddress}@${params.chainId}/transfer?address=${params.recipientAddress}&uint256=${amountUint256}`;
@@ -39,12 +40,20 @@ export default async function Home({
         <meta property="fc:frame:image" content={image} />
         <meta property="fc:frame:ratio" content="1.91:1" />
 
-        <meta
-          property="fc:frame:button:1"
-          content={`Pay $${params.amount} (Mobile)`}
-        />
+        <meta property="fc:frame:button:1" content={`Pay in USDC (Mobile)`} />
         <meta property="fc:frame:button:1:action" content="link" />
         <meta property="fc:frame:button:1:target" content={ethereumUrl} />
+
+        {params.onRampURL && (
+          <>
+            <meta property="fc:frame:button:2" content={`Pay in USD`} />
+            <meta property="fc:frame:button:2:action" content="link" />
+            <meta
+              property="fc:frame:button:2:target"
+              content={params.onRampURL}
+            />
+          </>
+        )}
       </head>
       <body>
         <UrlGenerator params={params} />

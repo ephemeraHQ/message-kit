@@ -20,28 +20,30 @@ agent/
 └── .env
 ```
 
-## Runner
+## Agent
 
 This is the main function that runs the listener.
 
 ```jsx
-import {
-  run,
-  XMTPContext,
-} from "@xmtp/message-kit";
-
-run(
-  async (context: XMTPContext) => {
-    // your logic here
-  },
-  {
-    /*optional parameters*/
-  },
-);
-
+const agent: Agent =[
+    name: "Agent Name",
+    tag: "@bot",
+    description: "Agent Description",
+    skills: [skill1, skill2],
+    onMessage: async (context: XMTPContext) => {
+        /* Logs every message in a conversation
+        If not declared te agent will automatially use the skills defined
+        If not you can write your own logic here */
+    },
+    config: {
+        // Optional parameters
+    }
+]
+//starts the agent
+run(agent);
 ```
 
-#### Optional parameters
+#### Config parameters
 
 - `privateKey`: the private key of the agent wallet, like any normal wallet private key.
 - `experimental`: experimental features like logging all group messages. Default is `false`.
@@ -51,29 +53,24 @@ run(
 - `agent`: Custom agent to be used. Default is to create the skills in the `src/skills.ts` file.
 - `hideInitLogMessage`: hide the init log message with messagekit logo and stuff
 - `memberChange`: if true, member changes will be enabled, like adding members to the group
-- `walletServiceDB`: the redis client for the wallet [service](/plugins/cdp).
 
 ## XMTPContext
 
 XMTPContext bridges the skills to the XMTP protocol. It's aware of conversations, groups and users.
 
 ```tsx
-import { XMTPContext } from "@xmtp/message-kit";
-
-run(async (context: XMTPContext) => {
-  const {
-    message,
-    group,
-    conversation,
-    client,
-    version,
-    v2client,
-    members,
-    admins,
-    runConfig,
-    superAdmins,
-  } = context;
-});
+const {
+  message,
+  group,
+  conversation,
+  client,
+  version,
+  v2client,
+  members,
+  admins,
+  agentConfig,
+  superAdmins,
+} = context;
 ```
 
 ### Context properties
@@ -87,7 +84,7 @@ run(async (context: XMTPContext) => {
 - `members`: the members of the group
 - `admins`: the admins of the group
 - `superAdmins`: the super admins of the group
-- `runConfig`: the config of the Runner
+- `agentConfig`: the optional parameters of the agent
 - `sender`: the sender of the message
 
 ## Clients
@@ -112,6 +109,22 @@ const { v2client: newClient } = await xmtpClient({
 ```
 
 > This can be used in the [Cron](/plugins/cron) plugin to send updates to the users.
+
+## Vibes
+
+Vibes are the personalities of the agent. They are defined in the `src/vibes/your-vibe.ts` file.
+
+```tsx
+import { Vibe } from "@xmtp/message-kit";
+
+export const chill: Vibe = {
+  vibe: "Chill",
+  description:
+    "A relaxed and easy-going personality, embodying the essence of tranquility and serenity. This vibe exudes a sense of calmness that soothes the soul and invites a peaceful atmosphere.",
+  tone: "calm and composed, like a gentle breeze on a warm summer day",
+  style: "laid-back, with an effortless grace that flows like a serene river",
+};
+```
 
 ## Manual Installation
 

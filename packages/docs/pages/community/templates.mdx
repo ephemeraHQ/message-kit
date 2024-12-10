@@ -6,8 +6,49 @@ import templatesData from "../../../../community/templates.json";
 
 Welcome to the MessageKit templates library. Here you'll find a collection of pre-built templates that you can use in your agents.
 
-:::info
-Contribute templates [here](/community/contribute)
+::::info[Share your templates with the community]
+:::details[Guidelines]
+
+Templates help developers quickly bootstrap new agents. Here's how to contribute a template:
+
+:::steps
+
+#### Run locally
+
+- See [`contribute page`](/contribute)
+
+#### Test it
+
+Make it work in the playground:
+
+```bash
+message-kit/
+└── templates/
+    └── your-template/
+        ├── src/
+        │   ├── index.ts
+        │   ├── prompt.ts
+        │   └── skills/ # Optional
+        │   └── plugins/ # Optional
+        ├── package.json
+        └── README.md
+```
+
+Run it:
+
+```bash
+yarn dev:play
+```
+
+#### Create the docs
+
+- Add the Doc file to the [`templates`](https://github.com/ephemeraHQ/message-kit/tree/main/packages/docs/pages/templates) folder
+
+#### Update the community file
+
+- Update the [`community/templates.json`](https://github.com/ephemeraHQ/message-kit/tree/main/community/templates.json) file to include your new template.
+
 :::
+::::
 
 <List items={templatesData} />

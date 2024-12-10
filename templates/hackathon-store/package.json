@@ -1,0 +1,20 @@
+{
+  "name": "hackathon-store",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc -w & sleep 1 && NODE_NO_WARNINGS=1 node --watch dist/index.js",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@notionhq/client": "^2.2.15",
+    "@redis/client": "^1.6.0",
+    "@xmtp/message-kit": "workspace:*",
+    "axios": "^1.7.7",
+    "lowdb": "^7.0.1"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

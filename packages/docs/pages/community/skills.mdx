@@ -6,8 +6,52 @@ import skillsData from "../../../../community/skills.json";
 
 Welcome to the MessageKit skills library. Here you'll find a collection of pre-built skills that you can use in your agents.
 
-:::info
-Contribute skills [here](/community/contribute)
+::::info[Share your skills with the community]
+:::details[Guidelines]
+
+Skills are the building blocks of MessageKit agents.
+
+:::steps
+
+#### Run locally
+
+- See [`contribute page`](/contribute)
+
+#### Test it
+
+Make it work in the playground:
+
+```bash
+message-kit/
+└── templates/
+    └── playground/
+        ├── plugins/ # Optional
+        │   ├── other plugins...
+        │   └── your-plugin.ts
+        ├── skills/ # Optional
+        │   ├── other skills...
+        │   └── your-skill.ts
+        ├── package.json
+        └── README.md
+```
+
+Run it:
+
+```bash
+yarn dev:play
+```
+
+> ⚠️ Feel free to edit the `index.ts` file but don't remove the existing files.
+
+#### Create the docs
+
+- Add the Doc file to the [`skills`](https://github.com/ephemeraHQ/message-kit/tree/main/packages/docs/pages/skills) folder
+
+#### Update the community file
+
+- Update the [`community/skills.json`](https://github.com/ephemeraHQ/message-kit/tree/main/community/skills.json) file to include your new skill.
+
 :::
+::::
 
 <List items={skillsData} />

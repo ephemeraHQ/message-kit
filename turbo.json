@@ -2,11 +2,8 @@
   "$schema": "https://turbo.build/schema.json",
   "globalEnv": ["**/.env.*local"],
   "pipeline": {
-    "prebuild": {
-      "outputs": []
-    },
     "build": {
-      "dependsOn": ["^build", "prebuild"],
+      "dependsOn": ["^build"],
       "outputs": ["dist/**"]
     },
     "clean": {

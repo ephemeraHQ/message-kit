@@ -29,8 +29,7 @@ jobs:
         run: yarn typecheck
 
   test:
-    runs-on: warp-ubuntu-latest-x64-16x
-    needs: build
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -43,7 +42,13 @@ jobs:
         run: corepack enable
       - name: Install dependencies
         run: yarn
+      - name: Build
+        run: yarn build:message-kit
+      - name: Test parsing
+        run: yarn test:parsing
       - name: Test client
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: yarn test:client
+      - name: Test v3
+        run: yarn test:v3
+      - name: Test v2
+        run: yarn test:v2

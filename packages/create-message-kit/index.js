@@ -7,7 +7,7 @@ import { default as fs } from "fs-extra";
 import { isCancel } from "@clack/prompts";
 import { detect } from "detect-package-manager";
 import pc from "picocolors";
-const defVersion = "1.2.19";
+const defVersion = "1.2.24";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Read package.json to get the version
@@ -96,19 +96,20 @@ async function updatePackagejson(destDir, templateType) {
 }
 
 async function gatherProjectInfo() {
-  const templateOptions = fs
-    .readJsonSync(resolve(__dirname, "./templates.json"))
-    .filter(
-      (template) =>
-        template.href.includes("ens") || template.href.includes("simple"),
-    );
+  const templateOptions = [
+    {
+      value: "templates/simple",
+      label: "Simple - Basic template with minimal setup",
+    },
+    {
+      value: "templates/ens",
+      label: "ENS - Template with ENS integration",
+    },
+  ];
 
   const templateType = await select({
     message: "Select the type of template to initialize:",
-    options: templateOptions.map(({ title, description, href }) => ({
-      value: href,
-      label: `${title} - ${description}`,
-    })),
+    options: templateOptions,
   });
 
   if (isCancel(templateType)) {
@@ -139,6 +140,11 @@ async function gatherProjectInfo() {
 
   const name = kebabcase(displayName);
   const destDir = resolve(process.cwd(), name);
+
+  // Remove existing directory if it exists
+  if (fs.existsSync(destDir)) {
+    fs.removeSync(destDir);
+  }
 
   // Copy template files
   fs.copySync(templateDir, destDir);
@@ -214,8 +220,7 @@ async function detectPackageManager() {
 
     const userAgent = process.env.npm_config_user_agent;
 
-    // Check if running through npm init
-    if (userAgent?.startsWith("npm")) {
+    if (userAgent?.startsWith("npm") || userAgent?.startsWith("npx")) {
       return "npm";
     }
 
@@ -281,13 +286,13 @@ ${envExampleContent}
 3. **Install dependencies:**
 
 \`\`\`sh
-${packageManager} install
+${packageManager.split("@")[0]} install
 \`\`\`
 
 4. **Run the project:**
 
 \`\`\`sh
-${packageManager === "npm" ? "npm run" : packageManager} dev
+${packageManager.split("@")[0]} run dev
 \`\`\`
 
 5. Enjoy!

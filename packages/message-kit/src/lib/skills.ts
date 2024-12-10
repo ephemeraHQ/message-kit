@@ -2,10 +2,10 @@ import { Agent, Skill } from "../helpers/types.js";
 import { XMTPContext } from "./xmtp.js";
 import path from "path";
 
-export function findSkill(text: string, skills: Skill[]): Skill | undefined {
+export function findSkill(text: string, skills: Skill[][]): Skill | undefined {
   const trigger = text.split(" ")[0].toLowerCase();
 
-  const handler = skills.find((skill) => {
+  const handler = skills.flat().find((skill) => {
     return (
       "/" + skill.skill?.replace("/", "").split(" ")[0].toLowerCase() ===
       trigger
@@ -15,6 +15,29 @@ export function findSkill(text: string, skills: Skill[]): Skill | undefined {
   return handler;
 }
 
+export function replaceSkills(agent: Agent) {
+  let returnPrompt = `## Commands\n${agent?.skills
+    .flat()
+    .map(
+      (skill) =>
+        "/" +
+        skill.skill?.replace("/", "").split(" ")[0] +
+        " " +
+        Object.keys(skill.params ?? {})
+          .map((key) => {
+            const paramConfig = skill.params?.[key];
+            return `[${key}${paramConfig?.optional ? " (optional)" : ""}]`;
+          })
+          .join(" ") +
+        " - " +
+        skill.description,
+    )
+    .join("\n")}\n\n## Examples\n${agent?.skills
+    .flat()
+    .map((skill) => skill.examples?.join("\n"))
+    .join("\n")}`;
+  return returnPrompt;
+}
 export async function executeSkill(
   text: string,
   agent: Agent,

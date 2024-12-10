@@ -26,7 +26,7 @@ export const faucet: Skill[] = [
     },
   },
   {
-    skill: "/networks",
+    skill: "networks",
     handler: handleFaucet,
     examples: ["/networks"],
     description: "Get the list of supported networks.",
