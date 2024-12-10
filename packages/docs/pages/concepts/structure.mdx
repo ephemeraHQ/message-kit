@@ -29,9 +29,10 @@ const agent: Agent =[
     name: "Agent Name",
     tag: "@bot",
     description: "Agent Description",
-    skills: [...skills],
+    skills: [skill1, skill2],
     onMessage: async (context: XMTPContext) => {
         // your logic here
+        // Logs every message in a conversation
     },
     config: {
         // your config here
