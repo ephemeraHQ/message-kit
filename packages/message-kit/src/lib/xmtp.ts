@@ -96,7 +96,6 @@ export class XMTPContext {
     name: "",
     description: "",
     tag: "",
-    skills: [],
   };
   walletService!: WalletService;
   sender?: AbstractedMember;
@@ -198,7 +197,7 @@ export class XMTPContext {
         if (message?.contentType?.sameAs(ContentTypeText)) {
           const skillAction = findSkill(
             content?.content,
-            context?.agent?.skills,
+            context?.agent?.skills ?? [],
           );
           const extractedValues = skillAction
             ? parseSkill(content?.content, skillAction)

@@ -13,7 +13,6 @@ const agent: Agent = {
   name: "Hackathon Store",
   tag: "@store",
   description: "Hackathon Store",
-  skills: [],
   onMessage: async (context: XMTPContext) => {
     const {
       message: {

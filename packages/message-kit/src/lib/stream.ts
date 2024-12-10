@@ -129,7 +129,7 @@ export async function run(agent: Agent) {
     } = context;
 
     let foundSkill = text?.startsWith("/")
-      ? findSkill(text, agent.skills)
+      ? findSkill(text, agent?.skills ?? [])
       : undefined;
 
     const { inboxId: senderInboxId } = client;

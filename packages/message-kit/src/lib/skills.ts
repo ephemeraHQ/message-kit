@@ -17,7 +17,7 @@ export function findSkill(text: string, skills: Skill[][]): Skill | undefined {
 
 export function replaceSkills(agent: Agent) {
   let returnPrompt = `## Commands\n${agent?.skills
-    .flat()
+    ?.flat()
     .map(
       (skill) =>
         "/" +
@@ -33,7 +33,7 @@ export function replaceSkills(agent: Agent) {
         skill.description,
     )
     .join("\n")}\n\n## Examples\n${agent?.skills
-    .flat()
+    ?.flat()
     .map((skill) => skill.examples?.join("\n"))
     .join("\n")}`;
   return returnPrompt;
@@ -44,7 +44,7 @@ export async function executeSkill(
   context: XMTPContext,
 ) {
   try {
-    let skillAction = findSkill(text, agent.skills);
+    let skillAction = findSkill(text, agent?.skills ?? []);
     const extractedValues = skillAction
       ? parseSkill(text, skillAction)
       : undefined;
@@ -255,7 +255,6 @@ export async function loadSkillsFile(): Promise<Agent> {
     name: "",
     tag: "",
     description: "",
-    skills: [],
   };
   try {
     const module = await import(resolvedPath);

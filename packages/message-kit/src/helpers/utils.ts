@@ -40,7 +40,7 @@ Powered by XMTP \x1b[0m`;
     agentConfig?.privateKey ||
     agentConfig?.memberChange ||
     agent === undefined ||
-    agent?.skills.flat().length === 0 ||
+    agent?.skills?.flat().length === 0 ||
     generatedKey ||
     agentConfig?.walletService
   ) {
@@ -69,7 +69,7 @@ Powered by XMTP \x1b[0m`;
     if (agentConfig?.memberChange) {
       console.warn("\t- ⚠️ Member changes are enabled");
     }
-    if (agent === undefined || agent.skills.flat().length === 0) {
+    if (agent === undefined || agent?.skills?.flat().length === 0) {
       console.warn("\t- ⚠️ No skills found");
     }
     if (agentConfig?.experimental) {

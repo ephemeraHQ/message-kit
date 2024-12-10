@@ -94,7 +94,7 @@ export interface Agent {
   name: string;
   description: string;
   tag: string;
-  skills: Skill[][];
+  skills?: Skill[][];
   vibe?: Vibe;
   systemPrompt?: string;
   onMessage?: Handler;
