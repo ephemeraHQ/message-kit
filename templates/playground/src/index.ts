@@ -4,21 +4,19 @@ import {
   replaceVariables,
   XMTPContext,
   Agent,
-  xmtpClient,
 } from "@xmtp/message-kit";
-import fs from "fs";
 import { systemPrompt } from "./prompt.js";
 import { web } from "./skills/web.js";
 import { cryptoPrice } from "./skills/cryptoPrice.js";
 import { search } from "./skills/search.js";
-import { friendlyVibe } from "./vibes/friendly";
+import { friendly } from "./vibes/friendly";
 
 export const agent: Agent = {
   name: "Playground Agent",
   tag: "@bot",
   description: "A playground agent with a lot of skills.",
   skills: [...web, ...cryptoPrice, ...search],
-  vibe: friendlyVibe,
+  vibe: friendly,
 };
 
 run(

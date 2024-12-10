@@ -7,7 +7,6 @@ import {
 } from "@xmtp/message-kit";
 import { systemPrompt } from "./prompt.js";
 import { faucet } from "./skills/faucet.js";
-import fs from "fs";
 
 // [!region skills]
 export const agent: Agent = {
