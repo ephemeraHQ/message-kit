@@ -96,19 +96,20 @@ async function updatePackagejson(destDir, templateType) {
 }
 
 async function gatherProjectInfo() {
-  const templateOptions = fs
-    .readJsonSync(resolve(__dirname, "./templates.json"))
-    .filter(
-      (template) =>
-        template.href.includes("ens") || template.href.includes("simple"),
-    );
+  const templateOptions = [
+    {
+      value: "templates/simple",
+      label: "Simple - Basic template with minimal setup",
+    },
+    {
+      value: "templates/ens",
+      label: "ENS - Template with ENS integration",
+    },
+  ];
 
   const templateType = await select({
     message: "Select the type of template to initialize:",
-    options: templateOptions.map(({ title, description, href }) => ({
-      value: href,
-      label: `${title} - ${description}`,
-    })),
+    options: templateOptions,
   });
 
   if (isCancel(templateType)) {
@@ -285,13 +286,13 @@ ${envExampleContent}
 3. **Install dependencies:**
 
 \`\`\`sh
-${packageManager} install
+${packageManager.split("@")[0]} install
 \`\`\`
 
 4. **Run the project:**
 
 \`\`\`sh
-${packageManager === "npm" ? "npm run" : packageManager} dev
+${packageManager.split("@")[0]} run dev
 \`\`\`
 
 5. Enjoy!

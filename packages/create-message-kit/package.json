@@ -7,7 +7,6 @@
   "module": "index.js",
   "bin": "index.js",
   "files": [
-    "templates.json",
     "templates/**/*"
   ],
   "scripts": {

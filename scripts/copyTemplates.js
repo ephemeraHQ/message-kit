@@ -11,12 +11,26 @@ const templateDestinationDir = path.resolve(
   "../packages/create-message-kit/templates",
 );
 const templates = fs.readdirSync(templatesDir).filter((file) => {
-  return fs.statSync(path.join(templatesDir, file)).isDirectory();
+  return (
+    fs.statSync(path.join(templatesDir, file)).isDirectory() &&
+    ["simple", "ens"].includes(file)
+  ); // Only include simple and ens templates
 });
 
 //test
 async function copyTemplates() {
   try {
+    // Remove destination directory if it exists
+    if (fs.existsSync(templateDestinationDir)) {
+      await fs.remove(templateDestinationDir);
+      console.log(
+        `Removed existing templates directory: ${templateDestinationDir}`,
+      );
+    }
+
+    // Create fresh destination directory
+    await fs.ensureDir(templateDestinationDir);
+
     // Copy templates
     for (const template of templates) {
       const srcDir = path.resolve(__dirname, `../templates/${template}`);
@@ -57,28 +71,6 @@ async function copyTemplates() {
 
     // Copy community folder
     const communitySourceDir = path.resolve(__dirname, "../community");
-
-    if (fs.existsSync(communitySourceDir)) {
-      await fs.ensureDir(templateDestinationDir);
-      // Instead of copying the entire community folder, just copy templates.json
-      const templatesJsonSrc = path.resolve(
-        communitySourceDir,
-        "templates.json",
-      );
-      const templatesJsonDest = path.resolve(
-        templateDestinationDir,
-        "../templates.json",
-      );
-
-      if (fs.existsSync(templatesJsonSrc)) {
-        await fs.copyFile(templatesJsonSrc, templatesJsonDest);
-        console.log(`Copied templates.json to ${templateDestinationDir}`);
-      } else {
-        console.warn(`templates.json not found in ${communitySourceDir}`);
-      }
-    } else {
-      console.warn(`Community directory ${communitySourceDir} does not exist.`);
-    }
 
     console.log("All templates and templates.json copied successfully.");
   } catch (error) {
