@@ -35,9 +35,9 @@ const agent: Agent = {
   description: "Agent Description",
   skills: [skill1, skill2],
   onMessage: async (context: XMTPContext) => {
-        /* Logs every message in a conversation
-        If not declared te agent will automatially use the skills defined
-        If not you can write your own logic here */
+        /* Logs every message in a conversation.
+        If not declared, the agent will automatically use the defined skills.
+        Alternatively, you can implement your own logic here. */
     },
   config: {
     // Optional parameters
@@ -59,8 +59,6 @@ run(agent);
 - `agent`: Custom agent to be used. Default is to create the skills in the `src/skills.ts` file.
 - `hideInitLogMessage`: hide the init log message with messagekit logo and stuff
 - `memberChange`: if true, member changes will be enabled, like adding members to the group
-
-> This can be used in the [Cron](/plugins/cron) plugin to send updates to the users.
 
 ## Skills
 

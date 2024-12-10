@@ -14,6 +14,13 @@
     "author": "ephemeraHQ"
   },
   {
+    "href": "/skills/waas",
+    "title": "Agent Wallet",
+    "description": "Agent wallets with CDP",
+    "icon": "💰",
+    "author": "humanagent"
+  },
+  {
     "href": "/skills/check",
     "title": "Check ENS domain",
     "description": "Check if an ENS domain is registered",
