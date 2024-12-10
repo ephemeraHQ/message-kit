@@ -134,7 +134,6 @@ export function getMocks() {
     name: "test-agent",
     description: "test-agent",
     tag: "test-agent",
-    skills: [],
   } as Agent;
   return {
     mockV2Conversation,

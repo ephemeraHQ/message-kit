@@ -11,7 +11,6 @@ export const agent: Agent = {
   name: "GPT Bot",
   tag: "@bot",
   description: "Use GPT to generate text responses.",
-  skills: [],
   onMessage: async (context: XMTPContext) => {
     const {
       message: { sender },

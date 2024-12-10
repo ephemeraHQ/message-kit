@@ -2,22 +2,34 @@ import { XMTPContext } from "../lib/xmtp.js";
 import { ClientOptions, GroupMember } from "@xmtp/node-sdk";
 import { ContentTypeId } from "@xmtp/content-type-primitives";
 
+// @twoslash
+/**
+ * Represents a message with metadata and content details.
+ *
+ * This type includes:
+ * - A unique identifier
+ * - Timestamp of when the message was sent
+ * - Content, which may be text, a reply, a reference, or other data
+ * - Information about the sender
+ *
+ * Use this type as the canonical form for message data across your application.
+ */
 export type MessageAbstracted = {
-  id: string;
-  sent: Date;
+  id: string; // Unique identifier for the message
+  sent: Date; // Date when the message was sent
   content: {
-    text?: string | undefined;
-    reply?: string | undefined;
-    previousMsg?: string | undefined;
-    react?: string | undefined;
-    content?: any | undefined;
-    params?: any | undefined;
-    reference?: string | undefined;
-    skill?: string | undefined;
+    text?: string | undefined; // Text content of the message
+    reply?: string | undefined; // Reply content if the message is a reply
+    previousMsg?: string | undefined; // Reference to the previous message
+    react?: string | undefined; // Reaction content if the message is a reaction
+    content?: any | undefined; // Any other content
+    params?: any | undefined; // Parameters for the message
+    reference?: string | undefined; // Reference ID for the message
+    skill?: string | undefined; // Skill associated with the message
   };
-  version: "v2" | "v3";
-  sender: AbstractedMember;
-  typeId: string;
+  version: "v2" | "v3"; // Version of the message
+  sender: AbstractedMember; // Sender of the message
+  typeId: string; // Type identifier for the message
 };
 export type GroupAbstracted = {
   id: string;
@@ -94,7 +106,7 @@ export interface Agent {
   name: string;
   description: string;
   tag: string;
-  skills: Skill[][];
+  skills?: Skill[][];
   vibe?: Vibe;
   systemPrompt?: string;
   onMessage?: Handler;

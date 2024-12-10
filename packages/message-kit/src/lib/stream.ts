@@ -13,7 +13,30 @@ import { awaitedHandlers } from "./xmtp.js";
 import { agentReply } from "../helpers/gpt.js";
 import { replaceVariables } from "../helpers/gpt.js";
 
+// Add at the top of the file
+let hasInitialized = false;
+
+// Create a check function that runs when the module is loaded
+function checkInitialization() {
+  if (!hasInitialized) {
+    console.warn(`\x1b[33m
+⚠️  MessageKit is imported but not running!
+   Make sure to call run(agent) to start processing messages
+
+      Example:
+        import { run } from '@xmtp/message-kit'
+          
+        const agent = {/* Your agent definition here */};
+
+        run(agent)
+\x1b[0m`);
+  }
+}
+
+// Run the check after a short delay to allow for initialization
+setTimeout(checkInitialization, 1000);
 export async function run(agent: Agent) {
+  hasInitialized = true;
   const { client, v2client } = await xmtpClient(agent.config, agent);
 
   const { inboxId: address } = client;
@@ -129,7 +152,7 @@ export async function run(agent: Agent) {
     } = context;
 
     let foundSkill = text?.startsWith("/")
-      ? findSkill(text, agent.skills)
+      ? findSkill(text, agent?.skills ?? [])
       : undefined;
 
     const { inboxId: senderInboxId } = client;

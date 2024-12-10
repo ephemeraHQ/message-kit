@@ -35,16 +35,3 @@ clearInfoCache(address);
 // Clear entire cache
 clearInfoCache();
 ```
-
-## XMTP availability check
-
-You can check if a user has XMTP enabled:
-
-```typescript
-const { v2, v3 } = await isOnXMTP(v3client, v2client, address);
-```
-
-This will return an object with `v2` and `v3` booleans indicating if the user has XMTP enabled
-
-- `v2:true` If the user has XMTP v2 enabled
-- `v3:true` If the user has XMTP v3 enabled

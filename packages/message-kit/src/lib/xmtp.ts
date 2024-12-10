@@ -80,9 +80,10 @@ export const awaitedHandlers = new Map<
   (text: string) => Promise<boolean | undefined>
 >();
 
+/* XMTPContext description*/
 export class XMTPContext {
   refConv: Conversation | V2Conversation | null = null;
-  message!: MessageAbstracted;
+  message!: MessageAbstracted; // A message from XMTP abstracted for agent use;
   group!: GroupAbstracted;
   conversation!: V2Conversation;
   client!: V3Client;
@@ -96,7 +97,6 @@ export class XMTPContext {
     name: "",
     description: "",
     tag: "",
-    skills: [],
   };
   walletService!: WalletService;
   sender?: AbstractedMember;
@@ -198,7 +198,7 @@ export class XMTPContext {
         if (message?.contentType?.sameAs(ContentTypeText)) {
           const skillAction = findSkill(
             content?.content,
-            context?.agent?.skills,
+            context?.agent?.skills ?? [],
           );
           const extractedValues = skillAction
             ? parseSkill(content?.content, skillAction)

@@ -4,7 +4,6 @@ const agent: Agent = {
   name: "Gm Bot",
   tag: "@bot",
   description: "Gm bot.",
-  skills: [],
   onMessage: async (context) => {
     const { group } = context;
     if (!group) {
