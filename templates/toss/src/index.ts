@@ -14,11 +14,8 @@ export const agent: Agent = {
   name: "Toss Bot",
   tag: "@toss",
   description: "Create a coin toss.",
-  skills: [...toss, ...waas],
-};
-
-run(
-  async (context: XMTPContext) => {
+  skills: [toss, waas],
+  onMessage: async (context: XMTPContext) => {
     const {
       message: { sender },
     } = context;
@@ -27,5 +24,6 @@ run(
 
     await agentReply(context, prompt);
   },
-  { agent },
-);
+};
+
+run(agent);

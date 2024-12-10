@@ -1,17 +1,19 @@
 import { XMTPContext } from "./xmtp.js";
 import { xmtpClient } from "./client.js";
-import { RunConfig, Handler, SkillHandler } from "../helpers/types.js";
+import { Agent, SkillHandler } from "../helpers/types.js";
 import { DecodedMessage } from "@xmtp/node-sdk";
 import { logMessage } from "../helpers/utils.js";
 import { DecodedMessage as DecodedMessageV2 } from "@xmtp/xmtp-js";
-import { streamMessages } from "./streams.js";
+import type { Client as V3Client } from "@xmtp/node-sdk";
+import type { Client as V2Client } from "@xmtp/xmtp-js";
 import { findSkill } from "./skills.js";
 import { Conversation } from "@xmtp/node-sdk";
 import { Conversation as V2Conversation } from "@xmtp/xmtp-js";
 import { awaitedHandlers } from "./xmtp.js";
+import { a } from "vitest/dist/chunks/suite.B2jumIFP.js";
 
-export async function run(handler: Handler, runConfig?: RunConfig) {
-  const { client, v2client } = await xmtpClient(runConfig);
+export async function run(agent: Agent) {
+  const { client, v2client } = await xmtpClient(agent.config);
 
   const { inboxId: address } = client;
   const { address: addressV2 } = v2client;
@@ -43,7 +45,7 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
           conversation,
           message,
           { client, v2client },
-          runConfig ?? {},
+          agent.config ?? {},
           version,
         );
         if (!context) {
@@ -78,7 +80,7 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
         // Check if the message content triggers a skill
         const { isMessageValid, customHandler } = filterMessage(context);
         if (isMessageValid && customHandler) await customHandler(context);
-        else if (isMessageValid) await handler(context);
+        else if (isMessageValid) await agent?.onMessage?.(context);
       } catch (e) {
         console.log(`error`, e);
       }
@@ -102,12 +104,11 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
       client,
       v2client,
       agent,
-      runConfig,
       group,
     } = context;
 
     let foundSkill = text?.startsWith("/")
-      ? findSkill(text, agent.skills)
+      ? findSkill(text, agent.skills.flat())
       : undefined;
 
     const { inboxId: senderInboxId } = client;
@@ -119,11 +120,11 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
         typeId !== "group_updated");
 
     const isSkillTriggered = foundSkill?.skill;
-    const iscommunity = runConfig?.experimental ?? false;
+    const iscommunity = agent.config?.experimental ?? false;
 
     const isAddedMemberOrPass =
       typeId === "group_updated" &&
-      runConfig?.memberChange &&
+      agent.config?.memberChange &&
       //@ts-ignore
       content?.addedInboxes?.length === 0
         ? false
@@ -147,7 +148,7 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
     // Text only works with explicit mentions from triggers.
     // Reactions don't work with triggers.
 
-    const isImageValid = isRemoteAttachment && runConfig?.attachments;
+    const isImageValid = isRemoteAttachment && agent.config?.attachments;
 
     const acceptedType = [
       "text",
@@ -251,4 +252,35 @@ export async function run(handler: Handler, runConfig?: RunConfig) {
     streamMessages("v2", handleMessage, v2client),
     streamMessages("v3", handleMessage, client),
   ]);
+}
+
+export async function streamMessages(
+  version: "v3" | "v2",
+  handleMessage: (
+    version: "v3" | "v2",
+    message: DecodedMessage | DecodedMessageV2 | undefined,
+  ) => Promise<void>,
+  client: V3Client | V2Client,
+) {
+  let v3client = client as V3Client;
+  let v2client = client as V2Client;
+  while (true) {
+    try {
+      if (version === "v3") {
+        const stream = await v3client.conversations.streamAllMessages();
+        console.warn(`\t- [${version}] Stream started`);
+        for await (const message of stream) {
+          handleMessage(version, message);
+        }
+      } else if (version === "v2") {
+        const stream = await v2client.conversations.streamAllMessages();
+        console.warn(`\t- [${version}] Stream started`);
+        for await (const message of stream) {
+          handleMessage(version, message);
+        }
+      }
+    } catch (err) {
+      console.error(`[${version}] Stream encountered an error:`, err);
+    }
+  }
 }

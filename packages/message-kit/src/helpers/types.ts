@@ -38,12 +38,6 @@ export type SkillResponse = {
   data?: any;
 };
 
-export type SkillHandler = (
-  context: XMTPContext,
-) => Promise<SkillResponse | void>;
-
-export type Handler = (context: XMTPContext) => Promise<void>;
-
 export type RunConfig = {
   // client options from XMTP client
   client?: ClientOptions;
@@ -90,16 +84,24 @@ export interface Vibe {
   tone: string;
   style: string;
 }
+export type SkillHandler = (
+  context: XMTPContext,
+) => Promise<SkillResponse | void>;
+
+export type Handler = (context: XMTPContext) => Promise<void>;
+
 export interface Agent {
   name: string;
   description: string;
   tag: string;
-  skills: Skill[];
+  skills: Skill[][];
   vibe?: Vibe;
+  onMessage?: Handler;
+  config?: RunConfig;
 }
 export interface Skill {
   skill: string;
-  handler?: SkillHandler | undefined;
+  handler?: SkillHandler;
   adminOnly?: boolean;
   description: string;
   examples: string[];

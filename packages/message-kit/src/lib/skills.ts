@@ -15,13 +15,36 @@ export function findSkill(text: string, skills: Skill[]): Skill | undefined {
   return handler;
 }
 
+export function replaceSkills(agent: Agent) {
+  let returnPrompt = `## Commands\n${agent?.skills
+    .flat()
+    .map(
+      (skill) =>
+        "/" +
+        skill.skill?.replace("/", "").split(" ")[0] +
+        " " +
+        Object.keys(skill.params ?? {})
+          .map((key) => {
+            const paramConfig = skill.params?.[key];
+            return `[${key}${paramConfig?.optional ? " (optional)" : ""}]`;
+          })
+          .join(" ") +
+        " - " +
+        skill.description,
+    )
+    .join("\n")}\n\n## Examples\n${agent?.skills
+    .flat()
+    .map((skill) => skill.examples?.join("\n"))
+    .join("\n")}`;
+  return returnPrompt;
+}
 export async function executeSkill(
   text: string,
   agent: Agent,
   context: XMTPContext,
 ) {
   try {
-    let skillAction = findSkill(text, agent.skills);
+    let skillAction = findSkill(text, agent.skills.flat());
     const extractedValues = skillAction
       ? parseSkill(text, skillAction)
       : undefined;

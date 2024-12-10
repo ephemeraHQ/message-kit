@@ -1,4 +1,4 @@
-export * from "./lib/runner.js";
+export * from "./lib/stream.js";
 export * from "./lib/client.js";
 export * from "./lib/xmtp.js";
 export * from "./helpers/types.js";

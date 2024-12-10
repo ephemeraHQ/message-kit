@@ -14,11 +14,8 @@ export const agent: Agent = {
   name: "Swap Bot",
   tag: "@base",
   description: "Swap bot for base.",
-  skills: [...swapSkill, ...mintSkill, ...dripSkill, ...paySkill],
-};
-
-run(
-  async (context: XMTPContext) => {
+  skills: [swapSkill, mintSkill, dripSkill, paySkill],
+  onMessage: async (context: XMTPContext) => {
     const {
       message: { sender },
       agent,
@@ -27,5 +24,6 @@ run(
     let prompt = await replaceVariables(systemPrompt, sender.address, agent);
     await agentReply(context, prompt);
   },
-  { agent }
-);
+};
+
+run(agent);

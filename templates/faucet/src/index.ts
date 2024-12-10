@@ -13,13 +13,8 @@ export const agent: Agent = {
   name: "Faucet Agent",
   tag: "@bot",
   description: "A faucet delivery agent.",
-  skills: [...faucet],
-};
-// [!endregion skills]
-
-// [!region run1]
-run(
-  async (context: XMTPContext) => {
+  skills: [faucet],
+  onMessage: async (context: XMTPContext) => {
     const {
       message: { sender },
       agent,
@@ -27,10 +22,7 @@ run(
 
     let prompt = await replaceVariables(systemPrompt, sender.address, agent);
 
-    // [!region run2]
     await agentReply(context, prompt);
   },
-  { agent },
-);
-
-// [!endregion run1]
+};
+run(agent);
