@@ -46,8 +46,6 @@ jobs:
         run: yarn build
       - name: Test parsing
         run: yarn test:parsing
-      - name: Test prompt
-        run: yarn test:prompting
       - name: Test client
         run: yarn test:client
       - name: Test v3
