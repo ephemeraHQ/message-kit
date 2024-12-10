@@ -2,21 +2,14 @@ import { ReplyCodec } from "@xmtp/content-type-reply";
 import { Client as V2Client } from "@xmtp/xmtp-js";
 import { ReactionCodec } from "@xmtp/content-type-reaction";
 import { Client, ClientOptions, XmtpEnv } from "@xmtp/node-sdk";
-import { logInitMessage } from "../helpers/utils";
+import { getFS, logInitMessage } from "../helpers/utils";
 import { TextCodec } from "@xmtp/content-type-text";
 import dotenv from "dotenv";
-//import readline from "readline";
+dotenv.config();
 import {
   AttachmentCodec,
   RemoteAttachmentCodec,
 } from "@xmtp/content-type-remote-attachment";
-// Only import fs in Node.js environment
-//@ts-ignore
-// Replace require with dynamic import for fs
-import * as fsSync from "fs";
-//@ts-ignore
-const fs = typeof window === "undefined" ? fsSync : null;
-
 import { createWalletClient, http, toBytes, toHex } from "viem";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { mainnet } from "viem/chains";
@@ -113,6 +106,7 @@ function setupPrivateKey(customKey?: string): {
     isRandom = true;
 
     // Write new key to .env only if in Node.js environment
+    const { fs } = getFS();
     if (fs) {
       const envContent = `\nKEY=${key.substring(2)}\n`;
       if (fs.existsSync(envFilePath)) {
@@ -139,6 +133,7 @@ function checkPrivateKey(key: string) {
 
 export const createSigner = (user: User) => {
   // Only create directory in Node.js environment
+  const { fs } = getFS();
   if (fs && !fs.existsSync(`.data`)) {
     fs.mkdirSync(`.data`);
   }
@@ -160,6 +155,7 @@ async function setupTestEncryptionKey(): Promise<Uint8Array> {
 
   if (!process.env.TEST_ENCRYPTION_KEY) {
     // Only perform file operations in Node.js environment
+    const { fs } = getFS();
     if (fs) {
       if (fs.existsSync(`.data`)) {
         fs.rmSync(`.data`, { recursive: true });
@@ -171,13 +167,13 @@ async function setupTestEncryptionKey(): Promise<Uint8Array> {
       // Prepare the env content
       const envContent = `\nTEST_ENCRYPTION_KEY=${testEncryptionKey}\n`;
 
-      // Append or create .env file
-      if (fs.existsSync(envFilePath)) {
-        fs.appendFileSync(envFilePath, envContent);
-      } else {
-        fs.writeFileSync(envFilePath, envContent);
+      if (fs) {
+        if (fs.existsSync(envFilePath)) {
+          fs.appendFileSync(envFilePath, envContent);
+        } else {
+          fs.writeFileSync(envFilePath, envContent);
+        }
       }
-      dotenv.config();
     }
   }
 

@@ -1,6 +1,7 @@
-import { describe, test, expect, fail } from "vitest";
+import { describe, test, expect } from "vitest";
 import { parseSkill, findSkill } from "../src/lib/skills";
-import { agent as web3Agent } from "../../../templates/ens/src/index";
+import { agent } from "../../../templates/ens/src/index";
+import { fail } from "assert";
 
 describe("Parsing tests", () => {
   test.each([
@@ -12,12 +13,17 @@ describe("Parsing tests", () => {
     [
       "/pay vitalik.eth",
       "pay",
-      { username: "vitalik.eth", amount: 10, token: "usdc" },
+      {
+        username: "vitalik.eth",
+        amount: 10,
+        token: "usdc",
+        address: "",
+      },
     ],
   ])(
     "Compare extracted values from skill: %s",
     (input, expectedSkill, expectedParams) => {
-      const skillAction = findSkill(input, web3Agent.skills);
+      const skillAction = findSkill(input, agent.skills);
       if (skillAction) {
         const extractedValues = parseSkill(input, skillAction);
         console.log(extractedValues);

@@ -4,7 +4,7 @@ import { baseUrl } from "../index.js";
 
 export const registerSkill: Skill[] = [
   {
-    skill: "/mint [collection] [token_id] [url]",
+    skill: "mint",
     examples: [
       "/mint 0x73a333cb82862d4f66f0154229755b184fb4f5b0 1",
       "/mint https://zora.co/collect/base/0x123456789/1...",

@@ -1,0 +1,51 @@
+# Hackathon Store
+
+Get all the hackathon needs from the general store.
+
+## Structure
+
+```
+hackathon-store/
+├── src/
+│   ├── plugins/
+│       ├── notion.ts
+│   ├── index.ts
+│   ├── prompt.ts
+├── package.json
+├── tsconfig.json
+└── .env
+```
+
+## Notion file
+
+This prompt loads from a notion package. You can manually update the prompt by running the `update` skill. or it will update each time you run the agent.
+
+- [Notion Prompt](https://ephemerahq.notion.site/Hackathon-prompt-15830823ce9280a6b0f4cea6ea8df932?pvs=4):
+
+### Plugins
+
+- [Notion](/plugins/notion): Interact with Notion
+
+## Prompt
+
+Here is the prompt that the agent will use to reply to messages.
+
+```md [src/prompt.md]
+// [!include ~/../../templates/hackathon-store/src/prompt.md]
+```
+
+## Runner
+
+The process that starts listening to messages and replying to them.
+
+```tsx [src/index.ts]
+// [!include ~/../../templates/hackathon-store/src/index.ts]
+```
+
+## Variables
+
+Set up these variables in your app
+
+```bash [cmd]
+// [!include ~/../../templates/hackathon-store/.env.example]
+```

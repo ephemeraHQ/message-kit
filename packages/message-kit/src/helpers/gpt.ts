@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config({ override: true });
 import OpenAI from "openai";
+import { getFS } from "./utils";
 import { XMTPContext } from "../lib/xmtp";
 import { getUserInfo, replaceUserContext } from "./resolver";
 import type { Agent } from "./types";
@@ -151,6 +152,10 @@ export async function replaceVariables(
 
   if (process.env.MSG_LOG === "true") {
     //console.log("System Prompt", prompt);
+  }
+  const { fs } = getFS();
+  if (fs) {
+    fs.writeFileSync("example_prompt.md", prompt);
   }
   return prompt;
 }

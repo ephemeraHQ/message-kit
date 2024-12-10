@@ -516,6 +516,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@coinbase/cbpay-js@npm:^2.4.0":
+  version: 2.4.0
+  resolution: "@coinbase/cbpay-js@npm:2.4.0"
+  peerDependencies:
+    regenerator-runtime: ^0.13.9
+  peerDependenciesMeta:
+    regenerator-runtime:
+      optional: true
+  checksum: 10/afb40657083724e51fcd7c5957dead3ab439d45139cc9c41d1dadd13671687cea49be8343cdc3d0800abb7a7b574cd71d178347c5f8c6d483259a865a3c971a8
+  languageName: node
+  linkType: hard
+
 "@coinbase/coinbase-sdk@npm:*":
   version: 0.11.2
   resolution: "@coinbase/coinbase-sdk@npm:0.11.2"
@@ -3669,6 +3681,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@xmtp/message-kit@workspace:packages/message-kit"
   dependencies:
+    "@coinbase/cbpay-js": "npm:^2.4.0"
     "@coinbase/coinbase-sdk": "npm:*"
     "@redis/client": "npm:^1.6.0"
     "@rollup/plugin-typescript": "npm:^11.1.6"
@@ -6395,6 +6408,18 @@ __metadata:
   checksum: 10/bf152d0ed1dc159239db1ba1f74fdbc40cb02f626770dcd5815c427ce0688c2635a06ed69af364396da4636d0408fcf7d4afdf7881724c3307e46aff30ca49e2
   languageName: node
   linkType: hard
+
+"hackathon-store@workspace:templates/hackathon-store":
+  version: 0.0.0-use.local
+  resolution: "hackathon-store@workspace:templates/hackathon-store"
+  dependencies:
+    "@notionhq/client": "npm:^2.2.15"
+    "@redis/client": "npm:^1.6.0"
+    "@xmtp/message-kit": "workspace:*"
+    axios: "npm:^1.7.7"
+    lowdb: "npm:^7.0.1"
+  languageName: unknown
+  linkType: soft
 
 "has-flag@npm:^4.0.0":
   version: 4.0.0
@@ -10897,20 +10922,6 @@ __metadata:
   checksum: 10/e6f6f4e1df2e7810e082e8d7dfc53be51a931e6e87925f5e1c2ef92cc1165246ba3bf2dae6b5d86251c16925683dba906bd41e40169ebc77120a2d1b5a0dbbe0
   languageName: node
   linkType: hard
-
-"thegeneralstore@workspace:templates/thegeneralstore":
-  version: 0.0.0-use.local
-  resolution: "thegeneralstore@workspace:templates/thegeneralstore"
-  dependencies:
-    "@notionhq/client": "npm:^2.2.15"
-    "@redis/client": "npm:^1.6.0"
-    "@types/node": "npm:^20.14.2"
-    "@xmtp/message-kit": "workspace:*"
-    axios: "npm:^1.7.7"
-    lowdb: "npm:^7.0.1"
-    typescript: "npm:^5.4.5"
-  languageName: unknown
-  linkType: soft
 
 "thenify-all@npm:^1.0.0":
   version: 1.6.0

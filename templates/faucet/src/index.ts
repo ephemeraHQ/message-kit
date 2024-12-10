@@ -7,7 +7,6 @@ import {
 } from "@xmtp/message-kit";
 import { systemPrompt } from "./prompt.js";
 import { faucet } from "./skills/faucet.js";
-import fs from "fs";
 
 // [!region skills]
 export const agent: Agent = {
@@ -27,13 +26,11 @@ run(
     } = context;
 
     let prompt = await replaceVariables(systemPrompt, sender.address, agent);
-    // [!endregion run1]
-    //This is only used for to update the docs.
-    fs.writeFileSync("example_prompt.md", prompt);
+
     // [!region run2]
     await agentReply(context, prompt);
   },
   { agent },
 );
 
-// [!endregion run2]
+// [!endregion run1]

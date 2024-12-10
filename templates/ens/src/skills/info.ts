@@ -48,9 +48,12 @@ export async function handler(context: XMTPContext) {
   message += `\n\nWould you like to tip the domain owner for getting there first 🤣?`;
   message = message.trim();
 
-  if (
-    await context.isOnXMTP(context.client, context.v2client, sender?.address)
-  ) {
+  const { v2, v3 } = await context.isOnXMTP(
+    context.client,
+    context.v2client,
+    sender?.address,
+  );
+  if (v2 || v3) {
     await context.send(
       `Ah, this domains is in XMTP, you can message it directly`,
     );

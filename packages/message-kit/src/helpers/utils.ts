@@ -28,8 +28,8 @@ export async function logInitMessage(
 ╚═╝     ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝╚═╝   ╚═╝   
 Powered by XMTP \x1b[0m`;
   console.log(coolLogo);
-  console.log(`\nSend a message to this account on :                              
-    \x1b[38;2;211;211;211m Converse: https://converse.xyz/dm/${client.accountAddress}\x1b[0m
+  console.log(`\nSend a message to this account on:                              
+    \x1b[90m Converse: https://converse.xyz/dm/${client.accountAddress}\x1b[0m
     \x1b[38;2;0;0;255m Coinbase Wallet: https://go.cb-w.com/messaging?address=${client.accountAddress}\x1b[0m
     \x1b[38;2;128;0;128m Share in Farcaster (Framev2): https://frames.message-kit.org/dm/${client.accountAddress}\x1b[0m`);
 
@@ -86,7 +86,7 @@ Powered by XMTP \x1b[0m`;
     }
     if (runConfig?.experimental) {
       console.warn(
-        `\t- ☣️ community MODE ENABLED:\n\t\t⚠️ All group messages will be exposed — proceed with caution.\n\t\tℹ Guidelines: https://message-kit.org/community/guidelines`,
+        `\t- ☣️ EXPERIMENTAL MODE ENABLED:\n\t\t⚠️ All group messages will be exposed — proceed with caution.\n\t\tℹ Guidelines: https://message-kit.org/guidelines`,
       );
     }
     if (runConfig?.walletService) {
@@ -425,4 +425,13 @@ export function extractFrameChain(txLink: string): Network {
     };
   }
   return network;
+}
+
+import { promises as fsPromisesModule } from "fs";
+import * as fsSync from "fs";
+
+export function getFS() {
+  const fs = typeof window === "undefined" ? fsSync : null;
+  const fsPromises = typeof window === "undefined" ? fsPromisesModule : null;
+  return { fs, fsPromises };
 }

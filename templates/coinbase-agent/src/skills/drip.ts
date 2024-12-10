@@ -5,7 +5,7 @@ import { LearnWeb3Client, Network } from "../plugins/learnweb3.js";
 
 export const registerSkill: Skill[] = [
   {
-    skill: "/drip [network] [address]",
+    skill: "drip",
     handler: handler,
     examples: [
       "/drip base_sepolia 0x123456789",

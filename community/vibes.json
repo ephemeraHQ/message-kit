@@ -1,0 +1,37 @@
+[
+  {
+    "href": "/vibes/friendly",
+    "title": "Friendly",
+    "description": "A warm and welcoming personality.",
+    "icon": "😊",
+    "author": "gpt4o"
+  },
+  {
+    "href": "/vibes/professional",
+    "title": "Professional",
+    "description": "A formal and business-like demeanor.",
+    "icon": "💼",
+    "author": "gpt4o"
+  },
+  {
+    "href": "/vibes/playful",
+    "title": "Playful",
+    "description": "A fun and light-hearted character.",
+    "icon": "🎉",
+    "author": "gpt4o"
+  },
+  {
+    "href": "/vibes/chill",
+    "title": "Chill",
+    "description": "A relaxed and easy-going personality.",
+    "icon": "😎",
+    "author": "gpt4o"
+  },
+  {
+    "href": "/vibes/inquisitive",
+    "title": "Inquisitive",
+    "description": "A curious and questioning nature.",
+    "icon": "🔍",
+    "author": "gpt4o"
+  }
+]

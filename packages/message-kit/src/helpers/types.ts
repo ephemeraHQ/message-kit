@@ -1,7 +1,6 @@
 import { XMTPContext } from "../lib/xmtp.js";
 import { ClientOptions, GroupMember } from "@xmtp/node-sdk";
 import { ContentTypeId } from "@xmtp/content-type-primitives";
-import type { RedisClientType } from "@redis/client";
 
 export type MessageAbstracted = {
   id: string;
@@ -64,8 +63,6 @@ export type RunConfig = {
   agent?: Agent;
   // model to be used
   gptModel?: string;
-  // wallet service db
-  walletServiceDB?: RedisClientType;
 };
 export interface SkillParamConfig {
   default?: string | number | boolean;
@@ -87,11 +84,18 @@ export interface Frame {
   buttons: { content: string; action: string; target: string }[];
   image: string;
 }
+export interface Vibe {
+  name: string;
+  description: string;
+  tone: string;
+  style: string;
+}
 export interface Agent {
   name: string;
   description: string;
   tag: string;
   skills: Skill[];
+  vibe?: Vibe;
 }
 export interface Skill {
   skill: string;

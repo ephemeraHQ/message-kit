@@ -1,5 +1,5 @@
 {
-  "name": "thegeneralstore",
+  "name": "hackathon-store",
   "private": true,
   "type": "module",
   "scripts": {
@@ -13,10 +13,6 @@
     "@xmtp/message-kit": "workspace:*",
     "axios": "^1.7.7",
     "lowdb": "^7.0.1"
-  },
-  "devDependencies": {
-    "@types/node": "^20.14.2",
-    "typescript": "^5.4.5"
   },
   "engines": {
     "node": ">=20"

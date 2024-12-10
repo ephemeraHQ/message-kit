@@ -9,21 +9,36 @@ import { select } from "@clack/prompts";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Add a flag to prevent multiple executions
+let isRunning = false;
+
 const templatesDir = path.resolve(__dirname, "../templates");
 const templates = fs.readdirSync(templatesDir).filter((file) => {
   return fs.statSync(path.join(templatesDir, file)).isDirectory();
 });
 
-console.log("Templates found:", templates);
-
 async function runSelectedTemplate() {
-  const selectedTemplate = await select({
-    message: "Select a template to run:",
-    options: templates.map((template) => ({
-      value: template,
-      label: template,
-    })),
-  });
+  // Prevent multiple executions
+  if (isRunning) {
+    console.log("Development server is already running.");
+    return;
+  }
+
+  // Get template from command line argument if provided
+  const directTemplate = process.argv[2];
+
+  let selectedTemplate;
+  if (directTemplate && templates.includes(directTemplate)) {
+    selectedTemplate = directTemplate;
+  } else {
+    selectedTemplate = await select({
+      message: "Select a template to run:",
+      options: templates.map((template) => ({
+        value: template,
+        label: template,
+      })),
+    });
+  }
 
   if (typeof selectedTemplate === "symbol" || !selectedTemplate) {
     console.log("No template selected. Exiting.");
@@ -34,14 +49,21 @@ async function runSelectedTemplate() {
     __dirname,
     `../templates/${selectedTemplate}`,
   );
+
   try {
+    isRunning = true;
     console.log(`Running dev for ${selectedTemplate}...`);
     execSync(`cd ${templatePath} && yarn dev`, {
       stdio: "inherit",
     });
   } catch (error) {
     console.error(`Error running dev for ${selectedTemplate}:`, error);
+  } finally {
+    isRunning = false;
   }
 }
 
-runSelectedTemplate();
+// Only run if this is the main module
+if (import.meta.url === `file://${__filename}`) {
+  runSelectedTemplate();
+}

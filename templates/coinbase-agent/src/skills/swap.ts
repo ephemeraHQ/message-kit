@@ -4,7 +4,7 @@ import { baseUrl } from "../index.js";
 
 export const registerSkill: Skill[] = [
   {
-    skill: "/swap [amount] [token_from] [token_to]",
+    skill: "swap",
     examples: ["/swap 10 usdc eth", "/swap 1 dai usdc"],
     handler: handler,
     description: "Exchange one type of cryptocurrency for another.",
@@ -39,7 +39,7 @@ export async function handler(context: XMTPContext) {
 
   if (!amount || !token_from || !token_to) {
     context.reply(
-      "Missing required parameters. Please provide amount, token_from, and token_to."
+      "Missing required parameters. Please provide amount, token_from, and token_to.",
     );
     return;
   }
