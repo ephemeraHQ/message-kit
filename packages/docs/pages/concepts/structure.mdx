@@ -31,8 +31,9 @@ const agent: Agent =[
     description: "Agent Description",
     skills: [skill1, skill2],
     onMessage: async (context: XMTPContext) => {
-        // your logic here
-        // Logs every message in a conversation
+        /* Logs every message in a conversation
+        If not declared te agent will automatially use the skills defined
+        If not you can write your own logic here */
     },
     config: {
         // Optional parameters
