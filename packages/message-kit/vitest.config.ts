@@ -1,11 +1,6 @@
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
-  resolve: {
-    alias: {
-      "@xmtp/message-kit": "./src/index.ts",
-    },
-  },
   test: {
     coverage: {
       provider: "v8",
