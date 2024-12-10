@@ -218,6 +218,10 @@
 .dark .vocs_Callout_info {
   background: hsla(0, 0%, 4%, 0.6) !important;
 }
+.dark .vocs_Callout_info strong,
+.dark .vocs_Callout_info summary {
+  color: var(--vocs-color_textAccent) !important;
+}
 .vocs_Callout_info .vocs_Paragraph,
 .vocs_Callout_info .vocs_Link,
 .vocs_Callout_info .vocs_ListItem {

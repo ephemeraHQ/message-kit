@@ -13,20 +13,23 @@ Vibes help developers quickly bootstrap new agents. Here's how to contribute a v
 
 :::steps
 
+#### Run locally
+
+- See [`contribute page`](/contribute)
+
 #### Test it
 
 Make it work in the playground:
 
 ```bash
 message-kit/
-└── vibes/
-    ├── other vibes...
-    └── your-vibe.ts
+└── templates/
+    └── playground/
         ├── src/
         │   ├── index.ts
         │   ├── prompt.ts
-        │   └── skills/ # Optional
-        │   └── plugins/ # Optional
+        │   └── vibes/ # Optional
+        │       └── your-vibe.ts
         ├── package.json
         └── README.md
 ```
@@ -39,7 +42,7 @@ yarn dev:play
 
 #### Create the docs
 
-- Add the Doc file to the [vibes](https://github.com/ephemeraHQ/message-kit/tree/main/packages/docs/pages/vibes) folder
+- Add the Doc file to the [`vibes`](https://github.com/ephemeraHQ/message-kit/tree/main/packages/docs/pages/vibes) folder
 
 #### Update the community file
 

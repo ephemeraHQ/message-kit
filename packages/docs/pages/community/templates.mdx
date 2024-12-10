@@ -13,6 +13,10 @@ Templates help developers quickly bootstrap new agents. Here's how to contribute
 
 :::steps
 
+#### Run locally
+
+- See [`contribute page`](/contribute)
+
 #### Test it
 
 Make it work in the playground:
@@ -20,10 +24,12 @@ Make it work in the playground:
 ```bash
 message-kit/
 └── templates/
-    └── playground/
-        ├── vibes/ # Optional
-        │   ├── other vibes...
-        │   └── your-vibe.ts
+    └── your-template/
+        ├── src/
+        │   ├── index.ts
+        │   ├── prompt.ts
+        │   └── skills/ # Optional
+        │   └── plugins/ # Optional
         ├── package.json
         └── README.md
 ```
@@ -36,7 +42,7 @@ yarn dev:play
 
 #### Create the docs
 
-- Add the Doc file to the [templates](https://github.com/ephemeraHQ/message-kit/tree/main/packages/docs/pages/templates) folder
+- Add the Doc file to the [`templates`](https://github.com/ephemeraHQ/message-kit/tree/main/packages/docs/pages/templates) folder
 
 #### Update the community file
 
