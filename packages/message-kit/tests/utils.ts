@@ -3,8 +3,6 @@ import { Agent } from "../src/helpers/types";
 import { clearMemory, replaceVariables, agentParse } from "../src/helpers/gpt";
 import { clearInfoCache } from "../src/helpers/resolver";
 import { ContentTypeText } from "@xmtp/content-type-text";
-import { ContentTypeReply } from "@xmtp/content-type-reply";
-import { ContentTypeReaction } from "@xmtp/content-type-reaction";
 import {
   Client as V2Client,
   Conversation as V2Conversation,
@@ -14,7 +12,6 @@ import {
   Client as V3Client,
   Conversation as V3Conversation,
   DecodedMessage as V3DecodedMessage,
-  GroupMember,
 } from "@xmtp/node-sdk";
 
 export function testPrompt(
