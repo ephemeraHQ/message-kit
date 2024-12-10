@@ -27,8 +27,6 @@ jobs:
         run: yarn format
       - name: Check types
         run: yarn typecheck
-      - name: Test parsing
-        run: yarn test:parsing
 
   test:
     runs-on: ubuntu-latest
@@ -45,6 +43,14 @@ jobs:
       - name: Install dependencies
         run: yarn
       - name: Build
-        run: yarn build
+        run: yarn prebuild
       - name: Test parsing
         run: yarn test:parsing
+      - name: Test prompt
+        run: yarn test:prompting
+      - name: Test client
+        run: yarn test:client
+      - name: Test v3
+        run: yarn test:v3
+      - name: Test v2
+        run: yarn test:v2
