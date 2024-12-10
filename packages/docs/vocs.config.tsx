@@ -137,19 +137,19 @@ export default defineConfig({
           text: "Projects",
           link: "/community/projects",
         },
-        {
-          text: "Contribute",
-          link: "/community/contribute",
-        },
-        {
-          text: "Guidelines",
-          link: "/community/guidelines",
-        },
       ],
+    },
+    {
+      text: "Contribute",
+      link: "/contribute",
     },
     {
       text: "Deployment",
       link: "/deployment",
+    },
+    {
+      text: "Guidelines",
+      link: "/guidelines",
     },
     {
       text: "Changelog",

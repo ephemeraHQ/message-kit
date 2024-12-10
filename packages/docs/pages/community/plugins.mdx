@@ -6,8 +6,48 @@ import pluginsData from "../../../../community/plugins.json";
 
 Welcome to the MessageKit plugins library. Here you'll find a collection of pre-built plugins that you can use in your agents.
 
-:::info
-Contribute plugins [here](/community/contribute)
+::::info[Share your plugins with the community]
+:::details[Guidelines]
+
+Plugins are the building blocks of MessageKit agents.
+
+:::steps
+
+#### Test it
+
+Make it work in the playground:
+
+```bash
+message-kit/
+└── templates/
+    └── playground/
+        ├── plugins/ # Optional
+        │   ├── other plugins...
+        │   └── your-plugin.ts
+        ├── skills/ # Optional
+        │   ├── other skills...
+        │   └── your-skill.ts
+        ├── package.json
+        └── README.md
+```
+
+Run it:
+
+```bash
+yarn dev:play
+```
+
+> ⚠️ Feel free to edit the `index.ts` file but don't remove the existing skills.
+
+#### Create the docs
+
+- Add the Doc file to the [plugins](https://github.com/ephemeraHQ/message-kit/tree/main/packages/docs/pages/plugins) folder
+
+#### Update the community file
+
+- Update the [`community/plugins.json`](https://github.com/ephemeraHQ/message-kit/tree/main/community/plugins.json) file to include your new plugin.
+
 :::
+::::
 
 <List items={pluginsData} />

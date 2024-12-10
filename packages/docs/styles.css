@@ -218,6 +218,11 @@
 .dark .vocs_Callout_info {
   background: hsla(0, 0%, 4%, 0.6) !important;
 }
+.vocs_Callout_info .vocs_Paragraph,
+.vocs_Callout_info .vocs_Link,
+.vocs_Callout_info .vocs_ListItem {
+  color: white !important;
+}
 .dark .custom-homepage-tile:hover {
   border: white 1px solid !important;
 }
