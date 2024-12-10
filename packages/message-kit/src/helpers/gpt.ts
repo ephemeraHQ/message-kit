@@ -35,6 +35,9 @@ class ChatMemory {
       this.histories[address] = [];
     }
     this.histories[address].push(entry);
+    if (process.env.MSG_LOG === "true") {
+      console.log("Chat History", this.histories[address]);
+    }
   }
 
   initializeWithSystem(address: string, systemPrompt: string) {

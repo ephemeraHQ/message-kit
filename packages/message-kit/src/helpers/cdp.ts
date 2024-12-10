@@ -197,15 +197,12 @@ export class WalletService {
       },
       assets: ["USDC"],
     });
-    await this.context.sendTo(`You can fund your account here:`, [to]);
-
-    await this.context.requestPayment(
-      amount,
-      "USDC",
-      wallet?.agent_address,
-      [to],
-      onRampURL,
-    );
+    if (!this.context.group) {
+      await this.context.sendTo(`You can fund your account here:`, [to]);
+      await this.context.requestPayment(amount, "USDC", wallet?.agent_address, [
+        to,
+      ]);
+    }
 
     if (this.context.group) {
       await this.context.reply(
@@ -268,19 +265,26 @@ export class WalletService {
   ): Promise<Transfer> {
     let from = await this.getWallet(fromAddress);
     let to = await this.getWallet(toAddress);
-    if (!from || !to) {
-      throw new Error("Wallet not found");
+    let toWallet = to?.agent_address;
+    if (!from) {
+      throw new Error("From not found");
+    }
+    if (!to) {
+      toWallet = toAddress as string;
     }
     try {
+      if (!this.context.group) {
+        this.context.send(`Transferring ${amount} USDC to ${toWallet}`);
+      }
       console.log("Transfer initiated:", {
         fromWallet: from.agent_address,
-        toWallet: to.agent_address,
+        toWallet: toWallet,
         amount,
       });
       const transfer = await from.wallet.createTransfer({
         amount,
         assetId: Coinbase.assets.Usdc,
-        destination: to.agent_address,
+        destination: toWallet as string,
         gasless: true,
       });
       try {

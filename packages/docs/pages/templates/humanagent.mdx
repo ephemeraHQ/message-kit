@@ -1,0 +1,54 @@
+# Human Agent
+
+Create wallets for users and interact with them.
+
+## Structure
+
+```
+humanagent/
+├── src/
+│   └── skills/
+│       ├── waas.ts
+│   └── vibes/
+│       ├── degen.ts
+│   ├── index.ts
+│   └── prompt.ts
+├── package.json
+├── tsconfig.json
+└── .env
+```
+
+- [Waas](/skills/waas): Agent Wallet as a Service
+- [Degen](/vibes/degen): Define the personality of your agent
+
+## Prompt
+
+Here is the prompt that the agent will use to reply to messages.
+
+```tsx [src/prompt.ts]
+// [!include ~/../../templates/humanagent/src/prompt.ts]
+```
+
+## Agent
+
+The process that starts listening to messages and replying to them.
+
+```tsx [src/index.ts]
+// [!include ~/../../templates/humanagent/src/index.ts]
+```
+
+## Variables
+
+Set up these variables in your app
+
+```bash [cmd]
+// [!include ~/../../templates/humanagent/.env.example]
+```
+
+## End result
+
+The end result is a prompt that the model can understand and use to respond to the user.
+
+```md [example_prompt.md]
+// [!include ~/../../templates/humanagent/example_prompt.md]
+```

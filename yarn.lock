@@ -528,7 +528,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@coinbase/coinbase-sdk@npm:*":
+"@coinbase/coinbase-sdk@npm:0.11.2":
   version: 0.11.2
   resolution: "@coinbase/coinbase-sdk@npm:0.11.2"
   dependencies:
@@ -3657,7 +3657,7 @@ __metadata:
   resolution: "@xmtp/message-kit@workspace:packages/message-kit"
   dependencies:
     "@coinbase/cbpay-js": "npm:^2.4.0"
-    "@coinbase/coinbase-sdk": "npm:*"
+    "@coinbase/coinbase-sdk": "npm:0.11.2"
     "@redis/client": "npm:^1.6.0"
     "@rollup/plugin-typescript": "npm:^11.1.6"
     "@types/node": "npm:^20.14.2"

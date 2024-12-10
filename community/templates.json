@@ -14,6 +14,13 @@
     "author": "humanagent"
   },
   {
+    "href": "/templates/humanagent",
+    "title": "Human Agent",
+    "description": "A template for a funding agents.",
+    "icon": "👤",
+    "author": "humanagent"
+  },
+  {
     "href": "/templates/coinbase-agent",
     "title": "Coinbase Agent",
     "description": "A template for a Coinbase features.",
