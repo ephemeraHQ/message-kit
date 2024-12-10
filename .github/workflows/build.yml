@@ -27,6 +27,7 @@ jobs:
         run: yarn format
       - name: Check types
         run: yarn typecheck
+      - name: Test parsing
         run: yarn test:parsing
 
   # test:
