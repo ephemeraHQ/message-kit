@@ -426,3 +426,12 @@ export function extractFrameChain(txLink: string): Network {
   }
   return network;
 }
+
+import { promises as fsPromisesModule } from "fs";
+import * as fsSync from "fs";
+
+export function getFS() {
+  const fs = typeof window === "undefined" ? fsSync : null;
+  const fsPromises = typeof window === "undefined" ? fsPromisesModule : null;
+  return { fs, fsPromises };
+}

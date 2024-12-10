@@ -8,9 +8,10 @@ import {
 import { XMTPContext } from "../lib/xmtp";
 import { keccak256, toHex, toBytes } from "viem";
 import { generateOnRampURL } from "@coinbase/cbpay-js";
-import * as fs from "fs/promises";
-import * as path from "path";
+import path from "path";
+import { getFS } from "./utils";
 
+const { fsPromises } = getFS();
 const appId = process.env.COINBASE_APP_ID;
 const apiKeyName = process.env.COINBASE_API_KEY_NAME;
 const privateKey = process.env.COINBASE_API_KEY_PRIVATE_KEY;
@@ -38,19 +39,20 @@ class LocalStorage {
   }
 
   private async ensureDir() {
-    await fs.mkdir(this.baseDir, { recursive: true });
+    if (!fsPromises) return;
+    await fsPromises.mkdir(this.baseDir, { recursive: true });
   }
 
   async set(key: string, value: string): Promise<void> {
     await this.ensureDir();
     const filePath = path.join(this.baseDir, `${key}.dat`);
-    await fs.writeFile(filePath, value, "utf8");
+    await fsPromises?.writeFile(filePath, value, "utf8");
   }
 
   async get(key: string): Promise<string | null> {
     try {
       const filePath = path.join(this.baseDir, `${key}.dat`);
-      return await fs.readFile(filePath, "utf8");
+      return (await fsPromises?.readFile(filePath, "utf8")) ?? null;
     } catch (error) {
       return null;
     }
@@ -59,7 +61,7 @@ class LocalStorage {
   async del(key: string): Promise<void> {
     try {
       const filePath = path.join(this.baseDir, `${key}.dat`);
-      await fs.unlink(filePath);
+      await fsPromises?.unlink(filePath);
     } catch (error) {
       // Ignore if file doesn't exist
     }

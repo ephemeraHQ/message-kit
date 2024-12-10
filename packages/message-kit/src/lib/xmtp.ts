@@ -36,29 +36,23 @@ import {
   ContentTypeAttachment,
   ContentTypeRemoteAttachment,
   RemoteAttachmentCodec,
-  AttachmentCodec,
   type RemoteAttachment,
   type Attachment,
 } from "@xmtp/content-type-remote-attachment";
-
+import { getFS } from "../helpers/utils";
 import {
   ContentTypeReaction,
   type Reaction,
 } from "@xmtp/content-type-reaction";
 import path from "path";
-
-// Only import fs in Node.js environment
-import { promises as fsPromises } from "fs";
-//@ts-ignore
-const fs = typeof window === "undefined" ? fsPromises : null;
-
 import fetch from "cross-fetch";
 
 const fileHandling = {
   async getCacheCreationDate() {
-    if (!fs) return null;
+    const { fsPromises } = getFS();
+    if (!fsPromises) return null;
     try {
-      const stats = await fs.stat(".data");
+      const stats = await fsPromises.stat(".data");
       return new Date(stats.birthtime);
     } catch (err) {
       console.error("Error getting cache creation date:", err);
@@ -68,9 +62,10 @@ const fileHandling = {
   // hey
 
   async readFile(filePath: string) {
+    const { fs } = getFS();
     if (!fs) return null;
     try {
-      return await fs.readFile(filePath);
+      return await fs.readFileSync(filePath);
     } catch (err) {
       console.error("Error reading file:", err);
       return null;
