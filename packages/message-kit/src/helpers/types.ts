@@ -84,11 +84,18 @@ export interface Frame {
   buttons: { content: string; action: string; target: string }[];
   image: string;
 }
+export interface Vibe {
+  name: string;
+  description: string;
+  tone: string;
+  style: string;
+}
 export interface Agent {
   name: string;
   description: string;
   tag: string;
   skills: Skill[];
+  vibe?: Vibe;
 }
 export interface Skill {
   skill: string;

@@ -9,12 +9,14 @@ import {
 import { systemPrompt } from "./prompt.js";
 import { toss } from "./skills/toss.js";
 import { waas } from "./skills/waas.js";
+import { customVibe } from "./vibes";
 
 export const agent: Agent = {
   name: "Toss Bot",
   tag: "@toss",
   description: "Create a coin toss.",
   skills: [...toss, ...waas],
+  vibe: customVibe,
 };
 
 run(

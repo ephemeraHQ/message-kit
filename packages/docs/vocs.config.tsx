@@ -130,12 +130,16 @@ export default defineConfig({
           link: "/community/templates",
         },
         {
-          text: "Contribute",
-          link: "/community/contribute",
+          text: "Vibes",
+          link: "/community/vibes",
         },
         {
           text: "Projects",
           link: "/community/projects",
+        },
+        {
+          text: "Contribute",
+          link: "/community/contribute",
         },
         {
           text: "Guidelines",
