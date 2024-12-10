@@ -30,34 +30,25 @@ jobs:
       - name: Test parsing
         run: yarn test:parsing
 
-  # test:
-  #   runs-on: warp-ubuntu-latest-x64-16x
-  #   needs: build
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - uses: actions/setup-node@v4
-  #       with:
-  #         node-version-file: ".node-version"
-  #         cache: "yarn"
-  #       env:
-  #         SKIP_YARN_COREPACK_CHECK: "1"
-  #     - name: Enable corepack
-  #       run: corepack enable
-  #     - name: Install dependencies
-  #       run: yarn
-  #     - name: Build message-kit
-  #       run: yarn workspace @xmtp/message-kit build
-  #     - name: Test client
-  #       env:
-  #         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-  #         NODE_ENV: "test"
-  #         # Add any other required environment variables
-  #         COINBASE_APP_ID: ${{ secrets.COINBASE_APP_ID }}
-  #         COINBASE_API_KEY_NAME: ${{ secrets.COINBASE_API_KEY_NAME }}
-  #         COINBASE_API_KEY_PRIVATE_KEY: ${{ secrets.COINBASE_API_KEY_PRIVATE_KEY }}
-  #       run: |
-  #         # Add debug information
-  #         echo "Node version: $(node -v)"
-  #         echo "Yarn version: $(yarn -v)"
-  #         echo "Running tests..."
-  #         yarn test:parsing
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ".node-version"
+          cache: "yarn"
+        env:
+          SKIP_YARN_COREPACK_CHECK: "1"
+      - name: Enable corepack
+        run: corepack enable
+      - name: Install dependencies
+        run: yarn
+      - name: Install docs dependencies
+        run: |
+          cd packages/docs
+          yarn
+      - name: Build
+        run: yarn build
+      - name: Test parsing
+        run: yarn test:parsing
