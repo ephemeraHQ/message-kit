@@ -77,7 +77,7 @@ export class WalletService {
   constructor(context: XMTPContext) {
     this.context = context;
     this.walletStorage = new LocalStorage();
-    this.cdpEncriptionKey = context.group?.id.toLowerCase();
+    this.cdpEncriptionKey = context.getConversationKey();
     this.enabled = Boolean(coinbase);
   }
 
