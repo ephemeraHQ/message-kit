@@ -1,10 +1,4 @@
-import {
-  run,
-  agentReply,
-  replaceVariables,
-  XMTPContext,
-  Agent,
-} from "@xmtp/message-kit";
+import { run, Agent } from "@xmtp/message-kit";
 import { systemPrompt } from "./prompt.js";
 import { checkDomain } from "./skills/check.js";
 import { cool } from "./skills/cool.js";
@@ -19,15 +13,7 @@ export const agent: Agent = {
   tag: "@bot",
   description: "A ens agent with a lot of skills.",
   skills: [checkDomain, cool, info, register, renew, reset, pay],
-  onMessage: async (context: XMTPContext) => {
-    const {
-      message: { sender },
-      agent,
-    } = context;
-
-    let prompt = await replaceVariables(systemPrompt, sender.address, agent);
-    await agentReply(context, prompt);
-  },
+  systemPrompt: systemPrompt,
 };
 
 run(agent);

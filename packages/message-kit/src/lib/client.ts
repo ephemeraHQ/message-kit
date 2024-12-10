@@ -1,11 +1,11 @@
+import dotenv from "dotenv";
+dotenv.config();
 import { ReplyCodec } from "@xmtp/content-type-reply";
 import { Client as V2Client } from "@xmtp/xmtp-js";
 import { ReactionCodec } from "@xmtp/content-type-reaction";
 import { Client, ClientOptions, XmtpEnv } from "@xmtp/node-sdk";
 import { getFS, logInitMessage } from "../helpers/utils";
 import { TextCodec } from "@xmtp/content-type-text";
-import dotenv from "dotenv";
-dotenv.config();
 import {
   AttachmentCodec,
   RemoteAttachmentCodec,
@@ -14,7 +14,7 @@ import { createWalletClient, http, toBytes, toHex } from "viem";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { mainnet } from "viem/chains";
 import { GrpcApiClient } from "@xmtp/grpc-api-client";
-import { RunConfig } from "../helpers/types";
+import { AgentConfig, Agent } from "../helpers/types";
 import { getRandomValues } from "crypto";
 import path from "path";
 
@@ -28,11 +28,12 @@ interface UserReturnType {
 export type User = ReturnType<typeof createUser>;
 
 export async function xmtpClient(
-  runConfig?: RunConfig,
+  agentConfig?: AgentConfig,
+  agent?: Agent,
 ): Promise<{ client: Client; v2client: V2Client }> {
   // Check if both clientConfig and privateKey are empty
   const testKey = await setupTestEncryptionKey();
-  const { key, isRandom } = setupPrivateKey(runConfig?.privateKey);
+  const { key, isRandom } = setupPrivateKey(agentConfig?.privateKey);
   const user = createUser(key);
 
   let env = process.env.XMTP_ENV as XmtpEnv;
@@ -50,10 +51,10 @@ export async function xmtpClient(
     ],
   };
   // Store the GPT model in process.env for global access
-  process.env.GPT_MODEL = runConfig?.gptModel || "gpt-4o";
+  process.env.GPT_MODEL = agentConfig?.gptModel || "gpt-4o";
 
   // Merge the default configuration with the provided config. Repeated fields in clientConfig will override the default values
-  const finalConfig = { ...defaultConfig, ...runConfig?.client };
+  const finalConfig = { ...defaultConfig, ...agentConfig?.client };
   //v2
   const account2 = privateKeyToAccount(key as `0x${string}`);
   const wallet2 = createWalletClient({
@@ -69,7 +70,7 @@ export async function xmtpClient(
   });
   const client = await Client.create(createSigner(user), testKey, finalConfig);
 
-  logInitMessage(client, runConfig, isRandom ? key : undefined);
+  logInitMessage(client, agent?.config, isRandom ? key : undefined, agent);
 
   return { client, v2client };
 }

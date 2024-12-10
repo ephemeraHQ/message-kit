@@ -2,10 +2,10 @@ import { Agent, Skill } from "../helpers/types.js";
 import { XMTPContext } from "./xmtp.js";
 import path from "path";
 
-export function findSkill(text: string, skills: Skill[]): Skill | undefined {
+export function findSkill(text: string, skills: Skill[][]): Skill | undefined {
   const trigger = text.split(" ")[0].toLowerCase();
 
-  const handler = skills.find((skill) => {
+  const handler = skills.flat().find((skill) => {
     return (
       "/" + skill.skill?.replace("/", "").split(" ")[0].toLowerCase() ===
       trigger
@@ -44,7 +44,7 @@ export async function executeSkill(
   context: XMTPContext,
 ) {
   try {
-    let skillAction = findSkill(text, agent.skills.flat());
+    let skillAction = findSkill(text, agent.skills);
     const extractedValues = skillAction
       ? parseSkill(text, skillAction)
       : undefined;

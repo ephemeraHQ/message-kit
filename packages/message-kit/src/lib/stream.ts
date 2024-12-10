@@ -10,9 +10,11 @@ import { findSkill } from "./skills.js";
 import { Conversation } from "@xmtp/node-sdk";
 import { Conversation as V2Conversation } from "@xmtp/xmtp-js";
 import { awaitedHandlers } from "./xmtp.js";
+import { agentReply } from "../helpers/gpt.js";
+import { replaceVariables } from "../helpers/gpt.js";
 
 export async function run(agent: Agent) {
-  const { client, v2client } = await xmtpClient(agent.config);
+  const { client, v2client } = await xmtpClient(agent.config, agent);
 
   const { inboxId: address } = client;
   const { address: addressV2 } = v2client;
@@ -44,7 +46,7 @@ export async function run(agent: Agent) {
           conversation,
           message,
           { client, v2client },
-          agent.config ?? {},
+          agent,
           version,
         );
         if (!context) {
@@ -79,13 +81,33 @@ export async function run(agent: Agent) {
         // Check if the message content triggers a skill
         const { isMessageValid, customHandler } = filterMessage(context);
         if (isMessageValid && customHandler) await customHandler(context);
-        else if (isMessageValid) await agent?.onMessage?.(context);
+        else if (isMessageValid && agent?.onMessage)
+          await agent?.onMessage?.(context);
+        else if (isMessageValid && !agent?.onMessage)
+          await onMessage(context, agent);
       } catch (e) {
         console.log(`error`, e);
       }
     }
   };
 
+  const onMessage = async (context: XMTPContext, agent: Agent) => {
+    /*Default onMessage function, replaces the prompt file*/
+    const {
+      message: { sender },
+    } = context;
+
+    if (!agent.systemPrompt) {
+      throw new Error("System prompt is not defined");
+    }
+
+    let prompt = await replaceVariables(
+      agent.systemPrompt,
+      sender.address,
+      agent,
+    );
+    await agentReply(context, prompt);
+  };
   const filterMessage = (
     context: XMTPContext,
   ): {
@@ -107,7 +129,7 @@ export async function run(agent: Agent) {
     } = context;
 
     let foundSkill = text?.startsWith("/")
-      ? findSkill(text, agent.skills.flat())
+      ? findSkill(text, agent.skills)
       : undefined;
 
     const { inboxId: senderInboxId } = client;

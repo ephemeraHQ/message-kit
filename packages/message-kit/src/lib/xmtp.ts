@@ -17,7 +17,7 @@ import { ContentTypeText } from "@xmtp/content-type-text";
 import { WalletService } from "../helpers/cdp.js";
 import { logMessage, extractFrameChain } from "../helpers/utils.js";
 import {
-  RunConfig,
+  AgentConfig,
   MessageAbstracted,
   GroupAbstracted,
   Agent,
@@ -90,7 +90,7 @@ export class XMTPContext {
   v2client!: V2Client;
   members?: AbstractedMember[];
   admins?: string[];
-  runConfig?: RunConfig;
+  agentConfig?: AgentConfig;
   superAdmins?: string[];
   agent: Agent = {
     name: "",
@@ -135,7 +135,7 @@ export class XMTPContext {
     conversation: Conversation | V2Conversation,
     message: DecodedMessage | DecodedMessageV2 | null,
     { client, v2client }: { client: V3Client; v2client: V2Client },
-    runConfig: RunConfig,
+    agent: Agent,
     version?: "v2" | "v3",
   ): Promise<XMTPContext | null> {
     try {
@@ -177,7 +177,8 @@ export class XMTPContext {
         }
 
         //Config
-        context.agent = runConfig?.agent ?? (await loadSkillsFile());
+        context.agent = agent;
+        context.agentConfig = agent.config;
 
         context.getMessageById =
           client.conversations?.getMessageById?.bind(client.conversations) ||
@@ -197,7 +198,7 @@ export class XMTPContext {
         if (message?.contentType?.sameAs(ContentTypeText)) {
           const skillAction = findSkill(
             content?.content,
-            context?.agent?.skills.flat(),
+            context?.agent?.skills,
           );
           const extractedValues = skillAction
             ? parseSkill(content?.content, skillAction)

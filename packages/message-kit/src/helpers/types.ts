@@ -38,7 +38,7 @@ export type SkillResponse = {
   data?: any;
 };
 
-export type RunConfig = {
+export type AgentConfig = {
   // client options from XMTP client
   client?: ClientOptions;
   // private key to be used for the client, if not, default from env
@@ -97,7 +97,8 @@ export interface Agent {
   skills: Skill[][];
   vibe?: Vibe;
   onMessage?: Handler;
-  config?: RunConfig;
+  config?: AgentConfig;
+  systemPrompt?: string;
 }
 export interface Skill {
   skill: string;

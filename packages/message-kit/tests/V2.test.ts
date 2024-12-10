@@ -14,6 +14,7 @@ describe("XMTPContext Message Tests", () => {
     mockV3Message,
     mockV2Client,
     mockV3Client,
+    mockAgent,
   } = getMocks();
 
   beforeEach(() => {
@@ -25,7 +26,7 @@ describe("XMTPContext Message Tests", () => {
       mockV2Conversation,
       mockV2Message,
       { client: mockV3Client, v2client: mockV2Client },
-      {},
+      mockAgent,
       "v2",
     );
 
@@ -43,7 +44,7 @@ describe("XMTPContext Message Tests", () => {
       mockV2Conversation,
       mockV2Message,
       { client: mockV3Client, v2client: mockV2Client },
-      {},
+      mockAgent,
       "v2",
     );
 
@@ -66,7 +67,7 @@ describe("XMTPContext Message Tests", () => {
       mockV2Conversation,
       mockV2Message,
       { client: mockV3Client, v2client: mockV2Client },
-      {},
+      mockAgent,
       "v2",
     );
 
@@ -90,7 +91,7 @@ describe("XMTPContext Message Tests", () => {
       mockV2Conversation,
       mockV2Message,
       { client: mockV3Client, v2client: mockV2Client },
-      {},
+      mockAgent,
       "v2",
     );
 

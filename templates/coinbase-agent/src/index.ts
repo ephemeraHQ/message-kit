@@ -15,6 +15,7 @@ export const agent: Agent = {
   tag: "@base",
   description: "Swap bot for base.",
   skills: [swapSkill, mintSkill, dripSkill, paySkill],
+  systemPrompt: systemPrompt,
   onMessage: async (context: XMTPContext) => {
     const {
       message: { sender },

@@ -4,13 +4,12 @@ import {
   replaceVariables,
   XMTPContext,
   Agent,
-  xmtpClient,
 } from "@xmtp/message-kit";
-import fs from "fs";
 import { systemPrompt } from "./prompt.js";
 import { web } from "./skills/web.js";
 import { cryptoPrice } from "./skills/cryptoPrice.js";
 import { search } from "./skills/search.js";
+
 export const agent: Agent = {
   name: "Playground Agent",
   tag: "@bot",
@@ -18,16 +17,11 @@ export const agent: Agent = {
   skills: [web, cryptoPrice, search],
   onMessage: async (context: XMTPContext) => {
     const {
-      message: {
-        sender,
-        content: { text },
-      },
+      message: { sender },
       agent,
     } = context;
 
     let prompt = await replaceVariables(systemPrompt, sender.address, agent);
-    // This is only used for to update the docs.
-    fs.writeFileSync("example_prompt.md", prompt);
     await agentReply(context, prompt);
   },
   config: {

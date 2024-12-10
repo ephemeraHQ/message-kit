@@ -134,7 +134,7 @@ export async function replaceVariables(
   }
   const { fs } = getFS();
   if (fs) {
-    fs.writeFileSync("example_prompt.md", prompt);
+    // fs.writeFileSync("example_prompt.md", prompt);
   }
   return prompt;
 }

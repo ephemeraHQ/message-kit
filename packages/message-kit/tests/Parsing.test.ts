@@ -23,7 +23,8 @@ describe("Parsing tests", () => {
   ])(
     "Compare extracted values from skill: %s",
     (input, expectedSkill, expectedParams) => {
-      const skillAction = findSkill(input, agent.skills);
+      // @ts-ignore
+      const skillAction = findSkill(input, agent?.skills);
       if (skillAction) {
         const extractedValues = parseSkill(input, skillAction);
         console.log(extractedValues);

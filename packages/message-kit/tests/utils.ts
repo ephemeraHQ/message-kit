@@ -130,6 +130,12 @@ export function getMocks() {
       client: mockV3Client as any,
     },
   ]);
+  const mockAgent = {
+    name: "test-agent",
+    description: "test-agent",
+    tag: "test-agent",
+    skills: [],
+  } as Agent;
   return {
     mockV2Conversation,
     mockV2Message,
@@ -137,5 +143,6 @@ export function getMocks() {
     mockV3Message,
     mockV2Client,
     mockV3Client,
+    mockAgent,
   };
 }

@@ -4,8 +4,15 @@ import { ContentTypeText } from "@xmtp/content-type-text";
 import { getMocks } from "./utils";
 
 describe("XMTPContext Message Tests", () => {
-  let { mockV3Conversation, mockV3Message, mockV2Client, mockV3Client } =
-    getMocks();
+  const {
+    mockV2Conversation,
+    mockV2Message,
+    mockV3Conversation,
+    mockV3Message,
+    mockV2Client,
+    mockV3Client,
+    mockAgent,
+  } = getMocks();
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -16,7 +23,7 @@ describe("XMTPContext Message Tests", () => {
       mockV3Conversation,
       mockV3Message,
       { client: mockV3Client, v2client: mockV2Client },
-      {},
+      mockAgent,
       "v3",
     );
 
@@ -31,6 +38,7 @@ describe("XMTPContext Message Tests", () => {
     // Simulate receiving the message by all members
     const members = await mockV3Conversation.members();
     for (const member of members) {
+      // @ts-ignore
       const messages = await member?.client?.messages(); // Fetch messages for each member
       console.log(messages);
       expect(messages).toContain("Group message");

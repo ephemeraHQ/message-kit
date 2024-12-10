@@ -20,7 +20,7 @@ agent/
 └── .env
 ```
 
-## Runner
+## Agent
 
 This is the main function that runs the listener.
 
@@ -68,7 +68,7 @@ const {
   v2client,
   members,
   admins,
-  runConfig,
+  agentConfig,
   superAdmins,
 } = context;
 ```
@@ -84,7 +84,7 @@ const {
 - `members`: the members of the group
 - `admins`: the admins of the group
 - `superAdmins`: the super admins of the group
-- `runConfig`: the config of the Runner
+- `agentConfig`: the optional parameters of the agent
 - `sender`: the sender of the message
 
 ## Clients
