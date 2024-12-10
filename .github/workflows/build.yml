@@ -43,7 +43,7 @@ jobs:
       - name: Install dependencies
         run: yarn
       - name: Build
-        run: yarn build
+        run: yarn build:message-kit
       - name: Test parsing
         run: yarn test:parsing
       - name: Test client

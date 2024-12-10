@@ -9,8 +9,10 @@
     "shared/*"
   ],
   "scripts": {
-    "prebuild": "turbo run build --filter=./packages/message-kit --force",
-    "build": "yarn prebuild && turbo run build --filter='./packages/*' --filter='./templates/*'",
+    "build": "yarn build:message-kit && yarn build:packages && yarn build:templates",
+    "build:message-kit": "turbo run build --filter=./packages/message-kit --force",
+    "build:packages": "turbo run build --filter='./packages/*' --filter='!./packages/message-kit'",
+    "build:templates": "turbo run build --filter='./templates/*'",
     "bump": "node scripts/update-version.js -t patch",
     "changeset": "yarn copy && changeset add --type patch",
     "clean": "turbo run clean && rm -rf node_modules && rm -rf .turbo && rm -rf packages/message-kit/dist && rm -rf packages/message-kit/.turbo && rm -rf packages/docs/dist && yarn cache clean",
