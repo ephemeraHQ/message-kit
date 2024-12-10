@@ -28,6 +28,8 @@
     "test:frames": "cd packages/message-kit/tests && yarn test:frames",
     "test:parsing": "cd packages/message-kit/tests && yarn test:parsing",
     "test:prompting": "cd packages/message-kit/tests && yarn test:prompting",
+    "test:v2": "cd packages/message-kit/tests && yarn test:v2",
+    "test:v3": "cd packages/message-kit/tests && yarn test:v3",
     "typecheck": "FORCE_COLOR=1 turbo run typecheck"
   },
   "resolutions": {
