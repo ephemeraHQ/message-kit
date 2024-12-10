@@ -23,7 +23,12 @@ export const waas: Skill[] = [
     skill: "transfer",
     description: "Transfer USDC to another user.",
     handler: handleWallet,
-    examples: ["/transfer @username 5", "/transfer 0x123... 5"],
+    examples: [
+      "/transfer @username 5.1",
+      "/transfer @username 2",
+      "/transfer 0x123... 10",
+      "/transfer vitalik.eth 0.01",
+    ],
     params: {
       recipient: {
         type: "string",
@@ -40,6 +45,28 @@ export const waas: Skill[] = [
     description: "Check your wallet balance.",
     handler: handleWallet,
     examples: ["/balance"],
+  },
+  {
+    skill: "swap",
+    description: "Swap between tokens (e.g., ETH to USDC).",
+    handler: handleWallet,
+    examples: ["/swap 1 eth usdc", "/swap 100 usdc eth"],
+    params: {
+      amount: {
+        type: "number",
+        default: "",
+      },
+      fromToken: {
+        type: "string",
+        values: ["eth", "usdc"],
+        default: "",
+      },
+      toToken: {
+        type: "string",
+        values: ["eth", "usdc"],
+        default: "",
+      },
+    },
   },
 ];
 
@@ -71,11 +98,9 @@ async function handleWallet(context: XMTPContext) {
       const { recipient, amount: transferAmount } = params;
       let recipientAddress = recipient;
 
-      if (recipient.startsWith("@")) {
-        const userInfo = await context.getUserInfo(recipient.substring(1));
-        recipientAddress = userInfo?.address;
-      }
-
+      const userInfo = await context.getUserInfo(recipient);
+      recipientAddress = userInfo?.address;
+      console.log("recipientAddress", userInfo);
       await walletService.transfer(
         sender.address,
         recipientAddress,
@@ -86,6 +111,14 @@ async function handleWallet(context: XMTPContext) {
     case "balance":
       const balance = await walletService.checkBalance(sender.address);
       await context.reply(`Your current balance is ${balance} USDC`);
+      break;
+
+    case "swap":
+      const { amount: swapAmount, fromToken, toToken } = params;
+      await walletService.swap(sender.address, swapAmount, fromToken, toToken);
+      await context.reply(
+        `Successfully swapped ${swapAmount} ${fromToken.toUpperCase()} to ${toToken.toUpperCase()}`,
+      );
       break;
   }
 }
