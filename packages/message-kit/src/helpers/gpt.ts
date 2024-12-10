@@ -86,8 +86,6 @@ export const PROMPT_RULES = `# Rules
 - Check that you are not missing a command
 - Focus only on helping users with operations detailed below.
 - Date: ${new Date().toUTCString()}
-- When mentioning any action related to available skills, you MUST trigger the corresponding command in a new line
-- If you suggest an action that has a command, you must trigger that command
 `;
 
 // [!region replaceVariables]
@@ -112,7 +110,19 @@ export async function replaceVariables(
   if (agent?.vibe) {
     let params = agent.vibe;
     // Construct a more detailed personality description from the vibe object
-    vibe = `You are ${params.vibe} agent called {agent_name} that lives inside a web3 messaging app called Converse.\n\nVibe: ${params.description}\nTone: ${params.tone}\nStyle: ${params.style}`;
+    vibe = `You are ${params.vibe} agent called {agent_name} that lives inside a web3 messaging app called Converse.\n\n`;
+    if (params.description) {
+      vibe += `Vibe: ${params.description}`;
+    }
+    if (params.tone) {
+      vibe += `Tone: ${params.tone}`;
+    }
+    if (params.style) {
+      vibe += `Style: ${params.style}`;
+    }
+    if (params.quirks && params.quirks.length > 0) {
+      vibe += `Quirks: ${params.quirks.join(", ")}`;
+    }
   }
 
   prompt = prompt.replace("{vibe}", vibe);

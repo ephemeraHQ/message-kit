@@ -95,6 +95,7 @@ export interface Vibe {
   description: string;
   tone: string;
   style: string;
+  quirks?: string[];
 }
 export type SkillHandler = (
   context: XMTPContext,

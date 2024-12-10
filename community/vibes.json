@@ -7,11 +7,25 @@
     "author": "gpt4o"
   },
   {
+    "href": "/vibes/degen",
+    "title": "Degen",
+    "description": "A crypto-native character.",
+    "icon": "🎩",
+    "author": "humanagent"
+  },
+  {
     "href": "/vibes/professional",
     "title": "Professional",
     "description": "A formal and business-like demeanor.",
     "icon": "💼",
     "author": "gpt4o"
+  },
+  {
+    "href": "/vibes/kuzco",
+    "title": "Kuzco Llama",
+    "description": "A fun and light-hearted character.",
+    "icon": "🦙",
+    "author": "ens"
   },
   {
     "href": "/vibes/playful",

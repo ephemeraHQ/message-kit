@@ -198,6 +198,7 @@ export class WalletService {
       assets: ["USDC"],
     });
     await this.context.sendTo(`You can fund your account here:`, [to]);
+
     await this.context.requestPayment(
       amount,
       "USDC",
@@ -206,11 +207,11 @@ export class WalletService {
       onRampURL,
     );
 
-    //await this.context.sendTo(`Or you can Onramp here: ${onRampURL}`, [to]);
-
-    await this.context.reply(
-      `You need to fund your account. Check your DMs https://converse.xyz/${this.context.client.accountAddress}`,
-    );
+    if (this.context.group) {
+      await this.context.reply(
+        `You need to fund your account. Check your DMs https://converse.xyz/${this.context.client.accountAddress}`,
+      );
+    }
     return;
   }
 
