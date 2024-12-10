@@ -1,6 +1,6 @@
 import { describe, test, expect } from "vitest";
 import { parseSkill, findSkill } from "../src/lib/skills";
-import { agent } from "../../../templates/ens/dist/index.js";
+import { agent } from "../../../templates/ens/src/index.js";
 import { fail } from "assert";
 
 describe("Parsing tests", () => {

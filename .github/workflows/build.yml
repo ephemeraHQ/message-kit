@@ -46,4 +46,14 @@ jobs:
       - name: Test client
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: yarn test:parsing
+          NODE_ENV: "test"
+          # Add any other required environment variables
+          COINBASE_APP_ID: ${{ secrets.COINBASE_APP_ID }}
+          COINBASE_API_KEY_NAME: ${{ secrets.COINBASE_API_KEY_NAME }}
+          COINBASE_API_KEY_PRIVATE_KEY: ${{ secrets.COINBASE_API_KEY_PRIVATE_KEY }}
+        run: |
+          # Add debug information
+          echo "Node version: $(node -v)"
+          echo "Yarn version: $(yarn -v)"
+          echo "Running tests..."
+          yarn test:parsing --verbose
