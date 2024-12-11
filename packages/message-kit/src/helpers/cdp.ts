@@ -73,9 +73,13 @@ export class WalletService {
   private walletStorage: LocalStorage;
   private cdpEncriptionKey: string;
   private enabled: boolean;
+  private isGroup: boolean;
+  private senderAddress: string;
 
   constructor(context: XMTPContext) {
     this.context = context;
+    this.isGroup = context.group !== undefined;
+    this.senderAddress = context.message.sender.address;
     this.walletStorage = new LocalStorage();
     this.cdpEncriptionKey = context.getConversationKey();
     this.enabled = Boolean(coinbase);
@@ -133,7 +137,7 @@ export class WalletService {
       const walletInfo = {
         data,
         agent_address: address.getId(),
-        address: this.context.message.sender.address,
+        address: this.senderAddress,
         key,
       };
 
@@ -142,11 +146,12 @@ export class WalletService {
         this.encrypt(walletInfo),
       );
 
-      let importedWallet = await Wallet.import(data);
+      ///let importedWallet =
+      await Wallet.import(data);
       // return {
       //   wallet: importedWallet,
       //   agent_address: address.getId(),
-      //   address: this.context.message.sender.address,
+      //   address: this.senderAddress,
       //   key: key,
       // };
       return true;
@@ -179,12 +184,26 @@ export class WalletService {
     }
   }
 
-  async requestFunds(amount: number): Promise<void> {
-    let to = this.context.message.sender.address;
-    let wallet = await this.getWallet(to);
-    if (!wallet) {
-      throw new Error("Wallet not found");
+  private async checkWalletExists(
+    address: string,
+  ): Promise<WalletServiceData | undefined> {
+    const walletData = await this.getWallet(address);
+    if (!walletData) {
+      if (!this.isGroup) {
+        await this.context.reply(
+          "You don't have an agent wallet yet. Would you like to create one?",
+        );
+      }
+      return undefined;
     }
+    return walletData;
+  }
+
+  async requestFunds(amount: number): Promise<void> {
+    let to = this.senderAddress;
+    let wallet = await this.checkWalletExists(to);
+    if (!wallet) return;
+
     if (!appId) {
       throw new Error("COINBASE_APP_ID is not set");
     }
@@ -193,18 +212,18 @@ export class WalletService {
       appId: process.env.COINBASE_APP_ID,
       presetCryptoAmount: amount,
       addresses: {
-        [wallet.agent_address]: ["base"],
+        [wallet?.agent_address as string]: ["base"],
       },
       assets: ["USDC"],
     });
-    if (!this.context.group) {
+    if (!this.isGroup) {
       await this.context.sendTo(`You can fund your account here:`, [to]);
       await this.context.requestPayment(amount, "USDC", wallet?.agent_address, [
         to,
       ]);
     }
 
-    if (this.context.group) {
+    if (this.isGroup) {
       await this.context.reply(
         `You need to fund your account. Check your DMs https://converse.xyz/${this.context.client.accountAddress}`,
       );
@@ -212,16 +231,16 @@ export class WalletService {
     return;
   }
 
-  async withdrawFunds(amount?: number): Promise<Transfer> {
-    let to = this.context.message.sender.address;
-    let walletData = await this.getWallet(to);
-    if (!walletData) {
-      throw new Error("Wallet not found");
-    }
+  async withdrawFunds(amount?: number): Promise<Transfer | undefined> {
+    let to = this.senderAddress;
+    let walletData = await this.checkWalletExists(to);
+    if (!walletData) return undefined;
+
     const balance = await walletData.wallet.getBalance(Coinbase.assets.Usdc);
     if (Number(balance) === 0) {
       throw new Error("Insufficient balance");
     }
+
     const transfer = await walletData.wallet.createTransfer({
       amount: amount || balance,
       assetId: Coinbase.assets.Usdc,
@@ -247,10 +266,9 @@ export class WalletService {
   }
 
   async checkBalance(key: string): Promise<number> {
-    let walletData = await this.getWallet(key);
-    if (!walletData) {
-      throw new Error("Wallet not found for balance check");
-    }
+    let walletData = await this.checkWalletExists(key);
+    if (!walletData) return 0;
+
     let balance = await walletData.wallet.getBalance(Coinbase.assets.Usdc);
     console.log(
       `Wallet balance for: ${walletData.agent_address} is ${balance}`,
@@ -262,18 +280,14 @@ export class WalletService {
     fromAddress: string,
     toAddress: string,
     amount: number,
-  ): Promise<Transfer> {
-    let from = await this.getWallet(fromAddress);
+  ): Promise<Transfer | undefined> {
+    let from = await this.checkWalletExists(fromAddress);
+    if (!from) return undefined;
+
     let to = await this.getWallet(toAddress);
-    let toWallet = to?.agent_address;
-    if (!from) {
-      throw new Error("From not found");
-    }
-    if (!to) {
-      toWallet = toAddress as string;
-    }
+    let toWallet = to?.agent_address ?? toAddress;
     try {
-      if (!this.context.group) {
+      if (!this.isGroup) {
         this.context.send(`Transferring ${amount} USDC to ${toWallet}`);
       }
       console.log("Transfer initiated:", {
