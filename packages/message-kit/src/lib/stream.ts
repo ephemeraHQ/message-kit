@@ -154,8 +154,8 @@ export async function run(agent: Agent) {
     //Reserved
     if (context.message.content.text?.startsWith("/reset")) {
       context.clearMemory(sender?.address);
-      context.clearCache(sender?.address);
-      context.send("Memory and cache cleared");
+      //context.clearCache(sender?.address);
+      context.send("Memory cleared");
       return { isMessageValid: false, customHandler: undefined };
     }
 
