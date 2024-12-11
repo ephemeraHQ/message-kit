@@ -32,16 +32,34 @@ The agent is the core component that listens for messages and responds. Follow t
 You can also integrate other agents in your project.
 
 ```tsx [src/index.ts]
-// Connect to a third-party API
-try {
-  const response = await axios.get("https://api.example.com/data");
-  const apiData = response.data;
-  //Return the agent framework with the response
-  await context.send(response.data);
-} catch (error) {
-  console.error("Error fetching data from API:", error);
-  await context.send("An error occurred while fetching data from the API.");
-}
+onMessage: async (context: XMTPContext) => {
+  const {
+    message: {
+      sender,
+      content: { text },
+    },
+    agent,
+  } = context;
+
+  // Connect to a third-party API
+  try {
+    const response = await axios.get("https://api.example.com/data", {
+      headers: {
+        Authorization: `Bearer ${process.env.API_KEY}`,
+      },
+      params: {
+        address: sender.address,
+        text,
+      },
+    });
+    const apiData = response.data;
+    //Return the agent framework with the response
+    await context.send(response.data);
+  } catch (error) {
+    console.error("Error fetching data from API:", error);
+    await context.send("An error occurred while fetching data from the API.");
+  }
+};
 ```
 
 ## Prompt
