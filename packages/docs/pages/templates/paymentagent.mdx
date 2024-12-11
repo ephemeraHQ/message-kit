@@ -20,6 +20,16 @@ paymentagent/
 └── .env
 ```
 
+## Agent
+
+The process that starts listening to messages and replying to them.
+
+```tsx [src/index.ts]
+// [!include ~/../../templates/paymentagent/src/index.ts]
+```
+
+## Skills
+
 - [Waas](/skills/waas): Agent Wallet as a Service
 - [Degen](/vibes/degen): Define the personality of your agent
 
@@ -29,14 +39,6 @@ Here is the prompt that the agent will use to reply to messages.
 
 ```tsx [src/prompt.ts]
 // [!include ~/../../templates/paymentagent/src/prompt.ts]
-```
-
-## Agent
-
-The process that starts listening to messages and replying to them.
-
-```tsx [src/index.ts]
-// [!include ~/../../templates/paymentagent/src/index.ts]
 ```
 
 ## Variables

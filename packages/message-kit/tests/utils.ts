@@ -1,8 +1,10 @@
 import { test, expect, vi } from "vitest";
 import { Agent } from "../src/helpers/types";
-import { chatMemory, replaceVariables, agentParse } from "../src/plugins/gpt";
-import { clearInfoCache } from "../src/plugins/resolver";
+import { chatMemory, parsePrompt } from "../src/plugins/gpt";
+import { userInfoCache } from "../src/plugins/resolver";
 import { ContentTypeText } from "@xmtp/content-type-text";
+import { getUserInfo } from "../src/plugins/resolver";
+import { textGeneration } from "../src/plugins/gpt";
 import {
   Client as V2Client,
   Conversation as V2Conversation,
@@ -21,11 +23,11 @@ export function testPrompt(
   sender: { address: string; converseUsername: string },
 ) {
   chatMemory.clear();
-  clearInfoCache();
+  userInfoCache.clear();
   test.each(testCases)(
     "should handle %s correctly",
     async (userPrompt, expectedPatterns) => {
-      let prompt = await replaceVariables(systemPrompt, sender.address, agent);
+      let prompt = await parsePrompt(systemPrompt, sender.address, agent);
       const reply = await agentParse(
         userPrompt as string,
         sender.address,
@@ -52,6 +54,26 @@ export function testPrompt(
       expect(matches).toBe(true);
     },
   );
+}
+export async function agentParse(
+  key: string,
+  prompt: string,
+  senderAddress: string,
+  systemPrompt: string,
+) {
+  try {
+    let userPrompt = prompt;
+    const userInfo = await getUserInfo(senderAddress);
+    if (!userInfo) {
+      console.log("User info not found");
+      return;
+    }
+    const { reply } = await textGeneration(key, userPrompt, systemPrompt);
+    return reply;
+  } catch (error) {
+    console.error("Error during OpenAI call:", error);
+    throw error;
+  }
 }
 
 export function getMocks() {

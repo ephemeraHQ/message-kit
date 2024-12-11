@@ -11,7 +11,7 @@ import { Conversation } from "@xmtp/node-sdk";
 import { Conversation as V2Conversation } from "@xmtp/xmtp-js";
 import { awaitedHandlers } from "./xmtp.js";
 import { agentReply, chatMemory } from "../plugins/gpt.js";
-import { replaceVariables } from "../plugins/gpt.js";
+import { parsePrompt } from "../plugins/gpt.js";
 
 // Add at the top of the file
 let hasInitialized = false;
@@ -124,11 +124,7 @@ export async function run(agent: Agent) {
       throw new Error("System prompt is not defined");
     }
 
-    let prompt = await replaceVariables(
-      agent.systemPrompt,
-      sender.address,
-      agent,
-    );
+    let prompt = await parsePrompt(agent.systemPrompt, sender.address, agent);
     await agentReply(context, prompt);
   };
   const filterMessage = (

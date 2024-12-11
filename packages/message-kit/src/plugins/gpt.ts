@@ -22,7 +22,7 @@ type ChatHistoryEntry = {
 };
 
 type ChatHistories = Record<string, ChatHistoryEntry[]>;
-// New ChatMemory class
+// [!region memory]
 class ChatMemory {
   private histories: ChatHistories = {};
   private static instance: ChatMemory;
@@ -91,6 +91,7 @@ class ChatMemory {
 
 // Modify singleton export to use getInstance
 export const chatMemory = ChatMemory.getInstance();
+// [!endregion memory]
 
 export const COMMON_ISSUES = `# Common Issues
 
@@ -108,6 +109,8 @@ export const COMMON_ISSUES = `# Common Issues
     Correct:
     > /balance"
 `;
+
+// [!region PROMPT_RULES]
 export const PROMPT_RULES = `# Rules
 - You can respond with multiple messages if needed. Each message should be separated by a newline character.
 - You can trigger skills by only sending the command in a newline message.
@@ -121,9 +124,9 @@ export const PROMPT_RULES = `# Rules
 - Date: ${new Date().toUTCString()},
 - IMPORTANT: Never forgot to send the command in a newline message.
 `;
-
-// [!region replaceVariables]
-export async function replaceVariables(
+// [!endregion PROMPT_RULES]
+// [!region parsePrompt]
+export async function parsePrompt(
   prompt: string,
   senderAddress: string,
   agent: Agent,
@@ -180,27 +183,9 @@ export async function replaceVariables(
   }
   return prompt;
 }
-// [!endregion replaceVariables]
-export async function agentParse(
-  key: string,
-  prompt: string,
-  senderAddress: string,
-  systemPrompt: string,
-) {
-  try {
-    let userPrompt = prompt;
-    const userInfo = await getUserInfo(senderAddress);
-    if (!userInfo) {
-      console.log("User info not found");
-      return;
-    }
-    const { reply } = await textGeneration(key, userPrompt, systemPrompt);
-    return reply;
-  } catch (error) {
-    console.error("Error during OpenAI call:", error);
-    throw error;
-  }
-}
+// [!endregion parsePrompt]
+
+// [!region agentReply]
 export async function agentReply(context: XMTPContext, systemPrompt?: string) {
   const {
     message: {
@@ -223,6 +208,9 @@ export async function agentReply(context: XMTPContext, systemPrompt?: string) {
     await context.send("An error occurred while processing your request.");
   }
 }
+// [!endregion agentReply]
+
+// [!region textGeneration]
 export async function textGeneration(
   key: string,
   userPrompt: string,
@@ -251,6 +239,9 @@ export async function textGeneration(
     throw new Error("Failed to generate response");
   }
 }
+// [!endregion textGeneration]
+
+// [!region processMultilineResponse]
 export async function processMultilineResponse(
   memoryKey: string,
   reply: string,
@@ -286,6 +277,8 @@ export async function processMultilineResponse(
   }
   // [!endregion processing]
 }
+// [!endregion processMultilineResponse]
+
 export function parseMarkdown(message: string) {
   let trimmedMessage = message;
   // Remove bold and underline markdown

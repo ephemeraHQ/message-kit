@@ -16,6 +16,14 @@ hackathon-store/
 └── .env
 ```
 
+## Agent
+
+The process that starts listening to messages and replying to them.
+
+```tsx [src/index.ts]
+// [!include ~/../../templates/hackathon-store/src/index.ts]
+```
+
 ## Notion file
 
 This prompt loads from a notion package. You can manually update the prompt by running the `update` skill. or it will update each time you run the agent.
@@ -32,14 +40,6 @@ Here is the prompt that the agent will use to reply to messages.
 
 ```md [src/prompt.md]
 // [!include ~/../../templates/hackathon-store/src/prompt.md]
-```
-
-## Agent
-
-The process that starts listening to messages and replying to them.
-
-```tsx [src/index.ts]
-// [!include ~/../../templates/hackathon-store/src/index.ts]
 ```
 
 ## Variables

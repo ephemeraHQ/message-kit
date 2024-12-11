@@ -22,6 +22,14 @@ coinbase-agent/
 └── .env
 ```
 
+## Agent
+
+The process that starts listening to messages and replying to them.
+
+```tsx [src/index.ts]
+// [!include ~/../../templates/coinbase-agent/src/index.ts]
+```
+
 ### Skills
 
 - [Drip](/skills/drip): Drip a coin
@@ -40,14 +48,6 @@ Here is the prompt that the agent will use to reply to messages.
 
 ```tsx [src/prompt.ts]
 // [!include ~/../../templates/coinbase-agent/src/prompt.ts]
-```
-
-## Agent
-
-The process that starts listening to messages and replying to them.
-
-```tsx [src/index.ts]
-// [!include ~/../../templates/coinbase-agent/src/index.ts]
 ```
 
 ## Variables

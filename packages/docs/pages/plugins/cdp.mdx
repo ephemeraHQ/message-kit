@@ -31,7 +31,7 @@ const agent: Agent = {
   tag: "@Bots",
   skills: [],
   onMessage: async (context: XMTPContext) => {
-    // ---cut---
+// ---cut---
 // Get the wallet service
 const { walletService } = context;
 
@@ -43,8 +43,6 @@ const isCreated = await walletService.createWallet(humanAddress);
 
 // Delete a wallet
 await walletService.deleteWallet(humanAddress);
-
-
 // ---cut-after---
   },
 };
@@ -81,13 +79,16 @@ const { walletService } = context;
 const {address, balance} = await walletService.checkBalance(humanAddress);
 
 // Withdraw funds (optional amount parameter)
-await walletService.withdrawFunds(amount);
+await walletService.fund(amount);
 
 // Transfer between wallets
 await walletService.transfer(humanAddress, humanAddress, amount);
 
-// Swap assets
+// Swap assets (USDC and ETH)
 await walletService.swap(humanAddress, fromAssetId, toAssetId, amount);
+
+// Withdraw funds (optional amount parameter)
+await walletService.withdraw(amount);
 // ---cut-after---
   },
 };

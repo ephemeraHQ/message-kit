@@ -19,6 +19,14 @@ gated-group/
 └── .env
 ```
 
+## Agent
+
+The process that starts listening to messages and replying to them.
+
+```tsx [src/index.ts]
+// [!include ~/../../templates/simple/src/index.ts]
+```
+
 ### Plugins
 
 - [Alchemy](/plugins/alchemy): Interact with Alchemy
@@ -34,14 +42,6 @@ Here is the prompt that the agent will use to reply to messages.
 
 ```tsx [src/prompt.ts]
 // [!include ~/../../templates/simple/src/prompt.ts]
-```
-
-## Agent
-
-The process that starts listening to messages and replying to them.
-
-```tsx [src/index.ts]
-// [!include ~/../../templates/simple/src/index.ts]
 ```
 
 ## Variables

@@ -21,13 +21,6 @@
     "author": "humanagent"
   },
   {
-    "href": "/templates/coinbase-agent",
-    "title": "Coinbase Agent",
-    "description": "A template for a Coinbase features.",
-    "icon": "💰",
-    "author": "humanagent"
-  },
-  {
     "href": "/templates/hackathon-store",
     "title": "Hackathon Store",
     "description": "All the goodies needed in a hackathon.",
@@ -53,13 +46,6 @@
     "title": "GM Bot",
     "description": "A template for a GM bot.",
     "icon": "👑",
-    "author": "humanagent"
-  },
-  {
-    "href": "/templates/toss",
-    "title": "Toss",
-    "description": "A friendly game for groups.",
-    "icon": "🪙",
     "author": "humanagent"
   }
 ]

@@ -1,0 +1,129 @@
+# AI Skills
+
+AI Skills system framework enables agents to understand and process skills through multiple intelligence layers, creating more natural and powerful conversational experiences. Agents can handle complex conversations by managing multiple steps in sequence, maintaining context, and waiting for user responses. This creates a more natural interaction flow.
+
+![](/img/skills.png)
+
+## How it works
+
+Let's walk through a complete ENS domain registration flow:
+
+:::steps
+
+### User request
+
+```bash
+I want to check if vitalik.eth is available
+```
+
+### Parsing
+
+The agent processes the natural language input and breaks it down into sequential steps:
+
+```bash
+[
+  "Hello! I'll help you get your domain.",
+  "Let's start by checking your ENS domain. Give me a moment.",
+  "/check humanagent.eth",
+]
+```
+
+> This happens in the `processMultilineResponse` in the GPT [plugin](/plugins/gpt).
+
+### Skill declaration
+
+The handler function to process check skill requests:
+
+```tsx [src/skills/info.ts]
+// [!include ~/../../templates/ens/src/skills/info.ts:define]
+```
+
+#### Properties
+
+- **skill**: The name of the skill.
+- **description**: The description of the skill.
+- **examples**: Examples of how to use the skill.
+- **params**: Defines the parameters required for the skill with its property name.
+  - **default**: The default value for the parameter. This can be any type.
+  - **optional**: If true, the parameter is optional.
+  - **values**: `[]` An array of strings that defines the accepted values for the parameter.
+  - **plural**: If true, the parameter is an array.
+  - **type**: The type of the parameter. It can be one of the following:
+    - `number`: The parameter is a number.
+    - `string`: The parameter is a string.
+    - `username`: The parameter is a username.
+    - `quoted`: The parameter is a quoted string.
+    - `address`: The parameter is an address.
+    - `prompt`: The parameter is a prompt.
+    - `url`: The parameter is a URL.
+
+## Context parameters
+
+This is the parameters extracted from the user request and available to the handler:
+
+```json
+{
+  "skill": "info",
+  "params": {
+    "domain": "vitalik.eth"
+  }
+}
+```
+
+### Handler
+
+The handler function to process info skill requests to fetch information about an ENS domain:
+
+```tsx [src/skills/info.ts]
+// [!include ~/../../templates/ens/src/skills/info.ts:handle]
+```
+
+### System prompt
+
+Here is the prompt for the agent.
+
+```jsx [src/prompt.ts]
+export const systemPrompt = `
+{vibe}
+
+{rules}
+
+{user_context}
+
+{skills}
+
+## Response Scenarios:
+ 
+1. When user wants to swap tokens:
+  Hey {PREFERRED_NAME! I can help you swap tokens on Base.
+  Let me help you swap 10 USDC to ETH
+  /swap 10 usdc eth
+ 
+2. When user wants to swap a specific amount:
+  Sure! I'll help you swap 5 DEGEN to DAI
+  /swap 5 degen dai
+
+{issues}
+`;
+```
+
+#### Properties
+
+- `{rules}`: The rules of the agent.
+- `{user_context}`: The user context.
+- `{skills}`: The skills of the agent.
+- `{issues}`: Most common issues of the agent.
+- `{scenarios}`: The scenarios of the agent.
+- `{agent_name}`: The name of the agent.
+- `{name}`: The name of the user.
+- `{address}`: The address of the user.
+- `{domain}`: The ENS domain of the user.
+- `{username}`: The Converse username of the user.
+
+## End result
+
+The end result is a prompt that the model can understand and use to respond to the user.
+
+```md [example_prompt.md]
+// [!include ~/../../templates/ens/example_prompt.md]
+```

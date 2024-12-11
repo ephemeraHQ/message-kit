@@ -3,7 +3,7 @@ import { registerSkill as mintSkill } from "./skills/mint.js";
 import { registerSkill as dripSkill } from "./skills/drip.js";
 import { registerSkill as paySkill } from "./skills/pay.js";
 import { run, XMTPContext, agentReply, Agent } from "@xmtp/message-kit";
-import { replaceVariables } from "@xmtp/message-kit";
+import { parsePrompt } from "@xmtp/message-kit";
 import { systemPrompt } from "./prompt.js";
 
 export const frameUrl = "https://ens.steer.fun/";
@@ -21,7 +21,7 @@ export const agent: Agent = {
       agent,
     } = context;
 
-    let prompt = await replaceVariables(systemPrompt, sender.address, agent);
+    let prompt = await parsePrompt(systemPrompt, sender.address, agent);
     await agentReply(context, prompt);
   },
 };

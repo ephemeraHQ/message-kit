@@ -2,6 +2,7 @@ import { XMTPContext } from "@xmtp/message-kit";
 
 import type { Skill } from "@xmtp/message-kit";
 
+// [!region define]
 export const info: Skill[] = [
   {
     skill: "info",
@@ -22,7 +23,9 @@ export const info: Skill[] = [
     },
   },
 ];
+// [!endregion define]
 
+// [!region handle]
 export async function handler(context: XMTPContext) {
   const {
     message: {
@@ -57,3 +60,4 @@ export async function handler(context: XMTPContext) {
   message = message.trim();
   return { code: 200, message };
 }
+// [!endregion handle]

@@ -69,7 +69,7 @@ const fileHandling = {
 };
 
 //com
-const framesUrl = process.env.frames_URL ?? "https://frames.message-kit.org/";
+const framesUrl = process.env.frames_URL ?? "https://frames.message-kit.org";
 export const awaitedHandlers = new Map<
   string,
   (text: string) => Promise<boolean | undefined>
