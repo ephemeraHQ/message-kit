@@ -97,7 +97,7 @@ export async function handleWallet(context: XMTPContext) {
     await context.reply("You don't have an agent wallet.");
   } else if (skill === "balance") {
     const { balance } = await walletService.checkBalance(sender.address);
-    context.send(`Your agent wallet with has a balance of $${balance}`);
+    await context.send(`Your agent wallet with has a balance of $${balance}`);
   } else if (skill === "fund") {
     const { balance, address } = await walletService.checkBalance(
       sender.address,
@@ -145,6 +145,14 @@ export async function handleWallet(context: XMTPContext) {
     await context.send("Swap completed");
     return;
   } else if (skill === "transfer") {
+    if (!amount || amount <= 0) {
+      await context.reply("Please specify a valid amount to transfer.");
+      return;
+    }
+    if (!recipient) {
+      await context.reply("Please specify a valid recipient.");
+      return;
+    }
     const { balance } = await walletService.checkBalance(sender.address);
     if (balance === 0) {
       await context.reply("You have no funds to transfer.");

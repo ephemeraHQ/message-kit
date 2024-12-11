@@ -111,16 +111,14 @@ export class WalletService {
   async createWallet(key: string): Promise<boolean> {
     try {
       console.log(`Creating new wallet for key ${key}...`);
-      await this.context.send(
-        `Creating new agent wallet for you with key: ${key}...`,
-      );
+      await this.context.send(`Creating new agent wallet for you...`);
       const wallet = await Wallet.create({
         networkId: Coinbase.networks.BaseMainnet,
       });
 
       const data = wallet.export();
       const address = await wallet.getDefaultAddress();
-      console.log("Agent Wallet:", address.getId());
+      console.log("New agent wallet created:", address.getId());
 
       const walletInfo = {
         data,

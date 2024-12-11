@@ -100,8 +100,8 @@ run(agent);
 
 The WalletService uses encryption with local file storage:
 
-- Wallets are encrypted using the groupId as the encryption key
-- Only people
+- Wallets are encrypted using the `getEncryptionKey()` method as the encryption key
+- Only people with the `getEncryptionKey()` method can decrypt the wallets
 - Data is stored locally in `.data/wallet-storage` directory
 
 ## Code
