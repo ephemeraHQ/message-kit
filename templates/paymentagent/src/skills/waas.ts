@@ -18,6 +18,9 @@ export const waas: Skill[] = [
     description: "Transfer USDC to another user.",
     handler: handleWallet,
     examples: [
+      "/send @username 5.1",
+      "/send 0x123... 10",
+      "/send vitalik.eth 0.01",
       "/transfer @username 5.1",
       "/transfer @username 2",
       "/transfer 0x123... 10",

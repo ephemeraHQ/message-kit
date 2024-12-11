@@ -33,10 +33,11 @@ The resolver returns a `UserInfo` object containing:
 The resolver implements automatic caching to improve performance and reduce API calls. You can manage the cache using:
 
 ```typescript
-// Clear cache for specific address
-clearInfoCache(address);
-// Clear entire cache
-clearInfoCache();
+context.clearCache(address);
+
+// or import directly
+import { userInfoCache } from "@xmtp/message-kit";
+userInfoCache.clear(address);
 ```
 
 ## Caching

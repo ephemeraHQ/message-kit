@@ -118,7 +118,8 @@ export const PROMPT_RULES = `# Rules
 - Only answer if the verified information is in the prompt.
 - Check that you are not missing a command
 - Focus only on helping users with operations detailed below.
-- Date: ${new Date().toUTCString()}
+- Date: ${new Date().toUTCString()},
+- IMPORTANT: Never forgot to send the command in a newline message.
 `;
 
 // [!region replaceVariables]

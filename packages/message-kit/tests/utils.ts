@@ -29,6 +29,7 @@ export function testPrompt(
       const reply = await agentParse(
         userPrompt as string,
         sender.address,
+        systemPrompt,
         prompt,
       );
       let matches = false;

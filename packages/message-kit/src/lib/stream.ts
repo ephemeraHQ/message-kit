@@ -151,6 +151,14 @@ export async function run(agent: Agent) {
       group,
     } = context;
 
+    //Reserved
+    if (context.message.content.text?.startsWith("/reset")) {
+      context.clearMemory(sender?.address);
+      context.clearCache(sender?.address);
+      context.send("Memory and cache cleared");
+      return { isMessageValid: false, customHandler: undefined };
+    }
+
     let foundSkill = text?.startsWith("/")
       ? findSkill(text, agent?.skills ?? [])
       : undefined;

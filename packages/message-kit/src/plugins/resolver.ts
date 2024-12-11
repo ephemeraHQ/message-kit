@@ -41,15 +41,39 @@ export interface EnsData {
   };
 }
 
-let infoCache: InfoCache = new Map();
+class UserInfoCache {
+  private static instance: UserInfoCache;
+  private cache: InfoCache = new Map();
 
-export const clearInfoCache = (address?: string) => {
-  if (address) {
-    infoCache.delete(address);
-  } else {
-    infoCache.clear();
+  private constructor() {}
+
+  public static getInstance(): UserInfoCache {
+    if (!UserInfoCache.instance) {
+      UserInfoCache.instance = new UserInfoCache();
+    }
+    return UserInfoCache.instance;
   }
-};
+
+  get(key: string): UserInfo | undefined {
+    return this.cache.get(key.toLowerCase());
+  }
+
+  set(key: string, data: UserInfo): void {
+    this.cache.set(key.toLowerCase(), data);
+  }
+
+  clear(key?: string): void {
+    if (key) {
+      this.cache.delete(key.toLowerCase());
+    } else {
+      this.cache.clear();
+    }
+  }
+}
+
+// Use the singleton instance
+export const userInfoCache = UserInfoCache.getInstance();
+
 export const getUserInfo = async (
   key: string,
   clientAddress?: string,
@@ -64,13 +88,18 @@ export const getUserInfo = async (
     converseEndpoint: undefined,
     preferredName: undefined,
   };
+
   if (typeof key !== "string") {
     console.error("userinfo key must be a string");
     return data;
   }
-  if (infoCache.get(key)) return infoCache.get(key) as UserInfo;
+
+  const cachedData = userInfoCache.get(key);
+  if (cachedData) return cachedData;
+
   key = key?.toLowerCase();
   clientAddress = clientAddress?.toLowerCase();
+
   // Determine user information based on provided key
   if (isAddress(clientAddress || "")) {
     data.address = clientAddress;
@@ -99,12 +128,6 @@ export const getUserInfo = async (
     console.log("Unable to determine a valid key for fetching user info.");
     return data;
   } else {
-    // Check cache for existing data
-    const cacheData = infoCache.get(keyToUse);
-    if (cacheData) {
-      return cacheData;
-    }
-
     // Notify user about the fetching process
     if (context) {
       await context.send(
@@ -130,7 +153,7 @@ export const getUserInfo = async (
           }
         }
       } catch (error) {
-        //console.error(`Failed to fetch ENS data for ${keyToUse}`);
+        console.error(`Failed to fetch ENS data for ${keyToUse}`);
       }
     } else {
       // Fetch Converse profile data
@@ -170,7 +193,7 @@ export const getUserInfo = async (
     }
 
     data.preferredName = data.ensDomain || data.converseUsername || "Friend";
-    infoCache.set(keyToUse, data);
+    userInfoCache.set(keyToUse, data);
     return data;
   }
 };

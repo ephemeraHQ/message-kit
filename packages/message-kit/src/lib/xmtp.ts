@@ -11,7 +11,7 @@ import {
 import { chatMemory } from "../plugins/gpt.js";
 import { GroupMember } from "@xmtp/node-sdk";
 import { textGeneration } from "../plugins/gpt.js";
-import { getUserInfo, isOnXMTP } from "../plugins/resolver.js";
+import { getUserInfo, userInfoCache, isOnXMTP } from "../plugins/resolver.js";
 import type { ContentTypeId } from "@xmtp/content-type-primitives";
 import { ContentTypeText } from "@xmtp/content-type-text";
 import { WalletService } from "../plugins/cdp.js";
@@ -99,6 +99,8 @@ export class XMTPContext {
   awaitedHandler: ((text: string) => Promise<boolean | void>) | null = null;
   getMessageById!: (id: string) => DecodedMessage | null;
   executeSkill!: (text: string) => Promise<SkillResponse | undefined>;
+  clearMemory!: (address?: string) => Promise<void>;
+  clearCache!: (address?: string) => Promise<void>;
   private constructor(
     conversation: Conversation | V2Conversation,
     { client, v2client }: { client: V3Client; v2client: V2Client },
@@ -179,6 +181,12 @@ export class XMTPContext {
           client.conversations?.getMessageById?.bind(client.conversations) ||
           (() => null);
 
+        context.clearMemory = async () => {
+          await chatMemory.clear(sender?.address);
+        };
+        context.clearCache = async () => {
+          await userInfoCache.clear(sender?.address);
+        };
         context.executeSkill = async (text: string) => {
           const result = await executeSkill(text, context.agent, context);
           return result ?? undefined;

@@ -77,13 +77,6 @@
     "author": "ephemeraHQ"
   },
   {
-    "href": "/skills/reset",
-    "title": "Reset state",
-    "description": "Reset user data and settings",
-    "icon": "🔄",
-    "author": "ephemeraHQ"
-  },
-  {
     "href": "/skills/todo",
     "title": "Summary by email",
     "description": "Send a summary of the day by email",
