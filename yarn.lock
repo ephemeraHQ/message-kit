@@ -9075,6 +9075,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"paymentagent@workspace:templates/paymentagent":
+  version: 0.0.0-use.local
+  resolution: "paymentagent@workspace:templates/paymentagent"
+  dependencies:
+    "@types/node": "npm:^20.14.2"
+    "@xmtp/message-kit": "workspace:*"
+    typescript: "npm:^5.4.5"
+  languageName: unknown
+  linkType: soft
+
 "peberminta@npm:^0.9.0":
   version: 0.9.0
   resolution: "peberminta@npm:0.9.0"

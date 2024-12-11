@@ -14,8 +14,8 @@
     "author": "humanagent"
   },
   {
-    "href": "/templates/humanagent",
-    "title": "Human Agent",
+    "href": "/templates/paymentagent",
+    "title": "Payment Agent",
     "description": "A template for a funding agents.",
     "icon": "👤",
     "author": "humanagent"

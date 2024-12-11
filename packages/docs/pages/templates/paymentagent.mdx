@@ -1,11 +1,13 @@
-# Human Agent
+# Payment Agent
 
 Create wallets for users and interact with them.
+
+> Payment Agent uses [CDP plugin](/plugins/cdp) to interact with Coinbase.
 
 ## Structure
 
 ```
-humanagent/
+paymentagent/
 ├── src/
 │   └── skills/
 │       ├── waas.ts
@@ -26,7 +28,7 @@ humanagent/
 Here is the prompt that the agent will use to reply to messages.
 
 ```tsx [src/prompt.ts]
-// [!include ~/../../templates/humanagent/src/prompt.ts]
+// [!include ~/../../templates/paymentagent/src/prompt.ts]
 ```
 
 ## Agent
@@ -34,7 +36,7 @@ Here is the prompt that the agent will use to reply to messages.
 The process that starts listening to messages and replying to them.
 
 ```tsx [src/index.ts]
-// [!include ~/../../templates/humanagent/src/index.ts]
+// [!include ~/../../templates/paymentagent/src/index.ts]
 ```
 
 ## Variables
@@ -42,7 +44,7 @@ The process that starts listening to messages and replying to them.
 Set up these variables in your app
 
 ```bash [cmd]
-// [!include ~/../../templates/humanagent/.env.example]
+// [!include ~/../../templates/paymentagent/.env.example]
 ```
 
 ## End result
@@ -50,5 +52,5 @@ Set up these variables in your app
 The end result is a prompt that the model can understand and use to respond to the user.
 
 ```md [example_prompt.md]
-// [!include ~/../../templates/humanagent/example_prompt.md]
+// [!include ~/../../templates/paymentagent/example_prompt.md]
 ```
