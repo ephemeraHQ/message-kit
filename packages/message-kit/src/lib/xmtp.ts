@@ -8,13 +8,13 @@ import {
   Client as V2Client,
   Conversation as V2Conversation,
 } from "@xmtp/xmtp-js";
-import { chatMemory } from "../helpers/gpt.js";
+import { chatMemory } from "../plugins/gpt.js";
 import { GroupMember } from "@xmtp/node-sdk";
-import { textGeneration } from "../helpers/gpt.js";
-import { getUserInfo, isOnXMTP } from "../helpers/resolver.js";
+import { textGeneration } from "../plugins/gpt.js";
+import { getUserInfo, isOnXMTP } from "../plugins/resolver.js";
 import type { ContentTypeId } from "@xmtp/content-type-primitives";
 import { ContentTypeText } from "@xmtp/content-type-text";
-import { WalletService } from "../helpers/cdp.js";
+import { WalletService } from "../plugins/cdp.js";
 import { logMessage, extractFrameChain } from "../helpers/utils.js";
 import {
   AgentConfig,
@@ -26,12 +26,7 @@ import {
   Frame,
 } from "../helpers/types.js";
 import { ContentTypeReply, type Reply } from "@xmtp/content-type-reply";
-import {
-  executeSkill,
-  parseSkill,
-  findSkill,
-  loadSkillsFile,
-} from "./skills.js";
+import { executeSkill, parseSkill, findSkill } from "./skills.js";
 import {
   ContentTypeAttachment,
   ContentTypeRemoteAttachment,
@@ -293,14 +288,6 @@ export class XMTPContext {
         if (validResponses.map((r) => r.toLowerCase()).includes(response)) {
           this.resetAwaitedState();
           resolve(response);
-          try {
-            chatMemory.addEntry(this.sender?.address ?? "", {
-              role: "user",
-              content: text,
-            });
-          } catch (error) {
-            console.error("Error adding entry to chatMemory:", error);
-          }
           return true;
         }
 
@@ -439,12 +426,20 @@ export class XMTPContext {
   async send(
     message: string | Reply | Reaction | RemoteAttachment | Attachment,
     contentType: ContentTypeId = ContentTypeText,
+    targetConversation?: Conversation | V2Conversation | null,
   ) {
     if (contentType === ContentTypeText && typeof message !== "string") {
       console.error("Message must be a string");
       return;
     }
-    const conversation = this.refConv || this.conversation || this.group;
+    let messageString = message as string;
+    if (typeof message === "object") {
+      //@ts-ignore
+      messageString = message?.content as string;
+    }
+
+    const conversation =
+      targetConversation || this.refConv || this.conversation || this.group;
     if (conversation) {
       if (this.isV2Conversation(conversation)) {
         await conversation.send(message, {
@@ -453,6 +448,12 @@ export class XMTPContext {
       } else if (this.isV3Conversation(conversation)) {
         await conversation.send(message, contentType);
       }
+      chatMemory.addEntry(
+        this.message?.sender?.address,
+        messageString,
+        "assistant",
+      );
+      logMessage("sent:" + messageString);
     }
   }
   getConversationKey() {
@@ -505,9 +506,7 @@ export class XMTPContext {
           await this.v2client.conversations.newConversation(receiver);
       }
 
-      // Send the message only once per receiver
-      await targetConversation.send(message);
-      logMessage("sent: " + message);
+      this.send(message, ContentTypeText, targetConversation);
     }
   }
 

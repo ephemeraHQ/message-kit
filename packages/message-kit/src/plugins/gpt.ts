@@ -1,10 +1,10 @@
 import dotenv from "dotenv";
 dotenv.config({ override: true });
 import OpenAI from "openai";
-import { getFS } from "./utils";
+import { getFS } from "../helpers/utils";
 import { XMTPContext } from "../lib/xmtp";
 import { getUserInfo, replaceUserContext } from "./resolver";
-import type { Agent } from "./types";
+import type { Agent } from "../helpers/types";
 import { replaceSkills } from "../lib/skills";
 
 const isOpenAIConfigured = () => {
@@ -25,45 +25,74 @@ type ChatHistories = Record<string, ChatHistoryEntry[]>;
 // New ChatMemory class
 class ChatMemory {
   private histories: ChatHistories = {};
+  private static instance: ChatMemory;
+
+  private constructor() {}
+
+  // Ensure singleton pattern
+  public static getInstance(): ChatMemory {
+    if (!ChatMemory.instance) {
+      ChatMemory.instance = new ChatMemory();
+    }
+    return ChatMemory.instance;
+  }
 
   getHistory(address: string): ChatHistoryEntry[] {
-    return this.histories[address] || [];
+    const normalizedAddress = address.toLowerCase();
+    return this.histories[normalizedAddress];
   }
 
-  addEntry(address: string, entry: ChatHistoryEntry) {
-    if (!this.histories[address]) {
-      this.histories[address] = [];
+  addEntry(
+    address: string,
+    message: string,
+    who: "user" | "assistant" | "system",
+  ): ChatHistoryEntry[] {
+    if (!address || !message) {
+      console.warn("Invalid entry attempt - missing address or message");
+      return [];
     }
-    this.histories[address].push(entry);
-    if (process.env.MSG_LOG === "true") {
-      console.log("Chat History", this.histories[address]);
+    const normalizedAddress = address.toLowerCase();
+    if (!this.getHistory(normalizedAddress)) {
+      return [];
     }
-  }
 
-  initializeWithSystem(address: string, systemPrompt: string) {
-    if (this.getHistory(address).length === 0) {
-      this.addEntry(address, {
-        role: "system",
-        content: systemPrompt,
-      });
-    }
+    this.histories[normalizedAddress].push({
+      role: who,
+      content: message,
+    });
+
+    return this.getHistory(normalizedAddress);
+  }
+  createMemory(address: string, systemPrompt: string) {
+    const normalizedAddress = address.toLowerCase();
+    this.histories[normalizedAddress] = [];
+    this.addEntry(normalizedAddress, systemPrompt, "system");
+  }
+  initMemory(address: string, systemPrompt: string, userPrompt: string) {
+    const normalizedAddress = address.toLowerCase();
+    const history = this.getHistory(normalizedAddress);
+    if (!history) {
+      this.createMemory(normalizedAddress, systemPrompt);
+      this.addEntry(normalizedAddress, userPrompt, "user");
+      return this.getHistory(normalizedAddress);
+    } else return history;
   }
 
   clear(address?: string) {
     if (address) {
-      this.histories[address] = [];
+      const normalizedAddress = address.toLowerCase();
+      console.log(`Clearing memory for specific address: ${normalizedAddress}`);
+      delete this.histories[normalizedAddress];
     } else {
+      console.log("Clearing all memory");
       this.histories = {};
     }
   }
 }
 
-// Create singleton instance
-export const chatMemory = new ChatMemory();
+// Modify singleton export to use getInstance
+export const chatMemory = ChatMemory.getInstance();
 
-export const clearMemory = (address?: string) => {
-  chatMemory.clear(address);
-};
 export const COMMON_ISSUES = `# Common Issues
 1. Missing commands in responses
    **Issue**: Sometimes responses are sent without the required command.
@@ -143,9 +172,6 @@ export async function replaceVariables(
     prompt = prompt.replaceAll("{name}", userInfo.preferredName || "");
   }
 
-  if (process.env.MSG_LOG === "true") {
-    //console.log("System Prompt", prompt);
-  }
   const { fs } = getFS();
   if (fs) {
     fs.writeFileSync("example_prompt.md", prompt);
@@ -207,18 +233,10 @@ export async function textGeneration(
   if (!openai) {
     return { reply: "No OpenAI API key found in .env" };
   }
-  let messages: ChatHistoryEntry[] = [];
-  if (memoryKey) {
-    // Initialize or get chat history
-    chatMemory.initializeWithSystem(memoryKey, systemPrompt);
-    messages = chatMemory.getHistory(memoryKey);
-  }
 
-  // Add user's prompt
-  messages.push({ role: "user", content: userPrompt });
+  const messages = chatMemory.initMemory(memoryKey, systemPrompt, userPrompt);
 
   try {
-    // Make OpenAI API call
     const response = await openai.chat.completions.create({
       model: (process.env.GPT_MODEL as string) || "gpt-4o",
       messages: messages,
@@ -227,15 +245,6 @@ export async function textGeneration(
     const reply =
       response.choices[0].message.content ?? "No response from OpenAI.";
     const cleanedReply = parseMarkdown(reply);
-
-    // Update chat memory
-    if (memoryKey) {
-      chatMemory.addEntry(memoryKey, {
-        role: "assistant",
-        content: cleanedReply,
-      });
-      messages = chatMemory.getHistory(memoryKey);
-    }
 
     return { reply: cleanedReply, history: messages };
   } catch (error) {
@@ -249,37 +258,26 @@ export async function processMultilineResponse(
   context: XMTPContext,
 ) {
   if (!memoryKey) {
-    clearMemory();
+    chatMemory.clear();
   }
   let messages = reply
     .split("\n")
     .map((message: string) => parseMarkdown(message))
     .filter((message): message is string => message.length > 0);
 
-  console.log(messages);
-  // [!region processing]
+  let msg = "";
   for (const message of messages) {
-    // Check if the message is a command (starts with "/")
     if (message.startsWith("/")) {
-      // Execute the skill associated with the command
       const response = await context.executeSkill(message);
-      if (response && typeof response.message === "string") {
-        // Parse the response message
-        let msg = parseMarkdown(response.message);
-        // Add the parsed message to chat memory as a system message
-        chatMemory.addEntry(memoryKey, {
-          role: "system",
-          content: msg,
-        });
-        // Send the response message
-        await context.send(response.message);
-      }
+      if (response && typeof response.message === "string")
+        msg = response.message;
     } else {
-      // If the message is not a command, send it as is
-      await context.send(message);
+      msg = message;
     }
+
+    msg = parseMarkdown(msg);
+    await context.send(msg);
   }
-  // [!endregion processing]
 }
 export function parseMarkdown(message: string) {
   let trimmedMessage = message;

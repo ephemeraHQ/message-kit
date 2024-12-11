@@ -1,4 +1,4 @@
-import { clearInfoCache, clearMemory } from "@xmtp/message-kit";
+import { clearInfoCache, chatMemory } from "@xmtp/message-kit";
 import { XMTPContext } from "@xmtp/message-kit";
 
 import type { Skill } from "@xmtp/message-kit";
@@ -16,7 +16,7 @@ export async function handler(context: XMTPContext) {
     message: { sender },
   } = context;
   try {
-    clearMemory(sender.address);
+    chatMemory.clear(sender.address);
     clearInfoCache(sender.address);
     return { code: 200, message: "Memory and usernames cache cleared." };
   } catch (error) {

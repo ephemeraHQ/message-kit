@@ -10,8 +10,8 @@ import { findSkill } from "./skills.js";
 import { Conversation } from "@xmtp/node-sdk";
 import { Conversation as V2Conversation } from "@xmtp/xmtp-js";
 import { awaitedHandlers } from "./xmtp.js";
-import { agentReply } from "../helpers/gpt.js";
-import { replaceVariables } from "../helpers/gpt.js";
+import { agentReply, chatMemory } from "../plugins/gpt.js";
+import { replaceVariables } from "../plugins/gpt.js";
 
 // Add at the top of the file
 let hasInitialized = false;
@@ -274,7 +274,15 @@ export async function run(agent: Agent) {
         isMessageValid,
       });
     }
-    if (isMessageValid) logMessage(`msg_${version}: ` + (text ?? typeId));
+    if (isMessageValid) {
+      const history = chatMemory.addEntry(
+        sender.address,
+        text ?? typeId,
+        "user",
+      );
+      console.log("history", history);
+      logMessage(`msg_${version}: ` + (text ?? typeId));
+    }
 
     return {
       isMessageValid,

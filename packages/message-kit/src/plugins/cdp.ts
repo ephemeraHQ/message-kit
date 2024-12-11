@@ -9,7 +9,7 @@ import { XMTPContext } from "../lib/xmtp";
 import { keccak256, toHex, toBytes } from "viem";
 import { generateOnRampURL } from "@coinbase/cbpay-js";
 import path from "path";
-import { getFS } from "./utils";
+import { getFS } from "../helpers/utils";
 
 const { fsPromises } = getFS();
 const appId = process.env.COINBASE_APP_ID;
@@ -84,7 +84,24 @@ export class WalletService {
     this.cdpEncriptionKey = context.getConversationKey();
     this.enabled = Boolean(coinbase);
   }
-
+  private async sendGroupMessage(message: string) {
+    if (this.isGroup) {
+      await this.context.reply(message);
+    }
+  }
+  private async requestPayment(amount: number, to: string) {
+    await this.context.requestPayment(amount, "USDC", to, [this.senderAddress]);
+  }
+  private async sendReceipt(tx: string) {
+    this.context.sendReceipt(tx);
+  }
+  private async sendPrivateMessage(message: string) {
+    if (!this.isGroup) {
+      await this.context.send(message);
+    } else if (this.isGroup) {
+      await this.context.sendTo(message, [this.senderAddress]);
+    }
+  }
   private checkEnabled() {
     if (!this.enabled) {
       throw new Error(
@@ -189,11 +206,9 @@ export class WalletService {
   ): Promise<WalletServiceData | undefined> {
     const walletData = await this.getWallet(address);
     if (!walletData) {
-      if (!this.isGroup) {
-        await this.context.reply(
-          "You don't have an agent wallet yet. Would you like to create one?",
-        );
-      }
+      this.sendPrivateMessage(
+        "You don't have an agent wallet yet. Would you like to create one?",
+      );
       return undefined;
     }
     return walletData;
@@ -208,26 +223,22 @@ export class WalletService {
       throw new Error("COINBASE_APP_ID is not set");
     }
 
-    const onRampURL = generateOnRampURL({
-      appId: process.env.COINBASE_APP_ID,
-      presetCryptoAmount: amount,
-      addresses: {
-        [wallet?.agent_address as string]: ["base"],
-      },
-      assets: ["USDC"],
-    });
-    if (!this.isGroup) {
-      await this.context.sendTo(`You can fund your account here:`, [to]);
-      await this.context.requestPayment(amount, "USDC", wallet?.agent_address, [
-        to,
-      ]);
-    }
+    // const onRampURL = generateOnRampURL({
+    //   appId: process.env.COINBASE_APP_ID,
+    //   presetCryptoAmount: amount,
+    //   addresses: {
+    //     [wallet?.agent_address as string]: ["base"],
+    //   },
+    //   assets: ["USDC"],
+    // });
 
-    if (this.isGroup) {
-      await this.context.reply(
-        `You need to fund your account. Check your DMs https://converse.xyz/${this.context.client.accountAddress}`,
-      );
-    }
+    this.sendPrivateMessage(`You can fund your account here:`);
+    this.requestPayment(amount, wallet?.agent_address);
+
+    this.sendGroupMessage(
+      `You need to fund your account. Check your DMs https://converse.xyz/${this.context.client.accountAddress}`,
+    );
+
     return;
   }
 
@@ -238,7 +249,8 @@ export class WalletService {
 
     const balance = await walletData.wallet.getBalance(Coinbase.assets.Usdc);
     if (Number(balance) === 0) {
-      throw new Error("Insufficient balance");
+      this.sendPrivateMessage("Insufficient balance");
+      return;
     }
 
     const transfer = await walletData.wallet.createTransfer({
@@ -283,29 +295,27 @@ export class WalletService {
   ): Promise<Transfer | undefined> {
     let from = await this.checkWalletExists(fromAddress);
     if (!from) return undefined;
-
+    let balance = await from.wallet.getBalance(Coinbase.assets.Usdc);
+    if (Number(balance) < amount) {
+      this.requestFunds(amount);
+      return;
+    }
     let to = await this.getWallet(toAddress);
     let toWallet = to?.agent_address ?? toAddress;
     try {
-      if (!this.isGroup) {
-        this.context.send(`Transferring ${amount} USDC to ${toWallet}`);
-      }
-      console.log("Transfer initiated:", {
-        fromWallet: from.agent_address,
-        toWallet: toWallet,
-        amount,
-      });
+      this.sendPrivateMessage(`Transferring ${amount} USDC to ${toWallet}`);
       const transfer = await from.wallet.createTransfer({
         amount,
         assetId: Coinbase.assets.Usdc,
         destination: toWallet as string,
         gasless: true,
       });
+      let sent = false;
       try {
         await transfer.wait();
-        console.log(
-          `Transfer completed successfully: https://basescan.org/tx/${transfer.getTransactionHash()}`,
-        );
+        let tx = transfer.getTransactionHash();
+        this.sendReceipt(`https://basescan.org/tx/${tx}`);
+        sent = true;
       } catch (err) {
         if (err instanceof TimeoutError) {
           console.log("Waiting for transfer timed out");
@@ -313,7 +323,7 @@ export class WalletService {
           console.error("Error while waiting for transfer to complete: ", err);
         }
       }
-      console.log(`Transfer completed successfully`);
+      if (!sent) this.sendPrivateMessage(`Transfer completed successfully`);
       return transfer;
     } catch (error) {
       console.error("Transfer failed:", error);
@@ -326,15 +336,15 @@ export class WalletService {
     fromAssetId: string,
     toAssetId: string,
     amount: number,
-  ): Promise<Trade> {
+  ): Promise<Trade | undefined> {
+    let walletData = await this.checkWalletExists(address);
+    if (!walletData) return undefined;
+
     console.log(
       `Initiating swap from ${fromAssetId} to ${toAssetId} for amount: ${amount}`,
     );
-    const wallet = await this.getWallet(address);
-    if (!wallet) {
-      throw new Error("Wallet not found");
-    }
-    const trade = await wallet.wallet.createTrade({
+
+    const trade = await walletData.wallet.createTrade({
       amount,
       fromAssetId,
       toAssetId,

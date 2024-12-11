@@ -1,4 +1,4 @@
-import { XMTPContext, clearMemory, Skill } from "@xmtp/message-kit";
+import { XMTPContext, chatMemory, Skill } from "@xmtp/message-kit";
 import { getRedisClient } from "../plugins/redis.js";
 import {
   FIVE_MINUTES,
@@ -117,7 +117,7 @@ export async function handleFaucet(context: XMTPContext) {
         `❌ Sorry, there was an error processing your request:\n\n"${result.error!}"`,
       );
       // Clear any in-memory cache or state related to the prompt
-      clearMemory();
+      chatMemory.clear();
       return;
     }
 
@@ -133,7 +133,7 @@ export async function handleFaucet(context: XMTPContext) {
       }`,
     );
     // Clear any in-memory cache or state related to the prompt
-    clearMemory();
+    chatMemory.clear();
   } else {
     await context.send("Unknown skill. Please use 'list' or 'drip'.");
   }

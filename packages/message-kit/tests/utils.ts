@@ -1,7 +1,7 @@
-import { describe, test, expect, vi, beforeEach } from "vitest";
+import { test, expect, vi } from "vitest";
 import { Agent } from "../src/helpers/types";
-import { clearMemory, replaceVariables, agentParse } from "../src/helpers/gpt";
-import { clearInfoCache } from "../src/helpers/resolver";
+import { chatMemory, replaceVariables, agentParse } from "../src/plugins/gpt";
+import { clearInfoCache } from "../src/plugins/resolver";
 import { ContentTypeText } from "@xmtp/content-type-text";
 import {
   Client as V2Client,
@@ -20,7 +20,7 @@ export function testPrompt(
   systemPrompt: string,
   sender: { address: string; converseUsername: string },
 ) {
-  clearMemory();
+  chatMemory.clear();
   clearInfoCache();
   test.each(testCases)(
     "should handle %s correctly",
