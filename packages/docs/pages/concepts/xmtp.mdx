@@ -46,11 +46,12 @@ import { xmtpClient } from "@xmtp/message-kit";
 
 const { v2client: newClient } = await xmtpClient({
   {
-    privateKey: /*Your private key*/,
     /*optional parameters*/
   },
 );
 ```
+
+> This can be used for example in the [Cron](/plugins/cron) plugin to send updates to the users.
 
 ## XMTP check
 

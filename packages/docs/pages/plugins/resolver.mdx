@@ -1,8 +1,44 @@
-# Resolver
+# Username resolution
 
 Message Kit provides powerful username resolution capabilities through its resolver system. This allows applications to handle various types of identifiers including ENS domain and Converse usernames.
 
-> Is already included in [MessageKit](/concepts/usernames)
+## Supported identifiers
+
+- **Ethereum Addresses** - Standard hex addresses (e.g., `0x123...`)
+- **ENS Domains** - Ethereum Name Service domains (e.g., `vitalik.eth`)
+- **Converse Usernames** - Social usernames from Converse (e.g., `@fabri`)
+
+## Usage
+
+The resolver provides a `getUserInfo` function that returns detailed information about a user:
+
+> Is already included in MessageKit
+
+```typescript
+import { getUserInfo } from "@xmtp/message-kit";
+const userInfo = await getUserInfo(identifier);
+```
+
+The resolver returns a `UserInfo` object containing:
+
+- `ensDomain` - User's ENS domain if available
+- `address` - Ethereum address
+- `preferredName` - Best available name to display
+- `converseUsername` - Converse username if available
+- `avatar` - Profile picture URL if available
+- `converseEndpoint` - Converse profile endpoint
+
+## Caching
+
+The resolver implements automatic caching to improve performance and reduce API calls. You can manage the cache using:
+
+```typescript
+context.clearCache(address);
+
+// or import directly
+import { userInfoCache } from "@xmtp/message-kit";
+userInfoCache.clear(address);
+```
 
 ## Caching
 
@@ -19,6 +55,6 @@ clearInfoCache();
 
 This code is included in MessageKit, but you can import it directly in your files for more customization.
 
-```tsx [src/helpers/resolver.ts]
-// [!include ~/../../packages/message-kit/src/helpers/resolver.ts]
+```tsx [src/plugins/resolver.ts]
+// [!include ~/../../packages/message-kit/src/plugins/resolver.ts]
 ```

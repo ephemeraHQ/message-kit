@@ -71,8 +71,8 @@ export class LearnWeb3Client {
       return data.filter(
         (network) =>
           EVM_TOKENS.some((t) =>
-            network.tokenName.toLowerCase().includes(t.toLowerCase()),
-          ) && network.isActive,
+            network.tokenName.toLowerCase().includes(t.toLowerCase())
+          ) && network.isActive
       );
     }
     return data.filter((network) => network.isActive);
@@ -80,7 +80,7 @@ export class LearnWeb3Client {
 
   async dripTokens(
     networkId: string,
-    recipientAddress: string,
+    recipientAddress: string
   ): Promise<DripTokensResponse> {
     const response = await axios.post(
       `${this.BASE_URL}/drip`,
@@ -89,7 +89,7 @@ export class LearnWeb3Client {
         headers: {
           authorization: `Bearer ${this.apiKey}`,
         },
-      },
+      }
     );
     return response.data;
   }

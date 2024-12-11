@@ -7,9 +7,11 @@ import {
 } from "@coinbase/coinbase-sdk";
 import { XMTPContext } from "../lib/xmtp";
 import { keccak256, toHex, toBytes } from "viem";
+import { getUserInfo } from "../plugins/resolver";
+import { isAddress } from "viem";
 import { generateOnRampURL } from "@coinbase/cbpay-js";
 import path from "path";
-import { getFS } from "./utils";
+import { getFS } from "../helpers/utils";
 
 const { fsPromises } = getFS();
 const appId = process.env.COINBASE_APP_ID;
@@ -49,12 +51,12 @@ class LocalStorage {
     await fsPromises?.writeFile(filePath, value, "utf8");
   }
 
-  async get(key: string): Promise<string | null> {
+  async get(key: string): Promise<string | undefined> {
     try {
       const filePath = path.join(this.baseDir, `${key}.dat`);
-      return (await fsPromises?.readFile(filePath, "utf8")) ?? null;
+      return (await fsPromises?.readFile(filePath, "utf8")) ?? undefined;
     } catch (error) {
-      return null;
+      return undefined;
     }
   }
 
@@ -69,24 +71,16 @@ class LocalStorage {
 }
 
 export class WalletService {
-  private context: XMTPContext;
   private walletStorage: LocalStorage;
   private cdpEncriptionKey: string;
-  private enabled: boolean;
+  private context: XMTPContext;
+  private humanAddress: string;
 
   constructor(context: XMTPContext) {
     this.context = context;
+    this.humanAddress = context.message.sender.address;
     this.walletStorage = new LocalStorage();
     this.cdpEncriptionKey = context.getConversationKey();
-    this.enabled = Boolean(coinbase);
-  }
-
-  private checkEnabled() {
-    if (!this.enabled) {
-      throw new Error(
-        "Wallet service is not enabled - missing Coinbase API credentials",
-      );
-    }
   }
 
   encrypt(data: any): string {
@@ -102,7 +96,7 @@ export class WalletService {
     return toHex(encrypted);
   }
 
-  decrypt(data: string): any {
+  decrypt(data: string): any | undefined {
     if (typeof data === "string") {
       data = data.toLowerCase();
     }
@@ -114,26 +108,22 @@ export class WalletService {
     );
     return JSON.parse(Buffer.from(decrypted).toString());
   }
-
   async createWallet(key: string): Promise<boolean> {
     try {
-      this.checkEnabled();
-      if (await this.getWallet(key)) {
-        return true;
-      }
       console.log(`Creating new wallet for key ${key}...`);
+      await this.context.send(`Creating new agent wallet for you...`);
       const wallet = await Wallet.create({
         networkId: Coinbase.networks.BaseMainnet,
       });
 
       const data = wallet.export();
       const address = await wallet.getDefaultAddress();
-      console.log("Agent Wallet:", address.getId());
+      console.log("New agent wallet created:", address.getId());
 
       const walletInfo = {
         data,
         agent_address: address.getId(),
-        address: this.context.message.sender.address,
+        address: this.humanAddress,
         key,
       };
 
@@ -142,11 +132,12 @@ export class WalletService {
         this.encrypt(walletInfo),
       );
 
-      let importedWallet = await Wallet.import(data);
+      ///let importedWallet =
+      await Wallet.import(data);
       // return {
       //   wallet: importedWallet,
       //   agent_address: address.getId(),
-      //   address: this.context.message.sender.address,
+      //   address: this.humanAddress,
       //   key: key,
       // };
       return true;
@@ -155,137 +146,96 @@ export class WalletService {
       return false;
     }
   }
-
-  async getWallet(key: string): Promise<WalletServiceData | undefined> {
+  async getWallet(
+    key: string,
+    createIfNotFound: boolean = true,
+  ): Promise<WalletServiceData | undefined> {
     const encryptedKey = `wallet:${this.encrypt(key)}`;
     const walletData = await this.walletStorage.get(encryptedKey);
 
-    if (walletData) {
-      try {
-        const decrypted = this.decrypt(walletData);
-        console.log(`Retrieved wallet data for ${decrypted.agent_address}`);
-
-        let importedWallet = await Wallet.import(decrypted.data);
-        return {
-          wallet: importedWallet,
-          agent_address: decrypted.agent_address,
-          address: decrypted.address,
-          key: decrypted.key,
-        };
-      } catch (error) {
-        console.error("Failed to decrypt wallet data:", error);
-        throw new Error("Invalid wallet access");
-      }
-    }
-  }
-
-  async requestFunds(amount: number): Promise<void> {
-    let to = this.context.message.sender.address;
-    let wallet = await this.getWallet(to);
-    if (!wallet) {
-      throw new Error("Wallet not found");
-    }
-    if (!appId) {
-      throw new Error("COINBASE_APP_ID is not set");
-    }
-
-    const onRampURL = generateOnRampURL({
-      appId: process.env.COINBASE_APP_ID,
-      presetCryptoAmount: amount,
-      addresses: {
-        [wallet.agent_address]: ["base"],
-      },
-      assets: ["USDC"],
-    });
-    await this.context.sendTo(`You can fund your account here:`, [to]);
-    await this.context.requestPayment(
-      amount,
-      "USDC",
-      wallet?.agent_address,
-      [to],
-      onRampURL,
-    );
-
-    //await this.context.sendTo(`Or you can Onramp here: ${onRampURL}`, [to]);
-
-    await this.context.reply(
-      `You need to fund your account. Check your DMs https://converse.xyz/${this.context.client.accountAddress}`,
-    );
-    return;
-  }
-
-  async withdrawFunds(amount?: number): Promise<Transfer> {
-    let to = this.context.message.sender.address;
-    let walletData = await this.getWallet(to);
+    // If no wallet exists, create one
     if (!walletData) {
-      throw new Error("Wallet not found");
+      if (createIfNotFound) {
+        const success = await this.createWallet(key);
+        if (success) {
+          // Retry getting the newly created wallet
+          return this.getWallet(key);
+        }
+      }
+      return undefined;
     }
-    const balance = await walletData.wallet.getBalance(Coinbase.assets.Usdc);
-    if (Number(balance) === 0) {
-      throw new Error("Insufficient balance");
-    }
-    const transfer = await walletData.wallet.createTransfer({
-      amount: amount || balance,
-      assetId: Coinbase.assets.Usdc,
-      destination: to,
-      gasless: true,
-    });
-    // Wait for transfer to land on-chain.
+
     try {
-      await transfer.wait();
-      console.log(
-        `Withdrawal completed successfully: https://basescan.org/tx/${transfer.getTransactionHash()}`,
-      );
-    } catch (err) {
-      if (err instanceof TimeoutError) {
-        console.log("Waiting for transfer timed out");
-        this.checkBalance(to);
-      } else {
-        console.error("Error while waiting for transfer to complete: ", err);
-        this.checkBalance(to);
-      }
+      const decrypted = this.decrypt(walletData);
+      console.log(`Retrieved wallet data for ${decrypted.agent_address}`);
+
+      let importedWallet = await Wallet.import(decrypted.data);
+      return {
+        wallet: importedWallet,
+        agent_address: decrypted.agent_address,
+        address: decrypted.address,
+        key: decrypted.key,
+      };
+    } catch (error) {
+      console.error("Failed to decrypt wallet data:", error);
+      throw new Error("Invalid wallet access");
     }
-    return transfer;
   }
 
-  async checkBalance(key: string): Promise<number> {
-    let walletData = await this.getWallet(key);
-    if (!walletData) {
-      throw new Error("Wallet not found for balance check");
-    }
+  async fund(amount: number): Promise<boolean> {
+    let walletData = await this.getWallet(this.humanAddress);
+    if (!walletData) return false;
     let balance = await walletData.wallet.getBalance(Coinbase.assets.Usdc);
-    console.log(
-      `Wallet balance for: ${walletData.agent_address} is ${balance}`,
+    if (Number(balance) === 10) {
+      await this.context.reply("You have maxed out your funds. Max 10 USDC.");
+      return false;
+    } else if (amount) {
+      if (amount + Number(balance) <= 10) {
+        return true;
+      } else {
+        await this.context.reply("Wrong amount. Max 10 USDC.");
+        return false;
+      }
+    }
+    const options = Array.from(
+      { length: Math.floor(10 - Number(balance)) },
+      (_, i) => (i + 1).toString(),
     );
-    return Number(balance);
+    const response = await this.context.awaitResponse(
+      `Please specify the amount of USDC to prefund (1 to ${
+        10 - Number(balance)
+      }):`,
+      options,
+    );
+
+    await this.context.requestPayment(
+      walletData.agent_address,
+      Number(response),
+    );
+    return true;
   }
 
-  async transfer(
-    fromAddress: string,
-    toAddress: string,
-    amount: number,
-  ): Promise<Transfer> {
-    let from = await this.getWallet(fromAddress);
-    let to = await this.getWallet(toAddress);
-    if (!from || !to) {
-      throw new Error("Wallet not found");
+  async withdraw(amount?: number): Promise<Transfer | undefined> {
+    let walletData = await this.getWallet(this.humanAddress);
+    if (!walletData) return undefined;
+    let balance = await walletData.wallet.getBalance(Coinbase.assets.Usdc);
+    if (Number(balance) === 0) {
+      await this.context.send("You have no funds to withdraw.");
+      return;
     }
-    try {
-      console.log("Transfer initiated:", {
-        fromWallet: from.agent_address,
-        toWallet: to.agent_address,
-        amount,
-      });
-      const transfer = await from.wallet.createTransfer({
-        amount,
+    let toWithdraw = amount ?? Number(balance);
+    if (toWithdraw <= Number(balance)) {
+      const transfer = await walletData.wallet.createTransfer({
+        amount: Number(amount),
         assetId: Coinbase.assets.Usdc,
-        destination: to.agent_address,
+        destination: this.humanAddress,
         gasless: true,
       });
+      // Wait for transfer to land on-chain.
       try {
         await transfer.wait();
         console.log(
-          `Transfer completed successfully: https://basescan.org/tx/${transfer.getTransactionHash()}`,
+          `Withdrawal completed successfully: https://basescan.org/tx/${transfer.getTransactionHash()}`,
         );
       } catch (err) {
         if (err instanceof TimeoutError) {
@@ -294,7 +244,62 @@ export class WalletService {
           console.error("Error while waiting for transfer to complete: ", err);
         }
       }
-      console.log(`Transfer completed successfully`);
+      return transfer;
+    }
+  }
+
+  async checkBalance(
+    humanAddress: string,
+  ): Promise<{ address: string | undefined; balance: number }> {
+    let walletData = await this.getWallet(humanAddress);
+    if (!walletData) return { address: undefined, balance: 0 };
+    let balance = await walletData.wallet.getBalance(Coinbase.assets.Usdc);
+
+    return {
+      address: walletData.agent_address,
+      balance: Number(balance),
+    };
+  }
+
+  async transfer(
+    fromAddress: string,
+    toAddress: string,
+    amount: number,
+  ): Promise<Transfer | undefined> {
+    let from = await this.getWallet(fromAddress);
+    if (!from) return undefined;
+    let balance = await from.wallet.getBalance(Coinbase.assets.Usdc);
+    if (Number(balance) < amount) {
+      return undefined;
+    }
+    if (!isAddress(toAddress)) {
+      let user = await getUserInfo(toAddress);
+      console.log("resolved toAddress", toAddress, user?.address);
+      if (!user) {
+        this.context.send("User not found.");
+        return undefined;
+      }
+      toAddress = user.address as string;
+    }
+    let to = await this.getWallet(toAddress, false);
+    let toWallet = to?.agent_address ?? toAddress;
+    try {
+      const transfer = await from.wallet.createTransfer({
+        amount,
+        assetId: Coinbase.assets.Usdc,
+        destination: toWallet as string,
+        gasless: true,
+      });
+      try {
+        await transfer.wait();
+        return transfer;
+      } catch (err) {
+        if (err instanceof TimeoutError) {
+          console.log("Waiting for transfer timed out");
+        } else {
+          console.error("Error while waiting for transfer to complete: ", err);
+        }
+      }
       return transfer;
     } catch (error) {
       console.error("Transfer failed:", error);
@@ -307,15 +312,15 @@ export class WalletService {
     fromAssetId: string,
     toAssetId: string,
     amount: number,
-  ): Promise<Trade> {
+  ): Promise<Trade | undefined> {
+    let walletData = await this.getWallet(address);
+    if (!walletData) return undefined;
+
     console.log(
       `Initiating swap from ${fromAssetId} to ${toAssetId} for amount: ${amount}`,
     );
-    const wallet = await this.getWallet(address);
-    if (!wallet) {
-      throw new Error("Wallet not found");
-    }
-    const trade = await wallet.wallet.createTrade({
+
+    const trade = await walletData.wallet.createTrade({
       amount,
       fromAssetId,
       toAssetId,
@@ -326,20 +331,19 @@ export class WalletService {
     } catch (err) {
       if (err instanceof TimeoutError) {
         console.log("Waiting for trade timed out");
-        this.checkBalance(address);
       } else {
         console.error("Error while waiting for trade to complete: ", err);
-        this.checkBalance(address);
       }
     }
     console.log(`Trade completed successfully`);
     return trade;
   }
 
-  async deleteWallet(key: string): Promise<void> {
+  async deleteWallet(key: string): Promise<boolean> {
     console.log(`Deleting wallet for key ${key}`);
     const encryptedKey = this.encrypt(key);
     await this.walletStorage.del(`wallet:${encryptedKey}`);
     console.log(`Wallet deleted for key ${key}`);
+    return true;
   }
 }

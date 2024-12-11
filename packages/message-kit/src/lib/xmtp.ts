@@ -8,13 +8,13 @@ import {
   Client as V2Client,
   Conversation as V2Conversation,
 } from "@xmtp/xmtp-js";
-import { chatMemory } from "../helpers/gpt.js";
+import { chatMemory } from "../plugins/gpt.js";
 import { GroupMember } from "@xmtp/node-sdk";
-import { textGeneration } from "../helpers/gpt.js";
-import { getUserInfo, isOnXMTP } from "../helpers/resolver.js";
+import { textGeneration } from "../plugins/gpt.js";
+import { getUserInfo, userInfoCache, isOnXMTP } from "../plugins/resolver.js";
 import type { ContentTypeId } from "@xmtp/content-type-primitives";
 import { ContentTypeText } from "@xmtp/content-type-text";
-import { WalletService } from "../helpers/cdp.js";
+import { WalletService } from "../plugins/cdp.js";
 import { logMessage, extractFrameChain } from "../helpers/utils.js";
 import {
   AgentConfig,
@@ -26,12 +26,7 @@ import {
   Frame,
 } from "../helpers/types.js";
 import { ContentTypeReply, type Reply } from "@xmtp/content-type-reply";
-import {
-  executeSkill,
-  parseSkill,
-  findSkill,
-  loadSkillsFile,
-} from "./skills.js";
+import { executeSkill, parseSkill, findSkill } from "./skills.js";
 import {
   ContentTypeAttachment,
   ContentTypeRemoteAttachment,
@@ -74,7 +69,7 @@ const fileHandling = {
 };
 
 //com
-const framesUrl = process.env.frames_URL ?? "https://frames.message-kit.org/";
+const framesUrl = process.env.frames_URL ?? "https://frames.message-kit.org";
 export const awaitedHandlers = new Map<
   string,
   (text: string) => Promise<boolean | undefined>
@@ -104,6 +99,8 @@ export class XMTPContext {
   awaitedHandler: ((text: string) => Promise<boolean | void>) | null = null;
   getMessageById!: (id: string) => DecodedMessage | null;
   executeSkill!: (text: string) => Promise<SkillResponse | undefined>;
+  clearMemory!: (address?: string) => Promise<void>;
+  clearCache!: (address?: string) => Promise<void>;
   private constructor(
     conversation: Conversation | V2Conversation,
     { client, v2client }: { client: V3Client; v2client: V2Client },
@@ -184,6 +181,12 @@ export class XMTPContext {
           client.conversations?.getMessageById?.bind(client.conversations) ||
           (() => null);
 
+        context.clearMemory = async () => {
+          await chatMemory.clear(sender?.address);
+        };
+        context.clearCache = async () => {
+          await userInfoCache.clear(sender?.address);
+        };
         context.executeSkill = async (text: string) => {
           const result = await executeSkill(text, context.agent, context);
           return result ?? undefined;
@@ -293,14 +296,6 @@ export class XMTPContext {
         if (validResponses.map((r) => r.toLowerCase()).includes(response)) {
           this.resetAwaitedState();
           resolve(response);
-          try {
-            chatMemory.addEntry(this.sender?.address ?? "", {
-              role: "user",
-              content: text,
-            });
-          } catch (error) {
-            console.error("Error adding entry to chatMemory:", error);
-          }
           return true;
         }
 
@@ -444,6 +439,11 @@ export class XMTPContext {
       console.error("Message must be a string");
       return;
     }
+    let messageString = message as string;
+    if (typeof message === "object") {
+      //@ts-ignore
+      messageString = message?.content as string;
+    }
     const conversation = this.refConv || this.conversation || this.group;
     if (conversation) {
       if (this.isV2Conversation(conversation)) {
@@ -453,7 +453,12 @@ export class XMTPContext {
       } else if (this.isV3Conversation(conversation)) {
         await conversation.send(message, contentType);
       }
+      chatMemory.addEntry(this.getMemoryKey(), messageString, "assistant");
+      logMessage("sent:" + messageString);
     }
+  }
+  getMemoryKey() {
+    return this.getConversationKey() + ":" + this.message?.sender?.address;
   }
   getConversationKey() {
     const conversation = this.refConv || this.conversation || this.group;
@@ -507,6 +512,8 @@ export class XMTPContext {
 
       // Send the message only once per receiver
       await targetConversation.send(message);
+
+      chatMemory.addEntry(this.getMemoryKey(), message, "assistant");
       logMessage("sent: " + message);
     }
   }
@@ -538,13 +545,13 @@ export class XMTPContext {
     return await textGeneration(memoryKey, userPrompt, systemPrompt);
   }
   async requestPayment(
-    amount: number = 1,
-    token: string = "usdc",
-    username: string = "humanagent.eth",
-    sendTo: string[] = [],
+    to: string = "humanagent.eth",
+    amount: number,
+    token?: string,
+    sendTo?: string[],
     onRampURL?: string,
   ) {
-    let senderInfo = await getUserInfo(username);
+    let senderInfo = await getUserInfo(to);
     if (senderInfo && process.env.MSG_LOG === "true")
       if (!senderInfo) {
         //console.log("senderInfo", senderInfo);
@@ -552,11 +559,11 @@ export class XMTPContext {
         return;
       }
 
-    let sendUrl = `${framesUrl}/payment?amount=${amount}&token=${token}&recipientAddress=${senderInfo?.address}`;
+    let sendUrl = `${framesUrl}/payment?amount=${amount ?? 1}&token=${token ?? "usdc"}&recipientAddress=${senderInfo?.address}`;
     if (onRampURL) {
       sendUrl = sendUrl + "&onRampURL=" + encodeURIComponent(onRampURL);
     }
-    if (sendTo.length > 0) {
+    if (sendTo && sendTo.length > 0) {
       await this.sendTo(sendUrl, sendTo);
     } else {
       await this.send(sendUrl);

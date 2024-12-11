@@ -6,16 +6,61 @@ Interact with GPT and use it for your agents.
 
 ## Required
 
-- `openai`: The OpenAI package.
-
-## Env
-
+- `openai`: The OpenAI package (already installed in MessageKit).
 - `OPENAI_API_KEY`: The OpenAI API key.
 
-## Code
+## Agent reply
+
+This is how the agentReply function is implemented in MessageKit.
+
+```tsx [plugins/gpt.ts]
+// [!include ~/../../packages/message-kit/src/plugins/gpt.ts:agentReply]
+```
+
+## Text generation
+
+This is how the textGeneration function is implemented in MessageKit.
+
+```tsx [plugins/gpt.ts]
+// [!include ~/../../packages/message-kit/src/plugins/gpt.ts:textGeneration]
+```
+
+## Process multiline response
+
+This is how the processMultilineResponse function is implemented in MessageKit.
+
+```tsx [plugins/gpt.ts]
+// [!include ~/../../packages/message-kit/src/plugins/gpt.ts:processMultilineResponse]
+```
+
+## Memory
+
+This is how the memory is implemented in MessageKit. For now its only on memory.
+
+```tsx [plugins/gpt.ts]
+// [!include ~/../../packages/message-kit/src/plugins/gpt.ts:memory]
+```
+
+## Prompt Rules
+
+This is how the prompt rules are implemented in MessageKit.
+
+```tsx [plugins/gpt.ts]
+// [!include ~/../../packages/message-kit/src/plugins/gpt.ts:PROMPT_RULES]
+```
+
+## Parse prompt
+
+This is how the parsePrompt function is implemented in MessageKit.
+
+```tsx [plugins/gpt.ts]
+// [!include ~/../../packages/message-kit/src/plugins/gpt.ts:parsePrompt]
+```
+
+## Full plugin
 
 This code is included in MessageKit, but you can import it directly in your files for more customization.
 
-```tsx [src/helpers/gpt.ts]
-// [!include ~/../../packages/message-kit/src/helpers/gpt.ts]
+```tsx [plugins/gpt.ts]
+// [!include ~/../../packages/message-kit/src/plugins/gpt.ts]
 ```

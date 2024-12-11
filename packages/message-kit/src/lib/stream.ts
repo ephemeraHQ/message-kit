@@ -10,8 +10,8 @@ import { findSkill } from "./skills.js";
 import { Conversation } from "@xmtp/node-sdk";
 import { Conversation as V2Conversation } from "@xmtp/xmtp-js";
 import { awaitedHandlers } from "./xmtp.js";
-import { agentReply } from "../helpers/gpt.js";
-import { replaceVariables } from "../helpers/gpt.js";
+import { agentReply, chatMemory } from "../plugins/gpt.js";
+import { parsePrompt } from "../plugins/gpt.js";
 
 // Add at the top of the file
 let hasInitialized = false;
@@ -124,11 +124,7 @@ export async function run(agent: Agent) {
       throw new Error("System prompt is not defined");
     }
 
-    let prompt = await replaceVariables(
-      agent.systemPrompt,
-      sender.address,
-      agent,
-    );
+    let prompt = await parsePrompt(agent.systemPrompt, sender.address, agent);
     await agentReply(context, prompt);
   };
   const filterMessage = (
@@ -150,6 +146,14 @@ export async function run(agent: Agent) {
       agent,
       group,
     } = context;
+
+    //Reserved
+    if (context.message.content.text?.startsWith("/reset")) {
+      context.clearMemory(sender?.address);
+      //context.clearCache(sender?.address);
+      context.send("Memory cleared");
+      return { isMessageValid: false, customHandler: undefined };
+    }
 
     let foundSkill = text?.startsWith("/")
       ? findSkill(text, agent?.skills ?? [])
@@ -274,7 +278,15 @@ export async function run(agent: Agent) {
         isMessageValid,
       });
     }
-    if (isMessageValid) logMessage(`msg_${version}: ` + (text ?? typeId));
+    if (isMessageValid) {
+      const history = chatMemory.addEntry(
+        context.getMemoryKey(),
+        text ?? typeId,
+        "user",
+      );
+      console.log("history", history);
+      logMessage(`msg_${version}: ` + (text ?? typeId));
+    }
 
     return {
       isMessageValid,

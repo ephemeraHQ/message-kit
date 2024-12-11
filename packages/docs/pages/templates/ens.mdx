@@ -13,7 +13,6 @@ ens/
 │       ├── info.ts
 │       ├── register.ts
 │       ├── renew.ts
-│       ├── reset.ts
 │       ├── pay.ts
 │   ├── index.ts
 │   ├── prompt.ts
@@ -22,12 +21,19 @@ ens/
 └── .env
 ```
 
+## Agent
+
+The process that starts listening to messages and replying to them.
+
+```tsx [src/index.ts]
+// [!include ~/../../templates/ens/src/index.ts]
+```
+
 ### Skills
 
 - [Check](/skills/check): Check if a domain is available
 - [Cool](/skills/cool): Show cool alternatives
 - [Register](/skills/register): Register a domain
-- [Reset](/skills/reset): Reset a domain
 - [Renew](/skills/renew): Renew a domain
 - [Info](/skills/info): Get info about a domain
 - [Pay](/skills/pay): Pay for a domain
@@ -38,14 +44,6 @@ Here is the prompt that the agent will use to reply to messages.
 
 ```tsx [src/prompt.ts]
 // [!include ~/../../templates/ens/src/prompt.ts]
-```
-
-## Agent
-
-The process that starts listening to messages and replying to them.
-
-```tsx [src/index.ts]
-// [!include ~/../../templates/ens/src/index.ts]
 ```
 
 ## Variables

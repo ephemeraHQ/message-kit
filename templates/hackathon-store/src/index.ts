@@ -1,9 +1,4 @@
-import {
-  agentReply,
-  XMTPContext,
-  replaceVariables,
-  run,
-} from "@xmtp/message-kit";
+import { agentReply, XMTPContext, parsePrompt, run } from "@xmtp/message-kit";
 import { downloadPage } from "./plugins/notion.js";
 import fs from "fs";
 import { Agent } from "@xmtp/message-kit";
@@ -29,7 +24,7 @@ const agent: Agent = {
     }
 
     let systemPrompt = await getPrompt();
-    let prompt = await replaceVariables(systemPrompt, sender.address, agent);
+    let prompt = await parsePrompt(systemPrompt, sender.address, agent);
     await agentReply(context, prompt);
   },
 };

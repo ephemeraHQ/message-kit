@@ -1,26 +1,114 @@
-# CDP
+# Agent Wallets
 
-Interact with Coinbase Developer Platform (CDP) and use it for your agents.
+The `WalletService` class in MessageKit provides a way to create agent wallets that can perform gasless payments and transfers on Base.
 
-> This functionality is already included in MessageKit, but you can import it directly in your files for more customization.
+## Introduction
 
-## Required
+To use the `WalletService`, you need to initialize it with Coinbase API credentials:
 
-This functionality requires the following packages:
+### Requirements
 
-- `@coinbase/coinbase-sdk`: The Coinbase SDK.
-- `@redis/redis`: The Redis client.
+- `@coinbase/coinbase-sdk`: Already included in MessageKit
+- `@coinbase/cbpay-js`: Already included in MessageKit
 
-## Env
+- Environment variables:
+  - `COINBASE_APP_ID`: The Coinbase app id
+  - `COINBASE_API_KEY_NAME`: The Coinbase API key name
+  - `COINBASE_API_KEY_PRIVATE_KEY`: The Coinbase API private key
 
-- `COINBASE_API_REDIS_URL`: The database number where the wallets are saved.
-- `COINBASE_API_KEY_NAME`: The Coinbase API key.
-- `COINBASE_API_KEY_PRIVATE_KEY`: The Coinbase API secret.
+## Wallet Management
+
+The `getWallet` method will retrieve an existing wallet or create a new one if it doesn't exist:
+
+{/* prettier-ignore-start */}
+```ts twoslash
+import { run, XMTPContext, Agent } from "@xmtp/message-kit";
+const level = "Danger";
+const humanAddress = "0x1234567890";
+const agent: Agent = {
+  name: "Agent",
+  description: "Agent",
+  tag: "@Bots",
+  skills: [],
+  onMessage: async (context: XMTPContext) => {
+// ---cut---
+// Get the wallet service
+const { walletService } = context;
+
+// Get or create a wallet
+const wallet = await walletService.getWallet(humanAddress);
+
+// Explicitly create a new wallet
+const isCreated = await walletService.createWallet(humanAddress);
+
+// Delete a wallet
+await walletService.deleteWallet(humanAddress);
+// ---cut-after---
+  },
+};
+
+run(agent);
+```
+{/* prettier-ignore-end */}
+
+### Actions
+
+Perform actions on the Agent Wallet like transfers and swaps or checking the balance.
+
+{/* prettier-ignore-start */}
+```ts twoslash
+import { run, XMTPContext, Agent } from "@xmtp/message-kit";
+const level = "Danger";
+const humanAddress = "0x1234567890";
+const amount = 100;
+const fromhumanAddress = "0x1234567890";
+const tohumanAddress = "0x1234567890";
+const fromAssetId = "USDC";
+const toAssetId = "ETH";
+const agent: Agent = {
+  name: "Agent",
+  description: "Agent",
+  tag: "@Bots",
+  skills: [],
+  onMessage: async (context: XMTPContext) => {
+// ---cut---
+// Get the wallet service
+const { walletService } = context;
+
+// Check balance
+const {address, balance} = await walletService.checkBalance(humanAddress);
+
+// Withdraw funds (optional amount parameter)
+await walletService.fund(amount);
+
+// Transfer between wallets
+await walletService.transfer(humanAddress, humanAddress, amount);
+
+// Swap assets (USDC and ETH)
+await walletService.swap(humanAddress, fromAssetId, toAssetId, amount);
+
+// Withdraw funds (optional amount parameter)
+await walletService.withdraw(amount);
+// ---cut-after---
+  },
+};
+
+run(agent);
+```
+{/* prettier-ignore-end */}
+
+## Security Architecture
+
+The WalletService uses encryption with local file storage:
+
+- Wallets are encrypted using the `getEncryptionKey()` method as the encryption key
+- Only people with the `getEncryptionKey()` method can decrypt the wallets
+- Data is stored locally in `.data/wallet-storage` directory
 
 ## Code
 
 This code is included in MessageKit, but you can import it directly in your files for more customization.
 
-```tsx [src/helpers/cdp.ts]
-// [!include ~/../../packages/message-kit/src/helpers/cdp.ts]
+```tsx [src/plugins/cdp.ts]
+// [!include ~/../../packages/message-kit/src/plugins/cdp.ts]
 ```

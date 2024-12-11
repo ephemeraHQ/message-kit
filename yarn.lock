@@ -528,7 +528,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@coinbase/coinbase-sdk@npm:*":
+"@coinbase/coinbase-sdk@npm:0.11.2":
   version: 0.11.2
   resolution: "@coinbase/coinbase-sdk@npm:0.11.2"
   dependencies:
@@ -3657,7 +3657,7 @@ __metadata:
   resolution: "@xmtp/message-kit@workspace:packages/message-kit"
   dependencies:
     "@coinbase/cbpay-js": "npm:^2.4.0"
-    "@coinbase/coinbase-sdk": "npm:*"
+    "@coinbase/coinbase-sdk": "npm:0.11.2"
     "@redis/client": "npm:^1.6.0"
     "@rollup/plugin-typescript": "npm:^11.1.6"
     "@types/node": "npm:^20.14.2"
@@ -4605,18 +4605,6 @@ __metadata:
   checksum: 10/516ed8b5e1a14d9c3a9c96c72ef6de2d70dfcdbaa0ec3a90bc7b9216c5457e39c09a5775750c272369070308542e671146120153062ab5f2f481bed5de2c925f
   languageName: node
   linkType: hard
-
-"coinbase-agent@workspace:templates/coinbase-agent":
-  version: 0.0.0-use.local
-  resolution: "coinbase-agent@workspace:templates/coinbase-agent"
-  dependencies:
-    "@redis/client": "npm:^1.6.0"
-    "@types/node": "npm:^20.14.2"
-    "@xmtp/message-kit": "workspace:*"
-    axios: "npm:^1.7.7"
-    typescript: "npm:^5.4.5"
-  languageName: unknown
-  linkType: soft
 
 "collapse-white-space@npm:^2.0.0":
   version: 2.1.0
@@ -9064,6 +9052,16 @@ __metadata:
   checksum: 10/b91575bf9cdf01757afd7b5e521eb8a0b874a49bc972d08e0047cfea0cd3c019f5614521d4bc83d2855e3fcc331db6817dfd533dd8f3d90b16bc76fad2450fc1
   languageName: node
   linkType: hard
+
+"paymentagent@workspace:templates/paymentagent":
+  version: 0.0.0-use.local
+  resolution: "paymentagent@workspace:templates/paymentagent"
+  dependencies:
+    "@types/node": "npm:^20.14.2"
+    "@xmtp/message-kit": "workspace:*"
+    typescript: "npm:^5.4.5"
+  languageName: unknown
+  linkType: soft
 
 "peberminta@npm:^0.9.0":
   version: 0.9.0

@@ -35,12 +35,12 @@ const agent: Agent = {
   description: "Agent Description",
   skills: [skill1, skill2],
   onMessage: async (context: XMTPContext) => {
-        /* Logs every message in a conversation
-        If not declared te agent will automatially use the skills defined
-        If not you can write your own logic here */
+        /* Logs every message in a conversation.
+        If not declared, the agent will automatically use the defined skills.
+        Alternatively, you can implement your own logic here. */
     },
   config: {
-    // Optional parameters
+    // Optional properties
   },
 };
 //starts the agent
@@ -49,7 +49,7 @@ run(agent);
 
 > See [`XMTP Context`](/concepts/xmtp) for more information.
 
-#### Config parameters
+### Properties
 
 - `privateKey`: the private key of the agent wallet, like any normal wallet private key.
 - `experimental`: experimental features like logging all group messages. Default is `false`.
@@ -59,8 +59,6 @@ run(agent);
 - `agent`: Custom agent to be used. Default is to create the skills in the `src/skills.ts` file.
 - `hideInitLogMessage`: hide the init log message with messagekit logo and stuff
 - `memberChange`: if true, member changes will be enabled, like adding members to the group
-
-> This can be used in the [Cron](/plugins/cron) plugin to send updates to the users.
 
 ## Skills
 
@@ -80,7 +78,68 @@ export const checkDomain: Skill[] = [
 ];
 ```
 
+### Properties
+
+- **skill**: The name of the skill.
+- **description**: The description of the skill.
+- **examples**: Examples of how to use the skill.
+- **params**: Defines the parameters required for the skill with its property name.
+  - **default**: The default value for the parameter. This can be any type.
+  - **optional**: If true, the parameter is optional.
+  - **values**: `[]` An array of strings that defines the accepted values for the parameter.
+  - **plural**: If true, the parameter is an array.
+  - **type**: The type of the parameter. It can be one of the following:
+    - `number`: The parameter is a number.
+    - `string`: The parameter is a string.
+    - `username`: The parameter is a username.
+    - `quoted`: The parameter is a quoted string.
+    - `address`: The parameter is an address.
+    - `prompt`: The parameter is a prompt.
+    - `url`: The parameter is a URL.
+
 > See [Skills](/community/skills) for more information.
+
+## System prompt
+
+Here is the prompt for the agent.
+
+```jsx [src/prompt.ts]
+export const systemPrompt = `
+{vibe}
+
+{rules}
+
+{user_context}
+
+{skills}
+
+## Response Scenarios:
+ 
+1. When user wants to swap tokens:
+  Hey {PREFERRED_NAME! I can help you swap tokens on Base.
+  Let me help you swap 10 USDC to ETH
+  /swap 10 usdc eth
+ 
+2. When user wants to swap a specific amount:
+  Sure! I'll help you swap 5 DEGEN to DAI
+  /swap 5 degen dai
+
+{issues}
+`;
+```
+
+### Properties
+
+- `{rules}`: The rules of the agent.
+- `{user_context}`: The user context.
+- `{skills}`: The skills of the agent.
+- `{issues}`: Most common issues of the agent.
+- `{scenarios}`: The scenarios of the agent.
+- `{agent_name}`: The name of the agent.
+- `{name}`: The name of the user.
+- `{address}`: The address of the user.
+- `{domain}`: The ENS domain of the user.
+- `{username}`: The Converse username of the user.
 
 ## Vibes
 

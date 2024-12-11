@@ -1,7 +1,7 @@
 import {
   run,
   agentReply,
-  replaceVariables,
+  parsePrompt,
   XMTPContext,
   Agent,
 } from "@xmtp/message-kit";
@@ -20,7 +20,7 @@ export const agent: Agent = {
       agent,
     } = context;
 
-    let prompt = await replaceVariables(systemPrompt, sender.address, agent);
+    let prompt = await parsePrompt(systemPrompt, sender.address, agent);
 
     await agentReply(context, prompt);
   },

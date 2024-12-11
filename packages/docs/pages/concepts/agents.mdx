@@ -1,0 +1,102 @@
+# AI Agents
+
+MessageKit's Skill framework enables agents to process natural language through multiple intelligence layers. Agents can:
+
+- Handle multi-step conversations
+- Maintain context
+- Wait for user responses
+- Create natural interaction flows
+
+![](/img/skills.png)
+
+## How it works
+
+Let's walk through a complete ENS domain registration flow:
+
+:::steps
+
+### User request
+
+```bash
+I want to check if vitalik.eth is available
+```
+
+### Parsing
+
+The agent processes the natural language input and breaks it down into sequential steps:
+
+```bash
+[
+  "Hello! I'll help you get your domain.",
+  "Let's start by checking your ENS domain. Give me a moment.",
+  "/check humanagent.eth",
+]
+```
+
+> This happens in the `processMultilineResponse` in the GPT [plugin](/plugins/gpt).
+
+### Skill declaration
+
+The handler function to process check skill requests:
+
+```tsx [src/skills/info.ts]
+// [!include ~/../../templates/ens/src/skills/info.ts:define]
+```
+
+## Context parameters
+
+This is the parameters extracted from the user request and available to the handler:
+
+```json
+{
+  "skill": "info",
+  "params": {
+    "domain": "vitalik.eth"
+  }
+}
+```
+
+### Handler
+
+The handler function to process info skill requests to fetch information about an ENS domain:
+
+```tsx [src/skills/info.ts]
+// [!include ~/../../templates/ens/src/skills/info.ts:handle]
+```
+
+### System prompt
+
+Here is the prompt for the agent.
+
+```jsx [src/prompt.ts]
+export const systemPrompt = `
+{vibe}
+
+{rules}
+
+{user_context}
+
+{skills}
+
+## Response Scenarios:
+ 
+1. When user wants to swap tokens:
+  Hey {PREFERRED_NAME! I can help you swap tokens on Base.
+  Let me help you swap 10 USDC to ETH
+  /swap 10 usdc eth
+ 
+2. When user wants to swap a specific amount:
+  Sure! I'll help you swap 5 DEGEN to DAI
+  /swap 5 degen dai
+
+{issues}
+`;
+```
+
+## End result
+
+The end result is a prompt that the model can understand and use to respond to the user.
+
+```md [example_prompt.md]
+// [!include ~/../../templates/ens/example_prompt.md]
+```

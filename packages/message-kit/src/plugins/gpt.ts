@@ -1,10 +1,10 @@
 import dotenv from "dotenv";
 dotenv.config({ override: true });
 import OpenAI from "openai";
-import { getFS } from "./utils";
+import { getFS } from "../helpers/utils";
 import { XMTPContext } from "../lib/xmtp";
 import { getUserInfo, replaceUserContext } from "./resolver";
-import type { Agent } from "./types";
+import type { Agent } from "../helpers/types";
 import { replaceSkills } from "../lib/skills";
 
 const isOpenAIConfigured = () => {
@@ -22,59 +22,95 @@ type ChatHistoryEntry = {
 };
 
 type ChatHistories = Record<string, ChatHistoryEntry[]>;
-// New ChatMemory class
+// [!region memory]
 class ChatMemory {
   private histories: ChatHistories = {};
+  private static instance: ChatMemory;
 
-  getHistory(address: string): ChatHistoryEntry[] {
-    return this.histories[address] || [];
-  }
+  private constructor() {}
 
-  addEntry(address: string, entry: ChatHistoryEntry) {
-    if (!this.histories[address]) {
-      this.histories[address] = [];
+  // Ensure singleton pattern
+  public static getInstance(): ChatMemory {
+    if (!ChatMemory.instance) {
+      ChatMemory.instance = new ChatMemory();
     }
-    this.histories[address].push(entry);
+    return ChatMemory.instance;
   }
 
-  initializeWithSystem(address: string, systemPrompt: string) {
-    if (this.getHistory(address).length === 0) {
-      this.addEntry(address, {
-        role: "system",
-        content: systemPrompt,
-      });
+  getHistory(key: string): ChatHistoryEntry[] {
+    const normalizedKey = key.toLowerCase();
+    return this.histories[normalizedKey];
+  }
+
+  addEntry(
+    key: string,
+    message: string,
+    who: "user" | "assistant" | "system",
+  ): ChatHistoryEntry[] {
+    if (!key || !message) {
+      console.log(key, message);
+      console.warn("Invalid entry attempt - missing key or message");
+      return [];
     }
+    const normalizedKey = key.toLowerCase();
+    if (!this.getHistory(normalizedKey)) {
+      return [];
+    }
+
+    this.histories[normalizedKey].push({
+      role: who,
+      content: message,
+    });
+
+    return this.getHistory(normalizedKey);
+  }
+  createMemory(key: string, systemPrompt: string) {
+    this.histories[key.toLowerCase()] = [];
+    this.addEntry(key.toLowerCase(), systemPrompt, "system");
+  }
+  initMemory(key: string, systemPrompt: string, userPrompt: string) {
+    const history = this.getHistory(key.toLowerCase());
+    if (!history) {
+      this.createMemory(key.toLowerCase(), systemPrompt);
+      this.addEntry(key.toLowerCase(), userPrompt, "user");
+      return this.getHistory(key.toLowerCase());
+    } else return history;
   }
 
-  clear(address?: string) {
-    if (address) {
-      this.histories[address] = [];
+  clear(key?: string) {
+    if (key) {
+      const normalizedKey = key.toLowerCase();
+      console.log(`Clearing memory for specific key: ${normalizedKey}`);
+      delete this.histories[normalizedKey];
     } else {
+      console.log("Clearing all memory");
       this.histories = {};
     }
   }
 }
 
-// Create singleton instance
-export const chatMemory = new ChatMemory();
+// Modify singleton export to use getInstance
+export const chatMemory = ChatMemory.getInstance();
+// [!endregion memory]
 
-export const clearMemory = (address?: string) => {
-  chatMemory.clear(address);
-};
 export const COMMON_ISSUES = `# Common Issues
+
 1. Missing commands in responses
-   **Issue**: Sometimes responses are sent without the required command.
-   **Example**:
-   Incorrect:
-   > "Looks like vitalik.eth is registered! What about these cool alternatives?"
-   Correct:
-   > "Looks like vitalik.eth is registered! What about these cool alternatives?
-   > /cool vitalik.eth"
-   Incorrect:
-   > Here is a summary of your TODOs. I will now send it via email.
-   Correct:
-   > /todo
+  **Example 1**:
+    User: check vitalik.eth
+    Incorrect:
+    > "Looks like vitalik.eth is registered! What about these cool alternatives?"
+    Correct:
+    > /cool vitalik.eth"
+  **Example 2**:
+    User: check my balance
+    Incorrect:
+    > "Let's see what your balance is saying now, ArizonaOregon! Here we go:"
+    Correct:
+    > /balance"
 `;
+
+// [!region PROMPT_RULES]
 export const PROMPT_RULES = `# Rules
 - You can respond with multiple messages if needed. Each message should be separated by a newline character.
 - You can trigger skills by only sending the command in a newline message.
@@ -85,13 +121,12 @@ export const PROMPT_RULES = `# Rules
 - Only answer if the verified information is in the prompt.
 - Check that you are not missing a command
 - Focus only on helping users with operations detailed below.
-- Date: ${new Date().toUTCString()}
-- When mentioning any action related to available skills, you MUST trigger the corresponding command in a new line
-- If you suggest an action that has a command, you must trigger that command
+- Date: ${new Date().toUTCString()},
+- IMPORTANT: Never forgot to send the command in a newline message.
 `;
-
-// [!region replaceVariables]
-export async function replaceVariables(
+// [!endregion PROMPT_RULES]
+// [!region parsePrompt]
+export async function parsePrompt(
   prompt: string,
   senderAddress: string,
   agent: Agent,
@@ -112,7 +147,19 @@ export async function replaceVariables(
   if (agent?.vibe) {
     let params = agent.vibe;
     // Construct a more detailed personality description from the vibe object
-    vibe = `You are ${params.vibe} agent called {agent_name} that lives inside a web3 messaging app called Converse.\n\nVibe: ${params.description}\nTone: ${params.tone}\nStyle: ${params.style}`;
+    vibe = `You are ${params.vibe} agent called {agent_name} that lives inside a web3 messaging app called Converse.\n\n`;
+    if (params.description) {
+      vibe += `Vibe: ${params.description}`;
+    }
+    if (params.tone) {
+      vibe += `Tone: ${params.tone}`;
+    }
+    if (params.style) {
+      vibe += `Style: ${params.style}`;
+    }
+    if (params.quirks && params.quirks.length > 0) {
+      vibe += `Quirks: ${params.quirks.join(", ")}`;
+    }
   }
 
   prompt = prompt.replace("{vibe}", vibe);
@@ -130,39 +177,15 @@ export async function replaceVariables(
     prompt = prompt.replaceAll("{name}", userInfo.preferredName || "");
   }
 
-  if (process.env.MSG_LOG === "true") {
-    //console.log("System Prompt", prompt);
-  }
   const { fs } = getFS();
   if (fs) {
     fs.writeFileSync("example_prompt.md", prompt);
   }
   return prompt;
 }
-// [!endregion replaceVariables]
-export async function agentParse(
-  prompt: string,
-  senderAddress: string,
-  systemPrompt: string,
-) {
-  try {
-    let userPrompt = prompt;
-    const userInfo = await getUserInfo(senderAddress);
-    if (!userInfo) {
-      console.log("User info not found");
-      return;
-    }
-    const { reply } = await textGeneration(
-      senderAddress,
-      userPrompt,
-      systemPrompt,
-    );
-    return reply;
-  } catch (error) {
-    console.error("Error during OpenAI call:", error);
-    throw error;
-  }
-}
+// [!endregion parsePrompt]
+
+// [!region agentReply]
 export async function agentReply(context: XMTPContext, systemPrompt?: string) {
   const {
     message: {
@@ -175,7 +198,7 @@ export async function agentReply(context: XMTPContext, systemPrompt?: string) {
     let userPrompt = params?.prompt ?? text;
 
     const { reply } = await textGeneration(
-      sender.address,
+      context.getConversationKey() + ":" + sender.address,
       userPrompt,
       systemPrompt,
     );
@@ -185,8 +208,11 @@ export async function agentReply(context: XMTPContext, systemPrompt?: string) {
     await context.send("An error occurred while processing your request.");
   }
 }
+// [!endregion agentReply]
+
+// [!region textGeneration]
 export async function textGeneration(
-  memoryKey: string,
+  key: string,
   userPrompt: string,
   systemPrompt: string = "",
 ) {
@@ -194,18 +220,10 @@ export async function textGeneration(
   if (!openai) {
     return { reply: "No OpenAI API key found in .env" };
   }
-  let messages: ChatHistoryEntry[] = [];
-  if (memoryKey) {
-    // Initialize or get chat history
-    chatMemory.initializeWithSystem(memoryKey, systemPrompt);
-    messages = chatMemory.getHistory(memoryKey);
-  }
 
-  // Add user's prompt
-  messages.push({ role: "user", content: userPrompt });
+  const messages = chatMemory.initMemory(key, systemPrompt, userPrompt);
 
   try {
-    // Make OpenAI API call
     const response = await openai.chat.completions.create({
       model: (process.env.GPT_MODEL as string) || "gpt-4o",
       messages: messages,
@@ -215,28 +233,22 @@ export async function textGeneration(
       response.choices[0].message.content ?? "No response from OpenAI.";
     const cleanedReply = parseMarkdown(reply);
 
-    // Update chat memory
-    if (memoryKey) {
-      chatMemory.addEntry(memoryKey, {
-        role: "assistant",
-        content: cleanedReply,
-      });
-      messages = chatMemory.getHistory(memoryKey);
-    }
-
     return { reply: cleanedReply, history: messages };
   } catch (error) {
     console.error("OpenAI API error:", error);
     throw new Error("Failed to generate response");
   }
 }
+// [!endregion textGeneration]
+
+// [!region processMultilineResponse]
 export async function processMultilineResponse(
   memoryKey: string,
   reply: string,
   context: XMTPContext,
 ) {
   if (!memoryKey) {
-    clearMemory();
+    chatMemory.clear();
   }
   let messages = reply
     .split("\n")
@@ -254,12 +266,9 @@ export async function processMultilineResponse(
         // Parse the response message
         let msg = parseMarkdown(response.message);
         // Add the parsed message to chat memory as a system message
-        chatMemory.addEntry(memoryKey, {
-          role: "system",
-          content: msg,
-        });
+        //chatMemory.addEntry(memoryKey, msg, "assistant");
         // Send the response message
-        await context.send(response.message);
+        await context.send(msg);
       }
     } else {
       // If the message is not a command, send it as is
@@ -268,6 +277,8 @@ export async function processMultilineResponse(
   }
   // [!endregion processing]
 }
+// [!endregion processMultilineResponse]
+
 export function parseMarkdown(message: string) {
   let trimmedMessage = message;
   // Remove bold and underline markdown

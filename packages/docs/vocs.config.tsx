@@ -103,20 +103,16 @@ export default defineConfig({
           link: "/concepts/groups",
         },
         {
-          text: "Usernames",
-          link: "/concepts/usernames",
-        },
-        {
           text: "Frames",
           link: "/concepts/frames",
         },
         {
           text: "Wallets",
-          link: "/concepts/wallet",
+          link: "/plugins/cdp",
         },
         {
-          text: "Skills",
-          link: "/concepts/skills",
+          text: "Agents",
+          link: "/concepts/agents",
         },
       ],
     },

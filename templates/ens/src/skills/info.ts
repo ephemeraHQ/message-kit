@@ -2,13 +2,20 @@ import { XMTPContext } from "@xmtp/message-kit";
 
 import type { Skill } from "@xmtp/message-kit";
 
+// [!region define]
 export const info: Skill[] = [
   {
     skill: "info",
     handler: handler,
     description:
       "Get detailed information about an ENS domain including owner, expiry date, and resolver.",
-    examples: ["/info nick.eth"],
+    examples: [
+      "/info humanagent.eth",
+      "/info fabri.base.eth",
+      "/info @fabri",
+      "/info fabri.converse.xyz",
+      "/info vitalik.eth",
+    ],
     params: {
       domain: {
         type: "string",
@@ -16,7 +23,9 @@ export const info: Skill[] = [
     },
   },
 ];
+// [!endregion define]
 
+// [!region handle]
 export async function handler(context: XMTPContext) {
   const {
     message: {
@@ -28,15 +37,17 @@ export async function handler(context: XMTPContext) {
   } = context;
 
   const data = await context.getUserInfo(domain);
-  if (!data?.ensDomain) {
+  if (!data?.address) {
     return {
       code: 404,
       message: "Domain not found.",
     };
   }
-  console.log(data);
-  let message = `Domain information:\n\n`;
-  message += `URL: https://app.ens.domains/${data?.ensDomain}\n`;
+  let message = `Information:\n\n`;
+  if (data?.ensDomain)
+    message += `URL: https://app.ens.domains/${data?.ensDomain}\n`;
+  if (data?.converseUsername)
+    message += `Converse: https://converse.xyz/dm/${data?.converseUsername}\n`;
   if (data?.address) message += `Address: ${data?.address}\n`;
   if (data?.ensInfo?.avatar) message += `Avatar: ${data?.ensInfo?.avatar}\n`;
   if (data?.ensInfo?.description)
@@ -47,18 +58,6 @@ export async function handler(context: XMTPContext) {
   if (data?.ensInfo?.twitter) message += `Twitter: ${data?.ensInfo?.twitter}\n`;
   message += `\n\nWould you like to tip the domain owner for getting there first 🤣?`;
   message = message.trim();
-
-  const { v2, v3 } = await context.isOnXMTP(
-    context.client,
-    context.v2client,
-    sender?.address,
-  );
-  if (v2 || v3) {
-    await context.send(
-      `Ah, this domains is in XMTP, you can message it directly`,
-    );
-    await context.sendConverseDmFrame(domain);
-  }
-
   return { code: 200, message };
 }
+// [!endregion handle]

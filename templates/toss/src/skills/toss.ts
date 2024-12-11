@@ -7,7 +7,6 @@ import {
   generateTossMessage,
   generateEndTossMessage,
   generateTossStatusMessage,
-  DM_HELP_MESSAGE,
 } from "../plugins/helpers.js";
 
 export const toss: Skill[] = [
@@ -159,8 +158,8 @@ export async function handleJoinToss(context: XMTPContext) {
   }
   //Create wallet for sender
   await walletService.createWallet(sender.address);
-  const balance = await walletService.checkBalance(sender.address);
-  if (balance < amount) return walletService.requestFunds(amount);
+  const { address, balance } = await walletService.checkBalance(sender.address);
+  if (balance < amount) return context.requestPayment(address, amount);
 
   try {
     let tempWalletID = toss_id + ":" + admin_address;
@@ -216,7 +215,7 @@ export async function handleEndToss(context: XMTPContext) {
   }
 
   let tempWalletID = toss_id + ":" + admin_address;
-  const balance = await walletService.checkBalance(tempWalletID);
+  const { balance } = await walletService.checkBalance(tempWalletID);
   const fundsNeeded = tossData.amount * participants?.length;
   if (balance < fundsNeeded) {
     await context.reply(
@@ -276,7 +275,7 @@ export async function handleCancelToss(context: XMTPContext) {
   }
 
   let tempWalletID = toss_id + ":" + admin_address;
-  const balance = await walletService.checkBalance(tempWalletID);
+  const { balance } = await walletService.checkBalance(tempWalletID);
   const fundsNeeded = tossData.amount * participants?.length;
   if (balance < fundsNeeded) {
     await context.reply(

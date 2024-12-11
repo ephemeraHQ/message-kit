@@ -1,7 +1,8 @@
+// [!region index]
 import {
   run,
   agentReply,
-  replaceVariables,
+  parsePrompt,
   XMTPContext,
   Agent,
 } from "@xmtp/message-kit";
@@ -13,13 +14,20 @@ export const agent: Agent = {
   description: "Use GPT to generate text responses.",
   onMessage: async (context: XMTPContext) => {
     const {
-      message: { sender },
+      message: {
+        sender,
+        content: { text },
+      },
       agent,
     } = context;
+    // [!endregion index]
 
-    let prompt = await replaceVariables(systemPrompt, sender.address, agent);
+    let prompt = await parsePrompt(systemPrompt, sender.address, agent);
     await agentReply(context, prompt);
+
+    // [!region final]
   },
 };
 
 run(agent);
+// [!endregion final]

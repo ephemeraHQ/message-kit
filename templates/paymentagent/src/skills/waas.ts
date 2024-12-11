@@ -18,6 +18,9 @@ export const waas: Skill[] = [
     description: "Transfer USDC to another user.",
     handler: handleWallet,
     examples: [
+      "/send @username 5.1",
+      "/send 0x123... 10",
+      "/send vitalik.eth 0.01",
       "/transfer @username 5.1",
       "/transfer @username 2",
       "/transfer 0x123... 10",
@@ -145,14 +148,6 @@ export async function handleWallet(context: XMTPContext) {
     await context.send("Swap completed");
     return;
   } else if (skill === "transfer") {
-    if (!amount || amount <= 0) {
-      await context.reply("Please specify a valid amount to transfer.");
-      return;
-    }
-    if (!recipient) {
-      await context.reply("Please specify a valid recipient.");
-      return;
-    }
     const { balance } = await walletService.checkBalance(sender.address);
     if (balance === 0) {
       await context.reply("You have no funds to transfer.");
