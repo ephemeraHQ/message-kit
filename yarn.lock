@@ -4606,18 +4606,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"coinbase-agent@workspace:templates/coinbase-agent":
-  version: 0.0.0-use.local
-  resolution: "coinbase-agent@workspace:templates/coinbase-agent"
-  dependencies:
-    "@redis/client": "npm:^1.6.0"
-    "@types/node": "npm:^20.14.2"
-    "@xmtp/message-kit": "workspace:*"
-    axios: "npm:^1.7.7"
-    typescript: "npm:^5.4.5"
-  languageName: unknown
-  linkType: soft
-
 "collapse-white-space@npm:^2.0.0":
   version: 2.1.0
   resolution: "collapse-white-space@npm:2.1.0"

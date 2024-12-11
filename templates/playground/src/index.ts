@@ -10,6 +10,9 @@ import { web } from "./skills/web.js";
 import { cryptoPrice } from "./skills/cryptoPrice.js";
 import { search } from "./skills/search.js";
 import { professional } from "./vibes/professional.js";
+export const frameUrl = "https://ens.steer.fun/";
+export const baseUrl = "https://base-tx-frame.vercel.app/transaction";
+export const ensUrl = "https://app.ens.domains/";
 
 export const agent: Agent = {
   name: "Playground Agent",
