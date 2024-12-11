@@ -1,55 +1,87 @@
-import { Skill, XMTPContext, getUserInfo } from "@xmtp/message-kit";
-import { DM_HELP_MESSAGE } from "../plugins/helpers.js";
+import { Skill, XMTPContext, SkillResponse } from "@xmtp/message-kit";
 
 export const waas: Skill[] = [
   {
     skill: "create",
-    description: "Create an agent wallet.",
-    handler: handleDM,
+    description: "Create your CDP wallet.",
+    handler: handleWallet,
     examples: ["/create"],
   },
   {
     skill: "fund",
-    description: "Fund your account.",
-    handler: handleDM,
-    examples: ["/fund 10"],
+    description: "Fund your CDP wallet.",
+    handler: handleWallet,
+    examples: ["/fund 10", "/fund 0.01"],
     params: {
       amount: {
         type: "number",
+        default: "",
       },
     },
   },
   {
-    skill: "withdraw",
-    description: "Withdraw funds from your account.",
-    handler: handleDM,
-    examples: ["/withdraw 10"],
+    skill: "transfer",
+    description: "Transfer USDC to another user.",
+    handler: handleWallet,
+    examples: [
+      "/transfer @username 5.1",
+      "/transfer @username 2",
+      "/transfer 0x123... 10",
+      "/transfer vitalik.eth 0.01",
+    ],
     params: {
+      recipient: {
+        type: "string",
+        default: "",
+      },
       amount: {
         type: "number",
+        default: "",
       },
     },
-  },
-  {
-    skill: "help",
-    description: "Get help with tossing.",
-    handler: handleDM,
-    examples: ["/help"],
   },
   {
     skill: "balance",
-    description: "Check your balance.",
-    handler: handleDM,
+    description: "Check your wallet balance.",
+    handler: handleWallet,
     examples: ["/balance"],
+  },
+  {
+    skill: "address",
+    description: "Check your wallet address.",
+    handler: handleWallet,
+    examples: ["/address"],
+  },
+  {
+    skill: "swap",
+    description: "Swap between tokens (e.g., ETH to USDC).",
+    handler: handleWallet,
+    examples: ["/swap 1 eth usdc", "/swap 100 usdc eth"],
+    params: {
+      amount: {
+        type: "number",
+        default: "",
+      },
+      fromToken: {
+        type: "string",
+        values: ["eth", "usdc"],
+        default: "",
+      },
+      toToken: {
+        type: "string",
+        values: ["eth", "usdc"],
+        default: "",
+      },
+    },
   },
 ];
 
-export async function handleDM(context: XMTPContext) {
+export async function handleWallet(context: XMTPContext) {
   const {
     message: {
       content: {
         skill,
-        params: { amount },
+        params: { amount, recipient, fromToken, toToken },
       },
       sender,
     },
@@ -58,10 +90,17 @@ export async function handleDM(context: XMTPContext) {
   } = context;
   if (group && skill == "help") {
     await context.reply("Check your DM's");
-    await context.sendTo(DM_HELP_MESSAGE, [sender.address]);
     return;
   } else if (skill === "help") {
-    await context.send(DM_HELP_MESSAGE);
+    await context.send("Im your personal assistant. How can I help you today?");
+  } else if (skill === "address") {
+    const walletExist = await walletService.getWallet(sender.address);
+    if (walletExist) {
+      await context.send("Your agent wallet address");
+      await context.send(walletExist.agent_address);
+      return;
+    }
+    await context.reply("You don't have an agent wallet.");
   } else if (skill === "create") {
     const walletExist = await walletService.getWallet(sender.address);
     if (walletExist) {
@@ -70,18 +109,19 @@ export async function handleDM(context: XMTPContext) {
     }
     await walletService.createWallet(sender.address);
   } else if (skill === "balance") {
-    context.sendTo(
-      `Your agent wallet for address is ${sender.address}\nBalance: $${await walletService.checkBalance(sender.address)}`,
-      [sender.address],
-    );
+    const { balance } = await walletService.checkBalance(sender.address);
+    context.send(`Your agent wallet with has a balance of $${balance}`);
   } else if (skill === "fund") {
-    const balance = await walletService.checkBalance(sender.address);
+    const { balance, address } = await walletService.checkBalance(
+      sender.address,
+    );
     if (balance === 10) {
       await context.reply("You have maxed out your funds.");
       return;
     } else if (amount) {
       if (amount + balance <= 10) {
-        return walletService.requestFunds(Number(amount));
+        await context.requestPayment(address, Number(amount));
+        return;
       } else {
         await context.send("Wrong amount. Max 10 USDC.");
         return;
@@ -97,9 +137,10 @@ export async function handleDM(context: XMTPContext) {
       `Please specify the amount of USDC to prefund (1 to ${10 - balance}):`,
       options,
     );
-    return walletService.requestFunds(Number(response));
+    await context.requestPayment(address, Number(response));
+    return;
   } else if (skill === "withdraw") {
-    const balance = await walletService.checkBalance(sender.address);
+    const { balance } = await walletService.checkBalance(sender.address);
     if (balance === 0) {
       await context.reply("You have no funds to withdraw.");
       return;
@@ -112,5 +153,19 @@ export async function handleDM(context: XMTPContext) {
       options,
     );
     await walletService.withdrawFunds(Number(response));
+  } else if (skill === "swap") {
+    await walletService.swap(sender.address, fromToken, toToken, amount);
+    await context.send("Swap completed");
+    return;
+  } else if (skill === "transfer") {
+    const { balance } = await walletService.checkBalance(sender.address);
+    if (balance === 0) {
+      await context.reply("You have no funds to transfer.");
+      return;
+    }
+    await context.send(`Transferring ${amount} USDC to ${recipient}`);
+    await walletService.transfer(sender.address, recipient, amount);
+    await context.send("Transfer completed");
+    return;
   }
 }

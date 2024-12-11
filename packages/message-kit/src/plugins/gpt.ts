@@ -37,52 +37,51 @@ class ChatMemory {
     return ChatMemory.instance;
   }
 
-  getHistory(address: string): ChatHistoryEntry[] {
-    const normalizedAddress = address.toLowerCase();
-    return this.histories[normalizedAddress];
+  getHistory(key: string): ChatHistoryEntry[] {
+    const normalizedKey = key.toLowerCase();
+    return this.histories[normalizedKey];
   }
 
   addEntry(
-    address: string,
+    key: string,
     message: string,
     who: "user" | "assistant" | "system",
   ): ChatHistoryEntry[] {
-    if (!address || !message) {
-      console.warn("Invalid entry attempt - missing address or message");
+    if (!key || !message) {
+      console.log(key, message);
+      console.warn("Invalid entry attempt - missing key or message");
       return [];
     }
-    const normalizedAddress = address.toLowerCase();
-    if (!this.getHistory(normalizedAddress)) {
+    const normalizedKey = key.toLowerCase();
+    if (!this.getHistory(normalizedKey)) {
       return [];
     }
 
-    this.histories[normalizedAddress].push({
+    this.histories[normalizedKey].push({
       role: who,
       content: message,
     });
 
-    return this.getHistory(normalizedAddress);
+    return this.getHistory(normalizedKey);
   }
-  createMemory(address: string, systemPrompt: string) {
-    const normalizedAddress = address.toLowerCase();
-    this.histories[normalizedAddress] = [];
-    this.addEntry(normalizedAddress, systemPrompt, "system");
+  createMemory(key: string, systemPrompt: string) {
+    this.histories[key.toLowerCase()] = [];
+    this.addEntry(key.toLowerCase(), systemPrompt, "system");
   }
-  initMemory(address: string, systemPrompt: string, userPrompt: string) {
-    const normalizedAddress = address.toLowerCase();
-    const history = this.getHistory(normalizedAddress);
+  initMemory(key: string, systemPrompt: string, userPrompt: string) {
+    const history = this.getHistory(key.toLowerCase());
     if (!history) {
-      this.createMemory(normalizedAddress, systemPrompt);
-      this.addEntry(normalizedAddress, userPrompt, "user");
-      return this.getHistory(normalizedAddress);
+      this.createMemory(key.toLowerCase(), systemPrompt);
+      this.addEntry(key.toLowerCase(), userPrompt, "user");
+      return this.getHistory(key.toLowerCase());
     } else return history;
   }
 
-  clear(address?: string) {
-    if (address) {
-      const normalizedAddress = address.toLowerCase();
-      console.log(`Clearing memory for specific address: ${normalizedAddress}`);
-      delete this.histories[normalizedAddress];
+  clear(key?: string) {
+    if (key) {
+      const normalizedKey = key.toLowerCase();
+      console.log(`Clearing memory for specific key: ${normalizedKey}`);
+      delete this.histories[normalizedKey];
     } else {
       console.log("Clearing all memory");
       this.histories = {};
@@ -180,6 +179,7 @@ export async function replaceVariables(
 }
 // [!endregion replaceVariables]
 export async function agentParse(
+  key: string,
   prompt: string,
   senderAddress: string,
   systemPrompt: string,
@@ -191,11 +191,7 @@ export async function agentParse(
       console.log("User info not found");
       return;
     }
-    const { reply } = await textGeneration(
-      senderAddress,
-      userPrompt,
-      systemPrompt,
-    );
+    const { reply } = await textGeneration(key, userPrompt, systemPrompt);
     return reply;
   } catch (error) {
     console.error("Error during OpenAI call:", error);
@@ -214,7 +210,7 @@ export async function agentReply(context: XMTPContext, systemPrompt?: string) {
     let userPrompt = params?.prompt ?? text;
 
     const { reply } = await textGeneration(
-      sender.address,
+      context.getConversationKey() + ":" + sender.address,
       userPrompt,
       systemPrompt,
     );
@@ -225,7 +221,7 @@ export async function agentReply(context: XMTPContext, systemPrompt?: string) {
   }
 }
 export async function textGeneration(
-  memoryKey: string,
+  key: string,
   userPrompt: string,
   systemPrompt: string = "",
 ) {
@@ -234,7 +230,7 @@ export async function textGeneration(
     return { reply: "No OpenAI API key found in .env" };
   }
 
-  const messages = chatMemory.initMemory(memoryKey, systemPrompt, userPrompt);
+  const messages = chatMemory.initMemory(key, systemPrompt, userPrompt);
 
   try {
     const response = await openai.chat.completions.create({
@@ -265,19 +261,27 @@ export async function processMultilineResponse(
     .map((message: string) => parseMarkdown(message))
     .filter((message): message is string => message.length > 0);
 
-  let msg = "";
+  console.log(messages);
+  // [!region processing]
   for (const message of messages) {
+    // Check if the message is a command (starts with "/")
     if (message.startsWith("/")) {
+      // Execute the skill associated with the command
       const response = await context.executeSkill(message);
-      if (response && typeof response.message === "string")
-        msg = response.message;
+      if (response && typeof response.message === "string") {
+        // Parse the response message
+        let msg = parseMarkdown(response.message);
+        // Add the parsed message to chat memory as a system message
+        //chatMemory.addEntry(memoryKey, msg, "assistant");
+        // Send the response message
+        await context.send(msg);
+      }
     } else {
-      msg = message;
+      // If the message is not a command, send it as is
+      await context.send(message);
     }
-
-    msg = parseMarkdown(msg);
-    await context.send(msg);
   }
+  // [!endregion processing]
 }
 export function parseMarkdown(message: string) {
   let trimmedMessage = message;

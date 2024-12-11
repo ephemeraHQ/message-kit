@@ -69,45 +69,15 @@ class LocalStorage {
 }
 
 export class WalletService {
-  private context: XMTPContext;
   private walletStorage: LocalStorage;
   private cdpEncriptionKey: string;
-  private enabled: boolean;
-  private isGroup: boolean;
+
   private senderAddress: string;
 
   constructor(context: XMTPContext) {
-    this.context = context;
-    this.isGroup = context.group !== undefined;
     this.senderAddress = context.message.sender.address;
     this.walletStorage = new LocalStorage();
     this.cdpEncriptionKey = context.getConversationKey();
-    this.enabled = Boolean(coinbase);
-  }
-  private async sendGroupMessage(message: string) {
-    if (this.isGroup) {
-      await this.context.reply(message);
-    }
-  }
-  private async requestPayment(amount: number, to: string) {
-    await this.context.requestPayment(amount, "USDC", to, [this.senderAddress]);
-  }
-  private async sendReceipt(tx: string) {
-    this.context.sendReceipt(tx);
-  }
-  private async sendPrivateMessage(message: string) {
-    if (!this.isGroup) {
-      await this.context.send(message);
-    } else if (this.isGroup) {
-      await this.context.sendTo(message, [this.senderAddress]);
-    }
-  }
-  private checkEnabled() {
-    if (!this.enabled) {
-      throw new Error(
-        "Wallet service is not enabled - missing Coinbase API credentials",
-      );
-    }
   }
 
   encrypt(data: any): string {
@@ -138,7 +108,6 @@ export class WalletService {
 
   async createWallet(key: string): Promise<boolean> {
     try {
-      this.checkEnabled();
       if (await this.getWallet(key)) {
         return true;
       }
@@ -177,80 +146,35 @@ export class WalletService {
       return false;
     }
   }
-
   async getWallet(key: string): Promise<WalletServiceData | undefined> {
     const encryptedKey = `wallet:${this.encrypt(key)}`;
     const walletData = await this.walletStorage.get(encryptedKey);
+    if (!walletData) return undefined;
+    try {
+      const decrypted = this.decrypt(walletData);
+      console.log(`Retrieved wallet data for ${decrypted.agent_address}`);
 
-    if (walletData) {
-      try {
-        const decrypted = this.decrypt(walletData);
-        console.log(`Retrieved wallet data for ${decrypted.agent_address}`);
-
-        let importedWallet = await Wallet.import(decrypted.data);
-        return {
-          wallet: importedWallet,
-          agent_address: decrypted.agent_address,
-          address: decrypted.address,
-          key: decrypted.key,
-        };
-      } catch (error) {
-        console.error("Failed to decrypt wallet data:", error);
-        throw new Error("Invalid wallet access");
-      }
+      let importedWallet = await Wallet.import(decrypted.data);
+      return {
+        wallet: importedWallet,
+        agent_address: decrypted.agent_address,
+        address: decrypted.address,
+        key: decrypted.key,
+      };
+    } catch (error) {
+      console.error("Failed to decrypt wallet data:", error);
+      throw new Error("Invalid wallet access");
     }
-  }
-
-  private async checkWalletExists(
-    address: string,
-  ): Promise<WalletServiceData | undefined> {
-    const walletData = await this.getWallet(address);
-    if (!walletData) {
-      this.sendPrivateMessage(
-        "You don't have an agent wallet yet. Would you like to create one?",
-      );
-      return undefined;
-    }
-    return walletData;
-  }
-
-  async requestFunds(amount: number): Promise<void> {
-    let to = this.senderAddress;
-    let wallet = await this.checkWalletExists(to);
-    if (!wallet) return;
-
-    if (!appId) {
-      throw new Error("COINBASE_APP_ID is not set");
-    }
-
-    // const onRampURL = generateOnRampURL({
-    //   appId: process.env.COINBASE_APP_ID,
-    //   presetCryptoAmount: amount,
-    //   addresses: {
-    //     [wallet?.agent_address as string]: ["base"],
-    //   },
-    //   assets: ["USDC"],
-    // });
-
-    this.sendPrivateMessage(`You can fund your account here:`);
-    this.requestPayment(amount, wallet?.agent_address);
-
-    this.sendGroupMessage(
-      `You need to fund your account. Check your DMs https://converse.xyz/${this.context.client.accountAddress}`,
-    );
-
-    return;
   }
 
   async withdrawFunds(amount?: number): Promise<Transfer | undefined> {
     let to = this.senderAddress;
-    let walletData = await this.checkWalletExists(to);
+    let walletData = await this.getWallet(to);
     if (!walletData) return undefined;
 
     const balance = await walletData.wallet.getBalance(Coinbase.assets.Usdc);
     if (Number(balance) === 0) {
-      this.sendPrivateMessage("Insufficient balance");
-      return;
+      return undefined;
     }
 
     const transfer = await walletData.wallet.createTransfer({
@@ -268,24 +192,25 @@ export class WalletService {
     } catch (err) {
       if (err instanceof TimeoutError) {
         console.log("Waiting for transfer timed out");
-        this.checkBalance(to);
       } else {
         console.error("Error while waiting for transfer to complete: ", err);
-        this.checkBalance(to);
       }
     }
     return transfer;
   }
 
-  async checkBalance(key: string): Promise<number> {
-    let walletData = await this.checkWalletExists(key);
-    if (!walletData) return 0;
-
+  async checkBalance(
+    humanAddress: string,
+  ): Promise<{ address: string | undefined; balance: number }> {
+    let walletData = await this.getWallet(humanAddress);
+    if (!walletData) return { address: undefined, balance: 0 };
+    console.log(walletData);
     let balance = await walletData.wallet.getBalance(Coinbase.assets.Usdc);
-    console.log(
-      `Wallet balance for: ${walletData.agent_address} is ${balance}`,
-    );
-    return Number(balance);
+    console.log(balance);
+    return {
+      address: walletData.agent_address,
+      balance: Number(balance),
+    };
   }
 
   async transfer(
@@ -293,29 +218,24 @@ export class WalletService {
     toAddress: string,
     amount: number,
   ): Promise<Transfer | undefined> {
-    let from = await this.checkWalletExists(fromAddress);
+    let from = await this.getWallet(fromAddress);
     if (!from) return undefined;
     let balance = await from.wallet.getBalance(Coinbase.assets.Usdc);
     if (Number(balance) < amount) {
-      this.requestFunds(amount);
-      return;
+      return undefined;
     }
     let to = await this.getWallet(toAddress);
     let toWallet = to?.agent_address ?? toAddress;
     try {
-      this.sendPrivateMessage(`Transferring ${amount} USDC to ${toWallet}`);
       const transfer = await from.wallet.createTransfer({
         amount,
         assetId: Coinbase.assets.Usdc,
         destination: toWallet as string,
         gasless: true,
       });
-      let sent = false;
       try {
         await transfer.wait();
-        let tx = transfer.getTransactionHash();
-        this.sendReceipt(`https://basescan.org/tx/${tx}`);
-        sent = true;
+        return transfer;
       } catch (err) {
         if (err instanceof TimeoutError) {
           console.log("Waiting for transfer timed out");
@@ -323,7 +243,6 @@ export class WalletService {
           console.error("Error while waiting for transfer to complete: ", err);
         }
       }
-      if (!sent) this.sendPrivateMessage(`Transfer completed successfully`);
       return transfer;
     } catch (error) {
       console.error("Transfer failed:", error);
@@ -337,7 +256,7 @@ export class WalletService {
     toAssetId: string,
     amount: number,
   ): Promise<Trade | undefined> {
-    let walletData = await this.checkWalletExists(address);
+    let walletData = await this.getWallet(address);
     if (!walletData) return undefined;
 
     console.log(
@@ -355,20 +274,19 @@ export class WalletService {
     } catch (err) {
       if (err instanceof TimeoutError) {
         console.log("Waiting for trade timed out");
-        this.checkBalance(address);
       } else {
         console.error("Error while waiting for trade to complete: ", err);
-        this.checkBalance(address);
       }
     }
     console.log(`Trade completed successfully`);
     return trade;
   }
 
-  async deleteWallet(key: string): Promise<void> {
+  async deleteWallet(key: string): Promise<boolean> {
     console.log(`Deleting wallet for key ${key}`);
     const encryptedKey = this.encrypt(key);
     await this.walletStorage.del(`wallet:${encryptedKey}`);
     console.log(`Wallet deleted for key ${key}`);
+    return true;
   }
 }

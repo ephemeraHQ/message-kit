@@ -276,7 +276,7 @@ export async function run(agent: Agent) {
     }
     if (isMessageValid) {
       const history = chatMemory.addEntry(
-        sender.address,
+        context.getMemoryKey(),
         text ?? typeId,
         "user",
       );

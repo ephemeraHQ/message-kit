@@ -93,7 +93,7 @@ async function fundHandler(context: XMTPContext) {
       return;
     }
 
-    await context.requestPayment(fundAmount, "USDC", usdcWallet.agentAddress);
+    await context.requestPayment(usdcWallet.agentAddress, fundAmount);
     await context.send(
       "After funding, let me know so I can check your balance.",
     );

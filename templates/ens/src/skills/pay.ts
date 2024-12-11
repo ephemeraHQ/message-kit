@@ -31,11 +31,24 @@ export const pay: Skill[] = [
       },
     },
   },
+  {
+    skill: "tip",
+    examples: ["/tip vitalik.eth"],
+    description: "Send 1 usdc.",
+    handler: handler,
+    params: {
+      username: {
+        default: "",
+        type: "username",
+      },
+    },
+  },
 ];
 export async function handler(context: XMTPContext) {
   const {
     message: {
       content: {
+        skill,
         params: { amount, token, username, address },
       },
     },
@@ -48,6 +61,12 @@ export async function handler(context: XMTPContext) {
     //Prioritize address over username
     receiverAddress = address;
   }
-
-  await context.requestPayment(amount, token, receiverAddress);
+  if (skill === "tip") {
+    let tipAmount = 1;
+    await context.send("Sure, here is the tip link: ");
+    await context.requestPayment(receiverAddress, tipAmount);
+  } else if (skill === "pay") {
+    await context.send("Sure, here is the payment link: ");
+    await context.requestPayment(receiverAddress, amount, token);
+  }
 }
