@@ -108,7 +108,7 @@ export default defineConfig({
         },
         {
           text: "Wallets",
-          link: "/concepts/wallet",
+          link: "/plugins/cdp",
         },
         {
           text: "Skills",

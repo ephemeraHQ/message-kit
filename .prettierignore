@@ -1,2 +1,4 @@
 CODEOWNERS
 .yarn
+
+packages/docs/pages/plugins/cdp.mdx

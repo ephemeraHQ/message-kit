@@ -1,21 +1,132 @@
-# CDP
 
-Interact with Coinbase Developer Platform (CDP) and use it for your agents.
+# Agent Wallets
 
-> This functionality is already included in MessageKit, but you can import it directly in your files for more customization.
+The `WalletService` class in MessageKit provides a way to create agent wallets that can perform gasless payments and transfers on Base.
 
-## Required
+## Introduction
 
-This functionality requires the following packages:
+To use the `WalletService`, you need to initialize it with Coinbase API credentials:
 
-- `@coinbase/coinbase-sdk`: The Coinbase SDK.
-- `@redis/redis`: The Redis client.
+### Requirements
 
-## Env
+- `@coinbase/coinbase-sdk`: Already included in MessageKit
+- `@coinbase/cbpay-js`: Already included in MessageKit
+- Environment variables:
+  - `COINBASE_APP_ID`: The Coinbase app id
+  - `COINBASE_API_KEY_NAME`: The Coinbase API key name
+  - `COINBASE_API_KEY_PRIVATE_KEY`: The Coinbase API private key
 
-- `COINBASE_API_REDIS_URL`: The database number where the wallets are saved.
-- `COINBASE_API_KEY_NAME`: The Coinbase API key.
-- `COINBASE_API_KEY_PRIVATE_KEY`: The Coinbase API secret.
+## Wallet Management
+
+The `getWallet` method will retrieve an existing wallet or create a new one if it doesn't exist:
+
+```ts twoslash
+import { run, XMTPContext, Agent } from "@xmtp/message-kit";
+const level = "Danger";
+const walletAddress = "0x1234567890";
+const agent: Agent = {
+  name: "Agent",
+  description: "Agent",
+  tag: "@Bots",
+  skills: [],
+  onMessage: async (context: XMTPContext) => {
+// ---cut---
+// Get the wallet service
+const { walletService } = context;
+// Get or create a wallet
+const wallet = await walletService.getWallet(walletAddress);
+
+// Explicitly create a new wallet
+const isCreated = await walletService.createWallet(walletAddress);
+
+// Delete a wallet
+await walletService.deleteWallet(walletAddress);
+// ---cut-after---
+  },
+};
+
+run(agent);
+```
+
+## Funds
+
+Requesting and Withdrawing Funds from or to the Agent Wallet
+
+```ts twoslash
+import { run, XMTPContext, Agent } from "@xmtp/message-kit";
+const amount = 100;
+const walletAddress = "0x1234567890";
+const agent: Agent = {
+  name: "Agent",
+  description: "Agent",
+  tag: "@Bots",
+  skills: [],
+  onMessage: async (context: XMTPContext) => {
+// ---cut---
+// Get the wallet service
+const { walletService } = context;
+// Request funds
+await walletService.requestFunds(amount);
+// This will send a payment request to the user with funding instructions
+
+// Withdraw funds (optional amount parameter)
+await walletService.withdrawFunds(amount);
+// If amount is not specified, withdraws entire balance
+// ---cut-after---
+  },
+};
+
+run(agent);
+```
+
+
+### Actions
+
+Perform actions on the Agent Wallet like transfers and swaps or checking the balance.
+
+
+```ts twoslash
+import { run, XMTPContext, Agent } from "@xmtp/message-kit";
+const level = "Danger";
+const walletAddress = "0x1234567890";
+const amount = 100;
+const fromWalletAddress = "0x1234567890";
+const toWalletAddress = "0x1234567890";
+const fromAssetId = "USDC";
+const toAssetId = "ETH";
+const agent: Agent = {
+  name: "Agent",
+  description: "Agent",
+  tag: "@Bots",
+  skills: [],
+  onMessage: async (context: XMTPContext) => {
+// ---cut---
+// Get the wallet service
+const { walletService } = context;
+
+// Check balance
+const balance = await walletService.checkBalance(walletAddress);
+
+// Transfer between wallets
+await walletService.transfer(walletAddress, walletAddress, amount);
+
+// Swap assets
+await walletService.swap(walletAddress, fromAssetId, toAssetId, amount);
+// ---cut-after---
+  },
+};
+
+run(agent);
+```
+
+
+## Security Architecture
+
+The WalletService uses encryption with local file storage:
+
+- Wallets are encrypted using the groupId as the encryption key
+- Only people
+- Data is stored locally in `.data/wallet-storage` directory
 
 ## Code
 
