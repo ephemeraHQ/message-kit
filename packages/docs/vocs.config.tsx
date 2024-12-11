@@ -111,8 +111,8 @@ export default defineConfig({
           link: "/plugins/cdp",
         },
         {
-          text: "Skills",
-          link: "/concepts/skills",
+          text: "Agents",
+          link: "/concepts/agents",
         },
       ],
     },
