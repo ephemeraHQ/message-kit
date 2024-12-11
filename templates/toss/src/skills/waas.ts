@@ -97,7 +97,7 @@ export async function handleWallet(context: XMTPContext) {
     await context.reply("You don't have an agent wallet.");
   } else if (skill === "balance") {
     const { balance } = await walletService.checkBalance(sender.address);
-    await context.send(`Your agent wallet with has a balance of $${balance}`);
+    await context.send(`Your agent wallet has a balance of $${balance}`);
   } else if (skill === "fund") {
     const { balance, address } = await walletService.checkBalance(
       sender.address,
