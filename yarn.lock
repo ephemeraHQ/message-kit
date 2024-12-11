@@ -6722,16 +6722,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"humanagent@workspace:templates/humanagent":
-  version: 0.0.0-use.local
-  resolution: "humanagent@workspace:templates/humanagent"
-  dependencies:
-    "@types/node": "npm:^20.14.2"
-    "@xmtp/message-kit": "workspace:*"
-    typescript: "npm:^5.4.5"
-  languageName: unknown
-  linkType: soft
-
 "humanize-ms@npm:^1.2.1":
   version: 1.2.1
   resolution: "humanize-ms@npm:1.2.1"
