@@ -93,18 +93,20 @@ class ChatMemory {
 export const chatMemory = ChatMemory.getInstance();
 
 export const COMMON_ISSUES = `# Common Issues
+
 1. Missing commands in responses
-   **Issue**: Sometimes responses are sent without the required command.
-   **Example**:
-   Incorrect:
-   > "Looks like vitalik.eth is registered! What about these cool alternatives?"
-   Correct:
-   > "Looks like vitalik.eth is registered! What about these cool alternatives?
-   > /cool vitalik.eth"
-   Incorrect:
-   > Here is a summary of your TODOs. I will now send it via email.
-   Correct:
-   > /todo
+  **Example 1**:
+    User: check vitalik.eth
+    Incorrect:
+    > "Looks like vitalik.eth is registered! What about these cool alternatives?"
+    Correct:
+    > /cool vitalik.eth"
+  **Example 2**:
+    User: check my balance
+    Incorrect:
+    > "Let's see what your balance is saying now, ArizonaOregon! Here we go:"
+    Correct:
+    > /balance"
 `;
 export const PROMPT_RULES = `# Rules
 - You can respond with multiple messages if needed. Each message should be separated by a newline character.

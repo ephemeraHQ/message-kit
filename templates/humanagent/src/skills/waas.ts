@@ -1,12 +1,6 @@
-import { Skill, XMTPContext, SkillResponse } from "@xmtp/message-kit";
+import { Skill, XMTPContext } from "@xmtp/message-kit";
 
 export const waas: Skill[] = [
-  {
-    skill: "create",
-    description: "Create your CDP wallet.",
-    handler: handleWallet,
-    examples: ["/create"],
-  },
   {
     skill: "fund",
     description: "Fund your CDP wallet.",
@@ -101,13 +95,6 @@ export async function handleWallet(context: XMTPContext) {
       return;
     }
     await context.reply("You don't have an agent wallet.");
-  } else if (skill === "create") {
-    const walletExist = await walletService.getWallet(sender.address);
-    if (walletExist) {
-      await context.reply("You already have an agent wallet.");
-      return;
-    }
-    await walletService.createWallet(sender.address);
   } else if (skill === "balance") {
     const { balance } = await walletService.checkBalance(sender.address);
     context.send(`Your agent wallet with has a balance of $${balance}`);
@@ -152,7 +139,7 @@ export async function handleWallet(context: XMTPContext) {
       `Please specify the amount of USDC to withdraw (1 to ${balance}):`,
       options,
     );
-    await walletService.withdrawFunds(Number(response));
+    await walletService.withdraw(Number(response));
   } else if (skill === "swap") {
     await walletService.swap(sender.address, fromToken, toToken, amount);
     await context.send("Swap completed");
