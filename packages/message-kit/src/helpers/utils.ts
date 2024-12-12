@@ -3,6 +3,26 @@ dotenv.config({ override: true });
 import { Client } from "@xmtp/node-sdk";
 import { AgentConfig } from "../helpers/types";
 import { Agent } from "../helpers/types";
+// Add these at the top level of the file
+const userInteractions = new Map<string, number>();
+let totalInteractions = 0;
+
+export async function logUserInteraction(address: string) {
+  let userAddress = address.toLowerCase();
+  if (userAddress) {
+    const isNewUser = !userInteractions.has(userAddress);
+    const currentCount = userInteractions.get(userAddress) || 0;
+
+    userInteractions.set(userAddress, currentCount + 1);
+    totalInteractions++;
+
+    if (isNewUser) {
+      console.log(
+        `New user ${userAddress}! Now ${userInteractions.size} users have interacted ${totalInteractions} times`,
+      );
+    }
+  }
+}
 
 export const logMessage = (message: any) => {
   if (process?.env?.MSG_LOG === "true") console.log(message);

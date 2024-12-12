@@ -35,10 +35,10 @@ const agent: Agent = {
   description: "Agent Description",
   skills: [skill1, skill2],
   onMessage: async (context: XMTPContext) => {
-        /* Logs every message in a conversation.
-        If not declared, the agent will automatically use the defined skills.
-        Alternatively, you can implement your own logic here. */
-    },
+    /* Logs every message in a conversation.
+    If not declared, the agent will automatically use the defined skills.
+    Alternatively, you can implement your own logic here. */
+  },
   config: {
     // Optional properties
   },
@@ -133,7 +133,6 @@ export const systemPrompt = `
 - `{rules}`: The rules of the agent.
 - `{user_context}`: The user context.
 - `{skills}`: The skills of the agent.
-- `{issues}`: Most common issues of the agent.
 - `{scenarios}`: The scenarios of the agent.
 - `{agent_name}`: The name of the agent.
 - `{name}`: The name of the user.

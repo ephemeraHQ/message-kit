@@ -34,7 +34,7 @@ import {
   type RemoteAttachment,
   type Attachment,
 } from "@xmtp/content-type-remote-attachment";
-import { getFS } from "../helpers/utils";
+import { getFS, logUserInteraction } from "../helpers/utils";
 import {
   ContentTypeReaction,
   type Reaction,
@@ -246,6 +246,8 @@ export class XMTPContext {
             attachment: { url: url },
           };
         }
+        // Add interaction tracking
+        logUserInteraction(sender?.address);
         context.message = {
           id: message.id,
           content,

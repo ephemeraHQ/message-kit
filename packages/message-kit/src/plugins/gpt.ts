@@ -93,23 +93,6 @@ class ChatMemory {
 export const chatMemory = ChatMemory.getInstance();
 // [!endregion memory]
 
-export const COMMON_ISSUES = `# Common Issues
-
-1. Missing commands in responses
-  **Example 1**:
-    User: check vitalik.eth
-    Incorrect:
-    > "Looks like vitalik.eth is registered! What about these cool alternatives?"
-    Correct:
-    > /cool vitalik.eth"
-  **Example 2**:
-    User: check my balance
-    Incorrect:
-    > "Let's see what your balance is saying now, ArizonaOregon! Here we go:"
-    Correct:
-    > /balance"
-`;
-
 // [!region PROMPT_RULES]
 export const PROMPT_RULES = `# Rules
 - You can respond with multiple messages if needed. Each message should be separated by a newline character.
@@ -122,7 +105,7 @@ export const PROMPT_RULES = `# Rules
 - Check that you are not missing a command
 - Focus only on helping users with operations detailed below.
 - Date: ${new Date().toUTCString()},
-- IMPORTANT: Never forgot to send the command in a newline message.
+- IMPORTANT: IF you are going to use a command, make sure to preceed with your message and "One moment:"
 `;
 // [!endregion PROMPT_RULES]
 // [!region parsePrompt]
@@ -165,7 +148,6 @@ export async function parsePrompt(
   prompt = prompt.replace("{vibe}", vibe);
   prompt = prompt.replace("{rules}", PROMPT_RULES);
   prompt = prompt.replace("{skills}", replaceSkills(agent));
-  prompt = prompt.replace("{issues}", COMMON_ISSUES);
   prompt = prompt.replace("{agent_name}", agent?.tag);
 
   // Replace variables in the system prompt
@@ -186,7 +168,7 @@ export async function parsePrompt(
 // [!endregion parsePrompt]
 
 // [!region agentReply]
-export async function agentReply(context: XMTPContext, systemPrompt?: string) {
+export async function agentReply(context: XMTPContext, systemPrompt: string) {
   const {
     message: {
       content: { text, params },
@@ -202,7 +184,12 @@ export async function agentReply(context: XMTPContext, systemPrompt?: string) {
       userPrompt,
       systemPrompt,
     );
-    await processMultilineResponse(sender.address, reply, context);
+    await processMultilineResponse(
+      sender.address,
+      reply,
+      context,
+      systemPrompt,
+    );
   } catch (error) {
     console.error("Error during OpenAI call:", error);
     await context.send("An error occurred while processing your request.");
@@ -241,43 +228,103 @@ export async function textGeneration(
 }
 // [!endregion textGeneration]
 
+// [!region hasIntent]
+export async function hasIntent(message: string): Promise<boolean> {
+  if (!openai) {
+    return false;
+  }
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [
+        {
+          role: "system",
+          content: `You are a binary classifier. Respond only with 'true' or 'false'. Detect if the message contains an intent or action description rather than a direct command or statement.
+            Possible indicators of intent could be :
+          
+              "Let me",
+              "One moment",
+              "Sure",
+              "Here",
+              "Let's",
+              "I'll",
+              "Checking",
+              ":",
+              "Okay",
+              "Alright",
+            `,
+        },
+        {
+          role: "user",
+          content: message,
+        },
+      ],
+      max_tokens: 1,
+      temperature: 0,
+    });
+    const hasIntent =
+      response.choices[0].message.content?.toLowerCase().includes("true") ??
+      false;
+    console.log("hasIntent", message, hasIntent);
+    return hasIntent;
+  } catch (error) {
+    console.error("Intent detection error:", error);
+    return false;
+  }
+}
+// [!endregion hasIntent]
+
+// [!region checkIntent]
+export async function checkIntent(
+  reply: string,
+  context: XMTPContext,
+  systemPrompt: string,
+) {
+  const intentDetected = reply.includes("moment"); //(await hasIntent(reply));
+  if (intentDetected && !reply.includes("/") && !reply.includes("?")) {
+    console.log("Oops, seems i forgot to run the command");
+    // context.send("Lets try again");
+    agentReply(context, systemPrompt);
+    return false;
+  } else return true;
+}
+// [!endregion checkIntent]
+
 // [!region processMultilineResponse]
 export async function processMultilineResponse(
   memoryKey: string,
   reply: string,
   context: XMTPContext,
+  systemPrompt: string,
 ) {
   if (!memoryKey) {
     chatMemory.clear();
   }
+  const isValidIntent = await checkIntent(reply, context, systemPrompt);
+  if (!isValidIntent) {
+    return;
+  }
+
   let messages = reply
     .split("\n")
     .map((message: string) => parseMarkdown(message))
     .filter((message): message is string => message.length > 0);
+  console.log("messages", messages);
 
-  console.log(messages);
-  // [!region processing]
+  // Continue with existing processing
   for (const message of messages) {
-    // Check if the message is a command (starts with "/")
     if (message.startsWith("/")) {
-      // Execute the skill associated with the command
       const response = await context.executeSkill(message);
       if (response && typeof response.message === "string") {
-        // Parse the response message
         let msg = parseMarkdown(response.message);
-        // Add the parsed message to chat memory as a system message
-        //chatMemory.addEntry(memoryKey, msg, "assistant");
-        // Send the response message
         await context.send(msg);
       }
     } else {
-      // If the message is not a command, send it as is
+      // If it's not a command and didn't match forbidden prefixes, it's probably valid free-form text
       await context.send(message);
     }
   }
-  // [!endregion processing]
 }
-// [!endregion processMultilineResponse]
 
 export function parseMarkdown(message: string) {
   let trimmedMessage = message;
