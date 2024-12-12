@@ -21,6 +21,7 @@
     "dev": "cd packages/message-kit && yarn build:watch",
     "docs": "cd packages/docs && yarn dev",
     "format": "turbo run format",
+    "frames": "cd packages/frames && yarn dev",
     "play": "cd templates/playground && yarn dev",
     "publish": "node scripts/publish.js",
     "templates": "node scripts/devTemplates.js",

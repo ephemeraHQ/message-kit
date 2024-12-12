@@ -10,6 +10,7 @@ export interface TossData {
   group_id: string;
   admin_name: string;
   admin_address: string;
+  creator_address: string;
   options: string;
   toss_id: string;
   amount: number;

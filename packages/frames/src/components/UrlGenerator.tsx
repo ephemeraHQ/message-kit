@@ -83,10 +83,11 @@ export default function UrlGenerator({ params }: { params: any }) {
               <label className="label">Generated URL</label>
               <div
                 style={{
-                  backgroundColor: "yellow",
+                  backgroundColor: "#FFFFE0",
                   padding: "10px",
                   borderRadius: "5px",
                   marginBottom: "10px",
+                  color: "black",
                 }}>
                 This frame can be sent through Converse and includes a button
                 that deeplinks to the wallet transaction. It only works on
@@ -98,6 +99,11 @@ export default function UrlGenerator({ params }: { params: any }) {
                   onClick={() => navigator.clipboard.writeText(generatedUrl)}
                   className="copy-button">
                   Copy
+                </button>{" "}
+                <button
+                  onClick={() => navigator.clipboard.writeText(generatedUrl)}
+                  className="copy-button">
+                  Trigger
                 </button>
               </div>
               <div
@@ -111,10 +117,11 @@ export default function UrlGenerator({ params }: { params: any }) {
               </div>
               <div
                 style={{
-                  backgroundColor: "yellow",
+                  backgroundColor: "#FFFFE0",
                   padding: "10px",
                   borderRadius: "5px",
                   marginBottom: "10px",
+                  color: "black",
                 }}>
                 This QR works in Mobile, scan this qr code with your mobile
                 camera

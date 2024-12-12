@@ -82,19 +82,23 @@ export async function handleWallet(context: XMTPContext) {
     group,
     walletService,
   } = context;
-  if (group && skill == "help") {
-    await context.reply("Check your DM's");
+  if (group && skill) {
+    await context.send("Check your DM's");
     return;
-  } else if (skill === "help") {
-    await context.send("Im your personal assistant. How can I help you today?");
+  }
+  if (skill == "help") {
+    await context.send(
+      "Im your personal assistant. How can I help you today?\nI can help you funding your account and sending USDC",
+    );
   } else if (skill === "address") {
     const walletExist = await walletService.getWallet(sender.address);
     if (walletExist) {
       await context.send("Your agent wallet address");
       await context.send(walletExist.agent_address);
       return;
+    } else {
+      await context.send("You don't have an agent wallet.");
     }
-    await context.reply("You don't have an agent wallet.");
   } else if (skill === "balance") {
     const { balance } = await walletService.checkBalance(sender.address);
     await context.send(`Your agent wallet has a balance of $${balance}`);
@@ -103,7 +107,7 @@ export async function handleWallet(context: XMTPContext) {
       sender.address,
     );
     if (balance === 10) {
-      await context.reply("You have maxed out your funds.");
+      await context.send("You have maxed out your funds.");
       return;
     } else if (amount) {
       if (amount + balance <= 10) {
@@ -114,7 +118,7 @@ export async function handleWallet(context: XMTPContext) {
         return;
       }
     }
-    await context.reply(
+    await context.send(
       `You have $${balance} in your account. You can fund up to $${10 - balance} more.`,
     );
     const options = Array.from({ length: Math.floor(10 - balance) }, (_, i) =>
@@ -129,7 +133,7 @@ export async function handleWallet(context: XMTPContext) {
   } else if (skill === "withdraw") {
     const { balance } = await walletService.checkBalance(sender.address);
     if (balance === 0) {
-      await context.reply("You have no funds to withdraw.");
+      await context.send("You have no funds to withdraw.");
       return;
     }
     const options = Array.from({ length: Math.floor(balance) }, (_, i) =>
@@ -146,16 +150,16 @@ export async function handleWallet(context: XMTPContext) {
     return;
   } else if (skill === "transfer") {
     if (!amount || amount <= 0) {
-      await context.reply("Please specify a valid amount to transfer.");
+      await context.send("Please specify a valid amount to transfer.");
       return;
     }
     if (!recipient) {
-      await context.reply("Please specify a valid recipient.");
+      await context.send("Please specify a valid recipient.");
       return;
     }
     const { balance } = await walletService.checkBalance(sender.address);
     if (balance === 0) {
-      await context.reply("You have no funds to transfer.");
+      await context.send("You have no funds to transfer.");
       return;
     }
     await context.send(`Transferring ${amount} USDC to ${recipient}`);

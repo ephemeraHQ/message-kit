@@ -279,12 +279,7 @@ export async function run(agent: Agent) {
       });
     }
     if (isMessageValid) {
-      const history = chatMemory.addEntry(
-        context.getMemoryKey(),
-        text ?? typeId,
-        "user",
-      );
-      console.log("history", history);
+      chatMemory.addEntry(context.getMemoryKey(), text ?? typeId, "user");
       logMessage(`msg_${version}: ` + (text ?? typeId));
     }
 

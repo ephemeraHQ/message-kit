@@ -78,6 +78,7 @@ export const awaitedHandlers = new Map<
 /* XMTPContext description*/
 export class XMTPContext {
   refConv: Conversation | V2Conversation | null = null;
+  originalMessage: DecodedMessage | DecodedMessageV2 | null = null;
   message!: MessageAbstracted; // A message from XMTP abstracted for agent use;
   group!: GroupAbstracted;
   conversation!: V2Conversation;
@@ -327,7 +328,18 @@ export class XMTPContext {
     this.awaitedHandler = null;
     awaitedHandlers.delete(this.getConversationKey());
   }
-
+  async getV2ConversationBySender(sender: string) {
+    if (this.isV2Conversation(this.conversation)) {
+      return this.conversation;
+    }
+    return this.v2client.conversations
+      .list()
+      .then((conversations) =>
+        conversations.find(
+          (conv) => conv.peerAddress.toLowerCase() === sender.toLowerCase(),
+        ),
+      );
+  }
   async getV2MessageById(
     conversationId: string,
     reference: string,
@@ -434,6 +446,7 @@ export class XMTPContext {
   async send(
     message: string | Reply | Reaction | RemoteAttachment | Attachment,
     contentType: ContentTypeId = ContentTypeText,
+    targetConversation?: V2Conversation,
   ) {
     if (contentType === ContentTypeText && typeof message !== "string") {
       console.error("Message must be a string");
@@ -444,7 +457,8 @@ export class XMTPContext {
       //@ts-ignore
       messageString = message?.content as string;
     }
-    const conversation = this.refConv || this.conversation || this.group;
+    const conversation =
+      targetConversation ?? this.refConv ?? this.conversation ?? this.group;
     if (conversation) {
       if (this.isV2Conversation(conversation)) {
         await conversation.send(message, {
@@ -461,6 +475,10 @@ export class XMTPContext {
     return this.getConversationKey() + ":" + this.message?.sender?.address;
   }
   getConversationKey() {
+    const conversation = this.refConv || this.conversation || this.group;
+    return `${(conversation as V2Conversation)?.topic || (conversation as Conversation)?.id}`;
+  }
+  getUserConversationKey() {
     const conversation = this.refConv || this.conversation || this.group;
     const awaitingSender =
       this.message?.sender?.inboxId || this.message?.sender?.address;
@@ -501,21 +519,26 @@ export class XMTPContext {
         continue;
       }
 
-      let targetConversation = conversations.find(
-        (conv) => conv.peerAddress.toLowerCase() === receiver.toLowerCase(),
-      );
+      let targetConversation = await this.getV2ConversationBySender(receiver);
 
       if (!targetConversation) {
         targetConversation =
           await this.v2client.conversations.newConversation(receiver);
       }
-
-      // Send the message only once per receiver
-      await targetConversation.send(message);
-
-      chatMemory.addEntry(this.getMemoryKey(), message, "assistant");
-      logMessage("sent: " + message);
+      this.send(message, ContentTypeText, targetConversation);
     }
+  }
+  async dm(message: string) {
+    if (typeof message !== "string") {
+      console.error("Message must be a string");
+      return;
+    }
+    let sender = this.message?.sender?.address;
+    this.send(
+      message,
+      ContentTypeText,
+      await this.getV2ConversationBySender(sender),
+    );
   }
 
   async sendCustomFrame(frame: Frame) {
@@ -548,7 +571,6 @@ export class XMTPContext {
     to: string = "humanagent.eth",
     amount: number,
     token?: string,
-    sendTo?: string[],
     onRampURL?: string,
   ) {
     let senderInfo = await getUserInfo(to);
@@ -563,11 +585,7 @@ export class XMTPContext {
     if (onRampURL) {
       sendUrl = sendUrl + "&onRampURL=" + encodeURIComponent(onRampURL);
     }
-    if (sendTo && sendTo.length > 0) {
-      await this.sendTo(sendUrl, sendTo);
-    } else {
-      await this.send(sendUrl);
-    }
+    await this.dm(sendUrl);
   }
   async sendConverseDmFrame(peer: string, pretext?: string) {
     let url = `https://converse.xyz/dm/${peer}`;

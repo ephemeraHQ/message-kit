@@ -5,7 +5,6 @@ import { AgentConfig } from "../helpers/types";
 import { Agent } from "../helpers/types";
 
 export const logMessage = (message: any) => {
-  //let msh = message?.substring(0, 60) + (message?.length > 60 ? "..." : "");
   if (process?.env?.MSG_LOG === "true") console.log(message);
 };
 
