@@ -101,7 +101,7 @@ export default function UrlGenerator({ params }: { params: any }) {
                   Copy
                 </button>{" "}
                 <button
-                  onClick={() => navigator.clipboard.writeText(generatedUrl)}
+                  onClick={() => navigator.clipboard.writeText(ethereumUrl)}
                   className="copy-button">
                   Trigger
                 </button>
