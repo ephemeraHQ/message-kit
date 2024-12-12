@@ -190,6 +190,7 @@ export class WalletService {
           },
           assets: ["USDC"],
         });
+        await this.context.dm("Here is the payment link:");
         await this.context.requestPayment(
           walletData.agent_address,
           amount,
@@ -214,7 +215,7 @@ export class WalletService {
       );
       const onRampURL = generateOnRampURL({
         appId: appId,
-        presetCryptoAmount: Number(amount),
+        presetCryptoAmount: Number(response),
         addresses: {
           [walletData.agent_address]: ["base"],
         },
@@ -222,7 +223,7 @@ export class WalletService {
       });
       await this.context.requestPayment(
         walletData.agent_address,
-        amount,
+        Number(response),
         "USDC",
         onramp ? onRampURL : undefined,
       );

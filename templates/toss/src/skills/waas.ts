@@ -18,6 +18,9 @@ export const waas: Skill[] = [
     description: "Transfer USDC to another user.",
     handler: handleWallet,
     examples: [
+      "/send @username 5.1",
+      "/send 0x123... 10",
+      "/send vitalik.eth 0.01",
       "/transfer @username 5.1",
       "/transfer @username 2",
       "/transfer 0x123... 10",
@@ -82,84 +85,35 @@ export async function handleWallet(context: XMTPContext) {
     group,
     walletService,
   } = context;
-  if (group && skill) {
-    await context.send("Check your DM's");
+  if (group && skill == "help") {
+    await context.reply("Check your DM's");
     return;
-  }
-  if (skill == "help") {
-    await context.send(
-      "Im your personal assistant. How can I help you today?\nI can help you funding your account and sending USDC",
-    );
+  } else if (skill === "help") {
+    await context.send("Im your personal assistant. How can I help you today?");
   } else if (skill === "address") {
     const walletExist = await walletService.getWallet(sender.address);
     if (walletExist) {
       await context.send("Your agent wallet address");
       await context.send(walletExist.agent_address);
       return;
-    } else {
-      await context.send("You don't have an agent wallet.");
     }
+    await context.reply("You don't have an agent wallet.");
   } else if (skill === "balance") {
     const { balance } = await walletService.checkBalance(sender.address);
     await context.send(`Your agent wallet has a balance of $${balance}`);
   } else if (skill === "fund") {
-    const { balance, address } = await walletService.checkBalance(
-      sender.address,
-    );
-    if (balance === 10) {
-      await context.send("You have maxed out your funds.");
-      return;
-    } else if (amount) {
-      if (amount + balance <= 10) {
-        await context.requestPayment(address, Number(amount));
-        return;
-      } else {
-        await context.send("Wrong amount. Max 10 USDC.");
-        return;
-      }
-    }
-    await context.send(
-      `You have $${balance} in your account. You can fund up to $${10 - balance} more.`,
-    );
-    const options = Array.from({ length: Math.floor(10 - balance) }, (_, i) =>
-      (i + 1).toString(),
-    );
-    const response = await context.awaitResponse(
-      `Please specify the amount of USDC to prefund (1 to ${10 - balance}):`,
-      options,
-    );
-    await context.requestPayment(address, Number(response));
+    await walletService.fund(amount);
     return;
   } else if (skill === "withdraw") {
-    const { balance } = await walletService.checkBalance(sender.address);
-    if (balance === 0) {
-      await context.send("You have no funds to withdraw.");
-      return;
-    }
-    const options = Array.from({ length: Math.floor(balance) }, (_, i) =>
-      (i + 1).toString(),
-    );
-    const response = await context.awaitResponse(
-      `Please specify the amount of USDC to withdraw (1 to ${balance}):`,
-      options,
-    );
-    await walletService.withdraw(Number(response));
+    await walletService.withdraw(amount);
   } else if (skill === "swap") {
     await walletService.swap(sender.address, fromToken, toToken, amount);
     await context.send("Swap completed");
     return;
   } else if (skill === "transfer") {
-    if (!amount || amount <= 0) {
-      await context.send("Please specify a valid amount to transfer.");
-      return;
-    }
-    if (!recipient) {
-      await context.send("Please specify a valid recipient.");
-      return;
-    }
     const { balance } = await walletService.checkBalance(sender.address);
     if (balance === 0) {
-      await context.send("You have no funds to transfer.");
+      await context.reply("You have no funds to transfer.");
       return;
     }
     await context.send(`Transferring ${amount} USDC to ${recipient}`);
