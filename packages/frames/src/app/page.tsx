@@ -43,13 +43,20 @@ export default function Home() {
               </a>
             </div>
             <div className="powered-by" style={{ marginTop: "1rem" }}>
+              <a href="/generator" rel="noopener noreferrer">
+                Deeplink Generator
+              </a>
+            </div>
+            <div className="powered-by" style={{ marginTop: "1rem" }}>
               <a href="/receipt" rel="noopener noreferrer">
                 Receipt
               </a>
             </div>
 
             <div className="powered-by" style={{ marginTop: "1rem" }}>
-              <a href="/dm/0xC60E6Bb79322392761BFe3081E302aEB79B30B03" rel="noopener noreferrer">
+              <a
+                href="/dm/0xC60E6Bb79322392761BFe3081E302aEB79B30B03"
+                rel="noopener noreferrer">
                 Chat
               </a>
             </div>

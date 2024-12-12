@@ -172,7 +172,7 @@ export class WalletService {
     }
   }
 
-  async fund(amount: number): Promise<boolean> {
+  async fund(amount: number, onramp: boolean = false): Promise<boolean> {
     let walletData = await this.getWallet(this.humanAddress);
     if (!walletData) return false;
     console.log(`Retrieved wallet data for ${this.humanAddress}`);
@@ -182,28 +182,52 @@ export class WalletService {
       return false;
     } else if (amount) {
       if (amount + Number(balance) <= 10) {
+        const onRampURL = generateOnRampURL({
+          appId: appId,
+          presetCryptoAmount: Number(amount),
+          addresses: {
+            [walletData.agent_address]: ["base"],
+          },
+          assets: ["USDC"],
+        });
+        await this.context.requestPayment(
+          walletData.agent_address,
+          amount,
+          "USDC",
+          onramp ? onRampURL : undefined,
+        );
         return true;
       } else {
         await this.context.dm("Wrong amount. Max 10 USDC.");
         return false;
       }
+    } else {
+      const options = Array.from(
+        { length: Math.floor(10 - Number(balance)) },
+        (_, i) => (i + 1).toString(),
+      );
+      const response = await this.context.awaitResponse(
+        `Please specify the amount of USDC to prefund (1 to ${
+          10 - Number(balance)
+        }):`,
+        options,
+      );
+      const onRampURL = generateOnRampURL({
+        appId: appId,
+        presetCryptoAmount: Number(amount),
+        addresses: {
+          [walletData.agent_address]: ["base"],
+        },
+        assets: ["USDC"],
+      });
+      await this.context.requestPayment(
+        walletData.agent_address,
+        amount,
+        "USDC",
+        onramp ? onRampURL : undefined,
+      );
+      return true;
     }
-    const options = Array.from(
-      { length: Math.floor(10 - Number(balance)) },
-      (_, i) => (i + 1).toString(),
-    );
-    const response = await this.context.awaitResponse(
-      `Please specify the amount of USDC to prefund (1 to ${
-        10 - Number(balance)
-      }):`,
-      options,
-    );
-
-    await this.context.requestPayment(
-      walletData.agent_address,
-      Number(response),
-    );
-    return true;
   }
 
   async withdraw(amount?: number): Promise<Transfer | undefined> {

@@ -102,47 +102,10 @@ export async function handleWallet(context: XMTPContext) {
     const { balance } = await walletService.checkBalance(sender.address);
     await context.send(`Your agent wallet has a balance of $${balance}`);
   } else if (skill === "fund") {
-    const { balance, address } = await walletService.checkBalance(
-      sender.address,
-    );
-    if (balance === 10) {
-      await context.reply("You have maxed out your funds.");
-      return;
-    } else if (amount) {
-      if (amount + balance <= 10) {
-        await context.requestPayment(address, Number(amount));
-        return;
-      } else {
-        await context.send("Wrong amount. Max 10 USDC.");
-        return;
-      }
-    }
-    await context.reply(
-      `You have $${balance} in your account. You can fund up to $${10 - balance} more.`,
-    );
-    const options = Array.from({ length: Math.floor(10 - balance) }, (_, i) =>
-      (i + 1).toString(),
-    );
-    const response = await context.awaitResponse(
-      `Please specify the amount of USDC to prefund (1 to ${10 - balance}):`,
-      options,
-    );
-    await context.requestPayment(address, Number(response));
+    await walletService.fund(amount);
     return;
   } else if (skill === "withdraw") {
-    const { balance } = await walletService.checkBalance(sender.address);
-    if (balance === 0) {
-      await context.reply("You have no funds to withdraw.");
-      return;
-    }
-    const options = Array.from({ length: Math.floor(balance) }, (_, i) =>
-      (i + 1).toString(),
-    );
-    const response = await context.awaitResponse(
-      `Please specify the amount of USDC to withdraw (1 to ${balance}):`,
-      options,
-    );
-    await walletService.withdraw(Number(response));
+    await walletService.withdraw(amount);
   } else if (skill === "swap") {
     await walletService.swap(sender.address, fromToken, toToken, amount);
     await context.send("Swap completed");

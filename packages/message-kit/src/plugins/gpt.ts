@@ -281,7 +281,8 @@ export async function checkIntent(
   systemPrompt: string,
 ) {
   const intentDetected = reply.includes("moment"); //(await hasIntent(reply));
-  if (intentDetected && !reply.includes("/") && !reply.includes("?")) {
+  console.log("intentDetected", intentDetected);
+  if (intentDetected && !reply.includes("/")) {
     console.log("Oops, seems i forgot to run the command");
     // context.send("Lets try again");
     agentReply(context, systemPrompt);
