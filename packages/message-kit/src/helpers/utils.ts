@@ -16,7 +16,7 @@ export async function logUserInteraction(address: string) {
     userInteractions.set(userAddress, currentCount + 1);
     totalInteractions++;
 
-    if (isNewUser) {
+    if (isNewUser && process.env.NODE_ENV == "production") {
       console.log(
         `New user ${userAddress}! Now ${userInteractions.size} users have interacted ${totalInteractions} times`,
       );
