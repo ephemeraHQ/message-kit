@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { parseUnits } from "viem";
-
+// update
 import { GeistMono as geistMono } from "geist/font/mono";
 import { GeistSans as geistSans } from "geist/font/sans";
 
