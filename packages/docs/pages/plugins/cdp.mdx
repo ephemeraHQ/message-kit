@@ -102,7 +102,8 @@ run(agent);
 The WalletService uses encryption with local file storage:
 
 - Wallets are encrypted using the `getEncryptionKey()` method as the encryption key
-- Only people with the `getEncryptionKey()` method can decrypt the wallets
+- `getEncryptionKey`() is a method that returns a string related to the current conversation
+- Only people inside the conversation can see the value of `getEncryptionKey`
 - Data is stored locally in `.data/wallet-storage` directory
 
 ## Code

@@ -377,29 +377,39 @@ export class MessageKit implements Context {
     awaitedHandlers.delete(this.getConversationKey());
   }
   async getV2ConversationBySender(sender: string) {
-    if (this.isV2Conversation(this.conversation)) {
-      return this.conversation;
+    try {
+      if (this.isV2Conversation(this.conversation)) {
+        return this.conversation;
+      }
+      return this.v2client.conversations
+        .list()
+        .then((conversations) =>
+          conversations.find(
+            (conv) => conv.peerAddress.toLowerCase() === sender.toLowerCase(),
+          ),
+        );
+    } catch (error) {
+      console.error("Error getting V2 conversation by sender:", error);
+      return undefined;
     }
-    return this.v2client.conversations
-      .list()
-      .then((conversations) =>
-        conversations.find(
-          (conv) => conv.peerAddress.toLowerCase() === sender.toLowerCase(),
-        ),
-      );
   }
   async getV2MessageById(
     conversationId: string,
     reference: string,
   ): Promise<DecodedMessageV2 | undefined> {
     /*Takes to long, deprecated*/
-    const conversations = await this.v2client.conversations.list();
-    const conversation = conversations.find(
-      (conv) => conv.topic === conversationId,
-    );
-    if (!conversation) return undefined;
-    const messages = await conversation.messages();
-    return messages.find((m) => m.id === reference) as DecodedMessageV2;
+    try {
+      const conversations = await this.v2client.conversations.list();
+      const conversation = conversations.find(
+        (conv) => conv.topic === conversationId,
+      );
+      if (!conversation) return undefined;
+      const messages = await conversation.messages();
+      return messages.find((m) => m.id === reference) as DecodedMessageV2;
+    } catch (error) {
+      console.error("Error getting V2 message by id:", error);
+      return undefined;
+    }
   }
   /*NEEDS TO BE FIXED
   async getV3ReplyChain(reference: string): Promise<{

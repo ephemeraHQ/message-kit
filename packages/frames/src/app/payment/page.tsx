@@ -20,7 +20,7 @@ export default async function Home({
     baseLogo: "https://avatars.githubusercontent.com/u/108554348?s=280&v=4",
     networkName: "base",
     tokenName: "usdc",
-    onRampURL: resolvedSearchParams?.onrampurl as string,
+    onRampURL: resolvedSearchParams?.onRampURL as string,
   };
   const amountUint256 = parseUnits(params.amount.toString(), 6);
   const ethereumUrl = `ethereum:${params.tokenAddress}@${params.chainId}/transfer?address=${params.recipientAddress}&uint256=${amountUint256}`;

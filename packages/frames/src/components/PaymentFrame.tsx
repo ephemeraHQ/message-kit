@@ -48,9 +48,12 @@ const PaymentFrame: React.FC<PaymentFrameProps> = ({
         });
 
         // Create transaction parameters for USDC transfer with gasless transaction
+        const accounts = await window.ethereum.request({
+          method: "eth_requestAccounts",
+        });
         const transactionParameters = {
           to: params.tokenAddress, // USDC contract address
-          from: window.ethereum.selectedAddress,
+          from: accounts[0],
           data: generateERC20TransferData(
             params.recipientAddress,
             amountUint256,

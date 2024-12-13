@@ -236,15 +236,21 @@ export class WalletService {
     if (!walletData) return undefined;
     console.log(`Retrieved wallet data for ${this.humanAddress}`);
     let balance = await walletData.wallet.getBalance(Coinbase.assets.Usdc);
-    if (Number(balance) === 0) {
-      await this.context.dm("You have no funds to withdraw.");
+    if (amount && amount <= 0) {
+      await this.context.dm(
+        "Please specify a valid positive amount to withdraw.",
+      );
+      return;
+    }
+    if (amount && amount > Number(balance)) {
+      await this.context.dm("You don't have enough funds to withdraw.");
       return;
     }
     let toWithdraw = amount ?? Number(balance);
     if (toWithdraw <= Number(balance)) {
       console.log("Withdrawing", toWithdraw);
       const transfer = await walletData.wallet.createTransfer({
-        amount: Number(amount),
+        amount: toWithdraw,
         assetId: Coinbase.assets.Usdc,
         destination: this.humanAddress,
         gasless: true,
