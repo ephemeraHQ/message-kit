@@ -18,7 +18,7 @@ Let's walk through a complete ENS domain registration flow:
 ### User request
 
 ```bash
-I want to check if vitalik.eth is available
+who holds vitalik.eth
 ```
 
 ### Parsing
@@ -29,21 +29,9 @@ The agent processes the natural language input and breaks it down into sequentia
 [
   "Hello! I'll help you get your domain.",
   "Let's start by checking your ENS domain. Give me a moment.",
-  "/check humanagent.eth",
+  "/info vitalik.eth",
 ]
 ```
-
-> This happens in the `processMultilineResponse` in the GPT [plugin](/plugins/gpt).
-
-### Skill declaration
-
-The handler function to process check skill requests:
-
-```tsx [src/skills/info.ts]
-// [!include ~/../../templates/ens/src/skills/info.ts:define]
-```
-
-## Context parameters
 
 This is the parameters extracted from the user request and available to the handler:
 
@@ -54,6 +42,16 @@ This is the parameters extracted from the user request and available to the hand
     "domain": "vitalik.eth"
   }
 }
+```
+
+> This happens in the `processMultilineResponse` in the GPT [plugin](/plugins/gpt).
+
+### Skill declaration
+
+The handler function to process check skill requests:
+
+```tsx [src/skills/info.ts]
+// [!include ~/../../templates/ens/src/skills/info.ts:define]
 ```
 
 ### Handler
