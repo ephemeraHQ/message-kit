@@ -244,6 +244,10 @@ export async function textGeneration(
     return { reply: "No OpenAI API key found in .env" };
   }
   try {
+    if (history.length === 0) {
+      history = [{ role: "system", content: systemPrompt }];
+      history.push({ role: "user", content: userPrompt });
+    }
     const response = await openai.chat.completions.create({
       model: (process.env.GPT_MODEL as string) || "gpt-4o",
       messages: history,
