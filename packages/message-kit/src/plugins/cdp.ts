@@ -5,7 +5,7 @@ import {
   Trade,
   TimeoutError,
 } from "@coinbase/coinbase-sdk";
-import { XMTPContext } from "../lib/xmtp";
+import { type Context } from "../lib/core";
 import { keccak256, toHex, toBytes } from "viem";
 import { getUserInfo } from "../plugins/resolver";
 import { isAddress } from "viem";
@@ -24,7 +24,7 @@ const coinbase =
         apiKeyName,
         privateKey,
       })
-    : null;
+    : undefined;
 
 interface WalletServiceData {
   wallet: Wallet;
@@ -73,10 +73,10 @@ class LocalStorage {
 export class WalletService {
   private walletStorage: LocalStorage;
   private cdpEncriptionKey: string;
-  private context: XMTPContext;
+  private context: Context;
   private humanAddress: string;
 
-  constructor(context: XMTPContext) {
+  constructor(context: Context) {
     this.context = context;
     this.humanAddress = context.message.sender.address;
     this.walletStorage = new LocalStorage();
@@ -111,7 +111,6 @@ export class WalletService {
   async createWallet(key: string): Promise<boolean> {
     try {
       console.log(`Creating new wallet for key ${key}...`);
-      await this.context.send(`Creating new agent wallet for you...`);
       const wallet = await Wallet.create({
         networkId: Coinbase.networks.BaseMainnet,
       });
@@ -132,14 +131,7 @@ export class WalletService {
         this.encrypt(walletInfo),
       );
 
-      ///let importedWallet =
       await Wallet.import(data);
-      // return {
-      //   wallet: importedWallet,
-      //   agent_address: address.getId(),
-      //   address: this.humanAddress,
-      //   key: key,
-      // };
       return true;
     } catch (error) {
       console.error("Failed to create wallet:", error);
@@ -152,9 +144,9 @@ export class WalletService {
   ): Promise<WalletServiceData | undefined> {
     const encryptedKey = `wallet:${this.encrypt(key)}`;
     const walletData = await this.walletStorage.get(encryptedKey);
-
     // If no wallet exists, create one
     if (!walletData) {
+      console.log("No wallet found for", key, encryptedKey);
       if (createIfNotFound) {
         const success = await this.createWallet(key);
         if (success) {
@@ -167,8 +159,6 @@ export class WalletService {
 
     try {
       const decrypted = this.decrypt(walletData);
-      console.log(`Retrieved wallet data for ${decrypted.agent_address}`);
-
       let importedWallet = await Wallet.import(decrypted.data);
       return {
         wallet: importedWallet,
@@ -182,51 +172,85 @@ export class WalletService {
     }
   }
 
-  async fund(amount: number): Promise<boolean> {
+  async fund(amount: number, onramp: boolean = false): Promise<boolean> {
     let walletData = await this.getWallet(this.humanAddress);
     if (!walletData) return false;
+    console.log(`Retrieved wallet data for ${this.humanAddress}`);
     let balance = await walletData.wallet.getBalance(Coinbase.assets.Usdc);
     if (Number(balance) === 10) {
-      await this.context.reply("You have maxed out your funds. Max 10 USDC.");
+      await this.context.dm("You have maxed out your funds. Max 10 USDC.");
       return false;
     } else if (amount) {
       if (amount + Number(balance) <= 10) {
+        const onRampURL = generateOnRampURL({
+          appId: appId,
+          presetCryptoAmount: Number(amount),
+          addresses: {
+            [walletData.agent_address]: ["base"],
+          },
+          assets: ["USDC"],
+        });
+        await this.context.dm("Here is the payment link:");
+        await this.context.requestPayment(
+          walletData.agent_address,
+          amount,
+          "USDC",
+          onramp ? onRampURL : undefined,
+        );
         return true;
       } else {
-        await this.context.reply("Wrong amount. Max 10 USDC.");
+        await this.context.dm("Wrong amount. Max 10 USDC.");
         return false;
       }
+    } else {
+      const options = Array.from(
+        { length: Math.floor(10 - Number(balance)) },
+        (_, i) => (i + 1).toString(),
+      );
+      const response = await this.context.awaitResponse(
+        `Please specify the amount of USDC to prefund (1 to ${
+          10 - Number(balance)
+        }):`,
+        options,
+      );
+      const onRampURL = generateOnRampURL({
+        appId: appId,
+        presetCryptoAmount: Number(response),
+        addresses: {
+          [walletData.agent_address]: ["base"],
+        },
+        assets: ["USDC"],
+      });
+      await this.context.requestPayment(
+        walletData.agent_address,
+        Number(response),
+        "USDC",
+        onramp ? onRampURL : undefined,
+      );
+      return true;
     }
-    const options = Array.from(
-      { length: Math.floor(10 - Number(balance)) },
-      (_, i) => (i + 1).toString(),
-    );
-    const response = await this.context.awaitResponse(
-      `Please specify the amount of USDC to prefund (1 to ${
-        10 - Number(balance)
-      }):`,
-      options,
-    );
-
-    await this.context.requestPayment(
-      walletData.agent_address,
-      Number(response),
-    );
-    return true;
   }
 
   async withdraw(amount?: number): Promise<Transfer | undefined> {
     let walletData = await this.getWallet(this.humanAddress);
     if (!walletData) return undefined;
+    console.log(`Retrieved wallet data for ${this.humanAddress}`);
     let balance = await walletData.wallet.getBalance(Coinbase.assets.Usdc);
-    if (Number(balance) === 0) {
-      await this.context.send("You have no funds to withdraw.");
+    if (amount && amount <= 0) {
+      await this.context.dm(
+        "Please specify a valid positive amount to withdraw.",
+      );
+      return;
+    }
+    if (amount && amount > Number(balance)) {
+      await this.context.dm("You don't have enough funds to withdraw.");
       return;
     }
     let toWithdraw = amount ?? Number(balance);
     if (toWithdraw <= Number(balance)) {
+      console.log("Withdrawing", toWithdraw);
       const transfer = await walletData.wallet.createTransfer({
-        amount: Number(amount),
+        amount: toWithdraw,
         assetId: Coinbase.assets.Usdc,
         destination: this.humanAddress,
         gasless: true,
@@ -253,6 +277,8 @@ export class WalletService {
   ): Promise<{ address: string | undefined; balance: number }> {
     let walletData = await this.getWallet(humanAddress);
     if (!walletData) return { address: undefined, balance: 0 };
+
+    console.log(`Retrieved wallet data for ${this.humanAddress}`);
     let balance = await walletData.wallet.getBalance(Coinbase.assets.Usdc);
 
     return {
@@ -268,22 +294,28 @@ export class WalletService {
   ): Promise<Transfer | undefined> {
     let from = await this.getWallet(fromAddress);
     if (!from) return undefined;
+    console.log(`Retrieved wallet data for ${fromAddress}`);
     let balance = await from.wallet.getBalance(Coinbase.assets.Usdc);
     if (Number(balance) < amount) {
       return undefined;
     }
-    if (!isAddress(toAddress)) {
+    if (!isAddress(toAddress) && !toAddress.includes(":")) {
       let user = await getUserInfo(toAddress);
       console.log("resolved toAddress", toAddress, user?.address);
       if (!user) {
-        this.context.send("User not found.");
+        this.context.dm("User not found.");
         return undefined;
       }
       toAddress = user.address as string;
     }
     let to = await this.getWallet(toAddress, false);
     let toWallet = to?.agent_address ?? toAddress;
+    if (toWallet.includes(":")) {
+      console.log("Failed accessing the wallet");
+      return undefined;
+    }
     try {
+      console.log("Transferring", amount, fromAddress, toWallet);
       const transfer = await from.wallet.createTransfer({
         amount,
         assetId: Coinbase.assets.Usdc,
@@ -315,11 +347,11 @@ export class WalletService {
   ): Promise<Trade | undefined> {
     let walletData = await this.getWallet(address);
     if (!walletData) return undefined;
+    console.log(`Retrieved wallet data for ${address}`);
 
     console.log(
       `Initiating swap from ${fromAssetId} to ${toAssetId} for amount: ${amount}`,
     );
-
     const trade = await walletData.wallet.createTrade({
       amount,
       fromAssetId,

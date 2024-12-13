@@ -3,9 +3,30 @@ dotenv.config({ override: true });
 import { Client } from "@xmtp/node-sdk";
 import { AgentConfig } from "../helpers/types";
 import { Agent } from "../helpers/types";
+// Add these at the top level of the file
+const userInteractions = new Map<string, number>();
+let totalInteractions = 0;
+
+export async function logUserInteraction(address: string) {
+  if (process.env.NODE_ENV !== "production") return;
+  if (!address) return;
+  let userAddress = address.toLowerCase();
+  if (userAddress) {
+    const isNewUser = !userInteractions.has(userAddress);
+    const currentCount = userInteractions.get(userAddress) || 0;
+
+    userInteractions.set(userAddress, currentCount + 1);
+    totalInteractions++;
+
+    if (isNewUser) {
+      console.log(
+        `New user ${userAddress}! Now ${userInteractions.size} users have interacted ${totalInteractions} times`,
+      );
+    }
+  }
+}
 
 export const logMessage = (message: any) => {
-  //let msh = message?.substring(0, 60) + (message?.length > 60 ? "..." : "");
   if (process?.env?.MSG_LOG === "true") console.log(message);
 };
 
@@ -97,8 +118,8 @@ type Network = {
   dripAmount: number;
   address: string;
   isERC20: boolean;
-  erc20Address: string | null;
-  erc20Decimals: number | null;
+  erc20Address: string | undefined;
+  erc20Decimals: number | undefined;
   isActive: boolean;
   balance: string;
 };
@@ -116,8 +137,8 @@ export function extractFrameChain(txLink: string): Network {
       dripAmount: 0.01,
       address: "0x625BCC1142E97796173104A6e817Ee46C593b3C5",
       isERC20: false,
-      erc20Address: null,
-      erc20Decimals: null,
+      erc20Address: undefined,
+      erc20Decimals: undefined,
       isActive: true,
       balance: "0.01",
     },
@@ -130,8 +151,8 @@ export function extractFrameChain(txLink: string): Network {
       dripAmount: 0.01,
       address: "0x625BCC1142E97796173104A6e817Ee46C593b3C5",
       isERC20: false,
-      erc20Address: null,
-      erc20Decimals: null,
+      erc20Address: undefined,
+      erc20Decimals: undefined,
       isActive: true,
       balance: "179.70",
     },
@@ -144,8 +165,8 @@ export function extractFrameChain(txLink: string): Network {
       dripAmount: 0.01,
       address: "0x625BCC1142E97796173104A6e817Ee46C593b3C5",
       isERC20: false,
-      erc20Address: null,
-      erc20Decimals: null,
+      erc20Address: undefined,
+      erc20Decimals: undefined,
       isActive: true,
       balance: "179.70",
     },
@@ -158,8 +179,8 @@ export function extractFrameChain(txLink: string): Network {
       dripAmount: 0.01,
       address: "0x625BCC1142E97796173104A6e817Ee46C593b3C5",
       isERC20: false,
-      erc20Address: null,
-      erc20Decimals: null,
+      erc20Address: undefined,
+      erc20Decimals: undefined,
       isActive: true,
       balance: "179.70",
     },
@@ -185,8 +206,8 @@ export function extractFrameChain(txLink: string): Network {
       dripAmount: 0.1,
       address: "0x625BCC1142E97796173104A6e817Ee46C593b3C5",
       isERC20: false,
-      erc20Address: null,
-      erc20Decimals: null,
+      erc20Address: undefined,
+      erc20Decimals: undefined,
       isActive: true,
       balance: "0.00",
     },
@@ -198,8 +219,8 @@ export function extractFrameChain(txLink: string): Network {
       dripAmount: 0.05,
       address: "0x625BCC1142E97796173104A6e817Ee46C593b3C5",
       isERC20: false,
-      erc20Address: null,
-      erc20Decimals: null,
+      erc20Address: undefined,
+      erc20Decimals: undefined,
       isActive: true,
       balance: "4553.99",
     },
@@ -211,8 +232,8 @@ export function extractFrameChain(txLink: string): Network {
       dripAmount: 0.1,
       address: "0x625BCC1142E97796173104A6e817Ee46C593b3C5",
       isERC20: false,
-      erc20Address: null,
-      erc20Decimals: null,
+      erc20Address: undefined,
+      erc20Decimals: undefined,
       isActive: true,
       balance: "6450.40",
     },
@@ -224,8 +245,8 @@ export function extractFrameChain(txLink: string): Network {
       dripAmount: 0.01,
       address: "0x625BCC1142E97796173104A6e817Ee46C593b3C5",
       isERC20: false,
-      erc20Address: null,
-      erc20Decimals: null,
+      erc20Address: undefined,
+      erc20Decimals: undefined,
       isActive: true,
       balance: "6450.40",
     },
@@ -237,8 +258,8 @@ export function extractFrameChain(txLink: string): Network {
       dripAmount: 0.02,
       address: "0x625BCC1142E97796173104A6e817Ee46C593b3C5",
       isERC20: false,
-      erc20Address: null,
-      erc20Decimals: null,
+      erc20Address: undefined,
+      erc20Decimals: undefined,
       isActive: true,
       balance: "54.45",
     },
@@ -250,8 +271,8 @@ export function extractFrameChain(txLink: string): Network {
       dripAmount: 1,
       address: "0x3e2ab8b954bc0bc0",
       isERC20: false,
-      erc20Address: null,
-      erc20Decimals: null,
+      erc20Address: undefined,
+      erc20Decimals: undefined,
       isActive: true,
       balance: "9964.00",
     },
@@ -264,8 +285,8 @@ export function extractFrameChain(txLink: string): Network {
       dripAmount: 0.1,
       address: "0x625BCC1142E97796173104A6e817Ee46C593b3C5",
       isERC20: false,
-      erc20Address: null,
-      erc20Decimals: null,
+      erc20Address: undefined,
+      erc20Decimals: undefined,
       isActive: true,
       balance: "0.02",
     },
@@ -278,8 +299,8 @@ export function extractFrameChain(txLink: string): Network {
       dripAmount: 0.01,
       address: "0x625BCC1142E97796173104A6e817Ee46C593b3C5",
       isERC20: false,
-      erc20Address: null,
-      erc20Decimals: null,
+      erc20Address: undefined,
+      erc20Decimals: undefined,
       isActive: true,
       balance: "2.30",
     },
@@ -292,8 +313,8 @@ export function extractFrameChain(txLink: string): Network {
       dripAmount: 0.1,
       address: "0x625BCC1142E97796173104A6e817Ee46C593b3C5",
       isERC20: false,
-      erc20Address: null,
-      erc20Decimals: null,
+      erc20Address: undefined,
+      erc20Decimals: undefined,
       isActive: true,
       balance: "0.03",
     },
@@ -306,8 +327,8 @@ export function extractFrameChain(txLink: string): Network {
       dripAmount: 0.01,
       address: "0x625BCC1142E97796173104A6e817Ee46C593b3C5",
       isERC20: false,
-      erc20Address: null,
-      erc20Decimals: null,
+      erc20Address: undefined,
+      erc20Decimals: undefined,
       isActive: true,
       balance: "6.42",
     },
@@ -319,8 +340,8 @@ export function extractFrameChain(txLink: string): Network {
       dripAmount: 1,
       address: "ST4HMZRS8XSTGEPQXNKXFAY9T45HMS4FE72Q3ED0",
       isERC20: false,
-      erc20Address: null,
-      erc20Decimals: null,
+      erc20Address: undefined,
+      erc20Decimals: undefined,
       isActive: true,
       balance: "907.42",
     },
@@ -334,8 +355,8 @@ export function extractFrameChain(txLink: string): Network {
       address:
         "0x012b6781F1Fbe402F75efacDD4D90bb22c69c0172b7d34bB5233854631Ca3272",
       isERC20: false,
-      erc20Address: null,
-      erc20Decimals: null,
+      erc20Address: undefined,
+      erc20Decimals: undefined,
       isActive: true,
       balance: "99.64",
     },
@@ -349,8 +370,8 @@ export function extractFrameChain(txLink: string): Network {
       address:
         "0xda593ab6a600ccf74e9dc1f2ef0f7ba852bf29bcc92d91e302c33c883b333432",
       isERC20: false,
-      erc20Address: null,
-      erc20Decimals: null,
+      erc20Address: undefined,
+      erc20Decimals: undefined,
       isActive: true,
       balance: "0.00",
     },
@@ -363,8 +384,8 @@ export function extractFrameChain(txLink: string): Network {
       dripAmount: 0.01,
       address: "0x625BCC1142E97796173104A6e817Ee46C593b3C5",
       isERC20: false,
-      erc20Address: null,
-      erc20Decimals: null,
+      erc20Address: undefined,
+      erc20Decimals: undefined,
       isActive: true,
       balance: "369.47",
     },
@@ -376,8 +397,8 @@ export function extractFrameChain(txLink: string): Network {
       dripAmount: 0.01,
       address: "0x625BCC1142E97796173104A6e817Ee46C593b3C5",
       isERC20: false,
-      erc20Address: null,
-      erc20Decimals: null,
+      erc20Address: undefined,
+      erc20Decimals: undefined,
       isActive: true,
       balance: "7.85",
     },
@@ -408,8 +429,8 @@ export function extractFrameChain(txLink: string): Network {
       dripAmount: 0,
       address: "",
       isERC20: false,
-      erc20Address: null,
-      erc20Decimals: null,
+      erc20Address: undefined,
+      erc20Decimals: undefined,
       isActive: false,
       balance: "0",
     };
@@ -421,7 +442,31 @@ import { promises as fsPromisesModule } from "fs";
 import * as fsSync from "fs";
 
 export function getFS() {
-  const fs = typeof window === "undefined" ? fsSync : null;
-  const fsPromises = typeof window === "undefined" ? fsPromisesModule : null;
+  const fs = typeof window === "undefined" ? fsSync : undefined;
+  const fsPromises =
+    typeof window === "undefined" ? fsPromisesModule : undefined;
   return { fs, fsPromises };
+}
+
+export async function getCacheCreationDate() {
+  const { fsPromises } = getFS();
+  if (!fsPromises) return undefined;
+  try {
+    const stats = await fsPromises.stat(".data");
+    return new Date(stats.birthtime);
+  } catch (err) {
+    console.error("Error getting cache creation date:", err);
+    return undefined;
+  }
+}
+
+export async function readFile(filePath: string) {
+  const { fs } = getFS();
+  if (!fs) return undefined;
+  try {
+    return await fs.readFileSync(filePath);
+  } catch (err) {
+    console.error("Error reading file:", err);
+    return undefined;
+  }
 }

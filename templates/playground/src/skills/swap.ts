@@ -1,4 +1,4 @@
-import { XMTPContext } from "@xmtp/message-kit";
+import { Context } from "@xmtp/message-kit";
 import type { Skill } from "@xmtp/message-kit";
 import { baseUrl } from "../index.js";
 
@@ -27,7 +27,7 @@ export const registerSkill: Skill[] = [
   },
 ];
 
-export async function handler(context: XMTPContext) {
+export async function handler(context: Context) {
   // Destructure and validate parameters for the swap command
   const {
     message: {

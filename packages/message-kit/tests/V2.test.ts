@@ -1,11 +1,11 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
-import { XMTPContext } from "../src/lib/xmtp";
+import { MessageKit } from "../src/lib/core";
 import { ContentTypeText } from "@xmtp/content-type-text";
 import { ContentTypeReply } from "@xmtp/content-type-reply";
 import { ContentTypeReaction } from "@xmtp/content-type-reaction";
 import { getMocks } from "./utils";
 
-describe("XMTPContext Message Tests", () => {
+describe("Context Message Tests", () => {
   // Mock conversation data
   const {
     mockV2Conversation,
@@ -22,7 +22,7 @@ describe("XMTPContext Message Tests", () => {
   });
 
   test("should send a text message", async () => {
-    const context = await XMTPContext.create(
+    const context = await MessageKit.create(
       mockV2Conversation,
       mockV2Message,
       { client: mockV3Client, v2client: mockV2Client },
@@ -30,7 +30,7 @@ describe("XMTPContext Message Tests", () => {
       "v2",
     );
 
-    expect(context).not.toBeNull();
+    expect(context).not.toBeUndefined();
     if (!context) return;
 
     await context.send("Test message");
@@ -40,7 +40,7 @@ describe("XMTPContext Message Tests", () => {
   });
 
   test("should send a reply", async () => {
-    const context = await XMTPContext.create(
+    const context = await MessageKit.create(
       mockV2Conversation,
       mockV2Message,
       { client: mockV3Client, v2client: mockV2Client },
@@ -48,7 +48,7 @@ describe("XMTPContext Message Tests", () => {
       "v2",
     );
 
-    expect(context).not.toBeNull();
+    expect(context).not.toBeUndefined();
     if (!context) return;
 
     await context.reply("Reply message");
@@ -63,7 +63,7 @@ describe("XMTPContext Message Tests", () => {
   });
 
   test("should send a reaction", async () => {
-    const context = await XMTPContext.create(
+    const context = await MessageKit.create(
       mockV2Conversation,
       mockV2Message,
       { client: mockV3Client, v2client: mockV2Client },
@@ -71,7 +71,7 @@ describe("XMTPContext Message Tests", () => {
       "v2",
     );
 
-    expect(context).not.toBeNull();
+    expect(context).not.toBeUndefined();
     if (!context) return;
 
     await context.react("👍");
@@ -87,7 +87,7 @@ describe("XMTPContext Message Tests", () => {
   });
 
   test("should handle conversation key generation", async () => {
-    const context = await XMTPContext.create(
+    const context = await MessageKit.create(
       mockV2Conversation,
       mockV2Message,
       { client: mockV3Client, v2client: mockV2Client },
@@ -95,10 +95,10 @@ describe("XMTPContext Message Tests", () => {
       "v2",
     );
 
-    expect(context).not.toBeNull();
+    expect(context).not.toBeUndefined();
     if (!context) return;
 
     const key = context.getConversationKey();
-    expect(key).toBe("test-topic:0x789");
+    expect(key).toBe("test-topic");
   });
 });

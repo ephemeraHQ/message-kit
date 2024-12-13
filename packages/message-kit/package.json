@@ -1,6 +1,6 @@
 {
   "name": "@xmtp/message-kit",
-  "version": "1.2.25",
+  "version": "1.2.27",
   "license": "MIT",
   "type": "module",
   "exports": {
@@ -29,8 +29,9 @@
     "test:client": "vitest run tests/client",
     "test:coverage": "vitest run --coverage",
     "test:frames": "vitest run tests/frames",
+    "test:intent": "vitest run tests/intent",
     "test:parsing": "vitest run tests/parsing",
-    "test:prompting": "vitest run tests/prompting",
+    "test:prompt": "vitest run tests/prompt",
     "test:v2": "vitest run tests/V2",
     "test:v3": "vitest run tests/V3",
     "test:watch": "vitest watch",

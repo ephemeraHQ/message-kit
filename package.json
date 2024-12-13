@@ -1,6 +1,6 @@
 {
   "name": "message-kit-monorepo",
-  "version": "1.2.25",
+  "version": "1.2.27",
   "private": true,
   "type": "module",
   "workspaces": [
@@ -21,14 +21,17 @@
     "dev": "cd packages/message-kit && yarn build:watch",
     "docs": "cd packages/docs && yarn dev",
     "format": "turbo run format",
+    "frames": "cd packages/frames && yarn dev",
     "play": "cd templates/playground && yarn dev",
     "publish": "node scripts/publish.js",
     "templates": "node scripts/devTemplates.js",
     "test": "FORCE_COLOR=1 turbo run test --force --concurrency=1",
     "test:client": "cd packages/message-kit/tests && yarn test:client",
+    "test:flow": "cd packages/message-kit/tests && yarn test:flow",
     "test:frames": "cd packages/message-kit/tests && yarn test:frames",
+    "test:intent": "cd packages/message-kit/tests && yarn test:intent",
     "test:parsing": "cd packages/message-kit/tests && yarn test:parsing",
-    "test:prompting": "cd packages/message-kit/tests && yarn test:prompting",
+    "test:prompt": "cd packages/message-kit/tests && yarn test:prompt",
     "test:v2": "cd packages/message-kit/tests && yarn test:v2",
     "test:v3": "cd packages/message-kit/tests && yarn test:v3",
     "typecheck": "FORCE_COLOR=1 turbo run typecheck"

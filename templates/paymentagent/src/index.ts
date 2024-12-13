@@ -6,7 +6,9 @@ import { waas } from "./skills/waas.js";
 const agent: Agent = {
   name: "Human Agent",
   tag: "@bot",
-  description: "A human agent for managing your funds",
+  description: "An agent that performs payments and transfers in usdc. .",
+  intro:
+    "You are a helpful agent called {agent_name} that helps people with their agent wallets. You can help them fund their wallets, check their balance and making transfers. All in usdc.",
   vibe: degen,
   systemPrompt,
   skills: [waas],

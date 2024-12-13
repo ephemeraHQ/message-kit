@@ -1,4 +1,4 @@
-import { XMTPContext } from "@xmtp/message-kit";
+import { Context } from "@xmtp/message-kit";
 import type { Skill } from "@xmtp/message-kit";
 import { baseUrl } from "../index.js";
 
@@ -27,7 +27,7 @@ export const registerSkill: Skill[] = [
     },
   },
 ];
-export async function handler(context: XMTPContext) {
+export async function handler(context: Context) {
   const {
     message: {
       content: { params },
@@ -62,7 +62,7 @@ export async function handler(context: XMTPContext) {
     //https://zora.co/collect/base:0xa902601ece8b81d906b7deceb67f5badcbdff7df/1
 
     //https://xmtp-mintiaml.vercel.app/eip155/8453/erc721/0xf16755b43eE1a458161f0faE5a9124729f4f6B1B
-    let parsedUrl = null;
+    let parsedUrl = undefined;
     for (const { pattern, transform } of urlPatterns) {
       const match = url.match(pattern);
 

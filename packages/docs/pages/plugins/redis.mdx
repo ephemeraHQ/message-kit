@@ -12,7 +12,7 @@ Copy paste the following code in your `lib/redis.ts` file.
 import { createClient } from "@redis/client";
 import type { RedisClientType } from "@redis/client";
 
-let redisClient: RedisClientType | null = null;
+let redisClient: RedisClientType | undefined = undefined;
 
 export const getRedisClient = async () => {
   if (redisClient?.isOpen) {

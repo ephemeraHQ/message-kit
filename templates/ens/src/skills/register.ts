@@ -1,4 +1,4 @@
-import { XMTPContext } from "@xmtp/message-kit";
+import { Context } from "@xmtp/message-kit";
 
 const ensUrl = "https://app.ens.domains/";
 import type { Skill } from "@xmtp/message-kit";
@@ -18,7 +18,7 @@ export const register: Skill[] = [
   },
 ];
 
-export async function handler(context: XMTPContext) {
+export async function handler(context: Context) {
   const {
     message: {
       content: {

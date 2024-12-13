@@ -1,4 +1,4 @@
-import { XMTPContext } from "@xmtp/message-kit";
+import { Context } from "@xmtp/message-kit";
 import type { Skill } from "@xmtp/message-kit";
 
 export const pay: Skill[] = [
@@ -44,7 +44,7 @@ export const pay: Skill[] = [
     },
   },
 ];
-export async function handler(context: XMTPContext) {
+export async function handler(context: Context) {
   const {
     message: {
       content: {
@@ -63,10 +63,8 @@ export async function handler(context: XMTPContext) {
   }
   if (skill === "tip") {
     let tipAmount = 1;
-    await context.send("Sure, here is the tip link: ");
     await context.requestPayment(receiverAddress, tipAmount);
   } else if (skill === "pay") {
-    await context.send("Sure, here is the payment link: ");
     await context.requestPayment(receiverAddress, amount, token);
   }
 }

@@ -18,11 +18,13 @@ interface Message {
 export default function Chat({ recipientAddress }: ChatProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
-  const [wallet, setWallet] = useState<any | null>(null);
-  const [xmtp, setXmtp] = useState<any>(null);
+  const [wallet, setWallet] = useState<any | undefined>(undefined);
+  const [xmtp, setXmtp] = useState<any>(undefined);
   const [isLoading, setIsLoading] = useState(true);
-  const [recipientInfo, setRecipientInfo] = useState<UserInfo | null>(null);
-  const [conversation, setConversation] = useState<any>(null);
+  const [recipientInfo, setRecipientInfo] = useState<UserInfo | undefined>(
+    undefined,
+  );
+  const [conversation, setConversation] = useState<any>(undefined);
   const [processedMessageIds] = useState(new Set<string>());
 
   useEffect(() => {

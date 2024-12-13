@@ -1,10 +1,6 @@
 import { test, expect, vi } from "vitest";
 import { Agent } from "../src/helpers/types";
-import { chatMemory, parsePrompt } from "../src/plugins/gpt";
-import { userInfoCache } from "../src/plugins/resolver";
 import { ContentTypeText } from "@xmtp/content-type-text";
-import { getUserInfo } from "../src/plugins/resolver";
-import { textGeneration } from "../src/plugins/gpt";
 import {
   Client as V2Client,
   Conversation as V2Conversation,
@@ -15,66 +11,33 @@ import {
   Conversation as V3Conversation,
   DecodedMessage as V3DecodedMessage,
 } from "@xmtp/node-sdk";
+import { AbstractedMember } from "../src/helpers/types";
 
-export function testPrompt(
-  testCases: [string, string | string[]][],
-  agent: Agent,
-  systemPrompt: string,
-  sender: { address: string; converseUsername: string },
-) {
-  chatMemory.clear();
-  userInfoCache.clear();
-  test.each(testCases)(
-    "should handle %s correctly",
-    async (userPrompt, expectedPatterns) => {
-      let prompt = await parsePrompt(systemPrompt, sender.address, agent);
-      const reply = await agentParse(
-        userPrompt as string,
-        sender.address,
-        systemPrompt,
-        prompt,
-      );
-      let matches = false;
-      if (Array.isArray(expectedPatterns)) {
-        matches = expectedPatterns.some((pattern) =>
-          reply?.toLowerCase().includes(pattern.toLowerCase()),
-        );
-      } else {
-        matches =
-          reply?.toLowerCase().includes(expectedPatterns.toLowerCase()) ??
-          false;
-      }
+const humanAgent: AbstractedMember = {
+  inboxId: "123",
+  address: "0x93E2fc3e99dFb1238eB9e0eF2580EFC5809C7204",
+  accountAddresses: ["0x93E2fc3e99dFb1238eB9e0eF2580EFC5809C7204"],
+  installationIds: ["123"],
+};
 
-      if (matches !== true) {
-        console.log("userPrompt", userPrompt);
-        console.log("reply", reply);
-        console.log("expectedPatterns", expectedPatterns);
-        console.log("matches", matches);
-      }
-      expect(matches).toBe(true);
+export const agentReplyMock = (userPrompt: string, agent: Agent) => {
+  return {
+    // @ts-ignore
+    message: {
+      content: { text: userPrompt, params: {} },
+      sender: humanAgent,
     },
-  );
-}
-export async function agentParse(
-  key: string,
-  prompt: string,
-  senderAddress: string,
-  systemPrompt: string,
-) {
-  try {
-    let userPrompt = prompt;
-    const userInfo = await getUserInfo(senderAddress);
-    if (!userInfo) {
-      console.log("User info not found");
-      return;
-    }
-    const { reply } = await textGeneration(key, userPrompt, systemPrompt);
-    return reply;
-  } catch (error) {
-    console.error("Error during OpenAI call:", error);
-    throw error;
-  }
-}
+    agent: agent as Agent,
+    getMemoryKey: () => humanAgent.address,
+    send: async (response: string) => {},
+    executeSkill: async (message: string) => {
+      return {
+        code: 200,
+        message: "Mocked skill response",
+      };
+    },
+  };
+};
 
 export function getMocks() {
   const mockV2Conversation = {

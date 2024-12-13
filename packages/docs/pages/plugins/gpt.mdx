@@ -1,47 +1,63 @@
 # GPT
 
-Interact with GPT and use it for your agents.
+> This plugin is already included in MessageKit, but you can import it directly in your files for more customization.
 
-> This functionality is already included in MessageKit, but you can import it directly in your files for more customization.
+## Overview
 
-## Required
+The idea behind this plugin is to abstract the complexities of creating agents by handling:
+
+- Memory
+- Skills execution
+- Personality
+- Rules
+- Reliability
+- User context
+
+### Requirements
 
 - `openai`: The OpenAI package (already installed in MessageKit).
 - `OPENAI_API_KEY`: The OpenAI API key.
 
-## Agent reply
+### Key methods
 
-This is how the agentReply function is implemented in MessageKit.
+- **`agentReply`**: Processes incoming messages, generates a response using GPT, and sends the reply back to the user.
 
-```tsx [plugins/gpt.ts]
-// [!include ~/../../packages/message-kit/src/plugins/gpt.ts:agentReply]
+- **`parsePrompt`**: Parses the system prompt using the agent's system prompt or a default one. It customizes the prompt based on the sender's address and the agent's configuration.
+
+- **`textGeneration`**: Generates a reply using the provided user prompt and system prompt. It utilizes the OpenAI API to create a response based on the conversation context.
+
+- **`processMultilineResponse`**: Processes the generated reply and sends it back to the user. It handles multiline responses to execute the [Skills](/community/skills) defined in the agent.
+
+## Default prompt
+
+Here is the prompt for the agent.
+
+```jsx [src/prompt.ts]
+export const systemPrompt = `{intro}
+
+{vibe}
+
+{rules}
+
+{user_context}
+
+{skills}
+`;
 ```
 
-## Text generation
+### Properties
 
-This is how the textGeneration function is implemented in MessageKit.
+- `{rules}`: The rules of the agent.
+- `{user_context}`: The user context.
+- `{skills}`: The skills of the agent.
+- `{scenarios}`: The scenarios of the agent.
+- `{agent_name}`: The name of the agent.
+- `{name}`: The name of the user.
+- `{address}`: The address of the user.
+- `{domain}`: The ENS domain of the user.
+- `{username}`: The Converse username of the user.
 
-```tsx [plugins/gpt.ts]
-// [!include ~/../../packages/message-kit/src/plugins/gpt.ts:textGeneration]
-```
-
-## Process multiline response
-
-This is how the processMultilineResponse function is implemented in MessageKit.
-
-```tsx [plugins/gpt.ts]
-// [!include ~/../../packages/message-kit/src/plugins/gpt.ts:processMultilineResponse]
-```
-
-## Memory
-
-This is how the memory is implemented in MessageKit. For now its only on memory.
-
-```tsx [plugins/gpt.ts]
-// [!include ~/../../packages/message-kit/src/plugins/gpt.ts:memory]
-```
-
-## Prompt Rules
+## Default rules
 
 This is how the prompt rules are implemented in MessageKit.
 
@@ -49,12 +65,23 @@ This is how the prompt rules are implemented in MessageKit.
 // [!include ~/../../packages/message-kit/src/plugins/gpt.ts:PROMPT_RULES]
 ```
 
-## Parse prompt
+## Memory
 
-This is how the parsePrompt function is implemented in MessageKit.
+This is how the memory is implemented in MessageKit. For now, it's only in memory.
 
 ```tsx [plugins/gpt.ts]
-// [!include ~/../../packages/message-kit/src/plugins/gpt.ts:parsePrompt]
+// create memory
+chatMemory.createMemory(key, systemPrompt);
+// add memory
+chatMemory.addEntry(
+  context.getMemoryKey() || "any memory key",
+  text,
+  "user | assistant | system",
+);
+// clear memory
+chatMemory.clear(key);
+// get memory
+chatMemory.getHistory(key);
 ```
 
 ## Full plugin

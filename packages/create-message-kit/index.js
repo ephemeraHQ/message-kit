@@ -7,7 +7,7 @@ import { default as fs } from "fs-extra";
 import { isCancel } from "@clack/prompts";
 import { detect } from "detect-package-manager";
 import pc from "picocolors";
-const defVersion = "1.2.25";
+const defVersion = "1.2.27";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Read package.json to get the version
@@ -49,6 +49,8 @@ Powered by XMTP`;
       // Create .gitignore
       createGitignore(destDir);
 
+      // Create .data directory
+      createDataDir(destDir);
       // Create .env file
       createEnvFile(destDir);
 
@@ -76,6 +78,12 @@ Powered by XMTP`;
   });
 
 program.parse(process.argv);
+
+async function createDataDir(destDir) {
+  if (!fs.existsSync(resolve(destDir, ".data"))) {
+    fs.mkdirSync(resolve(destDir, ".data"));
+  }
+}
 
 async function updatePackagejson(destDir, templateType) {
   // Remove 'templates/' prefix if it exists in templateType

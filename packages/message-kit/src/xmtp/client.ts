@@ -27,10 +27,13 @@ interface UserReturnType {
 
 export type User = ReturnType<typeof createUser>;
 
+export let hasClientInitialized = false;
+
 export async function xmtpClient(
   agentConfig?: AgentConfig,
   agent?: Agent,
 ): Promise<{ client: Client; v2client: V2Client }> {
+  hasClientInitialized = true;
   // Check if both clientConfig and privateKey are empty
   const testKey = await setupTestEncryptionKey();
   const { key, isRandom } = setupPrivateKey(agentConfig?.privateKey);
@@ -70,7 +73,7 @@ export async function xmtpClient(
   });
   const client = await Client.create(createSigner(user), testKey, finalConfig);
 
-  logInitMessage(client, agent?.config, isRandom ? key : undefined, agent);
+  logInitMessage(client, agentConfig, isRandom ? key : undefined, agent);
 
   return { client, v2client };
 }
@@ -158,10 +161,6 @@ async function setupTestEncryptionKey(): Promise<Uint8Array> {
     // Only perform file operations in Node.js environment
     const { fs } = getFS();
     if (fs) {
-      if (fs.existsSync(`.data`)) {
-        fs.rmSync(`.data`, { recursive: true });
-      }
-
       // Generate new test encryption key
       const testEncryptionKey = toHex(getRandomValues(new Uint8Array(32)));
 

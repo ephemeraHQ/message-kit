@@ -8,14 +8,18 @@ import {
   Client as V2Client,
   Conversation as V2Conversation,
 } from "@xmtp/xmtp-js";
-import { chatMemory } from "../plugins/gpt.js";
+import { chatMemory, defaultSystemPrompt } from "../plugins/gpt.js";
 import { GroupMember } from "@xmtp/node-sdk";
-import { textGeneration } from "../plugins/gpt.js";
-import { getUserInfo, userInfoCache, isOnXMTP } from "../plugins/resolver.js";
+import {
+  getUserInfo,
+  userInfoCache,
+  isOnXMTP,
+  type UserInfo,
+} from "../plugins/resolver.js";
 import type { ContentTypeId } from "@xmtp/content-type-primitives";
 import { ContentTypeText } from "@xmtp/content-type-text";
 import { WalletService } from "../plugins/cdp.js";
-import { logMessage, extractFrameChain } from "../helpers/utils.js";
+import { logMessage, extractFrameChain, readFile } from "../helpers/utils.js";
 import {
   AgentConfig,
   MessageAbstracted,
@@ -34,7 +38,7 @@ import {
   type RemoteAttachment,
   type Attachment,
 } from "@xmtp/content-type-remote-attachment";
-import { getFS } from "../helpers/utils";
+import { logUserInteraction } from "../helpers/utils.js";
 import {
   ContentTypeReaction,
   type Reaction,
@@ -42,42 +46,77 @@ import {
 import path from "path";
 import fetch from "cross-fetch";
 
-const fileHandling = {
-  async getCacheCreationDate() {
-    const { fsPromises } = getFS();
-    if (!fsPromises) return null;
-    try {
-      const stats = await fsPromises.stat(".data");
-      return new Date(stats.birthtime);
-    } catch (err) {
-      console.error("Error getting cache creation date:", err);
-      return null;
-    }
-  },
-  // hey
-
-  async readFile(filePath: string) {
-    const { fs } = getFS();
-    if (!fs) return null;
-    try {
-      return await fs.readFileSync(filePath);
-    } catch (err) {
-      console.error("Error reading file:", err);
-      return null;
-    }
-  },
-};
-
 //com
-const framesUrl = process.env.frames_URL ?? "https://frames.message-kit.org";
+const framesUrl = process.env.FRAMES_URL ?? "https://frames.message-kit.org";
 export const awaitedHandlers = new Map<
   string,
   (text: string) => Promise<boolean | undefined>
 >();
 
-/* XMTPContext description*/
-export class XMTPContext {
-  refConv: Conversation | V2Conversation | null = null;
+/* Context Interface */
+export type Context = {
+  refConv: Conversation | V2Conversation | undefined;
+  originalMessage: DecodedMessage | DecodedMessageV2 | undefined;
+  message: MessageAbstracted;
+  group: GroupAbstracted;
+  conversation: V2Conversation;
+  client: V3Client;
+  version: "v2" | "v3";
+  v2client: V2Client;
+  members?: AbstractedMember[];
+  admins?: string[];
+  agentConfig?: AgentConfig;
+  superAdmins?: string[];
+  agent: Agent;
+  walletService: WalletService;
+  sender?: AbstractedMember;
+  awaitingResponse: boolean;
+  getMessageById: (id: string) => DecodedMessage | null;
+  executeSkill: (text: string) => Promise<SkillResponse | undefined>;
+  clearMemory: (address?: string) => Promise<void>;
+  clearCache: (address?: string) => Promise<void>;
+
+  // Add method signatures for all public methods
+  awaitResponse(
+    prompt: string,
+    validResponses?: string[],
+    attempts?: number,
+  ): Promise<string>;
+  getUserInfo(address: string): Promise<UserInfo | undefined>;
+  resetAwaitedState(): void;
+  getV2ConversationBySender(
+    sender: string,
+  ): Promise<V2Conversation | undefined>;
+  getV2MessageById(
+    conversationId: string,
+    reference: string,
+  ): Promise<DecodedMessageV2 | undefined>;
+  getMemoryKey(): string;
+  sendTo(message: string, receivers: string[]): Promise<void>;
+  getLastMessageById(reference: string): Promise<any>;
+  reply(message: string): Promise<void>;
+  dm(message: string): Promise<void>;
+  requestPayment(
+    to: string | undefined,
+    amount: number,
+    token?: string | undefined,
+    onRampURL?: string | undefined,
+  ): Promise<void>;
+  send(
+    message: string | Reply | Reaction | RemoteAttachment | Attachment,
+    contentType?: ContentTypeId,
+    targetConversation?: V2Conversation,
+  ): Promise<void>;
+  getConversationKey(): string;
+  awaitedHandler: ((text: string) => Promise<boolean | void>) | undefined;
+  sendCustomFrame(frame: Frame): Promise<void>;
+  sendReceipt(txLink: string): Promise<void>;
+};
+
+/* Context implementation */
+export class MessageKit implements Context {
+  refConv: Conversation | V2Conversation | undefined = undefined;
+  originalMessage: DecodedMessage | DecodedMessageV2 | undefined = undefined;
   message!: MessageAbstracted; // A message from XMTP abstracted for agent use;
   group!: GroupAbstracted;
   conversation!: V2Conversation;
@@ -96,11 +135,14 @@ export class XMTPContext {
   walletService!: WalletService;
   sender?: AbstractedMember;
   awaitingResponse: boolean = false;
-  awaitedHandler: ((text: string) => Promise<boolean | void>) | null = null;
-  getMessageById!: (id: string) => DecodedMessage | null;
-  executeSkill!: (text: string) => Promise<SkillResponse | undefined>;
-  clearMemory!: (address?: string) => Promise<void>;
-  clearCache!: (address?: string) => Promise<void>;
+  getMessageById: (id: string) => DecodedMessage | null = () => null;
+  executeSkill: (text: string) => Promise<SkillResponse | undefined> =
+    async () => undefined;
+  clearMemory: (address?: string) => Promise<void> = async () => {};
+  clearCache: (address?: string) => Promise<void> = async () => {};
+  awaitedHandler: ((text: string) => Promise<boolean | void>) | undefined =
+    undefined;
+
   private constructor(
     conversation: Conversation | V2Conversation,
     { client, v2client }: { client: V3Client; v2client: V2Client },
@@ -130,18 +172,18 @@ export class XMTPContext {
   }
   static async create(
     conversation: Conversation | V2Conversation,
-    message: DecodedMessage | DecodedMessageV2 | null,
+    message: DecodedMessage | DecodedMessageV2 | undefined,
     { client, v2client }: { client: V3Client; v2client: V2Client },
     agent: Agent,
     version?: "v2" | "v3",
-  ): Promise<XMTPContext | null> {
+  ): Promise<Context | undefined> {
     try {
-      const context = new XMTPContext(conversation, { client, v2client });
+      const context = new MessageKit(conversation, { client, v2client });
       if (message && message.id) {
         //v2
         const sentAt = "sentAt" in message ? message.sentAt : message.sent;
         let members: GroupMember[];
-        let sender: AbstractedMember | null = null;
+        let sender: AbstractedMember | undefined = undefined;
         if (version === "v2") {
           sender = {
             address: (message as DecodedMessageV2).senderAddress,
@@ -175,11 +217,12 @@ export class XMTPContext {
 
         //Config
         context.agent = agent;
+        context.agent.systemPrompt = agent.systemPrompt ?? defaultSystemPrompt;
         context.agentConfig = agent.config;
 
         context.getMessageById =
           client.conversations?.getMessageById?.bind(client.conversations) ||
-          (() => null);
+          (() => undefined);
 
         context.clearMemory = async () => {
           await chatMemory.clear(sender?.address);
@@ -188,7 +231,11 @@ export class XMTPContext {
           await userInfoCache.clear(sender?.address);
         };
         context.executeSkill = async (text: string) => {
-          const result = await executeSkill(text, context.agent, context);
+          const result = await executeSkill(
+            text,
+            context.agent,
+            context as Context,
+          );
           return result ?? undefined;
         };
         let typeId = message.contentType?.typeId;
@@ -245,6 +292,8 @@ export class XMTPContext {
             attachment: { url: url },
           };
         }
+        // Add interaction tracking
+        logUserInteraction(sender?.address);
         context.message = {
           id: message.id,
           content,
@@ -257,15 +306,15 @@ export class XMTPContext {
           process.env.COINBASE_API_KEY_NAME &&
           process.env.COINBASE_API_KEY_PRIVATE_KEY
         ) {
-          context.walletService = new WalletService(context);
+          context.walletService = new WalletService(context as Context);
         }
 
         return context;
       }
-      return null;
+      return undefined;
     } catch (error) {
-      console.error("Error creating XMTPContext:", error);
-      return null;
+      console.error("Error creating Context:", error);
+      return undefined;
     }
   }
   async awaitResponse(
@@ -324,22 +373,43 @@ export class XMTPContext {
   // Method to reset the awaited state
   resetAwaitedState() {
     this.awaitingResponse = false;
-    this.awaitedHandler = null;
+    this.awaitedHandler = undefined;
     awaitedHandlers.delete(this.getConversationKey());
   }
-
+  async getV2ConversationBySender(sender: string) {
+    try {
+      if (this.isV2Conversation(this.conversation)) {
+        return this.conversation;
+      }
+      return this.v2client.conversations
+        .list()
+        .then((conversations) =>
+          conversations.find(
+            (conv) => conv.peerAddress.toLowerCase() === sender.toLowerCase(),
+          ),
+        );
+    } catch (error) {
+      console.error("Error getting V2 conversation by sender:", error);
+      return undefined;
+    }
+  }
   async getV2MessageById(
     conversationId: string,
     reference: string,
-  ): Promise<DecodedMessageV2 | null> {
+  ): Promise<DecodedMessageV2 | undefined> {
     /*Takes to long, deprecated*/
-    const conversations = await this.v2client.conversations.list();
-    const conversation = conversations.find(
-      (conv) => conv.topic === conversationId,
-    );
-    if (!conversation) return null;
-    const messages = await conversation.messages();
-    return messages.find((m) => m.id === reference) as DecodedMessageV2;
+    try {
+      const conversations = await this.v2client.conversations.list();
+      const conversation = conversations.find(
+        (conv) => conv.topic === conversationId,
+      );
+      if (!conversation) return undefined;
+      const messages = await conversation.messages();
+      return messages.find((m) => m.id === reference) as DecodedMessageV2;
+    } catch (error) {
+      console.error("Error getting V2 message by id:", error);
+      return undefined;
+    }
   }
   /*NEEDS TO BE FIXED
   async getV3ReplyChain(reference: string): Promise<{
@@ -347,7 +417,7 @@ export class XMTPContext {
     isSenderInChain: boolean;
   }> {
     try {
-      let msg: DecodedMessage | DecodedMessageV2 | null = null;
+      let msg: DecodedMessage | DecodedMessageV2 | undefined = undefined;
       let senderAddress: string = "";
       msg = await this.getMessageById(reference);
       if (!msg) {
@@ -434,6 +504,7 @@ export class XMTPContext {
   async send(
     message: string | Reply | Reaction | RemoteAttachment | Attachment,
     contentType: ContentTypeId = ContentTypeText,
+    targetConversation?: V2Conversation,
   ) {
     if (contentType === ContentTypeText && typeof message !== "string") {
       console.error("Message must be a string");
@@ -444,7 +515,8 @@ export class XMTPContext {
       //@ts-ignore
       messageString = message?.content as string;
     }
-    const conversation = this.refConv || this.conversation || this.group;
+    const conversation =
+      targetConversation ?? this.refConv ?? this.conversation ?? this.group;
     if (conversation) {
       if (this.isV2Conversation(conversation)) {
         await conversation.send(message, {
@@ -462,17 +534,21 @@ export class XMTPContext {
   }
   getConversationKey() {
     const conversation = this.refConv || this.conversation || this.group;
+    return `${(conversation as V2Conversation)?.topic || (conversation as Conversation)?.id}`;
+  }
+  getUserConversationKey() {
+    const conversation = this.refConv || this.conversation || this.group;
     const awaitingSender =
       this.message?.sender?.inboxId || this.message?.sender?.address;
     return `${(conversation as V2Conversation)?.topic || (conversation as Conversation)?.id}:${awaitingSender}`;
   }
   isV2Conversation(
-    conversation: Conversation | V2Conversation | null,
+    conversation: Conversation | V2Conversation | undefined,
   ): conversation is V2Conversation {
     return (conversation as V2Conversation)?.topic !== undefined;
   }
   isV3Conversation(
-    conversation: Conversation | V2Conversation | null,
+    conversation: Conversation | V2Conversation | undefined,
   ): conversation is Conversation {
     return (conversation as Conversation)?.id !== undefined;
   }
@@ -487,35 +563,36 @@ export class XMTPContext {
     this.send(reaction, ContentTypeReaction);
   }
 
-  async getCacheCreationDate() {
-    return await fileHandling.getCacheCreationDate();
-  }
   async sendTo(message: string, receivers: string[]) {
     if (typeof message !== "string") {
       console.error("Message must be a string");
       return;
     }
-    const conversations = await this.v2client.conversations.list();
     for (const receiver of receivers) {
       if (this.v2client.address.toLowerCase() === receiver.toLowerCase()) {
         continue;
       }
 
-      let targetConversation = conversations.find(
-        (conv) => conv.peerAddress.toLowerCase() === receiver.toLowerCase(),
-      );
+      let targetConversation = await this.getV2ConversationBySender(receiver);
 
       if (!targetConversation) {
         targetConversation =
           await this.v2client.conversations.newConversation(receiver);
       }
-
-      // Send the message only once per receiver
-      await targetConversation.send(message);
-
-      chatMemory.addEntry(this.getMemoryKey(), message, "assistant");
-      logMessage("sent: " + message);
+      this.send(message, ContentTypeText, targetConversation);
     }
+  }
+  async dm(message: string) {
+    if (typeof message !== "string") {
+      console.error("Message must be a string");
+      return;
+    }
+    let sender = this.message?.sender?.address;
+    this.send(
+      message,
+      ContentTypeText,
+      await this.getV2ConversationBySender(sender),
+    );
   }
 
   async sendCustomFrame(frame: Frame) {
@@ -537,18 +614,10 @@ export class XMTPContext {
   async isOnXMTP(v3client: V3Client, v2client: V2Client, address: string) {
     return await isOnXMTP(v3client, v2client, address);
   }
-  async textGeneration(
-    memoryKey: string,
-    userPrompt: string,
-    systemPrompt?: string,
-  ) {
-    return await textGeneration(memoryKey, userPrompt, systemPrompt);
-  }
   async requestPayment(
     to: string = "humanagent.eth",
     amount: number,
     token?: string,
-    sendTo?: string[],
     onRampURL?: string,
   ) {
     let senderInfo = await getUserInfo(to);
@@ -563,11 +632,7 @@ export class XMTPContext {
     if (onRampURL) {
       sendUrl = sendUrl + "&onRampURL=" + encodeURIComponent(onRampURL);
     }
-    if (sendTo && sendTo.length > 0) {
-      await this.sendTo(sendUrl, sendTo);
-    } else {
-      await this.send(sendUrl);
-    }
+    await this.dm(sendUrl);
   }
   async sendConverseDmFrame(peer: string, pretext?: string) {
     let url = `https://converse.xyz/dm/${peer}`;
@@ -639,7 +704,7 @@ export class XMTPContext {
         }
       } else {
         // Handle file path
-        const file = await fileHandling.readFile(source);
+        const file = await readFile(source);
         if (!file) {
           console.error("File operations not supported in this environment");
           return;

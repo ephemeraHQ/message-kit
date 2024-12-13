@@ -1,4 +1,4 @@
-import { XMTPContext } from "@xmtp/message-kit";
+import { Context } from "@xmtp/message-kit";
 import { getRedisClient } from "./redis.js";
 
 interface Participant {
@@ -10,6 +10,7 @@ export interface TossData {
   group_id: string;
   admin_name: string;
   admin_address: string;
+  creator_address: string;
   options: string;
   toss_id: string;
   amount: number;
@@ -19,7 +20,7 @@ export interface TossData {
   participants: Participant[];
 }
 export async function checkTossCorrect(
-  context: XMTPContext,
+  context: Context,
 ): Promise<TossData | undefined> {
   const {
     message: {
@@ -45,7 +46,7 @@ export async function checkTossCorrect(
   }
   const tossDBClient = await getRedisClient();
   const tossDataString = await tossDBClient.get(`toss:${toss_id}`);
-  let tossData = tossDataString ? JSON.parse(tossDataString) : null;
+  let tossData = tossDataString ? JSON.parse(tossDataString) : undefined;
 
   if (typeof tossData === "string") {
     tossData = JSON.parse(tossData) as TossData;
@@ -65,12 +66,12 @@ export async function checkTossCorrect(
   return { ...tossData, toss_id };
 }
 
-export function extractTossId(message: string): string | null {
+export function extractTossId(message: string): string | undefined {
   try {
     const match = message.match(/ID:\s*(\d+)/);
-    return match ? match[1].toString() : null;
+    return match ? match[1].toString() : undefined;
   } catch (error) {
-    return null;
+    return undefined;
   }
 }
 

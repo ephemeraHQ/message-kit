@@ -1,7 +1,7 @@
 import { Resend } from "resend";
-import { XMTPContext } from "@xmtp/message-kit";
+import { Context } from "@xmtp/message-kit";
 import type { Skill } from "@xmtp/message-kit";
-
+import { textGeneration } from "@xmtp/message-kit";
 const resend = new Resend(process.env.RESEND_API_KEY); // Replace with your Resend API key
 
 export const todo: Skill[] = [
@@ -14,7 +14,7 @@ export const todo: Skill[] = [
   },
 ];
 
-export async function handler(context: XMTPContext) {
+export async function handler(context: Context) {
   const {
     message: {
       content: { previousMsg },
@@ -51,8 +51,7 @@ export async function handler(context: XMTPContext) {
     return;
   }
   try {
-    let { reply } = await context.textGeneration(
-      context.getConversationKey() + ":" + email,
+    let { reply } = await textGeneration(
       "Make this summary concise and to the point to be sent in an email.\n msg: " +
         previousMsg,
       "You are an expert at summarizing to-dos.  Return in format html and just the content inside the body tag. Dont return `html` or `body` tags",

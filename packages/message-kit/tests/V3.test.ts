@@ -1,9 +1,9 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
-import { XMTPContext } from "../src/lib/xmtp";
+import { MessageKit } from "../src/lib/core";
 import { ContentTypeText } from "@xmtp/content-type-text";
 import { getMocks } from "./utils";
 
-describe("XMTPContext Message Tests", () => {
+describe("Context Message Tests", () => {
   const {
     mockV2Conversation,
     mockV2Message,
@@ -19,7 +19,7 @@ describe("XMTPContext Message Tests", () => {
   });
 
   test("should send a message to a V3 group chat and receive it by all members", async () => {
-    const context = await XMTPContext.create(
+    const context = await MessageKit.create(
       mockV3Conversation,
       mockV3Message,
       { client: mockV3Client, v2client: mockV2Client },
@@ -27,7 +27,7 @@ describe("XMTPContext Message Tests", () => {
       "v3",
     );
 
-    expect(context).not.toBeNull();
+    expect(context).not.toBeUndefined();
     if (!context) return;
 
     await context.send("Group message");

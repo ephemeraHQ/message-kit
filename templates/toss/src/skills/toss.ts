@@ -1,4 +1,4 @@
-import { Skill, XMTPContext, getUserInfo } from "@xmtp/message-kit";
+import { Skill, Context, getUserInfo } from "@xmtp/message-kit";
 import { getRedisClient } from "../plugins/redis.js";
 import {
   checkTossCorrect,
@@ -47,7 +47,7 @@ export const toss: Skill[] = [
   {
     skill: "toss",
     description:
-      "Create a toss with a description, options, amount and judge(optional).",
+      "Create a toss with a description, options, amount and end time(optional).",
     handler: handleTossCreation,
     examples: [
       "/toss 'Shane vs John at pickeball' 'Yes,No' 10",
@@ -68,10 +68,6 @@ export const toss: Skill[] = [
       amount: {
         type: "number",
       },
-      judge: {
-        type: "username",
-        optional: true,
-      },
       endTime: {
         type: "quoted",
         optional: true,
@@ -80,7 +76,7 @@ export const toss: Skill[] = [
   },
 ];
 
-export async function handleTossCreation(context: XMTPContext) {
+export async function handleTossCreation(context: Context) {
   const {
     message: {
       content: { params },
@@ -112,10 +108,9 @@ export async function handleTossCreation(context: XMTPContext) {
       options: params.options,
       amount: params.amount,
       group_id: group.id,
-      admin_name:
-        (await getUserInfo(params.judge ?? sender.address))?.preferredName ??
-        "",
-      admin_address: params.judge ?? sender.address,
+      admin_name: (await getUserInfo(sender.address))?.preferredName ?? "",
+      admin_address: sender.address,
+      creator_address: sender.address,
       created_at: new Date().toLocaleString(),
       end_time: params.endTime
         ? new Date(params.endTime).toLocaleString()
@@ -133,7 +128,7 @@ export async function handleTossCreation(context: XMTPContext) {
   }
 }
 
-export async function handleJoinToss(context: XMTPContext) {
+export async function handleJoinToss(context: Context) {
   const tossData = await checkTossCorrect(context);
   if (!tossData) {
     return;
@@ -148,7 +143,9 @@ export async function handleJoinToss(context: XMTPContext) {
         params: { response },
       },
     },
+    client,
     walletService,
+    group,
   } = context;
 
   const tossDBClient = await getRedisClient();
@@ -157,13 +154,33 @@ export async function handleJoinToss(context: XMTPContext) {
     return;
   }
   //Create wallet for sender
-  await walletService.createWallet(sender.address);
   const { address, balance } = await walletService.checkBalance(sender.address);
-  if (balance < amount) return context.requestPayment(address, amount);
+
+  if (balance < amount) {
+    await context.reply(
+      `You need to fund your account. Check your DMs https://converse.xyz/dm/${client?.accountAddress}`,
+    );
+    await context.dm(
+      `You dont have enough balance to join the toss. Your balance is ${balance}.\nAt least ${amount} usdc is required.`,
+    );
+    await context.requestPayment(address, amount);
+    // await context.dm(
+    //   `Once funded, you can join the toss again. https://converse.xyz/group/${group?.id}`,
+    // );
+    return;
+  }
 
   try {
     let tempWalletID = toss_id + ":" + admin_address;
-    await walletService.transfer(sender.address, tempWalletID, amount);
+    const transfer = await walletService.transfer(
+      sender.address,
+      tempWalletID,
+      amount,
+    );
+    if (transfer === undefined) {
+      await context.reply("Failed to transfer funds to the toss wallet.");
+      return;
+    }
     const participant = {
       address: sender.address,
       response: response,
@@ -180,7 +197,7 @@ export async function handleJoinToss(context: XMTPContext) {
 
     await context.reply("Successfully joined the toss!");
     await context.sendTo(
-      `Your balance was deducted by $${amount}. Now is $${balance - amount}. You can check your balance with /balance`,
+      `Your balance was deducted by $${amount}. Now is $${balance - amount}.`,
       [sender.address],
     );
     await context.executeSkill(`/status ${toss_id}`);
@@ -190,7 +207,7 @@ export async function handleJoinToss(context: XMTPContext) {
   }
 }
 
-export async function handleEndToss(context: XMTPContext) {
+export async function handleEndToss(context: Context) {
   const tossData = await checkTossCorrect(context);
   if (!tossData) return;
   const { toss_id, admin_address, options, participants } = tossData;
@@ -232,6 +249,7 @@ export async function handleEndToss(context: XMTPContext) {
     (tossData.amount * (participants?.length ?? 0)) / (winners.length ?? 1);
 
   try {
+    await context.send("Sending prize to winners...");
     for (const winner of winners) {
       await walletService.transfer(tempWalletID, winner.address, prize);
       await tossDBClient.set(
@@ -246,7 +264,7 @@ export async function handleEndToss(context: XMTPContext) {
     }
 
     await context.sendTo(
-      `You received $${prize} from the toss! Check your balance with /balance`,
+      `You received $${prize} from the toss!`,
       winners.map((w) => w.address),
     );
   } catch (error) {
@@ -254,7 +272,7 @@ export async function handleEndToss(context: XMTPContext) {
   }
 }
 
-export async function handleCancelToss(context: XMTPContext) {
+export async function handleCancelToss(context: Context) {
   const tossData = await checkTossCorrect(context);
   if (!tossData) return;
 
@@ -288,7 +306,7 @@ export async function handleCancelToss(context: XMTPContext) {
       await walletService.transfer(tempWalletID, participant.address, amount);
     } catch (error) {
       console.error(
-        `Failed to send prize to ${participant.address} agent wallet:`,
+        `Failed to send prize to ${participant.address} agent wallet`,
         error,
       );
       await context.reply(
@@ -310,7 +328,7 @@ export async function handleCancelToss(context: XMTPContext) {
     ${participants?.map((p) => `${p.name} - $${amount}`).join("\n")}`,
   );
 }
-export async function handleTossStatus(context: XMTPContext) {
+export async function handleTossStatus(context: Context) {
   const tossData = await checkTossCorrect(context);
   if (!tossData) return;
   await context.reply(await generateTossStatusMessage(tossData));

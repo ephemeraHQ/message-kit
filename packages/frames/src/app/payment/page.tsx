@@ -1,15 +1,14 @@
 import { parseUnits } from "viem";
-import UrlGenerator from "../../components/UrlGenerator";
+import PaymentFrame from "../../components/PaymentFrame";
 
 export default async function Home({
   searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const resolvedSearchParams = await searchParams; // Await the promises
-  //tes sd
+  const resolvedSearchParams = await searchParams;
   const params = {
-    url: `${process.env.NEXT_PUBLIC_URL}`,
+    url: process.env.NEXT_PUBLIC_URL,
     recipientAddress:
       (resolvedSearchParams?.recipientAddress as string) ||
       "0x93E2fc3e99dFb1238eB9e0eF2580EFC5809C7204",
@@ -27,8 +26,15 @@ export default async function Home({
   const ethereumUrl = `ethereum:${params.tokenAddress}@${params.chainId}/transfer?address=${params.recipientAddress}&uint256=${amountUint256}`;
 
   const image = `${params.url}/api/image?s=1&networkLogo=${params.baseLogo}&amount=${params.amount}&networkName=${params.networkName}&tokenName=${params.tokenName}&recipientAddress=${params.recipientAddress}&tokenAddress=${params.tokenAddress}&chainId=${params.chainId}&networkId=${params.chainId}`;
+
   return (
-    <html>
+    <html
+      style={{
+        margin: 0,
+        padding: 0,
+        backgroundColor: "white",
+        height: "100%",
+      }}>
       <head>
         <meta charSet="utf-8" />
         <meta property="og:title" content="Ethereum Payment" />
@@ -54,9 +60,61 @@ export default async function Home({
             />
           </>
         )}
+        <style>
+          {`
+          :root {
+            --background: #ffffff;
+            --foreground: #000000;
+            --accent: #fa6977;
+          }
+
+          @media (prefers-color-scheme: dark) {
+            :root {
+              --background: #ffffff;
+              --foreground: #000000;
+            }
+          }
+
+          * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+          }
+            
+            html, body {
+              background-color: var(--background) !important;
+              height: 100%;
+              width: 100%;
+            }
+
+            body {
+              display: inline-block;
+            }
+
+            .form-container {
+              background-color: var(--background);  
+              border-radius: 0.5rem;
+              box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+              padding: 1.5rem;
+            }
+          `}
+        </style>
       </head>
-      <body>
-        <UrlGenerator params={params} />
+      <body
+        style={{
+          margin: 0,
+          padding: 0,
+          backgroundColor: "white",
+          height: "100%",
+          display: "inline-block",
+          width: "100%",
+        }}>
+        <PaymentFrame
+          params={params}
+          ethereumUrl={ethereumUrl}
+          amountUint256={amountUint256.toString()}
+          image={image}
+        />
       </body>
     </html>
   );

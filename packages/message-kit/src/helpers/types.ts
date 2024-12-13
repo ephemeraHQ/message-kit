@@ -1,19 +1,7 @@
-import { XMTPContext } from "../lib/xmtp.js";
+import { Context } from "../lib/core.js";
 import { ClientOptions, GroupMember } from "@xmtp/node-sdk";
 import { ContentTypeId } from "@xmtp/content-type-primitives";
 
-// @twoslash
-/**
- * Represents a message with metadata and content details.
- *
- * This type includes:
- * - A unique identifier
- * - Timestamp of when the message was sent
- * - Content, which may be text, a reply, a reference, or other data
- * - Information about the sender
- *
- * Use this type as the canonical form for message data across your application.
- */
 export type MessageAbstracted = {
   id: string; // Unique identifier for the message
   sent: Date; // Date when the message was sent
@@ -97,19 +85,18 @@ export interface Vibe {
   style: string;
   quirks?: string[];
 }
-export type SkillHandler = (
-  context: XMTPContext,
-) => Promise<SkillResponse | void>;
+export type SkillHandler = (context: Context) => Promise<SkillResponse | void>;
 
-export type Handler = (context: XMTPContext) => Promise<void>;
+export type Handler = (context: Context) => Promise<void>;
 
 export interface Agent {
   name: string;
   description: string;
+  intro?: string;
   tag: string;
+  systemPrompt?: string;
   skills?: Skill[][];
   vibe?: Vibe;
-  systemPrompt?: string;
   onMessage?: Handler;
   config?: AgentConfig;
 }
