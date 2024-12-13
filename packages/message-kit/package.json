@@ -30,6 +30,7 @@
     "test:coverage": "vitest run --coverage",
     "test:frames": "vitest run tests/frames",
     "test:intent": "vitest run tests/intent",
+    "test:parsing": "vitest run tests/parsing",
     "test:prompt": "vitest run tests/prompt",
     "test:v2": "vitest run tests/V2",
     "test:v3": "vitest run tests/V3",
