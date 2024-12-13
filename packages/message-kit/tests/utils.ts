@@ -11,6 +11,33 @@ import {
   Conversation as V3Conversation,
   DecodedMessage as V3DecodedMessage,
 } from "@xmtp/node-sdk";
+import { AbstractedMember } from "../src/helpers/types";
+
+const humanAgent: AbstractedMember = {
+  inboxId: "123",
+  address: "0x93E2fc3e99dFb1238eB9e0eF2580EFC5809C7204",
+  accountAddresses: ["0x93E2fc3e99dFb1238eB9e0eF2580EFC5809C7204"],
+  installationIds: ["123"],
+};
+
+export const agentReplyMock = (userPrompt: string, agent: Agent) => {
+  return {
+    // @ts-ignore
+    message: {
+      content: { text: userPrompt, params: {} },
+      sender: humanAgent,
+    },
+    agent: agent as Agent,
+    getMemoryKey: () => humanAgent.address,
+    send: async (response: string) => {},
+    executeSkill: async (message: string) => {
+      return {
+        code: 200,
+        message: "Mocked skill response",
+      };
+    },
+  };
+};
 
 export function getMocks() {
   const mockV2Conversation = {

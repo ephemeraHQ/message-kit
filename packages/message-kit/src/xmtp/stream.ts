@@ -11,13 +11,13 @@ import { Conversation } from "@xmtp/node-sdk";
 import { Conversation as V2Conversation } from "@xmtp/xmtp-js";
 import { awaitedHandlers } from "../lib/core.js";
 import { agentReply } from "../plugins/gpt.js";
-
+import { hasClientInitialized } from "./client.js";
 // Add at the top of the file
 export let hasInitialized = false;
-export let streamInitialized = false;
+
 // Create a check function that runs when the module is loaded
 function checkInitialization() {
-  if (!hasInitialized && !streamInitialized) {
+  if (!hasInitialized && !hasClientInitialized) {
     console.warn(`\x1b[33m
 ⚠️  MessageKit is imported but not running!
    Make sure to call run(agent) to start processing messages
@@ -306,7 +306,6 @@ export async function streamMessages(
   ) => Promise<void>,
   client: V3Client | V2Client,
 ) {
-  streamInitialized = true;
   let v3client = client as V3Client;
   let v2client = client as V2Client;
   while (true) {

@@ -27,10 +27,13 @@ interface UserReturnType {
 
 export type User = ReturnType<typeof createUser>;
 
+export let hasClientInitialized = false;
+
 export async function xmtpClient(
   agentConfig?: AgentConfig,
   agent?: Agent,
 ): Promise<{ client: Client; v2client: V2Client }> {
+  hasClientInitialized = true;
   // Check if both clientConfig and privateKey are empty
   const testKey = await setupTestEncryptionKey();
   const { key, isRandom } = setupPrivateKey(agentConfig?.privateKey);

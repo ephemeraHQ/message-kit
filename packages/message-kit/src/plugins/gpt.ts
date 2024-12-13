@@ -48,7 +48,6 @@ class ChatMemory {
     who: "user" | "assistant" | "system",
   ): ChatHistoryEntry[] {
     if (!key || !message) {
-      console.log(key, message);
       console.warn("Invalid entry attempt - missing key or message");
       return [];
     }
@@ -60,7 +59,7 @@ class ChatMemory {
       role: who,
       content: message,
     });
-    console.log("addEntry", this.getHistory(normalizedKey));
+    //console.log("addEntry", this.getHistory(normalizedKey));
     return this.getHistory(normalizedKey);
   }
   createMemory(key: string, systemPrompt: string) {
@@ -222,8 +221,7 @@ export async function agentReply(context: Context) {
     console.log("reply", messages);
 
     // Process the generated reply and send it back to the user
-    const ok = await processMultilineResponse(messages, context);
-    if (ok) chatMemory.addEntry(memoryKey, reply, "assistant");
+    await processMultilineResponse(messages, context);
     return { reply };
   } catch (error) {
     // Log any errors that occur during the OpenAI call
@@ -287,7 +285,6 @@ Remember: Commands must be on their own line starting with /.`;
       systemPrompt,
       history,
     );
-    console.log("fixedReply", { fixPrompt, systemPrompt });
 
     // Verify the fixed reply has a command
     if (!fixedReply.includes("/")) {
@@ -313,6 +310,7 @@ export async function processMultilineResponse(
         const response = await context.executeSkill(message);
         if (response && typeof response.message === "string") {
           let msg = parseMarkdown(response.message);
+
           await context.send(msg);
         }
       } else {

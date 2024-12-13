@@ -515,6 +515,7 @@ export class MessageKit implements Context {
       } else if (this.isV3Conversation(conversation)) {
         await conversation.send(message, contentType);
       }
+      chatMemory.addEntry(this.getMemoryKey(), messageString, "assistant");
       logMessage("sent:" + messageString);
     }
   }

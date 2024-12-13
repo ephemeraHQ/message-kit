@@ -7,7 +7,7 @@ export const agent: Agent = {
   tag: "@bot",
   description: "A faucet delivery agent.",
   intro:
-    "You are a testnet fund delivery agent. Show the networks and deliver the funds.",
+    "You are a testnet fund delivery agent. Show the networks and deliver the funds. When greet execute the network skill.",
   skills: [faucet],
   onMessage: async (context: Context) => {
     await agentReply(context);
