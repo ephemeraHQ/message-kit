@@ -1,4 +1,4 @@
-import { XMTPContext } from "@xmtp/message-kit";
+import { Context } from "@xmtp/message-kit";
 import type { Skill } from "@xmtp/message-kit";
 import OpenAI from "openai";
 
@@ -20,7 +20,7 @@ export const web: Skill[] = [
   },
 ];
 
-export async function handler(context: XMTPContext) {
+export async function handler(context: Context) {
   const {
     message: {
       content: {
@@ -41,7 +41,7 @@ export async function handler(context: XMTPContext) {
     const html = await response.text();
     const content = extractContent(html);
     const summary = await getAISummary(content, url);
-    
+
     return {
       code: 200,
       message: summary,
@@ -56,14 +56,16 @@ export async function handler(context: XMTPContext) {
 
 function extractContent(html: string): string {
   // Remove scripts and style elements
-  html = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-             .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '');
-  
+  html = html
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
+    .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, "");
+
   // Get text content
-  const text = html.replace(/<[^>]+>/g, ' ')
-                  .replace(/\s+/g, ' ')
-                  .trim()
-                  .slice(0, 1000);
+  const text = html
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 1000);
 
   return text;
 }
@@ -73,11 +75,14 @@ async function getAISummary(content: string, url: string): Promise<string> {
     messages: [
       {
         role: "user",
-        content: `What is ${url} about? Summarize it in 2-3 sentences based on the following content: \n${content}\n\nDon't include any pretext but include the url in the summary.`
-      }
+        content: `What is ${url} about? Summarize it in 2-3 sentences based on the following content: \n${content}\n\nDon't include any pretext but include the url in the summary.`,
+      },
     ],
     model: "gpt-4o-mini",
   });
 
-  return completion.choices[0].message.content || "Could not generate summary. Please visit the website directly.";
+  return (
+    completion.choices[0].message.content ||
+    "Could not generate summary. Please visit the website directly."
+  );
 }

@@ -70,7 +70,7 @@ export async function xmtpClient(
   });
   const client = await Client.create(createSigner(user), testKey, finalConfig);
 
-  logInitMessage(client, agent?.config, isRandom ? key : undefined, agent);
+  logInitMessage(client, agentConfig, isRandom ? key : undefined, agent);
 
   return { client, v2client };
 }

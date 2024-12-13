@@ -1,4 +1,4 @@
-import { XMTPContext } from "@xmtp/message-kit";
+import { Context } from "@xmtp/message-kit";
 import type { Skill } from "@xmtp/message-kit";
 
 export const registerSkill: Skill[] = [
@@ -26,7 +26,7 @@ export const registerSkill: Skill[] = [
   },
 ];
 
-export async function handler(context: XMTPContext) {
+export async function handler(context: Context) {
   const { params } = context.message.content;
 
   const { amount: amountSend, token: tokenSend, username } = params;

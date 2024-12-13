@@ -69,7 +69,8 @@ The handler function to process info skill requests to fetch information about a
 Here is the prompt for the agent.
 
 ```jsx [src/prompt.ts]
-export const systemPrompt = `
+export const systemPrompt = `{intro}
+
 {vibe}
 
 {rules}
@@ -77,19 +78,6 @@ export const systemPrompt = `
 {user_context}
 
 {skills}
-
-## Response Scenarios:
- 
-1. When user wants to swap tokens:
-  Hey {PREFERRED_NAME! I can help you swap tokens on Base.
-  Let me help you swap 10 USDC to ETH
-  /swap 10 usdc eth
- 
-2. When user wants to swap a specific amount:
-  Sure! I'll help you swap 5 DEGEN to DAI
-  /swap 5 degen dai
-
-{issues}
 `;
 ```
 

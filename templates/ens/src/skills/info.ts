@@ -1,4 +1,4 @@
-import { XMTPContext } from "@xmtp/message-kit";
+import { Context } from "@xmtp/message-kit";
 
 import type { Skill } from "@xmtp/message-kit";
 
@@ -26,7 +26,7 @@ export const info: Skill[] = [
 // [!endregion define]
 
 // [!region handle]
-export async function handler(context: XMTPContext) {
+export async function handler(context: Context) {
   const {
     message: {
       sender,

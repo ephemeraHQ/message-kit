@@ -1,16 +1,16 @@
 import { isAddress } from "viem";
 import { V2Client, V3Client } from "../index";
-import { XMTPContext } from "../lib/xmtp";
+import { Context } from "../lib/core";
 
 export const converseEndpointURL = "https://converse.xyz/profile/";
 
 export type InfoCache = Map<string, UserInfo>;
 export type ConverseProfile = {
-  address: string | null;
+  address: string | undefined;
   onXmtp: boolean;
-  avatar: string | null;
-  formattedName: string | null;
-  name: string | null;
+  avatar: string | undefined;
+  formattedName: string | undefined;
+  name: string | undefined;
 };
 export type UserInfo = {
   ensDomain?: string | undefined;
@@ -77,8 +77,8 @@ export const userInfoCache = UserInfoCache.getInstance();
 export const getUserInfo = async (
   key: string,
   clientAddress?: string,
-  context?: XMTPContext,
-): Promise<UserInfo | null> => {
+  context?: Context,
+): Promise<UserInfo | undefined> => {
   let data: UserInfo = {
     ensDomain: undefined,
     address: undefined,
@@ -134,62 +134,58 @@ export const getUserInfo = async (
         "Hey there! Give me a sec while I fetch info about you first...",
       );
     }
-    // Fetch data based on ENS domain or Converse username
-    if (keyToUse.includes(".eth")) {
-      // Fetch ENS data
-      try {
-        const response = await fetch(`https://ensdata.net/${keyToUse}`);
-        if (!response.ok) {
-          console.error(
-            `ENS data request failed with status or unable to resolve ${keyToUse}`,
-          );
-        } else {
-          const ensData = (await response.json()) as EnsData;
-          if (ensData) {
-            data.ensInfo = ensData;
-            data.ensDomain = ensData.ens || data.ensDomain;
-            data.address = ensData.address || data.address;
-            data.avatar = ensData.avatar_url || data.avatar;
-          }
+    // Fetch data based on ENS domain
+    // Fetch ENS data
+    try {
+      const response = await fetch(`https://ensdata.net/${keyToUse}`);
+      if (response.status !== 200) {
+        if (process.env.MSG_LOG)
+          console.log("- ENS data request failed for", keyToUse);
+      } else {
+        const ensData = (await response.json()) as EnsData;
+        if (ensData) {
+          data.ensInfo = ensData;
+          data.ensDomain = ensData.ens || data.ensDomain;
+          data.address = ensData.address || data.address;
+          data.avatar = ensData.avatar_url || data.avatar;
         }
-      } catch (error) {
-        console.error(`Failed to fetch ENS data for ${keyToUse}`);
       }
-    } else {
-      // Fetch Converse profile data
-      try {
-        const username = keyToUse.replace("@", "");
-        const converseEndpoint = `${converseEndpointURL}${username}`;
-        const response = await fetchWithTimeout(
-          converseEndpoint,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Accept: "application/json",
-            },
-            body: JSON.stringify({ peer: username }),
+    } catch (error) {
+      console.error(`Failed to fetch ENS data for ${keyToUse}`);
+    }
+    //Converse profile
+    try {
+      const username = keyToUse.replace("@", "");
+      const converseEndpoint = `${converseEndpointURL}${username}`;
+      const response = await fetchWithTimeout(
+        converseEndpoint,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
           },
-          5000,
+          body: JSON.stringify({ peer: username }),
+        },
+        5000,
+      );
+      if (!response?.ok) {
+        console.error(
+          `Converse profile request failed with status ${response?.status}`,
         );
-        if (!response?.ok) {
-          console.error(
-            `Converse profile request failed with status ${response?.status}`,
-          );
-        }
-        const converseData = (await response?.json()) as ConverseProfile;
-        if (converseData) {
-          data.converseUsername =
-            converseData.formattedName ||
-            converseData.name ||
-            data.converseUsername;
-          data.address = converseData.address || data.address;
-          data.avatar = converseData.avatar || data.avatar;
-          data.converseEndpoint = converseEndpoint;
-        }
-      } catch (error) {
-        console.error("Failed to fetch Converse profile:", error);
       }
+      const converseData = (await response?.json()) as ConverseProfile;
+      if (converseData) {
+        data.converseUsername =
+          converseData.formattedName ||
+          converseData.name ||
+          data.converseUsername;
+        data.address = converseData.address || data.address;
+        data.avatar = converseData.avatar || data.avatar;
+        data.converseEndpoint = converseEndpoint;
+      }
+    } catch (error) {
+      console.error("Failed to fetch Converse profile:", error);
     }
 
     data.preferredName = data.ensDomain || data.converseUsername || "Friend";
@@ -218,8 +214,8 @@ const fetchWithTimeout = async (
   }
 };
 export const isOnXMTP = async (
-  v3client: V3Client | null,
-  v2client: V2Client | null,
+  v3client: V3Client | undefined,
+  v2client: V2Client | undefined,
   address: string,
 ) => {
   try {
@@ -235,19 +231,4 @@ export const isOnXMTP = async (
     console.error("Error checking XMTP availability:", error);
     return { v2: false, v3: false }; // Return default values on error
   }
-};
-
-export const replaceUserContext = (userInfo: UserInfo) => {
-  let { address, ensDomain, converseUsername, preferredName } = userInfo;
-  let prompt = `## User context
-- Start by fetch their domain from or Converse username
-- Call the user by their name or domain, in case they have one
-- Ask for a name (if they don't have one) so you can suggest domains.
-- Message sent date: ${new Date().toISOString()}
-- Users address is: ${address}`;
-  if (preferredName) prompt += `\n- Users name is: ${preferredName}`;
-  if (ensDomain) prompt += `\n- User ENS domain is: ${ensDomain}`;
-  if (converseUsername)
-    prompt += `\n- Converse username is: ${converseUsername}`;
-  return prompt;
 };

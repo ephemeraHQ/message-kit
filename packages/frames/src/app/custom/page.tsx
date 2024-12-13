@@ -73,7 +73,7 @@ export default async function Home({
         {metas}
       </head>
       <body>
-        <pre>{JSON.stringify(metaTags, null, 2)}</pre>
+        <pre>{JSON.stringify(metaTags, undefined, 2)}</pre>
       </body>
     </html>
   );

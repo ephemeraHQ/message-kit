@@ -4,11 +4,11 @@ export const converseEndpointURL = "https://converse.xyz/profile/";
 
 export type InfoCache = Map<string, UserInfo>;
 export type ConverseProfile = {
-  address: string | null;
+  address: string | undefined;
   onXmtp: boolean;
-  avatar: string | null;
-  formattedName: string | null;
-  name: string | null;
+  avatar: string | undefined;
+  formattedName: string | undefined;
+  name: string | undefined;
 };
 export type UserInfo = {
   address?: string;

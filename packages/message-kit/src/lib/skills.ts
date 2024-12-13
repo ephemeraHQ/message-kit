@@ -1,5 +1,5 @@
 import { Agent, Skill } from "../helpers/types.js";
-import { XMTPContext } from "./xmtp.js";
+import { type Context } from "./core.js";
 import path from "path";
 
 export function findSkill(text: string, skills: Skill[][]): Skill | undefined {
@@ -41,7 +41,7 @@ export function replaceSkills(agent: Agent) {
 export async function executeSkill(
   text: string,
   agent: Agent,
-  context: XMTPContext,
+  context: Context,
 ) {
   try {
     let skillAction = findSkill(text, agent?.skills ?? []);
@@ -55,21 +55,20 @@ export async function executeSkill(
       console.warn("Skill not valid", text);
     } else if (skillAction?.handler) {
       // Mock context for skill execution
-      const mockContext: XMTPContext = {
+      const mockContext: Context = {
         ...context,
         message: {
           ...context.message,
           content: { ...context.message.content, ...extractedValues },
         },
-      } as XMTPContext;
+      } as Context;
 
       // Copy all methods with proper binding
       Object.getOwnPropertyNames(Object.getPrototypeOf(context)).forEach(
         (key) => {
-          const method = context[key as keyof XMTPContext];
+          const method = context[key as keyof Context];
           if (typeof method === "function") {
-            (mockContext[key as keyof XMTPContext] as any) =
-              method.bind(context);
+            (mockContext[key as keyof Context] as any) = method.bind(context);
           }
         },
       );
@@ -89,7 +88,7 @@ export async function executeSkill(
     }
     throw error;
   } finally {
-    context.refConv = null;
+    context.refConv = undefined;
   }
 }
 

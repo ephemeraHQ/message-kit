@@ -1,10 +1,10 @@
-import { XMTPContext } from "@xmtp/message-kit";
+import { Context } from "@xmtp/message-kit";
 import type { Skill } from "@xmtp/message-kit";
 
 // Example skill structure
 export const cryptoPrice: Skill[] = [
   {
-    skill: "price", 
+    skill: "price",
     handler: handler,
     examples: ["/price BTC USD", "/price ETH EUR"],
     description: "Get the current exchange rate for a cryptocurrency.",
@@ -20,7 +20,7 @@ export const cryptoPrice: Skill[] = [
   },
 ];
 
-async function handler(context: XMTPContext) {
+async function handler(context: Context) {
   const {
     message: {
       content: {
@@ -31,7 +31,7 @@ async function handler(context: XMTPContext) {
 
   try {
     const response = await fetch(
-      `https://min-api.cryptocompare.com/data/price?fsym=${crypto}&tsyms=${currency}`
+      `https://min-api.cryptocompare.com/data/price?fsym=${crypto}&tsyms=${currency}`,
     );
 
     if (!response.ok) {
@@ -41,8 +41,8 @@ async function handler(context: XMTPContext) {
       };
     }
 
-    const data = await response.json() as Record<string, number>;
-    
+    const data = (await response.json()) as Record<string, number>;
+
     if (!data[currency]) {
       return {
         code: 400,

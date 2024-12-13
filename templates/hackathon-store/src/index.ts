@@ -1,20 +1,22 @@
-import { agentReply, XMTPContext, parsePrompt, run } from "@xmtp/message-kit";
+import { agentReply, Agent, run, Context } from "@xmtp/message-kit";
 import { downloadPage } from "./plugins/notion.js";
 import fs from "fs";
-import { Agent } from "@xmtp/message-kit";
+
 setupFiles();
 
 const agent: Agent = {
   name: "Hackathon Store",
   tag: "@store",
   description: "Hackathon Store",
-  onMessage: async (context: XMTPContext) => {
+  systemPrompt: fs.existsSync("src/prompt.md")
+    ? fs.readFileSync("src/prompt.md", "utf-8")
+    : "",
+
+  onMessage: async (context: Context) => {
     const {
       message: {
-        sender,
         content: { skill },
       },
-      agent,
     } = context;
 
     if (skill === "update") {
@@ -23,17 +25,12 @@ const agent: Agent = {
       await context.reply("Notion DB updated");
     }
 
-    let systemPrompt = await getPrompt();
-    let prompt = await parsePrompt(systemPrompt, sender.address, agent);
-    await agentReply(context, prompt);
+    await agentReply(context);
   },
 };
 
 run(agent);
 
-async function getPrompt() {
-  return fs.readFileSync("src/prompt.md", "utf8");
-}
 async function setupFiles() {
   const page = await downloadPage();
   fs.writeFileSync("src/prompt.md", page);

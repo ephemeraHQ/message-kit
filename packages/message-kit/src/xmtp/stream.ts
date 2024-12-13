@@ -1,4 +1,4 @@
-import { XMTPContext } from "./xmtp.js";
+import { MessageKit, type Context } from "../lib/core.js";
 import { xmtpClient } from "./client.js";
 import { Agent, SkillHandler } from "../helpers/types.js";
 import { DecodedMessage } from "@xmtp/node-sdk";
@@ -6,19 +6,18 @@ import { logMessage } from "../helpers/utils.js";
 import { DecodedMessage as DecodedMessageV2 } from "@xmtp/xmtp-js";
 import type { Client as V3Client } from "@xmtp/node-sdk";
 import type { Client as V2Client } from "@xmtp/xmtp-js";
-import { findSkill } from "./skills.js";
+import { findSkill } from "../lib/skills.js";
 import { Conversation } from "@xmtp/node-sdk";
 import { Conversation as V2Conversation } from "@xmtp/xmtp-js";
-import { awaitedHandlers } from "./xmtp.js";
-import { agentReply, chatMemory } from "../plugins/gpt.js";
-import { parsePrompt } from "../plugins/gpt.js";
+import { awaitedHandlers } from "../lib/core.js";
+import { agentReply } from "../plugins/gpt.js";
 
 // Add at the top of the file
-let hasInitialized = false;
-
+export let hasInitialized = false;
+export let streamInitialized = false;
 // Create a check function that runs when the module is loaded
 function checkInitialization() {
-  if (!hasInitialized) {
+  if (!hasInitialized && !streamInitialized) {
     console.warn(`\x1b[33m
 ⚠️  MessageKit is imported but not running!
    Make sure to call run(agent) to start processing messages
@@ -65,7 +64,7 @@ export async function run(agent: Agent) {
         ) {
           return;
         }
-        const context = await XMTPContext.create(
+        const context = await MessageKit.create(
           conversation,
           message,
           { client, v2client },
@@ -106,29 +105,24 @@ export async function run(agent: Agent) {
         if (isMessageValid && customHandler) await customHandler(context);
         else if (isMessageValid && agent?.onMessage)
           await agent?.onMessage?.(context);
-        else if (isMessageValid && !agent?.onMessage)
-          await onMessage(context, agent);
+        else if (isMessageValid && !agent?.onMessage) await onMessage(context);
       } catch (e) {
         console.log(`error`, e);
       }
     }
   };
 
-  const onMessage = async (context: XMTPContext, agent: Agent) => {
+  const onMessage = async (context: Context) => {
     /*Default onMessage function, replaces the prompt file*/
-    const {
-      message: { sender },
-    } = context;
-
+    const { agent } = context;
     if (!agent.systemPrompt) {
-      throw new Error("System prompt is not defined");
+      console.log("System prompt is not defined");
+      return;
     }
-
-    let prompt = await parsePrompt(agent.systemPrompt, sender.address, agent);
-    await agentReply(context, prompt);
+    await agentReply(context);
   };
   const filterMessage = (
-    context: XMTPContext,
+    context: Context,
   ): {
     isMessageValid: boolean;
     customHandler: SkillHandler | undefined;
@@ -279,7 +273,6 @@ export async function run(agent: Agent) {
       });
     }
     if (isMessageValid) {
-      chatMemory.addEntry(context.getMemoryKey(), text ?? typeId, "user");
       logMessage(`msg_${version}: ` + (text ?? typeId));
     }
 
@@ -313,6 +306,7 @@ export async function streamMessages(
   ) => Promise<void>,
   client: V3Client | V2Client,
 ) {
+  streamInitialized = true;
   let v3client = client as V3Client;
   let v2client = client as V2Client;
   while (true) {

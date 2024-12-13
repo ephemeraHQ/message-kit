@@ -12,6 +12,8 @@ export const agent: Agent = {
   name: "Gated Group Creator Agent",
   tag: "@bot",
   description: "A gated group creator agent.",
+  intro: "You are a gated group creator agent.",
   skills: [gated],
 };
+
 run(agent);

@@ -1,11 +1,4 @@
-import {
-  run,
-  agentReply,
-  parsePrompt,
-  XMTPContext,
-  Agent,
-} from "@xmtp/message-kit";
-import { systemPrompt } from "./prompt.js";
+import { run, agentReply, Context, Agent } from "@xmtp/message-kit";
 import { faucet } from "./skills/faucet.js";
 
 // [!region skills]
@@ -13,16 +6,11 @@ export const agent: Agent = {
   name: "Faucet Agent",
   tag: "@bot",
   description: "A faucet delivery agent.",
+  intro:
+    "You are a testnet fund delivery agent. Show the networks and deliver the funds.",
   skills: [faucet],
-  onMessage: async (context: XMTPContext) => {
-    const {
-      message: { sender },
-      agent,
-    } = context;
-
-    let prompt = await parsePrompt(systemPrompt, sender.address, agent);
-
-    await agentReply(context, prompt);
+  onMessage: async (context: Context) => {
+    await agentReply(context);
   },
 };
 run(agent);

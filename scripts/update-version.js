@@ -61,7 +61,7 @@ filesToUpdate.forEach((filePath) => {
   if (filePath.endsWith("package.json")) {
     const jsonContent = JSON.parse(content);
     jsonContent.version = newVersion;
-    content = JSON.stringify(jsonContent, null, 2);
+    content = JSON.stringify(jsonContent, undefined, 2);
   } else if (filePath.endsWith("vocs.config.tsx")) {
     content = content.replace(/v\d+\.\d+\.\d+/g, `v${newVersion}`);
   } else if (filePath.endsWith("index.js")) {

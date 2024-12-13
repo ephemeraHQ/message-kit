@@ -1,4 +1,4 @@
-import { XMTPContext } from "@xmtp/message-kit";
+import { Context } from "@xmtp/message-kit";
 import type { Skill } from "@xmtp/message-kit";
 import { USDCWallet } from "../plugins/usdc.js";
 
@@ -39,7 +39,7 @@ export const cash: Skill[] = [
   },
 ];
 
-async function balanceHandler(context: XMTPContext) {
+async function balanceHandler(context: Context) {
   const {
     message: { sender },
   } = context;
@@ -50,7 +50,7 @@ async function balanceHandler(context: XMTPContext) {
   );
 }
 
-async function fundHandler(context: XMTPContext) {
+async function fundHandler(context: Context) {
   try {
     const {
       message: {
@@ -104,7 +104,7 @@ async function fundHandler(context: XMTPContext) {
   }
 }
 
-async function transferHandler(context: XMTPContext) {
+async function transferHandler(context: Context) {
   const {
     message: {
       sender,

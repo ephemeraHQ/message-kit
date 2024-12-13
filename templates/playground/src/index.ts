@@ -1,11 +1,4 @@
-import {
-  run,
-  agentReply,
-  parsePrompt,
-  XMTPContext,
-  Agent,
-} from "@xmtp/message-kit";
-import { systemPrompt } from "./prompt.js";
+import { run, agentReply, Context, Agent } from "@xmtp/message-kit";
 import { web } from "./skills/web.js";
 import { cryptoPrice } from "./skills/cryptoPrice.js";
 import { search } from "./skills/search.js";
@@ -20,14 +13,8 @@ export const agent: Agent = {
   description: "A playground agent with a lot of skills.",
   skills: [web, cryptoPrice, search],
   vibe: professional,
-  onMessage: async (context: XMTPContext) => {
-    const {
-      message: { sender },
-      agent,
-    } = context;
-
-    let prompt = await parsePrompt(systemPrompt, sender.address, agent);
-    await agentReply(context, prompt);
+  onMessage: async (context: Context) => {
+    await agentReply(context);
   },
   config: {
     experimental: true,

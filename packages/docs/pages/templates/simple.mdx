@@ -10,7 +10,6 @@ Your project will have the following structure:
 group/
 ├── src/
 │   ├── index.ts
-│   ├── prompt.ts
 ├── package.json
 ├── tsconfig.json
 └── .env
@@ -32,7 +31,7 @@ The agent is the core component that listens for messages and responds. Follow t
 You can also integrate other agents in your project.
 
 ```tsx [src/index.ts]
-onMessage: async (context: XMTPContext) => {
+onMessage: async (context: Context) => {
   const {
     message: {
       sender,
@@ -60,14 +59,6 @@ onMessage: async (context: XMTPContext) => {
     await context.send("An error occurred while fetching data from the API.");
   }
 };
-```
-
-## Prompt
-
-Define the prompt that your agent will use to generate responses. This is crucial for ensuring your agent communicates effectively.
-
-```tsx [src/prompt.ts]
-// [!include ~/../../templates/simple/src/prompt.ts]
 ```
 
 ## Variables

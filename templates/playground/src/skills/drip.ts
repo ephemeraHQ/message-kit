@@ -1,4 +1,4 @@
-import { XMTPContext, chatMemory } from "@xmtp/message-kit";
+import { Context, chatMemory } from "@xmtp/message-kit";
 import type { Skill } from "@xmtp/message-kit";
 import { getRedisClient } from "../plugins/redis.js";
 import { LearnWeb3Client, Network } from "../plugins/learnweb3.js";
@@ -27,7 +27,7 @@ export const registerSkill: Skill[] = [
   },
 ];
 
-export async function handler(context: XMTPContext) {
+export async function handler(context: Context) {
   const {
     message: {
       content: { params },
@@ -77,7 +77,5 @@ export async function handler(context: XMTPContext) {
 
   await context.send("Here's your transaction receipt:");
   await context.sendReceipt(result.value!);
-  // Clear any in-memory cache or state related to the prompt
-  chatMemory.clear();
   return;
 }

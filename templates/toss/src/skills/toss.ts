@@ -1,4 +1,4 @@
-import { Skill, XMTPContext, getUserInfo } from "@xmtp/message-kit";
+import { Skill, Context, getUserInfo } from "@xmtp/message-kit";
 import { getRedisClient } from "../plugins/redis.js";
 import {
   checkTossCorrect,
@@ -76,7 +76,7 @@ export const toss: Skill[] = [
   },
 ];
 
-export async function handleTossCreation(context: XMTPContext) {
+export async function handleTossCreation(context: Context) {
   const {
     message: {
       content: { params },
@@ -128,7 +128,7 @@ export async function handleTossCreation(context: XMTPContext) {
   }
 }
 
-export async function handleJoinToss(context: XMTPContext) {
+export async function handleJoinToss(context: Context) {
   const tossData = await checkTossCorrect(context);
   if (!tossData) {
     return;
@@ -207,7 +207,7 @@ export async function handleJoinToss(context: XMTPContext) {
   }
 }
 
-export async function handleEndToss(context: XMTPContext) {
+export async function handleEndToss(context: Context) {
   const tossData = await checkTossCorrect(context);
   if (!tossData) return;
   const { toss_id, admin_address, options, participants } = tossData;
@@ -272,7 +272,7 @@ export async function handleEndToss(context: XMTPContext) {
   }
 }
 
-export async function handleCancelToss(context: XMTPContext) {
+export async function handleCancelToss(context: Context) {
   const tossData = await checkTossCorrect(context);
   if (!tossData) return;
 
@@ -328,7 +328,7 @@ export async function handleCancelToss(context: XMTPContext) {
     ${participants?.map((p) => `${p.name} - $${amount}`).join("\n")}`,
   );
 }
-export async function handleTossStatus(context: XMTPContext) {
+export async function handleTossStatus(context: Context) {
   const tossData = await checkTossCorrect(context);
   if (!tossData) return;
   await context.reply(await generateTossStatusMessage(tossData));

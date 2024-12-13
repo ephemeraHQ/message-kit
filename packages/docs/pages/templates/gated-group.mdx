@@ -13,7 +13,6 @@ gated-group/
 │   ├── skills/
 │       ├── gated.ts
 │   ├── index.ts
-│   ├── prompt.ts
 ├── package.json
 ├── tsconfig.json
 └── .env
@@ -36,18 +35,10 @@ The process that starts listening to messages and replying to them.
 
 - [Gated](/skills/gated): Create an onboard to a gated NFT group
 
-## Prompt
-
-Here is the prompt that the agent will use to reply to messages.
-
-```tsx [src/prompt.ts]
-// [!include ~/../../templates/simple/src/prompt.ts]
-```
-
 ## Variables
 
 Set up these variables in your app
 
 ```bash [cmd]
-// [!include ~/../../templates/simple/.env.example]
+// [!include ~/../../templates/gated-group/.env.example]
 ```

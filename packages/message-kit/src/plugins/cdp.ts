@@ -5,7 +5,7 @@ import {
   Trade,
   TimeoutError,
 } from "@coinbase/coinbase-sdk";
-import { XMTPContext } from "../lib/xmtp";
+import { type Context } from "../lib/core";
 import { keccak256, toHex, toBytes } from "viem";
 import { getUserInfo } from "../plugins/resolver";
 import { isAddress } from "viem";
@@ -24,7 +24,7 @@ const coinbase =
         apiKeyName,
         privateKey,
       })
-    : null;
+    : undefined;
 
 interface WalletServiceData {
   wallet: Wallet;
@@ -73,10 +73,10 @@ class LocalStorage {
 export class WalletService {
   private walletStorage: LocalStorage;
   private cdpEncriptionKey: string;
-  private context: XMTPContext;
+  private context: Context;
   private humanAddress: string;
 
-  constructor(context: XMTPContext) {
+  constructor(context: Context) {
     this.context = context;
     this.humanAddress = context.message.sender.address;
     this.walletStorage = new LocalStorage();

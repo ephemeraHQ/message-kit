@@ -33,7 +33,7 @@ export async function createGroup(
     return group;
   } catch (error) {
     console.log("Error creating group", error);
-    return null;
+    return undefined;
   }
 }
 
@@ -94,7 +94,7 @@ export async function addToGroup(
 ): Promise<{ code: number; message: string }> {
   try {
     let lowerAddress = address.toLowerCase();
-    const { v2, v3 } = await isOnXMTP(client, null, lowerAddress);
+    const { v2, v3 } = await isOnXMTP(client, undefined, lowerAddress);
     if (!v3)
       return {
         code: 400,

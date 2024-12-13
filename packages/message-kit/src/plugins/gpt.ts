@@ -2,8 +2,8 @@ import dotenv from "dotenv";
 dotenv.config({ override: true });
 import OpenAI from "openai";
 import { getFS } from "../helpers/utils";
-import { XMTPContext } from "../lib/xmtp";
-import { getUserInfo, replaceUserContext } from "./resolver";
+import type { Context } from "../lib/core";
+import { getUserInfo } from "./resolver";
 import type { Agent } from "../helpers/types";
 import { replaceSkills } from "../lib/skills";
 
@@ -14,9 +14,9 @@ const isOpenAIConfigured = () => {
 // Modify OpenAI initialization to be conditional
 const openai = isOpenAIConfigured()
   ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
-  : null;
+  : undefined;
 
-type ChatHistoryEntry = {
+export type ChatHistoryEntry = {
   role: "user" | "assistant" | "system"; // restrict roles to valid options
   content: string;
 };
@@ -56,25 +56,22 @@ class ChatMemory {
     if (!this.getHistory(normalizedKey)) {
       return [];
     }
-
     this.histories[normalizedKey].push({
       role: who,
       content: message,
     });
-
+    console.log("addEntry", this.getHistory(normalizedKey));
     return this.getHistory(normalizedKey);
   }
   createMemory(key: string, systemPrompt: string) {
-    this.histories[key.toLowerCase()] = [];
-    this.addEntry(key.toLowerCase(), systemPrompt, "system");
-  }
-  initMemory(key: string, systemPrompt: string, userPrompt: string) {
     const history = this.getHistory(key.toLowerCase());
     if (!history) {
-      this.createMemory(key.toLowerCase(), systemPrompt);
-      this.addEntry(key.toLowerCase(), userPrompt, "user");
+      this.histories[key.toLowerCase()] = [];
+      this.addEntry(key.toLowerCase(), systemPrompt, "system");
       return this.getHistory(key.toLowerCase());
-    } else return history;
+    } else {
+      return history;
+    }
   }
 
   clear(key?: string) {
@@ -92,20 +89,22 @@ class ChatMemory {
 // Modify singleton export to use getInstance
 export const chatMemory = ChatMemory.getInstance();
 // [!endregion memory]
-
+export const defaultIntro =
+  "You are a helpful agent called {agent_name} that lives inside a web3 messaging app called";
+export const defaultSystemPrompt = `{intro}\n{vibe}\n{rules}\n{user_context}\n{skills}`;
 // [!region PROMPT_RULES]
 export const PROMPT_RULES = `# Rules
 - You can respond with multiple messages if needed. Each message should be separated by a newline character.
 - You can trigger skills by only sending the command in a newline message.
 - Each command starts with a slash (/).
+- Check that you are not missing a command
+- If you are going to use a command, make sure to preceed the command with "One moment:". i.e "Sure! ill check that for you. One moment:\n/check humanagent.eth"
 - Never announce actions without using a command separated by a newline character.
-- Never use markdown in your responses.
+- Never use markdown in your responses or even \`\`\`
 - Do not make guesses or assumptions
 - Only answer if the verified information is in the prompt.
-- Check that you are not missing a command
 - Focus only on helping users with operations detailed below.
 - Date: ${new Date().toUTCString()},
-- IMPORTANT: IF you are going to use a command, make sure to preceed with your message and "One moment:"
 `;
 // [!endregion PROMPT_RULES]
 // [!region parsePrompt]
@@ -114,7 +113,25 @@ export async function parsePrompt(
   senderAddress: string,
   agent: Agent,
 ) {
-  // Fetch user information based on the sender's address
+  prompt = prompt.replace("{intro}", agent?.intro ?? defaultIntro);
+  prompt = prompt.replace("{vibe}", parseVibe(agent) + "\n");
+  prompt = prompt.replace("{rules}", PROMPT_RULES + "\n");
+  prompt = prompt.replace("{skills}", replaceSkills(agent) + "\n");
+  prompt = prompt.replace("{agent_name}", agent?.tag);
+  prompt = prompt.replace(
+    "{user_context}",
+    (await parseUserContext(senderAddress)) + "\n",
+  );
+
+  const { fs } = getFS();
+  if (fs) {
+    //This is for debugging
+    fs.writeFileSync("example_prompt.md", prompt);
+  }
+  return prompt;
+}
+
+export const parseUserContext = async (senderAddress: string) => {
   let userInfo = await getUserInfo(senderAddress);
   if (!userInfo) {
     console.log("User info not found");
@@ -125,12 +142,31 @@ export async function parsePrompt(
       converseUsername: senderAddress,
     };
   }
-  let vibe =
-    "You are a helpful agent called {agent_name} that lives inside a web3 messaging app called Converse.";
+  let { address, ensDomain, converseUsername, preferredName } = userInfo;
+
+  let prompt = `## User context
+- Start by fetch their domain from or Converse username
+- Call the user by their name or domain, in case they have one
+- Ask for a name (if they don't have one) so you can suggest domains.
+- Message sent date: ${new Date().toISOString()}
+- Users address is: ${address}`;
+  if (preferredName) prompt += `\n- Users name is: ${preferredName}`;
+  if (ensDomain) prompt += `\n- User ENS domain is: ${ensDomain}`;
+  if (converseUsername)
+    prompt += `\n- Converse username is: ${converseUsername}`;
+
+  prompt = prompt.replaceAll("{address}", userInfo.address || "");
+  prompt = prompt.replaceAll("{domain}", userInfo.ensDomain || "");
+  prompt = prompt.replaceAll("{username}", userInfo.converseUsername || "");
+  prompt = prompt.replaceAll("{name}", userInfo.preferredName || "");
+
+  return prompt;
+};
+// [!endregion parsePrompt]
+export function parseVibe(agent: Agent) {
+  let vibe = "";
   if (agent?.vibe) {
     let params = agent.vibe;
-    // Construct a more detailed personality description from the vibe object
-    vibe = `You are ${params.vibe} agent called {agent_name} that lives inside a web3 messaging app called Converse.\n\n`;
     if (params.description) {
       vibe += `Vibe: ${params.description}`;
     }
@@ -144,83 +180,83 @@ export async function parsePrompt(
       vibe += `Quirks: ${params.quirks.join(", ")}`;
     }
   }
-
-  prompt = prompt.replace("{vibe}", vibe);
-  prompt = prompt.replace("{rules}", PROMPT_RULES);
-  prompt = prompt.replace("{skills}", replaceSkills(agent));
-  prompt = prompt.replace("{agent_name}", agent?.tag);
-
-  // Replace variables in the system prompt
-  if (userInfo) {
-    prompt = prompt.replace("{user_context}", replaceUserContext(userInfo));
-    prompt = prompt.replaceAll("{address}", userInfo.address || "");
-    prompt = prompt.replaceAll("{domain}", userInfo.ensDomain || "");
-    prompt = prompt.replaceAll("{username}", userInfo.converseUsername || "");
-    prompt = prompt.replaceAll("{name}", userInfo.preferredName || "");
-  }
-
-  const { fs } = getFS();
-  if (fs) {
-    fs.writeFileSync("example_prompt.md", prompt);
-  }
-  return prompt;
+  return vibe;
 }
-// [!endregion parsePrompt]
-
 // [!region agentReply]
-export async function agentReply(context: XMTPContext, systemPrompt: string) {
+export async function agentReply(context: Context) {
   const {
     message: {
       content: { text, params },
       sender,
     },
+    agent,
   } = context;
 
   try {
+    // Parse the system prompt using the agent's system prompt or the default one
+    let systemPrompt = await parsePrompt(
+      agent.systemPrompt || defaultSystemPrompt,
+      sender.address,
+      agent,
+    );
+
+    // Use the provided prompt from params or fallback to the message text
     let userPrompt = params?.prompt ?? text;
 
+    //Memory
+    let memoryKey = context.getMemoryKey();
+    chatMemory.createMemory(memoryKey, systemPrompt);
+    chatMemory.addEntry(memoryKey, userPrompt, "user");
+
+    // Generate a reply using the text generation function
     const { reply } = await textGeneration(
-      context.getConversationKey() + ":" + sender.address,
       userPrompt,
       systemPrompt,
+      chatMemory.getHistory(memoryKey),
     );
-    await processMultilineResponse(
-      sender.address,
-      reply,
-      context,
-      systemPrompt,
-    );
+
+    let messages = reply
+      .split("\n")
+      .map((message: string) => parseMarkdown(message))
+      .filter((message): message is string => message.length > 0);
+    console.log("reply", messages);
+
+    // Process the generated reply and send it back to the user
+    const ok = await processMultilineResponse(messages, context);
+    if (ok) chatMemory.addEntry(memoryKey, reply, "assistant");
+    return { reply };
   } catch (error) {
+    // Log any errors that occur during the OpenAI call
     console.error("Error during OpenAI call:", error);
+    // Inform the user that an error occurred
     await context.send("An error occurred while processing your request.");
+    return { reply: "An error occurred while processing your request." };
   }
 }
 // [!endregion agentReply]
 
 // [!region textGeneration]
 export async function textGeneration(
-  key: string,
   userPrompt: string,
   systemPrompt: string = "",
+  history: ChatHistoryEntry[] = [],
 ) {
   // Early validation
   if (!openai) {
     return { reply: "No OpenAI API key found in .env" };
   }
-
-  const messages = chatMemory.initMemory(key, systemPrompt, userPrompt);
-
   try {
     const response = await openai.chat.completions.create({
       model: (process.env.GPT_MODEL as string) || "gpt-4o",
-      messages: messages,
+      messages: history,
     });
 
     const reply =
       response.choices[0].message.content ?? "No response from OpenAI.";
-    const cleanedReply = parseMarkdown(reply);
 
-    return { reply: cleanedReply, history: messages };
+    let cleanedReply: string = await checkIntent(history, systemPrompt, reply);
+    cleanedReply = parseMarkdown(cleanedReply);
+    return { reply: cleanedReply };
   } catch (error) {
     console.error("OpenAI API error:", error);
     throw new Error("Failed to generate response");
@@ -228,102 +264,66 @@ export async function textGeneration(
 }
 // [!endregion textGeneration]
 
-// [!region hasIntent]
-export async function hasIntent(message: string): Promise<boolean> {
-  if (!openai) {
-    return false;
-  }
-  try {
-    const response = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      messages: [
-        {
-          role: "system",
-          content: `You are a binary classifier. Respond only with 'true' or 'false'. Detect if the message contains an intent or action description rather than a direct command or statement.
-            Possible indicators of intent could be :
-          
-              "Let me",
-              "One moment",
-              "Sure",
-              "Here",
-              "Let's",
-              "I'll",
-              "Checking",
-              ":",
-              "Okay",
-              "Alright",
-            `,
-        },
-        {
-          role: "user",
-          content: message,
-        },
-      ],
-      max_tokens: 1,
-      temperature: 0,
-    });
-    const hasIntent =
-      response.choices[0].message.content?.toLowerCase().includes("true") ??
-      false;
-    console.log("hasIntent", message, hasIntent);
-    return hasIntent;
-  } catch (error) {
-    console.error("Intent detection error:", error);
-    return false;
-  }
-}
-// [!endregion hasIntent]
-
 // [!region checkIntent]
 export async function checkIntent(
-  reply: string,
-  context: XMTPContext,
+  history: ChatHistoryEntry[],
   systemPrompt: string,
+  reply: string,
 ) {
-  const intentDetected = reply.includes("moment"); //(await hasIntent(reply));
-  console.log("intentDetected", intentDetected);
-  if (intentDetected && !reply.includes("/")) {
-    console.log("Oops, seems i forgot to run the command");
-    // context.send("Lets try again");
-    agentReply(context, systemPrompt);
-    return false;
-  } else return true;
+  const intentDetected = reply.toLowerCase().includes("moment");
+  const hasValidCommand = reply.includes("\n/") || reply.startsWith("/");
+
+  if (intentDetected && !hasValidCommand) {
+    console.log("Intent detected but missing command:", reply);
+
+    const fixPrompt = `You indicated you would perform an action by saying "One moment" but didn't include the proper command. 
+Your previous response was: "${reply}"
+Please provide your response again with the exact command starting with / on a new line. 
+Remember: Commands must be on their own line starting with /.`;
+
+    // Request a fix with the fix prompt using temporary memory
+    const { reply: fixedReply } = await textGeneration(
+      fixPrompt,
+      systemPrompt,
+      history,
+    );
+    console.log("fixedReply", { fixPrompt, systemPrompt });
+
+    // Verify the fixed reply has a command
+    if (!fixedReply.includes("/")) {
+      return "I apologize, but I'm having trouble formatting the command correctly. Please try rephrasing your request.";
+    }
+
+    return fixedReply;
+  }
+
+  return reply;
 }
 // [!endregion checkIntent]
 
 // [!region processMultilineResponse]
 export async function processMultilineResponse(
-  memoryKey: string,
-  reply: string,
-  context: XMTPContext,
-  systemPrompt: string,
-) {
-  if (!memoryKey) {
-    chatMemory.clear();
-  }
-  const isValidIntent = await checkIntent(reply, context, systemPrompt);
-  if (!isValidIntent) {
-    return;
-  }
-
-  let messages = reply
-    .split("\n")
-    .map((message: string) => parseMarkdown(message))
-    .filter((message): message is string => message.length > 0);
-  console.log("messages", messages);
-
-  // Continue with existing processing
-  for (const message of messages) {
-    if (message.startsWith("/")) {
-      const response = await context.executeSkill(message);
-      if (response && typeof response.message === "string") {
-        let msg = parseMarkdown(response.message);
-        await context.send(msg);
+  messages: string[],
+  context: Context,
+): Promise<boolean> {
+  try {
+    // Continue with existing processing
+    for (const message of messages) {
+      if (message.startsWith("/")) {
+        const response = await context.executeSkill(message);
+        if (response && typeof response.message === "string") {
+          let msg = parseMarkdown(response.message);
+          await context.send(msg);
+        }
+      } else {
+        // If it's not a command and didn't match forbidden prefixes, it's probably valid free-form text
+        await context.send(message);
       }
-    } else {
-      // If it's not a command and didn't match forbidden prefixes, it's probably valid free-form text
-      await context.send(message);
     }
+    return true;
+  } catch (error) {
+    console.error("Error during OpenAI call:", error);
+    return false;
   }
 }
 
@@ -343,6 +343,6 @@ export function parseMarkdown(message: string) {
   trimmedMessage = trimmedMessage?.replace(/^\s+|\s+$/g, "");
   // Remove any remaining leading or trailing whitespace
   trimmedMessage = trimmedMessage.trim();
-
+  trimmedMessage = trimmedMessage.replace(/```/g, "");
   return trimmedMessage;
 }

@@ -1,4 +1,4 @@
-import { XMTPContext, Skill } from "@xmtp/message-kit";
+import { Context, Skill } from "@xmtp/message-kit";
 
 export const broadcast: Skill[] = [
   {
@@ -15,7 +15,7 @@ export const broadcast: Skill[] = [
   },
 ];
 
-async function handler(context: XMTPContext) {
+async function handler(context: Context) {
   const {
     message: {
       content: {

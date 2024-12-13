@@ -1,6 +1,6 @@
 import { describe, test, expect } from "vitest";
 import { generatePrivateKey } from "viem/accounts";
-import { xmtpClient, createUser } from "../src/lib/client";
+import { xmtpClient, createUser } from "../src/xmtp/client";
 
 describe("Client Private Key Configuration Tests", () => {
   test("creates a client with a random generated key", async () => {
@@ -13,7 +13,6 @@ describe("Client Private Key Configuration Tests", () => {
 
   test("creates a client with a provided private key", async () => {
     const privateKey = generatePrivateKey();
-    console.log(privateKey);
     const { client, v2client } = await xmtpClient({
       privateKey,
       hideInitLogMessage: true,

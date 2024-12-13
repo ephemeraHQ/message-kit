@@ -1,4 +1,4 @@
-import { XMTPContext } from "@xmtp/message-kit";
+import { Context } from "@xmtp/message-kit";
 import type { Skill } from "@xmtp/message-kit";
 
 export const wordle: Skill[] = [
@@ -26,7 +26,7 @@ export const wordle: Skill[] = [
   },
 ];
 
-async function handler(context: XMTPContext) {
+async function handler(context: Context) {
   const {
     message: {
       content: { skill },
@@ -46,7 +46,7 @@ async function handler(context: XMTPContext) {
     );
   }
 }
-async function handleArenaMessage(context: XMTPContext) {
+async function handleArenaMessage(context: Context) {
   const {
     message: {
       content: { text },

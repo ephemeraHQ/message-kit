@@ -1,10 +1,4 @@
-import {
-  run,
-  agentReply,
-  parsePrompt,
-  XMTPContext,
-  Agent,
-} from "@xmtp/message-kit";
+import { run, agentReply, Context, Agent } from "@xmtp/message-kit";
 
 import { systemPrompt } from "./prompt.js";
 import { toss } from "./skills/toss.js";
@@ -15,14 +9,9 @@ export const agent: Agent = {
   tag: "@toss",
   description: "Create a coin toss.",
   skills: [toss, waas],
-  onMessage: async (context: XMTPContext) => {
-    const {
-      message: { sender },
-    } = context;
-
-    let prompt = await parsePrompt(systemPrompt, sender.address, agent);
-
-    await agentReply(context, prompt);
+  systemPrompt,
+  onMessage: async (context: Context) => {
+    await agentReply(context);
   },
 };
 

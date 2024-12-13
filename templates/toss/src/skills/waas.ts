@@ -1,4 +1,4 @@
-import { Skill, XMTPContext } from "@xmtp/message-kit";
+import { Skill, Context } from "@xmtp/message-kit";
 
 export const waas: Skill[] = [
   {
@@ -73,7 +73,7 @@ export const waas: Skill[] = [
   },
 ];
 
-export async function handleWallet(context: XMTPContext) {
+export async function handleWallet(context: Context) {
   const {
     message: {
       content: {

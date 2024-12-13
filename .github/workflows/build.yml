@@ -44,6 +44,8 @@ jobs:
         run: yarn
       - name: Build
         run: yarn build:message-kit
+      - name: Test Prompting
+        run: yarn test:prompting
       - name: Test parsing
         run: yarn test:parsing
       - name: Test client
@@ -52,3 +54,5 @@ jobs:
         run: yarn test:v3
       - name: Test v2
         run: yarn test:v2
+      - name: Test message-kit
+        run: yarn test:flow

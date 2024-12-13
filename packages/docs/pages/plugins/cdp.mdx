@@ -22,7 +22,7 @@ The `getWallet` method will retrieve an existing wallet or create a new one if i
 
 {/* prettier-ignore-start */}
 ```ts twoslash
-import { run, XMTPContext, Agent } from "@xmtp/message-kit";
+import { run, Context, Agent } from "@xmtp/message-kit";
 const level = "Danger";
 const humanAddress = "0x1234567890";
 const agent: Agent = {
@@ -30,7 +30,7 @@ const agent: Agent = {
   description: "Agent",
   tag: "@Bots",
   skills: [],
-  onMessage: async (context: XMTPContext) => {
+  onMessage: async (context: Context) => {
 // ---cut---
 // Get the wallet service
 const { walletService } = context;
@@ -57,7 +57,7 @@ Perform actions on the Agent Wallet like transfers and swaps or checking the bal
 
 {/* prettier-ignore-start */}
 ```ts twoslash
-import { run, XMTPContext, Agent } from "@xmtp/message-kit";
+import { run, Context, Agent } from "@xmtp/message-kit";
 const level = "Danger";
 const humanAddress = "0x1234567890";
 const amount = 100;
@@ -70,7 +70,7 @@ const agent: Agent = {
   description: "Agent",
   tag: "@Bots",
   skills: [],
-  onMessage: async (context: XMTPContext) => {
+  onMessage: async (context: Context) => {
 // ---cut---
 // Get the wallet service
 const { walletService } = context;

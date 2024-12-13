@@ -10,12 +10,12 @@ Each app consists of the following files:
 agent/
 ├── src/
 │   └── index.ts
-│   └── prompt.ts
-│   └── plugins/
+│   └── prompt.ts # Optional
+│   └── plugins/ # Optional
 │       └── ...
-│   └── skills/
+│   └── skills/ # Optional
 │       └── ...
-│   └── vibes/
+│   └── vibes/ # Optional
 │       └── ...
 ├── tsconfig.json
 ├── package.json
@@ -27,14 +27,14 @@ agent/
 This is the main function that runs the listener.
 
 ```jsx
-import { Agent, run, XMTPContext } from "@xmtp/message-kit";
+import { Agent, run, type Context } from "@xmtp/message-kit";
 
 const agent: Agent = {
   name: "Agent Name",
   tag: "@bot",
   description: "Agent Description",
   skills: [skill1, skill2],
-  onMessage: async (context: XMTPContext) => {
+  onMessage: async (context: Context) => {
     /* Logs every message in a conversation.
     If not declared, the agent will automatically use the defined skills.
     Alternatively, you can implement your own logic here. */
@@ -98,35 +98,6 @@ export const checkDomain: Skill[] = [
     - `url`: The parameter is a URL.
 
 > See [Skills](/community/skills) for more information.
-
-## System prompt
-
-Here is the prompt for the agent.
-
-```jsx [src/prompt.ts]
-export const systemPrompt = `
-{vibe}
-
-{rules}
-
-{user_context}
-
-{skills}
-
-## Response Scenarios:
- 
-1. When user wants to swap tokens:
-  Hey {PREFERRED_NAME! I can help you swap tokens on Base.
-  Let me help you swap 10 USDC to ETH
-  /swap 10 usdc eth
- 
-2. When user wants to swap a specific amount:
-  Sure! I'll help you swap 5 DEGEN to DAI
-  /swap 5 degen dai
-
-{issues}
-`;
-```
 
 ### Properties
 

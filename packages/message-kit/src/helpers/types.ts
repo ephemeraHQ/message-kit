@@ -1,4 +1,4 @@
-import { XMTPContext } from "../lib/xmtp.js";
+import { Context } from "../lib/core.js";
 import { ClientOptions, GroupMember } from "@xmtp/node-sdk";
 import { ContentTypeId } from "@xmtp/content-type-primitives";
 
@@ -97,19 +97,18 @@ export interface Vibe {
   style: string;
   quirks?: string[];
 }
-export type SkillHandler = (
-  context: XMTPContext,
-) => Promise<SkillResponse | void>;
+export type SkillHandler = (context: Context) => Promise<SkillResponse | void>;
 
-export type Handler = (context: XMTPContext) => Promise<void>;
+export type Handler = (context: Context) => Promise<void>;
 
 export interface Agent {
   name: string;
   description: string;
+  intro?: string;
   tag: string;
+  systemPrompt?: string;
   skills?: Skill[][];
   vibe?: Vibe;
-  systemPrompt?: string;
   onMessage?: Handler;
   config?: AgentConfig;
 }

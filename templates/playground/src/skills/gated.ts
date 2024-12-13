@@ -1,4 +1,4 @@
-import { XMTPContext, Skill, V3Client } from "@xmtp/message-kit";
+import { Context, Skill, V3Client } from "@xmtp/message-kit";
 import { createGroup } from "../plugins/xmtp.js";
 import express from "express";
 import { checkNft } from "../plugins/alchemy.js";
@@ -13,7 +13,7 @@ export const gated: Skill[] = [
   },
 ];
 
-async function handler(context: XMTPContext) {
+async function handler(context: Context) {
   const {
     message: {
       sender,

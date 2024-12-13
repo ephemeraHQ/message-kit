@@ -1,30 +1,13 @@
 // [!region index]
-import {
-  run,
-  agentReply,
-  parsePrompt,
-  XMTPContext,
-  Agent,
-} from "@xmtp/message-kit";
-import { systemPrompt } from "./prompt.js";
+import { run, agentReply, Context, Agent } from "@xmtp/message-kit";
 
 export const agent: Agent = {
   name: "GPT Bot",
-  tag: "@bot",
   description: "Use GPT to generate text responses.",
-  onMessage: async (context: XMTPContext) => {
-    const {
-      message: {
-        sender,
-        content: { text },
-      },
-      agent,
-    } = context;
+  tag: "@bot",
+  onMessage: async (context: Context) => {
     // [!endregion index]
-
-    let prompt = await parsePrompt(systemPrompt, sender.address, agent);
-    await agentReply(context, prompt);
-
+    await agentReply(context);
     // [!region final]
   },
 };
