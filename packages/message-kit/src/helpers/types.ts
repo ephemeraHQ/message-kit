@@ -2,18 +2,6 @@ import { Context } from "../lib/core.js";
 import { ClientOptions, GroupMember } from "@xmtp/node-sdk";
 import { ContentTypeId } from "@xmtp/content-type-primitives";
 
-// @twoslash
-/**
- * Represents a message with metadata and content details.
- *
- * This type includes:
- * - A unique identifier
- * - Timestamp of when the message was sent
- * - Content, which may be text, a reply, a reference, or other data
- * - Information about the sender
- *
- * Use this type as the canonical form for message data across your application.
- */
 export type MessageAbstracted = {
   id: string; // Unique identifier for the message
   sent: Date; // Date when the message was sent

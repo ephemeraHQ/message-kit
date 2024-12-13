@@ -20,17 +20,7 @@ To use the `WalletService`, you need to initialize it with Coinbase API credenti
 
 The `getWallet` method will retrieve an existing wallet or create a new one if it doesn't exist:
 
-{/* prettier-ignore-start */}
-```ts twoslash
-import { run, Context, Agent } from "@xmtp/message-kit";
-const humanAddress = "0x1234567890";
-const agent: Agent = {
-  name: "Agent",
-  description: "Agent",
-  tag: "@Bots",
-  skills: [],
-  onMessage: async (context: Context) => {
-// ---cut---
+```tsx
 // Get the wallet service
 const { walletService } = context;
 
@@ -42,39 +32,18 @@ const isCreated = await walletService.createWallet(humanAddress);
 
 // Delete a wallet
 await walletService.deleteWallet(humanAddress);
-// ---cut-after---
-  },
-};
-
-run(agent);
 ```
-{/* prettier-ignore-end */}
 
 ### Actions
 
 Perform actions on the Agent Wallet like transfers and swaps or checking the balance.
 
-{/* prettier-ignore-start */}
-```ts twoslash
-import { run, Context, Agent } from "@xmtp/message-kit";
-const humanAddress = "0x1234567890";
-const amount = 100;
-const fromhumanAddress = "0x1234567890";
-const tohumanAddress = "0x1234567890";
-const fromAssetId = "USDC";
-const toAssetId = "ETH";
-const agent: Agent = {
-  name: "Agent",
-  description: "Agent",
-  tag: "@Bots",
-  skills: [],
-  onMessage: async (context: Context) => {
-// ---cut---
+```tsx
 // Get the wallet service
 const { walletService } = context;
 
 // Check balance
-const {address, balance} = await walletService.checkBalance(humanAddress);
+const { address, balance } = await walletService.checkBalance(humanAddress);
 
 // Withdraw funds (optional amount parameter)
 await walletService.fund(amount);
@@ -87,13 +56,7 @@ await walletService.swap(humanAddress, fromAssetId, toAssetId, amount);
 
 // Withdraw funds (optional amount parameter)
 await walletService.withdraw(amount);
-// ---cut-after---
-  },
-};
-
-run(agent);
 ```
-{/* prettier-ignore-end */}
 
 ## Security Architecture
 
