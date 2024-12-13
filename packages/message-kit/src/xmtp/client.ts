@@ -161,10 +161,6 @@ async function setupTestEncryptionKey(): Promise<Uint8Array> {
     // Only perform file operations in Node.js environment
     const { fs } = getFS();
     if (fs) {
-      if (fs.existsSync(`.data`)) {
-        fs.rmSync(`.data`, { recursive: true });
-      }
-
       // Generate new test encryption key
       const testEncryptionKey = toHex(getRandomValues(new Uint8Array(32)));
 
