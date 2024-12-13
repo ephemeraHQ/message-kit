@@ -44,10 +44,6 @@ jobs:
         run: yarn
       - name: Build
         run: yarn build:message-kit
-      - name: Test Prompting
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: yarn test:prompt
       - name: Test parsing
         run: yarn test:parsing
       - name: Test client
@@ -56,5 +52,11 @@ jobs:
         run: yarn test:v3
       - name: Test v2
         run: yarn test:v2
+      - name: Test Prompting
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: yarn test:prompt
       - name: Test message-kit
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: yarn test:intent
