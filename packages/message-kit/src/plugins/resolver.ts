@@ -217,15 +217,15 @@ export const isOnXMTP = async (
   v3client: V3Client | undefined,
   v2client: V2Client | undefined,
   address: string,
-) => {
+): Promise<{ v2: boolean; v3: boolean }> => {
   try {
     const [v2, v3] = await Promise.all([
       v2client ? v2client.canMessage(address) : false,
       v3client ? v3client.canMessage([address]) : false,
     ]);
     return {
-      v2,
-      v3: v3 ? (v3 as Map<string, boolean>).get(address) : false,
+      v2: v2 || false,
+      v3: v3 ? (v3 as Map<string, boolean>).get(address) || false : false,
     };
   } catch (error) {
     console.error("Error checking XMTP availability:", error);

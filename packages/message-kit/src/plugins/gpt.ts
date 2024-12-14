@@ -208,11 +208,7 @@ export async function agentReply(context: Context) {
     chatMemory.addEntry(memoryKey, userPrompt, "user");
 
     // Generate a reply using the text generation function
-    const { reply } = await textGeneration(
-      userPrompt,
-      systemPrompt,
-      chatMemory.getHistory(memoryKey),
-    );
+    const { reply } = await textGeneration(userPrompt, systemPrompt, memoryKey);
 
     let messages = reply
       .split("\n")
@@ -237,13 +233,15 @@ export async function agentReply(context: Context) {
 export async function textGeneration(
   userPrompt: string,
   systemPrompt: string = "",
-  history: ChatHistoryEntry[] = [],
+  memoryKey: string,
 ) {
   // Early validation
   if (!openai) {
     return { reply: "No OpenAI API key found in .env" };
   }
+
   try {
+    let history = chatMemory.getHistory(memoryKey);
     if (history.length === 0) {
       history = [{ role: "system", content: systemPrompt }];
       history.push({ role: "user", content: userPrompt });
@@ -256,7 +254,12 @@ export async function textGeneration(
     const reply =
       response.choices[0].message.content ?? "No response from OpenAI.";
 
-    let cleanedReply: string = await checkIntent(history, systemPrompt, reply);
+    let cleanedReply: string = await checkIntent(
+      systemPrompt,
+      userPrompt,
+      reply,
+      memoryKey,
+    );
     cleanedReply = parseMarkdown(cleanedReply);
     return { reply: cleanedReply };
   } catch (error) {
@@ -268,18 +271,19 @@ export async function textGeneration(
 
 // [!region checkIntent]
 export async function checkIntent(
-  history: ChatHistoryEntry[],
   systemPrompt: string,
+  userPrompt: string,
   reply: string,
+  memoryKey: string,
 ) {
   const intentDetected = reply.toLowerCase().includes("moment");
   const hasValidCommand = reply.includes("\n/") || reply.startsWith("/");
 
   if (intentDetected && !hasValidCommand) {
-    console.log("Intent detected but missing command:", reply);
+    console.log("Intent detected but missing command:");
 
     const fixPrompt = `You indicated you would perform an action by saying "One moment" but didn't include the proper command. 
-Your previous response was: "${reply}"
+Your previous response was: "${reply}" to the users prompt: "${userPrompt}"
 Please provide your response again with the exact command starting with / on a new line. 
 Remember: Commands must be on their own line starting with /.`;
 
@@ -287,11 +291,17 @@ Remember: Commands must be on their own line starting with /.`;
     const { reply: fixedReply } = await textGeneration(
       fixPrompt,
       systemPrompt,
-      history,
+      memoryKey,
     );
-
+    if (process.env.MSG_LOG)
+      console.log("Intent detected but missing command", {
+        reply,
+        fixPrompt,
+        fixedReply,
+      });
     // Verify the fixed reply has a command
     if (!fixedReply.includes("/")) {
+      chatMemory.clear(memoryKey);
       return "I apologize, but I'm having trouble formatting the command correctly. Please try rephrasing your request.";
     }
 

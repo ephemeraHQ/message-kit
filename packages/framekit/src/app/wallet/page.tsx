@@ -1,4 +1,3 @@
-import { parseUnits } from "viem";
 import PaymentFrame from "../../components/PaymentFrame";
 
 export default async function Home({
@@ -9,23 +8,22 @@ export default async function Home({
   const resolvedSearchParams = await searchParams;
   const params = {
     url: process.env.NEXT_PUBLIC_URL,
-    recipientAddress:
-      (resolvedSearchParams?.recipientAddress as string) ||
-      "0x93E2fc3e99dFb1238eB9e0eF2580EFC5809C7204",
-    tokenAddress:
-      (resolvedSearchParams?.tokenAddress as string) ||
-      "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913", //usdc
+    agentAddress: resolvedSearchParams?.agentAddress as string,
+    recipientAddress: resolvedSearchParams?.recipientAddress as string,
+    ownerAddress: resolvedSearchParams?.ownerAddress as string,
+    tokenAddress: "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+    amount: 0,
+    onRampURL: "https://onramp.example.com",
     chainId: parseInt(resolvedSearchParams?.chainId as string) || 8453,
-    amount: parseFloat(resolvedSearchParams?.amount as string) || 1,
     baseLogo: "https://avatars.githubusercontent.com/u/108554348?s=280&v=4",
     networkName: "base",
-    tokenName: "usdc",
-    onRampURL: resolvedSearchParams?.onRampURL as string,
+    balance: (resolvedSearchParams?.balance as string) || "0.00",
+    baseScanUrl:
+      "https://basescan.org/address/" + resolvedSearchParams?.address,
   };
-  const amountUint256 = parseUnits(params.amount.toString(), 6);
-  const ethereumUrl = `ethereum:${params.tokenAddress}@${params.chainId}/transfer?address=${params.recipientAddress}&uint256=${amountUint256}`;
 
-  const image = `${params.url}/api/image?s=1&networkLogo=${params.baseLogo}&amount=${params.amount}&networkName=${params.networkName}&tokenName=${params.tokenName}&recipientAddress=${params.recipientAddress}&tokenAddress=${params.tokenAddress}&chainId=${params.chainId}&networkId=${params.chainId}`;
+  const ethereumUrl = `ethereum:${params.tokenAddress}@${params.chainId}/transfer?address=${params.agentAddress}`;
+  const image = `${params.url}/api/wallet?s=1&networkLogo=${params.baseLogo}&networkName=${params.networkName}&agentAddress=${params.agentAddress}&ownerAddress=${params.ownerAddress}&balance=${params.balance}&chainId=${params.chainId}`;
 
   return (
     <html
@@ -37,7 +35,7 @@ export default async function Home({
       }}>
       <head>
         <meta charSet="utf-8" />
-        <meta property="og:title" content="Ethereum Payment" />
+        <meta property="og:title" content="Wallet Information" />
         <meta property="fc:frame" content="vNext" />
         <meta property="of:version" content="vNext" />
         <meta property="of:accepts:xmtp" content="vNext" />
@@ -46,20 +44,16 @@ export default async function Home({
         <meta property="fc:frame:image" content={image} />
         <meta property="fc:frame:ratio" content="1.91:1" />
 
-        <meta property="fc:frame:button:1" content={`Pay in USDC (Mobile)`} />
+        <meta property="fc:frame:button:1" content=" Base Scan" />
         <meta property="fc:frame:button:1:action" content="link" />
-        <meta property="fc:frame:button:1:target" content={ethereumUrl} />
+        <meta
+          property="fc:frame:button:1:target"
+          content={params.baseScanUrl}
+        />
+        <meta property="fc:frame:button:2" content="Add funds" />
+        <meta property="fc:frame:button:2:action" content="link" />
+        <meta property="fc:frame:button:2:target" content={ethereumUrl} />
 
-        {params.onRampURL && (
-          <>
-            <meta property="fc:frame:button:2" content={`Pay in USD`} />
-            <meta property="fc:frame:button:2:action" content="link" />
-            <meta
-              property="fc:frame:button:2:target"
-              content={params.onRampURL}
-            />
-          </>
-        )}
         <style>
           {`
           :root {
@@ -111,9 +105,9 @@ export default async function Home({
         }}>
         <PaymentFrame
           params={params}
-          ethereumUrl={ethereumUrl}
-          amountUint256={amountUint256.toString()}
           image={image}
+          url={params.baseScanUrl}
+          label="View on Base Scan"
         />
       </body>
     </html>

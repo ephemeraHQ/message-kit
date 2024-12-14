@@ -19,7 +19,7 @@ import {
 import type { ContentTypeId } from "@xmtp/content-type-primitives";
 import { ContentTypeText } from "@xmtp/content-type-text";
 import { WalletService } from "../plugins/cdp.js";
-import { logMessage, extractFrameChain, readFile } from "../helpers/utils.js";
+import { logMessage, readFile } from "../helpers/utils.js";
 import {
   AgentConfig,
   MessageAbstracted,
@@ -27,8 +27,8 @@ import {
   Agent,
   SkillResponse,
   AbstractedMember,
-  Frame,
 } from "../helpers/types.js";
+import { FrameKit } from "../plugins/framekit.js";
 import { ContentTypeReply, type Reply } from "@xmtp/content-type-reply";
 import { executeSkill, parseSkill, findSkill } from "./skills.js";
 import {
@@ -46,8 +46,6 @@ import {
 import path from "path";
 import fetch from "cross-fetch";
 
-//com
-const framesUrl = process.env.FRAMES_URL ?? "https://frames.message-kit.org";
 export const awaitedHandlers = new Map<
   string,
   (text: string) => Promise<boolean | undefined>
@@ -56,19 +54,16 @@ export const awaitedHandlers = new Map<
 /* Context Interface */
 export type Context = {
   refConv: Conversation | V2Conversation | undefined;
-  originalMessage: DecodedMessage | DecodedMessageV2 | undefined;
   message: MessageAbstracted;
   group: GroupAbstracted;
   conversation: V2Conversation;
   client: V3Client;
   version: "v2" | "v3";
   v2client: V2Client;
-  members?: AbstractedMember[];
-  admins?: string[];
   agentConfig?: AgentConfig;
-  superAdmins?: string[];
   agent: Agent;
   walletService: WalletService;
+  framekit: FrameKit;
   sender?: AbstractedMember;
   awaitingResponse: boolean;
   getMessageById: (id: string) => DecodedMessage | null;
@@ -82,6 +77,7 @@ export type Context = {
     validResponses?: string[],
     attempts?: number,
   ): Promise<string>;
+  isOnXMTP(address: string): Promise<{ v2: boolean; v3: boolean }>;
   getUserInfo(address: string): Promise<UserInfo | undefined>;
   resetAwaitedState(): void;
   getV2ConversationBySender(
@@ -96,12 +92,6 @@ export type Context = {
   getLastMessageById(reference: string): Promise<any>;
   reply(message: string): Promise<void>;
   dm(message: string): Promise<void>;
-  requestPayment(
-    to: string | undefined,
-    amount: number,
-    token?: string | undefined,
-    onRampURL?: string | undefined,
-  ): Promise<void>;
   send(
     message: string | Reply | Reaction | RemoteAttachment | Attachment,
     contentType?: ContentTypeId,
@@ -109,12 +99,11 @@ export type Context = {
   ): Promise<void>;
   getConversationKey(): string;
   awaitedHandler: ((text: string) => Promise<boolean | void>) | undefined;
-  sendCustomFrame(frame: Frame): Promise<void>;
-  sendReceipt(txLink: string): Promise<void>;
 };
 
 /* Context implementation */
 export class MessageKit implements Context {
+  framekit!: FrameKit; // Using ! since we know it will be initialized
   refConv: Conversation | V2Conversation | undefined = undefined;
   originalMessage: DecodedMessage | DecodedMessageV2 | undefined = undefined;
   message!: MessageAbstracted; // A message from XMTP abstracted for agent use;
@@ -149,6 +138,7 @@ export class MessageKit implements Context {
   ) {
     this.client = client;
     this.v2client = v2client;
+    this.framekit = new FrameKit(this as unknown as Context);
     if (conversation instanceof Conversation) {
       this.group = {
         id: conversation.id,
@@ -234,7 +224,7 @@ export class MessageKit implements Context {
           const result = await executeSkill(
             text,
             context.agent,
-            context as Context,
+            context as unknown as Context,
           );
           return result ?? undefined;
         };
@@ -289,7 +279,7 @@ export class MessageKit implements Context {
           const url = URL.createObjectURL(blobdecoded);
 
           content = {
-            attachment: { url: url },
+            attachment: url,
           };
         }
         // Add interaction tracking
@@ -306,10 +296,12 @@ export class MessageKit implements Context {
           process.env.COINBASE_API_KEY_NAME &&
           process.env.COINBASE_API_KEY_PRIVATE_KEY
         ) {
-          context.walletService = new WalletService(context as Context);
+          context.walletService = new WalletService(
+            context as unknown as Context,
+          );
         }
 
-        return context;
+        return context as unknown as Context;
       }
       return undefined;
     } catch (error) {
@@ -526,6 +518,7 @@ export class MessageKit implements Context {
         await conversation.send(message, contentType);
       }
       chatMemory.addEntry(this.getMemoryKey(), messageString, "assistant");
+      console.log(messageString);
       logMessage("sent:" + messageString);
     }
   }
@@ -595,68 +588,11 @@ export class MessageKit implements Context {
     );
   }
 
-  async sendCustomFrame(frame: Frame) {
-    // Convert the frame object to URL-encoded parameters
-    const params = new URLSearchParams();
-    for (const [key, value] of Object.entries(frame)) {
-      params.append(
-        key,
-        typeof value === "object" ? JSON.stringify(value) : value,
-      );
-    }
-
-    const frameUrl = `${framesUrl}/custom?${params.toString()}`;
-    await this.send(frameUrl);
-  }
   async getUserInfo(username: string) {
     return await getUserInfo(username);
   }
-  async isOnXMTP(v3client: V3Client, v2client: V2Client, address: string) {
-    return await isOnXMTP(v3client, v2client, address);
-  }
-  async requestPayment(
-    to: string = "humanagent.eth",
-    amount: number,
-    token?: string,
-    onRampURL?: string,
-  ) {
-    let senderInfo = await getUserInfo(to);
-    if (senderInfo && process.env.MSG_LOG === "true")
-      if (!senderInfo) {
-        //console.log("senderInfo", senderInfo);
-        console.error("Failed to get sender info");
-        return;
-      }
-
-    let sendUrl = `${framesUrl}/payment?amount=${amount ?? 1}&token=${token ?? "usdc"}&recipientAddress=${senderInfo?.address}`;
-    if (onRampURL) {
-      sendUrl = sendUrl + "&onRampURL=" + encodeURIComponent(onRampURL);
-    }
-    await this.dm(sendUrl);
-  }
-  async sendConverseDmFrame(peer: string, pretext?: string) {
-    let url = `https://converse.xyz/dm/${peer}`;
-    if (pretext) url += `&pretext=${encodeURIComponent(pretext)}`;
-    await this.send(url);
-  }
-
-  async sendConverseGroupFrame(groupId: string, pretext?: string) {
-    let url = `https://converse.xyz/group/${groupId}`;
-    if (pretext) url += `&pretext=${encodeURIComponent(pretext)}`;
-    await this.send(url);
-  }
-
-  async sendReceipt(txLink: string) {
-    //const tkLink ="https://sepolia.basescan.org/tx/0xd60833f6e38ffce6e19109cf525726f54859593a0716201ae9f6444a04765a37";
-
-    const { networkLogo, networkName, tokenName, dripAmount } =
-      extractFrameChain(txLink);
-
-    let receiptUrl = `${framesUrl}/receipt?txLink=${txLink}&networkLogo=${
-      networkLogo
-    }&networkName=${networkName}&tokenName=${tokenName}&amount=${dripAmount}`;
-
-    await this.send(receiptUrl);
+  async isOnXMTP(address: string): Promise<{ v2: boolean; v3: boolean }> {
+    return await isOnXMTP(this.client, this.v2client, address);
   }
 
   async sendImage(source: string) {

@@ -1,7 +1,6 @@
-import { run, Agent } from "@xmtp/message-kit";
-import { degen } from "./vibes/degen.js";
+import { run, Agent, waas } from "@xmtp/message-kit";
+import { degen } from "../../playground/src/vibes/degen.js";
 import { systemPrompt } from "./prompt.js";
-import { waas } from "./skills/waas.js";
 
 const agent: Agent = {
   name: "Human Agent",

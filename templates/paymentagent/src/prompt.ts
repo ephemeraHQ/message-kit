@@ -13,6 +13,4 @@ Specifics:
 {user_context}
 
 {skills}
-
-{issues}
 `;

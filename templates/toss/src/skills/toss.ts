@@ -153,23 +153,11 @@ export async function handleJoinToss(context: Context) {
     await context.reply("You have already joined this toss.");
     return;
   }
-  //Create wallet for sender
-  const { address, balance } = await walletService.checkBalance(sender.address);
-
+  const { balance } = await walletService.checkBalance(sender.address);
   if (balance < amount) {
-    await context.reply(
-      `You need to fund your account. Check your DMs https://converse.xyz/dm/${client?.accountAddress}`,
-    );
-    await context.dm(
-      `You dont have enough balance to join the toss. Your balance is ${balance}.\nAt least ${amount} usdc is required.`,
-    );
-    await context.requestPayment(address, amount);
-    // await context.dm(
-    //   `Once funded, you can join the toss again. https://converse.xyz/group/${group?.id}`,
-    // );
+    await walletService.fund(amount);
     return;
   }
-
   try {
     let tempWalletID = toss_id + ":" + admin_address;
     const transfer = await walletService.transfer(
@@ -196,10 +184,7 @@ export async function handleJoinToss(context: Context) {
     );
 
     await context.reply("Successfully joined the toss!");
-    await context.sendTo(
-      `Your balance was deducted by $${amount}. Now is $${balance - amount}.`,
-      [sender.address],
-    );
+
     await context.executeSkill(`/status ${toss_id}`);
   } catch (error) {
     console.error(error);

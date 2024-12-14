@@ -53,5 +53,5 @@ export async function handler(context: Context) {
     ],
     image: tokenInfo.image,
   };
-  await context.sendCustomFrame(frame);
+  await context.framekit.sendCustomFrame(frame);
 }

@@ -23,62 +23,64 @@ interface PaymentFrameProps {
     onRampURL: string;
     chainId?: number;
     networkName?: string;
+    balance?: string;
     tokenName?: string;
+    baseScanUrl?: string;
   };
-  ethereumUrl: string;
-  amountUint256: string;
+  url: string;
   image: string;
+  label: string;
 }
 
 const PaymentFrame: React.FC<PaymentFrameProps> = ({
   params,
-  ethereumUrl,
-  amountUint256,
+  url,
   image,
+  label,
 }) => {
   const BASE_CHAIN_ID = 8453;
 
-  const handleWeb3Payment = async () => {
-    if (typeof window.ethereum !== "undefined") {
-      try {
-        // Ensure we're on Base network
-        await window.ethereum.request({
-          method: "wallet_switchEthereumChain",
-          params: [{ chainId: `0x${BASE_CHAIN_ID.toString(16)}` }],
-        });
+  // const handleWeb3Payment = async () => {
+  //   if (typeof window.ethereum !== "undefined") {
+  //     try {
+  //       // Ensure we're on Base network
+  //       await window.ethereum.request({
+  //         method: "wallet_switchEthereumChain",
+  //         params: [{ chainId: `0x${BASE_CHAIN_ID.toString(16)}` }],
+  //       });
 
-        // Create transaction parameters for USDC transfer with gasless transaction
-        const accounts = await window.ethereum.request({
-          method: "eth_requestAccounts",
-        });
-        const transactionParameters = {
-          to: params.tokenAddress, // USDC contract address
-          from: accounts[0],
-          data: generateERC20TransferData(
-            params.recipientAddress,
-            amountUint256,
-          ),
-          maxFeePerGas: "0x0", // Set to 0 for gasless
-          maxPriorityFeePerGas: "0x0", // Set to 0 for gasless
-          // Add Base Paymaster contract as the gas sponsor
-          gasPrice: "0x0",
-        };
+  //       // Create transaction parameters for USDC transfer with gasless transaction
+  //       const accounts = await window.ethereum.request({
+  //         method: "eth_requestAccounts",
+  //       });
+  //       const transactionParameters = {
+  //         to: params.tokenAddress, // USDC contract address
+  //         from: accounts[0],
+  //         data: generateERC20TransferData(
+  //           params.recipientAddress,
+  //           amountUint256,
+  //         ),
+  //         maxFeePerGas: "0x0", // Set to 0 for gasless
+  //         maxPriorityFeePerGas: "0x0", // Set to 0 for gasless
+  //         // Add Base Paymaster contract as the gas sponsor
+  //         gasPrice: "0x0",
+  //       };
 
-        // Send the transaction
-        await window.ethereum.request({
-          method: "eth_sendTransaction",
-          params: [transactionParameters],
-        });
-      } catch (error) {
-        console.error("Payment failed:", error);
-      }
-    } else {
-      window.location.href = ethereumUrl;
-    }
-  };
+  //       // Send the transaction
+  //       await window.ethereum.request({
+  //         method: "eth_sendTransaction",
+  //         params: [transactionParameters],
+  //       });
+  //     } catch (error) {
+  //       console.error("Payment failed:", error);
+  //     }
+  //   } else {
+  //     window.location.href = url;
+  //   }
+  // };
 
   const handleCoinbaseDeeplink = () => {
-    const coinbasePaymentURL = ethereumUrl;
+    const coinbasePaymentURL = url;
     window.location.href = coinbasePaymentURL;
   };
 
@@ -116,7 +118,7 @@ const PaymentFrame: React.FC<PaymentFrameProps> = ({
                   borderRadius: "0.5rem",
                   cursor: "pointer",
                 }}>
-                Pay in USDC
+                {label}
               </button>
             </div>
           </div>

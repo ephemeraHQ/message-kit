@@ -1,22 +1,20 @@
 # Groups
 
-MessageKit allows agents to interact inside XMTP groups.
+MessageKit allows agents to interact inside XMTP groups. Make sure you follow the [guidelines](/guidelines) for building responsible group agents on XMTP.
 
-> Make sure you follow the [guidelines](/guidelines) for building responsible group agents on XMTP.
+:::info
+You need to **add the agent to the group as a member**.
+:::
 
 ## Tag an agent
 
-If a message includes a tag like `@bot`, it will be received by your stream like any other message.
+When a message includes a tag like `@bot`, it will be received by your agent.
 
 ```tsx
 export const agent: Agent = {
   name: "Web3 Domain Bot",
   tag: "@bot",
-  description: "Register Web3 domains.",
-  systemPrompt: "You are a bot that registers Web3 domains.",
-  skills: [
-    /*Your set of skills*/
-  ],
+  /* Your agent definition */
 };
 ```
 
@@ -25,8 +23,6 @@ Example:
 ```bash
 @bot who owns vitalik.eth
 ```
-
-> Be aware that you need to add the agent to the group as a member.
 
 ## Create a group
 

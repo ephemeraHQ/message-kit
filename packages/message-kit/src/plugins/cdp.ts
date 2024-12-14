@@ -75,12 +75,13 @@ export class WalletService {
   private cdpEncriptionKey: string;
   private context: Context;
   private humanAddress: string;
-
+  private isGroup: boolean;
   constructor(context: Context) {
     this.context = context;
     this.humanAddress = context.message.sender.address;
     this.walletStorage = new LocalStorage();
-    this.cdpEncriptionKey = context.getConversationKey();
+    this.cdpEncriptionKey = context.client.accountAddress;
+    this.isGroup = context.group !== undefined;
   }
 
   encrypt(data: any): string {
@@ -172,7 +173,7 @@ export class WalletService {
     }
   }
 
-  async fund(amount: number, onramp: boolean = false): Promise<boolean> {
+  async fund(amount: number, onRamp: boolean = false): Promise<boolean> {
     let walletData = await this.getWallet(this.humanAddress);
     if (!walletData) return false;
     console.log(`Retrieved wallet data for ${this.humanAddress}`);
@@ -182,6 +183,11 @@ export class WalletService {
       return false;
     } else if (amount) {
       if (amount + Number(balance) <= 10) {
+        if (this.isGroup) {
+          await this.context.reply(
+            `You need to fund your agent account. Check your DMs https://converse.xyz/${this.context.client.accountAddress}`,
+          );
+        }
         const onRampURL = generateOnRampURL({
           appId: appId,
           presetCryptoAmount: Number(amount),
@@ -191,11 +197,11 @@ export class WalletService {
           assets: ["USDC"],
         });
         await this.context.dm("Here is the payment link:");
-        await this.context.requestPayment(
+        await this.context.framekit.requestPayment(
           walletData.agent_address,
           amount,
           "USDC",
-          onramp ? onRampURL : undefined,
+          onRamp ? onRampURL : undefined,
         );
         return true;
       } else {
@@ -221,11 +227,11 @@ export class WalletService {
         },
         assets: ["USDC"],
       });
-      await this.context.requestPayment(
+      await this.context.framekit.requestPayment(
         walletData.agent_address,
         Number(response),
         "USDC",
-        onramp ? onRampURL : undefined,
+        onRamp ? onRampURL : undefined,
       );
       return true;
     }
@@ -258,9 +264,6 @@ export class WalletService {
       // Wait for transfer to land on-chain.
       try {
         await transfer.wait();
-        console.log(
-          `Withdrawal completed successfully: https://basescan.org/tx/${transfer.getTransactionHash()}`,
-        );
       } catch (err) {
         if (err instanceof TimeoutError) {
           console.log("Waiting for transfer timed out");
@@ -268,6 +271,8 @@ export class WalletService {
           console.error("Error while waiting for transfer to complete: ", err);
         }
       }
+
+      this.notifyUser(walletData, this.humanAddress, transfer, toWithdraw);
       return transfer;
     }
   }
@@ -324,7 +329,6 @@ export class WalletService {
       });
       try {
         await transfer.wait();
-        return transfer;
       } catch (err) {
         if (err instanceof TimeoutError) {
           console.log("Waiting for transfer timed out");
@@ -332,44 +336,84 @@ export class WalletService {
           console.error("Error while waiting for transfer to complete: ", err);
         }
       }
+
+      await this.notifyUser(from, toAddress, transfer, amount);
       return transfer;
     } catch (error) {
       console.error("Transfer failed:", error);
       throw error;
     }
   }
-
-  async swap(
-    address: string,
-    fromAssetId: string,
-    toAssetId: string,
+  async notifyUser(
+    from: WalletServiceData,
+    toAddress: string,
+    transaction: Transfer | Trade,
     amount: number,
-  ): Promise<Trade | undefined> {
-    let walletData = await this.getWallet(address);
-    if (!walletData) return undefined;
-    console.log(`Retrieved wallet data for ${address}`);
+  ) {
+    let balance = await from.wallet.getBalance(Coinbase.assets.Usdc);
 
-    console.log(
-      `Initiating swap from ${fromAssetId} to ${toAssetId} for amount: ${amount}`,
-    );
-    const trade = await walletData.wallet.createTrade({
-      amount,
-      fromAssetId,
-      toAssetId,
-    });
-
-    try {
-      await trade.wait();
-    } catch (err) {
-      if (err instanceof TimeoutError) {
-        console.log("Waiting for trade timed out");
-      } else {
-        console.error("Error while waiting for trade to complete: ", err);
+    if (transaction instanceof Transfer) {
+      await this.context.dm(`Transfer completed successfully`);
+      if (transaction.getTransactionHash()) {
+        await this.context.framekit.sendReceipt(
+          `https://basescan.org/tx/${transaction.getTransactionHash()}`,
+        );
+      }
+    } else if (transaction instanceof Trade) {
+      await this.context.dm(`Trade completed successfully`);
+      if (transaction.getTransaction()) {
+        await this.context.framekit.sendReceipt(
+          `https://basescan.org/tx/${(transaction as Trade).getTransaction()}`,
+        );
       }
     }
-    console.log(`Trade completed successfully`);
-    return trade;
+    if (!isAddress(toAddress)) return;
+    const { v2, v3 } = await this.context.isOnXMTP(toAddress);
+    if (v2 || v3) return;
+    await this.context.dm(
+      `Your balance was deducted by $${amount}. Now is $${Number(balance) - amount}.`,
+    );
+    if (toAddress) {
+      await this.context.sendTo(
+        `Your balance was added by $${amount}. Now is $${Number(balance) + amount}.`,
+        [toAddress],
+      );
+    }
   }
+  // async swap(
+  //   address: string,
+  //   fromAssetId: string,
+  //   toAssetId: string,
+  //   amount: number,
+  // ): Promise<Trade | undefined> {
+  //   let walletData = await this.getWallet(address);
+  //   if (!walletData) return undefined;
+  //   console.log(`Retrieved wallet data for ${address}`);
+
+  //   console.log(
+  //     `Initiating swap from ${fromAssetId} to ${toAssetId} for amount: ${amount}`,
+  //   );
+  //   const trade = await walletData.wallet.createTrade({
+  //     amount,
+  //     fromAssetId,
+  //     toAssetId,
+  //   });
+
+  //   try {
+  //     await trade.wait();
+  //   } catch (err) {
+  //     if (err instanceof TimeoutError) {
+  //       console.log("Waiting for trade timed out");
+  //     } else {
+  //       console.error("Error while waiting for trade to complete: ", err);
+  //     }
+  //   }
+
+  //   //Notify the user
+  //   await this.notifyUser(  from, toAddress, trade, amount);
+
+  //   return trade;
+  // }
 
   async deleteWallet(key: string): Promise<boolean> {
     console.log(`Deleting wallet for key ${key}`);

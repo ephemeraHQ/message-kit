@@ -147,7 +147,7 @@ export function extractFrameChain(txLink: string): Network {
       networkName: "Base",
       networkLogo:
         "https://avatars.githubusercontent.com/u/108554348?s=280&v=4",
-      tokenName: "ETH",
+      tokenName: "USDC",
       dripAmount: 0.01,
       address: "0x625BCC1142E97796173104A6e817Ee46C593b3C5",
       isERC20: false,

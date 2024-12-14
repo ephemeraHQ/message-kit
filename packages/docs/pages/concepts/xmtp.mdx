@@ -6,9 +6,21 @@ XMTP is the protocol that MessageKit uses to send and receive messages.
 
 Context bridges the XMTP protocol. It's aware of conversations, groups and users.
 
-```tsx
+{/* prettier-ignore-start */}
+
+```tsx 
 import { Context } from "@xmtp/message-kit";
+
+onMessage(async (context: Context) => {
+  const {
+    message: { content }, client, v2client, conversation, group, members, admins, superAdmins,
+  } = context;
+
+  /*Logic*/
+});
 ```
+
+{/* prettier-ignore-end */}
 
 **Properties**
 
@@ -53,9 +65,9 @@ const { v2client: newClient } = await xmtpClient({
 
 > This can be used for example in the [Cron](/plugins/cron) plugin to send updates to the users.
 
-## XMTP check
+## Availability check
 
-You can check if a user has XMTP enabled:
+You can check if a user has XMTP enabled. If it has, you can use the v2 and v3 clients to send messages.
 
 ```typescript
 const { v2, v3 } = await isOnXMTP(v3client, v2client, address);
