@@ -91,6 +91,7 @@ export type Context = {
     conversationId: string,
     reference: string,
   ): Promise<DecodedMessageV2 | undefined>;
+  sendWallet(walletLink: string): Promise<void>;
   getMemoryKey(): string;
   sendTo(message: string, receivers: string[]): Promise<void>;
   getLastMessageById(reference: string): Promise<any>;
@@ -111,6 +112,7 @@ export type Context = {
   awaitedHandler: ((text: string) => Promise<boolean | void>) | undefined;
   sendCustomFrame(frame: Frame): Promise<void>;
   sendReceipt(txLink: string): Promise<void>;
+  sendWallet(walletLink: string): Promise<void>;
 };
 
 /* Context implementation */
@@ -645,7 +647,9 @@ export class MessageKit implements Context {
     if (pretext) url += `&pretext=${encodeURIComponent(pretext)}`;
     await this.send(url);
   }
-
+  async sendWallet(walletLink: string) {
+    await this.send(walletLink);
+  }
   async sendReceipt(txLink: string) {
     //const tkLink ="https://sepolia.basescan.org/tx/0xd60833f6e38ffce6e19109cf525726f54859593a0716201ae9f6444a04765a37";
 

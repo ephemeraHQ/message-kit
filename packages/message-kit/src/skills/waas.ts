@@ -1,4 +1,5 @@
-import { Skill, Context } from "@xmtp/message-kit";
+import { Skill } from "../helpers/types";
+import { Context } from "../lib/core";
 
 export const waas: Skill[] = [
   {
@@ -94,7 +95,9 @@ export async function handleWallet(context: Context) {
     const walletExist = await walletService.getWallet(sender.address);
     if (walletExist) {
       await context.send("Your agent wallet address");
-      await context.send(walletExist.agent_address);
+      await context.sendWallet(
+        `https://basescan.org/address/${walletExist.agent_address}#tokentxns`,
+      );
       return;
     }
     await context.reply("You don't have an agent wallet.");

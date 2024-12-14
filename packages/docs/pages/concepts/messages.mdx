@@ -2,22 +2,15 @@
 
 ## Content
 
-When you start the app, you can listen for incoming messages using the `run` function.
+When you start the app, you can listen for incoming messages using the `onMessage` function.
+
+{/* prettier-ignore-start */}
 
 ```tsx [src/index.ts]
 onMessage(async (context: Context) => {
   const {
     message: {
-      id,
-      content: {
-        reference,
-        reply,
-        previousMsg,
-        text,
-        skill,
-        params,
-        attachment,
-      },
+      id, content: {  reference, reply, previousMsg,  text, skill, params,    attachment, },
     },
     sender,
     sent,
@@ -27,6 +20,10 @@ onMessage(async (context: Context) => {
   /*Logic*/
 });
 ```
+
+{/* prettier-ignore-end */}
+
+**Properties**
 
 - `id`: string // The id of the message
 - `content`: all the content of the message depending on the type

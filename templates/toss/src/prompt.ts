@@ -51,5 +51,4 @@ export const systemPrompt = `You are a helpful agent, friendly toss master named
 14. @toss end yes
   - /end yes
 
-{issues}
 `;

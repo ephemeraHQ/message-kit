@@ -1,6 +1,10 @@
 {
   "extends": "@xmtp/tsconfig/base.json",
-  "include": ["src/**/*"],
+  "include": [
+    "src/**/*",
+    "../playground/src/vibes/chill.ts",
+    "../playground/src/vibes/degen.ts"
+, "../playground/src/vibes/kuzco.ts"  ],
   "compilerOptions": {
     "outDir": "./dist"
   }

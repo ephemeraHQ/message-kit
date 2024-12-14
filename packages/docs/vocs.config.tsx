@@ -89,8 +89,8 @@ export default defineConfig({
       text: "Concepts",
       items: [
         {
-          text: "Structure",
-          link: "/concepts/structure",
+          text: "Overview",
+          link: "/concepts/overview",
         },
         {
           text: "XMTP",

@@ -184,10 +184,7 @@ export async function handleJoinToss(context: Context) {
     );
 
     await context.reply("Successfully joined the toss!");
-    await context.sendTo(
-      `Your balance was deducted by $${amount}. Now is $${balance - amount}.`,
-      [sender.address],
-    );
+
     await context.executeSkill(`/status ${toss_id}`);
   } catch (error) {
     console.error(error);

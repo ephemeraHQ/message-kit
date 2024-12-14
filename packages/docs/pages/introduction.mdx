@@ -1,11 +1,6 @@
 # Introduction
 
-MessageKit's Skill framework enables agents to process natural language through multiple intelligence layers. Agents can:
-
-- Handle multi-step conversations
-- Maintain context
-- Wait for user responses
-- Create natural interaction flows
+MessageKit's Skill framework is a GPT wrapper built on top of [XMTP](https://xmtp.org). It allows you to process natural language and perform agentic interactions.
 
 ![](/img/skills.png)
 
@@ -27,8 +22,7 @@ The agent processes the natural language input and breaks it down into sequentia
 
 ```bash
 [
-  "Hello! I'll help you get your domain.",
-  "Let's start by checking your ENS domain. Give me a moment.",
+  "Let's check who holds vitalik.eth",
   "/info vitalik.eth",
 ]
 ```
@@ -64,7 +58,7 @@ The handler function to process info skill requests to fetch information about a
 
 ### System prompt
 
-Here is the prompt for the agent.
+Here is the default prompt for the agent. You don't need to define it, but you can override it.
 
 ```jsx [src/prompt.ts]
 export const systemPrompt = `{intro}

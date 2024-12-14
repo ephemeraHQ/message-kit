@@ -225,7 +225,7 @@ export class WalletService {
         walletData.agent_address,
         Number(response),
         "USDC",
-        onramp ? onRampURL : undefined,
+        onRamp ? onRampURL : undefined,
       );
       return true;
     }
@@ -258,7 +258,7 @@ export class WalletService {
       // Wait for transfer to land on-chain.
       try {
         await transfer.wait();
-        console.log(
+        await this.context.dm(
           `Withdrawal completed successfully: https://basescan.org/tx/${transfer.getTransactionHash()}`,
         );
       } catch (err) {
@@ -268,6 +268,11 @@ export class WalletService {
           console.error("Error while waiting for transfer to complete: ", err);
         }
       }
+
+      let balance = await walletData.wallet.getBalance(Coinbase.assets.Usdc);
+      await this.context.dm(
+        `Your balance was deducted by $${toWithdraw}. Now is $${Number(balance) - toWithdraw}.`,
+      );
       return transfer;
     }
   }
@@ -324,6 +329,9 @@ export class WalletService {
       });
       try {
         await transfer.wait();
+        await this.context.dm(
+          `Transfer completed successfully: https://basescan.org/tx/${transfer.getTransactionHash()}`,
+        );
         return transfer;
       } catch (err) {
         if (err instanceof TimeoutError) {
@@ -331,6 +339,16 @@ export class WalletService {
         } else {
           console.error("Error while waiting for transfer to complete: ", err);
         }
+      }
+      let balance = await from.wallet.getBalance(Coinbase.assets.Usdc);
+      await this.context.dm(
+        `Your balance was deducted by $${amount}. Now is $${Number(balance) - amount}.`,
+      );
+      if (to?.agent_address) {
+        await this.context.sendTo(
+          `Your balance was added by $${amount}. Now is $${Number(balance) + amount}.`,
+          [to?.address],
+        );
       }
       return transfer;
     } catch (error) {
@@ -360,6 +378,10 @@ export class WalletService {
 
     try {
       await trade.wait();
+      await this.context.dm(
+        `Your tokens were swapped successfully. https://basescan.org/tx/${trade.getTransaction().getTransactionHash()}`,
+      );
+      return trade;
     } catch (err) {
       if (err instanceof TimeoutError) {
         console.log("Waiting for trade timed out");
@@ -367,6 +389,7 @@ export class WalletService {
         console.error("Error while waiting for trade to complete: ", err);
       }
     }
+    await this.context.dm(`Your tokens were swapped successfully.`);
     console.log(`Trade completed successfully`);
     return trade;
   }
