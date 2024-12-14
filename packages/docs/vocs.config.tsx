@@ -95,10 +95,6 @@ export default defineConfig({
           text: "Wallets",
           link: "/plugins/cdp",
         },
-        {
-          text: "Identity",
-          link: "/plugins/identity",
-        },
       ],
     },
     {
@@ -144,6 +140,10 @@ export default defineConfig({
         {
           text: "Groups",
           link: "/concepts/groups",
+        },
+        {
+          text: "Identity",
+          link: "/plugins/identity",
         },
       ],
     },
