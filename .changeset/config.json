@@ -12,5 +12,5 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["frames", "docs", "@xmtp/tsconfig"]
+  "ignore": ["framekit", "docs", "@xmtp/tsconfig"]
 }

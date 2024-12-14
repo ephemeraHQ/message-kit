@@ -25,7 +25,7 @@ export default async function Home({
   const amountUint256 = parseUnits(params.amount.toString(), 6);
   const ethereumUrl = `ethereum:${params.tokenAddress}@${params.chainId}/transfer?address=${params.recipientAddress}&uint256=${amountUint256}`;
 
-  const image = `${params.url}/api/image?s=1&networkLogo=${params.baseLogo}&amount=${params.amount}&networkName=${params.networkName}&tokenName=${params.tokenName}&recipientAddress=${params.recipientAddress}&tokenAddress=${params.tokenAddress}&chainId=${params.chainId}&networkId=${params.chainId}`;
+  const image = `${params.url}/api/payment?s=1&networkLogo=${params.baseLogo}&amount=${params.amount}&networkName=${params.networkName}&tokenName=${params.tokenName}&recipientAddress=${params.recipientAddress}&tokenAddress=${params.tokenAddress}&chainId=${params.chainId}&networkId=${params.chainId}`;
 
   return (
     <html
@@ -111,9 +111,9 @@ export default async function Home({
         }}>
         <PaymentFrame
           params={params}
-          ethereumUrl={ethereumUrl}
-          amountUint256={amountUint256.toString()}
+          url={ethereumUrl}
           image={image}
+          label="Pay in USDC"
         />
       </body>
     </html>

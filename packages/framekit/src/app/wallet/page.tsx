@@ -1,4 +1,3 @@
-import { parseUnits } from "viem";
 import PaymentFrame from "../../components/PaymentFrame";
 
 export default async function Home({
@@ -9,17 +8,22 @@ export default async function Home({
   const resolvedSearchParams = await searchParams;
   const params = {
     url: process.env.NEXT_PUBLIC_URL,
-    recipientAddress:
-      (resolvedSearchParams?.recipientAddress as string) ||
-      "0x93E2fc3e99dFb1238eB9e0eF2580EFC5809C7204",
+    agentAddress: resolvedSearchParams?.agentAddress as string,
+    recipientAddress: resolvedSearchParams?.recipientAddress as string,
+    ownerAddress: resolvedSearchParams?.ownerAddress as string,
+    tokenAddress: "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+    amount: 0,
+    onRampURL: "https://onramp.example.com",
     chainId: parseInt(resolvedSearchParams?.chainId as string) || 8453,
     baseLogo: "https://avatars.githubusercontent.com/u/108554348?s=280&v=4",
     networkName: "base",
+    balance: (resolvedSearchParams?.balance as string) || "0.00",
+    baseScanUrl:
+      "https://basescan.org/address/" + resolvedSearchParams?.address,
   };
 
-  const baseScanUrl = `https://basescan.org/address/${params.recipientAddress}`;
-
-  const image = `${params.url}/api/image?s=1&networkLogo=${params.baseLogo}&networkName=${params.networkName}&address=${params.recipientAddress}`;
+  const ethereumUrl = `ethereum:${params.tokenAddress}@${params.chainId}/transfer?address=${params.agentAddress}`;
+  const image = `${params.url}/api/wallet?s=1&networkLogo=${params.baseLogo}&networkName=${params.networkName}&agentAddress=${params.agentAddress}&ownerAddress=${params.ownerAddress}&balance=${params.balance}&chainId=${params.chainId}`;
 
   return (
     <html
@@ -40,9 +44,15 @@ export default async function Home({
         <meta property="fc:frame:image" content={image} />
         <meta property="fc:frame:ratio" content="1.91:1" />
 
-        <meta property="fc:frame:button:1" content="View on Base Scan" />
+        <meta property="fc:frame:button:1" content=" Base Scan" />
         <meta property="fc:frame:button:1:action" content="link" />
-        <meta property="fc:frame:button:1:target" content={baseScanUrl} />
+        <meta
+          property="fc:frame:button:1:target"
+          content={params.baseScanUrl}
+        />
+        <meta property="fc:frame:button:2" content="Add funds" />
+        <meta property="fc:frame:button:2:action" content="link" />
+        <meta property="fc:frame:button:2:target" content={ethereumUrl} />
 
         <style>
           {`
@@ -93,7 +103,12 @@ export default async function Home({
           display: "inline-block",
           width: "100%",
         }}>
-        <PaymentFrame params={params} baseScanUrl={baseScanUrl} image={image} />
+        <PaymentFrame
+          params={params}
+          image={image}
+          url={params.baseScanUrl}
+          label="View on Base Scan"
+        />
       </body>
     </html>
   );

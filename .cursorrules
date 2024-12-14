@@ -109,7 +109,7 @@ export async function handler(context: Context) {
     receiverAddress = address;
   }
 
-  await context.requestPayment(receiverAddress, amount, token);
+  await context.framekit.requestPayment(receiverAddress, amount, token);
 }
 
 

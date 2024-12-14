@@ -93,7 +93,7 @@ async function fundHandler(context: Context) {
       return;
     }
 
-    await context.requestPayment(usdcWallet.agentAddress, fundAmount);
+    await context.framekit.requestPayment(usdcWallet.agentAddress, fundAmount);
     await context.send(
       "After funding, let me know so I can check your balance.",
     );

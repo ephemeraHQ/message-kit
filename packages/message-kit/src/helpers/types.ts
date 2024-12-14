@@ -73,11 +73,6 @@ export interface SkillParamConfig {
   optional?: boolean;
 }
 
-export interface Frame {
-  title: string;
-  buttons: { content: string; action: string; target: string }[];
-  image: string;
-}
 export interface Vibe {
   vibe: string;
   description: string;

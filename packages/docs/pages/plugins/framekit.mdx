@@ -1,4 +1,4 @@
-# Introduction to frames
+# FrameKit
 
 MessageKit enables developers to create interactive elements (frames) inside messaging applications. These frames can be used for various purposes such as handling payments, displaying transaction receipts, managing conversations, and creating custom interactive interfaces.
 
@@ -26,13 +26,22 @@ Share in Farcaster (Framev2): https://frames.message-kit.org/dm/0x...
 
 - `address`: The address of the agent. Could be converse profile name , ens name or address
 
+## Agent Wallet
+
+You can send agent wallet info using the `sendWallet` method:
+
+```typescript
+// Send agent wallet info
+await framekit.sendWallet("0x93E2fc3e99dFb1238eB9e0eF2580EFC5809C7204");
+```
+
 ## Payment
 
 You can request payments using the payment frame:
 
 ```typescript
 // Request 1 USDC payment to a specific address
-await context.requestPayment(recipientAddress, 1, "USDC");
+await framekit.requestPayment(recipientAddress, 1, "USDC");
 ```
 
 Properties:
@@ -47,7 +56,7 @@ You can request receipts using the receipt frame:
 
 ```typescript
 // Request a receipt
-await context.sendReceipt(urlOfTransaction);
+await framekit.sendReceipt(urlOfTransaction);
 // ie https://sepolia.basescan.org/tx/0x1234567890abcdef
 ```
 
@@ -61,10 +70,10 @@ You can send messages to a user or group on Converse using the `sendConverseDmFr
 
 ```typescript
 // Send a message to a user with an optional pretext
-await context.sendConverseDmFrame("userAddress", "Hello, how are you?");
+await framekit.sendConverseDmFrame("userAddress", "Hello, how are you?");
 
 // Send a message to a group with an optional pretext
-await context.sendConverseGroupFrame("groupId", "gm all!");
+await framekit.sendConverseGroupFrame("groupId", "gm all!");
 ```
 
 ## Custom
@@ -89,7 +98,7 @@ const frame = {
   image: "https://example.com/weather.png",
 };
 
-await context.sendCustomFrame(frame);
+await framekit.sendCustomFrame(frame);
 ```
 
 Properties:
@@ -113,3 +122,11 @@ These are quickstarts for different Frameworks that support Open Frames
 - [OnchainKit Quickstart](https://github.com/ephemeraHQ/open-frames-starter-onchainkit/): Onchain Kit quickstart that integrates XMTP.
 - [Frog Quickstart](https://github.com/ephemeraHQ/open-frames-starter-frog): Frog XMTP quickstart
 - [Frames.js Quickstart](https://github.com/ephemeraHQ/open-frames-starter-framesjs/): Frames.js quickstart that integrates XMTP.
+
+## Code
+
+This code is included in MessageKit, but you can import it directly in your files for more customization.
+
+```tsx [src/plugins/framekit.ts]
+// [!include ~/../../packages/message-kit/src/plugins/framekit.ts]
+```

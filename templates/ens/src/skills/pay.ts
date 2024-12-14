@@ -63,8 +63,8 @@ export async function handler(context: Context) {
   }
   if (skill === "tip") {
     let tipAmount = 1;
-    await context.requestPayment(receiverAddress, tipAmount);
+    await context.framekit.requestPayment(receiverAddress, tipAmount);
   } else if (skill === "pay") {
-    await context.requestPayment(receiverAddress, amount, token);
+    await context.framekit.requestPayment(receiverAddress, amount, token);
   }
 }

@@ -105,10 +105,6 @@ export default defineConfig({
           link: "/concepts/groups",
         },
         {
-          text: "Frames",
-          link: "/concepts/frames",
-        },
-        {
           text: "Wallets",
           link: "/plugins/cdp",
         },

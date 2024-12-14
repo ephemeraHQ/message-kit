@@ -76,6 +76,6 @@ export async function handler(context: Context) {
   }
 
   await context.send("Here's your transaction receipt:");
-  await context.sendReceipt(result.value!);
+  await context.framekit.sendReceipt(result.value!);
   return;
 }

@@ -4,14 +4,14 @@ import fs from "fs";
 import { join } from "path";
 // @ts-ignore
 import QRCode from "qrcode";
-import { parseUnits } from "viem";
-export interface Network {
+
+export interface WalletStatus {
   networkId: string;
   networkName: string;
   networkLogo: string;
-  amount: number;
+  balance: string;
   tokenName: string;
-  recipientAddress: string;
+  walletAddress: string;
 }
 
 const interFontPath = join(process.cwd(), "public/fonts/Inter-Regular.ttf");
@@ -25,35 +25,42 @@ const interSemiboldFontData = fs.readFileSync(interSemiboldFontPath);
 
 export async function GET(req: NextRequest) {
   try {
+    let searchParams = req.nextUrl.searchParams;
+
     const params = {
       url: process.env.NEXT_PUBLIC_URL,
-      networkLogo: req.nextUrl.searchParams.get("networkLogo"),
-      amount: req.nextUrl.searchParams.get("amount") ?? "1",
-      networkName: req.nextUrl.searchParams.get("networkName") ?? "base",
-      tokenName: req.nextUrl.searchParams.get("tokenName") ?? "",
-      recipientAddress: req.nextUrl.searchParams.get("recipientAddress"),
-      tokenAddress: req.nextUrl.searchParams.get("tokenAddress"),
-      chainId: req.nextUrl.searchParams.get("chainId"),
-      networkId: req.nextUrl.searchParams.get("networkId"),
+      networkLogo: searchParams.get("networkLogo"),
+      balance: searchParams.get("balance") ?? "0",
+      networkName: searchParams.get("networkName") ?? "base",
+      tokenName: searchParams.get("tokenName") ?? "USDC",
+      agentAddress: searchParams.get("agentAddress"),
+      ownerAddress: searchParams.get("ownerAddress"),
+      chainId: searchParams.get("chainId"),
+      networkId: searchParams.get("networkId"),
+      tokenAddress:
+        searchParams.get("tokenAddress") ||
+        "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
     };
-    const toComponent =
-      "To: " +
-      params.recipientAddress?.slice(0, 4) +
+
+    const ownerComponent =
+      "Owner: " +
+      params.ownerAddress?.slice(0, 4) +
       "..." +
-      params.recipientAddress?.slice(-4);
+      params.ownerAddress?.slice(-4);
 
-    const amountUint256 = parseUnits(params.amount.toString(), 6);
-    const ethereumUrl = `ethereum:${params.tokenAddress}@${params.chainId}/transfer?address=${params.recipientAddress}&uint256=${amountUint256}`;
+    const addressComponent =
+      "Address: " +
+      params.agentAddress?.slice(0, 4) +
+      "..." +
+      params.agentAddress?.slice(-4);
 
+    // Generate QR code for funding the wallet
+
+    const ethereumUrl = `ethereum:${params.tokenAddress}@${params.chainId}/transfer?address=${params.agentAddress}`;
+    console.log(params);
     const qrCodeDataUrl = await QRCode.toDataURL(ethereumUrl);
 
-    if (
-      !params.networkName ||
-      !params.networkLogo ||
-      !params.amount ||
-      !params.tokenName ||
-      !params.recipientAddress
-    ) {
+    if (!params.networkName || !params.networkLogo || !params.agentAddress) {
       return new ImageResponse(
         (
           <div
@@ -62,7 +69,6 @@ export async function GET(req: NextRequest) {
               background: "black",
               display: "flex",
               flexDirection: "column",
-              flexWrap: "nowrap",
               height: "100%",
               justifyContent: "center",
               textAlign: "center",
@@ -79,7 +85,7 @@ export async function GET(req: NextRequest) {
                 padding: "0 120px",
                 whiteSpace: "pre-wrap",
               }}>
-              {`Invalid network!`}
+              {`Invalid wallet info!`}
             </div>
           </div>
         ),
@@ -89,7 +95,7 @@ export async function GET(req: NextRequest) {
           fonts: [
             {
               data: interFontData,
-              name: "Inter-SemiBold.ttf",
+              name: "Inter-Regular",
               style: "normal",
               weight: 400,
             },
@@ -97,7 +103,7 @@ export async function GET(req: NextRequest) {
         },
       );
     }
-    // ... existing code ...
+
     return new ImageResponse(
       (
         <div
@@ -136,20 +142,37 @@ export async function GET(req: NextRequest) {
               />
               <div style={{ fontSize: "24px" }}>{params.networkName}</div>
             </div>
-            <div style={{ fontSize: "56px", display: "flex" }}>
-              Pay
+            <div
+              style={{
+                fontSize: "56px",
+                display: "flex",
+                flexDirection: "column",
+              }}>
+              Balance
               <div
                 style={{
                   fontFamily: "Inter-SemiBold",
                   display: "flex",
                   marginLeft: "8px",
                 }}>
-                {params.amount} {params.tokenName}
+                {params.balance} {params.tokenName}
               </div>
             </div>
-            <div style={{ fontSize: "24px" }}>{toComponent}</div>
+            <div style={{ fontSize: "24px" }}>{addressComponent}</div>
+            <div style={{ fontSize: "24px" }}>{ownerComponent}</div>
           </div>
-          <img src={qrCodeDataUrl} alt="QR Code" width={350} height={350} />
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: "8px",
+            }}>
+            <img src={qrCodeDataUrl} alt="QR Code" width={350} height={350} />
+            <div style={{ fontSize: "16px", color: "#666" }}>
+              Scan to fund wallet
+            </div>
+          </div>
         </div>
       ),
       {

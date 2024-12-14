@@ -28,7 +28,7 @@ describe("Frame Chain Tests", () => {
         networkLogo:
           "https://avatars.githubusercontent.com/u/108554348?s=280&v=4",
         networkName: "Base",
-        tokenName: "ETH",
+        tokenName: "USDC",
         dripAmount: 0.01,
       },
     ],
@@ -38,7 +38,7 @@ describe("Frame Chain Tests", () => {
         networkLogo:
           "https://avatars.githubusercontent.com/u/108554348?s=280&v=4",
         networkName: "Base",
-        tokenName: "ETH",
+        tokenName: "USDC",
         dripAmount: 0.01,
       },
     ],
