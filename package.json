@@ -20,6 +20,7 @@
     "copy": "node scripts/copyTemplates.js",
     "dev": "cd packages/message-kit && yarn build:watch",
     "docs": "cd packages/docs && yarn dev",
+    "domain": "ngrok http --hostname=frames.ngrok.app 3000",
     "format": "turbo run format",
     "frames": "cd packages/frames && yarn dev",
     "play": "cd templates/playground && yarn dev",

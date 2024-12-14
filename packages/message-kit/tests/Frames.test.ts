@@ -32,7 +32,17 @@ describe("Frame Chain Tests", () => {
         dripAmount: 0.01,
       },
     ],
-  ])("Compare extracted values from skill: %s", (input, expected) => {
+    [
+      "https://basescan.org/address/0x0000000000000000000000000000000000000000",
+      {
+        networkLogo:
+          "https://avatars.githubusercontent.com/u/108554348?s=280&v=4",
+        networkName: "Base",
+        tokenName: "ETH",
+        dripAmount: 0.01,
+      },
+    ],
+  ])("Extract frame chain: %s", (input, expected) => {
     const extractedValues = extractFrameChain(input);
     expect(extractedValues?.networkLogo).toEqual(expected.networkLogo);
     expect(extractedValues?.networkName).toEqual(expected.networkName);

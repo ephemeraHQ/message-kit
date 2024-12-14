@@ -95,9 +95,7 @@ export async function handleWallet(context: Context) {
     const walletExist = await walletService.getWallet(sender.address);
     if (walletExist) {
       await context.send("Your agent wallet address");
-      await context.sendWallet(
-        `https://basescan.org/address/${walletExist.agent_address}#tokentxns`,
-      );
+      await context.sendWallet(walletExist.agent_address);
       return;
     }
     await context.reply("You don't have an agent wallet.");

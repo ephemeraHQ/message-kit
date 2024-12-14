@@ -47,7 +47,10 @@ import path from "path";
 import fetch from "cross-fetch";
 
 //com
-const framesUrl = process.env.FRAMES_URL ?? "https://frames.message-kit.org";
+const framesUrl =
+  process.env.NODE_ENV === "production"
+    ? "https://frames.message-kit.org"
+    : "https://frames.ngrok.app";
 export const awaitedHandlers = new Map<
   string,
   (text: string) => Promise<boolean | undefined>
@@ -291,7 +294,7 @@ export class MessageKit implements Context {
           const url = URL.createObjectURL(blobdecoded);
 
           content = {
-            attachment: { url: url },
+            attachment: url,
           };
         }
         // Add interaction tracking
@@ -647,8 +650,17 @@ export class MessageKit implements Context {
     if (pretext) url += `&pretext=${encodeURIComponent(pretext)}`;
     await this.send(url);
   }
-  async sendWallet(walletLink: string) {
-    await this.send(walletLink);
+  async sendWallet(walletAddress: string) {
+    //const tkLink ="https://sepolia.basescan.org/tx/0xd60833f6e38ffce6e19109cf525726f54859593a0716201ae9f6444a04765a37";
+    let walletLink = `https://basescan.org/address/${walletAddress}`;
+    const { networkLogo, networkName, tokenName, dripAmount } =
+      extractFrameChain(walletLink);
+
+    let url = `${framesUrl}/wallet?address=${walletAddress}&networkLogo=${
+      networkLogo
+    }&networkName=${networkName}&tokenName=${tokenName}&amount=${dripAmount}`;
+
+    await this.send(url);
   }
   async sendReceipt(txLink: string) {
     //const tkLink ="https://sepolia.basescan.org/tx/0xd60833f6e38ffce6e19109cf525726f54859593a0716201ae9f6444a04765a37";
