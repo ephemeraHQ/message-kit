@@ -84,29 +84,20 @@ export default defineConfig({
       text: "Quickstart",
       link: "/quickstart",
     },
-
     {
-      text: "Concepts",
+      text: "Features",
       items: [
         {
-          text: "Overview",
-          link: "/concepts/overview",
-        },
-        {
-          text: "XMTP",
-          link: "/concepts/xmtp",
-        },
-        {
-          text: "Messages",
-          link: "/concepts/messages",
-        },
-        {
-          text: "Groups",
-          link: "/concepts/groups",
+          text: "Frames",
+          link: "/plugins/framekit",
         },
         {
           text: "Wallets",
           link: "/plugins/cdp",
+        },
+        {
+          text: "Identity",
+          link: "/plugins/identity",
         },
       ],
     },
@@ -132,6 +123,27 @@ export default defineConfig({
         {
           text: "Projects",
           link: "/community/projects",
+        },
+      ],
+    },
+    {
+      text: "Fundations",
+      items: [
+        {
+          text: "Skills",
+          link: "/concepts/skills",
+        },
+        {
+          text: "Agents",
+          link: "/concepts/agents",
+        },
+        {
+          text: "XMTP",
+          link: "/concepts/xmtp",
+        },
+        {
+          text: "Groups",
+          link: "/concepts/groups",
         },
       ],
     },

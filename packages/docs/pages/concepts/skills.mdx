@@ -1,0 +1,70 @@
+## Skills
+
+Skills are the actions of the agent. They are defined in the `src/skills/your-skill.ts` file.
+
+```tsx
+import { Skill } from "@xmtp/message-kit";
+
+export const checkDomain: Skill[] = [
+  {
+    skill: // name of the skill
+    handler: handler(context)
+    examples: // examples of the skill
+    description: // description of the skill
+    params: // params of the skill
+  },
+];
+```
+
+When a message is send through XMTP to your agent, the `handler` function is triggered. It brings the message with all the [context](/concepts/xmtp) .
+
+{/* prettier-ignore-start */}
+
+```tsx [src/index.ts]
+function handler(context: Context) {
+  const {
+    message: {
+      content: { text, params, attachment, reply, reference, skill, previousMsg },
+      sender,
+      sent,
+      typeId
+    },
+  } = context;
+
+  if (typeId === "text") {
+    // Do something with the text
+  } else if (typeId === "skill") {
+    // Do something with the skill
+    const { address, domain } = params;
+    // Use params
+  } else if (typeId === "reply") {
+    // Do something with the `reply`
+    console.log(reply,previousMsg);
+  } else if (typeId === "attachment") {
+    // Do something with the attachment data url
+    console.log(attachment);
+  }
+}
+```
+
+{/* prettier-ignore-end */}
+
+### Properties
+
+- **skill**: The name of the skill.
+- **description**: The description of the skill.
+- **examples**: Examples of how to use the skill that will help gpt understand the skill.
+- **handler**: The function that handles the skill.
+- **params**: Defines the parameters required for the skill with its property name.
+  - **default**: The default value for the parameter. This can be any type.
+  - **optional**: If true, the parameter is optional.
+  - **values**: `[]` An array of strings that defines the accepted values for the parameter.
+  - **plural**: If true, the parameter is an array.
+  - **type**: The type of the parameter. It can be one of the following:
+    - `number`: The parameter is a number.
+    - `string`: The parameter is a string.
+    - `username`: The parameter is a username.
+    - `quoted`: The parameter is a quoted string.
+    - `address`: The parameter is an address.
+    - `prompt`: The parameter is a prompt.
+    - `url`: The parameter is a URL.

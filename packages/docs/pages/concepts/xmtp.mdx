@@ -13,7 +13,11 @@ import { Context } from "@xmtp/message-kit";
 
 onMessage(async (context: Context) => {
   const {
-    message: { content }, client, v2client, conversation, group, members, admins, superAdmins,
+    message: { content, sender, sent, typeId },
+    client,
+    v2client,
+    conversation,
+    group: { members, admins, superAdmins },
   } = context;
 
   /*Logic*/
@@ -24,23 +28,15 @@ onMessage(async (context: Context) => {
 
 **Properties**
 
-- `message`: the [message](/concepts/messages) object
-  - `sender`: the sender of the message
-  - `content`: the content of the message
+- `message`: See [skills](/concepts/skills) for more information
 - `version`: the version of the client
 - `client`: the v3 client object
 - `v2client`: the v2 client object
 - `conversation`: the v2 conversation object
-
-Groups:
-
 - `group`: the v3 group object
-- `members`: the members of the group
-- `admins`: the admins of the group
-- `superAdmins`: the super admins of the group
-
-Other:
-
+  - `members`: the members of the group
+  - `admins`: the admins of the group
+  - `superAdmins`: the super admins of the group
 - `agentConfig`: the optional parameters of the agent
 
 ## Clients

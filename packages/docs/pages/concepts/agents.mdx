@@ -1,0 +1,94 @@
+import { CustomHomePage } from "../../components/CustomHomePage";
+
+# Agents
+
+## Project files
+
+Each agent project consists of the following basic structure:
+
+```bash
+agent/
+├── src/
+│   └── index.ts
+│   └── skills/
+│       └── ...
+├── tsconfig.json
+├── package.json
+└── .env
+```
+
+## Agent
+
+This is the main function that runs the listener.
+
+```jsx
+import { Agent, run, type Context } from "@xmtp/message-kit";
+
+const agent: Agent = {
+  name: "Agent Name",
+  tag: "@bot",
+  description: "Agent Description",
+  skills: [skill1, skill2]
+};
+//starts the agent
+run(agent);
+```
+
+> See [`Messages`](/concepts/messages) for more information.
+
+```tsx
+const agent: Agent = {
+  config: {
+    /* Optional properties */
+  },
+};
+```
+
+- `privateKey`: the private key of the agent wallet, like any normal wallet private key.
+- `experimental`: experimental features like logging all group messages. Default is `false`.
+- `attachments`: to receive attachments. Default is `false`.
+- `gptModel`: model to be used. Default is `gpt-4o`.
+- `client`: Optional parameters to pass to the XMTP client.
+- `agent`: Custom agent to be used. Default is to create the skills in the `src/skills.ts` file.
+- `hideInitLogMessage`: hide the init log message with messagekit logo and stuff
+- `memberChange`: if true, member changes will be enabled, like adding members to the group
+
+## Sending
+
+App messages are messages that are sent when you send a reply to a message and are highlighted differently by the apps.
+
+```tsx
+// Send a message
+await context.send("Your message.");
+// Reply to the last message
+await context.reply("Your message.");
+// Send a message to specific users
+await context.sendTo("Your message.", ["address1", "address2"]);
+// Await a response
+const answer = await context.awaitResponse("Please answer with yes or no", [
+  "yes",
+  "no",
+]);
+console.log(`You answered: ${answer}`);
+// Send an image (max 1MB)
+await context.sendImage("path/to/image.png");
+// Send a remote image (max 1MB)
+await context.sendImage("https://picsum.photos/200/300");
+```
+
+## Vibes
+
+Vibes are the personalities of the agent. They are defined in the `src/vibes/your-vibe.ts` file.
+
+```tsx
+import { Vibe } from "@xmtp/message-kit";
+
+export const chill: Vibe = {
+  vibe: // name of the vibe
+  description: // description of the vibe
+  tone: // tone of the vibe
+  style: // style of the vibe
+};
+```
+
+> See [Vibes](/community/vibes) for more information.
