@@ -39,6 +39,13 @@ async function handler(context: Context) {
   try {
     const fromWallet = await WalletService.getUserWallet(sender.address);
     
+    if (!fromWallet) {
+      return {
+        code: 400,
+        message: `❌ No wallet found for ${sender.address}`
+      };
+    }
+    
     // Check if token exists in wallet
     const availableTokens = await WalletService.getAvailableTokens(fromWallet);
     if (!availableTokens.includes(token.toUpperCase())) {
