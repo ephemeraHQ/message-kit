@@ -53,9 +53,9 @@ const { v2client: newClient } = await xmtpClient({
 
 > This can be used for example in the [Cron](/plugins/cron) plugin to send updates to the users.
 
-## XMTP check
+## Availability check
 
-You can check if a user has XMTP enabled:
+You can check if a user has XMTP enabled. If it has, you can use the v2 and v3 clients to send messages.
 
 ```typescript
 const { v2, v3 } = await isOnXMTP(v3client, v2client, address);

@@ -77,6 +77,10 @@ export default defineConfig({
   },
   sidebar: [
     {
+      text: "Introduction",
+      link: "/introduction",
+    },
+    {
       text: "Quickstart",
       link: "/quickstart",
     },
@@ -87,12 +91,10 @@ export default defineConfig({
         {
           text: "Structure",
           link: "/concepts/structure",
-          items: [
-            {
-              text: "XMTP",
-              link: "/concepts/xmtp",
-            },
-          ],
+        },
+        {
+          text: "XMTP",
+          link: "/concepts/xmtp",
         },
         {
           text: "Messages",
@@ -109,10 +111,6 @@ export default defineConfig({
         {
           text: "Wallets",
           link: "/plugins/cdp",
-        },
-        {
-          text: "Agents",
-          link: "/concepts/agents",
         },
       ],
     },

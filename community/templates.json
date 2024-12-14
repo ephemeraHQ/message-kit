@@ -47,5 +47,12 @@
     "description": "A template for a GM bot.",
     "icon": "👑",
     "author": "humanagent"
+  },
+  {
+    "href": "/templates/toss",
+    "title": "Toss",
+    "description": "A template for a Cointoss bot.",
+    "icon": "🪙",
+    "author": "humanagent"
   }
 ]

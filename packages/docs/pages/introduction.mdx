@@ -1,4 +1,4 @@
-# AI Agents
+# Introduction
 
 MessageKit's Skill framework enables agents to process natural language through multiple intelligence layers. Agents can:
 
@@ -79,10 +79,30 @@ export const systemPrompt = `{intro}
 `;
 ```
 
-## End result
+### Agent
+
+This is the main function that runs the listener.
+
+```jsx
+import { Agent, run, type Context } from "@xmtp/message-kit";
+
+const agent: Agent = {
+  name: "Agent Name",
+  tag: "@bot",
+  description: "Agent Description",
+  skills: [skill1, skill2],
+};
+
+//starts the agent
+run(agent);
+```
+
+### End result
 
 The end result is a prompt that the model can understand and use to respond to the user.
 
 ```md [example_prompt.md]
 // [!include ~/../../templates/ens/example_prompt.md]
 ```
+
+:::
