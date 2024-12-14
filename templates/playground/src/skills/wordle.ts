@@ -51,7 +51,7 @@ async function handleArenaMessage(context: Context) {
     message: {
       content: { text },
     },
-    members,
+    group: { members },
   } = context;
 
   const apiKey = process.env.FRAMEDL_API_KEY;

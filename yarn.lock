@@ -494,6 +494,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@circle-fin/developer-controlled-wallets@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "@circle-fin/developer-controlled-wallets@npm:6.0.0"
+  dependencies:
+    axios: "npm:^1.6.2"
+  checksum: 10/b44e30b9584b2fda01f9d4550f41752becd8ce519b30f0d9eaabbbbaacb3c1ff973e530c4339015886d14ae5c05732ea93553531c950ef1d957d7e5ae6d35eb1
+  languageName: node
+  linkType: hard
+
 "@clack/core@npm:^0.3.3":
   version: 0.3.5
   resolution: "@clack/core@npm:0.3.5"
@@ -3652,6 +3661,33 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@xmtp/message-kit@npm:latest":
+  version: 1.2.27
+  resolution: "@xmtp/message-kit@npm:1.2.27"
+  dependencies:
+    "@coinbase/cbpay-js": "npm:^2.4.0"
+    "@coinbase/coinbase-sdk": "npm:0.11.2"
+    "@redis/client": "npm:^1.6.0"
+    "@types/node": "npm:^20.14.2"
+    "@vitest/coverage-v8": "npm:^2.1.4"
+    "@xmtp/content-type-primitives": "npm:^1.0.2"
+    "@xmtp/content-type-reaction": "npm:^1.1.10-beta.1"
+    "@xmtp/content-type-remote-attachment": "npm:1.1.11"
+    "@xmtp/content-type-reply": "npm:^1.1.11"
+    "@xmtp/content-type-text": "npm:^1.0.0"
+    "@xmtp/grpc-api-client": "npm:^0.2.8"
+    "@xmtp/node-sdk": "npm:^0.0.31"
+    "@xmtp/xmtp-js": "npm:^13.0.3"
+    cross-fetch: "npm:^4.0.0"
+    dotenv: "npm:^16.4.5"
+    openai: "npm:^4.52.7"
+    typescript: "npm:^5.4.5"
+    viem: "npm:^2.16.3"
+    vitest: "npm:^2.1.4"
+  checksum: 10/622082afe46ec070f03e03702ccc908fc087f1c56330b37486ce3976210a01a2f9ef5be1cdc3b9a408e3d54f12b4710f1e428954ef997767fb1ed114ad309ee8
+  languageName: node
+  linkType: hard
+
 "@xmtp/message-kit@workspace:*, @xmtp/message-kit@workspace:packages/message-kit":
   version: 0.0.0-use.local
   resolution: "@xmtp/message-kit@workspace:packages/message-kit"
@@ -4058,7 +4094,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.6.8, axios@npm:^1.7.4, axios@npm:^1.7.7":
+"axios@npm:^1.6.2, axios@npm:^1.6.8, axios@npm:^1.7.4, axios@npm:^1.7.7":
   version: 1.7.9
   resolution: "axios@npm:1.7.9"
   dependencies:
@@ -4523,6 +4559,17 @@ __metadata:
   checksum: 10/faf232deff2351448ea23d265eb8723e035ebbb454baca45fb60c1bd71056ede8b153bef1b221e067f13e6b9288ebb83bb6ae2d5dd4cec285411f9fc22ec1f5b
   languageName: node
   linkType: hard
+
+"circle-agent@workspace:templates/circle-agent":
+  version: 0.0.0-use.local
+  resolution: "circle-agent@workspace:templates/circle-agent"
+  dependencies:
+    "@circle-fin/developer-controlled-wallets": "npm:^6.0.0"
+    "@types/node": "npm:^20.14.2"
+    "@xmtp/message-kit": "npm:latest"
+    typescript: "npm:^5.4.5"
+  languageName: unknown
+  linkType: soft
 
 "cli-cursor@npm:^3.1.0":
   version: 3.1.0
