@@ -172,7 +172,7 @@ export class WalletService {
     }
   }
 
-  async fund(amount: number, onramp: boolean = false): Promise<boolean> {
+  async fund(amount: number, onRamp: boolean = false): Promise<boolean> {
     let walletData = await this.getWallet(this.humanAddress);
     if (!walletData) return false;
     console.log(`Retrieved wallet data for ${this.humanAddress}`);
@@ -195,7 +195,7 @@ export class WalletService {
           walletData.agent_address,
           amount,
           "USDC",
-          onramp ? onRampURL : undefined,
+          onRamp ? onRampURL : undefined,
         );
         return true;
       } else {
