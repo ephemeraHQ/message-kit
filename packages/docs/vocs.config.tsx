@@ -143,7 +143,7 @@ export default defineConfig({
         },
         {
           text: "Identity",
-          link: "/plugins/identity",
+          link: "/plugins/resolver",
         },
       ],
     },
