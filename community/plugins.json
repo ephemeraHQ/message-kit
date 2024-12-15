@@ -113,9 +113,23 @@
   },
   {
     "href": "/plugins/cdp",
-    "title": "CDP",
+    "title": "CDP Wallet Service",
     "description": "Use CDP to create agent wallets.",
-    "icon": "💳",
+    "icon": "⛽️",
     "author": "raihankhan-rk"
+  },
+  {
+    "href": "/plugins/circle",
+    "title": "Circle Wallet Service",
+    "description": "Use Circle to create agent wallets.",
+    "icon": "⛽️",
+    "author": "raihankhan-rk"
+  },
+  {
+    "href": "/plugins/storage",
+    "title": "Local Storage",
+    "description": "Use Local Storage to store data.",
+    "icon": "💾",
+    "author": "humanagent"
   }
 ]

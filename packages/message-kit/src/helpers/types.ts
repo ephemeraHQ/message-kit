@@ -38,6 +38,32 @@ export type SkillResponse = {
   data?: any;
 };
 
+export type AgentWalletData = {
+  id: string;
+  wallet: any;
+  address: string;
+  agent_address: string;
+  blockchain?: string;
+  state?: string;
+  key: string;
+};
+
+export interface AgentWallet {
+  getWallet: (
+    key: string,
+    createIfNotFound?: boolean,
+  ) => Promise<AgentWalletData | undefined>;
+  transfer: (
+    fromAddress: string,
+    toAddress: string,
+    amount: number,
+  ) => Promise<any>;
+  checkBalance: (
+    key: string,
+  ) => Promise<{ address: string | undefined; balance: number }>;
+  createWallet: (key: string) => Promise<AgentWalletData>;
+  onRampURL: (amount: number, address: string) => Promise<string | undefined>;
+}
 export type AgentConfig = {
   // client options from XMTP client
   client?: ClientOptions;
@@ -67,7 +93,8 @@ export interface SkillParamConfig {
     | "quoted"
     | "address"
     | "prompt"
-    | "url";
+    | "url"
+    | "user";
   plural?: boolean;
   values?: string[]; // Accepted values for the parameter
   optional?: boolean;

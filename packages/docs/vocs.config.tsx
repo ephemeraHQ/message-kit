@@ -69,7 +69,7 @@ export default defineConfig({
       link: "https://github.com/ephemeraHQ/message-kit",
     },
   ],
-  topNav: [{ text: "v1.2.27", link: "/changelog" }],
+  topNav: [{ text: "v1.2.29", link: "/changelog" }],
   editLink: {
     pattern:
       "https://github.com/ephemeraHQ/message-kit/blob/main/packages/docs/pages/:path",
@@ -84,29 +84,24 @@ export default defineConfig({
       text: "Quickstart",
       link: "/quickstart",
     },
-
     {
-      text: "Concepts",
+      text: "Fun stuff",
       items: [
         {
-          text: "Overview",
-          link: "/concepts/overview",
+          text: "Concierge",
+          link: "/skills/concierge",
         },
         {
-          text: "XMTP",
-          link: "/concepts/xmtp",
+          text: "Frames",
+          link: "/plugins/framekit",
         },
         {
-          text: "Messages",
-          link: "/concepts/messages",
+          text: "Wallet service",
+          link: "/ux/wallet-service",
         },
         {
           text: "Groups",
-          link: "/concepts/groups",
-        },
-        {
-          text: "Wallets",
-          link: "/plugins/cdp",
+          link: "/ux/groups",
         },
       ],
     },
@@ -132,6 +127,27 @@ export default defineConfig({
         {
           text: "Projects",
           link: "/community/projects",
+        },
+      ],
+    },
+    {
+      text: "Fundations",
+      items: [
+        {
+          text: "Agents",
+          link: "/concepts/agents",
+        },
+        {
+          text: "Skills",
+          link: "/concepts/skills",
+        },
+        {
+          text: "XMTP",
+          link: "/concepts/xmtp",
+        },
+        {
+          text: "Usernames",
+          link: "/plugins/resolver",
         },
       ],
     },

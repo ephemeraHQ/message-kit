@@ -1,19 +1,48 @@
-import { CustomHomePage } from "../../components/CustomHomePage";
+# Skills
 
-# Messages
+Skills are the actions of the agent. They are defined in the `src/skills/your-skill.ts` file.
 
-## Receiving
+## Defining a skill
 
-When a message is send through XMTP to your agent, the `onMessage` function is triggered. It brings the message with all the content and the sender.
+```tsx
+import { Skill } from "@xmtp/message-kit";
+
+export const checkDomain: Skill[] = [
+  {
+    skill: // name of the skill
+    handler: handler(context)
+    examples: // examples of the skill
+    description: // description of the skill
+    params: {
+      <name>: {
+        default: "" // default value
+        type: "string" | "number" | "user" | "username" | "quoted" | "address" | "prompt" | "url"
+        values: ["USDC","ETH"]// accepted values
+        optional: true // if true, the parameter is optional
+        plural: false // if true, the parameter is an array
+      }
+  },
+];
+```
+
+:::tip
+The type `user` is a special type that allows you to get the user's address resolving the username or ENS name. See more in the [Identities](/plugins/resolver) section.
+:::
+
+## Handling logic
+
+When a message is send through XMTP to your agent, the `handler` function is triggered. It brings the message with all the [context](/concepts/xmtp) .
 
 {/* prettier-ignore-start */}
 
 ```tsx [src/index.ts]
-onMessage(async (context: Context) => {
+function handler(context: Context) {
   const {
     message: {
       content: { text, params, attachment, reply, reference, skill, previousMsg },
       sender,
+      sent,
+      typeId
     },
   } = context;
 
@@ -30,27 +59,12 @@ onMessage(async (context: Context) => {
     // Do something with the attachment data url
     console.log(attachment);
   }
-});
+}
 ```
 
 {/* prettier-ignore-end */}
 
-**Properties**
-
-- `id`: string // The id of the message
-- `message`: all the content of the message depending on the type
-  - `text`: string // The content of the message
-  - `skill`: string, // The skill of the message
-  - `params`: string[], // The parameters of the message
-  - `attachment`: Attachment // The attachment of the message
-  - `reply`: Reply // The reply of the message
-  - `reference`: string // The reference of the message
-  - `previousMsg`: Message // The previous message
-- `sender`: User // The user object of the sender
-- `sent`: Date // The timestamp of the message
-- `typeId`: string // The type of the message (text, reply, attachment, skill)
-
-## Sending
+## Sending messages
 
 App messages are messages that are sent when you send a reply to a message and are highlighted differently by the apps.
 
@@ -72,16 +86,3 @@ await context.sendImage("path/to/image.png");
 // Send a remote image (max 1MB)
 await context.sendImage("https://picsum.photos/200/300");
 ```
-
-## Included
-
-Check our included plugins for sending dynamic content.
-
-<CustomHomePage.TileGrid3>
-  <CustomHomePage.Tile
-    href="/plugins/framekit"
-    title="FrameKit"
-    description="Use FrameKit to send frames."
-    icon="🖼️"
-  />
-</CustomHomePage.TileGrid3>

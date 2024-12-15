@@ -97,11 +97,3 @@ getMemoryKey() {
   return this.getConversationKey() + ":" + this.message?.sender?.address;
 }
 ```
-
-## Full plugin
-
-This code is included in MessageKit, but you can import it directly in your files for more customization.
-
-```tsx [plugins/gpt.ts]
-// [!include ~/../../packages/message-kit/src/plugins/gpt.ts]
-```

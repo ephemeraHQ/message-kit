@@ -1,0 +1,139 @@
+# Wallet concierge
+
+The Wallet Concierge acts as a personal financial assistant within your XMTP conversations, managing digital assets with ease.
+
+## Balance
+
+Simply ask the concierge to check your balance, and it will provide you with the current amount in your wallet. For example, you can say:
+
+```plaintext
+Hey, check my balance.
+```
+
+The concierge will respond with your current balance.
+
+```typescript
+// Balance checking implementation
+if (skill === "balance") {
+  const { balance } = await walletService.checkBalance(sender.address);
+  await context.send(`Your agent wallet has a balance of $${balance}`);
+}
+```
+
+## Fund
+
+You can request to add funds to your wallet. If you try to exceed the maximum limit, the concierge will notify you. For instance, you might say:
+
+```plaintext
+Can you add 5 USDC to my wallet?
+```
+
+The concierge will handle the transaction.
+
+```typescript
+// Funding logic
+async function fund(context: Context, amount: number) {
+  if (Number(balance) === 10) {
+    await context.dm("You have maxed out your funds. Max 10 USDC.");
+    return false;
+  }
+
+  let onRampURL = await walletService.onRampURL(
+    amount,
+    walletData.agent_address,
+  );
+  await context.framekit.requestPayment(
+    walletData.agent_address,
+    amount,
+    "USDC",
+    onRamp ? onRampURL : undefined,
+  );
+}
+```
+
+## Transfers
+
+You can instruct the concierge to transfer funds to another user. If your balance is insufficient, it will inform you. For example, you might say:
+
+```plaintext
+Please send 5 USDC to @username.
+```
+
+The concierge will execute the transfer.
+
+```typescript
+// Transfer implementation
+if (skill === "transfer") {
+  const { balance } = await walletService.checkBalance(sender.address);
+  if (balance === 0) {
+    await context.reply("You have no funds to transfer.");
+    return;
+  }
+
+  await context.send(
+    `Transferring ${amount} USDC to ${recipient?.preferredName}`,
+  );
+  const tx = await walletService.transfer(
+    sender.address,
+    recipient?.address as string,
+    amount,
+  );
+
+  // Smart notifications
+  await notifyUser(context, sender.address, recipient?.address, tx, amount);
+}
+```
+
+## Swaps
+
+You can instruct the concierge to swap tokens from one type to another. For example, you might say:
+
+```plaintext
+Please swap 0.1 ETH to USDC.
+```
+
+The concierge will execute the swap.
+
+```typescript
+// Swap implementation
+if (skill === "swap") {
+  await walletService.swap(sender.address, fromToken, toToken, amount);
+  await context.send("Swap completed");
+  return;
+}
+```
+
+## Notifications
+
+After a transaction, the concierge will notify you with a receipt and update your balance. It will also inform the recipient if they are on XMTP. For example, after sending funds, you will receive a message confirming the transaction and your new balance.
+
+```typescript
+async function notifyUser(
+  context: Context,
+  fromAddress: string,
+  toAddress: string,
+  transaction: any,
+  amount: number,
+) {
+  // Send receipt
+  await context.dm(`Transfer completed successfully`);
+  await context.framekit.sendReceipt(
+    `https://basescan.org/tx/${transaction.txHash}`,
+  );
+
+  // Update balance info
+  let newBalance = (Number(balance) - amount).toFixed(2);
+  await context.dm(
+    `Your balance was deducted by $${amount}. Now is $${newBalance}.`,
+  );
+
+  // Notify recipient if on XMTP
+  const { v2, v3 } = await context.isOnXMTP(toAddress);
+  if (v2 || v3) {
+    await context.sendTo(
+      `${userInfo?.preferredName} just sent you $${amount}`,
+      [toAddress],
+    );
+  }
+}
+```

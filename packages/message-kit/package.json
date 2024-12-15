@@ -1,6 +1,6 @@
 {
   "name": "@xmtp/message-kit",
-  "version": "1.2.27",
+  "version": "1.2.29",
   "license": "MIT",
   "type": "module",
   "exports": {
@@ -38,6 +38,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@circle-fin/developer-controlled-wallets": "^6.0.0",
     "@coinbase/cbpay-js": "^2.4.0",
     "@coinbase/coinbase-sdk": "0.11.2",
     "@redis/client": "^1.6.0",
@@ -65,6 +66,22 @@
     "rollup-plugin-dts": "^6.1.1",
     "ts-node": "^10.9.2",
     "turbo": "^2.2.3"
+  },
+  "peerDependencies": {
+    "@circle-fin/developer-controlled-wallets": "^6.0.0",
+    "@coinbase/cbpay-js": "^2.4.0",
+    "@coinbase/coinbase-sdk": "0.11.2"
+  },
+  "peerDependenciesMeta": {
+    "@circle-fin/developer-controlled-wallets": {
+      "optional": true
+    },
+    "@coinbase/cbpay-js": {
+      "optional": true
+    },
+    "@coinbase/coinbase-sdk": {
+      "optional": true
+    }
   },
   "packageManager": "yarn@4.5.1",
   "engines": {

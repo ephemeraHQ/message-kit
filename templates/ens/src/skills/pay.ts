@@ -1,5 +1,4 @@
-import { Context } from "@xmtp/message-kit";
-import type { Skill } from "@xmtp/message-kit";
+import { Context, getUserInfo, Skill } from "@xmtp/message-kit";
 
 export const pay: Skill[] = [
   {
@@ -55,7 +54,7 @@ export async function handler(context: Context) {
   } = context;
   let receiverAddress = address;
   if (username) {
-    receiverAddress = (await context.getUserInfo(username))?.address;
+    receiverAddress = (await getUserInfo(username))?.address;
   }
   if (address) {
     //Prioritize address over username

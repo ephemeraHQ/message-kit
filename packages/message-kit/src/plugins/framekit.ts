@@ -1,5 +1,6 @@
 import { Context } from "../lib/core.js";
 import { extractFrameChain } from "../helpers/utils.js";
+import { getUserInfo } from "../plugins/resolver.js";
 
 export interface Frame {
   title: string;
@@ -39,7 +40,7 @@ export class FrameKit {
     token?: string,
     onRampURL?: string,
   ) {
-    let senderInfo = await this.context.getUserInfo(to);
+    let senderInfo = await getUserInfo(to);
     if (!senderInfo) {
       console.error("Failed to get sender info");
       return;

@@ -55,6 +55,7 @@ Powered by XMTP \x1b[0m`;
     \x1b[38;2;128;0;128m Share in Farcaster (Framev2): https://frames.message-kit.org/dm/${client.accountAddress}\x1b[0m`);
 
   if (
+    agentConfig?.walletService == true ||
     agentConfig?.attachments ||
     process.env.OPENAI_API_KEY === undefined ||
     agentConfig?.client?.structuredLogging ||
@@ -68,6 +69,7 @@ Powered by XMTP \x1b[0m`;
     if (agentConfig?.attachments) {
       console.warn("\t- ⚠️ Attachments are enabled");
     }
+
     if (generatedKey) {
       console.warn(
         `\t- ⚠️ Invalid private key or not set. Generating a random one in your .env file.`,
@@ -97,13 +99,25 @@ Powered by XMTP \x1b[0m`;
         `\t- ☣️ EXPERIMENTAL MODE ENABLED:\n\t\t⚠️ All group messages will be exposed — proceed with caution.\n\t\tℹ Guidelines: https://message-kit.org/guidelines`,
       );
     }
-    if (
-      process.env.COINBASE_API_KEY_NAME &&
-      process.env.COINBASE_API_KEY_PRIVATE_KEY
-    ) {
-      console.warn(
-        `\t- ⚠️ Wallet Service ENABLED:\n\t\t⚠️ Save wallets at your discretion.\n\t\tℹ️ An agent wallet will be available for every user.\n\t\tℹ️ MessageKit does not have access to these wallets or is responsible for them.`,
-      );
+    if (agentConfig?.walletService === true) {
+      if (
+        process.env.COINBASE_API_KEY_NAME &&
+        process.env.COINBASE_API_KEY_PRIVATE_KEY
+      ) {
+        console.warn("\t- ⚠️ CDP Wallet Service is enabled");
+
+        console.warn(
+          `\t- \n\t\t- Save wallets at your discretion.\n\t\t- An agent wallet will be available for every user.\n\t\t- Developers are responsible for their own wallets.`,
+        );
+      } else if (process.env.CIRCLE_API_KEY) {
+        console.warn("\t- ⚠️ Circle Wallet Service is enabled");
+
+        console.warn(
+          `\t- \n\t\t- Save wallets at your discretion.\n\t\t- An agent wallet will be available for every user.\n\t\t- Developers are responsible for their own wallets.`,
+        );
+      } else {
+        console.warn("\t- ⚠️ Wallet Service is enabled but missing API keys");
+      }
     }
     console.warn("\x1b[0m"); // Reset color to default
   }

@@ -1,79 +1,113 @@
 # XMTP
 
-XMTP is the protocol that MessageKit uses to send and receive messages.
+[XMTP](https://xmtp.org/) is the protocol that MessageKit uses to send and receive messages.
 
 ## Context
 
-Context bridges the XMTP protocol. It's aware of conversations, groups and users.
+The `Context` object is a core component that provides access to all XMTP messaging functionality. It handles conversations, groups, and messages.
 
-{/* prettier-ignore-start */}
-
-```tsx 
+```tsx
 import { Context } from "@xmtp/message-kit";
 
 onMessage(async (context: Context) => {
   const {
-    message: { content }, client, v2client, conversation, group, members, admins, superAdmins,
+    message, // Current message details
+    client, // V3 XMTP client
+    v2client, // V2 XMTP client
+    conversation, // Current conversation
+    group, // Group details if in a group chat
   } = context;
 
-  /*Logic*/
+  // Your message handling logic
 });
 ```
 
-{/* prettier-ignore-end */}
+### Properties
 
-**Properties**
+#### Message
 
-- `message`: the [message](/concepts/messages) object
-  - `sender`: the sender of the message
-  - `content`: the content of the message
-- `version`: the version of the client
-- `client`: the v3 client object
-- `v2client`: the v2 client object
-- `conversation`: the v2 conversation object
+Contains information about the current message:
 
-Groups:
+- `content`: The message content
+- `sender`: Address of message sender
+- `sent`: Timestamp when message was sent
+- `typeId`: Type of message
 
-- `group`: the v3 group object
-- `members`: the members of the group
-- `admins`: the admins of the group
-- `superAdmins`: the super admins of the group
+#### Clients
 
-Other:
+- `client`: V3 XMTP client instance
+- `v2client`: V2 XMTP client instance
+- `version`: Current client version
 
-- `agentConfig`: the optional parameters of the agent
+#### Conversation
+
+- `conversation`: Current conversation object with messaging methods
+
+#### Group (V3 Only)
+
+Group chat information including:
+
+- `members`: List of all group members
+- `admins`: List of group administrators
+- `superAdmins`: List of group super administrators
+
+## Identity
+
+Each messages comes with a sender object that contains the address, name, and avatar of the sender.
+
+```tsx
+interface AbstractedMember {
+  // Unique identifier for the user's inbox
+  inboxId: string;
+
+  // User's blockchain address (e.g. Ethereum address)
+  address: string;
+
+  // Array of all addresses associated with this identity
+  accountAddresses: string[];
+
+  // Array of unique installation identifiers
+  installationIds: string[];
+}
+
+// Example usage
+const { sender } = context.message;
+```
+
+### Properties:
+
+- `inboxId`: A unique identifier for the user's message inbox. This remains consistent across different installations.
+- `address`: The primary blockchain address associated with the sender. This is typically an Ethereum address.
+- `accountAddresses`: An array of all blockchain addresses linked to this identity. Users can have multiple addresses associated with their XMTP identity.
+- `installationIds`: Array of unique identifiers for each installation/device where the user has XMTP enabled.
 
 ## Clients
 
-Use this instead of XMTP sdks for compatibility with MessageKit
+MessageKit provides wrapped versions of XMTP clients for easier integration:
 
 ```tsx
 import { V2Client, V3Client } from "@xmtp/message-kit";
 ```
 
-You can export other clients on run time by importing the `xmtpClient` function.
+You can create new client instances using the `xmtpClient` helper:
 
-```jsx
+```tsx
 import { xmtpClient } from "@xmtp/message-kit";
 
-const { v2client: newClient } = await xmtpClient({
-  {
-    /*optional parameters*/
-  },
-);
+const { v2client } = await xmtpClient({
+  // Optional configuration
+});
 ```
 
-> This can be used for example in the [Cron](/plugins/cron) plugin to send updates to the users.
+## Availability
 
-## Availability check
-
-You can check if a user has XMTP enabled. If it has, you can use the v2 and v3 clients to send messages.
+To check if a user has XMTP enabled:
 
 ```typescript
 const { v2, v3 } = await isOnXMTP(v3client, v2client, address);
 ```
 
-This will return an object with `v2` and `v3` booleans indicating if the user has XMTP enabled
+Returns:
 
-- `v2:true` If the user has XMTP v2 enabled
-- `v3:true` If the user has XMTP v3 enabled
+- `v2`: `true` if user has XMTP V2 enabled
+- `v3`: `true` if user has XMTP V3 enabled

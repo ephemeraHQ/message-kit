@@ -1,3 +1,5 @@
+import { CustomHomePage } from "../../components/CustomHomePage";
+
 # Groups
 
 MessageKit allows agents to interact inside XMTP groups. Make sure you follow the [guidelines](/guidelines) for building responsible group agents on XMTP.
@@ -32,8 +34,6 @@ To create a group from your agent, you can use the following code:
 const group = await client?.conversations.newGroup([address1, address2]);
 ```
 
-Check out the [gated group](/skills/gated) template.
-
 ## Add members
 
 As an admin you can add members to the group.
@@ -65,3 +65,24 @@ if (typeId === "group_updated") {
 ```
 
 > For more reliable functions see the [XMTP Plugin](/plugins/xmtp)
+
+## Group templates
+
+Check our templates related to groups.
+
+<CustomHomePage.TileGrid3>
+  <CustomHomePage.Tile
+    href="/templates/toss"
+    title="Toss"
+    description="A template for a Cointoss bot."
+    icon="🪙"
+    author="humanagent"
+  />
+  <CustomHomePage.Tile
+    href="/templates/gated-group"
+    title="Gated Group"
+    description="A template for a gated group."
+    icon="🔒"
+    author="humanagent"
+  />
+</CustomHomePage.TileGrid3>
