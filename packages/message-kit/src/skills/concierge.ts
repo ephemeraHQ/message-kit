@@ -59,28 +59,28 @@ export const concierge: Skill[] = [
     handler: handleWallet,
     examples: ["/address"],
   },
-  // {
-  //   skill: "swap",
-  //   description: "Swap between tokens (e.g., ETH to USDC).",
-  //   handler: handleWallet,
-  //   examples: ["/swap 1 eth usdc", "/swap 100 usdc eth"],
-  //   params: {
-  //     amount: {
-  //       type: "number",
-  //       default: "",
-  //     },
-  //     fromToken: {
-  //       type: "string",
-  //       values: ["eth", "usdc"],
-  //       default: "",
-  //     },
-  //     toToken: {
-  //       type: "string",
-  //       values: ["eth", "usdc"],
-  //       default: "",
-  //     },
-  //   },
-  // },
+  {
+    skill: "swap",
+    description: "Swap between tokens (e.g., ETH to USDC).",
+    handler: handleWallet,
+    examples: ["/swap 1 eth usdc", "/swap 100 usdc eth"],
+    params: {
+      amount: {
+        type: "number",
+        default: "",
+      },
+      fromToken: {
+        type: "string",
+        values: ["eth", "usdc"],
+        default: "",
+      },
+      toToken: {
+        type: "string",
+        values: ["eth", "usdc"],
+        default: "",
+      },
+    },
+  },
 ];
 
 export async function handleWallet(context: Context) {

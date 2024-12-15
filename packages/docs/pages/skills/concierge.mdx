@@ -2,30 +2,35 @@
 
 The Wallet Concierge acts as a personal financial assistant within your XMTP conversations, managing digital assets with ease.
 
-## Core features & code examples
+## Balance
 
-### Fund management & balance checking
+Simply ask the concierge to check your balance, and it will provide you with the current amount in your wallet. For example, you can say:
+
+```plaintext
+Hey, check my balance.
+```
+
+The concierge will respond with your current balance.
 
 ```typescript
-export const concierge: Skill[] = [
-  {
-    skill: "fund",
-    description: "Fund your CDP wallet.",
-    examples: ["/fund 10", "/fund 0.01"],
-  },
-  {
-    skill: "balance",
-    description: "Check your wallet balance.",
-    examples: ["/balance"],
-  },
-];
-
 // Balance checking implementation
 if (skill === "balance") {
   const { balance } = await walletService.checkBalance(sender.address);
   await context.send(`Your agent wallet has a balance of $${balance}`);
 }
+```
 
+## Fund
+
+You can request to add funds to your wallet. If you try to exceed the maximum limit, the concierge will notify you. For instance, you might say:
+
+```plaintext
+Can you add 5 USDC to my wallet?
+```
+
+The concierge will handle the transaction.
+
+```typescript
 // Funding logic
 async function fund(context: Context, amount: number) {
   if (Number(balance) === 10) {
@@ -46,20 +51,17 @@ async function fund(context: Context, amount: number) {
 }
 ```
 
-### Smart money transfers
+## Transfers
+
+You can instruct the concierge to transfer funds to another user. If your balance is insufficient, it will inform you. For example, you might say:
+
+```plaintext
+Please send 5 USDC to @username.
+```
+
+The concierge will execute the transfer.
 
 ```typescript
-// Transfer skill definition
-{
-  skill: "transfer",
-  description: "Transfer USDC to another user.",
-  examples: [
-    "/transfer @username 5.1",
-    "/transfer 0x123... 10",
-    "/transfer vitalik.eth 0.01"
-  ],
-}
-
 // Transfer implementation
 if (skill === "transfer") {
   const { balance } = await walletService.checkBalance(sender.address);
@@ -68,11 +70,13 @@ if (skill === "transfer") {
     return;
   }
 
-  await context.send(`Transferring ${amount} USDC to ${recipient?.preferredName}`);
+  await context.send(
+    `Transferring ${amount} USDC to ${recipient?.preferredName}`,
+  );
   const tx = await walletService.transfer(
     sender.address,
     recipient?.address as string,
-    amount
+    amount,
   );
 
   // Smart notifications
@@ -80,7 +84,28 @@ if (skill === "transfer") {
 }
 ```
 
-### Smart notifications system
+## Swaps
+
+You can instruct the concierge to swap tokens from one type to another. For example, you might say:
+
+```plaintext
+Please swap 0.1 ETH to USDC.
+```
+
+The concierge will execute the swap.
+
+```typescript
+// Swap implementation
+if (skill === "swap") {
+  await walletService.swap(sender.address, fromToken, toToken, amount);
+  await context.send("Swap completed");
+  return;
+}
+```
+
+## Notifications
+
+After a transaction, the concierge will notify you with a receipt and update your balance. It will also inform the recipient if they are on XMTP. For example, after sending funds, you will receive a message confirming the transaction and your new balance.
 
 ```typescript
 async function notifyUser(
@@ -112,19 +137,3 @@ async function notifyUser(
   }
 }
 ```
-
-## Quick command reference
-
-- `/balance` - Check your current balance
-- `/fund <amount>` - Add USDC to your wallet (max 10 USDC)
-- `/transfer <@user/address> <amount>` - Send USDC to someone
-- `/address` - View your wallet details
-
-## Key features
-
-- Secure fund management
-- Automatic transaction receipts
-- Smart notifications
-- Group chat support
-- Integration with Coinbase infrastructure
-- Cross-platform messaging support
