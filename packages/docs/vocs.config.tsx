@@ -85,7 +85,7 @@ export default defineConfig({
       link: "/quickstart",
     },
     {
-      text: "Features",
+      text: "Fun stuff",
       items: [
         {
           text: "Concierge",
@@ -96,7 +96,7 @@ export default defineConfig({
           link: "/plugins/framekit",
         },
         {
-          text: "Wallet Service",
+          text: "Wallet service",
           link: "/ux/wallet-service",
         },
         {
