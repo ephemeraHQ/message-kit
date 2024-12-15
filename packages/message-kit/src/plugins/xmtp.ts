@@ -21,6 +21,10 @@ export class XmtpPlugin {
     this.client = context.client;
     this.v2client = context.v2client;
     this.version = context.version;
+    this.refConv = context.refConv;
+    this.conversation = context.conversation;
+    this.group = context.group;
+    this.message = context.message;
   }
 
   async createGroup(
