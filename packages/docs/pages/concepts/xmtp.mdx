@@ -51,23 +51,37 @@ Group chat information including:
 - `admins`: List of group administrators
 - `superAdmins`: List of group super administrators
 
-## XMTP Identity
+## Identity
 
 Each messages comes with a sender object that contains the address, name, and avatar of the sender.
 
 ```tsx
-const { sender } = context.message;
+interface AbstractedMember {
+  // Unique identifier for the user's inbox
+  inboxId: string;
 
-// Each sender contains an inboxId, address, accountAddresses, and installationIds.
-const sender: AbstractedMember = {
-  inboxId: sender.inboxId,
-  address: sender.address,
-  accountAddresses: sender.accountAddresses,
-  installationIds: sender.installationIds,
-};
+  // User's blockchain address (e.g. Ethereum address)
+  address: string;
+
+  // Array of all addresses associated with this identity
+  accountAddresses: string[];
+
+  // Array of unique installation identifiers
+  installationIds: string[];
+}
+
+// Example usage
+const { sender } = context.message;
 ```
 
-## XMTP Clients
+Properties:
+
+- `inboxId`: A unique identifier for the user's message inbox. This remains consistent across different installations.
+- `address`: The primary blockchain address associated with the sender. This is typically an Ethereum address.
+- `accountAddresses`: An array of all blockchain addresses linked to this identity. Users can have multiple addresses associated with their XMTP identity.
+- `installationIds`: Array of unique identifiers for each installation/device where the user has XMTP enabled.
+
+## Clients
 
 MessageKit provides wrapped versions of XMTP clients for easier integration:
 
@@ -85,7 +99,7 @@ const { v2client } = await xmtpClient({
 });
 ```
 
-## Checking User Availability
+## Availability
 
 To check if a user has XMTP enabled:
 
