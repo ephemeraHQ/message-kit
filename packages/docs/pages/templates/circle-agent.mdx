@@ -1,0 +1,52 @@
+# Circle Agent
+
+Create wallets for users and interact with them.
+
+> Circle Agent uses [Circle plugin](/plugins/circle) to interact with Circle.
+
+## Structure
+
+```
+paymentagent/
+├── src/
+│   ├── index.ts
+├── package.json
+├── tsconfig.json
+└── .env
+```
+
+## Agent
+
+The process that starts listening to messages and replying to them.
+
+```tsx [src/index.ts]
+// [!include ~/../../templates/circle-agent/src/index.ts]
+```
+
+## Skills
+
+- [Concierge](/skills/concierge): Agent Wallet as a Service
+
+## Prompt
+
+Here is the prompt that the agent will use to reply to messages.
+
+```tsx [src/prompt.ts]
+// [!include ~/../../templates/circle-agent/src/prompt.ts]
+```
+
+## Variables
+
+Set up these variables in your app
+
+```bash [cmd]
+// [!include ~/../../templates/circle-agent/.env.example]
+```
+
+## End result
+
+The end result is a prompt that the model can understand and use to respond to the user.
+
+```md [example_prompt.md]
+// [!include ~/../../templates/circle-agent/example_prompt.md]
+```

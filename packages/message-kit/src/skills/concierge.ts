@@ -3,8 +3,7 @@ import { Transfer } from "@coinbase/coinbase-sdk";
 import { Skill } from "../helpers/types";
 import { Context } from "../lib/core";
 import { getUserInfo } from "../plugins/resolver";
-import { isAddress, TimeoutError } from "viem";
-import { generateOnRampURL } from "@coinbase/cbpay-js";
+import { isAddress } from "viem";
 
 export const concierge: Skill[] = [
   {
@@ -183,10 +182,7 @@ async function notifyUser(
       );
     }
   }
-  let newBalance = (Number(balance) - amount).toFixed(2);
-  await context.dm(
-    `Your balance was deducted by $${amount}. Now is $${newBalance}.`,
-  );
+  await context.dm(`Your balance was deducted by $${amount}`);
 
   if (!isAddress(toAddress)) return;
   const { v2, v3 } = await context.isOnXMTP(toAddress);

@@ -45,12 +45,10 @@ interface TokenBalanceResponse {
 
 export class WalletService implements AgentWallet {
   private walletStorage!: LocalStorage;
-  private context: Context;
-  private humanAddress: string;
+  private senderAddress: string;
 
   constructor(context: Context) {
-    this.context = context;
-    this.humanAddress = context.message.sender.address;
+    this.senderAddress = context.message.sender.address;
     this.walletStorage = new LocalStorage();
   }
 
@@ -60,22 +58,14 @@ export class WalletService implements AgentWallet {
 
     if (walletData) {
       const wallet = JSON.parse(walletData);
-      return {
-        id: wallet.id,
-        address: wallet.address,
-        blockchain: "ETH-SEPOLIA",
-        state: "ACTIVE",
-        wallet: client?.getWallet,
-        agent_address: userAddress,
-        key: wallet.id,
-      };
+      return wallet as AgentWalletData;
     }
 
     return this.createWallet(userAddress);
   }
 
-  async createWallet(userAddress: string): Promise<AgentWalletData> {
-    console.log(`Creating new wallet for user ${userAddress}...`);
+  async createWallet(identifier: string): Promise<AgentWalletData> {
+    console.log(`Creating new wallet with id ${identifier}...`);
     const response = await client?.createWallets({
       accountType: "SCA",
       blockchains: ["ETH-SEPOLIA"],
@@ -84,7 +74,11 @@ export class WalletService implements AgentWallet {
       metadata: [
         {
           name: "user",
-          refId: userAddress,
+          refId: identifier,
+        },
+        {
+          name: "senderAddress",
+          refId: this.senderAddress,
         },
       ],
     });
@@ -97,22 +91,22 @@ export class WalletService implements AgentWallet {
 
     // Store in LocalStorage
     await this.walletStorage.set(
-      `wallet:${userAddress}`,
+      `wallet:${identifier}`,
       JSON.stringify({
         id: wallet.id,
         address: wallet.address,
       }),
     );
 
-    console.log(`Created wallet for user ${userAddress}`);
+    console.log(`Created wallet with id ${identifier}`);
 
     return {
       id: wallet.id,
-      address: wallet.address,
       blockchain: wallet.blockchain,
       state: wallet.state,
       wallet: client?.getWallet,
-      agent_address: userAddress,
+      address: this.senderAddress,
+      agent_address: wallet.address,
       key: wallet.id,
     };
   }

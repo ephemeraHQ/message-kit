@@ -1,4 +1,4 @@
-# Cirle Wallet Service
+# Circle Wallet Service
 
 The `WalletService` class in MessageKit provides a way to create agent wallets that can perform gasless payments and transfers on Base.
 
@@ -12,38 +12,8 @@ Visit the [Circle Developer Portal](https://developer.circle.com/) to create an 
   - `CIRCLE_ENTITY_SECRET`= # Circle Entity Secret
   - `CIRCLE_WALLET_SET_ID`= # Circle Wallet Set ID
 
-## Wallet Management
+## Code
 
-The `getWallet` method will retrieve an existing wallet or create a new one if it doesn't exist:
-
-```tsx
-// Get the wallet service
-const { walletService } = context;
-
-// Get or create a wallet
-const wallet = await walletService.getWallet(humanAddress);
-
-// Explicitly create a new wallet
-const isCreated = await walletService.createWallet(humanAddress);
-
-// Delete a wallet
-await walletService.deleteWallet(humanAddress);
-```
-
-## Actions
-
-Perform actions on the Agent Wallet like transfers and swaps or checking the balance.
-
-```tsx
-// Get the wallet service
-const { walletService } = context;
-
-// Check balance
-const { address, balance } = await walletService.checkBalance(humanAddress);
-
-// Transfer between wallets
-await walletService.transfer(humanAddress, humanAddress, amount);
-
-// Swap assets (USDC and ETH)
-await walletService.swap(humanAddress, fromAssetId, toAssetId, amount);
+```tsx [plugins/circle.ts]
+// [!include ~/../../packages/message-kit/src/plugins/circle.ts]
 ```

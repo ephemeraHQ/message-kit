@@ -27,16 +27,14 @@ const coinbase =
 export class WalletService implements AgentWallet {
   private walletStorage: LocalStorage;
   private cdpEncriptionKey: string;
-  private context: Context;
-  private humanAddress: string;
-  private isGroup: boolean;
+  private senderAddress: string;
+  private developerAddress: string;
 
   constructor(context: Context) {
-    this.context = context;
-    this.humanAddress = context.message.sender.address;
     this.walletStorage = new LocalStorage();
-    this.cdpEncriptionKey = context.client.accountAddress;
-    this.isGroup = context.group !== undefined;
+    this.cdpEncriptionKey = process.env.COINBASE_API_KEY_PRIVATE_KEY as string;
+    this.senderAddress = context.message.sender.address;
+    this.developerAddress = context.client.accountAddress;
   }
 
   encrypt(data: any): string {
@@ -78,7 +76,7 @@ export class WalletService implements AgentWallet {
       const walletInfo = {
         data,
         agent_address: address.getId(),
-        address: this.humanAddress,
+        address: this.senderAddress,
         key,
       };
 
@@ -91,7 +89,7 @@ export class WalletService implements AgentWallet {
       return {
         id: address.getId(),
         wallet: wallet,
-        address: address.getId(),
+        address: this.senderAddress,
         agent_address: address.getId(),
         key: key,
       };
@@ -141,7 +139,7 @@ export class WalletService implements AgentWallet {
     let walletData = await this.getWallet(humanAddress);
     if (!walletData) return { address: undefined, balance: 0 };
 
-    console.log(`Retrieved wallet data for ${this.humanAddress}`);
+    console.log(`Retrieved wallet data for ${humanAddress}`);
     let balance = await walletData.wallet.getBalance(Coinbase.assets.Usdc);
 
     return {
@@ -176,7 +174,6 @@ export class WalletService implements AgentWallet {
       let user = await getUserInfo(toAddress);
       console.log("resolved toAddress", toAddress, user?.address);
       if (!user) {
-        this.context.dm("User not found.");
         return undefined;
       }
       toAddress = user.address as string;

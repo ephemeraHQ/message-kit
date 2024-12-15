@@ -13,13 +13,13 @@ The `getWallet` method will retrieve an existing wallet or create a new one if i
 const { walletService } = context;
 
 // Get or create a wallet
-const wallet = await walletService.getWallet(humanAddress);
+const wallet = await walletService.getWallet(identifier or address);
 
 // Explicitly create a new wallet
-const isCreated = await walletService.createWallet(humanAddress);
+const isCreated = await walletService.createWallet(identifier or address);
 
 // Delete a wallet
-await walletService.deleteWallet(humanAddress);
+await walletService.deleteWallet(identifier or address);
 ```
 
 ## Actions
@@ -31,18 +31,18 @@ Perform actions on the Agent Wallet like transfers and swaps or checking the bal
 const { walletService } = context;
 
 // Check balance
-const { address, balance } = await walletService.checkBalance(humanAddress);
+const { address, balance } = await walletService.checkBalance(identifier or address);
 
 // Transfer between wallets
-await walletService.transfer(humanAddress, humanAddress, amount);
+await walletService.transfer(identifier or address, identifier or address, amount);
 
 // Swap assets (USDC and ETH)
-await walletService.swap(humanAddress, fromAssetId, toAssetId, amount);
+await walletService.swap(identifier or address, fromAssetId, toAssetId, amount);
 ```
 
 ## Plugins
 
-Check our plugins related to wallets.
+Currently messagekit supports Circle and CDP SDKs. Depending on your `.env` variables, the wallet service will use the correct SDK.
 
 <CustomHomePage.TileGrid3>
   <CustomHomePage.Tile
