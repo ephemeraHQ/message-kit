@@ -110,7 +110,15 @@ export async function parseSkill(
 }> {
   const defaultResult = {
     skill: undefined,
-    params: {} as { [key: string]: string | number | string[] | undefined },
+    params: {} as {
+      [key: string]:
+        | string
+        | number
+        | string[]
+        | undefined
+        | UserInfo
+        | UserInfo[];
+    },
   };
   try {
     if (!text.startsWith("/") && !text.startsWith("@"))
@@ -130,7 +138,13 @@ export async function parseSkill(
     const values: {
       skill: string;
       params: {
-        [key: string]: string | number | string[] | undefined; // Removed boolean type
+        [key: string]:
+          | string
+          | number
+          | string[]
+          | undefined
+          | UserInfo
+          | UserInfo[];
       };
     } = {
       skill: commandName,
