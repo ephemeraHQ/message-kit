@@ -3,6 +3,7 @@ import {
   Wallet,
   Transfer,
   TimeoutError,
+  Trade,
 } from "@coinbase/coinbase-sdk";
 import { type Context } from "../lib/core";
 import { keccak256, toHex, toBytes } from "viem";
@@ -208,40 +209,40 @@ export class WalletService implements AgentWallet {
       throw error;
     }
   }
-  // async swap(
-  //   address: string,
-  //   fromAssetId: string,
-  //   toAssetId: string,
-  //   amount: number,
-  // ): Promise<Trade | undefined> {
-  //   let walletData = await this.getWallet(address);
-  //   if (!walletData) return undefined;
-  //   console.log(`Retrieved wallet data for ${address}`);
+  async swap(
+    address: string,
+    fromAssetId: string,
+    toAssetId: string,
+    amount: number,
+  ): Promise<Trade | undefined> {
+    let walletData = await this.getWallet(address);
+    if (!walletData) return undefined;
+    console.log(`Retrieved wallet data for ${address}`);
 
-  //   console.log(
-  //     `Initiating swap from ${fromAssetId} to ${toAssetId} for amount: ${amount}`,
-  //   );
-  //   const trade = await walletData.wallet.createTrade({
-  //     amount,
-  //     fromAssetId,
-  //     toAssetId,
-  //   });
+    console.log(
+      `Initiating swap from ${fromAssetId} to ${toAssetId} for amount: ${amount}`,
+    );
+    const trade = await walletData.wallet.createTrade({
+      amount,
+      fromAssetId,
+      toAssetId,
+    });
 
-  //   try {
-  //     await trade.wait();
-  //   } catch (err) {
-  //     if (err instanceof TimeoutError) {
-  //       console.log("Waiting for trade timed out");
-  //     } else {
-  //       console.error("Error while waiting for trade to complete: ", err);
-  //     }
-  //   }
+    try {
+      await trade.wait();
+    } catch (err) {
+      if (err instanceof TimeoutError) {
+        console.log("Waiting for trade timed out");
+      } else {
+        console.error("Error while waiting for trade to complete: ", err);
+      }
+    }
 
-  //   //Notify the user
-  //   await this.notifyUser(  from, toAddress, trade, amount);
+    //Notify the user
+    await this.notifyUser(from, toAddress, trade, amount);
 
-  //   return trade;
-  // }
+    return trade;
+  }
 
   async deleteWallet(key: string): Promise<boolean> {
     console.log(`Deleting wallet for key ${key}`);
