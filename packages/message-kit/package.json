@@ -38,7 +38,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@circle-fin/developer-controlled-wallets": "^1.0.0",
+    "@circle-fin/developer-controlled-wallets": "^6.0.0",
     "@coinbase/cbpay-js": "^2.4.0",
     "@coinbase/coinbase-sdk": "0.11.2",
     "@redis/client": "^1.6.0",
@@ -68,7 +68,7 @@
     "turbo": "^2.2.3"
   },
   "peerDependencies": {
-    "@circle-fin/developer-controlled-wallets": "^1.0.0",
+    "@circle-fin/developer-controlled-wallets": "^6.0.0",
     "@coinbase/cbpay-js": "^2.4.0",
     "@coinbase/coinbase-sdk": "0.11.2"
   },
