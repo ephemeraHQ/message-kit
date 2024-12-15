@@ -5,11 +5,10 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc -w & sleep 1 && NODE_NO_WARNINGS=1 node --watch dist/index.js",
-    "postinstall": "tsc",
-    "setup": "node dist/scripts/setupCircle.js",
     "start": "node dist/index.js"
   },
   "dependencies": {
+    "@circle-fin/developer-controlled-wallets": "^6.0.0",
     "@xmtp/message-kit": "workspace:*"
   },
   "devDependencies": {
