@@ -1,29 +1,10 @@
 import { Context } from "../lib/core";
-import {
-  Conversation,
-  DecodedMessage,
-  Client as V3Client,
-} from "@xmtp/node-sdk";
+import { Conversation, Client as V3Client } from "@xmtp/node-sdk";
 import {
   DecodedMessage as DecodedMessageV2,
   Client as V2Client,
   Conversation as V2Conversation,
 } from "@xmtp/xmtp-js";
-import { GroupMember } from "@xmtp/node-sdk";
-import type { ContentTypeId } from "@xmtp/content-type-primitives";
-import { ContentTypeText } from "@xmtp/content-type-text";
-import { ContentTypeReply, type Reply } from "@xmtp/content-type-reply";
-import {
-  ContentTypeReaction,
-  type Reaction,
-} from "@xmtp/content-type-reaction";
-import {
-  ContentTypeAttachment,
-  ContentTypeRemoteAttachment,
-  RemoteAttachmentCodec,
-  type RemoteAttachment,
-  type Attachment,
-} from "@xmtp/content-type-remote-attachment";
 
 export class XmtpPlugin {
   private context: Context;
@@ -163,79 +144,6 @@ export class XmtpPlugin {
       return undefined;
     }
   }
-
-  // async getV3ReplyChain(reference: string): Promise<{
-  //   chain: Array<{ address: string; content: string }>;
-  //   isSenderInChain: boolean;
-  // }> {
-  //   try {
-  //     let msg: DecodedMessage | DecodedMessageV2 | undefined = undefined;
-  //     let senderAddress: string = "";
-  //     msg = await this.getMessageById(reference);
-  //     if (!msg) {
-  //       return {
-  //         chain: [],
-  //         isSenderInChain: false,
-  //       };
-  //     }
-  //     let group = await (this.refConv as Conversation);
-  //     if (group) {
-  //       let members: GroupMember[] = [];
-  //       try {
-  //         await group.sync();
-  //         members = await group.members();
-  //       } catch (error) {
-  //         console.error(
-  //           "Failed to sync group or fetch members in reply chain:",
-  //           error,
-  //         );
-  //         members = [];
-  //       }
-  //       let sender = members?.find(
-  //         (member: GroupMember) =>
-  //           member.inboxId === (msg as DecodedMessage).senderInboxId ||
-  //           member.accountAddresses.includes(
-  //             (msg as unknown as DecodedMessageV2).senderAddress,
-  //           ),
-  //       );
-  //       senderAddress = sender?.accountAddresses[0] ?? "";
-
-  //       let content = msg?.content?.content ?? msg?.content;
-  //       let isSenderBot =
-  //         senderAddress.toLowerCase() === this.v2client.address.toLowerCase();
-  //       let chain = [{ address: senderAddress, content: content }];
-  //       // if (msg?.content?.reference) {
-  //       //   const { chain: replyChain, isSenderInChain } =
-  //       //     await this.getV3ReplyChain(
-  //       //       msg.content.reference,
-  //       //       this.v2client.address as string,
-  //       //     );
-  //       //   chain = replyChain;
-  //       //   isSenderBot = isSenderBot || isSenderInChain;
-
-  //       //   chain.push({
-  //       //     address: senderAddress,
-  //       //     content: content,
-  //       //   });
-  //       // }
-  //       return {
-  //         chain: chain,
-  //         isSenderInChain: isSenderBot,
-  //       };
-  //     } else {
-  //       return {
-  //         chain: [],
-  //         isSenderInChain: false,
-  //       };
-  //     }
-  //   } catch (error) {
-  //     console.error("Error getting reply chain:", error);
-  //     return {
-  //       chain: [],
-  //       isSenderInChain: false,
-  //     };
-  //   }
-  // }
 
   getConversationKey() {
     const conversation = this.refConv || this.conversation || this.group;
