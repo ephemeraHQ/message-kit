@@ -173,8 +173,7 @@ export async function handleJoinToss(context: Context) {
       address: sender.address,
       response: response,
       name:
-        (await context.getUserInfo(sender.address))?.preferredName ??
-        sender.address,
+        (await getUserInfo(sender.address))?.preferredName ?? sender.address,
     };
     participants.push(participant);
 

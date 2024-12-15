@@ -13,7 +13,7 @@ const templateDestinationDir = path.resolve(
 const templates = fs.readdirSync(templatesDir).filter((file) => {
   return (
     fs.statSync(path.join(templatesDir, file)).isDirectory() &&
-    ["simple", "ens"].includes(file)
+    ["simple", "ens", "paymentagent"].includes(file)
   ); // Only include simple and ens templates
 });
 
@@ -68,9 +68,6 @@ async function copyTemplates() {
         console.warn(`Source directory ${srcDir} does not exist.`);
       }
     }
-
-    // Copy community folder
-    const communitySourceDir = path.resolve(__dirname, "../community");
 
     console.log("All templates and templates.json copied successfully.");
   } catch (error) {

@@ -1,6 +1,4 @@
-import { Context } from "@xmtp/message-kit";
-
-import type { Skill } from "@xmtp/message-kit";
+import { Context, getUserInfo, Skill } from "@xmtp/message-kit";
 
 // [!region define]
 export const info: Skill[] = [
@@ -36,7 +34,7 @@ export async function handler(context: Context) {
     },
   } = context;
 
-  const data = await context.getUserInfo(domain);
+  const data = await getUserInfo(domain);
   if (!data?.address) {
     return {
       code: 404,

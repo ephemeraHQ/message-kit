@@ -53,29 +53,6 @@ const agent: Agent = {
 - `hideInitLogMessage`: hide the init log message with messagekit logo and stuff
 - `memberChange`: if true, member changes will be enabled, like adding members to the group
 
-## Sending
-
-App messages are messages that are sent when you send a reply to a message and are highlighted differently by the apps.
-
-```tsx
-// Send a message
-await context.send("Your message.");
-// Reply to the last message
-await context.reply("Your message.");
-// Send a message to specific users
-await context.sendTo("Your message.", ["address1", "address2"]);
-// Await a response
-const answer = await context.awaitResponse("Please answer with yes or no", [
-  "yes",
-  "no",
-]);
-console.log(`You answered: ${answer}`);
-// Send an image (max 1MB)
-await context.sendImage("path/to/image.png");
-// Send a remote image (max 1MB)
-await context.sendImage("https://picsum.photos/200/300");
-```
-
 ## Vibes
 
 Vibes are the personalities of the agent. They are defined in the `src/vibes/your-vibe.ts` file.

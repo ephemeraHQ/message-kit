@@ -1,6 +1,4 @@
-import { Context } from "@xmtp/message-kit";
-
-import type { Skill } from "@xmtp/message-kit";
+import { Context, getUserInfo, Skill } from "@xmtp/message-kit";
 
 const frameUrl = "https://ens.steer.fun/";
 
@@ -37,7 +35,7 @@ export async function handler(context: Context) {
     };
   }
 
-  const data = await context.getUserInfo(domain);
+  const data = await getUserInfo(domain);
 
   if (!data?.address || data?.address !== sender?.address) {
     return {

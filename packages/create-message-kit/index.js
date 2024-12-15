@@ -113,6 +113,10 @@ async function gatherProjectInfo() {
       value: "templates/ens",
       label: "ENS - Template with ENS integration",
     },
+    {
+      value: "templates/paymentagent",
+      label: "Payment Agent - Template for funding an agent wallet",
+    },
   ];
 
   const templateType = await select({

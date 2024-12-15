@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { CustomHomePage } from "./CustomHomePage";
 
-const TemplateList: React.FC<{ items: any[] }> = ({ items }) => {
+const List: React.FC<{ items: any[] }> = ({ items }) => {
   const [searchTerm, setSearchTerm] = useState("");
 
   return (
@@ -34,4 +34,4 @@ const TemplateList: React.FC<{ items: any[] }> = ({ items }) => {
   );
 };
 
-export default TemplateList;
+export default List;
