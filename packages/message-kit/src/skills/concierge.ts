@@ -9,7 +9,8 @@ import { generateOnRampURL } from "@coinbase/cbpay-js";
 export const concierge: Skill[] = [
   {
     skill: "fund",
-    description: "Fund your CDP wallet.",
+    description:
+      "Fund your agent wallet. Asume its always usdc. There is no minum to fund the account. Max to top the account is 10 usdc",
     handler: handleWallet,
     examples: ["/fund 10", "/fund 0.01"],
     params: {
@@ -48,7 +49,7 @@ export const concierge: Skill[] = [
   },
   {
     skill: "balance",
-    description: "Check your wallet balance.",
+    description: "Check your USDC wallet balance.",
     handler: handleWallet,
     examples: ["/balance"],
   },
@@ -207,6 +208,12 @@ async function fund(
     message: { sender },
     walletService,
   } = context;
+
+  if (amount <= 0) {
+    await context.dm("Please specify a valid amount to fund.");
+    return false;
+  }
+
   let walletData = await walletService.getWallet(sender.address);
   if (!walletData) return false;
   console.log(`Retrieved wallet data for ${sender.address}`);
