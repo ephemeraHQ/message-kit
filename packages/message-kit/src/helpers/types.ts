@@ -62,8 +62,7 @@ export interface AgentWallet {
     key: string,
   ) => Promise<{ address: string | undefined; balance: number }>;
   createWallet: (key: string) => Promise<AgentWalletData>;
-  fund: (amount: number) => Promise<boolean>;
-  withdraw: (amount: number) => Promise<any>;
+  onRampURL: (amount: number, address: string) => Promise<string | undefined>;
 }
 export type AgentConfig = {
   // client options from XMTP client

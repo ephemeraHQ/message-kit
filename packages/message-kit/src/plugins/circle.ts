@@ -244,12 +244,7 @@ export class WalletService implements AgentWallet {
       throw error;
     }
   }
-  fund(amount: number): Promise<any> {
-    // return this.transfer(this.humanAddress, this.humanAddress, amount);
-    return Promise.resolve(true);
-  }
-  withdraw(amount: number): Promise<any> {
-    // return this.transfer(this.humanAddress, this.humanAddress, amount);
-    return Promise.resolve(true);
+  async onRampURL(amount: number, address: string) {
+    return undefined;
   }
 }

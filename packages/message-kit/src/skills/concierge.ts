@@ -1,9 +1,12 @@
+import { Coinbase } from "@coinbase/coinbase-sdk";
+import { Transfer } from "@coinbase/coinbase-sdk";
 import { Skill } from "../helpers/types";
 import { Context } from "../lib/core";
 import { getUserInfo } from "../plugins/resolver";
-import { isAddress } from "viem";
+import { isAddress, TimeoutError } from "viem";
+import { generateOnRampURL } from "@coinbase/cbpay-js";
 
-export const waas: Skill[] = [
+export const concierge: Skill[] = [
   {
     skill: "fund",
     description: "Fund your CDP wallet.",
@@ -115,10 +118,10 @@ export async function handleWallet(context: Context) {
     const { balance } = await walletService.checkBalance(sender.address);
     await context.send(`Your agent wallet has a balance of $${balance}`);
   } else if (skill === "fund") {
-    await walletService.fund(amount);
+    await fund(context, amount);
     return;
   } else if (skill === "withdraw") {
-    await walletService.withdraw(amount);
+    await withdraw(context, amount);
   } else if (skill === "swap") {
     context.send("I cant do that yet");
     // await walletService.swap(sender.address, fromToken, toToken, amount);
@@ -192,4 +195,104 @@ async function notifyUser(
   await context.sendTo(`${userInfo?.preferredName} just sent you $${amount}`, [
     toAddress,
   ]);
+}
+
+async function fund(
+  context: Context,
+  amount: number,
+  onRamp: boolean = false,
+): Promise<boolean> {
+  const {
+    group,
+    message: { sender },
+    walletService,
+  } = context;
+  let walletData = await walletService.getWallet(sender.address);
+  if (!walletData) return false;
+  console.log(`Retrieved wallet data for ${sender.address}`);
+  let balance = await walletData.wallet.getBalance(Coinbase.assets.Usdc);
+  if (Number(balance) === 10) {
+    await context.dm("You have maxed out your funds. Max 10 USDC.");
+    return false;
+  } else if (amount) {
+    if (amount + Number(balance) <= 10) {
+      if (group) {
+        await context.reply(
+          `You need to fund your agent account. Check your DMs https://converse.xyz/${context.client.accountAddress}`,
+        );
+      }
+      let onRampURL = await walletService.onRampURL(
+        amount,
+        walletData.agent_address,
+      );
+      await context.dm("Here is the payment link:");
+      await context.framekit.requestPayment(
+        walletData.agent_address,
+        amount,
+        "USDC",
+        onRamp ? onRampURL : undefined,
+      );
+      return true;
+    } else {
+      await context.dm("Wrong amount. Max 10 USDC.");
+      return false;
+    }
+  } else {
+    const options = Array.from(
+      { length: Math.floor(10 - Number(balance)) },
+      (_, i) => (i + 1).toString(),
+    );
+    const response = await context.awaitResponse(
+      `Please specify the amount of USDC to prefund (1 to ${
+        10 - Number(balance)
+      }):`,
+      options,
+    );
+
+    let onRampURL = await walletService.onRampURL(
+      amount,
+      walletData.agent_address,
+    );
+
+    await context.framekit.requestPayment(
+      walletData.agent_address,
+      Number(response),
+      "USDC",
+      onRamp ? onRampURL : undefined,
+    );
+    return true;
+  }
+}
+
+async function withdraw(
+  context: Context,
+  amount?: number,
+): Promise<Transfer | undefined> {
+  const {
+    message: { sender },
+    walletService,
+  } = context;
+
+  let walletData = await walletService.getWallet(sender.address);
+  if (!walletData) return undefined;
+  console.log(`Retrieved wallet data for ${sender.address}`);
+  let balance = await walletData.wallet.getBalance(Coinbase.assets.Usdc);
+  if (amount && amount <= 0) {
+    await context.dm("Please specify a valid positive amount to withdraw.");
+    return;
+  }
+  if (amount && amount > Number(balance)) {
+    await context.dm("You don't have enough funds to withdraw.");
+    return;
+  }
+  let toWithdraw = amount ?? Number(balance);
+  if (toWithdraw <= Number(balance)) {
+    const transfer = await walletService.transfer(
+      sender.address,
+      sender.address,
+      toWithdraw,
+    );
+
+    return transfer;
+  }
 }

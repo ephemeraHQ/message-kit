@@ -135,109 +135,6 @@ export class WalletService implements AgentWallet {
     }
   }
 
-  async fund(amount: number, onRamp: boolean = false): Promise<boolean> {
-    let walletData = await this.getWallet(this.humanAddress);
-    if (!walletData) return false;
-    console.log(`Retrieved wallet data for ${this.humanAddress}`);
-    let balance = await walletData.wallet.getBalance(Coinbase.assets.Usdc);
-    if (Number(balance) === 10) {
-      await this.context.dm("You have maxed out your funds. Max 10 USDC.");
-      return false;
-    } else if (amount) {
-      if (amount + Number(balance) <= 10) {
-        if (this.isGroup) {
-          await this.context.reply(
-            `You need to fund your agent account. Check your DMs https://converse.xyz/${this.context.client.accountAddress}`,
-          );
-        }
-        const onRampURL = generateOnRampURL({
-          appId: appId,
-          presetCryptoAmount: Number(amount),
-          addresses: {
-            [walletData.agent_address]: ["base"],
-          },
-          assets: ["USDC"],
-        });
-        await this.context.dm("Here is the payment link:");
-        await this.context.framekit.requestPayment(
-          walletData.agent_address,
-          amount,
-          "USDC",
-          onRamp ? onRampURL : undefined,
-        );
-        return true;
-      } else {
-        await this.context.dm("Wrong amount. Max 10 USDC.");
-        return false;
-      }
-    } else {
-      const options = Array.from(
-        { length: Math.floor(10 - Number(balance)) },
-        (_, i) => (i + 1).toString(),
-      );
-      const response = await this.context.awaitResponse(
-        `Please specify the amount of USDC to prefund (1 to ${
-          10 - Number(balance)
-        }):`,
-        options,
-      );
-      const onRampURL = generateOnRampURL({
-        appId: appId,
-        presetCryptoAmount: Number(response),
-        addresses: {
-          [walletData.agent_address]: ["base"],
-        },
-        assets: ["USDC"],
-      });
-      await this.context.framekit.requestPayment(
-        walletData.agent_address,
-        Number(response),
-        "USDC",
-        onRamp ? onRampURL : undefined,
-      );
-      return true;
-    }
-  }
-
-  async withdraw(amount?: number): Promise<Transfer | undefined> {
-    let walletData = await this.getWallet(this.humanAddress);
-    if (!walletData) return undefined;
-    console.log(`Retrieved wallet data for ${this.humanAddress}`);
-    let balance = await walletData.wallet.getBalance(Coinbase.assets.Usdc);
-    if (amount && amount <= 0) {
-      await this.context.dm(
-        "Please specify a valid positive amount to withdraw.",
-      );
-      return;
-    }
-    if (amount && amount > Number(balance)) {
-      await this.context.dm("You don't have enough funds to withdraw.");
-      return;
-    }
-    let toWithdraw = amount ?? Number(balance);
-    if (toWithdraw <= Number(balance)) {
-      console.log("Withdrawing", toWithdraw);
-      const transfer = await walletData.wallet.createTransfer({
-        amount: toWithdraw,
-        assetId: Coinbase.assets.Usdc,
-        destination: this.humanAddress,
-        gasless: true,
-      });
-      // Wait for transfer to land on-chain.
-      try {
-        await transfer.wait();
-      } catch (err) {
-        if (err instanceof TimeoutError) {
-          console.log("Waiting for transfer timed out");
-        } else {
-          console.error("Error while waiting for transfer to complete: ", err);
-        }
-      }
-
-      return transfer;
-    }
-  }
-
   async checkBalance(
     humanAddress: string,
   ): Promise<{ address: string | undefined; balance: number }> {
@@ -252,7 +149,17 @@ export class WalletService implements AgentWallet {
       balance: Number(balance),
     };
   }
-
+  async onRampURL(amount: number, address: string) {
+    const onRampURL = generateOnRampURL({
+      appId: appId,
+      presetCryptoAmount: Number(amount),
+      addresses: {
+        [address]: ["base"],
+      },
+      assets: ["USDC"],
+    });
+    return onRampURL;
+  }
   async transfer(
     fromAddress: string,
     toAddress: string,

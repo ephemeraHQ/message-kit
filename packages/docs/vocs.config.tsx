@@ -88,6 +88,10 @@ export default defineConfig({
       text: "Features",
       items: [
         {
+          text: "Concierge",
+          link: "/skills/concierge",
+        },
+        {
           text: "Frames",
           link: "/plugins/framekit",
         },

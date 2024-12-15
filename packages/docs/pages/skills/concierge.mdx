@@ -1,0 +1,130 @@
+# Wallet concierge
+
+The Wallet Concierge acts as a personal financial assistant within your XMTP conversations, managing digital assets with ease.
+
+## Core features & code examples
+
+### Fund management & balance checking
+
+```typescript
+export const concierge: Skill[] = [
+  {
+    skill: "fund",
+    description: "Fund your CDP wallet.",
+    examples: ["/fund 10", "/fund 0.01"],
+  },
+  {
+    skill: "balance",
+    description: "Check your wallet balance.",
+    examples: ["/balance"],
+  },
+];
+
+// Balance checking implementation
+if (skill === "balance") {
+  const { balance } = await walletService.checkBalance(sender.address);
+  await context.send(`Your agent wallet has a balance of $${balance}`);
+}
+
+// Funding logic
+async function fund(context: Context, amount: number) {
+  if (Number(balance) === 10) {
+    await context.dm("You have maxed out your funds. Max 10 USDC.");
+    return false;
+  }
+
+  let onRampURL = await walletService.onRampURL(
+    amount,
+    walletData.agent_address,
+  );
+  await context.framekit.requestPayment(
+    walletData.agent_address,
+    amount,
+    "USDC",
+    onRamp ? onRampURL : undefined,
+  );
+}
+```
+
+### Smart money transfers
+
+```typescript
+// Transfer skill definition
+{
+  skill: "transfer",
+  description: "Transfer USDC to another user.",
+  examples: [
+    "/transfer @username 5.1",
+    "/transfer 0x123... 10",
+    "/transfer vitalik.eth 0.01"
+  ],
+}
+
+// Transfer implementation
+if (skill === "transfer") {
+  const { balance } = await walletService.checkBalance(sender.address);
+  if (balance === 0) {
+    await context.reply("You have no funds to transfer.");
+    return;
+  }
+
+  await context.send(`Transferring ${amount} USDC to ${recipient?.preferredName}`);
+  const tx = await walletService.transfer(
+    sender.address,
+    recipient?.address as string,
+    amount
+  );
+
+  // Smart notifications
+  await notifyUser(context, sender.address, recipient?.address, tx, amount);
+}
+```
+
+### Smart notifications system
+
+```typescript
+async function notifyUser(
+  context: Context,
+  fromAddress: string,
+  toAddress: string,
+  transaction: any,
+  amount: number,
+) {
+  // Send receipt
+  await context.dm(`Transfer completed successfully`);
+  await context.framekit.sendReceipt(
+    `https://basescan.org/tx/${transaction.txHash}`,
+  );
+
+  // Update balance info
+  let newBalance = (Number(balance) - amount).toFixed(2);
+  await context.dm(
+    `Your balance was deducted by $${amount}. Now is $${newBalance}.`,
+  );
+
+  // Notify recipient if on XMTP
+  const { v2, v3 } = await context.isOnXMTP(toAddress);
+  if (v2 || v3) {
+    await context.sendTo(
+      `${userInfo?.preferredName} just sent you $${amount}`,
+      [toAddress],
+    );
+  }
+}
+```
+
+## Quick command reference
+
+- `/balance` - Check your current balance
+- `/fund <amount>` - Add USDC to your wallet (max 10 USDC)
+- `/transfer <@user/address> <amount>` - Send USDC to someone
+- `/address` - View your wallet details
+
+## Key features
+
+- Secure fund management
+- Automatic transaction receipts
+- Smart notifications
+- Group chat support
+- Integration with Coinbase infrastructure
+- Cross-platform messaging support
