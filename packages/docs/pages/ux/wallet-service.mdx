@@ -33,17 +33,11 @@ const { walletService } = context;
 // Check balance
 const { address, balance } = await walletService.checkBalance(humanAddress);
 
-// Withdraw funds (optional amount parameter)
-await walletService.fund(amount);
-
 // Transfer between wallets
 await walletService.transfer(humanAddress, humanAddress, amount);
 
 // Swap assets (USDC and ETH)
 await walletService.swap(humanAddress, fromAssetId, toAssetId, amount);
-
-// Withdraw funds (optional amount parameter)
-await walletService.withdraw(amount);
 ```
 
 ## Plugins

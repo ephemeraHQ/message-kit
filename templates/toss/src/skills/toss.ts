@@ -155,7 +155,7 @@ export async function handleJoinToss(context: Context) {
   }
   const { balance } = await walletService.checkBalance(sender.address);
   if (balance < amount) {
-    await walletService.fund(amount);
+    await context.executeSkill(`/fund ${amount}`);
     return;
   }
   try {
