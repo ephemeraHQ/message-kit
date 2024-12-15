@@ -1,8 +1,7 @@
 import { Context, Skill, V3Client } from "@xmtp/message-kit";
-import { createGroup } from "../plugins/xmtp.js";
 import express from "express";
 import { checkNft } from "../plugins/alchemy.js";
-import { addToGroup } from "../plugins/xmtp.js";
+
 export const gated: Skill[] = [
   {
     skill: "create",
@@ -23,7 +22,7 @@ async function handler(context: Context) {
   } = context;
 
   if (skill === "create") {
-    const group = await createGroup(
+    const group = await context.xmtp.createGroup(
       client,
       sender.address,
       client.accountAddress,
@@ -51,12 +50,13 @@ export function startGatedGroupServer(client: V3Client) {
       return "not verified";
     } else {
       try {
-        const added = await addToGroup(groupId, client, walletAddress);
-        if (added.code === 200) {
+        const added = await client.conversations.getConversationById(groupId);
+        if (added) {
+          added.addMembers([walletAddress]);
           console.log(`Added wallet address: ${walletAddress} to the group`);
           return "success";
         } else {
-          return added.message;
+          return "error";
         }
       } catch (error: any) {
         console.log(error.message);

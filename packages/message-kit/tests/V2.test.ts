@@ -98,7 +98,7 @@ describe("Context Message Tests", () => {
     expect(context).not.toBeUndefined();
     if (!context) return;
 
-    const key = context.getConversationKey();
+    const key = context.xmtp.getConversationKey();
     expect(key).toBe("test-topic");
   });
 });

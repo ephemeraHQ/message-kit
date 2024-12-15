@@ -78,13 +78,13 @@ export async function run(agent: Agent) {
 
         //Await response
         const awaitedHandler = awaitedHandlers.get(
-          context.getConversationKey(),
+          context.xmtp.getConversationKey(),
         );
         if (awaitedHandler) {
           const messageText =
             context.message.content.text || context.message.content.reply || "";
           // Check if the response is from the expected user
-          const expectedUser = context.getConversationKey().split(":")[1];
+          const expectedUser = context.xmtp.getConversationKey().split(":")[1];
           const actualSender =
             version === "v3"
               ? (message as DecodedMessage).senderInboxId
@@ -94,7 +94,7 @@ export async function run(agent: Agent) {
             const isValidResponse = await awaitedHandler(messageText);
             // Only remove the handler if we got a valid response
             if (isValidResponse) {
-              awaitedHandlers.delete(context.getConversationKey());
+              awaitedHandlers.delete(context.xmtp.getConversationKey());
             }
           }
           return;

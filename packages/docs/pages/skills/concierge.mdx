@@ -128,7 +128,7 @@ async function notifyUser(
   );
 
   // Notify recipient if on XMTP
-  const { v2, v3 } = await context.isOnXMTP(toAddress);
+  const { v2, v3 } = await isOnXMTP(toAddress);
   if (v2 || v3) {
     await context.sendTo(
       `${userInfo?.preferredName} just sent you $${amount}`,

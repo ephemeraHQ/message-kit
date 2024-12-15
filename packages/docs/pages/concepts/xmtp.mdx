@@ -104,7 +104,7 @@ const { v2client } = await xmtpClient({
 To check if a user has XMTP enabled:
 
 ```typescript
-const { v2, v3 } = await isOnXMTP(v3client, v2client, address);
+const { v2, v3 } = await context.xmtp.isOnXMTP(address);
 ```
 
 Returns:
