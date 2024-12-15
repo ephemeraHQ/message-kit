@@ -1,5 +1,5 @@
 import { Agent, Skill } from "../helpers/types.js";
-import { getUserInfo, UserInfo } from "../plugins/resolver.js";
+import { getUserInfo, type UserInfo } from "../plugins/resolver.js";
 import { type Context } from "./core.js";
 import path from "path";
 
@@ -73,6 +73,7 @@ export async function executeSkill(
           }
         },
       );
+
       if (skillAction?.handler) return skillAction.handler(mockContext);
     } else if (skillAction) {
       console.warn("No handler for", skillAction.skill);
@@ -102,22 +103,14 @@ export async function parseSkill(
       | string
       | number
       | string[]
+      | undefined
       | UserInfo
-      | UserInfo[]
-      | undefined;
+      | UserInfo[];
   };
 }> {
   const defaultResult = {
     skill: undefined,
-    params: {} as {
-      [key: string]:
-        | string
-        | number
-        | string[]
-        | UserInfo
-        | UserInfo[]
-        | undefined;
-    },
+    params: {} as { [key: string]: string | number | string[] | undefined },
   };
   try {
     if (!text.startsWith("/") && !text.startsWith("@"))
@@ -137,13 +130,7 @@ export async function parseSkill(
     const values: {
       skill: string;
       params: {
-        [key: string]:
-          | string
-          | number
-          | string[]
-          | UserInfo
-          | UserInfo[]
-          | undefined; // Removed boolean type
+        [key: string]: string | number | string[] | undefined; // Removed boolean type
       };
     } = {
       skill: commandName,
@@ -195,28 +182,19 @@ export async function parseSkill(
         valueFound = true;
       } else if (type === "username") {
         // Updated regular expression to ensure usernames start with @
-        const usernameParts = await parts.reduce<Promise<string[]>>(
-          async (acc, part, idx) => {
-            const result = await acc;
-            if (
-              !usedIndices.has(idx) &&
-              (/^@[a-zA-Z][a-zA-Z0-9_-]*$/.test(part) ||
-                /^[a-zA-Z0-9-]+\.eth$/.test(part))
-            ) {
-              usedIndices.add(idx);
-              // Handle potential comma-separated values
-              const usernames = part.split(",");
-              for (const username of usernames) {
-                let userInfo = await getUserInfo(username);
-                if (userInfo) {
-                  result.push(userInfo?.address as string);
-                }
-              }
-            }
-            return result;
-          },
-          Promise.resolve([]),
-        );
+        const usernameParts = parts.reduce<string[]>((acc, part, idx) => {
+          if (
+            !usedIndices.has(idx) &&
+            (/^@[a-zA-Z][a-zA-Z0-9_-]*$/.test(part) ||
+              /^[a-zA-Z0-9-]+\.eth$/.test(part)) // Ensure it starts with @ or is a .eth domain
+          ) {
+            usedIndices.add(idx);
+            // Handle potential comma-separated values
+            const usernames = part.split(",");
+            acc.push(...usernames);
+          }
+          return acc;
+        }, []);
 
         if (usernameParts.length > 0) {
           values.params[param] = plural ? usernameParts : usernameParts[0];
