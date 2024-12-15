@@ -1,6 +1,6 @@
 import { MessageKit, type Context } from "../lib/core.js";
 import { xmtpClient } from "./client.js";
-import { Agent, SkillHandler } from "../helpers/types.js";
+import { Agent, SkillHandler, SkillResponse } from "../helpers/types.js";
 import { DecodedMessage } from "@xmtp/node-sdk";
 import { logMessage } from "../helpers/utils.js";
 import { DecodedMessage as DecodedMessageV2 } from "@xmtp/xmtp-js";
@@ -102,8 +102,14 @@ export async function run(agent: Agent) {
 
         // Check if the message content triggers a skill
         const { isMessageValid, customHandler } = filterMessage(context);
-        if (isMessageValid && customHandler) await customHandler(context);
-        else if (isMessageValid && agent?.onMessage)
+        if (isMessageValid && customHandler) {
+          const result = await customHandler(context);
+          if (result && "code" in result) {
+            if (result.code === 200) {
+              await context.send(result.message);
+            }
+          }
+        } else if (isMessageValid && agent?.onMessage)
           await agent?.onMessage?.(context);
         else if (isMessageValid && !agent?.onMessage) await onMessage(context);
       } catch (e) {

@@ -8,6 +8,9 @@ export const agent: Agent = {
   description: "Create a coin toss.",
   skills: [toss, waas],
   systemPrompt,
+  config: {
+    walletService: true,
+  },
 };
 
 run(agent);

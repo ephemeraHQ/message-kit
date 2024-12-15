@@ -1,5 +1,5 @@
 import { run, Agent, waas } from "@xmtp/message-kit";
-import { degen } from "../../playground/src/vibes/degen.js";
+import { degen } from "./vibes/degen.js";
 import { systemPrompt } from "./prompt.js";
 
 const agent: Agent = {
@@ -11,6 +11,9 @@ const agent: Agent = {
   vibe: degen,
   systemPrompt,
   skills: [waas],
+  config: {
+    walletService: true,
+  },
 };
 
 run(agent);

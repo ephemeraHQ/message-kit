@@ -1,23 +1,7 @@
 {
-  "include": [
-    "src/**/*"
-  ],
+  "extends": "@xmtp/tsconfig/base.json",
+  "include": ["src/**/*"],
   "compilerOptions": {
-    "outDir": "./dist",
-    "esModuleInterop": true,
-    "declaration": true,
-    "declarationMap": true,
-    "forceConsistentCasingInFileNames": true,
-    "isolatedModules": true,
-    "lib": [
-      "ESNext"
-    ],
-    "module": "ESNext",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "skipLibCheck": true,
-    "sourceMap": true,
-    "strict": true,
-    "target": "ESNext"
+    "outDir": "./dist"
   }
 }

@@ -1,18 +1,8 @@
-# CDP Wallet Service
+import { CustomHomePage } from "../../components/CustomHomePage";
 
-The `WalletService` class in MessageKit provides a way to create agent wallets that can perform gasless payments and transfers on Base.
+# Wallet Service
 
-## Requirements
-
-Visit the [Coinbase Developer Portal](https://developer.coinbase.com/) to create an API key.
-
-- `@coinbase/coinbase-sdk`: Already included in MessageKit
-- `@coinbase/cbpay-js`: Already included in MessageKit
-
-- Environment variables:
-  - `COINBASE_APP_ID`: The Coinbase app id
-  - `COINBASE_API_KEY_NAME`: The Coinbase API key name
-  - `COINBASE_API_KEY_PRIVATE_KEY`: The Coinbase API private key
+The `WalletService` class in MessageKit provides a way to create agent wallets that can perform gasless payments and transfers in USDC.
 
 ## Wallet Management
 
@@ -56,11 +46,23 @@ await walletService.swap(humanAddress, fromAssetId, toAssetId, amount);
 await walletService.withdraw(amount);
 ```
 
-## Security Architecture
+## Plugins
 
-The WalletService uses encryption with local file storage:
+Check our plugins related to wallets.
 
-- Wallets are encrypted using the `getEncryptionKey()` method as the encryption key
-- `getEncryptionKey`() is a method that returns a string related to the current conversation
-- Only people inside the conversation can see the value of `getEncryptionKey`
-- Data is stored locally in `.data/wallet-storage` directory
+<CustomHomePage.TileGrid3>
+  <CustomHomePage.Tile
+    href="/plugins/circle"
+    title="Circle Wallet Service"
+    description="A plugin for a Circle Wallet Service."
+    icon="⛽️"
+    author="raihankhan-rk"
+  />
+  <CustomHomePage.Tile
+    href="/plugins/cdp"
+    title="CDP Wallet Service"
+    description="A plugin for a CDP Wallet Service."
+    icon="⛽️"
+    author="raihankhan-rk"
+  />
+</CustomHomePage.TileGrid3>

@@ -18,16 +18,16 @@ import {
 } from "../plugins/resolver.js";
 import type { ContentTypeId } from "@xmtp/content-type-primitives";
 import { ContentTypeText } from "@xmtp/content-type-text";
-import { WalletService } from "../plugins/cdp.js";
 import { logMessage, readFile } from "../helpers/utils.js";
 import {
-  AgentConfig,
   MessageAbstracted,
   GroupAbstracted,
   Agent,
   SkillResponse,
   AbstractedMember,
 } from "../helpers/types.js";
+import { WalletService as CdpWalletService } from "../plugins/cdp.js";
+import { WalletService as CircleWalletService } from "../plugins/circle.js";
 import { FrameKit } from "../plugins/framekit.js";
 import { ContentTypeReply, type Reply } from "@xmtp/content-type-reply";
 import { executeSkill, parseSkill, findSkill } from "./skills.js";
@@ -45,6 +45,7 @@ import {
 } from "@xmtp/content-type-reaction";
 import path from "path";
 import fetch from "cross-fetch";
+import type { AgentConfig, AgentWallet } from "../helpers/types";
 
 export const awaitedHandlers = new Map<
   string,
@@ -62,7 +63,7 @@ export type Context = {
   v2client: V2Client;
   agentConfig?: AgentConfig;
   agent: Agent;
-  walletService: WalletService;
+  walletService: CdpWalletService | CircleWalletService;
   framekit: FrameKit;
   sender?: AbstractedMember;
   awaitingResponse: boolean;
@@ -121,7 +122,7 @@ export class MessageKit implements Context {
     description: "",
     tag: "",
   };
-  walletService!: WalletService;
+  walletService!: CdpWalletService | CircleWalletService;
   sender?: AbstractedMember;
   awaitingResponse: boolean = false;
   getMessageById: (id: string) => DecodedMessage | null = () => null;
@@ -241,7 +242,7 @@ export class MessageKit implements Context {
             context?.agent?.skills ?? [],
           );
           const extractedValues = skillAction
-            ? parseSkill(content?.content, skillAction)
+            ? await parseSkill(content?.content, skillAction)
             : undefined;
           if (extractedValues?.skill) {
             content = {
@@ -292,16 +293,25 @@ export class MessageKit implements Context {
           typeId: typeId ?? "",
           version: version ?? "v2",
         };
-        if (
-          process.env.COINBASE_API_KEY_NAME &&
-          process.env.COINBASE_API_KEY_PRIVATE_KEY
-        ) {
-          context.walletService = new WalletService(
-            context as unknown as Context,
-          );
+        console.log("walletService", context.agentConfig?.walletService);
+        if (context.agentConfig?.walletService === true) {
+          if (
+            process.env.COINBASE_API_KEY_NAME &&
+            process.env.COINBASE_API_KEY_PRIVATE_KEY
+          ) {
+            console.log("CDP Wallet Service Started");
+            context.walletService = new CdpWalletService(
+              context as unknown as Context,
+            );
+          } else if (process.env.CIRCLE_API_KEY) {
+            console.log("Circle Wallet Service Started");
+            context.walletService = new CircleWalletService(
+              context as unknown as Context,
+            );
+          }
         }
 
-        return context as unknown as Context;
+        return context as Context;
       }
       return undefined;
     } catch (error) {
@@ -370,16 +380,13 @@ export class MessageKit implements Context {
   }
   async getV2ConversationBySender(sender: string) {
     try {
-      if (this.isV2Conversation(this.conversation)) {
+      if (!this.isV2Conversation(this.conversation)) {
         return this.conversation;
       }
-      return this.v2client.conversations
-        .list()
-        .then((conversations) =>
-          conversations.find(
-            (conv) => conv.peerAddress.toLowerCase() === sender.toLowerCase(),
-          ),
-        );
+      const conversations = await this.v2client.conversations.list();
+      return conversations.find(
+        (conv) => conv.peerAddress.toLowerCase() === sender.toLowerCase(),
+      );
     } catch (error) {
       console.error("Error getting V2 conversation by sender:", error);
       return undefined;

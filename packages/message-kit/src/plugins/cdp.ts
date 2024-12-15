@@ -2,7 +2,6 @@ import {
   Coinbase,
   Wallet,
   Transfer,
-  Trade,
   TimeoutError,
 } from "@coinbase/coinbase-sdk";
 import { type Context } from "../lib/core";
@@ -10,10 +9,9 @@ import { keccak256, toHex, toBytes } from "viem";
 import { getUserInfo } from "../plugins/resolver";
 import { isAddress } from "viem";
 import { generateOnRampURL } from "@coinbase/cbpay-js";
-import path from "path";
-import { getFS } from "../helpers/utils";
+import { AgentWallet, AgentWalletData } from "../helpers/types";
+import { LocalStorage } from "./storage";
 
-const { fsPromises } = getFS();
 const appId = process.env.COINBASE_APP_ID;
 const apiKeyName = process.env.COINBASE_API_KEY_NAME;
 const privateKey = process.env.COINBASE_API_KEY_PRIVATE_KEY;
@@ -26,56 +24,13 @@ const coinbase =
       })
     : undefined;
 
-interface WalletServiceData {
-  wallet: Wallet;
-  address: string;
-  agent_address: string;
-  key: string;
-}
-
-class LocalStorage {
-  private baseDir: string;
-
-  constructor(baseDir: string = ".data/wallet-storage") {
-    this.baseDir = baseDir;
-  }
-
-  private async ensureDir() {
-    if (!fsPromises) return;
-    await fsPromises.mkdir(this.baseDir, { recursive: true });
-  }
-
-  async set(key: string, value: string): Promise<void> {
-    await this.ensureDir();
-    const filePath = path.join(this.baseDir, `${key}.dat`);
-    await fsPromises?.writeFile(filePath, value, "utf8");
-  }
-
-  async get(key: string): Promise<string | undefined> {
-    try {
-      const filePath = path.join(this.baseDir, `${key}.dat`);
-      return (await fsPromises?.readFile(filePath, "utf8")) ?? undefined;
-    } catch (error) {
-      return undefined;
-    }
-  }
-
-  async del(key: string): Promise<void> {
-    try {
-      const filePath = path.join(this.baseDir, `${key}.dat`);
-      await fsPromises?.unlink(filePath);
-    } catch (error) {
-      // Ignore if file doesn't exist
-    }
-  }
-}
-
-export class WalletService {
+export class WalletService implements AgentWallet {
   private walletStorage: LocalStorage;
   private cdpEncriptionKey: string;
   private context: Context;
   private humanAddress: string;
   private isGroup: boolean;
+
   constructor(context: Context) {
     this.context = context;
     this.humanAddress = context.message.sender.address;
@@ -109,7 +64,7 @@ export class WalletService {
     );
     return JSON.parse(Buffer.from(decrypted).toString());
   }
-  async createWallet(key: string): Promise<boolean> {
+  async createWallet(key: string): Promise<AgentWalletData> {
     try {
       console.log(`Creating new wallet for key ${key}...`);
       const wallet = await Wallet.create({
@@ -133,16 +88,22 @@ export class WalletService {
       );
 
       await Wallet.import(data);
-      return true;
+      return {
+        id: address.getId(),
+        wallet: wallet,
+        address: address.getId(),
+        agent_address: address.getId(),
+        key: key,
+      };
     } catch (error) {
       console.error("Failed to create wallet:", error);
-      return false;
+      throw new Error("Failed to create wallet");
     }
   }
   async getWallet(
     key: string,
     createIfNotFound: boolean = true,
-  ): Promise<WalletServiceData | undefined> {
+  ): Promise<AgentWalletData | undefined> {
     const encryptedKey = `wallet:${this.encrypt(key)}`;
     const walletData = await this.walletStorage.get(encryptedKey);
     // If no wallet exists, create one
@@ -162,6 +123,7 @@ export class WalletService {
       const decrypted = this.decrypt(walletData);
       let importedWallet = await Wallet.import(decrypted.data);
       return {
+        id: importedWallet.getId() ?? "",
         wallet: importedWallet,
         agent_address: decrypted.agent_address,
         address: decrypted.address,
@@ -272,7 +234,6 @@ export class WalletService {
         }
       }
 
-      this.notifyUser(walletData, this.humanAddress, transfer, toWithdraw);
       return transfer;
     }
   }
@@ -337,47 +298,10 @@ export class WalletService {
         }
       }
 
-      await this.notifyUser(from, toAddress, transfer, amount);
       return transfer;
     } catch (error) {
       console.error("Transfer failed:", error);
       throw error;
-    }
-  }
-  async notifyUser(
-    from: WalletServiceData,
-    toAddress: string,
-    transaction: Transfer | Trade,
-    amount: number,
-  ) {
-    let balance = await from.wallet.getBalance(Coinbase.assets.Usdc);
-
-    if (transaction instanceof Transfer) {
-      await this.context.dm(`Transfer completed successfully`);
-      if (transaction.getTransactionHash()) {
-        await this.context.framekit.sendReceipt(
-          `https://basescan.org/tx/${transaction.getTransactionHash()}`,
-        );
-      }
-    } else if (transaction instanceof Trade) {
-      await this.context.dm(`Trade completed successfully`);
-      if (transaction.getTransaction()) {
-        await this.context.framekit.sendReceipt(
-          `https://basescan.org/tx/${(transaction as Trade).getTransaction()}`,
-        );
-      }
-    }
-    if (!isAddress(toAddress)) return;
-    const { v2, v3 } = await this.context.isOnXMTP(toAddress);
-    if (v2 || v3) return;
-    await this.context.dm(
-      `Your balance was deducted by $${amount}. Now is $${Number(balance) - amount}.`,
-    );
-    if (toAddress) {
-      await this.context.sendTo(
-        `Your balance was added by $${amount}. Now is $${Number(balance) + amount}.`,
-        [toAddress],
-      );
     }
   }
   // async swap(

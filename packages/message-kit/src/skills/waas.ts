@@ -1,6 +1,7 @@
-import { Balance } from "@coinbase/coinbase-sdk";
 import { Skill } from "../helpers/types";
 import { Context } from "../lib/core";
+import { getUserInfo } from "../plugins/resolver";
+import { isAddress } from "viem";
 
 export const waas: Skill[] = [
   {
@@ -27,11 +28,14 @@ export const waas: Skill[] = [
       "/transfer @username 2",
       "/transfer 0x123... 10",
       "/transfer vitalik.eth 0.01",
+      "/pay @username 5.1",
+      "/pay @username 2",
+      "/pay 0x123... 10",
+      "/pay vitalik.eth 0.01",
     ],
     params: {
       recipient: {
-        type: "string",
-        default: "",
+        type: "user",
       },
       amount: {
         type: "number",
@@ -81,13 +85,14 @@ export async function handleWallet(context: Context) {
     message: {
       content: {
         skill,
-        params: { amount, recipient, fromToken, toToken },
+        params: { amount, recipient },
       },
       sender,
     },
     group,
     walletService,
   } = context;
+
   if (group && skill == "help") {
     await context.reply("Check your DM's");
     return;
@@ -125,13 +130,66 @@ export async function handleWallet(context: Context) {
       await context.reply("You have no funds to transfer.");
       return;
     }
-    await context.send(`Transferring ${amount} USDC to ${recipient}`);
-    const transfer = await walletService.transfer(
+    if (!recipient?.address) {
+      console.log("recipient", recipient);
+      await context.reply("User not found.");
+      return;
+    }
+    await context.send(
+      `Transferring ${amount} USDC to ${recipient?.preferredName}`,
+    );
+    const tx = await walletService.transfer(
       sender.address,
-      recipient,
+      recipient?.address as string,
       amount,
     );
-
+    await notifyUser(
+      context,
+      sender.address,
+      recipient?.address as string,
+      tx,
+      amount,
+    );
     return;
   }
+}
+
+async function notifyUser(
+  context: Context,
+  fromAddress: string,
+  toAddress: string,
+  transaction: any,
+  amount: number,
+) {
+  let { balance } = await context.walletService.checkBalance(fromAddress);
+
+  if (transaction) {
+    await context.dm(`Transfer completed successfully`);
+    if (transaction.getTransactionHash !== undefined) {
+      await context.framekit.sendReceipt(
+        `https://basescan.org/tx/${transaction.getTransactionHash()}`,
+      );
+    } else if (transaction.txHash !== undefined) {
+      await context.framekit.sendReceipt(
+        `https://basescan.org/tx/${transaction.txHash}`,
+      );
+    } else if (transaction.getTransaction !== undefined) {
+      await context.framekit.sendReceipt(
+        `https://basescan.org/tx/${transaction.getTransaction()}`,
+      );
+    }
+  }
+  let newBalance = (Number(balance) - amount).toFixed(2);
+  await context.dm(
+    `Your balance was deducted by $${amount}. Now is $${newBalance}.`,
+  );
+
+  if (!isAddress(toAddress)) return;
+  const { v2, v3 } = await context.isOnXMTP(toAddress);
+  console.log(toAddress, { v2, v3 });
+  if (!v2 && !v3) return;
+  let userInfo = await getUserInfo(fromAddress);
+  await context.sendTo(`${userInfo?.preferredName} just sent you $${amount}`, [
+    toAddress,
+  ]);
 }

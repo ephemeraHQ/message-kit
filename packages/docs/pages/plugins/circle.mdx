@@ -1,18 +1,16 @@
-# CDP Wallet Service
+# Cirle Wallet Service
 
 The `WalletService` class in MessageKit provides a way to create agent wallets that can perform gasless payments and transfers on Base.
 
 ## Requirements
 
-Visit the [Coinbase Developer Portal](https://developer.coinbase.com/) to create an API key.
+Visit the [Circle Developer Portal](https://developer.circle.com/) to create an API key and entity secret.
 
-- `@coinbase/coinbase-sdk`: Already included in MessageKit
-- `@coinbase/cbpay-js`: Already included in MessageKit
-
+- `@circle-fin/developer-controlled-wallets`: Already included in MessageKit
 - Environment variables:
-  - `COINBASE_APP_ID`: The Coinbase app id
-  - `COINBASE_API_KEY_NAME`: The Coinbase API key name
-  - `COINBASE_API_KEY_PRIVATE_KEY`: The Coinbase API private key
+  - `CIRCLE_API_KEY`= # Circle API Key
+  - `CIRCLE_ENTITY_SECRET`= # Circle Entity Secret
+  - `CIRCLE_WALLET_SET_ID`= # Circle Wallet Set ID
 
 ## Wallet Management
 
@@ -55,12 +53,3 @@ await walletService.swap(humanAddress, fromAssetId, toAssetId, amount);
 // Withdraw funds (optional amount parameter)
 await walletService.withdraw(amount);
 ```
-
-## Security Architecture
-
-The WalletService uses encryption with local file storage:
-
-- Wallets are encrypted using the `getEncryptionKey()` method as the encryption key
-- `getEncryptionKey`() is a method that returns a string related to the current conversation
-- Only people inside the conversation can see the value of `getEncryptionKey`
-- Data is stored locally in `.data/wallet-storage` directory

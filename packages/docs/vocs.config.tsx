@@ -92,8 +92,12 @@ export default defineConfig({
           link: "/plugins/framekit",
         },
         {
-          text: "Wallets",
-          link: "/plugins/cdp",
+          text: "Wallet Service",
+          link: "/ux/wallet-service",
+        },
+        {
+          text: "Groups",
+          link: "/ux/groups",
         },
       ],
     },
@@ -126,23 +130,19 @@ export default defineConfig({
       text: "Fundations",
       items: [
         {
-          text: "Skills",
-          link: "/concepts/skills",
-        },
-        {
           text: "Agents",
           link: "/concepts/agents",
+        },
+        {
+          text: "Skills",
+          link: "/concepts/skills",
         },
         {
           text: "XMTP",
           link: "/concepts/xmtp",
         },
         {
-          text: "Groups",
-          link: "/concepts/groups",
-        },
-        {
-          text: "Identity",
+          text: "Usernames",
           link: "/plugins/resolver",
         },
       ],

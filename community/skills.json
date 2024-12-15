@@ -14,13 +14,6 @@
     "author": "ephemeraHQ"
   },
   {
-    "href": "/skills/waas",
-    "title": "Agent Wallet",
-    "description": "Agent wallets with CDP",
-    "icon": "💰",
-    "author": "humanagent"
-  },
-  {
     "href": "/skills/check",
     "title": "Check ENS domain",
     "description": "Check if an ENS domain is registered",
@@ -110,6 +103,13 @@
     "description": "Get the current price of a cryptocurrency in a currency.",
     "icon": "🪙",
     "author": "raihankhan_rk"
+  },
+  {
+    "href": "/skills/waas",
+    "title": "WAAS",
+    "description": "Interact with agent wallets",
+    "icon": "💰",
+    "author": "humanagent"
   },
   {
     "href": "/skills/search",

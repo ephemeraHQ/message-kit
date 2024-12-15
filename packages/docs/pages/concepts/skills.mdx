@@ -16,7 +16,7 @@ export const checkDomain: Skill[] = [
     params: {
       <name>: {
         default: "" // default value
-        type: `string` | `number` | `username` | `quoted` | `address` | `prompt` | `url`
+        type: "string" | "number" | "user" | "username" | "quoted" | "address" | "prompt" | "url"
         values: ["USDC","ETH"]// accepted values
         optional: true // if true, the parameter is optional
         plural: false // if true, the parameter is an array
@@ -24,6 +24,10 @@ export const checkDomain: Skill[] = [
   },
 ];
 ```
+
+:::tip
+The type `user` is a special type that allows you to get the user's address resolving the username or ENS name. See more in the [Identities](/plugins/resolver) section.
+:::
 
 ## Handling logic
 

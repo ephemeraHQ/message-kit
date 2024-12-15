@@ -22,11 +22,11 @@ describe("Parsing tests", () => {
     ],
   ])(
     "Compare extracted values from skill: %s",
-    (input, expectedSkill, expectedParams) => {
+    async (input, expectedSkill, expectedParams) => {
       // @ts-ignore
       const skillAction = findSkill(input, agent?.skills);
       if (skillAction) {
-        const extractedValues = parseSkill(input, skillAction);
+        const extractedValues = await parseSkill(input, skillAction);
         console.log(extractedValues);
         expect(extractedValues?.skill).toBe(expectedSkill);
         expect(extractedValues?.params).toEqual(expectedParams);
