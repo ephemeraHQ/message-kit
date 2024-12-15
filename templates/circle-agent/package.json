@@ -10,7 +10,6 @@
     "start": "node dist/index.js"
   },
   "dependencies": {
-    "@circle-fin/developer-controlled-wallets": "^6.0.0",
     "@xmtp/message-kit": "workspace:*"
   },
   "devDependencies": {
