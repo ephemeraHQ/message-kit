@@ -238,9 +238,6 @@ export class WalletService implements AgentWallet {
       }
     }
 
-    //Notify the user
-    await this.notifyUser(from, toAddress, trade, amount);
-
     return trade;
   }
 
