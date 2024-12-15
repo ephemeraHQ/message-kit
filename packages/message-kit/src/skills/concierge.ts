@@ -37,7 +37,7 @@ export const concierge: Skill[] = [
     ],
     params: {
       recipient: {
-        type: "user",
+        type: "username",
       },
       amount: {
         type: "number",

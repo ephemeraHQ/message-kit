@@ -77,10 +77,6 @@ export default defineConfig({
   },
   sidebar: [
     {
-      text: "Introduction",
-      link: "/introduction",
-    },
-    {
       text: "Quickstart",
       link: "/quickstart",
     },

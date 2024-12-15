@@ -195,26 +195,6 @@ export async function parseSkill(
         values.params[param] = parts.slice(1).join(" ");
         valueFound = true;
       } else if (type === "username") {
-        // Updated regular expression to ensure usernames start with @
-        const usernameParts = parts.reduce<string[]>((acc, part, idx) => {
-          if (
-            !usedIndices.has(idx) &&
-            (/^@[a-zA-Z][a-zA-Z0-9_-]*$/.test(part) ||
-              /^[a-zA-Z0-9-]+\.eth$/.test(part)) // Ensure it starts with @ or is a .eth domain
-          ) {
-            usedIndices.add(idx);
-            // Handle potential comma-separated values
-            const usernames = part.split(",");
-            acc.push(...usernames);
-          }
-          return acc;
-        }, []);
-
-        if (usernameParts.length > 0) {
-          values.params[param] = plural ? usernameParts : usernameParts[0];
-          valueFound = true;
-        }
-      } else if (type === "user") {
         const userParts = await parts.reduce<Promise<UserInfo[]>>(
           async (acc, part, idx) => {
             const result: UserInfo[] = await acc;
@@ -232,8 +212,6 @@ export async function parseSkill(
                 // Handle potential comma-separated values
                 const users = part.split(",");
                 for (const user of users) {
-                  // For ENS or usernames, resolve to address
-                  console.log("user", user);
                   let userInfo = await getUserInfo(user);
                   console.log("userInfo", userInfo);
                   if (userInfo?.address) {

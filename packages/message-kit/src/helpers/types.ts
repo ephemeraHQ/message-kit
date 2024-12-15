@@ -93,8 +93,7 @@ export interface SkillParamConfig {
     | "quoted"
     | "address"
     | "prompt"
-    | "url"
-    | "user";
+    | "url";
   plural?: boolean;
   values?: string[]; // Accepted values for the parameter
   optional?: boolean;
