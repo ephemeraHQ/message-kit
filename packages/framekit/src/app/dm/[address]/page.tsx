@@ -1,8 +1,9 @@
 "use client";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useState, useMemo } from "react";
 import dynamic from "next/dynamic";
 import { useParams } from "next/navigation";
 import sdk, { type FrameContext } from "@farcaster/frame-sdk";
+import { getUserInfo, UserInfo } from "@/app/utils/resolver";
 
 const Chat = dynamic(() => import("../../../components/Chat"), {
   ssr: false,
@@ -10,12 +11,40 @@ const Chat = dynamic(() => import("../../../components/Chat"), {
 
 export default function ChatFrame(): JSX.Element {
   const params = useParams();
-  const address = params.address as string;
+  const [user, setUser] = useState<UserInfo | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        console.log("Fetching user info for address:", params?.address);
+        const userInfo = await getUserInfo(params?.address as string);
+        console.log("Fetched user info:", userInfo);
+        setUser(userInfo ?? null);
+      } catch (error) {
+        console.error("Error fetching user info:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserInfo();
+  }, [params?.address]);
+
+  const memoizedUser = useMemo(() => user, [user]) as UserInfo;
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!user) {
+    return <div>User not found</div>;
+  }
 
   return (
-    <FrameHTML address={address}>
+    <FrameHTML user={memoizedUser}>
       <Suspense fallback={<div>Loading...</div>}>
-        <ChatContent />
+        <Chat user={memoizedUser} />
       </Suspense>
     </FrameHTML>
   );
@@ -24,13 +53,13 @@ export default function ChatFrame(): JSX.Element {
 // Create a wrapper component that will render the full HTML
 function FrameHTML({
   children,
-  address,
+  user,
 }: {
   children: React.ReactNode;
-  address: string;
+  user: UserInfo;
 }) {
   const baseUrl = `${process.env.NEXT_PUBLIC_URL ?? "http://localhost:3000"}`;
-  const image = `${baseUrl}/api/dm?address=${address}`;
+  const image = `${baseUrl}/api/dm?address=${user.address}`;
 
   console.log(image);
   return (
@@ -51,27 +80,26 @@ function FrameHTML({
   );
 }
 
-function ChatContent(): JSX.Element {
+function ChatContent({ user }: { user: UserInfo }): JSX.Element {
   const [isSDKLoaded, setIsSDKLoaded] = useState(false);
   const [context, setContext] = useState<FrameContext>();
   const params = useParams();
-  const address = params.address as string;
 
   useEffect(() => {
     const initFrame = async () => {
-      setContext(await sdk.context);
-      sdk.actions.ready();
+      if (!isSDKLoaded) {
+        setContext(await sdk.context);
+        sdk.actions.ready();
+        setIsSDKLoaded(true);
+      }
     };
 
-    if (sdk && !isSDKLoaded) {
-      setIsSDKLoaded(true);
-      initFrame();
-    }
+    initFrame();
   }, [isSDKLoaded]);
 
   return (
     <div style={{ height: "100vh", width: "100%" }}>
-      <Chat recipientAddress={address} />
+      <Chat user={user} />
     </div>
   );
 }

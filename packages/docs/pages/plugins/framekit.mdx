@@ -13,7 +13,10 @@ You can request payments using the payment frame:
 
 ```typescript
 // Request 1 USDC payment to a specific address
-await framekit.requestPayment(recipientAddress, 1, "USDC");
+const url = await FrameKit.requestPayment(recipientAddress, 1, "USDC");
+
+// Send the url to the user
+await context.send(url);
 ```
 
 ## Wallet details
@@ -22,7 +25,12 @@ You can send agent wallet info using the `sendWallet` method:
 
 ```typescript
 // Send agent wallet info
-await framekit.sendWallet("0x93E2fc3e99dFb1238eB9e0eF2580EFC5809C7204");
+const url = await FrameKit.sendWallet(
+  "0x93E2fc3e99dFb1238eB9e0eF2580EFC5809C7204",
+);
+
+// Send the url to the user
+await context.send(url);
 ```
 
 Properties:
@@ -37,8 +45,10 @@ You can request receipts using the receipt frame:
 
 ```typescript
 // Request a receipt
-await framekit.sendReceipt(urlOfTransaction);
-// ie https://sepolia.basescan.org/tx/0x1234567890abcdef
+const url = await FrameKit.sendReceipt(urlOfTransaction);
+
+// Send the url to the user
+await context.send(url);
 ```
 
 Properties:
@@ -51,16 +61,25 @@ You can send messages to a user or group on Converse using the `sendConverseDmFr
 
 ```typescript
 // Send a message to a user
-await framekit.sendConverseDmFrame(userAddress);
+const url = await FrameKit.converseLink(userAddress);
+
+// Send the url to the user
+await context.send(url);
 
 // Send a message to a user with an optional pretext
-await framekit.sendConverseDmFrame(userAddress, "Hello, how are you?");
+const url = await FrameKit.converseLink(userAddress, "Hello, how are you?");
+
+// Send the url to the user
+await context.send(url);
 
 // Send a message to a group
-await framekit.sendConverseGroupFrame(groupId);
+const url = await FrameKit.converseGroup(groupId);
 
 // Send a message to a group with an optional pretext
-await framekit.sendConverseGroupFrame(groupId, "gm all!");
+const url = await FrameKit.converseGroup(groupId, "gm all!");
+
+// Send the url to the user
+await context.send(url);
 ```
 
 ## Coinbase
@@ -71,7 +90,7 @@ Coinbase does not render frames but you can deeplink into other users inside the
 
 ```typescript
 // Send a message to a user with an optional pretext
-await context.send("https://go.cb-w.com/messaging?address=" + userAddress);
+await context.coinbaseLink(userAddress);
 ```
 
 ## Custom
@@ -96,7 +115,10 @@ const frame = {
   image: "https://example.com/weather.png",
 };
 
-await framekit.sendCustomFrame(frame);
+const url = await FrameKit.sendCustomFrame(frame);
+
+// Send the url to the user
+await context.send(url);
 ```
 
 Properties:

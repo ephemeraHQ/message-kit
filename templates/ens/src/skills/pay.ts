@@ -1,4 +1,4 @@
-import { Context, getUserInfo, Skill } from "@xmtp/message-kit";
+import { Context, FrameKit, getUserInfo, Skill } from "@xmtp/message-kit";
 
 export const pay: Skill[] = [
   {
@@ -51,8 +51,10 @@ export async function handler(context: Context) {
   let receiverAddress = username?.address;
   if (skill === "tip") {
     let tipAmount = 1;
-    await context.framekit.requestPayment(receiverAddress, tipAmount);
+    const url = await FrameKit.requestPayment(receiverAddress, tipAmount);
+    await context.dm(url);
   } else if (skill === "pay") {
-    await context.framekit.requestPayment(receiverAddress, amount, token);
+    const url = await FrameKit.requestPayment(receiverAddress, amount, token);
+    await context.dm(url);
   }
 }

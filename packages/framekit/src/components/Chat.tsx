@@ -1,13 +1,10 @@
+import React from "react";
 import { useState, useEffect } from "react";
 import { Client as V2Client } from "@xmtp/xmtp-js";
 import { Wallet } from "ethers";
 import styles from "./Chat.module.css";
-import { getUserInfo, UserInfo } from "@/app/utils/resolver";
+import { UserInfo } from "@/app/utils/resolver";
 import { isAddress } from "viem";
-
-interface ChatProps {
-  recipientAddress: string;
-}
 
 interface Message {
   id: string;
@@ -15,7 +12,7 @@ interface Message {
   sender: string;
 }
 
-export default function Chat({ recipientAddress }: ChatProps) {
+function Chat({ user }: { user: UserInfo }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [wallet, setWallet] = useState<any | undefined>(undefined);
@@ -28,15 +25,17 @@ export default function Chat({ recipientAddress }: ChatProps) {
   const [processedMessageIds] = useState(new Set<string>());
 
   useEffect(() => {
+    console.log("useEffect triggered with user:", user);
+
     const init = async () => {
       const newWallet = Wallet.createRandom();
       setWallet(newWallet);
 
       try {
-        const userInfo = await getUserInfo(recipientAddress);
-        setRecipientInfo(userInfo);
-
-        if (userInfo?.address) {
+        setRecipientInfo(user);
+        console.log("User info:", user);
+        if (user?.address) {
+          console.log("Initializing XMTP with address:", user.address);
           await initXmtp(newWallet);
         } else {
           console.error("Could not resolve recipient address");
@@ -49,7 +48,7 @@ export default function Chat({ recipientAddress }: ChatProps) {
     };
 
     init();
-  }, [recipientAddress]);
+  }, [user.address]);
 
   useEffect(() => {
     const initConversation = async () => {
@@ -160,6 +159,20 @@ export default function Chat({ recipientAddress }: ChatProps) {
     }
   };
 
+  const renderMessageContent = (content: string) => {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    return content.split(urlRegex).map((part, index) => {
+      if (urlRegex.test(part)) {
+        return (
+          <a key={index} href={part} target="_blank" rel="noopener noreferrer">
+            {part}
+          </a>
+        );
+      }
+      return part;
+    });
+  };
+
   return (
     <div className={styles.chatContainer}>
       <div className={styles.walletInfo}>
@@ -170,19 +183,17 @@ export default function Chat({ recipientAddress }: ChatProps) {
         </div>*/}
         <div>
           Agent:
-          {recipientInfo?.preferredName ||
-            (isAddress(recipientAddress)
-              ? recipientAddress.slice(0, 6) +
-                "..." +
-                recipientAddress.slice(-4)
-              : recipientAddress)}
+          {user?.preferredName ||
+            (user?.address && isAddress(user.address)
+              ? user.address.slice(0, 6) + "..." + user.address.slice(-4)
+              : user?.address)}
         </div>
       </div>
       <div className={styles.messagesContainer}>
         {messages.map((msg, index) => (
           <div key={msg.id || index} className={styles.message}>
             <span className={styles.sender}>{msg.sender}</span>
-            {msg.content}
+            {renderMessageContent(msg.content)}
           </div>
         ))}
       </div>
@@ -209,3 +220,5 @@ export default function Chat({ recipientAddress }: ChatProps) {
     </div>
   );
 }
+
+export default React.memo(Chat);

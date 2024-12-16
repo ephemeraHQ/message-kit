@@ -3,6 +3,7 @@ import { Skill } from "../helpers/types";
 import { Context } from "../lib/core";
 import { getUserInfo } from "../plugins/resolver";
 import { isAddress } from "viem";
+import { FrameKit } from "../plugins/FrameKit";
 
 export const concierge: Skill[] = [
   {
@@ -99,32 +100,33 @@ export async function handleWallet(context: Context) {
     await context.reply("Check your DM's");
     return;
   } else if (skill === "help") {
-    await context.send("Im your personal assistant. How can I help you today?");
+    await context.dm("Im your personal assistant. How can I help you today?");
   } else if (skill === "address") {
     const walletExist = await walletService.getWallet(sender.address);
     if (walletExist) {
       const { balance } = await walletService.checkBalance(sender.address);
-      await context.send("Your agent wallet address");
-      await context.framekit.sendWallet(
+      await context.dm("Your agent wallet address");
+      const url = await FrameKit.sendWallet(
         walletExist.address,
         walletExist.agent_address,
         balance,
       );
+      await context.dm(url);
       return;
     }
     await context.reply("You don't have an agent wallet.");
   } else if (skill === "balance") {
     const { balance } = await walletService.checkBalance(sender.address);
-    await context.send(`Your agent wallet has a balance of $${balance}`);
+    await context.dm(`Your agent wallet has a balance of $${balance}`);
   } else if (skill === "fund") {
     await fund(context, amount);
     return;
   } else if (skill === "withdraw") {
     await withdraw(context, amount);
   } else if (skill === "swap") {
-    context.send("I cant do that yet");
+    context.dm("I cant do that yet");
     // await walletService.swap(sender.address, fromToken, toToken, amount);
-    // await context.send("Swap completed");
+    // await context.dm("Swap completed");
     // return;
   } else if (skill === "transfer") {
     const { balance } = await walletService.checkBalance(sender.address);
@@ -137,7 +139,7 @@ export async function handleWallet(context: Context) {
       await context.reply("User not found.");
       return;
     }
-    await context.send(
+    await context.dm(
       `Transferring ${amount} USDC to ${recipient?.preferredName}`,
     );
     const tx = await walletService.transfer(
@@ -166,20 +168,23 @@ async function notifyUser(
   if (transaction) {
     await context.dm(`Transfer completed successfully`);
     if (transaction.getTransactionHash !== undefined) {
-      await context.framekit.sendReceipt(
+      const url = await FrameKit.sendReceipt(
         `https://basescan.org/tx/${transaction.getTransactionHash()}`,
         amount,
       );
+      await context.dm(url);
     } else if (transaction.txHash !== undefined) {
-      await context.framekit.sendReceipt(
+      const url = await FrameKit.sendReceipt(
         `https://basescan.org/tx/${transaction.txHash}`,
         amount,
       );
+      await context.dm(url);
     } else if (transaction.getTransaction !== undefined) {
-      await context.framekit.sendReceipt(
+      const url = await FrameKit.sendReceipt(
         `https://basescan.org/tx/${transaction.getTransaction()}`,
         amount,
       );
+      await context.dm(url);
     }
   }
   await context.dm(`Your balance was deducted by $${amount}`);
@@ -231,12 +236,13 @@ async function fund(
         walletData.agent_address,
       );
       await context.dm("Here is the payment link:");
-      await context.framekit.requestPayment(
+      const url = await FrameKit.requestPayment(
         walletData.agent_address,
         amount,
         "USDC",
         onRamp ? onRampURL : undefined,
       );
+      await context.dm(url);
       return true;
     } else {
       await context.dm("Wrong amount. Max 10 USDC.");
@@ -259,12 +265,13 @@ async function fund(
       walletData.agent_address,
     );
 
-    await context.framekit.requestPayment(
+    const url = await FrameKit.requestPayment(
       walletData.agent_address,
       Number(response),
       "USDC",
       onRamp ? onRampURL : undefined,
     );
+    await context.dm(url);
     return true;
   }
 }

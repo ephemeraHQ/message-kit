@@ -1,7 +1,4 @@
 import { isAddress } from "viem";
-import { V2Client, V3Client } from "../index";
-import { Context } from "../lib/core";
-
 export const converseEndpointURL = "https://converse.xyz/profile/";
 
 export type InfoCache = Map<string, UserInfo>;
@@ -77,7 +74,6 @@ export const userInfoCache = UserInfoCache.getInstance();
 export const getUserInfo = async (
   key: string,
   clientAddress?: string,
-  context?: Context,
 ): Promise<UserInfo | undefined> => {
   let data: UserInfo = {
     ensDomain: undefined,
@@ -129,13 +125,6 @@ export const getUserInfo = async (
     console.log("Unable to determine a valid key for fetching user info.");
     return data;
   } else {
-    // Notify user about the fetching process
-    if (context) {
-      await context.send(
-        "Hey there! Give me a sec while I fetch info about you first...",
-      );
-    }
-    // Fetch data based on ENS domain
     // Fetch ENS data
     try {
       const response = await fetch(`https://ensdata.net/${keyToUse}`);

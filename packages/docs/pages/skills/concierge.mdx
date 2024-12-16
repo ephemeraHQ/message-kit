@@ -50,12 +50,13 @@ async function fund(context: Context, amount: number) {
     amount,
     walletData.agent_address,
   );
-  await context.framekit.requestPayment(
+  const url = await FrameKit.requestPayment(
     walletData.agent_address,
     amount,
     "USDC",
     onRamp ? onRampURL : undefined,
   );
+  await context.send(url);
 }
 ```
 
