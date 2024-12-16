@@ -1,8 +1,16 @@
+import Video from "../../components/Video";
+
 # Wallet concierge
 
-The Wallet Concierge acts as a personal financial assistant within your XMTP conversations, managing digital assets with ease.
+The Wallet Concierge acts as a personal financial assistant within your Agent. It handles the user financial needs without you needing to worry about the logic.
 
-## Balance
+<Video src="/videos/concierge.mp4" />
+
+> As seen in this [tweet](https://x.com/xmtp_/status/1867254407819415653)
+
+## Features
+
+### Balance
 
 Simply ask the concierge to check your balance, and it will provide you with the current amount in your wallet. For example, you can say:
 
@@ -20,7 +28,7 @@ if (skill === "balance") {
 }
 ```
 
-## Fund
+### Funding
 
 You can request to add funds to your wallet. If you try to exceed the maximum limit, the concierge will notify you. For instance, you might say:
 
@@ -51,7 +59,7 @@ async function fund(context: Context, amount: number) {
 }
 ```
 
-## Transfers
+### Transfers
 
 You can instruct the concierge to transfer funds to another user. If your balance is insufficient, it will inform you. For example, you might say:
 
@@ -78,13 +86,10 @@ if (skill === "transfer") {
     recipient?.address as string,
     amount,
   );
-
-  // Smart notifications
-  await notifyUser(context, sender.address, recipient?.address, tx, amount);
 }
 ```
 
-## Swaps
+### Swaps
 
 You can instruct the concierge to swap tokens from one type to another. For example, you might say:
 
@@ -103,37 +108,43 @@ if (skill === "swap") {
 }
 ```
 
-## Notifications
+### Notifications
 
 After a transaction, the concierge will notify you with a receipt and update your balance. It will also inform the recipient if they are on XMTP. For example, after sending funds, you will receive a message confirming the transaction and your new balance.
 
 ```typescript
-async function notifyUser(
-  context: Context,
-  fromAddress: string,
-  toAddress: string,
-  transaction: any,
-  amount: number,
-) {
-  // Send receipt
-  await context.dm(`Transfer completed successfully`);
-  await context.framekit.sendReceipt(
-    `https://basescan.org/tx/${transaction.txHash}`,
-  );
-
-  // Update balance info
-  let newBalance = (Number(balance) - amount).toFixed(2);
-  await context.dm(
-    `Your balance was deducted by $${amount}. Now is $${newBalance}.`,
-  );
-
-  // Notify recipient if on XMTP
-  const { v2, v3 } = await context.isOnXMTP(toAddress);
-  if (v2 || v3) {
-    await context.sendTo(
-      `${userInfo?.preferredName} just sent you $${amount}`,
-      [toAddress],
-    );
-  }
-}
+// Smart notifications
+await notifyUser(context, sender.address, recipient?.address, tx, amount);
 ```
+
+## Installation
+
+Concierge is a [Skill](/concepts/skills) already included in Message Kit.
+
+```tsx
+import { run, Agent, concierge } from "@xmtp/message-kit";
+
+export const agent: Agent = {
+  name: "Wallet Agent",
+  tag: "@bot",
+  description: "A payment agent with that manages wallets for its users",
+  skills: [concierge], // [!code focus]
+  config: {
+    walletService: true,
+  },
+};
+
+run(agent);
+```
+
+## Wallet Service
+
+Wallet Service is a plugin that manages the Concierge uses for performing gasless transactions on behalf of the user.
+
+- Gasless
+- Onramp
+- Offramp
+- Swaps
+- Transfers
+
+Learn more about the [Wallet Service](/ux/wallet-service).

@@ -17,13 +17,13 @@ export class LocalStorage {
 
   async set(key: string, value: string): Promise<void> {
     await this.ensureDir();
-    const filePath = path.join(this.baseDir, `${key}.dat`);
+    const filePath = path.join(this.baseDir, `${key.toLowerCase()}.dat`);
     await fsPromises?.writeFile(filePath, value, "utf8");
   }
 
   async get(key: string): Promise<string | undefined> {
     try {
-      const filePath = path.join(this.baseDir, `${key}.dat`);
+      const filePath = path.join(this.baseDir, `${key.toLowerCase()}.dat`);
       return (await fsPromises?.readFile(filePath, "utf8")) ?? undefined;
     } catch (error) {
       return undefined;
@@ -32,10 +32,23 @@ export class LocalStorage {
 
   async del(key: string): Promise<void> {
     try {
-      const filePath = path.join(this.baseDir, `${key}.dat`);
+      const filePath = path.join(this.baseDir, `${key.toLowerCase()}.dat`);
       await fsPromises?.unlink(filePath);
     } catch (error) {
       // Ignore if file doesn't exist
+    }
+  }
+
+  async getWalletCount(): Promise<number> {
+    try {
+      const files = await fsPromises?.readdir(this.baseDir);
+      const walletFiles = files?.filter(
+        (file) => file.endsWith(".dat") && /^[0-9a-f]{40}\.dat$/i.test(file),
+      );
+      console.log("walletFiles", walletFiles?.length);
+      return walletFiles?.length || 0;
+    } catch {
+      return 0;
     }
   }
 }

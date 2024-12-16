@@ -3,6 +3,7 @@ import {
   Wallet,
   Transfer,
   TimeoutError,
+  Trade,
 } from "@coinbase/coinbase-sdk";
 import { type Context } from "../lib/core";
 import { keccak256, toHex, toBytes } from "viem";
@@ -27,16 +28,18 @@ const coinbase =
 export class WalletService implements AgentWallet {
   private walletStorage: LocalStorage;
   private cdpEncriptionKey: string;
-  private context: Context;
-  private humanAddress: string;
-  private isGroup: boolean;
+  private senderAddress: string;
+  private developerAddress: string;
 
   constructor(context: Context) {
-    this.context = context;
-    this.humanAddress = context.message.sender.address;
     this.walletStorage = new LocalStorage();
-    this.cdpEncriptionKey = context.client.accountAddress;
-    this.isGroup = context.group !== undefined;
+    this.walletStorage.getWalletCount();
+    this.cdpEncriptionKey = (
+      process.env.COINBASE_API_KEY_PRIVATE_KEY as string
+    ).toLowerCase();
+    console.log("cdpEncriptionKey", this.cdpEncriptionKey);
+    this.senderAddress = context.message.sender.address.toLowerCase();
+    this.developerAddress = context.client.accountAddress.toLowerCase();
   }
 
   encrypt(data: any): string {
@@ -49,14 +52,13 @@ export class WalletService implements AgentWallet {
     const encrypted = Buffer.from(dataString).map(
       (byte, i) => byte ^ parseInt(key.slice(2 + (i % 64), 4 + (i % 64)), 16),
     );
-    return toHex(encrypted);
+    return toHex(encrypted).toLowerCase();
   }
 
   decrypt(data: string): any | undefined {
     if (typeof data === "string") {
       data = data.toLowerCase();
     }
-
     const key = keccak256(toHex(this.cdpEncriptionKey));
     const encrypted = toBytes(data);
     const decrypted = encrypted.map(
@@ -66,6 +68,7 @@ export class WalletService implements AgentWallet {
   }
   async createWallet(key: string): Promise<AgentWalletData> {
     try {
+      key = key.toLowerCase();
       console.log(`Creating new wallet for key ${key}...`);
       const wallet = await Wallet.create({
         networkId: Coinbase.networks.BaseMainnet,
@@ -78,7 +81,7 @@ export class WalletService implements AgentWallet {
       const walletInfo = {
         data,
         agent_address: address.getId(),
-        address: this.humanAddress,
+        address: this.senderAddress,
         key,
       };
 
@@ -91,7 +94,7 @@ export class WalletService implements AgentWallet {
       return {
         id: address.getId(),
         wallet: wallet,
-        address: address.getId(),
+        address: this.senderAddress,
         agent_address: address.getId(),
         key: key,
       };
@@ -104,6 +107,7 @@ export class WalletService implements AgentWallet {
     key: string,
     createIfNotFound: boolean = true,
   ): Promise<AgentWalletData | undefined> {
+    key = key.toLowerCase();
     const encryptedKey = `wallet:${this.encrypt(key)}`;
     const walletData = await this.walletStorage.get(encryptedKey);
     // If no wallet exists, create one
@@ -138,10 +142,11 @@ export class WalletService implements AgentWallet {
   async checkBalance(
     humanAddress: string,
   ): Promise<{ address: string | undefined; balance: number }> {
+    humanAddress = humanAddress.toLowerCase();
     let walletData = await this.getWallet(humanAddress);
     if (!walletData) return { address: undefined, balance: 0 };
 
-    console.log(`Retrieved wallet data for ${this.humanAddress}`);
+    console.log(`Retrieved wallet data for ${humanAddress}`);
     let balance = await walletData.wallet.getBalance(Coinbase.assets.Usdc);
 
     return {
@@ -165,6 +170,8 @@ export class WalletService implements AgentWallet {
     toAddress: string,
     amount: number,
   ): Promise<Transfer | undefined> {
+    fromAddress = fromAddress.toLowerCase();
+    toAddress = toAddress.toLowerCase();
     let from = await this.getWallet(fromAddress);
     if (!from) return undefined;
     console.log(`Retrieved wallet data for ${fromAddress}`);
@@ -176,7 +183,6 @@ export class WalletService implements AgentWallet {
       let user = await getUserInfo(toAddress);
       console.log("resolved toAddress", toAddress, user?.address);
       if (!user) {
-        this.context.dm("User not found.");
         return undefined;
       }
       toAddress = user.address as string;
@@ -211,42 +217,41 @@ export class WalletService implements AgentWallet {
       throw error;
     }
   }
-  // async swap(
-  //   address: string,
-  //   fromAssetId: string,
-  //   toAssetId: string,
-  //   amount: number,
-  // ): Promise<Trade | undefined> {
-  //   let walletData = await this.getWallet(address);
-  //   if (!walletData) return undefined;
-  //   console.log(`Retrieved wallet data for ${address}`);
+  async swap(
+    address: string,
+    fromAssetId: string,
+    toAssetId: string,
+    amount: number,
+  ): Promise<Trade | undefined> {
+    address = address.toLowerCase();
+    let walletData = await this.getWallet(address);
+    if (!walletData) return undefined;
+    console.log(`Retrieved wallet data for ${address}`);
 
-  //   console.log(
-  //     `Initiating swap from ${fromAssetId} to ${toAssetId} for amount: ${amount}`,
-  //   );
-  //   const trade = await walletData.wallet.createTrade({
-  //     amount,
-  //     fromAssetId,
-  //     toAssetId,
-  //   });
+    console.log(
+      `Initiating swap from ${fromAssetId} to ${toAssetId} for amount: ${amount}`,
+    );
+    const trade = await walletData.wallet.createTrade({
+      amount,
+      fromAssetId,
+      toAssetId,
+    });
 
-  //   try {
-  //     await trade.wait();
-  //   } catch (err) {
-  //     if (err instanceof TimeoutError) {
-  //       console.log("Waiting for trade timed out");
-  //     } else {
-  //       console.error("Error while waiting for trade to complete: ", err);
-  //     }
-  //   }
+    try {
+      await trade.wait();
+    } catch (err) {
+      if (err instanceof TimeoutError) {
+        console.log("Waiting for trade timed out");
+      } else {
+        console.error("Error while waiting for trade to complete: ", err);
+      }
+    }
 
-  //   //Notify the user
-  //   await this.notifyUser(  from, toAddress, trade, amount);
-
-  //   return trade;
-  // }
+    return trade;
+  }
 
   async deleteWallet(key: string): Promise<boolean> {
+    key = key.toLowerCase();
     console.log(`Deleting wallet for key ${key}`);
     const encryptedKey = this.encrypt(key);
     await this.walletStorage.del(`wallet:${encryptedKey}`);

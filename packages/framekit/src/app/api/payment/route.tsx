@@ -5,6 +5,7 @@ import { join } from "path";
 // @ts-ignore
 import QRCode from "qrcode";
 import { parseUnits } from "viem";
+import { extractFrameChain } from "@/app/utils/networks";
 export interface Network {
   networkId: string;
   networkName: string;
@@ -25,16 +26,18 @@ const interSemiboldFontData = fs.readFileSync(interSemiboldFontPath);
 
 export async function GET(req: NextRequest) {
   try {
-    const params = {
+    let searchParams = req.nextUrl.searchParams;
+    let params = {
       url: process.env.NEXT_PUBLIC_URL,
-      networkLogo: req.nextUrl.searchParams.get("networkLogo"),
-      amount: req.nextUrl.searchParams.get("amount") ?? "1",
-      networkName: req.nextUrl.searchParams.get("networkName") ?? "base",
-      tokenName: req.nextUrl.searchParams.get("tokenName") ?? "",
-      recipientAddress: req.nextUrl.searchParams.get("recipientAddress"),
-      tokenAddress: req.nextUrl.searchParams.get("tokenAddress"),
-      chainId: req.nextUrl.searchParams.get("chainId"),
-      networkId: req.nextUrl.searchParams.get("networkId"),
+      amount: searchParams.get("amount") ?? "1",
+      recipientAddress:
+        searchParams.get("recipientAddress") ??
+        searchParams.get("recipientaddress") ??
+        "",
+      networkId:
+        searchParams.get("networkId") ??
+        searchParams.get("networkid") ??
+        "base",
     };
     const toComponent =
       "To: " +
@@ -42,16 +45,18 @@ export async function GET(req: NextRequest) {
       "..." +
       params.recipientAddress?.slice(-4);
 
+    const { chainId, networkName, tokenName, networkLogo, tokenAddress } =
+      extractFrameChain(params.networkId);
     const amountUint256 = parseUnits(params.amount.toString(), 6);
-    const ethereumUrl = `ethereum:${params.tokenAddress}@${params.chainId}/transfer?address=${params.recipientAddress}&uint256=${amountUint256}`;
+    const ethereumUrl = `ethereum:${tokenAddress}@${chainId}/transfer?address=${params.recipientAddress}&uint256=${amountUint256}`;
 
     const qrCodeDataUrl = await QRCode.toDataURL(ethereumUrl);
 
     if (
-      !params.networkName ||
-      !params.networkLogo ||
+      !networkName ||
+      !networkLogo ||
       !params.amount ||
-      !params.tokenName ||
+      !tokenName ||
       !params.recipientAddress
     ) {
       return new ImageResponse(
@@ -128,13 +133,13 @@ export async function GET(req: NextRequest) {
                 gap: "16px",
               }}>
               <img
-                src={params.networkLogo}
+                src={networkLogo}
                 style={{
                   borderRadius: "25px",
                   width: "30px",
                 }}
               />
-              <div style={{ fontSize: "24px" }}>{params.networkName}</div>
+              <div style={{ fontSize: "24px" }}>{networkName}</div>
             </div>
             <div style={{ fontSize: "56px", display: "flex" }}>
               Pay
@@ -144,7 +149,7 @@ export async function GET(req: NextRequest) {
                   display: "flex",
                   marginLeft: "8px",
                 }}>
-                {params.amount} {params.tokenName}
+                {params.amount} {tokenName}
               </div>
             </div>
             <div style={{ fontSize: "24px" }}>{toComponent}</div>

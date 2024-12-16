@@ -1,4 +1,5 @@
 import PaymentFrame from "../../components/PaymentFrame";
+import { extractFrameChain } from "../utils/networks";
 
 export default async function Home({
   searchParams,
@@ -8,22 +9,29 @@ export default async function Home({
   const resolvedSearchParams = await searchParams;
   const params = {
     url: process.env.NEXT_PUBLIC_URL,
-    agentAddress: resolvedSearchParams?.agentAddress as string,
-    recipientAddress: resolvedSearchParams?.recipientAddress as string,
-    ownerAddress: resolvedSearchParams?.ownerAddress as string,
-    tokenAddress: "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+    agentAddress:
+      (resolvedSearchParams?.agentAddress as string) ||
+      (resolvedSearchParams?.agentaddress as string),
+    recipientAddress:
+      (resolvedSearchParams?.recipientAddress as string) ||
+      (resolvedSearchParams?.recipientaddress as string),
+    ownerAddress:
+      (resolvedSearchParams?.ownerAddress as string) ||
+      (resolvedSearchParams?.owneraddress as string),
+    networkId:
+      (resolvedSearchParams?.networkId as string) ||
+      (resolvedSearchParams?.networkid as string),
     amount: 0,
-    onRampURL: "https://onramp.example.com",
-    chainId: parseInt(resolvedSearchParams?.chainId as string) || 8453,
-    baseLogo: "https://avatars.githubusercontent.com/u/108554348?s=280&v=4",
-    networkName: "base",
+    onRampURL:
+      (resolvedSearchParams?.onRampURL as string) ||
+      (resolvedSearchParams?.onrampurl as string),
     balance: (resolvedSearchParams?.balance as string) || "0.00",
     baseScanUrl:
       "https://basescan.org/address/" + resolvedSearchParams?.address,
   };
-
-  const ethereumUrl = `ethereum:${params.tokenAddress}@${params.chainId}/transfer?address=${params.agentAddress}`;
-  const image = `${params.url}/api/wallet?s=1&networkLogo=${params.baseLogo}&networkName=${params.networkName}&agentAddress=${params.agentAddress}&ownerAddress=${params.ownerAddress}&balance=${params.balance}&chainId=${params.chainId}`;
+  const { chainId, tokenAddress } = extractFrameChain(params.networkId);
+  const ethereumUrl = `ethereum:${tokenAddress}@${chainId}/transfer?address=${params.agentAddress}`;
+  const image = `${params.url}/api/wallet?networkId=${params.networkId}&agentAddress=${params.agentAddress}&ownerAddress=${params.ownerAddress}&balance=${params.balance}`;
 
   return (
     <html

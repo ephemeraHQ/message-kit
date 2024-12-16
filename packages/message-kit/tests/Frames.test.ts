@@ -1,5 +1,5 @@
 import { describe, test, expect } from "vitest";
-import { extractFrameChain } from "../src/helpers/utils";
+import { extractFrameChain } from "../../framekit/src/app/utils/networks";
 
 describe("Frame Chain Tests", () => {
   test.each([
@@ -39,6 +39,18 @@ describe("Frame Chain Tests", () => {
           "https://avatars.githubusercontent.com/u/108554348?s=280&v=4",
         networkName: "Base",
         tokenName: "USDC",
+        dripAmount: 0.01,
+      },
+    ],
+    [
+      "base",
+      {
+        networkLogo:
+          "https://avatars.githubusercontent.com/u/108554348?s=280&v=4",
+        networkName: "Base",
+        tokenName: "USDC",
+        tokenAddress: "0x83358384d0c3d8e8938733c8b9833f3c44db03d4",
+        chainId: "0x2105",
         dripAmount: 0.01,
       },
     ],

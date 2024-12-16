@@ -3594,12 +3594,30 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@xmtp/content-type-primitives@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@xmtp/content-type-primitives@npm:2.0.0"
+  dependencies:
+    "@xmtp/proto": "npm:^3.72.0"
+  checksum: 10/a5aca63b6d9cb505b78ed518f48331236bac54bb2dcae3e037b8b43d802d9e64b1da151111b5c82b1bb78a0b6c3507c0f8bfad5ffb281c77ace21430c8716b8e
+  languageName: node
+  linkType: hard
+
 "@xmtp/content-type-reaction@npm:^1.1.10-beta.1":
   version: 1.1.12
   resolution: "@xmtp/content-type-reaction@npm:1.1.12"
   dependencies:
     "@xmtp/content-type-primitives": "npm:^1.0.3"
   checksum: 10/dac17c467590eeda562f7b742931aef9e4f7e300dc6cbc10383bd40141f49d552dad7c2c6b09fb53968a6cbf07940501af19902507da9c4ba6df0af9519ae31a
+  languageName: node
+  linkType: hard
+
+"@xmtp/content-type-read-receipt@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@xmtp/content-type-read-receipt@npm:2.0.0"
+  dependencies:
+    "@xmtp/content-type-primitives": "npm:^2.0.0"
+  checksum: 10/04024586a0bcccd92e5bf1281c02d1d9d2c6c6a6f82c65531da15b7eea2e941b9d430894ae6dc21d34f7f89874f10ecf7d7fdb3da8ee2134fa18c8fae2e5b2f7
   languageName: node
   linkType: hard
 
@@ -3661,6 +3679,7 @@ __metadata:
     "@vitest/coverage-v8": "npm:^2.1.4"
     "@xmtp/content-type-primitives": "npm:^1.0.2"
     "@xmtp/content-type-reaction": "npm:^1.1.10-beta.1"
+    "@xmtp/content-type-read-receipt": "npm:^2.0.0"
     "@xmtp/content-type-remote-attachment": "npm:1.1.11"
     "@xmtp/content-type-reply": "npm:^1.1.11"
     "@xmtp/content-type-text": "npm:^1.0.0"

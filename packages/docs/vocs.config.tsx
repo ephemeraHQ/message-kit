@@ -69,17 +69,13 @@ export default defineConfig({
       link: "https://github.com/ephemeraHQ/message-kit",
     },
   ],
-  topNav: [{ text: "v1.2.29", link: "/changelog" }],
+  topNav: [{ text: "v1.2.30", link: "/changelog" }],
   editLink: {
     pattern:
       "https://github.com/ephemeraHQ/message-kit/blob/main/packages/docs/pages/:path",
     text: "Suggest changes to this page",
   },
   sidebar: [
-    {
-      text: "Introduction",
-      link: "/introduction",
-    },
     {
       text: "Quickstart",
       link: "/quickstart",
@@ -93,7 +89,7 @@ export default defineConfig({
         },
         {
           text: "Frames",
-          link: "/plugins/framekit",
+          link: "/ux/frames",
         },
         {
           text: "Wallet service",

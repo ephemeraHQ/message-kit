@@ -49,13 +49,6 @@
     "author": "humanagent"
   },
   {
-    "href": "/plugins/xmtp",
-    "title": "XMTP",
-    "description": "Use XMTP to broadcast or manage groups.",
-    "icon": "💬",
-    "author": "ephemeraHQ"
-  },
-  {
     "href": "/plugins/agentkit",
     "title": "AgentKit",
     "description": "Use AgentKit to manage agents.",

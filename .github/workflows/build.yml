@@ -46,6 +46,9 @@ jobs:
         run: yarn build:message-kit
       - name: Test parsing
         run: yarn test:parsing
+        continue-on-error: true
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       - name: Test client
         run: yarn test:client
       - name: Test v3

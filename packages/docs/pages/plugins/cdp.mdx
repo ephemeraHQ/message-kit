@@ -14,53 +14,14 @@ Visit the [Coinbase Developer Portal](https://developer.coinbase.com/) to create
   - `COINBASE_API_KEY_NAME`: The Coinbase API key name
   - `COINBASE_API_KEY_PRIVATE_KEY`: The Coinbase API private key
 
-## Wallet Management
-
-The `getWallet` method will retrieve an existing wallet or create a new one if it doesn't exist:
-
-```tsx
-// Get the wallet service
-const { walletService } = context;
-
-// Get or create a wallet
-const wallet = await walletService.getWallet(humanAddress);
-
-// Explicitly create a new wallet
-const isCreated = await walletService.createWallet(humanAddress);
-
-// Delete a wallet
-await walletService.deleteWallet(humanAddress);
-```
-
-## Actions
-
-Perform actions on the Agent Wallet like transfers and swaps or checking the balance.
-
-```tsx
-// Get the wallet service
-const { walletService } = context;
-
-// Check balance
-const { address, balance } = await walletService.checkBalance(humanAddress);
-
-// Withdraw funds (optional amount parameter)
-await walletService.fund(amount);
-
-// Transfer between wallets
-await walletService.transfer(humanAddress, humanAddress, amount);
-
-// Swap assets (USDC and ETH)
-await walletService.swap(humanAddress, fromAssetId, toAssetId, amount);
-
-// Withdraw funds (optional amount parameter)
-await walletService.withdraw(amount);
-```
-
 ## Security Architecture
 
 The WalletService uses encryption with local file storage:
 
-- Wallets are encrypted using the `getEncryptionKey()` method as the encryption key
-- `getEncryptionKey`() is a method that returns a string related to the current conversation
-- Only people inside the conversation can see the value of `getEncryptionKey`
-- Data is stored locally in `.data/wallet-storage` directory
+- Wallets are encrypted using the private key of the developer
+
+## Code
+
+```tsx [plugins/cdp.ts]
+// [!include ~/../../packages/message-kit/src/plugins/cdp.ts]
+```

@@ -22,13 +22,9 @@ export default function ReceiptGenerator() {
     // Create URLSearchParams object to properly encode parameters
     const params = new URLSearchParams({
       txLink: formData.txLink,
-      networkLogo: formData.networkLogo,
-      amount: formData.amount,
-      networkName: formData.networkName,
-      tokenName: formData.tokenName,
     });
 
-    setGeneratedUrl(`${baseUrl}/receipt?${params.toString()}`);
+    setGeneratedUrl(`${baseUrl}/receipt?txLink=${formData.txLink}`);
   };
 
   return (

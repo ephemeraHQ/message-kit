@@ -10,6 +10,8 @@ import {
   AttachmentCodec,
   RemoteAttachmentCodec,
 } from "@xmtp/content-type-remote-attachment";
+import { ReadReceiptCodec } from "@xmtp/content-type-read-receipt";
+import { AgentMessageCodec } from "../content-types/agent-message";
 import { createWalletClient, http, toBytes, toHex } from "viem";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { mainnet } from "viem/chains";
@@ -44,13 +46,15 @@ export async function xmtpClient(
 
   const defaultConfig: ClientOptions = {
     env: env,
-    dbPath: `.data/${user.account?.address}-${env}`,
+    dbPath: `.data/${user.account?.address.toLowerCase()}-${env}`,
     codecs: [
       new TextCodec(),
       new ReactionCodec(),
       new ReplyCodec(),
       new RemoteAttachmentCodec(),
       new AttachmentCodec(),
+      new ReadReceiptCodec(),
+      new AgentMessageCodec(),
     ],
   };
   // Store the GPT model in process.env for global access

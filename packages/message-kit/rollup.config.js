@@ -17,6 +17,7 @@ const external = [
   "@xmtp/grpc-api-client",
   "@coinbase/coinbase-sdk",
   "@coinbase/cbpay-js",
+  "@xmtp/content-type-read-receipt",
   "@circle-fin/developer-controlled-wallets",
   "cross-fetch",
   "path",

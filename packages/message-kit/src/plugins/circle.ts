@@ -45,37 +45,30 @@ interface TokenBalanceResponse {
 
 export class WalletService implements AgentWallet {
   private walletStorage!: LocalStorage;
-  private context: Context;
-  private humanAddress: string;
+  private senderAddress: string;
 
   constructor(context: Context) {
-    this.context = context;
-    this.humanAddress = context.message.sender.address;
+    this.senderAddress = context.message.sender.address;
     this.walletStorage = new LocalStorage();
   }
 
   async getWallet(userAddress: string): Promise<AgentWalletData> {
-    // Check if user has a wallet stored
-    const walletData = await this.walletStorage.get(`wallet:${userAddress}`);
+    const normalizedAddress = userAddress.toLowerCase();
+    const walletData = await this.walletStorage.get(
+      `wallet:${normalizedAddress}`,
+    );
 
     if (walletData) {
       const wallet = JSON.parse(walletData);
-      return {
-        id: wallet.id,
-        address: wallet.address,
-        blockchain: "ETH-SEPOLIA",
-        state: "ACTIVE",
-        wallet: client?.getWallet,
-        agent_address: userAddress,
-        key: wallet.id,
-      };
+      return wallet as AgentWalletData;
     }
 
-    return this.createWallet(userAddress);
+    return this.createWallet(normalizedAddress);
   }
 
-  async createWallet(userAddress: string): Promise<AgentWalletData> {
-    console.log(`Creating new wallet for user ${userAddress}...`);
+  async createWallet(identifier: string): Promise<AgentWalletData> {
+    const normalizedIdentifier = identifier.toLowerCase();
+    console.log(`Creating new wallet with id ${normalizedIdentifier}...`);
     const response = await client?.createWallets({
       accountType: "SCA",
       blockchains: ["ETH-SEPOLIA"],
@@ -84,7 +77,11 @@ export class WalletService implements AgentWallet {
       metadata: [
         {
           name: "user",
-          refId: userAddress,
+          refId: normalizedIdentifier,
+        },
+        {
+          name: "senderAddress",
+          refId: this.senderAddress,
         },
       ],
     });
@@ -97,22 +94,22 @@ export class WalletService implements AgentWallet {
 
     // Store in LocalStorage
     await this.walletStorage.set(
-      `wallet:${userAddress}`,
+      `wallet:${normalizedIdentifier}`,
       JSON.stringify({
         id: wallet.id,
-        address: wallet.address,
+        address: wallet.address.toLowerCase(),
       }),
     );
 
-    console.log(`Created wallet for user ${userAddress}`);
+    console.log(`Created wallet with id ${normalizedIdentifier}`);
 
     return {
       id: wallet.id,
-      address: wallet.address,
       blockchain: wallet.blockchain,
       state: wallet.state,
       wallet: client?.getWallet,
-      agent_address: userAddress,
+      address: this.senderAddress,
+      agent_address: wallet.address,
       key: wallet.id,
     };
   }
@@ -123,9 +120,12 @@ export class WalletService implements AgentWallet {
     amount: number,
   ): Promise<any> {
     try {
+      const normalizedFromAddress = fromAddress.toLowerCase();
+      const normalizedToAddress = toAddress.toLowerCase();
+
       // Get token balances to find the requested token
-      const fromWallet = await this.getWallet(fromAddress);
-      const { balance, id } = await this.checkBalance(fromAddress);
+      const fromWallet = await this.getWallet(normalizedFromAddress);
+      const { balance, id } = await this.checkBalance(normalizedFromAddress);
 
       // Check if balance is sufficient
       if (balance < amount) {
@@ -134,14 +134,14 @@ export class WalletService implements AgentWallet {
 
       console.log("Initiating transfer:", {
         from: fromWallet.id,
-        to: toAddress,
+        to: normalizedToAddress,
         amount,
       });
 
       const response = await client?.createTransaction({
         walletId: fromWallet.id,
         tokenId: id as string,
-        destinationAddress: toAddress,
+        destinationAddress: normalizedToAddress,
         amount: [amount.toString()],
         fee: {
           type: "level",

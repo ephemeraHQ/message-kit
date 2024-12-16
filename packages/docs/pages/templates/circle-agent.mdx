@@ -1,18 +1,15 @@
-# Payment Agent
+# Circle Agent
 
 Create wallets for users and interact with them.
 
-> Payment Agent uses [CDP plugin](/plugins/cdp) to interact with Coinbase.
+> Circle Agent uses [Circle plugin](/plugins/circle) to interact with Circle.
 
 ## Structure
 
 ```
 paymentagent/
 ├── src/
-│   └── vibes/
-│       ├── degen.ts
 │   ├── index.ts
-│   └── prompt.ts
 ├── package.json
 ├── tsconfig.json
 └── .env
@@ -23,20 +20,19 @@ paymentagent/
 The process that starts listening to messages and replying to them.
 
 ```tsx [src/index.ts]
-// [!include ~/../../templates/paymentagent/src/index.ts]
+// [!include ~/../../templates/circle-agent/src/index.ts]
 ```
 
 ## Skills
 
-- [C](/skills/concierge): Agent Wallet as a Service
-- [Degen](/vibes/degen): Define the personality of your agent
+- [Concierge](/skills/concierge): Agent Wallet as a Service
 
 ## Variables
 
 Set up these variables in your app
 
 ```bash [cmd]
-// [!include ~/../../templates/paymentagent/.env.example]
+// [!include ~/../../templates/circle-agent/.env.example]
 ```
 
 ## End result
@@ -44,5 +40,5 @@ Set up these variables in your app
 The end result is a prompt that the model can understand and use to respond to the user.
 
 ```md [example_prompt.md]
-// [!include ~/../../templates/paymentagent/example_prompt.md]
+// [!include ~/../../templates/circle-agent/example_prompt.md]
 ```

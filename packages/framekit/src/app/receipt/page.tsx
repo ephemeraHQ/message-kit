@@ -1,21 +1,35 @@
+"use client";
+
 import ReceiptGenerator from "../../components/ReceiptGenerator";
+import { useEffect } from "react";
 
 export default async function Home({
   searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const resolvedSearchParams = await searchParams; // Await the promise
+  const resolvedSearchParams = await searchParams;
+  let params = {
+    url: `${process.env.NEXT_PUBLIC_URL || "http://localhost:3000"}`,
+    txLink:
+      (resolvedSearchParams.txLink as string) ||
+      (resolvedSearchParams.txlink as string) ||
+      "",
+    amount: resolvedSearchParams.amount as string,
+    networkId:
+      (resolvedSearchParams.networkId as string) ||
+      (resolvedSearchParams.networkid as string) ||
+      "base",
+  };
+  const image = `${params.url}/api/receipt?txLink=${params.txLink}&amount=${params.amount}&networkId=${params.networkId}`;
 
-  const url = `${process.env.NEXT_PUBLIC_URL || "http://localhost:3000"}`;
+  useEffect(() => {
+    // Check if running in browser environment
+    if (typeof window !== "undefined") {
+      window.location.href = params.txLink;
+    }
+  }, [params.txLink]);
 
-  const txLink = resolvedSearchParams.txLink as string;
-  const networkLogo = resolvedSearchParams.networkLogo as string;
-  const amount = resolvedSearchParams.amount as string;
-  const networkName = resolvedSearchParams.networkName as string;
-  const tokenName = resolvedSearchParams.tokenName as string;
-
-  const image = `${url}/api/receipt?networkLogo=${networkLogo}&amount=${amount}&networkName=${networkName}&tokenName=${tokenName}`;
   return (
     <html>
       <head>
@@ -31,7 +45,7 @@ export default async function Home({
 
         <meta property="fc:frame:button:1" content={`Transaction Receipt`} />
         <meta property="fc:frame:button:1:action" content="link" />
-        <meta property="fc:frame:button:1:target" content={txLink} />
+        <meta property="fc:frame:button:1:target" content={params.txLink} />
       </head>
       <body>
         <ReceiptGenerator />

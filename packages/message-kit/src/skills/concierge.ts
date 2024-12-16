@@ -1,10 +1,8 @@
-import { Coinbase } from "@coinbase/coinbase-sdk";
 import { Transfer } from "@coinbase/coinbase-sdk";
 import { Skill } from "../helpers/types";
 import { Context } from "../lib/core";
 import { getUserInfo } from "../plugins/resolver";
-import { isAddress, TimeoutError } from "viem";
-import { generateOnRampURL } from "@coinbase/cbpay-js";
+import { isAddress } from "viem";
 
 export const concierge: Skill[] = [
   {
@@ -39,7 +37,7 @@ export const concierge: Skill[] = [
     ],
     params: {
       recipient: {
-        type: "user",
+        type: "username",
       },
       amount: {
         type: "number",
@@ -165,31 +163,29 @@ async function notifyUser(
   transaction: any,
   amount: number,
 ) {
-  let { balance } = await context.walletService.checkBalance(fromAddress);
-
   if (transaction) {
     await context.dm(`Transfer completed successfully`);
     if (transaction.getTransactionHash !== undefined) {
       await context.framekit.sendReceipt(
         `https://basescan.org/tx/${transaction.getTransactionHash()}`,
+        amount,
       );
     } else if (transaction.txHash !== undefined) {
       await context.framekit.sendReceipt(
         `https://basescan.org/tx/${transaction.txHash}`,
+        amount,
       );
     } else if (transaction.getTransaction !== undefined) {
       await context.framekit.sendReceipt(
         `https://basescan.org/tx/${transaction.getTransaction()}`,
+        amount,
       );
     }
   }
-  let newBalance = (Number(balance) - amount).toFixed(2);
-  await context.dm(
-    `Your balance was deducted by $${amount}. Now is $${newBalance}.`,
-  );
+  await context.dm(`Your balance was deducted by $${amount}`);
 
   if (!isAddress(toAddress)) return;
-  const { v2, v3 } = await context.isOnXMTP(toAddress);
+  const { v2, v3 } = await context.xmtp.isOnXMTP(toAddress);
   console.log(toAddress, { v2, v3 });
   if (!v2 && !v3) return;
   let userInfo = await getUserInfo(fromAddress);
@@ -217,11 +213,13 @@ async function fund(
   let walletData = await walletService.getWallet(sender.address);
   if (!walletData) return false;
   console.log(`Retrieved wallet data for ${sender.address}`);
-  let balance = await walletData.wallet.getBalance(Coinbase.assets.Usdc);
+  let { balance } = await walletService.checkBalance(sender.address);
   if (Number(balance) === 10) {
     await context.dm("You have maxed out your funds. Max 10 USDC.");
     return false;
   } else if (amount) {
+    console.log("amount", amount);
+    console.log("balance", balance);
     if (amount + Number(balance) <= 10) {
       if (group) {
         await context.reply(
@@ -283,7 +281,7 @@ async function withdraw(
   let walletData = await walletService.getWallet(sender.address);
   if (!walletData) return undefined;
   console.log(`Retrieved wallet data for ${sender.address}`);
-  let balance = await walletData.wallet.getBalance(Coinbase.assets.Usdc);
+  let { balance } = await walletService.checkBalance(sender.address);
   if (amount && amount <= 0) {
     await context.dm("Please specify a valid positive amount to withdraw.");
     return;
