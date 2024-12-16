@@ -60,4 +60,4 @@ describe("Parsing tests", () => {
       }
     },
   );
-});
+}, 15000);

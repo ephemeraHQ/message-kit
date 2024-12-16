@@ -275,34 +275,44 @@ export async function checkIntent(
   userPrompt: string,
   reply: string,
   memoryKey: string,
+  attempts: number = 0,
 ) {
+  const MAX_ATTEMPTS = 10;
   const intentDetected = reply.toLowerCase().includes("moment");
   const hasValidCommand = reply.includes("\n/") || reply.startsWith("/");
 
-  if (intentDetected && !hasValidCommand) {
-    console.log("Intent detected but missing command:");
+  if (attempts >= MAX_ATTEMPTS) {
+    chatMemory.clear(memoryKey);
+    return "I apologize, but I'm having trouble processing your request correctly. Please try rephrasing your question or ask for a different task.";
+  }
 
+  if (intentDetected && !hasValidCommand) {
     const fixPrompt = `You indicated you would perform an action by saying "One moment" but didn't include the proper command. 
 Your previous response was: "${reply}" to the users prompt: "${userPrompt}"
 Please provide your response again with the exact command starting with / on a new line. 
 Remember: Commands must be on their own line starting with /.`;
 
-    // Request a fix with the fix prompt using temporary memory
     const { reply: fixedReply } = await textGeneration(
       fixPrompt,
       systemPrompt,
       memoryKey,
     );
+
     if (process.env.MSG_LOG)
       console.log("Intent detected but missing command", {
         reply,
         fixPrompt,
         fixedReply,
       });
-    // Verify the fixed reply has a command
+
     if (!fixedReply.includes("/")) {
-      chatMemory.clear(memoryKey);
-      return "I apologize, but I'm having trouble formatting the command correctly. Please try rephrasing your request.";
+      return checkIntent(
+        systemPrompt,
+        userPrompt,
+        fixedReply,
+        memoryKey,
+        attempts + 1,
+      );
     }
 
     return fixedReply;

@@ -89,7 +89,7 @@ export default defineConfig({
         },
         {
           text: "Frames",
-          link: "/plugins/framekit",
+          link: "/ux/frames",
         },
         {
           text: "Wallet service",

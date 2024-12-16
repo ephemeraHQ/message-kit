@@ -1,21 +1,27 @@
+"use client";
+
 import ReceiptGenerator from "../../components/ReceiptGenerator";
+import { useEffect } from "react";
 
 export default async function Home({
   searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const resolvedSearchParams = await searchParams; // Await the promise
+  const resolvedSearchParams = await searchParams;
 
   const url = `${process.env.NEXT_PUBLIC_URL || "http://localhost:3000"}`;
-
   const txLink = resolvedSearchParams.txLink as string;
-  const networkLogo = resolvedSearchParams.networkLogo as string;
   const amount = resolvedSearchParams.amount as string;
-  const networkName = resolvedSearchParams.networkName as string;
-  const tokenName = resolvedSearchParams.tokenName as string;
+  const image = `${url}/api/receipt?txLink=${txLink}&amount=${amount}`;
 
-  const image = `${url}/api/receipt?networkLogo=${networkLogo}&amount=${amount}&networkName=${networkName}&tokenName=${tokenName}`;
+  useEffect(() => {
+    // Check if running in browser environment
+    if (typeof window !== "undefined") {
+      window.location.href = txLink;
+    }
+  }, [txLink]);
+
   return (
     <html>
       <head>

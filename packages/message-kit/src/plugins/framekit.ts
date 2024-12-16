@@ -78,12 +78,8 @@ export class FrameKit {
     await this.context.send(frameUrl);
   }
 
-  async sendReceipt(txLink: string) {
-    const { networkLogo, networkName, tokenName, dripAmount } =
-      extractFrameChain(txLink);
-
-    let receiptUrl = `${framesUrl}/receipt?txLink=${txLink}&networkLogo=${networkLogo}&networkName=${networkName}&tokenName=${tokenName}&amount=${dripAmount}`;
-
+  async sendReceipt(txLink: string, amount: number) {
+    let receiptUrl = `${framesUrl}/receipt?txLink=${txLink}&amount=${amount}`;
     await this.context.dm(receiptUrl);
   }
 }

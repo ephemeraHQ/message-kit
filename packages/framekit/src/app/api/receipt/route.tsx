@@ -2,35 +2,22 @@ import { ImageResponse } from "next/og";
 import { NextRequest } from "next/server";
 import fs from "fs";
 import { join } from "path";
-
-export interface Network {
-  networkId: string;
-  networkName: string;
-  networkLogo: string;
-  tokenName: string;
-  dripAmount: number;
-  address: string;
-  isERC20: boolean;
-  erc20Address?: string;
-  erc20Decimals?: number;
-  isActive: boolean;
-  balance: string;
-}
+import { extractFrameChain } from "../../utils/networks";
 
 const interFontPath = join(process.cwd(), "public/fonts/Inter-Regular.ttf");
 const interFontData = fs.readFileSync(interFontPath);
 
 const interSemiboldFontPath = join(
   process.cwd(),
-  "public/fonts/Inter-SemiBold.ttf"
+  "public/fonts/Inter-SemiBold.ttf",
 );
 const interSemiboldFontData = fs.readFileSync(interSemiboldFontPath);
 
 export async function GET(req: NextRequest) {
-  const networkLogo = req.nextUrl.searchParams.get("networkLogo");
-  const amount = req.nextUrl.searchParams.get("amount");
-  const networkName = req.nextUrl.searchParams.get("networkName");
-  const tokenName = req.nextUrl.searchParams.get("tokenName");
+  const txLink = req.nextUrl.searchParams.get("txLink") as string;
+  const amount = req.nextUrl.searchParams.get("amount") as string;
+  const { networkLogo, networkName, tokenName } = extractFrameChain(txLink);
+
   if (!networkName || !networkLogo || !amount || !tokenName) {
     return new ImageResponse(
       (
@@ -45,8 +32,7 @@ export async function GET(req: NextRequest) {
             justifyContent: "center",
             textAlign: "center",
             width: "100%",
-          }}
-        >
+          }}>
           <div
             style={{
               color: "white",
@@ -57,8 +43,7 @@ export async function GET(req: NextRequest) {
               marginTop: 30,
               padding: "0 120px",
               whiteSpace: "pre-wrap",
-            }}
-          >
+            }}>
             {`Invalid network!`}
           </div>
         </div>
@@ -74,7 +59,7 @@ export async function GET(req: NextRequest) {
             weight: 400,
           },
         ],
-      }
+      },
     );
   }
   return new ImageResponse(
@@ -90,8 +75,7 @@ export async function GET(req: NextRequest) {
           height: "100%",
           width: "100%",
           padding: "48px",
-        }}
-      >
+        }}>
         <div
           style={{
             display: "flex",
@@ -99,8 +83,7 @@ export async function GET(req: NextRequest) {
             alignItems: "center",
             justifyContent: "center",
             gap: "16px",
-          }}
-        >
+          }}>
           <div
             style={{
               display: "flex",
@@ -108,8 +91,7 @@ export async function GET(req: NextRequest) {
               alignItems: "center",
               justifyContent: "center",
               gap: "16px",
-            }}
-          >
+            }}>
             <img
               src={networkLogo}
               style={{
@@ -126,8 +108,7 @@ export async function GET(req: NextRequest) {
                 fontFamily: "Inter-SemiBold",
                 display: "flex",
                 marginLeft: "8px",
-              }}
-            >
+              }}>
               {" "}
               {amount} {tokenName}
             </div>
@@ -148,6 +129,6 @@ export async function GET(req: NextRequest) {
           name: "Inter-SemiBold",
         },
       ],
-    }
+    },
   );
 }

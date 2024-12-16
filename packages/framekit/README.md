@@ -107,7 +107,7 @@ https://frames.message-kit.org/mint?collectionId=0x73a333cb82862d4f66f0154229755
 Once the app is running, you can construct an URL with the following format:
 
 ```bash
-http://localhost:3001/receipt?txLink={txLink}&networkLogo={networkLogo}&amount={amount}&networkName={networkName}&tokenName={tokenName}
+http://localhost:3001/receipt?txLink={txLink}
 ```
 
 - `txLink`: Direct link to view the transaction.
@@ -119,7 +119,7 @@ http://localhost:3001/receipt?txLink={txLink}&networkLogo={networkLogo}&amount={
 Example url:
 
 ```bash
-https://frames.message-kit.org/receipt?txLink=https://sepolia.basescan.org/tx/0x2ec524f740c5831b16ca84053f9b6ae3e3923d3399d527113982e884a75e6bfa&networkLogo=https://avatars.githubusercontent.com/u/108554348?s=280&v=4&networkName=Base&tokenName=usdc&amount=1
+https://frames.message-kit.org/receipt?txLink=https://sepolia.basescan.org/tx/0x2ec524f740c5831b16ca84053f9b6ae3e3923d3399d527113982e884a75e6bfa
 ```
 
 ## Custom
