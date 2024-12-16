@@ -42,6 +42,18 @@ describe("Frame Chain Tests", () => {
         dripAmount: 0.01,
       },
     ],
+    [
+      "base",
+      {
+        networkLogo:
+          "https://avatars.githubusercontent.com/u/108554348?s=280&v=4",
+        networkName: "Base",
+        tokenName: "USDC",
+        tokenAddress: "0x83358384d0c3d8e8938733c8b9833f3c44db03d4",
+        chainId: "0x2105",
+        dripAmount: 0.01,
+      },
+    ],
   ])("Extract frame chain: %s", (input, expected) => {
     const extractedValues = extractFrameChain(input);
     expect(extractedValues?.networkLogo).toEqual(expected.networkLogo);

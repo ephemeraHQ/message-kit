@@ -1,4 +1,4 @@
-import { Context, chatMemory } from "@xmtp/message-kit";
+import { Context } from "@xmtp/message-kit";
 import type { Skill } from "@xmtp/message-kit";
 import { getRedisClient } from "../plugins/redis.js";
 import { LearnWeb3Client, Network } from "../plugins/learnweb3.js";

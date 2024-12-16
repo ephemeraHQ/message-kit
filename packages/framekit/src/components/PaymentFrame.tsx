@@ -13,33 +13,7 @@ declare global {
   }
 }
 
-interface PaymentFrameProps {
-  params: {
-    url: string | undefined;
-    recipientAddress: string;
-    tokenAddress: string;
-    amount: number;
-    baseLogo: string;
-    onRampURL: string;
-    chainId?: number;
-    networkName?: string;
-    balance?: string;
-    tokenName?: string;
-    baseScanUrl?: string;
-  };
-  url: string;
-  image: string;
-  label: string;
-}
-
-const PaymentFrame: React.FC<PaymentFrameProps> = ({
-  params,
-  url,
-  image,
-  label,
-}) => {
-  const BASE_CHAIN_ID = 8453;
-
+const PaymentFrame: React.FC<any> = ({ url, image, label }) => {
   // const handleWeb3Payment = async () => {
   //   if (typeof window.ethereum !== "undefined") {
   //     try {
@@ -84,17 +58,17 @@ const PaymentFrame: React.FC<PaymentFrameProps> = ({
     window.location.href = coinbasePaymentURL;
   };
 
-  // Helper function to generate ERC20 transfer data
-  function generateERC20TransferData(recipient: string, amount: string) {
-    // ERC20 transfer function signature
-    const transferFunctionSignature = "0xa9059cbb";
+  // // Helper function to generate ERC20 transfer data
+  // function generateERC20TransferData(recipient: string, amount: string) {
+  //   // ERC20 transfer function signature
+  //   const transferFunctionSignature = "0xa9059cbb";
 
-    // Pad address and amount to 32 bytes
-    const paddedAddress = recipient.slice(2).padStart(64, "0");
-    const paddedAmount = ethers.toBeHex(amount).slice(2).padStart(64, "0");
+  //   // Pad address and amount to 32 bytes
+  //   const paddedAddress = recipient.slice(2).padStart(64, "0");
+  //   const paddedAmount = ethers.toBeHex(amount).slice(2).padStart(64, "0");
 
-    return `${transferFunctionSignature}${paddedAddress}${paddedAmount}`;
-  }
+  //   return `${transferFunctionSignature}${paddedAddress}${paddedAmount}`;
+  // }
 
   return (
     <div className={`container ${geistSans.variable} ${geistMono.variable}`}>

@@ -163,8 +163,6 @@ async function notifyUser(
   transaction: any,
   amount: number,
 ) {
-  let { balance } = await context.walletService.checkBalance(fromAddress);
-
   if (transaction) {
     await context.dm(`Transfer completed successfully`);
     if (transaction.getTransactionHash !== undefined) {
@@ -215,11 +213,13 @@ async function fund(
   let walletData = await walletService.getWallet(sender.address);
   if (!walletData) return false;
   console.log(`Retrieved wallet data for ${sender.address}`);
-  let balance = await walletService.checkBalance(sender.address);
+  let { balance } = await walletService.checkBalance(sender.address);
   if (Number(balance) === 10) {
     await context.dm("You have maxed out your funds. Max 10 USDC.");
     return false;
   } else if (amount) {
+    console.log("amount", amount);
+    console.log("balance", balance);
     if (amount + Number(balance) <= 10) {
       if (group) {
         await context.reply(
@@ -281,7 +281,7 @@ async function withdraw(
   let walletData = await walletService.getWallet(sender.address);
   if (!walletData) return undefined;
   console.log(`Retrieved wallet data for ${sender.address}`);
-  let balance = await walletService.checkBalance(sender.address);
+  let { balance } = await walletService.checkBalance(sender.address);
   if (amount && amount <= 0) {
     await context.dm("Please specify a valid positive amount to withdraw.");
     return;

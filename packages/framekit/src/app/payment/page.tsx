@@ -1,5 +1,6 @@
 import { parseUnits } from "viem";
 import PaymentFrame from "../../components/PaymentFrame";
+import { extractFrameChain } from "../utils/networks";
 
 export default async function Home({
   searchParams,
@@ -11,21 +12,20 @@ export default async function Home({
     url: process.env.NEXT_PUBLIC_URL,
     recipientAddress:
       (resolvedSearchParams?.recipientAddress as string) ||
-      "0x93E2fc3e99dFb1238eB9e0eF2580EFC5809C7204",
-    tokenAddress:
-      (resolvedSearchParams?.tokenAddress as string) ||
-      "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913", //usdc
-    chainId: parseInt(resolvedSearchParams?.chainId as string) || 8453,
+      (resolvedSearchParams?.recipientaddress as string),
     amount: parseFloat(resolvedSearchParams?.amount as string) || 1,
-    baseLogo: "https://avatars.githubusercontent.com/u/108554348?s=280&v=4",
-    networkName: "base",
-    tokenName: "usdc",
-    onRampURL: resolvedSearchParams?.onRampURL as string,
+    onRampURL:
+      (resolvedSearchParams?.onRampURL as string) ||
+      (resolvedSearchParams?.onrampurl as string),
+    networkId:
+      (resolvedSearchParams?.networkId as string) ||
+      (resolvedSearchParams?.networkid as string) ||
+      "base",
   };
+  const { chainId, tokenAddress } = extractFrameChain(params.networkId);
   const amountUint256 = parseUnits(params.amount.toString(), 6);
-  const ethereumUrl = `ethereum:${params.tokenAddress}@${params.chainId}/transfer?address=${params.recipientAddress}&uint256=${amountUint256}`;
-
-  const image = `${params.url}/api/payment?s=1&networkLogo=${params.baseLogo}&amount=${params.amount}&networkName=${params.networkName}&tokenName=${params.tokenName}&recipientAddress=${params.recipientAddress}&tokenAddress=${params.tokenAddress}&chainId=${params.chainId}&networkId=${params.chainId}`;
+  const ethereumUrl = `ethereum:${tokenAddress}@${chainId}/transfer?address=${params.recipientAddress}&uint256=${amountUint256}`;
+  const image = `${params.url}/api/payment?networkId=${params.networkId}&amount=${params.amount}&recipientAddress=${params.recipientAddress}`;
 
   return (
     <html
@@ -109,12 +109,7 @@ export default async function Home({
           display: "inline-block",
           width: "100%",
         }}>
-        <PaymentFrame
-          params={params}
-          url={ethereumUrl}
-          image={image}
-          label="Pay in USDC"
-        />
+        <PaymentFrame url={ethereumUrl} image={image} label="Pay in USDC" />
       </body>
     </html>
   );

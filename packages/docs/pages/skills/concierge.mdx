@@ -86,9 +86,6 @@ if (skill === "transfer") {
     recipient?.address as string,
     amount,
   );
-
-  // Smart notifications
-  await notifyUser(context, sender.address, recipient?.address, tx, amount);
 }
 ```
 

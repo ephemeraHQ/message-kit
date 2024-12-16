@@ -282,7 +282,6 @@ export async function checkIntent(
   const hasValidCommand = reply.includes("\n/") || reply.startsWith("/");
 
   if (attempts >= MAX_ATTEMPTS) {
-    chatMemory.clear(memoryKey);
     return "I apologize, but I'm having trouble processing your request correctly. Please try rephrasing your question or ask for a different task.";
   }
 
@@ -295,7 +294,7 @@ Remember: Commands must be on their own line starting with /.`;
     const { reply: fixedReply } = await textGeneration(
       fixPrompt,
       systemPrompt,
-      memoryKey,
+      Math.random().toString(36).substring(2, 12),
     );
 
     if (process.env.MSG_LOG)
@@ -310,7 +309,7 @@ Remember: Commands must be on their own line starting with /.`;
         systemPrompt,
         userPrompt,
         fixedReply,
-        memoryKey,
+        Math.random().toString(36).substring(2, 12),
         attempts + 1,
       );
     }

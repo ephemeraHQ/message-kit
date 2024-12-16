@@ -4,15 +4,7 @@ import fs from "fs";
 import { join } from "path";
 // @ts-ignore
 import QRCode from "qrcode";
-
-export interface WalletStatus {
-  networkId: string;
-  networkName: string;
-  networkLogo: string;
-  balance: string;
-  tokenName: string;
-  walletAddress: string;
-}
+import { extractFrameChain } from "@/app/utils/networks";
 
 const interFontPath = join(process.cwd(), "public/fonts/Inter-Regular.ttf");
 const interFontData = fs.readFileSync(interFontPath);
@@ -29,17 +21,16 @@ export async function GET(req: NextRequest) {
 
     const params = {
       url: process.env.NEXT_PUBLIC_URL,
-      networkLogo: searchParams.get("networkLogo"),
-      balance: searchParams.get("balance") ?? "0",
-      networkName: searchParams.get("networkName") ?? "base",
-      tokenName: searchParams.get("tokenName") ?? "USDC",
-      agentAddress: searchParams.get("agentAddress"),
-      ownerAddress: searchParams.get("ownerAddress"),
-      chainId: searchParams.get("chainId"),
-      networkId: searchParams.get("networkId"),
-      tokenAddress:
-        searchParams.get("tokenAddress") ||
-        "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+      balance:
+        searchParams.get("balance") ?? searchParams.get("Balance") ?? "0",
+      networkId:
+        searchParams.get("networkid") ??
+        searchParams.get("networkId") ??
+        "base",
+      agentAddress:
+        searchParams.get("agentaddress") ?? searchParams.get("agentAddress"),
+      ownerAddress:
+        searchParams.get("owneraddress") ?? searchParams.get("ownerAddress"),
     };
 
     const ownerComponent =
@@ -56,11 +47,14 @@ export async function GET(req: NextRequest) {
 
     // Generate QR code for funding the wallet
 
-    const ethereumUrl = `ethereum:${params.tokenAddress}@${params.chainId}/transfer?address=${params.agentAddress}`;
-    console.log(params);
+    const { networkLogo, networkName, tokenName, chainId, tokenAddress } =
+      extractFrameChain(params.networkId as string);
+
+    const ethereumUrl = `ethereum:${tokenAddress}@${chainId}/transfer?address=${params.agentAddress}`;
+
     const qrCodeDataUrl = await QRCode.toDataURL(ethereumUrl);
 
-    if (!params.networkName || !params.networkLogo || !params.agentAddress) {
+    if (!networkName || !networkLogo || !tokenName) {
       return new ImageResponse(
         (
           <div
@@ -134,13 +128,13 @@ export async function GET(req: NextRequest) {
                 gap: "16px",
               }}>
               <img
-                src={params.networkLogo}
+                src={networkLogo}
                 style={{
                   borderRadius: "25px",
                   width: "30px",
                 }}
               />
-              <div style={{ fontSize: "24px" }}>{params.networkName}</div>
+              <div style={{ fontSize: "24px" }}>{networkName}</div>
             </div>
             <div
               style={{
@@ -155,7 +149,7 @@ export async function GET(req: NextRequest) {
                   display: "flex",
                   marginLeft: "8px",
                 }}>
-                {params.balance} {params.tokenName}
+                {params.balance} {tokenName}
               </div>
             </div>
             <div style={{ fontSize: "24px" }}>{addressComponent}</div>

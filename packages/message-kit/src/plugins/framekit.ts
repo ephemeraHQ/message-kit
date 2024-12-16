@@ -24,15 +24,14 @@ export class FrameKit {
     agentAddress: string,
     balance: number,
   ) {
-    let url = `${framesUrl}/wallet?agentAddress=${agentAddress}&ownerAddress=${ownerAddress}&balance=${balance}`;
-
+    let url = `${framesUrl}/wallet?networkId=${"base"}&agentAddress=${agentAddress}&ownerAddress=${ownerAddress}&balance=${balance}`;
     await this.context.send(url);
   }
 
   async requestPayment(
     to: string = "humanagent.eth",
-    amount: number,
-    token?: string,
+    amount: number = 0.01,
+    token: string = "usdc",
     onRampURL?: string,
   ) {
     let senderInfo = await getUserInfo(to);
@@ -41,11 +40,17 @@ export class FrameKit {
       return;
     }
 
-    let sendUrl = `${framesUrl}/payment?amount=${amount ?? 1}&token=${token ?? "usdc"}&recipientAddress=${senderInfo?.address}`;
+    let sendUrl = `${framesUrl}/payment?networkId=${"base"}&amount=${amount}&token=${token}&recipientAddress=${senderInfo?.address}`;
     if (onRampURL) {
       sendUrl = sendUrl + "&onRampURL=" + encodeURIComponent(onRampURL);
     }
     await this.context.dm(sendUrl);
+  }
+
+  async sendReceipt(txLink: string, amount: number) {
+    if (!txLink) return;
+    let receiptUrl = `${framesUrl}/receipt?networkId=${"base"}&txLink=${txLink}&amount=${amount}`;
+    await this.context.dm(receiptUrl);
   }
 
   async sendConverseDmFrame(peer: string, pretext?: string) {
@@ -71,10 +76,5 @@ export class FrameKit {
 
     const frameUrl = `${framesUrl}/custom?${params.toString()}`;
     await this.context.send(frameUrl);
-  }
-
-  async sendReceipt(txLink: string, amount: number) {
-    let receiptUrl = `${framesUrl}/receipt?txLink=${txLink}&amount=${amount}`;
-    await this.context.dm(receiptUrl);
   }
 }

@@ -14,11 +14,16 @@ const interSemiboldFontPath = join(
 const interSemiboldFontData = fs.readFileSync(interSemiboldFontPath);
 
 export async function GET(req: NextRequest) {
-  const txLink = req.nextUrl.searchParams.get("txLink") as string;
-  const amount = req.nextUrl.searchParams.get("amount") as string;
-  const { networkLogo, networkName, tokenName } = extractFrameChain(txLink);
-
-  if (!networkName || !networkLogo || !amount || !tokenName) {
+  let searchParams = req.nextUrl.searchParams;
+  let params = {
+    amount: searchParams.get("amount") ?? "",
+    networkId:
+      searchParams.get("networkId") ?? searchParams.get("networkid") ?? "base",
+  };
+  const { networkLogo, networkName, tokenName } = extractFrameChain(
+    params.networkId,
+  );
+  if (!networkName || !networkLogo || !params.amount || !tokenName) {
     return new ImageResponse(
       (
         <div
@@ -110,7 +115,7 @@ export async function GET(req: NextRequest) {
                 marginLeft: "8px",
               }}>
               {" "}
-              {amount} {tokenName}
+              {params.amount} {tokenName}
             </div>
           </div>
         </div>
