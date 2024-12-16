@@ -65,13 +65,13 @@ export class LocalStorage {
     try {
       console.log("Storage directory:", process.env.RAILWAY_VOLUME_MOUNT_PATH);
       const filesRoot = await fsPromises?.readdir("/");
-      console.log("Storage directory:", this.baseDir);
+      console.log("Storage directory:", "/");
       console.log("All files:", filesRoot);
       const filesRoot2 = await fsPromises?.readdir("/app");
-      console.log("Storage directory:", this.baseDir);
+      console.log("Storage directory:", "/app");
       console.log("All files:", filesRoot2);
       const filesRoot3 = await fsPromises?.readdir("/app/.data");
-      console.log("Storage directory:", this.baseDir);
+      console.log("Storage directory:", "/app/.data");
       console.log("All files:", filesRoot3);
 
       const files = await fsPromises?.readdir(this.baseDir);
