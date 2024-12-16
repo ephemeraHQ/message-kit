@@ -8,9 +8,9 @@ export interface Frame {
 }
 
 const framesUrl =
-  process.env.NODE_ENV === "production"
-    ? "https://frames.message-kit.org"
-    : "https://frames.ngrok.app";
+  process.env.FRAME_URL !== undefined
+    ? process.env.FRAME_URL
+    : "https://frames.message-kit.org";
 
 export class FrameKit {
   private context: Context;
