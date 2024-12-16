@@ -8,7 +8,6 @@ export class LocalStorage {
 
   constructor(baseDir: string = ".data/wallet-storage") {
     this.baseDir = baseDir;
-    this.getWalletCount();
   }
 
   private async ensureDir() {
