@@ -1,4 +1,4 @@
-import { getFS } from "../helpers/utils";
+import { checkStorage, getFS } from "../helpers/utils";
 import path from "path";
 
 const { fsPromises } = getFS();
@@ -63,16 +63,7 @@ export class LocalStorage {
 
   async getWalletCount(): Promise<number> {
     try {
-      console.log("Storage directory:", process.env.RAILWAY_VOLUME_MOUNT_PATH);
-      const filesRoot = await fsPromises?.readdir("/");
-      console.log("Storage directory:", "/");
-      console.log("All files:", filesRoot);
-      const filesRoot2 = await fsPromises?.readdir("/app");
-      console.log("Storage directory:", "/app");
-      console.log("All files:", filesRoot2);
-      const filesRoot3 = await fsPromises?.readdir("/app/.data");
-      console.log("Storage directory:", "/app/.data");
-      console.log("All files:", filesRoot3);
+      await checkStorage();
 
       const files = await fsPromises?.readdir(this.baseDir);
       console.log("Storage directory:", this.baseDir);

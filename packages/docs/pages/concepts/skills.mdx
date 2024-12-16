@@ -40,7 +40,7 @@ function handler(context: Context) {
   const {
     message: {
       content: { text, params, attachment, reply, reference, skill, previousMsg },
-      sender,
+      sender: { address, inboxId, username, ensDomain },
       sent,
       typeId
     },

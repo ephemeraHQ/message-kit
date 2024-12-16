@@ -135,6 +135,8 @@ export interface AbstractedMember {
   address: string;
   accountAddresses: string[];
   installationIds?: string[];
+  username?: string;
+  ensDomain?: string;
 }
 
 export type MetadataValue = string | number | boolean;

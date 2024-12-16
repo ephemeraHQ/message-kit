@@ -26,33 +26,62 @@ export async function logUserInteraction(address: string) {
   }
 }
 
+const { fsPromises } = getFS();
 export const logMessage = (message: any) => {
   if (process?.env?.MSG_LOG === "true") console.log(message);
 };
-
+export async function checkStorage() {
+  try {
+    try {
+      console.log("Storage directory:", process.env.RAILWAY_VOLUME_MOUNT_PATH);
+      const filesRoot = await fsPromises?.readdir("/");
+      console.log("Storage directory:", "/");
+      console.log("All files:", filesRoot);
+    } catch (error) {
+      console.error("Error checking storage:", error);
+    }
+    try {
+      const filesRoot2 = await fsPromises?.readdir("/app");
+      console.log("Storage directory:", "/app");
+      console.log("All files:", filesRoot2);
+    } catch (error) {
+      console.error("Error checking storage:", error);
+    }
+    try {
+      const filesRoot3 = await fsPromises?.readdir("/app/.data");
+      console.log("Storage directory:", "/app/.data");
+      console.log("All files:", filesRoot3);
+    } catch (error) {
+      console.error("Error checking storage:", error);
+    }
+  } catch (error) {
+    console.error("Error checking storage:", error);
+  }
+}
 export async function logInitMessage(
   client: Client,
   agentConfig?: AgentConfig,
   generatedKey?: string,
   agent?: Agent,
 ) {
+  await checkStorage();
   if (agentConfig?.hideInitLogMessage === true) return;
 
   const coolLogo = `\x1b[38;2;250;105;119m\
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-███╗   ███╗███████╗███████╗███████╗ █████╗  ██████╗ ███████╗██╗  ██╗██╗████████╗
-████╗ ████║██╔════╝██╔════╝██╔════╝██╔══██╗██╔════╝ ██╔════╝██║ ██╔╝██║╚══██╔══╝
-██╔████╔██║█████╗  ███████╗███████╗███████║██║  ███╗█████╗  █████╔╝ ██║   ██║   
-██║╚██╔╝██║██╔══╝  ╚════██║╚════██║██╔══██║██║   ██║██╔══╝  ██╔═██╗ ██║   ██║   
-██║ ╚═╝ ██║███████╗███████║███████║██║  ██║╚██████╔╝███████╗██║  ██╗██║   ██║   
-╚═╝     ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝╚═╝   ╚═╝   
-Powered by XMTP \x1b[0m`;
+  ███╗   ███╗███████╗███████╗███████╗ █████╗  ██████╗ ███████╗██╗  ██╗██╗████████╗
+  ████╗ ████║██╔════╝██╔════╝██╔════╝██╔══██╗██╔════╝ ██╔════╝██║ ██╔╝██║╚══██╔══╝
+  ██╔████╔██║█████╗  ███████╗███████╗███████║██║  ███╗█████╗  █████╔╝ ██║   ██║   
+  ██║╚██╔╝██║██╔══╝  ╚════██║╚════██║██╔══██║██║   ██║██╔══╝  ██╔═██╗ ██║   ██║   
+  ██║ ╚═╝ ██║███████╗███████║███████║██║  ██║╚██████╔╝███████╗██║  ██╗██║   ██║   
+  ╚═╝     ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝╚═╝   ╚═╝   
+  Powered by XMTP \x1b[0m`;
   console.log(coolLogo);
   console.log(`\nSend a message to this account on:                              
-    \x1b[90m Converse: https://converse.xyz/dm/${client.accountAddress}\x1b[0m
-    \x1b[38;2;0;0;255m Coinbase Wallet: https://go.cb-w.com/messaging?address=${client.accountAddress}\x1b[0m
-    \x1b[38;2;128;0;128m Share in Farcaster (Framev2): https://frames.message-kit.org/dm/${client.accountAddress}\x1b[0m`);
+      \x1b[90m Converse: https://converse.xyz/dm/${client.accountAddress}\x1b[0m
+      \x1b[38;2;0;0;255m Coinbase Wallet: https://go.cb-w.com/messaging?address=${client.accountAddress}\x1b[0m
+      \x1b[38;2;128;0;128m Share in Farcaster (Framev2): https://frames.message-kit.org/dm/${client.accountAddress}\x1b[0m`);
 
   if (
     agentConfig?.walletService == true ||
@@ -122,7 +151,7 @@ Powered by XMTP \x1b[0m`;
     console.warn("\x1b[0m"); // Reset color to default
   }
   console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Logging new messages to console ↴`);
+  Logging new messages to console ↴`);
 }
 
 import { promises as fsPromisesModule } from "fs";

@@ -25,7 +25,7 @@ import {
 } from "@xmtp/content-type-remote-attachment";
 
 import { chatMemory, defaultSystemPrompt } from "../plugins/gpt.js";
-import { userInfoCache } from "../plugins/resolver.js";
+import { getUserInfo, userInfoCache } from "../plugins/resolver.js";
 import { logMessage, readFile } from "../helpers/utils.js";
 import {
   MessageAbstracted,
@@ -200,6 +200,9 @@ export class MessageKit implements Context {
             accountAddresses: MemberSender?.accountAddresses,
           } as AbstractedMember;
         }
+        let userInfo = await getUserInfo(sender?.address);
+        sender.username = userInfo?.converseUsername;
+        sender.ensDomain = userInfo?.ensDomain;
 
         //Config
         context.agent = agent;
