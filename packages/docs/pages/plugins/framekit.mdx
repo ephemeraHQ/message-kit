@@ -65,11 +65,13 @@ await framekit.sendConverseGroupFrame(groupId, "gm all!");
 
 ## Coinbase
 
+:::warning
 Coinbase does not render frames but you can deeplink into other users inside the wallet.
+:::
 
 ```typescript
 // Send a message to a user with an optional pretext
-await framekit.send("https://go.cb-w.com/messaging?address=" + userAddress);
+await context.send("https://go.cb-w.com/messaging?address=" + userAddress);
 ```
 
 ## Custom
