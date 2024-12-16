@@ -9,7 +9,10 @@ import {
   Conversation as V2Conversation,
 } from "@xmtp/xmtp-js";
 import { GroupMember } from "@xmtp/node-sdk";
-import type { ContentTypeId } from "@xmtp/content-type-primitives";
+import type {
+  ContentTypeId,
+  EncodedContent,
+} from "@xmtp/content-type-primitives";
 import { ContentTypeText } from "@xmtp/content-type-text";
 import { ContentTypeReply, type Reply } from "@xmtp/content-type-reply";
 import {
@@ -34,6 +37,10 @@ import {
   SkillResponse,
   AbstractedMember,
 } from "../helpers/types.js";
+import {
+  type ReadReceipt,
+  ContentTypeReadReceipt,
+} from "@xmtp/content-type-read-receipt";
 import { WalletService as CdpWalletService } from "../plugins/cdp.js";
 import { WalletService as CircleWalletService } from "../plugins/circle.js";
 import { FrameKit } from "../plugins/framekit.js";
@@ -43,6 +50,8 @@ import path from "path";
 import fetch from "cross-fetch";
 import type { AgentConfig } from "../helpers/types";
 import { XmtpPlugin } from "../plugins/xmtp.js";
+import { AgentMessage } from "../content-types/agent-message.js";
+import { ContentTypeAgentMessage } from "../content-types/agent-message.js";
 
 export const awaitedHandlers = new Map<
   string,
@@ -64,7 +73,7 @@ export type Context = {
   framekit: FrameKit;
   sender?: AbstractedMember;
   awaitingResponse: boolean;
-
+  sendAgentMessage: (message: string, metadata: any) => Promise<void>;
   executeSkill: (text: string) => Promise<SkillResponse | undefined>;
   clearMemory: (address?: string) => Promise<void>;
   clearCache: (address?: string) => Promise<void>;
@@ -257,6 +266,13 @@ export class MessageKit implements Context {
           content = {
             attachment: attachment,
           };
+        } else if (message?.contentType?.sameAs(ContentTypeReadReceipt)) {
+          //Log read receipt
+        } else if (message?.contentType?.sameAs(ContentTypeAgentMessage)) {
+          content = {
+            text: message.content.text,
+            metadata: message.content.metadata,
+          };
         } else if (message?.contentType?.sameAs(ContentTypeAttachment)) {
           const blobdecoded = new Blob([message.content.data], {
             type: message.content.mimeType,
@@ -318,7 +334,6 @@ export class MessageKit implements Context {
     return new Promise<string>((resolve, reject) => {
       const handler = async (text: string) => {
         if (!text) return false;
-        console.log(text);
         attemptCount++;
 
         const response = text.trim().toLowerCase();
@@ -377,9 +392,19 @@ export class MessageKit implements Context {
     };
     this.send(reply, ContentTypeReply);
   }
-
+  async sendAgentMessage(message: string, metadata: any) {
+    const agentMessage = new AgentMessage(message, metadata);
+    this.send(agentMessage, ContentTypeAgentMessage);
+  }
   async send(
-    message: string | Reply | Reaction | RemoteAttachment | Attachment,
+    message:
+      | string
+      | Reply
+      | Reaction
+      | RemoteAttachment
+      | Attachment
+      | ReadReceipt
+      | AgentMessage,
     contentType: ContentTypeId = ContentTypeText,
     targetConversation?: V2Conversation,
   ) {
@@ -388,7 +413,12 @@ export class MessageKit implements Context {
       return;
     }
     let messageString = message as string;
-    if (typeof message === "object") {
+    if (
+      typeof message === "object" &&
+      message !== undefined &&
+      //@ts-ignore
+      message?.content !== undefined
+    ) {
       //@ts-ignore
       messageString = message?.content as string;
     }
@@ -403,7 +433,6 @@ export class MessageKit implements Context {
         await conversation.send(message, contentType);
       }
       chatMemory.addEntry(this.getMemoryKey(), messageString, "assistant");
-      console.log(messageString);
       logMessage("sent:" + messageString);
     }
   }

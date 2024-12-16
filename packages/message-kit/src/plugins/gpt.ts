@@ -278,7 +278,19 @@ export async function checkIntent(
   attempts: number = 0,
 ) {
   const MAX_ATTEMPTS = 10;
-  const intentDetected = reply.toLowerCase().includes("moment");
+  const actionIndicators = [
+    "moment",
+    "let's",
+    "i'll look up",
+    "check",
+    "checking",
+    "searching",
+    "hang",
+    "wait",
+  ];
+  const intentDetected = actionIndicators.some((indicator) =>
+    reply.toLowerCase().includes(indicator),
+  );
   const hasValidCommand = reply.includes("\n/") || reply.startsWith("/");
 
   if (attempts >= MAX_ATTEMPTS) {

@@ -53,7 +53,6 @@ export async function run(agent: Agent) {
       try {
         const { senderInboxId, kind } = message as DecodedMessage;
         const senderAddress = (message as DecodedMessageV2).senderAddress;
-
         if (
           //If same address do nothin
           senderAddress?.toLowerCase() === addressV2?.toLowerCase() ||
