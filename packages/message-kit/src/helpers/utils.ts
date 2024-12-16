@@ -32,24 +32,24 @@ export const logMessage = (message: any) => {
 };
 export async function checkStorage() {
   try {
+    console.log("Railway directory:", process.env.RAILWAY_VOLUME_MOUNT_PATH);
+    // try {
+    //   const filesRoot = await fsPromises?.readdir("/");
+    //   console.log("Storage directory:", "/");
+    //   console.log("All files:", filesRoot);
+    // } catch (error) {
+    //   console.error("Error checking storage:", error);
+    // }
+    // try {
+    //   const filesRoot2 = await fsPromises?.readdir("/app/");
+    //   console.log("Storage directory:", "/app/");
+    //   console.log("All files:", filesRoot2);
+    // } catch (error) {
+    //   console.error("Error checking storage:", error);
+    // }
     try {
-      console.log("Storage directory:", process.env.RAILWAY_VOLUME_MOUNT_PATH);
-      const filesRoot = await fsPromises?.readdir("/");
-      console.log("Storage directory:", "/");
-      console.log("All files:", filesRoot);
-    } catch (error) {
-      console.error("Error checking storage:", error);
-    }
-    try {
-      const filesRoot2 = await fsPromises?.readdir("/app");
-      console.log("Storage directory:", "/app");
-      console.log("All files:", filesRoot2);
-    } catch (error) {
-      console.error("Error checking storage:", error);
-    }
-    try {
-      const filesRoot3 = await fsPromises?.readdir("/app/.data");
-      console.log("Storage directory:", "/app/.data");
+      const filesRoot3 = await fsPromises?.readdir("/app/data/");
+      console.log("Storage directory:", "/app/data/");
       console.log("All files:", filesRoot3);
     } catch (error) {
       console.error("Error checking storage:", error);
