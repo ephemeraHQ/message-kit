@@ -3,7 +3,6 @@ import { program } from "commander";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { log, outro, text, select } from "@clack/prompts";
-import { default as fs } from "fs-extra";
 import { isCancel } from "@clack/prompts";
 import { detect } from "detect-package-manager";
 import pc from "picocolors";

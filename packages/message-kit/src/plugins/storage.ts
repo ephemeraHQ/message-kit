@@ -79,7 +79,7 @@ export class LocalStorage {
       const walletFiles = await fsPromises?.readdir(this.baseDir);
       return walletFiles?.length || 0;
     } catch (error) {
-      console.log("Error reading directory:", error);
+      console.log("Error reading directory:", this.baseDir);
       return 0;
     }
   }
