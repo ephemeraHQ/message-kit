@@ -170,14 +170,17 @@ async function notifyUser(
     if (transaction.getTransactionHash !== undefined) {
       await context.framekit.sendReceipt(
         `https://basescan.org/tx/${transaction.getTransactionHash()}`,
+        amount,
       );
     } else if (transaction.txHash !== undefined) {
       await context.framekit.sendReceipt(
         `https://basescan.org/tx/${transaction.txHash}`,
+        amount,
       );
     } else if (transaction.getTransaction !== undefined) {
       await context.framekit.sendReceipt(
         `https://basescan.org/tx/${transaction.getTransaction()}`,
+        amount,
       );
     }
   }

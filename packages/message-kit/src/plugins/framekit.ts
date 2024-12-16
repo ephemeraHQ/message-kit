@@ -1,5 +1,4 @@
 import { Context } from "../lib/core.js";
-import { extractFrameChain } from "../helpers/utils.js";
 import { getUserInfo } from "../plugins/resolver.js";
 
 export interface Frame {
@@ -25,11 +24,7 @@ export class FrameKit {
     agentAddress: string,
     balance: number,
   ) {
-    let walletLink = `https://basescan.org/address/${agentAddress}`;
-    const { networkLogo, networkName, tokenName } =
-      extractFrameChain(walletLink);
-
-    let url = `${framesUrl}/wallet?agentAddress=${agentAddress}&ownerAddress=${ownerAddress}&networkLogo=${networkLogo}&networkName=${networkName}&tokenName=${tokenName}&balance=${balance}`;
+    let url = `${framesUrl}/wallet?agentAddress=${agentAddress}&ownerAddress=${ownerAddress}&balance=${balance}`;
 
     await this.context.send(url);
   }
