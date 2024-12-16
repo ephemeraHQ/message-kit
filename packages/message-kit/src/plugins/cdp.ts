@@ -65,6 +65,7 @@ export class WalletService implements AgentWallet {
   }
   async createWallet(key: string): Promise<AgentWalletData> {
     try {
+      key = key.toLowerCase();
       console.log(`Creating new wallet for key ${key}...`);
       const wallet = await Wallet.create({
         networkId: Coinbase.networks.BaseMainnet,
@@ -103,6 +104,7 @@ export class WalletService implements AgentWallet {
     key: string,
     createIfNotFound: boolean = true,
   ): Promise<AgentWalletData | undefined> {
+    key = key.toLowerCase();
     const encryptedKey = `wallet:${this.encrypt(key)}`;
     const walletData = await this.walletStorage.get(encryptedKey);
     // If no wallet exists, create one
@@ -137,6 +139,7 @@ export class WalletService implements AgentWallet {
   async checkBalance(
     humanAddress: string,
   ): Promise<{ address: string | undefined; balance: number }> {
+    humanAddress = humanAddress.toLowerCase();
     let walletData = await this.getWallet(humanAddress);
     if (!walletData) return { address: undefined, balance: 0 };
 
@@ -164,6 +167,8 @@ export class WalletService implements AgentWallet {
     toAddress: string,
     amount: number,
   ): Promise<Transfer | undefined> {
+    fromAddress = fromAddress.toLowerCase();
+    toAddress = toAddress.toLowerCase();
     let from = await this.getWallet(fromAddress);
     if (!from) return undefined;
     console.log(`Retrieved wallet data for ${fromAddress}`);
@@ -215,6 +220,7 @@ export class WalletService implements AgentWallet {
     toAssetId: string,
     amount: number,
   ): Promise<Trade | undefined> {
+    address = address.toLowerCase();
     let walletData = await this.getWallet(address);
     if (!walletData) return undefined;
     console.log(`Retrieved wallet data for ${address}`);
@@ -242,6 +248,7 @@ export class WalletService implements AgentWallet {
   }
 
   async deleteWallet(key: string): Promise<boolean> {
+    key = key.toLowerCase();
     console.log(`Deleting wallet for key ${key}`);
     const encryptedKey = this.encrypt(key);
     await this.walletStorage.del(`wallet:${encryptedKey}`);

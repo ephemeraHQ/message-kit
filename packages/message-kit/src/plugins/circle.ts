@@ -53,19 +53,22 @@ export class WalletService implements AgentWallet {
   }
 
   async getWallet(userAddress: string): Promise<AgentWalletData> {
-    // Check if user has a wallet stored
-    const walletData = await this.walletStorage.get(`wallet:${userAddress}`);
+    const normalizedAddress = userAddress.toLowerCase();
+    const walletData = await this.walletStorage.get(
+      `wallet:${normalizedAddress}`,
+    );
 
     if (walletData) {
       const wallet = JSON.parse(walletData);
       return wallet as AgentWalletData;
     }
 
-    return this.createWallet(userAddress);
+    return this.createWallet(normalizedAddress);
   }
 
   async createWallet(identifier: string): Promise<AgentWalletData> {
-    console.log(`Creating new wallet with id ${identifier}...`);
+    const normalizedIdentifier = identifier.toLowerCase();
+    console.log(`Creating new wallet with id ${normalizedIdentifier}...`);
     const response = await client?.createWallets({
       accountType: "SCA",
       blockchains: ["ETH-SEPOLIA"],
@@ -74,7 +77,7 @@ export class WalletService implements AgentWallet {
       metadata: [
         {
           name: "user",
-          refId: identifier,
+          refId: normalizedIdentifier,
         },
         {
           name: "senderAddress",
@@ -91,14 +94,14 @@ export class WalletService implements AgentWallet {
 
     // Store in LocalStorage
     await this.walletStorage.set(
-      `wallet:${identifier}`,
+      `wallet:${normalizedIdentifier}`,
       JSON.stringify({
         id: wallet.id,
-        address: wallet.address,
+        address: wallet.address.toLowerCase(),
       }),
     );
 
-    console.log(`Created wallet with id ${identifier}`);
+    console.log(`Created wallet with id ${normalizedIdentifier}`);
 
     return {
       id: wallet.id,
@@ -117,9 +120,12 @@ export class WalletService implements AgentWallet {
     amount: number,
   ): Promise<any> {
     try {
+      const normalizedFromAddress = fromAddress.toLowerCase();
+      const normalizedToAddress = toAddress.toLowerCase();
+
       // Get token balances to find the requested token
-      const fromWallet = await this.getWallet(fromAddress);
-      const { balance, id } = await this.checkBalance(fromAddress);
+      const fromWallet = await this.getWallet(normalizedFromAddress);
+      const { balance, id } = await this.checkBalance(normalizedFromAddress);
 
       // Check if balance is sufficient
       if (balance < amount) {
@@ -128,14 +134,14 @@ export class WalletService implements AgentWallet {
 
       console.log("Initiating transfer:", {
         from: fromWallet.id,
-        to: toAddress,
+        to: normalizedToAddress,
         amount,
       });
 
       const response = await client?.createTransaction({
         walletId: fromWallet.id,
         tokenId: id as string,
-        destinationAddress: toAddress,
+        destinationAddress: normalizedToAddress,
         amount: [amount.toString()],
         fee: {
           type: "level",
