@@ -23,7 +23,7 @@ export default async function Home({
   };
 
   const ethereumUrl = `ethereum:${params.tokenAddress}@${params.chainId}/transfer?address=${params.agentAddress}`;
-  const image = `${params.url}/api/wallet?s=1&networkLogo=${params.baseLogo}&networkName=${params.networkName}&agentAddress=${params.agentAddress}&ownerAddress=${params.ownerAddress}&balance=${params.balance}&chainId=${params.chainId}`;
+  const image = `${params.url}/api/wallet?agentAddress=${params.agentAddress}&ownerAddress=${params.ownerAddress}&balance=${params.balance}`;
 
   return (
     <html
