@@ -23,6 +23,7 @@ export async function handler(context: Context) {
       content: {
         params: { address },
       },
+      sender,
     },
   } = context;
 
@@ -34,7 +35,7 @@ export async function handler(context: Context) {
   }
 
   const redisClient = await getRedisClient();
-  const employeeKey = `employee:${address.toLowerCase()}`;
+  const employeeKey = `employee:${sender.address}:${address.toLowerCase()}`;
 
   const employeeData = await redisClient.get(employeeKey);
   if (!employeeData) {

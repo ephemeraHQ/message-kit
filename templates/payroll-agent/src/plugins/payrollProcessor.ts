@@ -93,13 +93,19 @@ export class PayrollProcessor {
 
   startCronJob() {
     console.log("Starting payroll cron job...");
-    // Run every day at 00:01
-    cron.schedule("1 0 * * *", () => {
+    // Run every minute for testing
+    cron.schedule("* * * * *", () => {
       console.log("Triggering scheduled payroll processing");
       this.processDailyPayroll().catch(error => {
         console.error("Scheduled payroll processing failed:", error);
       });
     });
     console.log("Payroll cron job started successfully");
+  }
+
+  // Add a method to manually trigger processing
+  async testPayrollProcessing() {
+    console.log("Manually triggering payroll processing...");
+    await this.processDailyPayroll();
   }
 }
