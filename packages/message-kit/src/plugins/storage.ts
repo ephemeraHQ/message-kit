@@ -42,8 +42,11 @@ export class LocalStorage {
   async getWalletCount(): Promise<number> {
     try {
       const files = await fsPromises?.readdir(this.baseDir);
-      console.log("files", files?.length);
-      return files?.length || 0;
+      const walletFiles = files?.filter(
+        (file) => file.endsWith(".dat") && /^[0-9a-f]{40}\.dat$/i.test(file),
+      );
+      console.log("walletFiles", walletFiles?.length);
+      return walletFiles?.length || 0;
     } catch {
       return 0;
     }

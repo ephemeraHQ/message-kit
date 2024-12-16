@@ -6,6 +6,11 @@ const agent: Agent = {
   description: "Gm bot.",
   onMessage: async (context) => {
     const { group } = context;
+    await context.sendAgentMessage("sd", {
+      agentId: "gm-bot",
+      skillUsed: "greeting",
+      customField: "value",
+    });
     if (!group) {
       await context.send(`gm`);
     }

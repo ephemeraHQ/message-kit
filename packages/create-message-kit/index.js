@@ -7,7 +7,7 @@ import { default as fs } from "fs-extra";
 import { isCancel } from "@clack/prompts";
 import { detect } from "detect-package-manager";
 import pc from "picocolors";
-const defVersion = "1.2.29";
+const defVersion = "1.2.30";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Read package.json to get the version

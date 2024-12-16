@@ -1,23 +1,26 @@
 import { Context } from "../lib/core";
-import { Conversation, Client as V3Client } from "@xmtp/node-sdk";
+import {
+  Conversation,
+  DecodedMessage,
+  Client as V3Client,
+} from "@xmtp/node-sdk";
 import {
   DecodedMessage as DecodedMessageV2,
   Client as V2Client,
   Conversation as V2Conversation,
 } from "@xmtp/xmtp-js";
+import { MessageAbstracted, GroupAbstracted } from "../helpers/types.js";
 
 export class XmtpPlugin {
-  private context: Context;
   private v2client: V2Client;
   private client: V3Client;
-  private refConv: any; // Define the correct type
-  private conversation: any; // Define the correct type
-  private group: any; // Define the correct type
+  private refConv: Conversation | V2Conversation | undefined;
+  private conversation: Conversation | V2Conversation | undefined;
+  private group: GroupAbstracted | undefined; // Replace with the correct group type if applicable
+  private message: MessageAbstracted | undefined;
   private version: "v2" | "v3";
-  private message: any; // Define the correct type
 
   constructor(context: Context) {
-    this.context = context;
     this.client = context.client;
     this.v2client = context.v2client;
     this.version = context.version;
@@ -182,7 +185,11 @@ export class XmtpPlugin {
   async getLastMessageById(reference: string) {
     let msg = await (this.version === "v3"
       ? this.getMessageById(reference)
-      : this.getV2MessageById(this.conversation.topic, reference));
+      : this.conversation &&
+        this.getV2MessageById(
+          (this.conversation as V2Conversation).topic,
+          reference,
+        ));
     msg = msg?.content;
     return msg;
   }

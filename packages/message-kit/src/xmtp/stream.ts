@@ -12,6 +12,7 @@ import { Conversation as V2Conversation } from "@xmtp/xmtp-js";
 import { awaitedHandlers } from "../lib/core.js";
 import { agentReply } from "../plugins/gpt.js";
 import { hasClientInitialized } from "./client.js";
+import { getUserInfo } from "../plugins/resolver.js";
 // Add at the top of the file
 export let hasInitialized = false;
 
@@ -100,7 +101,7 @@ export async function run(agent: Agent) {
         }
 
         // Check if the message content triggers a skill
-        const { isMessageValid, customHandler } = filterMessage(context);
+        const { isMessageValid, customHandler } = await filterMessage(context);
         if (isMessageValid && customHandler) {
           const result = await customHandler(context);
           if (result && "code" in result) {
@@ -126,12 +127,12 @@ export async function run(agent: Agent) {
     }
     await agentReply(context);
   };
-  const filterMessage = (
+  const filterMessage = async (
     context: Context,
-  ): {
+  ): Promise<{
     isMessageValid: boolean;
     customHandler: SkillHandler | undefined;
-  } => {
+  }> => {
     const {
       message: {
         content: { text },
@@ -204,7 +205,11 @@ export async function run(agent: Agent) {
       "skill",
     ].includes(typeId ?? "");
     // Check if the message content triggers a tag
-    const isTagged = text?.includes(`${agent?.tag}`) ?? false;
+    let botTag = (await getUserInfo(client.accountAddress))?.converseUsername;
+    console.log("botTag", botTag);
+    const isTagged =
+      text?.toLowerCase()?.includes(agent?.tag?.toLowerCase() ?? "") ??
+      text?.toLowerCase()?.includes(botTag?.toLowerCase() ?? "");
     const isMessageValid = isSameAddress
       ? false
       : // v2 only accepts text, remoteStaticAttachment, reply

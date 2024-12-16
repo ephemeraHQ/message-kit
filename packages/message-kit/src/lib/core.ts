@@ -467,7 +467,7 @@ export class MessageKit implements Context {
         targetConversation =
           await this.v2client.conversations.newConversation(receiver);
       }
-      this.send(message, ContentTypeText, targetConversation);
+      this.send(message, ContentTypeText, targetConversation as V2Conversation);
     }
   }
   async dm(message: string) {
@@ -476,11 +476,10 @@ export class MessageKit implements Context {
       return;
     }
     let sender = this.message?.sender?.address;
-    this.send(
-      message,
-      ContentTypeText,
-      await this.xmtp.getV2ConversationBySender(sender),
-    );
+
+    const targetConversation =
+      await this.xmtp.getV2ConversationBySender(sender);
+    this.send(message, ContentTypeText, targetConversation as V2Conversation);
   }
 
   async sendImage(source: string) {
