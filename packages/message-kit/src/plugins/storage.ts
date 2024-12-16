@@ -32,11 +32,6 @@ export class LocalStorage {
         recursive: true,
         mode: 0o755,
       });
-
-      const testFile = path.join(this.baseDir, "test.txt");
-      await fsPromises.writeFile(testFile, "test");
-      await fsPromises.unlink(testFile);
-
       console.log("Storage directory ready:", this.baseDir);
       return true;
     } catch (error) {
@@ -81,11 +76,7 @@ export class LocalStorage {
 
   async getWalletCount(): Promise<number> {
     try {
-      const files = await fsPromises?.readdir(this.baseDir);
-      console.log("Storage directory:", this.baseDir);
-      console.log("All files:", files);
-      const walletFiles = files?.filter((file) => file.endsWith(".dat"));
-      console.log("Wallet files:", walletFiles?.length);
+      const walletFiles = await fsPromises?.readdir(this.baseDir);
       return walletFiles?.length || 0;
     } catch (error) {
       console.log("Error reading directory:", error);

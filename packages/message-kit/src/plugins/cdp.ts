@@ -103,7 +103,7 @@ export class WalletService implements AgentWallet {
     key: string,
     createIfNotFound: boolean = true,
   ): Promise<AgentWalletData | undefined> {
-    this.walletStorage.getWalletCount();
+    console.log("Wallet count:", await this.walletStorage.getWalletCount());
     key = key.toLowerCase();
     const encryptedKey = `wallet:${this.encrypt(key)}`;
     const walletData = await this.walletStorage.get(encryptedKey);

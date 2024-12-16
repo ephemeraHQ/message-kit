@@ -300,7 +300,6 @@ export class MessageKit implements Context {
         //Plugins
         context.framekit = new FrameKit(context as unknown as Context);
         context.xmtp = new XmtpPlugin(context as unknown as Context);
-        context.storage = new LocalStorage();
         //test
         if (context.agentConfig?.walletService === true) {
           if (
@@ -320,6 +319,7 @@ export class MessageKit implements Context {
             );
           }
         }
+        context.storage = new LocalStorage(".data/storage");
 
         return context as Context;
       }
