@@ -6,16 +6,12 @@ const { fsPromises } = getFS();
 export class LocalStorage {
   private baseDir: string;
 
-  constructor(baseDir: string = "wallets") {
+  constructor(baseDir: string = ".data/wallets") {
     if (process.env.RAILWAY_VOLUME_MOUNT_PATH) {
-      this.baseDir = path.join("/app/.data", baseDir);
+      this.baseDir = path.join("/app/data/", baseDir);
       console.log("Railway detected - Using absolute path:", this.baseDir);
     } else {
-      baseDir = baseDir
-        .replace("/.data/", "")
-        .replace(".data/", "")
-        .replace("/" + baseDir, baseDir.replace("/", ""));
-      this.baseDir = ".data/" + baseDir;
+      this.baseDir = baseDir;
       console.log("Local development - Using relative path:", this.baseDir);
     }
   }
