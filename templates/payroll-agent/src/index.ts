@@ -2,24 +2,10 @@ import { run, Agent, concierge, agentReply } from "@xmtp/message-kit";
 import { degen } from "./vibes/degen.js";
 import { registerEmployees } from "./skills/register.js";
 import { removeEmployee } from "./skills/remove.js";
-import { PayrollProcessor } from "./plugins/payrollProcessor.js";
+import { Payroll } from "./plugins/payroll.js";
+import { listEmployees } from "./skills/list.js";
 
-let processor: PayrollProcessor | null = null;
-
-const testPayroll: Skill[] = [{
-  skill: "test-payroll",
-  description: "Test payroll processing",
-  handler: async (context) => {
-    if (!processor) {
-      processor = new PayrollProcessor(context);
-    }
-    await processor.testPayrollProcessing();
-    return {
-      code: 200,
-      message: "Triggered payroll processing",
-    };
-  }
-}];
+let processor: Payroll | null = null;
 
 const agent: Agent = {
   name: "Payroll Agent",
@@ -29,14 +15,14 @@ const agent: Agent = {
   intro:
     "You are a helpful agent called {agent_name} that helps manage payroll. You can register employees, remove them, and process payments.",
   vibe: degen,
-  skills: [registerEmployees, removeEmployee, concierge, testPayroll],
+  skills: [registerEmployees, removeEmployee, listEmployees, concierge],
   config: {
     walletService: true,
   },
   onMessage: async (context: any) => {
     // Initialize payroll processor on first message
     if (!processor) {
-      processor = new PayrollProcessor(context);
+      processor = new Payroll(context);
       processor.startCronJob();
     }
     await agentReply(context);
