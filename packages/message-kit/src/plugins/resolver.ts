@@ -112,17 +112,18 @@ export const getUserInfo = async (
     data.ensDomain = key.replace("@", "") + ".eth";
     data.converseUsername = key.replace("@", "");
   } else if (key === "@alix") {
-    data.address = "0x3a044b218BaE80E5b9E16609443A192129A67BeA";
+    data.address = "0x3a044b218BaE80E5b9E16609443A192129A67BeA".toLowerCase();
     data.converseUsername = "alix";
   } else if (key === "@bo") {
-    data.address = "0xbc3246461ab5e1682baE48fa95172CDf0689201a";
+    data.address = "0xbc3246461ab5e1682baE48fa95172CDf0689201a".toLowerCase();
     data.converseUsername = "bo";
   } else {
     data.converseUsername = key;
   }
 
   data.preferredName = data.ensDomain || data.converseUsername || "Friend";
-  const keyToUse = data.address || data.ensDomain || data.converseUsername;
+  const keyToUse =
+    data.address?.toLowerCase() || data.ensDomain || data.converseUsername;
 
   if (!keyToUse) {
     console.log("Unable to determine a valid key for fetching user info.");
@@ -146,7 +147,8 @@ export const getUserInfo = async (
         if (ensData) {
           data.ensInfo = ensData;
           data.ensDomain = ensData.ens || data.ensDomain;
-          data.address = ensData.address || data.address;
+          data.address =
+            ensData.address?.toLowerCase() || data.address?.toLowerCase();
           data.avatar = ensData.avatar_url || data.avatar;
         }
       }
@@ -180,7 +182,8 @@ export const getUserInfo = async (
           converseData.formattedName ||
           converseData.name ||
           data.converseUsername;
-        data.address = converseData.address || data.address;
+        data.address =
+          converseData.address?.toLowerCase() || data.address?.toLowerCase();
         data.avatar = converseData.avatar || data.avatar;
         data.converseEndpoint = converseEndpoint;
       }
