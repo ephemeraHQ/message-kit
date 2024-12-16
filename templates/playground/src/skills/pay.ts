@@ -31,5 +31,9 @@ export async function handler(context: Context) {
 
   const { amount: amountSend, token: tokenSend, username } = params;
 
-  await context.framekit.requestPayment(username, amountSend, tokenSend);
+  await context.framekit.requestPayment(
+    username?.address,
+    amountSend,
+    tokenSend,
+  );
 }

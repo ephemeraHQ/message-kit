@@ -24,10 +24,6 @@ export const pay: Skill[] = [
         default: "",
         type: "username",
       },
-      address: {
-        default: "",
-        type: "address",
-      },
     },
   },
   {
@@ -48,18 +44,11 @@ export async function handler(context: Context) {
     message: {
       content: {
         skill,
-        params: { amount, token, username, address },
+        params: { amount, token, username },
       },
     },
   } = context;
-  let receiverAddress = address;
-  if (username) {
-    receiverAddress = (await getUserInfo(username))?.address;
-  }
-  if (address) {
-    //Prioritize address over username
-    receiverAddress = address;
-  }
+  let receiverAddress = username?.address;
   if (skill === "tip") {
     let tipAmount = 1;
     await context.framekit.requestPayment(receiverAddress, tipAmount);
