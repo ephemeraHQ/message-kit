@@ -301,6 +301,7 @@ export class MessageKit implements Context {
         context.framekit = new FrameKit(context as unknown as Context);
         context.xmtp = new XmtpPlugin(context as unknown as Context);
         context.storage = new LocalStorage();
+        //test
         if (context.agentConfig?.walletService === true) {
           if (
             process.env.COINBASE_API_KEY_NAME &&
