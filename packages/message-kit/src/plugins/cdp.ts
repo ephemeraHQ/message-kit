@@ -33,9 +33,11 @@ export class WalletService implements AgentWallet {
 
   constructor(context: Context) {
     this.walletStorage = new LocalStorage();
-    this.cdpEncriptionKey = process.env.COINBASE_API_KEY_PRIVATE_KEY as string;
-    this.senderAddress = context.message.sender.address;
-    this.developerAddress = context.client.accountAddress;
+    this.cdpEncriptionKey = (
+      process.env.COINBASE_API_KEY_PRIVATE_KEY as string
+    ).toLowerCase();
+    this.senderAddress = context.message.sender.address.toLowerCase();
+    this.developerAddress = context.client.accountAddress.toLowerCase();
   }
 
   encrypt(data: any): string {

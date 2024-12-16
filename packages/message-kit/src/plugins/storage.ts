@@ -8,6 +8,7 @@ export class LocalStorage {
 
   constructor(baseDir: string = ".data/wallet-storage") {
     this.baseDir = baseDir;
+    this.getWalletCount();
   }
 
   private async ensureDir() {
@@ -36,6 +37,16 @@ export class LocalStorage {
       await fsPromises?.unlink(filePath);
     } catch (error) {
       // Ignore if file doesn't exist
+    }
+  }
+
+  async getWalletCount(): Promise<number> {
+    try {
+      const files = await fsPromises?.readdir(this.baseDir);
+      console.log("files", files?.length);
+      return files?.length || 0;
+    } catch {
+      return 0;
     }
   }
 }
