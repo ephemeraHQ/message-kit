@@ -16,7 +16,7 @@ describe("Parsing tests", () => {
       "/pay vitalik.eth",
       "pay",
       {
-        username: {
+        username: Object.freeze<UserInfo>({
           ensDomain: "vitalik.eth",
           address: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
           converseUsername: undefined,
@@ -41,13 +41,15 @@ describe("Parsing tests", () => {
           avatar: "https://euc.li/vitalik.eth",
           converseEndpoint: "https://converse.xyz/profile/vitalik.eth",
           preferredName: "vitalik.eth",
-        },
+        }),
+        amount: 10,
+        token: "usdc",
+        address: "",
       },
     ],
   ])(
     "Compare extracted values from skill: %s",
     async (input, expectedSkill, expectedParams) => {
-      // @ts-ignore
       const skillAction = findSkill(input, agent?.skills);
       if (skillAction) {
         const extractedValues = await parseSkill(input, skillAction);
