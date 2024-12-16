@@ -11,14 +11,19 @@ export class LocalStorage {
   }
 
   private async ensureDir() {
-    if (!fsPromises) return;
+    if (!fsPromises) return undefined;
     await fsPromises.mkdir(this.baseDir, { recursive: true });
+    return true;
   }
 
   async set(key: string, value: string): Promise<void> {
-    await this.ensureDir();
-    const filePath = path.join(this.baseDir, `${key.toLowerCase()}.dat`);
-    await fsPromises?.writeFile(filePath, value, "utf8");
+    const ensureDir = await this.ensureDir();
+    if (ensureDir === undefined) {
+      const filePath = path.join(this.baseDir, `${key.toLowerCase()}.dat`);
+      await fsPromises?.writeFile(filePath, value, "utf8");
+    } else {
+      console.error("Failed to ensure directory");
+    }
   }
 
   async get(key: string): Promise<string | undefined> {

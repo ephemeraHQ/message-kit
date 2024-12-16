@@ -213,7 +213,6 @@ export async function parseSkill(
                 const users = part.split(",");
                 for (const user of users) {
                   let userInfo = await getUserInfo(user);
-                  console.log("userInfo", userInfo);
                   if (userInfo?.address) {
                     result.push(userInfo);
                   }
