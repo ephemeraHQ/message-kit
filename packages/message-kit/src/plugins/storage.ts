@@ -26,6 +26,11 @@ export class LocalStorage {
     }
   }
 
+  setBaseDir(baseDir: string) {
+    this.baseDir =
+      ".data/" + baseDir.replace("/.data/", "").replace(".data/", "");
+  }
+
   async get(key: string): Promise<string | undefined> {
     try {
       const filePath = path.join(this.baseDir, `${key.toLowerCase()}.dat`);

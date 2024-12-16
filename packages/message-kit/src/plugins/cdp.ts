@@ -33,7 +33,7 @@ export class WalletService implements AgentWallet {
 
   constructor(context: Context) {
     this.walletStorage = context.storage;
-    this.walletStorage.setDir("/wallets");
+    this.walletStorage.setBaseDir("/wallets");
     this.walletStorage.getWalletCount();
     this.cdpEncriptionKey = (
       process.env.COINBASE_API_KEY_PRIVATE_KEY as string
