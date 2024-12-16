@@ -107,13 +107,13 @@ Powered by XMTP \x1b[0m`;
         console.warn("\t- ⚠️ CDP Wallet Service is enabled");
 
         console.warn(
-          `\t- \n\t\t- Save wallets at your discretion.\n\t\t- An agent wallet will be available for every user.\n\t\t- Developers are responsible for their own wallets.`,
+          `\t\t- Save wallets at your discretion.\n\t\t- An agent wallet will be available for every user.\n\t\t- Developers are responsible for their own wallets.`,
         );
       } else if (process.env.CIRCLE_API_KEY) {
         console.warn("\t- ⚠️ Circle Wallet Service is enabled");
 
         console.warn(
-          `\t- \n\t\t- Save wallets at your discretion.\n\t\t- An agent wallet will be available for every user.\n\t\t- Developers are responsible for their own wallets.`,
+          `\t\t- Save wallets at your discretion.\n\t\t- An agent wallet will be available for every user.\n\t\t- Developers are responsible for their own wallets.`,
         );
       } else {
         console.warn("\t- ⚠️ Wallet Service is enabled but missing API keys");
