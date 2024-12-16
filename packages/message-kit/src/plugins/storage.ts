@@ -7,8 +7,11 @@ export class LocalStorage {
   private baseDir: string;
 
   constructor(baseDir: string = ".data/wallets") {
-    if (process.env.RAILWAY_VOLUME_MOUNT_PATH) {
-      this.baseDir = path.join("/app/data/", baseDir);
+    if (process.env.RAILWAY_VOLUME_MOUNT_PATH !== undefined) {
+      this.baseDir = path.join(
+        process.env.RAILWAY_VOLUME_MOUNT_PATH as string,
+        baseDir,
+      );
       console.log("Railway detected - Using absolute path:", this.baseDir);
     } else {
       this.baseDir = baseDir;
@@ -76,8 +79,6 @@ export class LocalStorage {
 
   async getWalletCount(): Promise<number> {
     try {
-      await checkStorage();
-
       const files = await fsPromises?.readdir(this.baseDir);
       console.log("Storage directory:", this.baseDir);
       console.log("All files:", files);

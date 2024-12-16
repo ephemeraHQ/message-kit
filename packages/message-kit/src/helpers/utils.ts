@@ -48,8 +48,8 @@ export async function checkStorage() {
     //   console.error("Error checking storage:", error);
     // }
     try {
-      const filesRoot3 = await fsPromises?.readdir("/app/data/");
-      console.log("Storage directory:", "/app/data/");
+      const filesRoot3 = await fsPromises?.readdir("/app/data/.data");
+      console.log("Storage directory:", "/app/data/.data");
       console.log("All files:", filesRoot3);
     } catch (error) {
       console.error("Error checking storage:", error);
