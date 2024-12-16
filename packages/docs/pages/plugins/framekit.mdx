@@ -45,7 +45,7 @@ Properties:
 
 - `url`: URL of the transaction receipt scanner like basescan, etherscan, etc.
 
-## Dm and Groups on Converse
+## Converse
 
 You can send messages to a user or group on Converse using the `sendConverseDmFrame` and `sendConverseGroupFrame` methods.
 
@@ -55,6 +55,17 @@ await framekit.sendConverseDmFrame("userAddress", "Hello, how are you?");
 
 // Send a message to a group with an optional pretext
 await framekit.sendConverseGroupFrame("groupId", "gm all!");
+```
+
+## Coinbase
+
+Coinbase does not render frames but you can deeplink into other users inside the wallet.
+
+```typescript
+// Send a message to a user with an optional pretext
+await framekit.send(
+  "https://go.cb-w.com/messaging?address=0x93E2fc3e99dFb1238eB9e0eF2580EFC5809C7204",
+);
 ```
 
 ## Custom
