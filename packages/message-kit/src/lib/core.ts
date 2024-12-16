@@ -303,12 +303,14 @@ export class MessageKit implements Context {
             process.env.COINBASE_API_KEY_NAME &&
             process.env.COINBASE_API_KEY_PRIVATE_KEY
           ) {
-            console.log("CDP Wallet Service Started");
+            if (process.env.MSG_LOG === "true")
+              console.log("CDP Wallet Service Started");
             context.walletService = new CdpWalletService(
               context as unknown as Context,
             );
           } else if (process.env.CIRCLE_API_KEY) {
-            console.log("Circle Wallet Service Started");
+            if (process.env.MSG_LOG === "true")
+              console.log("Circle Wallet Service Started");
             context.walletService = new CircleWalletService(
               context as unknown as Context,
             );

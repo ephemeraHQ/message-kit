@@ -32,13 +32,8 @@ export class WalletService implements AgentWallet {
   private developerAddress: string;
 
   constructor(context: Context) {
-    this.walletStorage = context.storage;
-    this.walletStorage.setBaseDir("/wallets");
-    this.walletStorage.getWalletCount();
-    this.cdpEncriptionKey = (
-      process.env.COINBASE_API_KEY_PRIVATE_KEY as string
-    ).toLowerCase();
-    console.log("cdpEncriptionKey", this.cdpEncriptionKey);
+    this.walletStorage = new LocalStorage("wallets");
+    this.cdpEncriptionKey = (process.env.KEY as string).toLowerCase();
     this.senderAddress = context.message.sender.address.toLowerCase();
     this.developerAddress = context.client.accountAddress.toLowerCase();
   }
@@ -108,6 +103,7 @@ export class WalletService implements AgentWallet {
     key: string,
     createIfNotFound: boolean = true,
   ): Promise<AgentWalletData | undefined> {
+    this.walletStorage.getWalletCount();
     key = key.toLowerCase();
     const encryptedKey = `wallet:${this.encrypt(key)}`;
     const walletData = await this.walletStorage.get(encryptedKey);

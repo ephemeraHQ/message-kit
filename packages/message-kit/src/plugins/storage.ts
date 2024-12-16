@@ -6,29 +6,41 @@ const { fsPromises } = getFS();
 export class LocalStorage {
   private baseDir: string;
 
-  constructor(baseDir: string = ".data/wallet-storage") {
-    this.baseDir = baseDir;
+  constructor(baseDir: string = "wallets") {
+    baseDir = baseDir
+      .replace("/.data/", "")
+      .replace(".data/", "")
+      .replace("/" + baseDir, baseDir.replace("/", ""));
+    this.baseDir = ".data/" + baseDir;
   }
 
-  private async ensureDir() {
-    if (!fsPromises) return undefined;
-    await fsPromises.mkdir(this.baseDir, { recursive: true });
-    return true;
+  private async ensureDir(): Promise<boolean> {
+    if (!fsPromises) {
+      throw new Error("Filesystem is not available");
+    }
+
+    try {
+      await fsPromises.mkdir(this.baseDir, { recursive: true });
+      return true;
+    } catch (error) {
+      throw new Error(`Failed to create directory: ${error}`);
+    }
   }
 
   async set(key: string, value: string): Promise<void> {
     const ensureDir = await this.ensureDir();
-    if (ensureDir === undefined) {
+    if (!ensureDir) {
+      throw new Error(
+        "Failed to ensure directory - filesystem may not be available",
+      );
+    }
+
+    try {
       const filePath = path.join(this.baseDir, `${key.toLowerCase()}.dat`);
       await fsPromises?.writeFile(filePath, value, "utf8");
-    } else {
-      console.error("Failed to ensure directory");
+    } catch (error) {
+      throw new Error(`Failed to write file: ${error}`);
     }
-  }
-
-  setBaseDir(baseDir: string) {
-    this.baseDir =
-      ".data/" + baseDir.replace("/.data/", "").replace(".data/", "");
   }
 
   async get(key: string): Promise<string | undefined> {
@@ -51,13 +63,25 @@ export class LocalStorage {
 
   async getWalletCount(): Promise<number> {
     try {
+      console.log("Storage directory:", process.env.RAILWAY_VOLUME_MOUNT_PATH);
+      const filesRoot = await fsPromises?.readdir("/");
+      console.log("Storage directory:", this.baseDir);
+      console.log("All files:", filesRoot);
+      const filesRoot2 = await fsPromises?.readdir("/app");
+      console.log("Storage directory:", this.baseDir);
+      console.log("All files:", filesRoot2);
+      const filesRoot3 = await fsPromises?.readdir("/app/.data");
+      console.log("Storage directory:", this.baseDir);
+      console.log("All files:", filesRoot3);
+
       const files = await fsPromises?.readdir(this.baseDir);
-      const walletFiles = files?.filter(
-        (file) => file.endsWith(".dat") && /^[0-9a-f]{40}\.dat$/i.test(file),
-      );
-      console.log("walletFiles", walletFiles?.length);
+      console.log("Storage directory:", this.baseDir);
+      console.log("All files:", files);
+      const walletFiles = files?.filter((file) => file.endsWith(".dat"));
+      console.log("Wallet files:", walletFiles?.length);
       return walletFiles?.length || 0;
-    } catch {
+    } catch (error) {
+      console.log("Error reading directory:", error);
       return 0;
     }
   }
