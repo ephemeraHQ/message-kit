@@ -59,7 +59,6 @@ export class WalletService implements AgentWallet {
     if (typeof data === "string") {
       data = data.toLowerCase();
     }
-
     const key = keccak256(toHex(this.cdpEncriptionKey));
     const encrypted = toBytes(data);
     const decrypted = encrypted.map(
