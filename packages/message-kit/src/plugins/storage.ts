@@ -7,23 +7,40 @@ export class LocalStorage {
   private baseDir: string;
 
   constructor(baseDir: string = "wallets") {
-    baseDir = baseDir
-      .replace("/.data/", "")
-      .replace(".data/", "")
-      .replace("/" + baseDir, baseDir.replace("/", ""));
-    this.baseDir = ".data/" + baseDir;
+    if (process.env.RAILWAY_VOLUME_MOUNT_PATH) {
+      this.baseDir = path.join("/app/.data", baseDir);
+      console.log("Railway detected - Using absolute path:", this.baseDir);
+    } else {
+      baseDir = baseDir
+        .replace("/.data/", "")
+        .replace(".data/", "")
+        .replace("/" + baseDir, baseDir.replace("/", ""));
+      this.baseDir = ".data/" + baseDir;
+      console.log("Local development - Using relative path:", this.baseDir);
+    }
   }
 
   private async ensureDir(): Promise<boolean> {
     if (!fsPromises) {
+      console.error("Filesystem not available");
       throw new Error("Filesystem is not available");
     }
 
     try {
-      await fsPromises.mkdir(this.baseDir, { recursive: true });
+      await fsPromises.mkdir(this.baseDir, {
+        recursive: true,
+        mode: 0o755,
+      });
+
+      const testFile = path.join(this.baseDir, "test.txt");
+      await fsPromises.writeFile(testFile, "test");
+      await fsPromises.unlink(testFile);
+
+      console.log("Storage directory ready:", this.baseDir);
       return true;
     } catch (error) {
-      throw new Error(`Failed to create directory: ${error}`);
+      console.error("Storage directory error:", error);
+      throw new Error(`Failed to create/write to directory: ${error}`);
     }
   }
 
