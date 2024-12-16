@@ -242,7 +242,7 @@ export async function textGeneration(
 
   try {
     let history = chatMemory.getHistory(memoryKey);
-    if (history.length === 0) {
+    if (history === undefined || history?.length === 0) {
       history = [{ role: "system", content: systemPrompt }];
       history.push({ role: "user", content: userPrompt });
     }
