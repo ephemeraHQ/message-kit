@@ -9,10 +9,7 @@ import {
   Conversation as V2Conversation,
 } from "@xmtp/xmtp-js";
 import { GroupMember } from "@xmtp/node-sdk";
-import type {
-  ContentTypeId,
-  EncodedContent,
-} from "@xmtp/content-type-primitives";
+import type { ContentTypeId } from "@xmtp/content-type-primitives";
 import { ContentTypeText } from "@xmtp/content-type-text";
 import { ContentTypeReply, type Reply } from "@xmtp/content-type-reply";
 import {
@@ -28,7 +25,7 @@ import {
 } from "@xmtp/content-type-remote-attachment";
 
 import { chatMemory, defaultSystemPrompt } from "../plugins/gpt.js";
-import { userInfoCache } from "../plugins/resolver.js";
+import { getUserInfo, userInfoCache } from "../plugins/resolver.js";
 import { logMessage, readFile } from "../helpers/utils.js";
 import {
   MessageAbstracted,
@@ -52,6 +49,7 @@ import type { AgentConfig } from "../helpers/types";
 import { XmtpPlugin } from "../plugins/xmtp.js";
 import { AgentMessage } from "../content-types/agent-message.js";
 import { ContentTypeAgentMessage } from "../content-types/agent-message.js";
+import { LocalStorage } from "../plugins/storage.js";
 
 export const awaitedHandlers = new Map<
   string,
@@ -63,6 +61,7 @@ export type Context = {
   refConv: Conversation | V2Conversation | undefined;
   message: MessageAbstracted;
   group: GroupAbstracted;
+  storage: LocalStorage;
   conversation: V2Conversation;
   client: V3Client;
   version: "v2" | "v3";
@@ -100,6 +99,7 @@ export type Context = {
 /* Context implementation */
 export class MessageKit implements Context {
   xmtp!: XmtpPlugin;
+  storage!: LocalStorage;
   framekit!: FrameKit; // Using ! since we know it will be initialized
   refConv: Conversation | V2Conversation | undefined = undefined;
   originalMessage: DecodedMessage | DecodedMessageV2 | undefined = undefined;
@@ -200,6 +200,9 @@ export class MessageKit implements Context {
             accountAddresses: MemberSender?.accountAddresses,
           } as AbstractedMember;
         }
+        let userInfo = await getUserInfo(sender?.address);
+        sender.username = userInfo?.converseUsername;
+        sender.ensDomain = userInfo?.ensDomain;
 
         //Config
         context.agent = agent;
@@ -297,22 +300,26 @@ export class MessageKit implements Context {
         //Plugins
         context.framekit = new FrameKit(context as unknown as Context);
         context.xmtp = new XmtpPlugin(context as unknown as Context);
+        //test
         if (context.agentConfig?.walletService === true) {
           if (
             process.env.COINBASE_API_KEY_NAME &&
             process.env.COINBASE_API_KEY_PRIVATE_KEY
           ) {
-            console.log("CDP Wallet Service Started");
+            if (process.env.MSG_LOG === "true")
+              console.log("CDP Wallet Service Started");
             context.walletService = new CdpWalletService(
               context as unknown as Context,
             );
           } else if (process.env.CIRCLE_API_KEY) {
-            console.log("Circle Wallet Service Started");
+            if (process.env.MSG_LOG === "true")
+              console.log("Circle Wallet Service Started");
             context.walletService = new CircleWalletService(
               context as unknown as Context,
             );
           }
         }
+        context.storage = new LocalStorage(".data/storage");
 
         return context as Context;
       }

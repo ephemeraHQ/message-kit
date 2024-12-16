@@ -242,7 +242,7 @@ export async function textGeneration(
 
   try {
     let history = chatMemory.getHistory(memoryKey);
-    if (history.length === 0) {
+    if (history === undefined || history?.length === 0) {
       history = [{ role: "system", content: systemPrompt }];
       history.push({ role: "user", content: userPrompt });
     }
@@ -258,7 +258,6 @@ export async function textGeneration(
       systemPrompt,
       userPrompt,
       reply,
-      memoryKey,
     );
     cleanedReply = parseMarkdown(cleanedReply);
     return { reply: cleanedReply };
@@ -274,11 +273,10 @@ export async function checkIntent(
   systemPrompt: string,
   userPrompt: string,
   reply: string,
-  memoryKey: string,
   attempts: number = 0,
 ) {
   const MAX_ATTEMPTS = 10;
-  const actionIndicators = [
+  const intentIndicators = [
     "moment",
     "let's",
     "i'll look up",
@@ -288,9 +286,15 @@ export async function checkIntent(
     "hang",
     "wait",
   ];
-  const intentDetected = actionIndicators.some((indicator) =>
+  let intentDetected = intentIndicators.some((indicator) =>
     reply.toLowerCase().includes(indicator),
   );
+  if (intentDetected) {
+    const nonActionIndicators = ["need", "help", "?"];
+    intentDetected = !nonActionIndicators.some((indicator) =>
+      reply.toLowerCase().includes(indicator),
+    );
+  }
   const hasValidCommand = reply.includes("\n/") || reply.startsWith("/");
 
   if (attempts >= MAX_ATTEMPTS) {
@@ -298,6 +302,7 @@ export async function checkIntent(
   }
 
   if (intentDetected && !hasValidCommand) {
+    console.log("reply", reply);
     const fixPrompt = `You indicated you would perform an action by saying "One moment" but didn't include the proper command. 
 Your previous response was: "${reply}" to the users prompt: "${userPrompt}"
 Please provide your response again with the exact command starting with / on a new line. 
@@ -309,21 +314,15 @@ Remember: Commands must be on their own line starting with /.`;
       Math.random().toString(36).substring(2, 12),
     );
 
-    if (process.env.MSG_LOG)
-      console.log("Intent detected but missing command", {
-        reply,
-        fixPrompt,
-        fixedReply,
-      });
+    // if (process.env.MSG_LOG === "true")
+    console.log("Intent detected but missing command", {
+      reply,
+      fixPrompt,
+      fixedReply,
+    });
 
     if (!fixedReply.includes("/")) {
-      return checkIntent(
-        systemPrompt,
-        userPrompt,
-        fixedReply,
-        Math.random().toString(36).substring(2, 12),
-        attempts + 1,
-      );
+      return checkIntent(systemPrompt, userPrompt, fixedReply, attempts + 1);
     }
 
     return fixedReply;

@@ -49,7 +49,7 @@ export class WalletService implements AgentWallet {
 
   constructor(context: Context) {
     this.senderAddress = context.message.sender.address;
-    this.walletStorage = new LocalStorage();
+    this.walletStorage = new LocalStorage(".data/wallets");
   }
 
   async getWallet(userAddress: string): Promise<AgentWalletData> {

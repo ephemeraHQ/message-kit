@@ -140,7 +140,7 @@ export const getUserInfo = async (
     try {
       const response = await fetch(`https://ensdata.net/${keyToUse}`);
       if (response.status !== 200) {
-        if (process.env.MSG_LOG)
+        if (process.env.MSG_LOG === "true")
           console.log("- ENS data request failed for", keyToUse);
       } else {
         const ensData = (await response.json()) as EnsData;

@@ -44,9 +44,17 @@ export async function xmtpClient(
   let env = process.env.XMTP_ENV as XmtpEnv;
   if (!env) env = "production" as XmtpEnv;
 
+  let volumePath = process.env.RAILWAY_VOLUME_MOUNT_PATH ?? "";
+  volumePath += ".data/xmtp";
+  const { fs } = getFS();
+  if (fs && !fs.existsSync(volumePath)) {
+    fs.mkdirSync(volumePath, { recursive: true });
+  }
+
+  console.log("Volume path:", volumePath);
   const defaultConfig: ClientOptions = {
     env: env,
-    dbPath: `.data/${user.account?.address.toLowerCase()}-${env}`,
+    dbPath: `${volumePath}/${user.account?.address.toLowerCase()}-${env}`,
     codecs: [
       new TextCodec(),
       new ReactionCodec(),
@@ -140,12 +148,6 @@ function checkPrivateKey(key: string) {
 }
 
 export const createSigner = (user: User) => {
-  // Only create directory in Node.js environment
-  const { fs } = getFS();
-  if (fs && !fs.existsSync(`.data`)) {
-    fs.mkdirSync(`.data`);
-  }
-
   return {
     getAddress: () => user.account.address,
     signMessage: async (message: string) => {

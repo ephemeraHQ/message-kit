@@ -206,7 +206,6 @@ export async function run(agent: Agent) {
     ].includes(typeId ?? "");
     // Check if the message content triggers a tag
     let botTag = (await getUserInfo(client.accountAddress))?.converseUsername;
-    console.log("botTag", botTag);
     const isTagged =
       text?.toLowerCase()?.includes(agent?.tag?.toLowerCase() ?? "") ??
       text?.toLowerCase()?.includes(botTag?.toLowerCase() ?? "");
