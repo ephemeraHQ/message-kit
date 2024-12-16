@@ -86,10 +86,13 @@ await context.sendImage("path/to/image.png");
 // Send a remote image (max 1MB)
 await context.sendImage("https://picsum.photos/200/300");
 //Send a message to another agent
-await context.sendAgentMessage("sd", {
-  agentId: "gm-bot",
-  skillUsed: "greeting",
-  customField: "value",
+await context.sendAgentMessage("Would you like to approve this transaction?", {
+  agentId: "payment-bot",
+  skillUsed: "approve-tx",
+  amount: "10",
+  token: "USDC",
+  chain: "base",
+  destinationAddress: "0x123...789",
 });
 // Send a dm to the sender
 await context.dm("Your message.");

@@ -33,20 +33,6 @@ export const logMessage = (message: any) => {
 export async function checkStorage() {
   try {
     console.log("Railway directory:", process.env.RAILWAY_VOLUME_MOUNT_PATH);
-    // try {
-    //   const filesRoot = await fsPromises?.readdir("/");
-    //   console.log("Storage directory:", "/");
-    //   console.log("All files:", filesRoot);
-    // } catch (error) {
-    //   console.error("Error checking storage:", error);
-    // }
-    // try {
-    //   const filesRoot2 = await fsPromises?.readdir("/app/");
-    //   console.log("Storage directory:", "/app/");
-    //   console.log("All files:", filesRoot2);
-    // } catch (error) {
-    //   console.error("Error checking storage:", error);
-    // }
     try {
       const filesRoot3 = await fsPromises?.readdir("/app/data/.data");
       console.log("Storage directory:", "/app/data/.data");
@@ -64,7 +50,8 @@ export async function logInitMessage(
   generatedKey?: string,
   agent?: Agent,
 ) {
-  await checkStorage();
+  if (process.env.MSG_LOG === "true" && process.env.NODE_ENV === "production")
+    await checkStorage();
   if (agentConfig?.hideInitLogMessage === true) return;
 
   const coolLogo = `\x1b[38;2;250;105;119m\

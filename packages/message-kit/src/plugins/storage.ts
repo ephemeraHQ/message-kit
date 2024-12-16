@@ -12,10 +12,12 @@ export class LocalStorage {
         process.env.RAILWAY_VOLUME_MOUNT_PATH as string,
         baseDir,
       );
-      console.log("Railway detected - Using absolute path:", this.baseDir);
+      if (process.env.MSG_LOG === "true")
+        console.log("Railway detected - Using absolute path:", this.baseDir);
     } else {
       this.baseDir = baseDir;
-      console.log("Local development - Using relative path:", this.baseDir);
+      if (process.env.MSG_LOG === "true")
+        console.log("Local development - Using relative path:", this.baseDir);
     }
   }
 
