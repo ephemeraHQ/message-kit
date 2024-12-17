@@ -157,6 +157,8 @@ export const getUserInfo = async (
             Accept: "application/json",
           },
           body: JSON.stringify({ peer: username }),
+          mode: "cors",
+          credentials: "include",
         },
         5000,
       );
