@@ -1,3 +1,4 @@
+import Head from "next/head";
 import PaymentFrame from "../../components/PaymentFrame";
 import { extractFrameChain } from "../utils/networks";
 
@@ -34,14 +35,8 @@ export default async function Home({
   const image = `${params.url}/api/wallet?networkId=${params.networkId}&agentAddress=${params.agentAddress}&ownerAddress=${params.ownerAddress}&balance=${params.balance}`;
 
   return (
-    <html
-      style={{
-        margin: 0,
-        padding: 0,
-        backgroundColor: "white",
-        height: "100%",
-      }}>
-      <head>
+    <>
+      <Head>
         <meta charSet="utf-8" />
         <meta property="og:title" content="Wallet Information" />
         <meta property="fc:frame" content="vNext" />
@@ -101,8 +96,8 @@ export default async function Home({
             }
           `}
         </style>
-      </head>
-      <body
+      </Head>
+      <div
         style={{
           margin: 0,
           padding: 0,
@@ -117,7 +112,7 @@ export default async function Home({
           url={params.baseScanUrl}
           label="View on Base Scan"
         />
-      </body>
-    </html>
+      </div>
+    </>
   );
 }

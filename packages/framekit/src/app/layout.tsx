@@ -1,3 +1,4 @@
+import Head from "next/head";
 import "./globals.css";
 
 export default function RootLayout({
@@ -5,5 +6,12 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return children;
+  return (
+    <html>
+      <Head>
+        <title>FrameKit</title>
+      </Head>
+      <body>{children}</body>
+    </html>
+  );
 }
