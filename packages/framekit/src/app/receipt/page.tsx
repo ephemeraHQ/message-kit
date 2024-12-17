@@ -39,9 +39,16 @@ export default function Home({
   const image = `${params.url}/api/receipt?txLink=${params.txLink}&amount=${params.amount}&networkId=${params.networkId}`;
 
   useEffect(() => {
-    if (typeof window !== "undefined" && params.txLink) {
-      console.log("redirecting to", params.txLink);
-      window.location.href = params.txLink;
+    if (typeof window !== "undefined") {
+      console.log("Window object is available");
+      if (params.txLink) {
+        console.log("Redirecting to", params.txLink);
+        window.location.href = params.txLink;
+      } else {
+        console.log("No txLink found, not redirecting");
+      }
+    } else {
+      console.log("Window object is not available");
     }
   }, [params.txLink]);
 
