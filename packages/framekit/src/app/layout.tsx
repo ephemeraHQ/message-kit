@@ -6,12 +6,5 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <html>
-      <Head>
-        <title>FrameKit</title>
-      </Head>
-      <body>{children}</body>
-    </html>
-  );
+  return <html>{children}</html>;
 }
