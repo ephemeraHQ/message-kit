@@ -4565,6 +4565,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "circle-agent@workspace:templates/circle-agent"
   dependencies:
+    "@circle-fin/developer-controlled-wallets": "npm:^6.0.0"
     "@types/node": "npm:^20.14.2"
     "@xmtp/message-kit": "workspace:*"
     typescript: "npm:^5.4.5"

@@ -81,7 +81,7 @@ export class WalletService implements AgentWallet {
         },
       ],
     });
-
+    //test
     if (!response?.data?.wallets?.[0]) {
       throw new Error("Failed to create wallet");
     }
