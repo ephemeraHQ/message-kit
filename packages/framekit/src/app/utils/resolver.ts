@@ -145,42 +145,42 @@ export const getUserInfo = async (
       console.error(`Failed to fetch ENS data for ${keyToUse}`);
     }
     //Converse profile
-    try {
-      const username = keyToUse.replace("@", "");
-      const converseEndpoint = `${converseEndpointURL}${username}`;
-      const response = await fetchWithTimeout(
-        converseEndpoint,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify({ peer: username }),
-          mode: "cors",
-          credentials: "include",
-        },
-        5000,
-      );
-      if (!response?.ok) {
-        console.error(
-          `Converse profile request failed with status ${response?.status}`,
-        );
-      }
-      const converseData = (await response?.json()) as ConverseProfile;
-      if (converseData) {
-        data.converseUsername =
-          converseData.formattedName ||
-          converseData.name ||
-          data.converseUsername;
-        data.address =
-          converseData.address?.toLowerCase() || data.address?.toLowerCase();
-        data.avatar = converseData.avatar || data.avatar;
-        data.converseEndpoint = converseEndpoint;
-      }
-    } catch (error) {
-      console.error("Failed to fetch Converse profile:", error);
-    }
+    // try {
+    //   const username = keyToUse.replace("@", "");
+    //   const converseEndpoint = `${converseEndpointURL}${username}`;
+    //   const response = await fetchWithTimeout(
+    //     converseEndpoint,
+    //     {
+    //       method: "POST",
+    //       headers: {
+    //         "Content-Type": "application/json",
+    //         Accept: "application/json",
+    //       },
+    //       body: JSON.stringify({ peer: username }),
+    //       mode: "cors",
+    //       credentials: "include",
+    //     },
+    //     5000,
+    //   );
+    //   if (!response?.ok) {
+    //     console.error(
+    //       `Converse profile request failed with status ${response?.status}`,
+    //     );
+    //   }
+    //   const converseData = (await response?.json()) as ConverseProfile;
+    //   if (converseData) {
+    //     data.converseUsername =
+    //       converseData.formattedName ||
+    //       converseData.name ||
+    //       data.converseUsername;
+    //     data.address =
+    //       converseData.address?.toLowerCase() || data.address?.toLowerCase();
+    //     data.avatar = converseData.avatar || data.avatar;
+    //     data.converseEndpoint = converseEndpoint;
+    //   }
+    // } catch (error) {
+    //   console.error("Failed to fetch Converse profile:", error);
+    // }
 
     data.preferredName = data.ensDomain || data.converseUsername || "Friend";
     userInfoCache.set(keyToUse, data);
