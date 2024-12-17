@@ -107,7 +107,6 @@ export async function GET(req: NextRequest) {
             <div style={{ fontSize: "20px" }}>{networkName}</div>
           </div>
           <div style={{ fontSize: "48px", display: "flex" }}>
-            You just received{" "}
             <div
               style={{
                 fontFamily: "Inter-SemiBold",
