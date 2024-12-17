@@ -89,12 +89,12 @@ MessageKit provides wrapped versions of XMTP clients for easier integration:
 import { V2Client, V3Client } from "@xmtp/message-kit";
 ```
 
-You can create new client instances using the `xmtpClient` helper:
+You can create new client instances using the `createClient` helper:
 
 ```tsx
-import { xmtpClient } from "@xmtp/message-kit";
+import { createClient } from "xmtp-agent";
 
-const { v2client } = await xmtpClient({
+const { v2client } = await createClient({
   // Optional configuration
 });
 ```

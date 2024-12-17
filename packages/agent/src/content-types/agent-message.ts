@@ -1,4 +1,3 @@
-// A test of this content type can be found in the following PR: https://github.com/xmtp/xmtp-js/pull/509/files
 import { ContentTypeId } from "@xmtp/content-type-primitives";
 import type {
   ContentCodec,

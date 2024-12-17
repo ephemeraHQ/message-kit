@@ -1,6 +1,6 @@
 {
   "name": "@xmtp/message-kit",
-  "version": "1.2.33",
+  "version": "patch",
   "license": "MIT",
   "type": "module",
   "exports": {
@@ -58,7 +58,8 @@
     "openai": "^4.52.7",
     "typescript": "^5.4.5",
     "viem": "^2.16.3",
-    "vitest": "^2.1.4"
+    "vitest": "^2.1.4",
+    "xmtp-agent": "workspace:*"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^11.1.6",

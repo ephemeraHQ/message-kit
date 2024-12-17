@@ -1,7 +1,7 @@
 // [!region index]
-import { run, agentReply, Context, Agent } from "@xmtp/message-kit";
+import { agentReply, Context, createAgent } from "@xmtp/message-kit";
 
-export const agent: Agent = {
+export const agent = createAgent({
   name: "GPT Bot",
   description: "Use GPT to generate text responses.",
   tag: "@bot",
@@ -10,7 +10,5 @@ export const agent: Agent = {
     await agentReply(context);
     // [!region final]
   },
-};
-
-run(agent);
+}).run();
 // [!endregion final]

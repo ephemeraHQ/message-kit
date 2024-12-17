@@ -16,12 +16,12 @@ Run a node cron daily to send message to users
 
 ```tsx [src/plugins/cron.ts]
 import cron from "node-cron";
-import { xmtpClient } from "@xmtp/message-kit";
+import { createClient } from "xmtp-agent";
 import { RedisClientType } from "@redis/client";
 
 export async function startCron(redisClient: RedisClientType) {
   // Daily task
-  const client = await xmtpClient();
+  const client = await createClient();
   console.log("Starting daily cron");
   cron.schedule(
     "0 0 * * *", // Daily or every 5 seconds in debug mode

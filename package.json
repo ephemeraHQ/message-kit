@@ -1,6 +1,6 @@
 {
   "name": "message-kit-monorepo",
-  "version": "1.2.33",
+  "version": "patch",
   "private": true,
   "type": "module",
   "workspaces": [
@@ -9,7 +9,8 @@
     "shared/*"
   ],
   "scripts": {
-    "build": "yarn build:message-kit && yarn build:packages && yarn build:templates",
+    "build": "yarn build:agent && yarn build:message-kit && yarn build:packages && yarn build:templates",
+    "build:agent": "turbo run build --filter=./packages/agent --force",
     "build:message-kit": "turbo run build --filter=./packages/message-kit --force",
     "build:packages": "turbo run build --filter='./packages/*' --filter='!./packages/message-kit'",
     "build:templates": "turbo run build --filter='./templates/*'",
@@ -27,14 +28,14 @@
     "publish": "node scripts/publish.js",
     "templates": "node scripts/devTemplates.js",
     "test": "FORCE_COLOR=1 turbo run test --force --concurrency=1",
-    "test:client": "cd packages/message-kit/tests && yarn test:client",
+    "test:client": "cd packages/agent/tests && yarn test:client",
     "test:flow": "cd packages/message-kit/tests && yarn test:flow",
     "test:framekit": "cd packages/message-kit/tests && yarn test:framekit",
     "test:intent": "cd packages/message-kit/tests && yarn test:intent",
     "test:parsing": "cd packages/message-kit/tests && yarn test:parsing",
     "test:prompt": "cd packages/message-kit/tests && yarn test:prompt",
-    "test:v2": "cd packages/message-kit/tests && yarn test:v2",
-    "test:v3": "cd packages/message-kit/tests && yarn test:v3",
+    "test:v2": "cd packages/agent/tests && yarn test:v2",
+    "test:v3": "cd packages/agent/tests && yarn test:v3",
     "typecheck": "FORCE_COLOR=1 turbo run typecheck"
   },
   "resolutions": {

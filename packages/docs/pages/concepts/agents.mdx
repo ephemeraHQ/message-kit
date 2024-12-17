@@ -30,26 +30,15 @@ agent/
 This is the main function that runs the listener.
 
 ```jsx
-import { Agent, run, type Context } from "@xmtp/message-kit";
-
-const agent: Agent = {
-  name: "Agent Name",
-  tag: "@bot",
-  description: "Agent Description",
-  skills: [skill1, skill2]
-};
-//starts the agent
-run(agent);
+// [!include ~/../../templates/simple/src/index.ts]
 ```
 
 ### Config
 
 ```tsx
-const agent: Agent = {
-  config: {
-    /* Optional properties */
-  },
-};
+config: {
+  /* Optional properties */
+}
 ```
 
 - `privateKey`: the private key of the agent wallet, like any normal wallet private key.

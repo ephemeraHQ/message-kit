@@ -1,6 +1,8 @@
-import { Agent, Skill } from "../helpers/types.js";
+import { Agent, Skill, SkillHandler } from "../helpers/types.js";
 import { getUserInfo, type UserInfo } from "../plugins/resolver.js";
 import { type Context } from "./core.js";
+import { logMessage } from "../helpers/utils.js";
+
 import path from "path";
 
 export function findSkill(text: string, skills: Skill[][]): Skill | undefined {
@@ -300,4 +302,166 @@ export async function loadSkillsFile(): Promise<Agent> {
     //console.error(`Error loading command config from ${resolvedPath}:`);
   }
   return agent;
+}
+
+export async function filterMessage(context: Context): Promise<{
+  isMessageValid: boolean;
+  customHandler: SkillHandler | undefined;
+}> {
+  const {
+    message: {
+      content: { text },
+      content,
+      typeId,
+      sender,
+    },
+    version,
+    client,
+    v2client,
+    agent,
+    group,
+  } = context;
+
+  //Reserved
+  if (context.message.content.text?.startsWith("/reset")) {
+    context.clearMemory(sender?.address);
+    //context.clearCache(sender?.address);
+    context.send("Memory cleared");
+    return { isMessageValid: false, customHandler: undefined };
+  }
+
+  let foundSkill = text?.startsWith("/")
+    ? findSkill(text, agent?.skills ?? [])
+    : undefined;
+
+  const { inboxId: senderInboxId } = client;
+  const { address: senderAddress } = v2client;
+
+  const isSameAddress =
+    sender.address?.toLowerCase() === senderAddress?.toLowerCase() ||
+    (sender.inboxId?.toLowerCase() === senderInboxId.toLowerCase() &&
+      typeId !== "group_updated");
+
+  const isSkillTriggered = foundSkill?.skill;
+  const iscommunity = agent.config?.experimental ?? false;
+
+  const isAddedMemberOrPass =
+    typeId === "group_updated" &&
+    agent.config?.memberChange &&
+    //@ts-ignore
+    content?.addedInboxes?.length === 0
+      ? false
+      : true;
+
+  const isRemoteAttachment = typeId == "remoteStaticAttachment";
+
+  const isAdminSkill = foundSkill?.adminOnly ?? false;
+
+  const isAdmin =
+    group &&
+    (group?.admins.includes(sender.inboxId) ||
+      group?.superAdmins.includes(sender.inboxId))
+      ? true
+      : false;
+
+  const isAdminOrPass = isAdminSkill && !isAdmin ? false : true;
+
+  // Remote attachments work if image:true in runner config
+  // Replies only work with explicit mentions from triggers.
+  // Text only works with explicit mentions from triggers.
+  // Reactions don't work with triggers.
+
+  const isImageValid = isRemoteAttachment && agent.config?.attachments;
+
+  const acceptedType = [
+    "text",
+    "remoteStaticAttachment",
+    "reply",
+    "skill",
+  ].includes(typeId ?? "");
+  // Check if the message content triggers a tag
+  let botTag = (await getUserInfo(client.accountAddress))?.converseUsername;
+  const isTagged =
+    text?.toLowerCase()?.includes(agent?.tag?.toLowerCase() ?? "") ??
+    text?.toLowerCase()?.includes(botTag?.toLowerCase() ?? "");
+  const isMessageValid = isSameAddress
+    ? false
+    : // v2 only accepts text, remoteStaticAttachment, reply
+      version == "v2" && acceptedType
+      ? true
+      : //If its image is also good, if it has a skill image:true
+        isImageValid
+        ? true
+        : //If its not an admin, nope
+          !isAdminOrPass
+          ? false
+          : iscommunity
+            ? true
+            : //If its a group update but its not an added member, nope
+              !isAddedMemberOrPass
+              ? false
+              : //If it has a skill trigger, good
+                isSkillTriggered
+                ? true
+                : //If it has a tag trigger, good
+                  isTagged
+                  ? true
+                  : false;
+
+  if (process.env.MSG_LOG === "true") {
+    logMessage({
+      isSameAddress,
+      openai: {
+        model: process?.env?.GPT_MODEL,
+        key: process?.env?.OPENAI_API_KEY ? "[SET]" : "[NOT SET]",
+      },
+      content,
+      version,
+      acceptedType,
+      attachmentDetails: {
+        isRemoteAttachment,
+        isImageValid,
+      },
+      adminDetails: {
+        isAdminSkill,
+        isAdmin,
+        isAdminOrPass,
+      },
+      isAddedMemberOrPass,
+      skillsParsed: agent?.skills?.length,
+      taggingDetails: {
+        tag: agent?.tag,
+        isTagged,
+      },
+      skillTriggerDetails: isSkillTriggered
+        ? {
+            skill: foundSkill?.skill,
+            examples: foundSkill?.examples,
+            description: foundSkill?.description,
+            params: foundSkill?.params
+              ? Object.entries(foundSkill.params).map(([key, value]) => ({
+                  key,
+                  value: {
+                    type: value.type,
+                    values: value.values,
+                    plural: value.plural,
+                    default: value.default,
+                  },
+                }))
+              : undefined,
+          }
+        : !text?.startsWith("/")
+          ? "Natural prompt, yet to be parsed"
+          : "No skill trigger detected",
+      isMessageValid,
+    });
+  }
+  if (isMessageValid) {
+    logMessage(`msg_${version}: ` + (text ?? typeId));
+  }
+
+  return {
+    isMessageValid,
+    customHandler: foundSkill?.handler,
+  };
 }
