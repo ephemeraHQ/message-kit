@@ -1,15 +1,18 @@
 import { parseUnits } from "viem";
 import PaymentFrame from "../../components/PaymentFrame";
 import { extractFrameChain } from "../utils/networks";
-import Head from "next/head";
+import { Metadata } from "next";
 
-export default async function Home({
-  searchParams,
-}: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}) {
+type SearchParams = { [key: string]: string | string[] | undefined };
+
+type Props = {
+  searchParams: Promise<SearchParams>;
+};
+
+// Helper function to safely get search params
+async function getParams(searchParams: Promise<SearchParams>) {
   const resolvedSearchParams = await searchParams;
-  const params = {
+  return {
     url: process.env.NEXT_PUBLIC_URL,
     recipientAddress:
       (resolvedSearchParams?.recipientAddress as string) ||
@@ -23,89 +26,56 @@ export default async function Home({
       (resolvedSearchParams?.networkid as string) ||
       "base",
   };
+}
+
+export async function generateMetadata({
+  searchParams,
+}: Props): Promise<Metadata> {
+  const params = await getParams(searchParams);
+  const { chainId, tokenAddress } = extractFrameChain(params.networkId);
+  const amountUint256 = parseUnits(params.amount.toString(), 6);
+  const ethereumUrl = `ethereum:${tokenAddress}@${chainId}/transfer?address=${params.recipientAddress}&uint256=${amountUint256}`;
+  const image = `${params.url}/api/payment?networkId=${params.networkId}&amount=${params.amount}&recipientAddress=${params.recipientAddress}`;
+
+  return {
+    title: "Ethereum Payment",
+    other: {
+      "fc:frame": "vNext",
+      "of:version": "vNext",
+      "of:accepts:xmtp": "vNext",
+      "fc:frame:image": image,
+      "og:image": image,
+      "fc:frame:ratio": "1.91:1",
+      "fc:frame:button:1": "Pay in USDC (Mobile)",
+      "fc:frame:button:1:action": "link",
+      "fc:frame:button:1:target": ethereumUrl,
+      ...(params.onRampURL && {
+        "fc:frame:button:2": "Pay in USD",
+        "fc:frame:button:2:action": "link",
+        "fc:frame:button:2:target": params.onRampURL,
+      }),
+    },
+  };
+}
+
+export default async function Home({ searchParams }: Props) {
+  const params = await getParams(searchParams);
   const { chainId, tokenAddress } = extractFrameChain(params.networkId);
   const amountUint256 = parseUnits(params.amount.toString(), 6);
   const ethereumUrl = `ethereum:${tokenAddress}@${chainId}/transfer?address=${params.recipientAddress}&uint256=${amountUint256}`;
   const image = `${params.url}/api/payment?networkId=${params.networkId}&amount=${params.amount}&recipientAddress=${params.recipientAddress}`;
 
   return (
-    <>
-      <Head>
-        <meta charSet="utf-8" />
-        <meta property="og:title" content="Ethereum Payment" />
-        <meta property="fc:frame" content="vNext" />
-        <meta property="of:version" content="vNext" />
-        <meta property="of:accepts:xmtp" content="vNext" />
-        <meta property="of:image" content={image} />
-        <meta property="og:image" content={image} />
-        <meta property="fc:frame:image" content={image} />
-        <meta property="fc:frame:ratio" content="1.91:1" />
-
-        <meta property="fc:frame:button:1" content={`Pay in USDC (Mobile)`} />
-        <meta property="fc:frame:button:1:action" content="link" />
-        <meta property="fc:frame:button:1:target" content={ethereumUrl} />
-
-        {params.onRampURL && (
-          <>
-            <meta property="fc:frame:button:2" content={`Pay in USD`} />
-            <meta property="fc:frame:button:2:action" content="link" />
-            <meta
-              property="fc:frame:button:2:target"
-              content={params.onRampURL}
-            />
-          </>
-        )}
-        <style>
-          {`
-          :root {
-            --background: #ffffff;
-            --foreground: #000000;
-            --accent: #fa6977;
-          }
-
-          @media (prefers-color-scheme: dark) {
-            :root {
-              --background: #ffffff;
-              --foreground: #000000;
-            }
-          }
-
-          * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-          }
-            
-            html, body {
-              background-color: var(--background) !important;
-              height: 100%;
-              width: 100%;
-            }
-
-            body {
-              display: inline-block;
-            }
-
-            .form-container {
-              background-color: var(--background);  
-              border-radius: 0.5rem;
-              box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-              padding: 1.5rem;
-            }
-          `}
-        </style>
-      </Head>
-      <div
-        style={{
-          margin: 0,
-          padding: 0,
-          backgroundColor: "white",
-          height: "100%",
-          display: "inline-block",
-          width: "100%",
-        }}>
-        <PaymentFrame url={ethereumUrl} image={image} label="Pay in USDC" />
-      </div>
-    </>
+    <div
+      style={{
+        margin: 0,
+        padding: 0,
+        backgroundColor: "white",
+        height: "100%",
+        display: "inline-block",
+        width: "100%",
+      }}>
+      <PaymentFrame url={ethereumUrl} image={image} label="Pay in USDC" />
+    </div>
   );
 }

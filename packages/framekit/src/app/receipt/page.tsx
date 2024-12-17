@@ -1,89 +1,86 @@
-"use client";
-
-import React, { useEffect, useState } from "react";
-import Head from "next/head";
+import { Metadata } from "next";
 import ReceiptGenerator from "../../components/ReceiptGenerator";
 
-export default function Home({
+type SearchParams = { [key: string]: string | string[] | undefined };
+
+// Helper function to safely get search params
+async function getParams(searchParams: Promise<SearchParams>) {
+  const resolvedSearchParams = await searchParams;
+  return {
+    url: `${process.env.NEXT_PUBLIC_URL || "http://localhost:3000"}`,
+    txLink:
+      String(resolvedSearchParams?.txLink || "") ||
+      String(resolvedSearchParams?.txlink || "") ||
+      "",
+    amount: String(resolvedSearchParams?.amount || ""),
+    networkId:
+      String(resolvedSearchParams?.networkId || "") ||
+      String(resolvedSearchParams?.networkid || "") ||
+      "base",
+  };
+}
+
+export async function generateMetadata({
   searchParams,
 }: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}) {
-  const [params, setParams] = useState({
-    url: `${process.env.NEXT_PUBLIC_URL || "http://localhost:3000"}`,
-    txLink: "",
-    amount: "",
-    networkId: "base",
-  });
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function resolveParams() {
-      try {
-        const resolvedSearchParams = await searchParams;
-        setParams({
-          url: `${process.env.NEXT_PUBLIC_URL || "http://localhost:3000"}`,
-          txLink:
-            (resolvedSearchParams.txLink as string) ||
-            (resolvedSearchParams.txlink as string) ||
-            "",
-          amount: (resolvedSearchParams.amount as string) || "",
-          networkId:
-            (resolvedSearchParams.networkId as string) ||
-            (resolvedSearchParams.networkid as string) ||
-            "base",
-        });
-      } catch (error) {
-        console.error("Error resolving searchParams:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-    resolveParams();
-  }, [searchParams]);
-
+  searchParams: Promise<SearchParams>;
+}): Promise<Metadata> {
+  const params = await getParams(searchParams);
   const image = `${params.url}/api/receipt?txLink=${params.txLink}&amount=${params.amount}&networkId=${params.networkId}`;
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      console.log("Window object is available");
-      if (params.txLink) {
-        console.log("Redirecting to", params.txLink);
-        window.location.href = params.txLink;
-      } else {
-        console.log("No txLink found, not redirecting");
-      }
-    } else {
-      console.log("Window object is not available");
-    }
-  }, [params.txLink]);
+  return {
+    title: "Ethereum Payment",
+    other: {
+      "fc:frame": "vNext",
+      "of:version": "vNext",
+      "of:accepts:xmtp": "vNext",
+      "fc:frame:image": image,
+      "og:image": image,
+      "fc:frame:ratio": "1.91:1",
+      "fc:frame:button:1": "Transaction Receipt",
+      "fc:frame:button:1:action": "link",
+      "fc:frame:button:1:target": params.txLink,
+    },
+  };
+}
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+export default async function ReceiptPage({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
+  const params = await getParams(searchParams);
 
-  if (!params.txLink) {
+  // If there's a txLink, redirect to it
+  if (params.txLink && params.txLink !== "") {
     return (
-      <>
-        <Head>
-          <meta charSet="utf-8" />
-          <meta property="og:title" content="Ethereum Payment" />
-          <meta property="fc:frame" content="vNext" />
-          <meta property="of:version" content="vNext" />
-          <meta property="of:accepts:xmtp" content="vNext" />
-          <meta property="of:image" content={image} />
-          <meta property="og:image" content={image} />
-          <meta property="fc:frame:image" content={image} />
-          <meta property="fc:frame:ratio" content="1.91:1" />
-
-          <meta property="fc:frame:button:1" content={`Transaction Receipt`} />
-          <meta property="fc:frame:button:1:action" content="link" />
-          <meta property="fc:frame:button:1:target" content={params.txLink} />
-        </Head>
-        <ReceiptGenerator />
-      </>
+      <div
+        style={{
+          margin: 0,
+          padding: 0,
+          backgroundColor: "white",
+          height: "100%",
+          display: "inline-block",
+          width: "100%",
+        }}>
+        <meta httpEquiv="refresh" content={`0;url=${params.txLink}`} />
+        Redirecting to transaction...
+      </div>
     );
   }
 
-  return null;
+  // If no txLink, show the receipt generator
+  return (
+    <div
+      style={{
+        margin: 0,
+        padding: 0,
+        backgroundColor: "white",
+        height: "100%",
+        display: "inline-block",
+        width: "100%",
+      }}>
+      <ReceiptGenerator />
+    </div>
+  );
 }
