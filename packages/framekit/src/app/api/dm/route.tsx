@@ -56,8 +56,8 @@ export async function GET(req: NextRequest) {
           </div>
         ),
         {
-          width: 500,
-          height: 500,
+          width: 900,
+          height: 600,
           fonts: [
             {
               data: interFontData,
@@ -80,7 +80,7 @@ export async function GET(req: NextRequest) {
             background: "#000000",
             height: "100%",
             width: "100%",
-            padding: "48px",
+            padding: "60px",
           }}>
           <div
             style={{
@@ -108,8 +108,8 @@ export async function GET(req: NextRequest) {
         </div>
       ),
       {
-        width: 955,
-        height: 500,
+        width: 900,
+        height: 600,
         fonts: [
           {
             data: interFontData,
