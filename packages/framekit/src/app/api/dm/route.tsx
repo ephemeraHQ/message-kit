@@ -81,34 +81,46 @@ export async function GET(req: NextRequest) {
         <div
           style={{
             display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-between",
+            flexDirection: "column",
+            justifyContent: "center",
             alignItems: "center",
             background: "#000000",
             height: "100%",
             width: "100%",
-            padding: "60px",
+            padding: "40px",
           }}>
           <div
             style={{
               display: "flex",
               flexDirection: "column",
-              alignItems: "flex-start",
+              alignItems: "center",
               justifyContent: "center",
               gap: "16px",
+              maxWidth: "100%",
             }}>
             <div
               style={{
                 display: "flex",
                 flexDirection: "row",
                 alignItems: "center",
-                justifyContent: "flex-start",
+                justifyContent: "center",
                 gap: "16px",
                 color: "#fa6977",
               }}>
-              <div style={{ fontSize: "44px" }}>{`Talk to`}</div>
+              <div
+                style={{
+                  fontSize: "44px",
+                  textAlign: "center",
+                }}>{`Talk to`}</div>
             </div>
-            <div style={{ fontSize: "64px", color: "#fa6977" }}>
+            <div
+              style={{
+                fontSize: "64px",
+                color: "#fa6977",
+                textAlign: "center",
+                wordBreak: "break-word",
+                maxWidth: "800px",
+              }}>
               {params.preferredName}
             </div>
           </div>
