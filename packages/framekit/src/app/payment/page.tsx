@@ -1,6 +1,7 @@
 import { parseUnits } from "viem";
 import PaymentFrame from "../../components/PaymentFrame";
 import { extractFrameChain } from "../utils/networks";
+import Head from "next/head";
 
 export default async function Home({
   searchParams,
@@ -28,14 +29,8 @@ export default async function Home({
   const image = `${params.url}/api/payment?networkId=${params.networkId}&amount=${params.amount}&recipientAddress=${params.recipientAddress}`;
 
   return (
-    <html
-      style={{
-        margin: 0,
-        padding: 0,
-        backgroundColor: "white",
-        height: "100%",
-      }}>
-      <head>
+    <>
+      <Head>
         <meta charSet="utf-8" />
         <meta property="og:title" content="Ethereum Payment" />
         <meta property="fc:frame" content="vNext" />
@@ -99,8 +94,8 @@ export default async function Home({
             }
           `}
         </style>
-      </head>
-      <body
+      </Head>
+      <div
         style={{
           margin: 0,
           padding: 0,
@@ -110,7 +105,7 @@ export default async function Home({
           width: "100%",
         }}>
         <PaymentFrame url={ethereumUrl} image={image} label="Pay in USDC" />
-      </body>
-    </html>
+      </div>
+    </>
   );
 }

@@ -1,84 +1,40 @@
-"use client";
-
-import React, { useEffect, useState } from "react";
 import Head from "next/head";
-import MintComponent from "../../components/MintComponent"; // Assuming there's a MintComponent
 
-export default function MintPage({
+export default async function Home({
   searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const [params, setParams] = useState({
-    url: `${process.env.NEXT_PUBLIC_URL || "http://localhost:3000"}`,
-    txLink: "",
-    amount: "",
-    networkId: "base",
-  });
-  const [loading, setLoading] = useState(true);
+  const resolvedSearchParams = await searchParams; // Await the promise
 
-  useEffect(() => {
-    async function resolveParams() {
-      const resolvedSearchParams = await searchParams;
-      setParams({
-        url: `${process.env.NEXT_PUBLIC_URL || "http://localhost:3000"}`,
-        txLink:
-          (resolvedSearchParams.txLink as string) ||
-          (resolvedSearchParams.txlink as string) ||
-          "",
-        amount: resolvedSearchParams.amount as string,
-        networkId:
-          (resolvedSearchParams.networkId as string) ||
-          (resolvedSearchParams.networkid as string) ||
-          "base",
-      });
-      setLoading(false);
-    }
-    resolveParams();
-  }, [searchParams]);
+  const url = `${process.env.NEXT_PUBLIC_URL || "http://localhost:3000"}`;
+  const collectionId =
+    (resolvedSearchParams.collectionId as string) ||
+    "0x73a333cb82862d4f66f0154229755b184fb4f5b0";
+  const tokenId = (resolvedSearchParams.tokenId as string) || "1";
+  const mintLink = `ethereum:${collectionId}/mint?uint256=${tokenId}`;
 
-  const image = `${params.url}/api/mint?txLink=${params.txLink}&amount=${params.amount}&networkId=${params.networkId}`;
+  //ethereum:0x73a333cb82862d4f66f0154229755b184fb4f5b0/mint?uint256=1
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      console.log("Window object is available");
-      if (params.txLink) {
-        console.log("Redirecting to", params.txLink);
-        window.location.href = params.txLink;
-      } else {
-        console.log("No txLink found, not redirecting");
-      }
-    } else {
-      console.log("Window object is not available");
-    }
-  }, [params.txLink]);
+  const image = `${url}/api/mint?collectionId=${collectionId}&tokenId=${tokenId}`;
+  return (
+    <>
+      <Head>
+        <meta charSet="utf-8" />
+        <meta property="og:title" content="Ethereum Payment" />
+        <meta property="fc:frame" content="vNext" />
+        <meta property="of:version" content="vNext" />
+        <meta property="of:accepts:xmtp" content="vNext" />
+        <meta property="of:image" content={image} />
+        <meta property="og:image" content={image} />
+        <meta property="fc:frame:image" content={image} />
+        <meta property="fc:frame:ratio" content="1.91:1" />
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (!params.txLink) {
-    return (
-      <>
-        <Head>
-          <meta charSet="utf-8" />
-          <meta property="og:title" content="Mint Page" />
-          <meta property="fc:frame" content="vNext" />
-          <meta property="of:version" content="vNext" />
-          <meta property="of:accepts:xmtp" content="vNext" />
-          <meta property="of:image" content={image} />
-          <meta property="og:image" content={image} />
-          <meta property="fc:frame:image" content={image} />
-          <meta property="fc:frame:ratio" content="1.91:1" />
-
-          <meta property="fc:frame:button:1" content={`Mint Receipt`} />
-          <meta property="fc:frame:button:1:action" content="link" />
-          <meta property="fc:frame:button:1:target" content={params.txLink} />
-        </Head>
-        <MintComponent />
-      </>
-    );
-  }
-
-  return null;
+        <meta property="fc:frame:button:1" content={`Mint `} />
+        <meta property="fc:frame:button:1:action" content="link" />
+        <meta property="fc:frame:button:1:target" content={mintLink} />
+      </Head>
+      <div></div>
+    </>
+  );
 }
