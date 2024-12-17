@@ -7,7 +7,7 @@ import ReceiptGenerator from "../../components/ReceiptGenerator";
 export default function Home({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const [params, setParams] = useState({
     url: `${process.env.NEXT_PUBLIC_URL || "http://localhost:3000"}`,
@@ -18,19 +18,28 @@ export default function Home({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setParams({
-      url: `${process.env.NEXT_PUBLIC_URL || "http://localhost:3000"}`,
-      txLink:
-        (searchParams.txLink as string) ||
-        (searchParams.txlink as string) ||
-        "",
-      amount: (searchParams.amount as string) || "",
-      networkId:
-        (searchParams.networkId as string) ||
-        (searchParams.networkid as string) ||
-        "base",
-    });
-    setLoading(false);
+    async function resolveParams() {
+      try {
+        const resolvedSearchParams = await searchParams;
+        setParams({
+          url: `${process.env.NEXT_PUBLIC_URL || "http://localhost:3000"}`,
+          txLink:
+            (resolvedSearchParams.txLink as string) ||
+            (resolvedSearchParams.txlink as string) ||
+            "",
+          amount: (resolvedSearchParams.amount as string) || "",
+          networkId:
+            (resolvedSearchParams.networkId as string) ||
+            (resolvedSearchParams.networkid as string) ||
+            "base",
+        });
+      } catch (error) {
+        console.error("Error resolving searchParams:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    resolveParams();
   }, [searchParams]);
 
   const image = `${params.url}/api/receipt?txLink=${params.txLink}&amount=${params.amount}&networkId=${params.networkId}`;
