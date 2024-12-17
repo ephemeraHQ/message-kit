@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Head from "next/head";
 import ReceiptGenerator from "../../components/ReceiptGenerator";
 
 export default function Home({
@@ -58,8 +59,8 @@ export default function Home({
 
   if (!params.txLink) {
     return (
-      <div>
-        <head>
+      <>
+        <Head>
           <meta charSet="utf-8" />
           <meta property="og:title" content="Ethereum Payment" />
           <meta property="fc:frame" content="vNext" />
@@ -73,9 +74,9 @@ export default function Home({
           <meta property="fc:frame:button:1" content={`Transaction Receipt`} />
           <meta property="fc:frame:button:1:action" content="link" />
           <meta property="fc:frame:button:1:target" content={params.txLink} />
-        </head>
+        </Head>
         <ReceiptGenerator />
-      </div>
+      </>
     );
   }
 

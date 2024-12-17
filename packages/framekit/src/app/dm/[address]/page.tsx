@@ -1,7 +1,9 @@
 "use client";
-import { Suspense, useEffect, useState } from "react";
+
+import React, { Suspense, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { useParams } from "next/navigation";
+import Head from "next/head";
 import sdk, { type FrameContext } from "@farcaster/frame-sdk";
 import { getUserInfo, type UserInfo } from "@/app/utils/resolver";
 
@@ -40,11 +42,30 @@ export default function ChatFrame(): JSX.Element {
   }
 
   return (
-    <FrameHTML user={user}>
-      <Suspense fallback={<div>Loading...</div>}>
-        <ChatContent user={user} />
-      </Suspense>
-    </FrameHTML>
+    <>
+      <Head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Chat Frame</title>
+        <meta
+          property="og:image"
+          content={`${process.env.NEXT_PUBLIC_URL ?? "http://localhost:3000"}/api/dm?address=${user?.address}`}
+        />
+        <meta property="fc:frame" content="vNext" />
+        <meta property="of:version" content="vNext" />
+        <meta property="of:accepts:xmtp" content="vNext" />
+        <meta
+          property="fc:frame:image"
+          content={`${process.env.NEXT_PUBLIC_URL ?? "http://localhost:3000"}/api/dm?address=${user?.address}`}
+        />
+        <meta property="fc:frame:button:1" content="Start Chat" />
+      </Head>
+      <FrameHTML user={user}>
+        <Suspense fallback={<div>Loading...</div>}>
+          <ChatContent user={user} />
+        </Suspense>
+      </FrameHTML>
+    </>
   );
 }
 
@@ -56,26 +77,7 @@ function FrameHTML({
   children: React.ReactNode;
   user: UserInfo;
 }) {
-  const baseUrl = `${process.env.NEXT_PUBLIC_URL ?? "http://localhost:3000"}`;
-  const image = `${baseUrl}/api/dm?address=${user.address}`;
-
-  console.log(image);
-  return (
-    <html>
-      <head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Chat Frame</title>
-        <meta property="og:image" content={image} />
-        <meta property="fc:frame" content="vNext" />
-        <meta property="of:version" content="vNext" />
-        <meta property="of:accepts:xmtp" content="vNext" />
-        <meta property="fc:frame:image" content={image} />
-        <meta property="fc:frame:button:1" content="Start Chat" />
-      </head>
-      <body>{children}</body>
-    </html>
-  );
+  return <>{children}</>;
 }
 
 function ChatContent({ user }: { user: UserInfo }): JSX.Element {
