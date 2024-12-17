@@ -79,10 +79,6 @@ export class WalletService implements AgentWallet {
           name: "user",
           refId: normalizedIdentifier,
         },
-        {
-          name: "senderAddress",
-          refId: this.senderAddress,
-        },
       ],
     });
 
