@@ -16,6 +16,12 @@ const interSemiboldFontData = fs.readFileSync(interSemiboldFontPath);
 
 export async function GET(req: NextRequest) {
   try {
+    const headers = new Headers({
+      "Cache-Control": "no-cache, no-store, must-revalidate",
+      Pragma: "no-cache",
+      Expires: "0",
+    });
+
     const address = req.nextUrl.searchParams.get("address") ?? "";
 
     const user = await getUserInfo(address);
@@ -66,6 +72,7 @@ export async function GET(req: NextRequest) {
               weight: 400,
             },
           ],
+          headers: headers,
         },
       );
     }
@@ -120,6 +127,7 @@ export async function GET(req: NextRequest) {
             name: "Inter-SemiBold",
           },
         ],
+        headers: headers,
       },
     );
   } catch (error) {
