@@ -1,5 +1,4 @@
-import { Context } from "../lib/core.js";
-import { getUserInfo } from "../plugins/resolver.js";
+import { getUserInfo } from "./resolver.js";
 
 export interface Frame {
   title: string;
@@ -8,64 +7,66 @@ export interface Frame {
 }
 
 const framesUrl =
-  process.env.NODE_ENV === "production"
-    ? "https://frames.message-kit.org"
-    : "https://frames.ngrok.app";
+  process.env.FRAME_URL !== undefined
+    ? process.env.FRAME_URL
+    : "https://frames.message-kit.org";
 
 export class FrameKit {
-  private context: Context;
-
-  constructor(context: Context) {
-    this.context = context;
-  }
-
-  async sendWallet(
+  static async sendWallet(
     ownerAddress: string,
     agentAddress: string,
     balance: number,
-  ) {
+  ): Promise<string> {
     let url = `${framesUrl}/wallet?networkId=${"base"}&agentAddress=${agentAddress}&ownerAddress=${ownerAddress}&balance=${balance}`;
-    await this.context.send(url);
+    return url;
   }
 
-  async requestPayment(
+  static async coinbaseLink(address: string): Promise<string> {
+    let url = `${framesUrl}/coinbase?address=${address}`;
+    return url;
+  }
+
+  static async requestPayment(
     to: string = "humanagent.eth",
     amount: number = 0.01,
     token: string = "usdc",
     onRampURL?: string,
-  ) {
+  ): Promise<string> {
     let senderInfo = await getUserInfo(to);
     if (!senderInfo) {
       console.error("Failed to get sender info");
-      return;
+      return "";
     }
 
     let sendUrl = `${framesUrl}/payment?networkId=${"base"}&amount=${amount}&token=${token}&recipientAddress=${senderInfo?.address}`;
     if (onRampURL) {
       sendUrl = sendUrl + "&onRampURL=" + encodeURIComponent(onRampURL);
     }
-    await this.context.dm(sendUrl);
+    return sendUrl;
   }
 
-  async sendReceipt(txLink: string, amount: number) {
-    if (!txLink) return;
+  static async sendReceipt(txLink: string, amount: number): Promise<string> {
+    if (!txLink) return "";
     let receiptUrl = `${framesUrl}/receipt?networkId=${"base"}&txLink=${txLink}&amount=${amount}`;
-    await this.context.dm(receiptUrl);
+    return receiptUrl;
   }
 
-  async sendConverseDmFrame(peer: string, pretext?: string) {
+  static async converseLink(peer: string, pretext?: string): Promise<string> {
     let url = `https://converse.xyz/dm/${peer}`;
     if (pretext) url += `&pretext=${encodeURIComponent(pretext)}`;
-    await this.context.send(url);
+    return url;
   }
 
-  async sendConverseGroupFrame(groupId: string, pretext?: string) {
+  static async converseGroup(
+    groupId: string,
+    pretext?: string,
+  ): Promise<string> {
     let url = `https://converse.xyz/group/${groupId}`;
     if (pretext) url += `&pretext=${encodeURIComponent(pretext)}`;
-    await this.context.send(url);
+    return url;
   }
 
-  async sendCustomFrame(frame: Frame) {
+  static async sendCustomFrame(frame: Frame): Promise<string> {
     const params = new URLSearchParams();
     for (const [key, value] of Object.entries(frame)) {
       params.append(
@@ -75,6 +76,6 @@ export class FrameKit {
     }
 
     const frameUrl = `${framesUrl}/custom?${params.toString()}`;
-    await this.context.send(frameUrl);
+    return frameUrl;
   }
 }

@@ -79,13 +79,9 @@ export class WalletService implements AgentWallet {
           name: "user",
           refId: normalizedIdentifier,
         },
-        {
-          name: "senderAddress",
-          refId: this.senderAddress,
-        },
       ],
     });
-
+    //test
     if (!response?.data?.wallets?.[0]) {
       throw new Error("Failed to create wallet");
     }

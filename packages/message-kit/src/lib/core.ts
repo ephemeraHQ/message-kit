@@ -40,7 +40,6 @@ import {
 } from "@xmtp/content-type-read-receipt";
 import { WalletService as CdpWalletService } from "../plugins/cdp.js";
 import { WalletService as CircleWalletService } from "../plugins/circle.js";
-import { FrameKit } from "../plugins/framekit.js";
 import { executeSkill, parseSkill, findSkill } from "./skills.js";
 import { logUserInteraction } from "../helpers/utils.js";
 import path from "path";
@@ -69,7 +68,6 @@ export type Context = {
   agentConfig?: AgentConfig;
   agent: Agent;
   walletService: CdpWalletService | CircleWalletService;
-  framekit: FrameKit;
   sender?: AbstractedMember;
   awaitingResponse: boolean;
   sendAgentMessage: (message: string, metadata: any) => Promise<void>;
@@ -100,7 +98,6 @@ export type Context = {
 export class MessageKit implements Context {
   xmtp!: XmtpPlugin;
   storage!: LocalStorage;
-  framekit!: FrameKit; // Using ! since we know it will be initialized
   refConv: Conversation | V2Conversation | undefined = undefined;
   originalMessage: DecodedMessage | DecodedMessageV2 | undefined = undefined;
   message!: MessageAbstracted; // A message from XMTP abstracted for agent use;
@@ -298,7 +295,6 @@ export class MessageKit implements Context {
         };
 
         //Plugins
-        context.framekit = new FrameKit(context as unknown as Context);
         context.xmtp = new XmtpPlugin(context as unknown as Context);
         //test
         if (context.agentConfig?.walletService === true) {

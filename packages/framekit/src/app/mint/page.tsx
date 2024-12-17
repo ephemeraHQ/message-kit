@@ -1,3 +1,5 @@
+import Head from "next/head";
+
 export default async function Home({
   searchParams,
 }: {
@@ -16,8 +18,8 @@ export default async function Home({
 
   const image = `${url}/api/mint?collectionId=${collectionId}&tokenId=${tokenId}`;
   return (
-    <html>
-      <head>
+    <>
+      <Head>
         <meta charSet="utf-8" />
         <meta property="og:title" content="Ethereum Payment" />
         <meta property="fc:frame" content="vNext" />
@@ -31,8 +33,8 @@ export default async function Home({
         <meta property="fc:frame:button:1" content={`Mint `} />
         <meta property="fc:frame:button:1:action" content="link" />
         <meta property="fc:frame:button:1:target" content={mintLink} />
-      </head>
-      <body></body>
-    </html>
+      </Head>
+      <div></div>
+    </>
   );
 }

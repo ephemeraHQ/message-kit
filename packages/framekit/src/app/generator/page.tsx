@@ -16,11 +16,10 @@ export default async function Home({
     onRampURL: resolvedSearchParams?.onRampURL as string,
   };
   return (
-    <html>
-      <head></head>
+    <>
       <body>
         <UrlGenerator params={params} />
       </body>
-    </html>
+    </>
   );
 }

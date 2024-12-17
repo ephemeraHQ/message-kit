@@ -1,13 +1,14 @@
 "use client";
 import { GeistMono as geistMono } from "geist/font/mono";
 import { GeistSans as geistSans } from "geist/font/sans";
+import Head from "next/head";
 
 export default function Home() {
   const url = `${process.env.NEXT_PUBLIC_URL || "http://localhost:3000"}`;
   let image = `${url}/hero.jpg`;
   return (
-    <html>
-      <head>
+    <>
+      <Head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width" />
         <meta property="og:title" content="MessageKit" />
@@ -30,7 +31,7 @@ export default function Home() {
           property="fc:frame:button:2:target"
           content="https://github.com/ephemeraHQ/message-kit"
         />
-      </head>
+      </Head>
       <body>
         <div
           className={`container ${geistSans.variable} ${geistMono.variable}`}>
@@ -65,24 +66,9 @@ export default function Home() {
                 Custom
               </a>
             </div>
-            <div
-              className="powered-by"
-              style={{
-                marginTop: "3rem",
-                width: "100%",
-                marginBottom: "1rem",
-              }}>
-              Powered by{" "}
-              <a
-                href="https://github.com/ephemeraHQ/message-kit"
-                target="_blank"
-                rel="noopener noreferrer">
-                MessageKit
-              </a>
-            </div>
           </div>
         </div>
       </body>
-    </html>
+    </>
   );
 }

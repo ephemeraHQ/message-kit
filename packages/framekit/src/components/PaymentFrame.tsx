@@ -97,22 +97,6 @@ const PaymentFrame: React.FC<any> = ({ url, image, label }) => {
             </div>
           </div>
         </div>
-        <div
-          className="powered-by"
-          style={{
-            marginTop: "3rem",
-            width: "100%",
-            marginBottom: "1rem",
-            color: "var(--foreground)",
-          }}>
-          Powered by{" "}
-          <a
-            href="https://github.com/ephemeraHQ/message-kit"
-            target="_blank"
-            rel="noopener noreferrer">
-            MessageKit
-          </a>
-        </div>
       </div>
     </div>
   );

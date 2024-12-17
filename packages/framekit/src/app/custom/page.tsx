@@ -1,3 +1,5 @@
+import Head from "next/head";
+
 export default async function Home({
   searchParams,
 }: {
@@ -66,15 +68,15 @@ export default async function Home({
     )),
   ];
   return (
-    <html>
-      <head>
+    <>
+      <Head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width" />
         {metas}
-      </head>
+      </Head>
       <body>
         <pre>{JSON.stringify(metaTags, undefined, 2)}</pre>
       </body>
-    </html>
+    </>
   );
 }

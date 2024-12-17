@@ -1,13 +1,17 @@
+import { Metadata } from "next";
 import PaymentFrame from "../../components/PaymentFrame";
 import { extractFrameChain } from "../utils/networks";
 
-export default async function Home({
-  searchParams,
-}: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}) {
+type SearchParams = { [key: string]: string | string[] | undefined };
+
+type Props = {
+  searchParams: Promise<SearchParams>;
+};
+
+// Helper function to get params
+async function getParams(searchParams: Promise<SearchParams>) {
   const resolvedSearchParams = await searchParams;
-  const params = {
+  return {
     url: process.env.NEXT_PUBLIC_URL,
     agentAddress:
       (resolvedSearchParams?.agentAddress as string) ||
@@ -29,95 +33,58 @@ export default async function Home({
     baseScanUrl:
       "https://basescan.org/address/" + resolvedSearchParams?.address,
   };
+}
+
+export async function generateMetadata({
+  searchParams,
+}: Props): Promise<Metadata> {
+  const params = await getParams(searchParams);
+  const { chainId, tokenAddress } = extractFrameChain(params.networkId);
+  const ethereumUrl = `ethereum:${tokenAddress}@${chainId}/transfer?address=${params.agentAddress}`;
+  const image = `${params.url}/api/wallet?networkId=${params.networkId}&agentAddress=${params.agentAddress}&ownerAddress=${params.ownerAddress}&balance=${params.balance}`;
+
+  return {
+    title: "Wallet Information",
+    other: {
+      "fc:frame": "vNext",
+      "of:version": "vNext",
+      "of:accepts:xmtp": "vNext",
+      "of:image": image,
+      "og:image": image,
+      "fc:frame:image": image,
+      "fc:frame:ratio": "1.91:1",
+      "fc:frame:button:1": "Base Scan",
+      "fc:frame:button:1:action": "link",
+      "fc:frame:button:1:target": params.baseScanUrl,
+      "fc:frame:button:2": "Add funds",
+      "fc:frame:button:2:action": "link",
+      "fc:frame:button:2:target": ethereumUrl,
+    },
+  };
+}
+
+export default async function Home({ searchParams }: Props) {
+  const params = await getParams(searchParams);
   const { chainId, tokenAddress } = extractFrameChain(params.networkId);
   const ethereumUrl = `ethereum:${tokenAddress}@${chainId}/transfer?address=${params.agentAddress}`;
   const image = `${params.url}/api/wallet?networkId=${params.networkId}&agentAddress=${params.agentAddress}&ownerAddress=${params.ownerAddress}&balance=${params.balance}`;
 
   return (
-    <html
+    <div
       style={{
         margin: 0,
         padding: 0,
         backgroundColor: "white",
         height: "100%",
+        display: "inline-block",
+        width: "100%",
       }}>
-      <head>
-        <meta charSet="utf-8" />
-        <meta property="og:title" content="Wallet Information" />
-        <meta property="fc:frame" content="vNext" />
-        <meta property="of:version" content="vNext" />
-        <meta property="of:accepts:xmtp" content="vNext" />
-        <meta property="of:image" content={image} />
-        <meta property="og:image" content={image} />
-        <meta property="fc:frame:image" content={image} />
-        <meta property="fc:frame:ratio" content="1.91:1" />
-
-        <meta property="fc:frame:button:1" content=" Base Scan" />
-        <meta property="fc:frame:button:1:action" content="link" />
-        <meta
-          property="fc:frame:button:1:target"
-          content={params.baseScanUrl}
-        />
-        <meta property="fc:frame:button:2" content="Add funds" />
-        <meta property="fc:frame:button:2:action" content="link" />
-        <meta property="fc:frame:button:2:target" content={ethereumUrl} />
-
-        <style>
-          {`
-          :root {
-            --background: #ffffff;
-            --foreground: #000000;
-            --accent: #fa6977;
-          }
-
-          @media (prefers-color-scheme: dark) {
-            :root {
-              --background: #ffffff;
-              --foreground: #000000;
-            }
-          }
-
-          * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-          }
-            
-            html, body {
-              background-color: var(--background) !important;
-              height: 100%;
-              width: 100%;
-            }
-
-            body {
-              display: inline-block;
-            }
-
-            .form-container {
-              background-color: var(--background);  
-              border-radius: 0.5rem;
-              box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-              padding: 1.5rem;
-            }
-          `}
-        </style>
-      </head>
-      <body
-        style={{
-          margin: 0,
-          padding: 0,
-          backgroundColor: "white",
-          height: "100%",
-          display: "inline-block",
-          width: "100%",
-        }}>
-        <PaymentFrame
-          params={params}
-          image={image}
-          url={params.baseScanUrl}
-          label="View on Base Scan"
-        />
-      </body>
-    </html>
+      <PaymentFrame
+        params={params}
+        image={image}
+        url={params.baseScanUrl}
+        label="View on Base Scan"
+      />
+    </div>
   );
 }

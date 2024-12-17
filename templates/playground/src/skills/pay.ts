@@ -1,4 +1,4 @@
-import { Context } from "@xmtp/message-kit";
+import { Context, FrameKit } from "@xmtp/message-kit";
 import type { Skill } from "@xmtp/message-kit";
 
 export const registerSkill: Skill[] = [
@@ -31,5 +31,10 @@ export async function handler(context: Context) {
 
   const { amount: amountSend, token: tokenSend, username } = params;
 
-  await context.framekit.requestPayment(username, amountSend, tokenSend);
+  const url = await FrameKit.requestPayment(
+    username?.address,
+    amountSend,
+    tokenSend,
+  );
+  await context.dm(url);
 }
