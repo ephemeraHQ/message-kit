@@ -16,7 +16,7 @@ async function getParams(params: Promise<{ address: string }>) {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const resolvedParams = await params;
   const userInfo = await getUserInfo(resolvedParams?.address as string);
-  const imageUrl = `${process.env.NEXT_PUBLIC_URL ?? "http://localhost:3000"}/api/dm?address=${userInfo?.address}`;
+  const imageUrl = `${process.env.NEXT_PUBLIC_URL ?? "http://localhost:3000"}/api/dmimage?address=${userInfo?.address}`;
   console.log("imageUrl", imageUrl);
   return {
     title: `Chat with ${userInfo?.preferredName || resolvedParams?.address}`,
