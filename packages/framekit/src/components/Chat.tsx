@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { useState, useEffect } from "react";
 import { Client as V2Client } from "@xmtp/xmtp-js";
 import { Wallet } from "ethers";
 import styles from "./Chat.module.css";
 import { UserInfo } from "@/app/utils/resolver";
-import { isAddress } from "viem";
+import { isAddress, parseUnits } from "viem";
+import { extractFrameChain } from "@/app/utils/networks";
+import sdk from "@farcaster/frame-sdk";
 
 interface Message {
   id: string;
@@ -86,6 +88,20 @@ function Chat({ user }: { user: UserInfo }) {
     initConversation();
   }, [xmtp, recipientInfo, wallet]);
 
+  const ethereumURL = (url: string) => {
+    //frames.message-kit.org/payment?networkId=base&amount=0.01&token=USDC&recipientAddress=0x5d8407cb37f12b8c2a7fbb81d182eafa784022ed
+
+    const urlParams = new URLSearchParams(url.split("?")[1]);
+    const networkId = urlParams.get("networkId");
+    const { chainId, tokenAddress } = extractFrameChain(networkId as string);
+    const amount = urlParams.get("amount");
+    const recipientAddress = urlParams.get("recipientAddress");
+
+    const amountUint256 = parseUnits(amount as string, 6);
+    const ethereumUrl = `ethereum:${tokenAddress}@${chainId}/transfer?address=${recipientAddress}&uint256=${amountUint256}`;
+
+    return ethereumUrl;
+  };
   useEffect(() => {
     const streamMessages = async () => {
       if (!conversation) return;
@@ -158,15 +174,28 @@ function Chat({ user }: { user: UserInfo }) {
       console.error("Error sending message:", error);
     }
   };
+  const openUrl = useCallback(
+    (url: string) => {
+      sdk.actions.openUrl(url);
+    },
+    [newMessage],
+  );
 
   const renderMessageContent = (content: string) => {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
     return content.split(urlRegex).map((part, index) => {
       if (urlRegex.test(part)) {
         return (
-          <a key={index} href={part} target="_blank" rel="noopener noreferrer">
-            {part}
-          </a>
+          <button
+            key={index}
+            onClick={() => {
+              window.location.href = ethereumURL(part);
+              const ethUrl = ethereumURL(part);
+              openUrl(ethUrl);
+            }}
+            className={`${styles.urlButton}`}>
+            Pay in USDC
+          </button>
         );
       }
       return part;

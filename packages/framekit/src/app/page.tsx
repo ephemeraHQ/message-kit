@@ -65,21 +65,6 @@ export default function Home() {
                 Custom
               </a>
             </div>
-            <div
-              className="powered-by"
-              style={{
-                marginTop: "3rem",
-                width: "100%",
-                marginBottom: "1rem",
-              }}>
-              Powered by{" "}
-              <a
-                href="https://github.com/ephemeraHQ/message-kit"
-                target="_blank"
-                rel="noopener noreferrer">
-                MessageKit
-              </a>
-            </div>
           </div>
         </div>
       </body>

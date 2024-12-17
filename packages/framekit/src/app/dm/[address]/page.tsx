@@ -1,9 +1,9 @@
 "use client";
-import { Suspense, useEffect, useState, useMemo } from "react";
+import { Suspense, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { useParams } from "next/navigation";
 import sdk, { type FrameContext } from "@farcaster/frame-sdk";
-import { getUserInfo, UserInfo } from "@/app/utils/resolver";
+import { getUserInfo, type UserInfo } from "@/app/utils/resolver";
 
 const Chat = dynamic(() => import("../../../components/Chat"), {
   ssr: false,
@@ -20,6 +20,7 @@ export default function ChatFrame(): JSX.Element {
         console.log("Fetching user info for address:", params?.address);
         const userInfo = await getUserInfo(params?.address as string);
         console.log("Fetched user info:", userInfo);
+
         setUser(userInfo ?? null);
       } catch (error) {
         console.error("Error fetching user info:", error);
@@ -27,11 +28,8 @@ export default function ChatFrame(): JSX.Element {
         setLoading(false);
       }
     };
-
     fetchUserInfo();
   }, [params?.address]);
-
-  const memoizedUser = useMemo(() => user, [user]) as UserInfo;
 
   if (loading) {
     return <div>Loading...</div>;
@@ -42,9 +40,9 @@ export default function ChatFrame(): JSX.Element {
   }
 
   return (
-    <FrameHTML user={memoizedUser}>
+    <FrameHTML user={user}>
       <Suspense fallback={<div>Loading...</div>}>
-        <Chat user={memoizedUser} />
+        <ChatContent user={user} />
       </Suspense>
     </FrameHTML>
   );
@@ -83,18 +81,17 @@ function FrameHTML({
 function ChatContent({ user }: { user: UserInfo }): JSX.Element {
   const [isSDKLoaded, setIsSDKLoaded] = useState(false);
   const [context, setContext] = useState<FrameContext>();
-  const params = useParams();
 
   useEffect(() => {
     const initFrame = async () => {
-      if (!isSDKLoaded) {
-        setContext(await sdk.context);
-        sdk.actions.ready();
-        setIsSDKLoaded(true);
-      }
+      setContext(await sdk.context);
+      sdk.actions.ready();
     };
 
-    initFrame();
+    if (sdk && !isSDKLoaded) {
+      setIsSDKLoaded(true);
+      initFrame();
+    }
   }, [isSDKLoaded]);
 
   return (
