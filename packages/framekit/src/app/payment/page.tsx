@@ -35,14 +35,7 @@ export async function generateMetadata({
   const { chainId, tokenAddress } = extractFrameChain(params.networkId);
   const amountUint256 = parseUnits(params.amount.toString(), 6);
   const ethereumUrl = `ethereum:${tokenAddress}@${chainId}/transfer?address=${params.recipientAddress}&uint256=${amountUint256}`;
-  
-  // Fix: Properly construct the image URL without HTML entities
-  const imageParams = new URLSearchParams({
-    networkId: params.networkId,
-    amount: params.amount.toString(),
-    recipientAddress: params.recipientAddress,
-  });
-  const image = `${params.url}/api/payment?${imageParams.toString()}`;
+  const image = `${params.url}/api/payment?networkId=${params.networkId}&amount=${params.amount}&recipientAddress=${params.recipientAddress}`;
 
   return {
     title: "Ethereum Payment",

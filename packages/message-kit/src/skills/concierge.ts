@@ -167,21 +167,15 @@ async function notifyUser(
 ) {
   if (transaction) {
     await context.dm(`Transfer completed successfully`);
-    if (transaction.getTransactionHash !== undefined) {
+    if ((await transaction.getTransactionHash()) !== undefined) {
       const url = await FrameKit.sendReceipt(
-        `https://basescan.org/tx/${transaction.getTransactionHash()}`,
+        `https://basescan.org/tx/${await transaction.getTransactionHash()}`,
         amount,
       );
       await context.dm(url);
-    } else if (transaction.txHash !== undefined) {
+    } else if ((await transaction.getTransaction()) !== undefined) {
       const url = await FrameKit.sendReceipt(
-        `https://basescan.org/tx/${transaction.txHash}`,
-        amount,
-      );
-      await context.dm(url);
-    } else if (transaction.getTransaction !== undefined) {
-      const url = await FrameKit.sendReceipt(
-        `https://basescan.org/tx/${transaction.getTransaction()}`,
+        `https://basescan.org/tx/${await transaction.getTransaction()}`,
         amount,
       );
       await context.dm(url);
