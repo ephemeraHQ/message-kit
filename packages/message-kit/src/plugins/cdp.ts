@@ -171,6 +171,8 @@ export class WalletService implements AgentWallet {
     toAddress = toAddress.toLowerCase();
     let from = await this.getWallet(fromAddress);
     if (!from) return undefined;
+    if (!Number(amount)) return undefined;
+
     console.log(`Retrieved wallet data for ${fromAddress}`);
     let balance = await from.wallet.getBalance(Coinbase.assets.Usdc);
     if (Number(balance) < amount) {
