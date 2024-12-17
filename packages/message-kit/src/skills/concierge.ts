@@ -3,7 +3,7 @@ import { Skill } from "../helpers/types";
 import { Context } from "../lib/core";
 import { getUserInfo } from "../plugins/resolver";
 import { isAddress } from "viem";
-import { FrameKit } from "../plugins/FrameKit";
+import { FrameKit } from "../plugins/framekit";
 
 export const concierge: Skill[] = [
   {
