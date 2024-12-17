@@ -25,7 +25,6 @@ export async function GET(req: NextRequest) {
     const address = req.nextUrl.searchParams.get("address") ?? "";
 
     const user = await getUserInfo(address);
-    console.log("Resolved user info:", user);
 
     const params = {
       url: process.env.NEXT_PUBLIC_URL || "http://localhost:3000",

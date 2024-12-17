@@ -1,12 +1,10 @@
 import { NextResponse } from "next/server";
-import { headers } from "next/headers";
+import * as cheerio from 'cheerio';
 
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const url = searchParams.get("url");
-
-    console.log("Fetching OG data for URL:", url);
 
     if (!url) {
       return NextResponse.json(
@@ -15,32 +13,46 @@ export async function GET(request: Request) {
       );
     }
 
-    // Fetch OpenGraph data from the target URL
+    console.log("Fetching OG data for URL:", url);
+
     const response = await fetch(url, {
       headers: {
-        "User-Agent": "bot",  // Some sites require a user agent
+        "user-agent": "bot",
       },
     });
 
     if (!response.ok) {
-      throw new Error(`Target URL returned status: ${response.status}`);
+      throw new Error(`Failed to fetch: ${response.status}`);
     }
 
     const html = await response.text();
+    const $ = cheerio.load(html);
 
-    // More robust OG tag extraction
-    const getMetaContent = (html: string, property: string) => {
-      const match = html.match(
-        new RegExp(`<meta[^>]*(?:property|name)=["']${property}["'][^>]*content=["']([^"']*?)["']`, "i")
+    // Extract meta tags using cheerio
+    const getMetaContent = (property: string) => {
+      return (
+        $(`meta[property="${property}"]`).attr('content') ||
+        $(`meta[name="${property}"]`).attr('content')
       );
-      return match?.[1] || "";
     };
 
     const ogData = {
-      title: getMetaContent(html, "og:title") || html.match(/<title>(.*?)<\/title>/i)?.[1] || "",
-      description: getMetaContent(html, "og:description") || getMetaContent(html, "description") || "",
-      image: getMetaContent(html, "og:image") || "",
+      title:
+        getMetaContent("og:title") ||
+        getMetaContent("twitter:title") ||
+        $('title').text() ||
+        url,
+      description:
+        getMetaContent("og:description") ||
+        getMetaContent("twitter:description") ||
+        getMetaContent("description") ||
+        "",
+      image:
+        getMetaContent("og:image") ||
+        getMetaContent("twitter:image") ||
+        "",
       url,
+      siteName: getMetaContent("og:site_name") || "",
     };
 
     console.log("Extracted OG data:", ogData);
@@ -49,12 +61,14 @@ export async function GET(request: Request) {
   } catch (error) {
     console.error("Error in OG route:", error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Failed to fetch OG data" },
+      {
+        error:
+          error instanceof Error ? error.message : "Failed to fetch OG data",
+      },
       { status: 500 },
     );
   }
 }
 
-// Configure CORS
 export const runtime = "edge";
 export const dynamic = "force-dynamic";

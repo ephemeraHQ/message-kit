@@ -56,7 +56,6 @@ function Chat({ user }: { user: UserInfo }) {
 
       try {
         setRecipientInfo(user);
-        console.log("User info:", user);
         if (user?.address) {
           console.log("Initializing XMTP with address:", user.address);
           await initXmtp(newWallet);

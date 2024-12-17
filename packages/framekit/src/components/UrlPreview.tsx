@@ -5,44 +5,49 @@ interface OgData {
   image?: string;
   title?: string;
   description?: string;
+  url?: string;
 }
 
-export function UrlPreview({ url, urlType }: { url: string; urlType: string }) {
+export const UrlPreview = ({
+  url,
+  urlType,
+}: {
+  url: string;
+  urlType?: string;
+}) => {
   const [ogData, setOgData] = useState<OgData | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchOgData = async (url: string) => {
-    try {
-      console.log("Fetching OG data for URL:", url);
-      const response = await fetch(`/api/og?url=${encodeURIComponent(url)}`);
-      console.log("OG Response status:", response.status);
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      console.log("OG Data received:", data);
-      return data;
-    } catch (error) {
-      console.error("Error fetching OG data:", error);
-      return null;
-    }
-  };
-
   useEffect(() => {
-    if (url) {
-      setLoading(true);
-      fetchOgData(url).then((data) => {
-        if (data) {
-          setOgData(data);
+    const fetchOGData = async () => {
+      try {
+        const decodedUrl = decodeURIComponent(url);
+        console.log("Fetching OG data for URL:", decodedUrl);
+
+        // Use the /api/og endpoint to avoid CORS
+        const response = await fetch(
+          `/api/og?url=${encodeURIComponent(decodedUrl)}`,
+        );
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch OG data: ${response.status}`);
         }
+
+        const data = await response.json();
+        console.log("Extracted OG data:", data);
+        setOgData(data);
+      } catch (error) {
+        console.error("Error fetching OG data:", error);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+
+    if (url) {
+      fetchOGData();
     }
   }, [url]);
 
-  // Don't render anything while loading or if no image is available
   if (loading) {
     return <div className={styles.loading}>Loading preview...</div>;
   }
@@ -60,4 +65,4 @@ export function UrlPreview({ url, urlType }: { url: string; urlType: string }) {
       />
     </div>
   );
-}
+};
