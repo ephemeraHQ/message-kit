@@ -58,7 +58,7 @@ export default function Home({
 
   if (!params.txLink) {
     return (
-      <html>
+      <div>
         <head>
           <meta charSet="utf-8" />
           <meta property="og:title" content="Ethereum Payment" />
@@ -74,10 +74,8 @@ export default function Home({
           <meta property="fc:frame:button:1:action" content="link" />
           <meta property="fc:frame:button:1:target" content={params.txLink} />
         </head>
-        <body>
-          <ReceiptGenerator />
-        </body>
-      </html>
+        <ReceiptGenerator />
+      </div>
     );
   }
 
