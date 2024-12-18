@@ -53,10 +53,10 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       - name: Test client
         run: yarn test:client
-      # - name: Test v3
-      #   run: yarn test:v3
-      # - name: Test v2
-      #   run: yarn test:v2
+      - name: Test v3
+        run: yarn test:v3
+      - name: Test v2
+        run: yarn test:v2
       - name: Test Frames
         run: yarn test:frames
       - name: Test Prompting
