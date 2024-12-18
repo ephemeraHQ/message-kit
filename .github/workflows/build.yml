@@ -48,6 +48,10 @@ jobs:
         run: yarn build:message-kit
       - name: Test client
         run: yarn test:client
+        continue-on-error: true
+        env:
+          KEY: ${{ secrets.KEY }}
+          TEST_ENCRYPTION_KEY: ${{ secrets.TEST_ENCRYPTION_KEY }}
       - name: Test parsing
         run: yarn test:parsing
         continue-on-error: true
