@@ -507,7 +507,7 @@ function checkPrivateKey(key: string) {
   }
 }
 
-function createUser(key: string): UserReturnType {
+export function createUser(key: string): UserReturnType {
   const account = privateKeyToAccount(key as `0x${string}`);
   return {
     key,

@@ -1,7 +1,7 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
-import { MessageKit } from "../../message-kit/src/lib/core";
+import { MessageKit } from "../src/lib/core";
 import { ContentTypeText } from "@xmtp/content-type-text";
-import { getMocks } from "../../message-kit/tests/utils";
+import { getMocks } from "./utils";
 
 describe("Context Message Tests", () => {
   const {

@@ -12292,6 +12292,7 @@ __metadata:
     "@changesets/cli": "npm:^2.27.5"
     "@rollup/plugin-typescript": "npm:^11.1.6"
     "@types/node": "npm:^20.14.2"
+    "@vitest/coverage-v8": "npm:^2.1.4"
     "@xmtp/content-type-primitives": "npm:^1.0.2"
     "@xmtp/content-type-reaction": "npm:^1.1.10-beta.1"
     "@xmtp/content-type-read-receipt": "npm:^2.0.0"
@@ -12309,6 +12310,7 @@ __metadata:
     turbo: "npm:^2.2.3"
     typescript: "npm:^5.4.5"
     viem: "npm:^2.16.3"
+    vitest: "npm:^2.1.4"
   languageName: unknown
   linkType: soft
 

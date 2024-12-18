@@ -20,7 +20,9 @@
     "build": "rollup -c",
     "build:watch": "yarn build -w",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "publish": "npm publish"
+    "publish": "npm publish",
+    "test": "vitest",
+    "test:client": "vitest run tests/client"
   },
   "dependencies": {
     "@changesets/changelog-git": "^0.2.0",
@@ -41,11 +43,13 @@
   "devDependencies": {
     "@rollup/plugin-typescript": "^11.1.6",
     "@types/node": "^20.14.2",
+    "@vitest/coverage-v8": "^2.1.4",
     "prettier": "^3.3.1",
     "rollup": "^4.18.0",
     "rollup-plugin-dts": "^6.1.1",
     "ts-node": "^10.9.2",
-    "turbo": "^2.2.3"
+    "turbo": "^2.2.3",
+    "vitest": "^2.1.4"
   },
   "packageManager": "yarn@4.5.1",
   "engines": {
