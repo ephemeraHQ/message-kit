@@ -56,9 +56,6 @@ import type { AgentConfig } from "../helpers/types";
 import { XMTP, createClient } from "xmtp-agent";
 import { LocalStorage } from "../plugins/storage.js";
 
-// Add at the top of the file
-export let hasInitialized = false;
-
 export function createAgent(
   agent: Agent,
 ): Agent & { run: () => Promise<void> } {
@@ -80,25 +77,6 @@ export const awaitedHandlers = new Map<
   string,
   (text: string) => Promise<boolean | undefined>
 >();
-let hasClientInitialized = false;
-// Create a check function that runs when the module is loaded
-function checkInitialization() {
-  if (!hasInitialized && !hasClientInitialized) {
-    console.warn(`\x1b[33m
-  ⚠️  MessageKit is imported but not running!
-    Make sure to call run(agent) to start processing messages
-
-        Example:
-          import { run } from '@xmtp/message-kit'
-            
-          const agent = {/* Your agent definition here */};
-
-          run(agent)
-  \x1b[0m`);
-  }
-}
-// Run the check after a short delay to allow for initialization
-setTimeout(checkInitialization, 1000);
 
 /* Context Interface */
 export type Context = {
@@ -165,14 +143,11 @@ export class MessageKit implements Context {
   }
 
   async run(): Promise<void> {
-    hasInitialized = true;
-
     // Initialize the clients
     const { client, v2client } = await createClient(
       this.handleMessage,
       this.agent.config?.client,
     );
-    hasClientInitialized = true;
     this.client = client;
     this.v2client = v2client;
 

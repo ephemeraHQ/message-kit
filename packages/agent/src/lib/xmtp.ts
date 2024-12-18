@@ -317,7 +317,7 @@ export class XMTP {
 }
 
 export async function createClient(
-  handleMessage: (
+  onMessage: (
     message: DecodedMessage | DecodedMessageV2 | undefined,
   ) => Promise<void> = async () => {}, // Default to a no-op function
   config?: xmtpConfig,
@@ -373,8 +373,8 @@ export async function createClient(
   );
 
   Promise.all([
-    streamMessages(handleMessage, v2client),
-    streamMessages(handleMessage, client),
+    streamMessages(onMessage, v2client),
+    streamMessages(onMessage, client),
   ]);
 
   return {
@@ -386,7 +386,7 @@ export async function createClient(
 }
 
 async function streamMessages(
-  handleMessage: (
+  onMessage: (
     message: DecodedMessage | DecodedMessageV2 | undefined,
   ) => Promise<void>,
   client: V3Client | V2Client,
@@ -409,7 +409,7 @@ async function streamMessages(
         const stream = await v3client.conversations.streamAllMessages();
         console.warn(`\t- [v3] Stream started`);
         for await (const message of stream) {
-          handleMessage(message);
+          onMessage(message);
         }
       } else if (
         v2client &&
@@ -418,7 +418,7 @@ async function streamMessages(
         const stream = await v2client.conversations.streamAllMessages();
         console.warn(`\t- [v2] Stream started`);
         for await (const message of stream) {
-          handleMessage(message);
+          onMessage(message);
         }
       }
     } catch (err) {

@@ -162,8 +162,8 @@ function Chat({ user }: { user: UserInfo }) {
 
   const initXmtp = async (wallet: any) => {
     try {
-      const createClient = await V2Client.create(wallet, { env: "production" });
-      setXmtp(createClient);
+      const v2client = await V2Client.create(wallet, { env: "production" });
+      setXmtp(v2client);
       setIsLoading(false);
     } catch (error) {
       console.error("Error initializing XMTP:", error);
