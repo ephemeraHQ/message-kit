@@ -1,5 +1,6 @@
-import { Context, Skill, V3Client } from "@xmtp/message-kit";
+import { Context, Skill } from "@xmtp/message-kit";
 import express from "express";
+import { V3Client } from "xmtp-agent";
 import { checkNft } from "../plugins/alchemy.js";
 
 export const gated: Skill[] = [

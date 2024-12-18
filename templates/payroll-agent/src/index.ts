@@ -1,4 +1,4 @@
-import { run, Agent, concierge, agentReply } from "@xmtp/message-kit";
+import { concierge, agentReply, createAgent } from "@xmtp/message-kit";
 import { degen } from "./vibes/degen.js";
 import { registerEmployees } from "./skills/register.js";
 import { removeEmployee } from "./skills/remove.js";
@@ -7,7 +7,7 @@ import { listEmployees } from "./skills/list.js";
 
 let processor: Payroll | null = null;
 
-const agent: Agent = {
+export const agent = createAgent({
   name: "Payroll Agent",
   tag: "@bot",
   description:
@@ -27,6 +27,4 @@ const agent: Agent = {
     }
     await agentReply(context);
   },
-};
-
-run(agent);
+}).run();

@@ -123,19 +123,7 @@ await notifyUser(context, sender.address, recipient?.address, tx, amount);
 Concierge is a [Skill](/concepts/skills) already included in Message Kit.
 
 ```tsx
-import { run, Agent, concierge } from "@xmtp/message-kit";
-
-export const agent: Agent = {
-  name: "Wallet Agent",
-  tag: "@bot",
-  description: "A payment agent with that manages wallets for its users",
-  skills: [concierge], // [!code focus]
-  config: {
-    walletService: true,
-  },
-};
-
-run(agent);
+// [!include ~/../../templates/paymentagent/src/index.ts]
 ```
 
 ## Wallet Service

@@ -1,7 +1,6 @@
 import dotenv from "dotenv";
 dotenv.config({ override: true });
 import { Client } from "@xmtp/node-sdk";
-import { AgentConfig } from "../helpers/types";
 import { Agent } from "../helpers/types";
 // Add these at the top level of the file
 const userInteractions = new Map<string, number>();
@@ -44,14 +43,10 @@ export async function checkStorage() {
     console.error("Error checking storage:", error);
   }
 }
-export async function logInitMessage(
-  client: Client,
-  agentConfig?: AgentConfig,
-  generatedKey?: string,
-  agent?: Agent,
-) {
+export async function logInitMessage(client: Client, agent?: Agent) {
   if (process.env.MSG_LOG === "true" && process.env.NODE_ENV === "production")
     await checkStorage();
+  const agentConfig = agent?.config;
   if (agentConfig?.hideInitLogMessage === true) return;
 
   const coolLogo = `\x1b[38;2;250;105;119m\
@@ -78,19 +73,18 @@ export async function logInitMessage(
     agentConfig?.privateKey ||
     agentConfig?.memberChange ||
     agent === undefined ||
-    agent?.skills?.flat().length === 0 ||
-    generatedKey
+    agent?.skills?.flat().length === 0
   ) {
     console.warn(`\x1b[33m\n\tWarnings:`);
     if (agentConfig?.attachments) {
       console.warn("\t- ⚠️ Attachments are enabled");
     }
 
-    if (generatedKey) {
-      console.warn(
-        `\t- ⚠️ Invalid private key or not set. Generating a random one in your .env file.`,
-      );
-    }
+    // if (generatedKey) {
+    //   console.warn(
+    //     `\t- ⚠️ Invalid private key or not set. Generating a random one in your .env file.`,
+    //   );
+    // }
     if (process.env.OPENAI_API_KEY === undefined) {
       console.warn(
         `\t- ⚠️ OPENAI_API_KEY is not set. Please set it in your .env file.`,

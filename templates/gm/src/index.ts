@@ -1,6 +1,6 @@
-import { run, Agent } from "@xmtp/message-kit";
+import { createAgent } from "@xmtp/message-kit";
 
-const agent: Agent = {
+export const agent = createAgent({
   name: "Gm Bot",
   tag: "@bot",
   description: "Gm bot.",
@@ -11,6 +11,4 @@ const agent: Agent = {
       await context.send(`gm`);
     }
   },
-};
-
-run(agent);
+}).run();

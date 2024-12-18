@@ -1,10 +1,10 @@
-import { agentReply, Agent, run, Context } from "@xmtp/message-kit";
+import { agentReply, Context, createAgent } from "@xmtp/message-kit";
 import { downloadPage } from "./plugins/notion.js";
 import fs from "fs";
 
 setupFiles();
 
-const agent: Agent = {
+export const agent = createAgent({
   name: "Hackathon Store",
   tag: "@store",
   description: "Hackathon Store",
@@ -27,9 +27,7 @@ const agent: Agent = {
 
     await agentReply(context);
   },
-};
-
-run(agent);
+}).run();
 
 async function setupFiles() {
   const page = await downloadPage();

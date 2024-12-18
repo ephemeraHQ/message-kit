@@ -1,6 +1,6 @@
-import { run, Agent, concierge } from "@xmtp/message-kit";
+import { concierge, createAgent } from "@xmtp/message-kit";
 
-export const agent: Agent = {
+export const agent = createAgent({
   name: "Circle Wallet Agent",
   tag: "@bot",
   description: "A payment agent with its own wallet powered by Circle",
@@ -8,6 +8,4 @@ export const agent: Agent = {
   config: {
     walletService: true,
   },
-};
-
-run(agent);
+}).run();

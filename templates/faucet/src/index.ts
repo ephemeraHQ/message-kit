@@ -1,8 +1,8 @@
-import { run, agentReply, Context, Agent } from "@xmtp/message-kit";
+import { agentReply, Context, createAgent } from "@xmtp/message-kit";
 import { faucet } from "./skills/faucet.js";
 
 // [!region skills]
-export const agent: Agent = {
+export const agent = createAgent({
   name: "Faucet Agent",
   tag: "@bot",
   description: "A faucet delivery agent.",
@@ -12,5 +12,4 @@ export const agent: Agent = {
   onMessage: async (context: Context) => {
     await agentReply(context);
   },
-};
-run(agent);
+}).run();

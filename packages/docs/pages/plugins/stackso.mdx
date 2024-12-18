@@ -38,7 +38,7 @@ export type { StackClient };
 ## Example handler
 
 ```tsx [src/handler/loyalty.ts]
-import { Context, AbstractedMember } from "@xmtp/message-kit";
+import { Context, Member } from "@xmtp/message-kit";
 import { getStackClient } from "../plugins/stack.js";
 
 export async function handler(context: Context, fake?: boolean) {
@@ -76,7 +76,7 @@ export async function handler(context: Context, fake?: boolean) {
   } else if (typeId === "group_updated") {
     const { initiatedByInboxId, addedInboxes } = params;
     const adminAddress = members?.find(
-      (member: AbstractedMember) => member.inboxId === initiatedByInboxId,
+      (member: Member) => member.inboxId === initiatedByInboxId,
     );
     if (addedInboxes && addedInboxes.length > 0) {
       //if add someone to the group

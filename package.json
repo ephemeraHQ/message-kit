@@ -9,7 +9,8 @@
     "shared/*"
   ],
   "scripts": {
-    "build": "yarn build:message-kit && yarn build:packages && yarn build:templates",
+    "build": "yarn build:agent && yarn build:message-kit && yarn build:packages && yarn build:templates",
+    "build:agent": "turbo run build --filter=./packages/agent --force",
     "build:message-kit": "turbo run build --filter=./packages/message-kit --force",
     "build:packages": "turbo run build --filter='./packages/*' --filter='!./packages/message-kit'",
     "build:templates": "turbo run build --filter='./templates/*'",
@@ -18,7 +19,7 @@
     "clean": "turbo run clean && rm -rf node_modules && rm -rf .turbo && rm -rf packages/message-kit/dist && rm -rf packages/message-kit/.turbo && rm -rf packages/docs/dist && yarn cache clean",
     "cli": "node packages/create-message-kit/index.js",
     "copy": "node scripts/copyTemplates.js",
-    "dev": "cd packages/message-kit && yarn build:watch",
+    "dev": "yarn build:agent && cd packages/message-kit && yarn build:watch",
     "docs": "cd packages/docs && yarn dev",
     "domain": "ngrok http --hostname=frames.ngrok.app 3000",
     "format": "turbo run format",
@@ -27,7 +28,7 @@
     "publish": "node scripts/publish.js",
     "templates": "node scripts/devTemplates.js",
     "test": "FORCE_COLOR=1 turbo run test --force --concurrency=1",
-    "test:client": "cd packages/message-kit/tests && yarn test:client",
+    "test:client": "cd packages/agent/tests && yarn test:client",
     "test:flow": "cd packages/message-kit/tests && yarn test:flow",
     "test:framekit": "cd packages/message-kit/tests && yarn test:framekit",
     "test:intent": "cd packages/message-kit/tests && yarn test:intent",

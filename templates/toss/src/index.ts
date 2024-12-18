@@ -1,8 +1,8 @@
-import { run, Agent, concierge } from "@xmtp/message-kit";
+import { concierge, createAgent } from "@xmtp/message-kit";
 import { systemPrompt } from "./prompt.js";
 import { toss } from "./skills/toss.js";
 
-export const agent: Agent = {
+export const agent = createAgent({
   name: "Toss Bot",
   tag: "@toss",
   description: "Create a coin toss.",
@@ -11,6 +11,4 @@ export const agent: Agent = {
   config: {
     walletService: true,
   },
-};
-
-run(agent);
+}).run();
