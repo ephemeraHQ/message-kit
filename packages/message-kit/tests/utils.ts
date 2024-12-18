@@ -11,9 +11,9 @@ import {
   Conversation as V3Conversation,
   DecodedMessage as V3DecodedMessage,
 } from "@xmtp/node-sdk";
-import { AbstractedMember } from "../src/helpers/types";
+import { Member } from "../src/helpers/types";
 
-const humanAgent: AbstractedMember = {
+const humanAgent: Member = {
   inboxId: "123",
   address: "0x93E2fc3e99dFb1238eB9e0eF2580EFC5809C7204",
   accountAddresses: ["0x93E2fc3e99dFb1238eB9e0eF2580EFC5809C7204"],

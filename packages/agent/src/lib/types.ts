@@ -2,6 +2,17 @@ import { privateKeyToAccount } from "viem/accounts";
 import { ContentTypeId } from "@xmtp/content-type-primitives";
 import { createWalletClient } from "viem";
 import { ClientOptions } from "@xmtp/node-sdk";
+import { Client as V3Client } from "@xmtp/node-sdk";
+import { Client as V2Client } from "@xmtp/xmtp-js";
+
+export interface XmtpClient {
+  inboxId: string;
+  address: string;
+  client: V3Client;
+  v2client: V2Client;
+}
+export { Client as V3Client } from "@xmtp/node-sdk";
+export { Client as V2Client } from "@xmtp/xmtp-js";
 
 export interface UserReturnType {
   key: string;
@@ -14,7 +25,7 @@ export type xmtpConfig = {
   gptModel?: string;
 } & ClientOptions;
 
-export type MessageAbstracted = {
+export type Message = {
   id: string; // Unique identifier for the message
   sent: Date; // Date when the message was sent
   content: {
@@ -27,11 +38,10 @@ export type MessageAbstracted = {
     reference?: string | undefined; // Reference ID for the message
     skill?: string | undefined; // Skill associated with the message
   };
-  version: "v2" | "v3"; // Version of the message
-  sender: AbstractedMember; // Sender of the message
+  sender: User; // Sender of the message
   typeId: string; // Type identifier for the message
 };
-export type GroupAbstracted = {
+export type Group = {
   id: string;
   sync: () => Promise<void>;
   addMembers: (addresses: string[]) => Promise<void>;
@@ -42,10 +52,10 @@ export type GroupAbstracted = {
   admins: string[];
   superAdmins: string[];
   createdAt: Date;
-  members: AbstractedMember[];
+  members: User[];
 };
 
-export interface AbstractedMember {
+export interface User {
   inboxId: string;
   address: string;
   accountAddresses: string[];

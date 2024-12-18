@@ -28,11 +28,11 @@ import { agentReply, chatMemory, defaultSystemPrompt } from "../plugins/gpt.js";
 import { getUserInfo, userInfoCache } from "../plugins/resolver.js";
 import { logInitMessage, logMessage, readFile } from "../helpers/utils.js";
 import {
-  MessageAbstracted,
-  GroupAbstracted,
-  AbstractedMember,
+  Message,
+  Group,
   AgentMessage,
   ContentTypeAgentMessage,
+  User,
 } from "xmtp-agent";
 
 import { Agent, SkillResponse } from "../helpers/types.js";
@@ -53,7 +53,7 @@ import { logUserInteraction } from "../helpers/utils.js";
 import path from "path";
 import fetch from "cross-fetch";
 import type { AgentConfig } from "../helpers/types";
-import { XmtpPlugin, createClient } from "xmtp-agent";
+import { XMTP, createClient } from "xmtp-agent";
 import { LocalStorage } from "../plugins/storage.js";
 
 // Add at the top of the file
@@ -102,17 +102,15 @@ setTimeout(checkInitialization, 1000);
 
 /* Context Interface */
 export type Context = {
-  refConv: Conversation | V2Conversation | undefined;
-  message: MessageAbstracted;
-  group: GroupAbstracted;
+  message: Message;
+  group: Group;
   storage: LocalStorage;
   conversation: V2Conversation;
   client: V3Client;
-  version: "v2" | "v3";
   v2client: V2Client;
   agentConfig?: AgentConfig;
   walletService: CdpWalletService | CircleWalletService;
-  sender?: AbstractedMember;
+  sender?: User;
   awaitingResponse: boolean;
   sendAgentMessage: (message: string, metadata: any) => Promise<void>;
   executeSkill: (text: string) => Promise<SkillResponse | undefined>;
@@ -135,26 +133,23 @@ export type Context = {
     targetConversation?: V2Conversation,
   ): Promise<void>;
   awaitedHandler: ((text: string) => Promise<boolean | void>) | undefined;
-  xmtp: XmtpPlugin;
+  xmtp: XMTP;
   agent: Agent;
 };
 
 /* Context implementation */
 export class MessageKit implements Context {
-  xmtp!: XmtpPlugin;
+  xmtp!: XMTP;
   storage!: LocalStorage;
-  refConv: Conversation | V2Conversation | undefined = undefined;
   originalMessage: DecodedMessage | DecodedMessageV2 | undefined = undefined;
-  message!: MessageAbstracted; // A message from XMTP abstracted for agent use;
-  group!: GroupAbstracted;
+  message!: Message; // A message from XMTP abstracted for agent use;
+  group!: Group;
   conversation!: V2Conversation;
   client!: V3Client;
-  version!: "v2" | "v3";
   v2client!: V2Client;
-  members?: AbstractedMember[];
   agentConfig?: AgentConfig;
   walletService!: CdpWalletService | CircleWalletService;
-  sender?: AbstractedMember;
+  sender?: User;
   awaitingResponse: boolean = false;
   agent: Agent;
 
@@ -184,27 +179,18 @@ export class MessageKit implements Context {
     // Store the GPT model in process.env for global access
     process.env.GPT_MODEL = this.agent.config?.gptModel || "gpt-4o";
     logInitMessage(client, this.agent);
-
-    const xmtp = new XmtpPlugin(
-      this.client,
-      this.v2client,
-      this.version,
-      this.refConv,
-      this.conversation,
-      this.group,
-      this.message,
-    );
-    this.xmtp = xmtp;
   }
   static async create(
     conversation: Conversation | V2Conversation,
     message: DecodedMessage | DecodedMessageV2 | undefined,
     { client, v2client }: { client: V3Client; v2client: V2Client },
     agent: Agent,
-    version?: "v2" | "v3",
   ): Promise<Context | undefined> {
     try {
       const context = new MessageKit(agent);
+      const xmtp = new XMTP(client, v2client, conversation, message);
+      context.xmtp = xmtp;
+
       context.client = client;
       context.v2client = v2client;
       if (conversation instanceof Conversation) {
@@ -222,33 +208,31 @@ export class MessageKit implements Context {
           admins: conversation.admins,
           superAdmins: conversation.superAdmins,
         };
-        context.version = "v3";
       } else {
-        context.version = "v2";
         context.conversation = conversation;
       }
 
       if (message && message.id) {
         //v2
         const sentAt = "sentAt" in message ? message.sentAt : message.sent;
-        let sender: AbstractedMember | undefined = undefined;
-        if (version === "v2") {
+        let sender: User | undefined = undefined;
+        if (v2client) {
           sender = {
             address: (message as DecodedMessageV2).senderAddress,
             inboxId: (message as DecodedMessageV2).senderAddress,
             installationIds: [],
             accountAddresses: [(message as DecodedMessageV2).senderAddress],
-          } as AbstractedMember;
+          } as User;
         } else {
           let group = await (conversation as Conversation);
           await group.sync();
           const members = await group.members();
-          context.members = members.map((member: GroupMember) => ({
+          context.group.members = members.map((member: GroupMember) => ({
             inboxId: member.inboxId,
             address: member.accountAddresses[0],
             accountAddresses: member.accountAddresses,
             installationIds: member.installationIds,
-          })) as AbstractedMember[];
+          })) as User[];
 
           let MemberSender = members?.find(
             (member: GroupMember) =>
@@ -260,7 +244,7 @@ export class MessageKit implements Context {
             inboxId: MemberSender?.inboxId,
             installationIds: [],
             accountAddresses: MemberSender?.accountAddresses,
-          } as AbstractedMember;
+          } as User;
         }
         let userInfo = await getUserInfo(sender?.address);
         sender.username = userInfo?.converseUsername;
@@ -356,7 +340,6 @@ export class MessageKit implements Context {
           sender: sender,
           sent: sentAt,
           typeId: typeId ?? "",
-          version: version ?? "v2",
         };
 
         //test
@@ -389,10 +372,9 @@ export class MessageKit implements Context {
     }
   }
   handleMessage = async (
-    version: "v3" | "v2",
     message: DecodedMessage | DecodedMessageV2 | undefined,
   ) => {
-    const conversation = await this.getConversation(message, version);
+    const conversation = await this.getConversation(message);
     if (message && conversation) {
       try {
         const { senderInboxId, kind } = message as DecodedMessage;
@@ -413,13 +395,11 @@ export class MessageKit implements Context {
           message,
           { client: this.client, v2client: this.v2client },
           this.agent,
-          version,
         );
         if (!context) {
           logMessage("No context found" + message);
           return;
         }
-        context.xmtp = this.xmtp;
 
         //Await response
         const awaitedHandler = awaitedHandlers.get(
@@ -430,10 +410,9 @@ export class MessageKit implements Context {
             context.message.content.text || context.message.content.reply || "";
           // Check if the response is from the expected user
           const expectedUser = context.xmtp.getConversationKey().split(":")[1];
-          const actualSender =
-            version === "v3"
-              ? (message as DecodedMessage).senderInboxId
-              : (message as DecodedMessageV2).senderAddress;
+          const actualSender = this.xmtp.isV2Message(message)
+            ? (message as DecodedMessageV2).senderAddress
+            : (message as DecodedMessage).senderInboxId;
 
           if (expectedUser?.toLowerCase() === actualSender?.toLowerCase()) {
             const isValidResponse = await awaitedHandler(messageText);
@@ -446,7 +425,10 @@ export class MessageKit implements Context {
         }
 
         // Check if the message content triggers a skill
-        const { isMessageValid, customHandler } = await filterMessage(context);
+        const { isMessageValid, customHandler } = await filterMessage(
+          context,
+          this.xmtp.isV2Message(message),
+        );
         if (isMessageValid && customHandler) {
           const result = await customHandler(context);
           if (result && "code" in result) {
@@ -465,9 +447,8 @@ export class MessageKit implements Context {
   };
   getConversation = async (
     message: DecodedMessage | DecodedMessageV2 | undefined,
-    version: "v3" | "v2",
   ): Promise<Conversation | V2Conversation> => {
-    return version === "v3"
+    return this.xmtp.isV2Message(message)
       ? ((await this.client.conversations.getConversationById(
           (message as DecodedMessage)?.conversationId as string,
         )) as Conversation)
@@ -573,7 +554,7 @@ export class MessageKit implements Context {
     await this.xmtp.send(
       message,
       contentType,
-      targetConversation ?? this.refConv ?? this.conversation ?? this.group,
+      targetConversation ?? this.conversation ?? this.group,
     );
     if (contentType === ContentTypeText && typeof message !== "string") {
       console.error("Message must be a string");

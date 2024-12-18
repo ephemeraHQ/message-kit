@@ -90,8 +90,6 @@ export async function executeSkill(
       console.error("Unknown error during skill execution:", error);
     }
     throw error;
-  } finally {
-    context.refConv = undefined;
   }
 }
 
@@ -304,7 +302,10 @@ export async function loadSkillsFile(): Promise<Agent> {
   return agent;
 }
 
-export async function filterMessage(context: Context): Promise<{
+export async function filterMessage(
+  context: Context,
+  isV2: boolean,
+): Promise<{
   isMessageValid: boolean;
   customHandler: SkillHandler | undefined;
 }> {
@@ -315,9 +316,9 @@ export async function filterMessage(context: Context): Promise<{
       typeId,
       sender,
     },
-    version,
     client,
     v2client,
+    xmtp,
     agent,
     group,
   } = context;
@@ -384,10 +385,11 @@ export async function filterMessage(context: Context): Promise<{
   const isTagged =
     text?.toLowerCase()?.includes(agent?.tag?.toLowerCase() ?? "") ??
     text?.toLowerCase()?.includes(botTag?.toLowerCase() ?? "");
+
   const isMessageValid = isSameAddress
     ? false
     : // v2 only accepts text, remoteStaticAttachment, reply
-      version == "v2" && acceptedType
+      isV2 && acceptedType
       ? true
       : //If its image is also good, if it has a skill image:true
         isImageValid
@@ -416,7 +418,6 @@ export async function filterMessage(context: Context): Promise<{
         key: process?.env?.OPENAI_API_KEY ? "[SET]" : "[NOT SET]",
       },
       content,
-      version,
       acceptedType,
       attachmentDetails: {
         isRemoteAttachment,
@@ -457,7 +458,7 @@ export async function filterMessage(context: Context): Promise<{
     });
   }
   if (isMessageValid) {
-    logMessage(`msg_${version}: ` + (text ?? typeId));
+    logMessage(`msg_${isV2 ? "v2" : "v3"}: ` + (text ?? typeId));
   }
 
   return {

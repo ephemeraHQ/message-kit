@@ -34,7 +34,7 @@ import { mainnet } from "viem/chains";
 import { GrpcApiClient } from "@xmtp/grpc-api-client";
 import { getRandomValues } from "crypto";
 import path from "path";
-import { MessageAbstracted, GroupAbstracted, xmtpConfig } from "./types.js";
+import { xmtpConfig, XmtpClient } from "./types.js";
 
 // Define the return type interface
 interface UserReturnType {
@@ -42,30 +42,21 @@ interface UserReturnType {
   account: ReturnType<typeof privateKeyToAccount>;
   wallet: ReturnType<typeof createWalletClient>;
 }
-export class XmtpPlugin {
+export class XMTP {
   private v2client: V2Client;
   private client: V3Client;
-  private refConv: Conversation | V2Conversation | undefined;
   private conversation: Conversation | V2Conversation | undefined;
-  private group: GroupAbstracted | undefined; // Replace with the correct group type if applicable
-  private message: MessageAbstracted | undefined;
-  private version: "v2" | "v3";
+  private message: DecodedMessage | DecodedMessageV2 | undefined;
 
   constructor(
     client: V3Client,
     v2client: V2Client,
-    version: "v2" | "v3",
-    refConv: Conversation | V2Conversation | undefined,
     conversation: Conversation | V2Conversation | undefined,
-    group: GroupAbstracted | undefined,
-    message: MessageAbstracted | undefined,
+    message: DecodedMessage | DecodedMessageV2 | undefined,
   ) {
     this.client = client;
     this.v2client = v2client;
-    this.version = version;
-    this.refConv = refConv;
     this.conversation = conversation;
-    this.group = group;
     this.message = message;
   }
   async send(
@@ -89,6 +80,9 @@ export class XmtpPlugin {
         await (conversation as Conversation).send(message, contentType as any);
       }
     }
+  }
+  isV2Message(message: DecodedMessage | DecodedMessageV2 | undefined) {
+    return (message as DecodedMessageV2)?.conversation !== undefined;
   }
 
   isV2Conversation(
@@ -206,7 +200,7 @@ export class XmtpPlugin {
     }
   }
 
-  async getV2MessageById(
+  private async getV2MessageById(
     conversationId: string,
     reference: string,
   ): Promise<DecodedMessageV2 | undefined> {
@@ -226,14 +220,15 @@ export class XmtpPlugin {
   }
 
   getConversationKey() {
-    const conversation = this.refConv || this.conversation || this.group;
+    const conversation = this.conversation;
     return `${(conversation as V2Conversation)?.topic || (conversation as Conversation)?.id}`;
   }
 
   getUserConversationKey() {
-    const conversation = this.refConv || this.conversation || this.group;
+    const conversation = this.conversation;
     const awaitingSender =
-      this.message?.sender?.inboxId || this.message?.sender?.address;
+      (this.message as DecodedMessage)?.senderInboxId ||
+      (this.message as DecodedMessageV2)?.senderAddress;
     return `${(conversation as V2Conversation)?.topic || (conversation as Conversation)?.id}:${awaitingSender}`;
   }
 
@@ -244,14 +239,14 @@ export class XmtpPlugin {
   }
 
   async getLastMessageById(reference: string) {
-    let msg = await (this.version === "v3"
-      ? this.getMessageById(reference)
-      : this.conversation &&
-        this.getV2MessageById(
+    let isV2 = this.isV2Conversation(this.conversation);
+    let msg = isV2
+      ? this.getV2MessageById(
           (this.conversation as V2Conversation).topic,
           reference,
-        ));
-    msg = msg?.content;
+        )
+      : this.getMessageById(reference);
+    msg = (await msg)?.content;
     return msg;
   }
 
@@ -323,11 +318,10 @@ export class XmtpPlugin {
 
 export async function createClient(
   handleMessage: (
-    version: "v3" | "v2",
     message: DecodedMessage | DecodedMessageV2 | undefined,
   ) => Promise<void> = async () => {}, // Default to a no-op function
   config?: xmtpConfig,
-): Promise<{ client: V3Client; v2client: V2Client }> {
+): Promise<XmtpClient> {
   // Check if both clientConfig and privateKey are empty
   const testKey = await setupTestEncryptionKey();
   const { key, isRandom } = setupPrivateKey(config?.privateKey);
@@ -379,46 +373,56 @@ export async function createClient(
   );
 
   Promise.all([
-    streamMessages("v2", handleMessage, v2client),
-    streamMessages("v3", handleMessage, client),
+    streamMessages(handleMessage, v2client),
+    streamMessages(handleMessage, client),
   ]);
-  return { client, v2client };
+
+  return {
+    client,
+    address: client.accountAddress,
+    inboxId: client.inboxId,
+    v2client,
+  } as XmtpClient;
 }
 
 async function streamMessages(
-  version: "v3" | "v2",
   handleMessage: (
-    version: "v3" | "v2",
     message: DecodedMessage | DecodedMessageV2 | undefined,
   ) => Promise<void>,
   client: V3Client | V2Client,
 ) {
-  let v3client = client as V3Client;
-  let v2client = client as V2Client;
+  let v3client = client instanceof V3Client ? client : undefined;
+  let v2client = client instanceof V2Client ? client : undefined;
 
   // sync and list conversations
-  if (version === "v3") {
+  if (v3client && typeof v3client.conversations.sync === "function") {
     await v3client.conversations.sync();
     await v3client.conversations.list();
   }
 
   while (true) {
     try {
-      if (version === "v3") {
+      if (
+        v3client &&
+        typeof v3client.conversations.streamAllMessages === "function"
+      ) {
         const stream = await v3client.conversations.streamAllMessages();
-        console.warn(`\t- [${version}] Stream started`);
+        console.warn(`\t- [v3] Stream started`);
         for await (const message of stream) {
-          handleMessage(version, message);
+          handleMessage(message);
         }
-      } else if (version === "v2") {
+      } else if (
+        v2client &&
+        typeof v2client.conversations.streamAllMessages === "function"
+      ) {
         const stream = await v2client.conversations.streamAllMessages();
-        console.warn(`\t- [${version}] Stream started`);
+        console.warn(`\t- [v2] Stream started`);
         for await (const message of stream) {
-          handleMessage(version, message);
+          handleMessage(message);
         }
       }
     } catch (err) {
-      console.error(`[${version}] Stream encountered an error:`, err);
+      console.error(`[v3] Stream encountered an error:`, err);
     }
   }
 }

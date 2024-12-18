@@ -5,8 +5,6 @@ import { getMocks } from "./utils";
 
 describe("Context Message Tests", () => {
   const {
-    mockV2Conversation,
-    mockV2Message,
     mockV3Conversation,
     mockV3Message,
     mockV2Client,

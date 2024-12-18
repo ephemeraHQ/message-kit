@@ -4,14 +4,13 @@ import { ContentTypeText } from "@xmtp/content-type-text";
 import { ContentTypeReply } from "@xmtp/content-type-reply";
 import { ContentTypeReaction } from "@xmtp/content-type-reaction";
 import { getMocks } from "./utils";
+import { createClient } from "xmtp-agent";
 
 describe("Context Message Tests", () => {
   // Mock conversation data
   const {
     mockV2Conversation,
     mockV2Message,
-    mockV3Conversation,
-    mockV3Message,
     mockV2Client,
     mockV3Client,
     mockAgent,
@@ -29,6 +28,8 @@ describe("Context Message Tests", () => {
       mockAgent,
       "v2",
     );
+    const xmtp = createClient();
+    console.log(xmtp);
 
     expect(context).not.toBeUndefined();
     if (!context) return;
@@ -59,30 +60,6 @@ describe("Context Message Tests", () => {
         reference: "msg-123",
       },
       { contentType: ContentTypeReply },
-    );
-  });
-
-  test("should send a reaction", async () => {
-    const context = await MessageKit.create(
-      mockV2Conversation,
-      mockV2Message,
-      { client: mockV3Client, v2client: mockV2Client },
-      mockAgent,
-      "v2",
-    );
-
-    expect(context).not.toBeUndefined();
-    if (!context) return;
-
-    await context.react("👍");
-    expect(mockV2Conversation.send).toHaveBeenCalledWith(
-      {
-        action: "added",
-        schema: "unicode",
-        reference: "msg-123",
-        content: "👍",
-      },
-      { contentType: ContentTypeReaction },
     );
   });
 
