@@ -1,6 +1,6 @@
 {
   "name": "message-kit-monorepo",
-  "version": "1.2.33",
+  "version": "1.2.35",
   "private": true,
   "type": "module",
   "workspaces": [
@@ -25,7 +25,7 @@
     "format": "turbo run format",
     "framekit": "cd packages/framekit && yarn dev",
     "play": "cd templates/playground && yarn dev",
-    "publish": "node scripts/publish.js",
+    "publish": "yarn install && yarn build && yarn copy && node scripts/publish.js",
     "templates": "node scripts/devTemplates.js",
     "test": "FORCE_COLOR=1 turbo run test --force --concurrency=1",
     "test:client": "cd packages/agent/tests && yarn test:client",

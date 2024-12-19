@@ -7,7 +7,6 @@ import { default as fs } from "fs-extra";
 import { isCancel } from "@clack/prompts";
 import { detect } from "detect-package-manager";
 import pc from "picocolors";
-const defVersion = "1.2.33";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Read package.json to get the version
@@ -26,13 +25,7 @@ program
       log.info(pc.cyan(`pkgManager detected: ${pkgManager}`));
 
       log.info(pc.cyan(`Welcome to MessageKit CLI v${version}!`));
-      if (version !== defVersion) {
-        log.warn(
-          pc.red(
-            "You are using a version of the CLI that is not compatible with the latest MessageKit. Please update to the latest version.",
-          ),
-        );
-      }
+
       const coolLogo = `
 ███╗   ███╗███████╗███████╗███████╗ █████╗  ██████╗ ███████╗██╗  ██╗██╗████████╗
 ████╗ ████║██╔════╝██╔════╝██╔════╝██╔══██╗██╔════╝ ██╔════╝██║ ██╔╝██║╚══██╔══╝

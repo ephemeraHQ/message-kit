@@ -9,8 +9,58 @@ bun install xmtp
 ```
 
 ```tsx
+import { createClient } from "xmtp";
+
 const xmtp = await createClient(onMessage, {
-  apiKey: process.env.XMTP_PRIVATE_KEY,
-  
+  encriptionKey: process.env.LOCAL_KEY,
+  apiKey: "xmtp-usage-key",
 });
+
+const onMessage = async (message, user) => {
+  console.log(`Decoded message: ${response} by ${user}`);
+  //Your AI model response
+  xmtp.send(response);
+};
+```
+
+## GPT example
+
+1. **`handleMessage`**: Triggered each time a new message is received from XMTP.
+2. **`client.send()`**: Used to send messages (e.g., AI prompts and responses) back to the XMTP network.
+
+In this example, when `handleMessage` is invoked, it takes the incoming user message, passes it to the AI model (OpenAI's Chat Completion API), and then sends the AI's response back over XMTP.
+
+```javascript
+import { createClient } from "xmtp";
+import { OpenAI } from "openai";
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+const xmtp = await createClient(onMessage, {
+  encriptionKey: process.env.LOCAL_KEY,
+  apiKey: "xmtp-usage-key",
+});
+
+const onMessage = async (message, user) => {
+  console.log(`Decoded message: ${response} by ${user}`);
+
+  // Prepare conversation history or context as needed
+  const history = [
+    { role: "system", content: "You are a helpful assistant." },
+    { role: "user", content: message },
+  ];
+
+  // Call the OpenAI API to process the user's message
+  const response = await openai.createChatCompletion({
+    model: process.env.GPT_MODEL || "gpt-4",
+    messages: history,
+  });
+
+  const response = response.data.choices[0].message.content.trim();
+
+  // Send the AI-generated response back to the XMTP network
+  xmtp.send(response);
+};
 ```
