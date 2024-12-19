@@ -1,0 +1,72 @@
+# Payroll Agent
+
+An autonomous payroll management agent that handles employee registration, payments, and scheduling.
+
+## Structure
+
+```
+payroll-agent/
+├── src/
+│   ├── plugins/
+│   │   ├── payroll.ts
+│   │   └── redis.ts
+│   ├── skills/
+│   │   ├── register.ts
+│   │   ├── remove.ts
+│   │   └── list.ts
+│   ├── vibes/
+│   │   └── degen.ts
+│   └── index.ts
+├── package.json
+├── tsconfig.json
+└── .env
+```
+
+## Agent
+
+The process that starts listening to messages and replying to them.
+
+```tsx [src/index.ts]
+// [!include ~/../../templates/payroll-agent/src/index.ts]
+```
+
+## Skills
+
+- [Register](/skills/register): Register new employees with payment details
+- [Remove](/skills/remove): Remove employees from the payroll system  
+- [List](/skills/list): List all registered employees and their payment details
+- [Concierge](/skills/concierge): Agent Wallet as a Service
+
+## Plugins
+
+- [Payroll](/plugins/payroll): Handles automated payroll processing and scheduling
+- [Redis](/plugins/redis): Persistent storage for employee data
+
+## Vibes
+
+- [Degen](/vibes/degen): High-energy crypto trader personality
+
+## Variables
+
+Set up these variables in your app:
+
+```bash [cmd]
+// [!include ~/../../templates/payroll-agent/.env.example]
+```
+
+## End result
+
+The end result is a prompt that the model can understand and use to respond to the user.
+
+```md [example_prompt.md]
+// [!include ~/../../templates/payroll-agent/example_prompt.md]
+```
+
+## Features
+
+- 🔄 Automated monthly payroll processing
+- 👥 Employee management (add/remove/list)
+- 💰 Automatically release payouts in USDC to employees
+- 📅 Configurable payment dates
+- 💾 Persistent storage with Redis
+- 🤖 Crypto-native personality
