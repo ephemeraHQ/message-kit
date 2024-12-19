@@ -31,8 +31,6 @@
     "test:intent": "vitest run tests/intent",
     "test:parsing": "vitest run tests/parsing",
     "test:prompt": "vitest run tests/prompt",
-    "test:v2": "vitest run tests/V2",
-    "test:v3": "vitest run tests/V3",
     "test:watch": "vitest watch",
     "typecheck": "tsc --noEmit"
   },
