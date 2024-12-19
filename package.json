@@ -9,7 +9,7 @@
     "shared/*"
   ],
   "scripts": {
-    "build": "yarn build:xmtp && yarn build:message-kit && yarn build:packages && yarn build:templates",
+    "build": "yarn build:message-kit && yarn build:packages && yarn build:templates",
     "build:message-kit": "turbo run build --filter=./packages/message-kit --force",
     "build:packages": "turbo run build --filter='./packages/*' --filter='!./packages/message-kit'",
     "build:templates": "turbo run build --filter='./templates/*'",
