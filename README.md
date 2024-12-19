@@ -1,22 +1,21 @@
-# MessageKit
+# XMTP AI
 
-This is the official repository for [MessageKit](https://message-kit.org/). Powered by [XMTP](http://xmtp.org)
+A set of tools for AI developers to build on top of [XMTP](https://xmtp.org)
 
 ## What's inside?
 
-### Packages
+### MessageKit
 
 - [`message-kit`](/packages/message-kit): A kit for quickly building messaging apps
 - [`create-message-kit`](/packages/create-message-kit): A CLI for creating new apps easily
-- [`framekit`](/packages/framekit): A suite for backend frames
-- ['xmtp](/packages/xmtp/): A secure agent sdk
-- [`xmtp-client`](/packages/xmtp-client/): Client sided agent sdk
 - [`docs`](/packages/docs): Documentation for MessageKit
+
+### Plugins
+
+- [`framekit`](/packages/framekit): A suite for backend frames
+- [`xmtp`](/packages/xmtp/): A node js wrapper for AI agents.
+- [`xmtp-client`](/packages/xmtp-client/): A client plugin for interacting with hte backend.
 
 ## Contributing
 
 See our [contribution guide](./CONTRIBUTING.md) to learn more about contributing to this project.
-
-### Open Frames
-
-XMTP contributes to the development of the Open Frames [standard](https://www.openframes.xyz).
