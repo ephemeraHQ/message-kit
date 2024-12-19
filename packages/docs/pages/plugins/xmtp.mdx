@@ -1,29 +1,50 @@
-# XMTP AI
+# Xmtp ai
 
-The XMTP ai plugin is a plugin that allows you to interact with the XMTP protocol.
+AI is transforming consumer tech, with messaging becoming the main channel for interacting with agent services. This shift will scale message traffic astronomically, akin to the web’s rise in the 2000s. Just as Cloudflare secured web traffic, messaging will need robust encryption, threat protection, and scalable infrastructure to handle the surge and protect sensitive AI-driven interactions.
 
-## Install
+## Risks
+
+⚠️ **Risks of not using end-to-end encryption**: Exposes users to Man in the Middle Attacks.
+
+> **Man in the Middle Attacks (MITM)**: Intercept requests in between to alter or manipulate data sent or received by the AI service or user.
+
+- **Phishing**: Messages can be intercepted and manipulated.
+- **Privacy**: Sensitive information read by unwanted parties.
+- **Tampering**: Content can be altered without detection.
+
+## Anonymity
+
+Using ephemeral addresses can enhance security by allowing users to message agents anonymously, protecting their identities from exposure.
+
+## Backend
+
+### Installation
+
+Install the `xmtp` package
 
 ```bash [cmd]
 bun install xmtp
 ```
 
+### Usage
+
+This is how you can use the `xmtp` package to create a client and handle messages.
+
 ```tsx
 import { createClient } from "xmtp";
 
 const xmtp = await createClient(onMessage, {
-  encriptionKey: process.env.LOCAL_KEY,
-  apiKey: "xmtp-usage-key",
+  encryptionKey: process.env.LOCAL_KEY,
 });
 
 const onMessage = async (message, user) => {
   console.log(`Decoded message: ${response} by ${user}`);
-  //Your AI model response
+  // Your AI model response
   xmtp.send(response);
 };
 ```
 
-## GPT example
+### Gpt example
 
 1. **`handleMessage`**: Triggered each time a new message is received from XMTP.
 2. **`client.send()`**: Used to send messages (e.g., AI prompts and responses) back to the XMTP network.
@@ -39,8 +60,7 @@ const openai = new OpenAI({
 });
 
 const xmtp = await createClient(onMessage, {
-  encriptionKey: process.env.LOCAL_KEY,
-  apiKey: "xmtp-usage-key",
+  encryptionKey: process.env.LOCAL_KEY,
 });
 
 const onMessage = async (message, user) => {
@@ -63,4 +83,105 @@ const onMessage = async (message, user) => {
   // Send the AI-generated response back to the XMTP network
   xmtp.send(response);
 };
+```
+
+## Frontend
+
+### Installation
+
+Install the `xmtp-client` package compatible with your frontend framework.
+
+```bash [cmd]
+bun install xmtp-client
+```
+
+### Usage
+
+```tsx
+import { createClient, XMTP, Message } from "xmtp-client";
+
+const xmtp = await createClient(onMessage, {
+  encryptionKey: process.env.LOCAL_KEY,
+});
+
+const onSend = async (text) => {
+  const message = await xmtp.sendMessage(text, agentAddress);
+  return message;
+};
+
+const onMessage = async (message, agentAddress) => {
+  console.log(`Decoded message: ${message} by ${agentAddress}`);
+  // Your AI model response
+};
+```
+
+### React example
+
+This is how you can use the `xmtp-client` package to create a client and handle messages.
+
+```tsx
+import { createClient, XMTP, Message } from "xmtp-client";
+// ... other imports ...
+
+function Chat({ user }: { user: UserInfo }) {
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [newMessage, setNewMessage] = useState("");
+  const [xmtp, setXmtp] = useState<XMTP | undefined>(undefined);
+  const [isLoading, setIsLoading] = useState(true);
+  // ... other state variables ...
+
+  useEffect(() => {
+    const init = async () => {
+      const newWallet = Wallet.createRandom();
+      // ... set wallet and recipient info ...
+
+      try {
+        if (user?.address) {
+          await initXmtp(newWallet);
+        }
+      } catch (error) {
+        console.error("Error resolving recipient:", error);
+        setIsLoading(false);
+      }
+    };
+
+    init();
+  }, [user.address]);
+
+  const onMessage = async (message: Message | undefined) => {
+    if (message) {
+      setMessages((prevMessages) => [...prevMessages, message]);
+    }
+  };
+
+  const initXmtp = async (wallet: any) => {
+    try {
+      const xmtpClient = await createClient(onMessage, {
+        privateKey: wallet.privateKey,
+      });
+      setXmtp(xmtpClient);
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error initializing XMTP:", error);
+      setIsLoading(false);
+    }
+  };
+
+  const sendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!xmtp || !newMessage || !recipientInfo?.address) return;
+
+    try {
+      const message = await xmtp.sendMessage(newMessage, user.address);
+      setMessages((prevMessages) => [...prevMessages, message]);
+      setNewMessage("");
+    } catch (error) {
+      console.error("Error sending message:", error);
+    }
+  };
+
+  return <div className={styles.chatContainer}>{/* Render chat UI */}</div>;
+}
+
+export default React.memo(Chat);
 ```

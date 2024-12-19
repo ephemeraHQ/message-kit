@@ -9,7 +9,8 @@ This is the official repository for [MessageKit](https://message-kit.org/). Powe
 - [`message-kit`](/packages/message-kit): A kit for quickly building messaging apps
 - [`create-message-kit`](/packages/create-message-kit): A CLI for creating new apps easily
 - [`framekit`](/packages/framekit): A suite for backend frames
-- ['agentsdk](/packages/agent/): A secure agent sdk
+- ['xmtp](/packages/xmtp/): A secure agent sdk
+- [`xmtp-client`](/packages/xmtp-client/): Client sided agent sdk
 - [`docs`](/packages/docs): Documentation for MessageKit
 
 ## Contributing

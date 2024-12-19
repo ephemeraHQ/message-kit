@@ -41,8 +41,9 @@ const versionType = process.argv[2];
 // Update versions for each package
 const packages = [
   "packages/message-kit",
-  "packages/agent",
+  "packages/xmtp",
   "packages/create-message-kit",
+  "packages/xmtp-client",
 ];
 
 packages.forEach((packagePath) => {

@@ -91,10 +91,17 @@
     "author": "humanagent"
   },
   {
+    "href": "/plugins/xmtp",
+    "title": "xmtp",
+    "description": "Use Xmtp to send E2EE messages.",
+    "icon": "💬",
+    "author": "ephemeraHQ"
+  },
+  {
     "href": "/plugins/xmtp-groups",
     "title": "Xmtp Groups",
     "description": "Use Xmtp Groups to manage groups.",
-    "icon": "💬",
+    "icon": "🧑‍🧑‍🧒",
     "author": "ephemeraHQ"
   },
   {

@@ -1,20 +1,13 @@
 import React, { useCallback } from "react";
 import { useState, useEffect } from "react";
-import { Client as V2Client } from "@xmtp/xmtp-js";
 import { Wallet } from "ethers";
 import styles from "./Chat.module.css";
 import { UserInfo } from "@/app/utils/resolver";
-import { http, isAddress, parseUnits } from "viem";
+import { isAddress, parseUnits } from "viem";
 import { extractFrameChain } from "@/app/utils/networks";
 import sdk from "@farcaster/frame-sdk";
 import { UrlPreview } from "./UrlPreview";
-
-interface Message {
-  id: string;
-  content: string;
-  sender: string;
-  timestamp: number;
-}
+import { createClient, XMTP, Message } from "xmtp-client";
 
 type UrlType = "receipt" | "payment" | "wallet" | "unknown";
 
@@ -38,12 +31,11 @@ function Chat({ user }: { user: UserInfo }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [wallet, setWallet] = useState<any | undefined>(undefined);
-  const [xmtp, setXmtp] = useState<any>(undefined);
+  const [xmtp, setXmtp] = useState<XMTP | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(true);
   const [recipientInfo, setRecipientInfo] = useState<UserInfo | undefined>(
     undefined,
   );
-  const [conversation, setConversation] = useState<any>(undefined);
   const [processedMessageIds] = useState(new Set<string>());
 
   useEffect(() => {
@@ -51,7 +43,6 @@ function Chat({ user }: { user: UserInfo }) {
 
     const init = async () => {
       const newWallet = Wallet.createRandom();
-
       setWallet(newWallet);
 
       try {
@@ -72,48 +63,49 @@ function Chat({ user }: { user: UserInfo }) {
     init();
   }, [user.address]);
 
-  useEffect(() => {
-    const initConversation = async () => {
-      if (!xmtp || !recipientInfo?.address) return;
+  const onMessage = async (message: Message | undefined) => {
+    if (message) {
+      console.log("onMessage", message);
+      setMessages((prevMessages) => [...prevMessages, message]);
+    }
+  };
 
-      try {
-        const conv = await xmtp.conversations.newConversation(
-          recipientInfo.address,
-        );
-        setConversation(conv);
+  const initXmtp = async (wallet: any) => {
+    try {
+      const xmtpClient = await createClient(onMessage, {
+        privateKey: wallet.privateKey,
+      });
 
-        // Load existing messages
-        const existingMessages = await conv.messages();
-        console.log("Initial messages loaded:", existingMessages.length);
+      setXmtp(xmtpClient);
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error initializing XMTP:", error);
+      setIsLoading(false);
+    }
+  };
 
-        // Process messages in chronological order
-        const formattedMessages = existingMessages
-          .sort((a: any, b: any) => a.sent.getTime() - b.sent.getTime())
-          .map((msg: any) => ({
-            id: msg.id,
-            content: msg.content,
-            sender: msg.senderAddress === wallet.address ? "Human" : "Agent",
-            timestamp: msg.sent.getTime(),
-          }));
+  const sendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-        // Add message IDs to processed set
-        formattedMessages.forEach((msg: any) =>
-          processedMessageIds.add(msg.id),
-        );
+    if (!xmtp || !newMessage || !recipientInfo?.address) {
+      console.log("Missing required data:", {
+        xmtp: !!xmtp,
+        newMessage,
+        recipientAddress: recipientInfo?.address,
+      });
+      return;
+    }
 
-        setMessages(formattedMessages);
-        setIsLoading(false);
+    try {
+      console.log("Sending message:", newMessage);
+      const message = await xmtp.sendMessage(newMessage, user.address);
 
-        // Start streaming new messages
-        streamMessages(conv);
-      } catch (error) {
-        console.error("Error initializing conversation:", error);
-        setIsLoading(false);
-      }
-    };
-
-    initConversation();
-  }, [xmtp, recipientInfo, wallet]);
+      setMessages((prevMessages) => [...prevMessages, message]);
+      setNewMessage("");
+    } catch (error) {
+      console.error("Error sending message:", error);
+    }
+  };
 
   const ethereumURL = (url: string) => {
     try {
@@ -137,73 +129,6 @@ function Chat({ user }: { user: UserInfo }) {
     }
   };
 
-  const streamMessages = async (conv: any) => {
-    try {
-      for await (const message of await conv.streamMessages()) {
-        console.log("Received message:", message.id, message.content);
-        if (!processedMessageIds.has(message.id)) {
-          processedMessageIds.add(message.id);
-          setMessages((prevMessages) => [
-            ...prevMessages,
-            {
-              id: message.id,
-              content: message.content,
-              sender:
-                message.senderAddress === wallet.address ? "Human" : "Agent",
-              timestamp: message.sent.getTime(),
-            },
-          ]);
-        }
-      }
-    } catch (error) {
-      console.error("Error streaming messages:", error);
-    }
-  };
-
-  const initXmtp = async (wallet: any) => {
-    try {
-      const v2client = await V2Client.create(wallet, { env: "production" });
-      setXmtp(v2client);
-      setIsLoading(false);
-    } catch (error) {
-      console.error("Error initializing XMTP:", error);
-    }
-  };
-
-  const sendMessage = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!conversation || !newMessage || !recipientInfo?.address) {
-      console.log("Missing required data:", {
-        conversation: !!conversation,
-        newMessage,
-        recipientAddress: recipientInfo?.address,
-      });
-      return;
-    }
-
-    try {
-      console.log("Sending message:", newMessage);
-      const sentMessage = await conversation.send(newMessage);
-      console.log("Message sent with ID:", sentMessage.id);
-
-      // Add message immediately to UI and processed set
-      processedMessageIds.add(sentMessage.id);
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        {
-          id: sentMessage.id,
-          content: newMessage,
-          sender: "Human",
-          timestamp: new Date().getTime(),
-        },
-      ]);
-
-      setNewMessage("");
-    } catch (error) {
-      console.error("Error sending message:", error);
-    }
-  };
   const openUrl = useCallback(async (url: string) => {
     try {
       const inFrame = await isFrame();
@@ -214,14 +139,13 @@ function Chat({ user }: { user: UserInfo }) {
       }
     } catch (error) {
       console.error("Error opening URL:", error);
-      // Fallback to traditional navigation if something goes wrong
       window.location.href = url;
     }
   }, []);
 
-  const renderMessageContent = (content: string) => {
+  const renderMessageContent = (text: string) => {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
-    const parts = content.split(urlRegex);
+    const parts = text?.split(urlRegex);
 
     return parts.map((part, index) => {
       if (urlRegex.test(part)) {
@@ -287,11 +211,6 @@ function Chat({ user }: { user: UserInfo }) {
   return (
     <div className={styles.chatContainer}>
       <div className={styles.walletInfo}>
-        {/*<div>
-           Display the user's wallet address 
-          Your Wallet: {wallet?.address?.slice(0, 6)}...
-          {wallet?.address?.slice(-4)}
-        </div>*/}
         <div>
           Agent:
           {user?.preferredName ||
@@ -308,8 +227,10 @@ function Chat({ user }: { user: UserInfo }) {
       <div className={styles.messagesContainer}>
         {messages.map((msg, index) => (
           <div key={msg.id || index} className={styles.message}>
-            <span className={styles.sender}>{msg.sender}</span>
-            {renderMessageContent(msg.content)}
+            <span className={styles.sender}>
+              {msg.sender.address === user.address ? "Agent" : "Human"}
+            </span>
+            {renderMessageContent(msg.content?.text as string)}
           </div>
         ))}
       </div>
