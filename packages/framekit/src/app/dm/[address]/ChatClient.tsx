@@ -1,14 +1,9 @@
 "use client";
-
 import React, { Suspense, useEffect, useState } from "react";
-import dynamic from "next/dynamic";
 import { useParams } from "next/navigation";
 import sdk, { type FrameContext } from "@farcaster/frame-sdk";
 import { getUserInfo, type UserInfo } from "@/app/utils/resolver";
-
-const Chat = dynamic(() => import("../../../components/Chat"), {
-  ssr: false,
-});
+import Chat from "../../../components/Chat";
 
 export function ChatFrameClient(): JSX.Element {
   const params = useParams();

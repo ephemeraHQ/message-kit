@@ -1,4 +1,4 @@
-import { checkStorage, getFS } from "../helpers/utils";
+import { getFS } from "../helpers/utils";
 import path from "path";
 
 const { fsPromises } = getFS();
@@ -15,9 +15,9 @@ export class LocalStorage {
       if (process.env.MSG_LOG === "true")
         console.log("Railway detected - Using absolute path:", this.baseDir);
     } else {
-      this.baseDir = baseDir;
-      if (process.env.MSG_LOG === "true")
-        console.log("Local development - Using relative path:", this.baseDir);
+      this.baseDir = path.join(process.cwd(), baseDir);
+      //if (process.env.MSG_LOG === "true")
+      //console.log("Local development - Using relative path:", this.baseDir);
     }
   }
 
@@ -28,11 +28,13 @@ export class LocalStorage {
     }
 
     try {
-      await fsPromises.mkdir(this.baseDir, {
-        recursive: true,
-        mode: 0o755,
-      });
-      console.log("Storage directory ready:", this.baseDir);
+      const { fs } = getFS();
+      if (!fs?.existsSync(this.baseDir)) {
+        await fsPromises.mkdir(this.baseDir, {
+          recursive: true,
+          mode: 0o755,
+        });
+      }
       return true;
     } catch (error) {
       console.error("Storage directory error:", error);

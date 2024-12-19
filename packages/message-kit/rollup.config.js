@@ -21,6 +21,7 @@ const external = [
   "@circle-fin/developer-controlled-wallets",
   "cross-fetch",
   "path",
+  "xmtp",
   "crypto",
   "viem",
   "dotenv",

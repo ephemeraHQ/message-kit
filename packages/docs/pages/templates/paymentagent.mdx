@@ -2,7 +2,23 @@
 
 Create wallets for users and interact with them.
 
-> Payment Agent uses [CDP plugin](/plugins/cdp) to interact with Coinbase.
+import Video from "../../components/Video";
+
+## Interoperable agent
+
+`paymentagent.eth` is a template that has an agent that can perform transactions on behalf of the user. Since it's a ens domain its reachable from any app that supports ENS.
+
+### Converse
+
+<Video src="/videos/concierge.mp4" />
+
+### Coinbase
+
+<Video src="/videos/cb.mp4" />
+
+### Warpcast
+
+<Video src="/videos/warpcast.mp4" />
 
 ## Structure
 
@@ -26,10 +42,11 @@ The process that starts listening to messages and replying to them.
 // [!include ~/../../templates/paymentagent/src/index.ts]
 ```
 
-## Skills
+## Used
 
-- [C](/skills/concierge): Agent Wallet as a Service
-- [Degen](/vibes/degen): Define the personality of your agent
+- [Concierge](/skills/concierge): Agent Wallet as a Service
+- [CDP Wallet Service](/plugins/cdp): Wallet for Coinbase
+- [Degen Vibe](/vibes/degen): Define the personality of your agent
 
 ## Variables
 

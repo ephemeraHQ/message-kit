@@ -2,6 +2,8 @@
 
 [XMTP](https://xmtp.org/) is the protocol that MessageKit uses to send and receive messages.
 
+> Check out the [XMTP AI](/plugins/xmtp) plugins for more information.
+
 ## Context
 
 The `Context` object is a core component that provides access to all XMTP messaging functionality. It handles conversations, groups, and messages.
@@ -32,15 +34,8 @@ Contains information about the current message:
 - `sender`: Address of message sender
 - `sent`: Timestamp when message was sent
 - `typeId`: Type of message
-
-#### Clients
-
 - `client`: V3 XMTP client instance
 - `v2client`: V2 XMTP client instance
-- `version`: Current client version
-
-#### Conversation
-
 - `conversation`: Current conversation object with messaging methods
 
 #### Group (V3 Only)
@@ -56,7 +51,7 @@ Group chat information including:
 Each messages comes with a sender object that contains the address, name, and avatar of the sender.
 
 ```tsx
-interface AbstractedMember {
+interface Member {
   // Unique identifier for the user's inbox
   inboxId: string;
 
@@ -86,15 +81,15 @@ const { sender } = context.message;
 MessageKit provides wrapped versions of XMTP clients for easier integration:
 
 ```tsx
-import { V2Client, V3Client } from "@xmtp/message-kit";
+import { V2Client, V3Client } from "xmtp";
 ```
 
-You can create new client instances using the `xmtpClient` helper:
+You can create new client instances using the `createClient` helper:
 
 ```tsx
-import { xmtpClient } from "@xmtp/message-kit";
+import { createClient } from "xmtp";
 
-const { v2client } = await xmtpClient({
+const { v2client } = await createClient({
   // Optional configuration
 });
 ```

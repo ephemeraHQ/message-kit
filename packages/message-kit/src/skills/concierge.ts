@@ -222,7 +222,7 @@ async function fund(
     if (amount + Number(balance) <= 10) {
       if (group) {
         await context.reply(
-          `You need to fund your agent account. Check your DMs https://converse.xyz/${context.client.accountAddress}`,
+          `You need to fund your agent account. Check your DMs https://converse.xyz/${context.xmtp.address}`,
         );
       }
       let onRampURL = await walletService.onRampURL(

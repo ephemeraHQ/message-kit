@@ -1,4 +1,4 @@
-import { run, agentReply, Context, Agent } from "@xmtp/message-kit";
+import { agentReply, Context, createAgent } from "@xmtp/message-kit";
 import { web } from "./skills/web.js";
 import { cryptoPrice } from "./skills/cryptoPrice.js";
 import { search } from "./skills/search.js";
@@ -7,7 +7,7 @@ export const frameUrl = "https://ens.steer.fun/";
 export const baseUrl = "https://base-tx-frame.vercel.app/transaction";
 export const ensUrl = "https://app.ens.domains/";
 
-export const agent: Agent = {
+export const agent = createAgent({
   name: "Playground Agent",
   tag: "@bot",
   description: "A playground agent with a lot of skills.",
@@ -19,6 +19,4 @@ export const agent: Agent = {
   config: {
     experimental: true,
   },
-};
-
-run(agent);
+}).run();

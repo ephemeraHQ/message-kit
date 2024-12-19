@@ -143,9 +143,7 @@ export async function handleJoinToss(context: Context) {
         params: { response },
       },
     },
-    client,
     walletService,
-    group,
   } = context;
 
   const tossDBClient = await getRedisClient();

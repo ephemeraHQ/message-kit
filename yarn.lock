@@ -3684,15 +3684,6 @@ __metadata:
     "@rollup/plugin-typescript": "npm:^11.1.6"
     "@types/node": "npm:^20.14.2"
     "@vitest/coverage-v8": "npm:^2.1.4"
-    "@xmtp/content-type-primitives": "npm:^1.0.2"
-    "@xmtp/content-type-reaction": "npm:^1.1.10-beta.1"
-    "@xmtp/content-type-read-receipt": "npm:^2.0.0"
-    "@xmtp/content-type-remote-attachment": "npm:1.1.11"
-    "@xmtp/content-type-reply": "npm:^1.1.11"
-    "@xmtp/content-type-text": "npm:^1.0.0"
-    "@xmtp/grpc-api-client": "npm:^0.2.8"
-    "@xmtp/node-sdk": "npm:^0.0.31"
-    "@xmtp/xmtp-js": "npm:^13.0.3"
     cross-fetch: "npm:^4.0.0"
     dotenv: "npm:^16.4.5"
     openai: "npm:^4.52.7"
@@ -3704,6 +3695,7 @@ __metadata:
     typescript: "npm:^5.4.5"
     viem: "npm:^2.16.3"
     vitest: "npm:^2.1.4"
+    xmtp: "workspace:*"
   peerDependencies:
     "@circle-fin/developer-controlled-wallets": ^6.0.0
     "@coinbase/cbpay-js": ^2.4.0
@@ -6226,6 +6218,7 @@ __metadata:
     react-dom: "npm:^18.2.0"
     typescript: "npm:^5"
     viem: "npm:^2.21.45"
+    xmtp-client: "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -12282,6 +12275,58 @@ __metadata:
   checksum: 10/70dfe53f23ff4368d46e4c0b1d4ca734db2c4149c6f68bc62cb16fc21f753c47b35fcc6e582f3bdfba0eaeb1c488cddab3c2255755a5c3eecb251431e42b3ff6
   languageName: node
   linkType: hard
+
+"xmtp-client@workspace:*, xmtp-client@workspace:packages/xmtp-client":
+  version: 0.0.0-use.local
+  resolution: "xmtp-client@workspace:packages/xmtp-client"
+  dependencies:
+    "@changesets/changelog-git": "npm:^0.2.0"
+    "@changesets/cli": "npm:^2.27.5"
+    "@rollup/plugin-typescript": "npm:^11.1.6"
+    "@types/node": "npm:^20.14.2"
+    "@vitest/coverage-v8": "npm:^2.1.4"
+    "@xmtp/content-type-text": "npm:^1.0.0"
+    "@xmtp/xmtp-js": "npm:^13.0.3"
+    prettier: "npm:^3.3.1"
+    rollup: "npm:^4.18.0"
+    rollup-plugin-dts: "npm:^6.1.1"
+    ts-node: "npm:^10.9.2"
+    turbo: "npm:^2.2.3"
+    typescript: "npm:^5.4.5"
+    viem: "npm:^2.16.3"
+    vitest: "npm:^2.1.4"
+  languageName: unknown
+  linkType: soft
+
+"xmtp@workspace:*, xmtp@workspace:packages/xmtp":
+  version: 0.0.0-use.local
+  resolution: "xmtp@workspace:packages/xmtp"
+  dependencies:
+    "@changesets/changelog-git": "npm:^0.2.0"
+    "@changesets/cli": "npm:^2.27.5"
+    "@rollup/plugin-typescript": "npm:^11.1.6"
+    "@types/node": "npm:^20.14.2"
+    "@vitest/coverage-v8": "npm:^2.1.4"
+    "@xmtp/content-type-primitives": "npm:^1.0.2"
+    "@xmtp/content-type-reaction": "npm:^1.1.10-beta.1"
+    "@xmtp/content-type-read-receipt": "npm:^2.0.0"
+    "@xmtp/content-type-remote-attachment": "npm:1.1.11"
+    "@xmtp/content-type-reply": "npm:^1.1.11"
+    "@xmtp/content-type-text": "npm:^1.0.0"
+    "@xmtp/grpc-api-client": "npm:^0.2.8"
+    "@xmtp/node-sdk": "npm:^0.0.31"
+    "@xmtp/xmtp-js": "npm:^13.0.3"
+    dotenv: "npm:^16.4.5"
+    prettier: "npm:^3.3.1"
+    rollup: "npm:^4.18.0"
+    rollup-plugin-dts: "npm:^6.1.1"
+    ts-node: "npm:^10.9.2"
+    turbo: "npm:^2.2.3"
+    typescript: "npm:^5.4.5"
+    viem: "npm:^2.16.3"
+    vitest: "npm:^2.1.4"
+  languageName: unknown
+  linkType: soft
 
 "y18n@npm:^4.0.0":
   version: 4.0.3
