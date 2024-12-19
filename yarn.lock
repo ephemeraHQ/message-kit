@@ -7836,21 +7836,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"message-kit-monorepo@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "message-kit-monorepo@workspace:."
-  dependencies:
-    "@changesets/changelog-git": "npm:^0.2.0"
-    "@changesets/cli": "npm:^2.27.5"
-    prettier: "npm:^3.3.1"
-    prettier-plugin-packagejson: "npm:^2.5.0"
-    punycode: "npm:^2.3.1"
-    readline-sync: "npm:^1.4.10"
-    turbo: "npm:^1.13.4"
-    typescript: "npm:^5.4.5"
-  languageName: unknown
-  linkType: soft
-
 "methods@npm:~1.1.2":
   version: 1.1.2
   resolution: "methods@npm:1.1.2"
@@ -12275,6 +12260,21 @@ __metadata:
   checksum: 10/70dfe53f23ff4368d46e4c0b1d4ca734db2c4149c6f68bc62cb16fc21f753c47b35fcc6e582f3bdfba0eaeb1c488cddab3c2255755a5c3eecb251431e42b3ff6
   languageName: node
   linkType: hard
+
+"xmtp-ai@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "xmtp-ai@workspace:."
+  dependencies:
+    "@changesets/changelog-git": "npm:^0.2.0"
+    "@changesets/cli": "npm:^2.27.5"
+    prettier: "npm:^3.3.1"
+    prettier-plugin-packagejson: "npm:^2.5.0"
+    punycode: "npm:^2.3.1"
+    readline-sync: "npm:^1.4.10"
+    turbo: "npm:^1.13.4"
+    typescript: "npm:^5.4.5"
+  languageName: unknown
+  linkType: soft
 
 "xmtp-client@workspace:*, xmtp-client@workspace:packages/xmtp-client":
   version: 0.0.0-use.local
