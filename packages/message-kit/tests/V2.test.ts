@@ -2,9 +2,8 @@ import { describe, test, expect, vi, beforeEach } from "vitest";
 import { MessageKit } from "../src/lib/core";
 import { ContentTypeText } from "@xmtp/content-type-text";
 import { ContentTypeReply } from "@xmtp/content-type-reply";
-import { ContentTypeReaction } from "@xmtp/content-type-reaction";
 import { getMocks } from "./utils";
-import { createClient } from "xmtp-agent";
+import { createClient } from "xmtp";
 
 describe("Context Message Tests", () => {
   // Mock conversation data
@@ -26,7 +25,6 @@ describe("Context Message Tests", () => {
       mockV2Message,
       { client: mockV3Client, v2client: mockV2Client },
       mockAgent,
-      "v2",
     );
     const xmtp = createClient();
     console.log(xmtp);

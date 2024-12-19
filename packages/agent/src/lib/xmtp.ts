@@ -1,24 +1,30 @@
 import dotenv from "dotenv";
 dotenv.config();
 import {
-  DecodedMessage,
+  DecodedMessage as V3DecodedMessage,
   Client as V3Client,
   ClientOptions,
   XmtpEnv,
-  ContentTypeId,
-  Conversation,
+  Conversation as V3Conversation,
 } from "@xmtp/node-sdk";
 import {
-  DecodedMessage as DecodedMessageV2,
+  DecodedMessage as V2DecodedMessage,
   Client as V2Client,
   Conversation as V2Conversation,
 } from "@xmtp/xmtp-js";
-import { Reply, ReplyCodec } from "@xmtp/content-type-reply";
-import { Reaction, ReactionCodec } from "@xmtp/content-type-reaction";
+import { ContentTypeReply, Reply, ReplyCodec } from "@xmtp/content-type-reply";
+import {
+  ContentTypeReaction,
+  Reaction,
+  ReactionCodec,
+} from "@xmtp/content-type-reaction";
 import { ContentTypeText, TextCodec } from "@xmtp/content-type-text";
+import { parseMessage, isV2Conversation } from "./parse.js";
 import {
   Attachment,
   AttachmentCodec,
+  ContentTypeRemoteAttachment,
+  ContentTypeAttachment,
   RemoteAttachment,
   RemoteAttachmentCodec,
 } from "@xmtp/content-type-remote-attachment";
@@ -27,38 +33,137 @@ import { ReadReceipt, ReadReceiptCodec } from "@xmtp/content-type-read-receipt";
 import {
   AgentMessage,
   AgentMessageCodec,
+  ContentTypeAgentMessage,
 } from "../content-types/agent-message.js";
+import { ContentTypeId } from "@xmtp/content-type-primitives";
 import { createWalletClient, http, toBytes, toHex } from "viem";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { mainnet } from "viem/chains";
 import { GrpcApiClient } from "@xmtp/grpc-api-client";
 import { getRandomValues } from "crypto";
 import path from "path";
-import { xmtpConfig, XmtpClient } from "./types.js";
+import { xmtpConfig, Message } from "./types.js";
+import { readFile } from "fs/promises";
 
-// Define the return type interface
 interface UserReturnType {
   key: string;
   account: ReturnType<typeof privateKeyToAccount>;
   wallet: ReturnType<typeof createWalletClient>;
 }
 export class XMTP {
-  private v2client: V2Client;
-  private client: V3Client;
-  private conversation: Conversation | V2Conversation | undefined;
-  private message: DecodedMessage | DecodedMessageV2 | undefined;
+  v2client: V2Client;
+  client: V3Client;
+  address: string;
+  inboxId: string;
+  message: Message;
 
-  constructor(
-    client: V3Client,
-    v2client: V2Client,
-    conversation: Conversation | V2Conversation | undefined,
-    message: DecodedMessage | DecodedMessageV2 | undefined,
-  ) {
+  constructor(client: V3Client, v2client: V2Client) {
     this.client = client;
     this.v2client = v2client;
-    this.conversation = conversation;
-    this.message = message;
+    this.address = client.accountAddress;
+    this.inboxId = client.inboxId;
+    this.message = {} as Message;
   }
+  async sendMessage(message: string, receiver?: string) {
+    await this.send(message, ContentTypeText, receiver ?? undefined);
+  }
+  async sendAgentMessage(message: string, metadata: any) {
+    let agentMessage = new AgentMessage(message, metadata);
+    await this.send(agentMessage, ContentTypeAgentMessage);
+  }
+  async reply(message: string, replyTo: string) {
+    const reply: Reply = {
+      content: message,
+      contentType: ContentTypeText,
+      reference: replyTo,
+    };
+    await this.send(reply, ContentTypeReply);
+  }
+
+  async sendImage(source: string) {
+    try {
+      let imgArray: Uint8Array;
+      let mimeType: string;
+      let filename: string;
+
+      const MAX_SIZE = 1024 * 1024; // 1MB in bytes
+
+      // Check if source is a URL
+      if (source.startsWith("http://") || source.startsWith("https://")) {
+        try {
+          // Handle URL
+          const response = await fetch(source);
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          // Check Content-Length header first if available
+          const contentLength = response.headers.get("content-length");
+          if (contentLength && parseInt(contentLength) > MAX_SIZE) {
+            throw new Error("Image size exceeds 1MB limit");
+          }
+
+          const arrayBuffer = await response.arrayBuffer();
+
+          // Double check actual size
+          if (arrayBuffer.byteLength > MAX_SIZE) {
+            throw new Error("Image size exceeds 1MB limit");
+          }
+
+          imgArray = new Uint8Array(arrayBuffer);
+          mimeType = response.headers.get("content-type") || "image/jpeg";
+          filename = source.split("/").pop() || "image";
+
+          // If filename doesn't have an extension, add one based on mime type
+          if (!filename.includes(".")) {
+            const ext = mimeType.split("/")[1];
+            filename = `${filename}.${ext}`;
+          }
+        } catch (error) {
+          console.error("Error fetching image from URL:", error);
+          throw error;
+        }
+      } else {
+        // Handle file path
+        const file = await readFile(source);
+        if (!file) {
+          console.error("File operations not supported in this environment");
+          return;
+        }
+
+        // Check file size
+        if (file.length > MAX_SIZE) {
+          throw new Error("Image size exceeds 1MB limit");
+        }
+
+        filename = path.basename(source);
+        const extname = path.extname(source);
+        mimeType = `image/${extname.replace(".", "").replace("jpg", "jpeg")}`;
+        imgArray = new Uint8Array(file);
+      }
+
+      const attachment = {
+        filename,
+        mimeType,
+        data: imgArray,
+      };
+
+      await this.send(attachment, ContentTypeRemoteAttachment);
+    } catch (error) {
+      console.error("Failed to send image:", error);
+      throw error;
+    }
+  }
+  async react(emoji: string, reference: string) {
+    let reaction: Reaction = {
+      content: emoji,
+      action: "added",
+      reference: reference,
+      schema: "unicode",
+    };
+    await this.send(reaction, ContentTypeReaction);
+  }
+
   async send(
     message:
       | string
@@ -68,131 +173,62 @@ export class XMTP {
       | Attachment
       | ReadReceipt
       | AgentMessage,
-    contentType: ContentTypeId = ContentTypeText,
-    conversation?: V2Conversation | Conversation,
+    contentType: ContentTypeId,
+    receiver?: string,
   ) {
-    if (conversation) {
-      if (this.isV2Conversation(conversation)) {
-        await (conversation as V2Conversation).send(message, {
-          contentType: contentType as any,
-        });
-      } else if (this.isV3Conversation(conversation)) {
-        await (conversation as Conversation).send(message, contentType as any);
+    if (this.message.version == "v2") {
+      let v2Conversation = await this.getV2ConversationByAddress(
+        receiver ?? this.message.sender.address,
+      );
+      await v2Conversation?.send(message, {
+        contentType: contentType,
+      });
+    } else if (this.message.version == "v3") {
+      let v3Conversation = await this.client.conversations.getConversationById(
+        this.message.conversation.id,
+      );
+      if (receiver) {
+        v3Conversation = await this.client.conversations
+          .list()
+          .then(
+            (conversations) =>
+              conversations.find(
+                (conv: V3Conversation) =>
+                  conv.dmPeerInboxId.toLowerCase() === receiver.toLowerCase(),
+              ) as V3Conversation,
+          );
       }
+      await v3Conversation?.send(message, contentType);
     }
   }
-  isV2Message(message: DecodedMessage | DecodedMessageV2 | undefined) {
-    return (message as DecodedMessageV2)?.conversation !== undefined;
+
+  async getConversationFromMessage(
+    message: V3DecodedMessage | V2DecodedMessage | undefined,
+  ): Promise<V3Conversation | V2Conversation | undefined> {
+    return !this.isV2Message(message)
+      ? ((await this.client.conversations.getConversationById(
+          (message as V3DecodedMessage)?.conversationId as string,
+        )) as V3Conversation)
+      : ((message as V2DecodedMessage)?.conversation as V2Conversation);
   }
 
-  isV2Conversation(
-    conversation: Conversation | V2Conversation | undefined,
-  ): conversation is V2Conversation {
-    return (conversation as V2Conversation)?.topic !== undefined;
+  isV2Message(message: V3DecodedMessage | V2DecodedMessage | undefined) {
+    return (message as V2DecodedMessage)?.conversation !== undefined;
   }
 
   isV3Conversation(
-    conversation: Conversation | V2Conversation | undefined,
-  ): conversation is Conversation {
-    return (conversation as Conversation)?.id !== undefined;
+    conversation: V3Conversation | V2Conversation | undefined,
+  ): conversation is V3Conversation {
+    return (conversation as V3Conversation)?.id !== undefined;
   }
-
-  async createGroup(
-    client: V3Client,
-    senderAddress: string,
-    clientAddress: string,
-  ) {
-    try {
-      let senderInboxId = "";
-      await client.conversations.sync();
-      const group = await client?.conversations.newGroup([
-        senderAddress,
-        clientAddress,
-      ]);
-      console.log("Group created", group?.id);
-      const members = await group.members();
-      const senderMember = members.find((member) =>
-        member.accountAddresses.includes(senderAddress.toLowerCase()),
-      );
-      if (senderMember) {
-        senderInboxId = senderMember.inboxId;
-        console.log("Sender's inboxId:", senderInboxId);
-      } else {
-        console.log("Sender not found in members list");
-      }
-      await group.addSuperAdmin(senderInboxId);
-      console.log(
-        "Sender is superAdmin",
-        await group.isSuperAdmin(senderInboxId),
-      );
-      await group.send(`Welcome to the new group!`);
-      await group.send(
-        `You are now the admin of this group as well as the bot`,
-      );
-      return group;
-    } catch (error) {
-      console.log("Error creating group", error);
-      return undefined;
-    }
+  setMessage(message: Message) {
+    this.message = message;
   }
-
-  async removeFromGroup(
-    groupId: string,
-    client: V3Client,
-    senderAddress: string,
-  ): Promise<{ code: number; message: string }> {
+  async getV2ConversationByAddress(address: string) {
     try {
-      let lowerAddress = senderAddress.toLowerCase();
-      const { v2, v3 } = await this.isOnXMTP(lowerAddress);
-      console.warn("Checking if on XMTP: v2", v2, "v3", v3);
-      if (!v3)
-        return {
-          code: 400,
-          message: "You don't seem to have a v3 identity ",
-        };
-      const conversation =
-        await client.conversations.getConversationById(groupId);
-      console.warn("removing from group", conversation?.id);
-      await conversation?.sync();
-      await conversation?.removeMembers([lowerAddress]);
-      console.warn("Removed member from group");
-      await conversation?.sync();
-      const members = await conversation?.members();
-      console.warn("Number of members", members?.length);
-
-      let wasRemoved = true;
-      if (members) {
-        for (const member of members) {
-          let lowerMemberAddress = member.accountAddresses[0].toLowerCase();
-          if (lowerMemberAddress === lowerAddress) {
-            wasRemoved = false;
-            break;
-          }
-        }
-      }
-      return {
-        code: wasRemoved ? 200 : 400,
-        message: wasRemoved
-          ? "You have been removed from the group"
-          : "Failed to remove from group",
-      };
-    } catch (error) {
-      console.log("Error removing from group", error);
-      return {
-        code: 400,
-        message: "Failed to remove from group",
-      };
-    }
-  }
-
-  async getV2ConversationBySender(sender: string) {
-    try {
-      if (!this.isV2Conversation(this.conversation)) {
-        return this.conversation;
-      }
       const conversations = await this.v2client.conversations.list();
       return conversations.find(
-        (conv) => conv.peerAddress.toLowerCase() === sender.toLowerCase(),
+        (conv) => conv.peerAddress.toLowerCase() === address.toLowerCase(),
       );
     } catch (error) {
       console.error("Error getting V2 conversation by sender:", error);
@@ -200,36 +236,16 @@ export class XMTP {
     }
   }
 
-  private async getV2MessageById(
-    conversationId: string,
-    reference: string,
-  ): Promise<DecodedMessageV2 | undefined> {
-    /*Takes to long, deprecated*/
-    try {
-      const conversations = await this.v2client.conversations.list();
-      const conversation = conversations.find(
-        (conv) => conv.topic === conversationId,
-      );
-      if (!conversation) return undefined;
-      const messages = await conversation.messages();
-      return messages.find((m) => m.id === reference) as DecodedMessageV2;
-    } catch (error) {
-      console.error("Error getting V2 message by id:", error);
-      return undefined;
-    }
-  }
-
   getConversationKey() {
-    const conversation = this.conversation;
-    return `${(conversation as V2Conversation)?.topic || (conversation as Conversation)?.id}`;
+    return `${this.message.conversation.id}`;
   }
 
   getUserConversationKey() {
-    const conversation = this.conversation;
     const awaitingSender =
-      (this.message as DecodedMessage)?.senderInboxId ||
-      (this.message as DecodedMessageV2)?.senderAddress;
-    return `${(conversation as V2Conversation)?.topic || (conversation as Conversation)?.id}:${awaitingSender}`;
+      this.message.version == "v2"
+        ? this.message.sender.address
+        : this.message.sender.inboxId;
+    return `${this.message.conversation.id}:${awaitingSender}`;
   }
 
   async getMessageById(reference: string) {
@@ -238,67 +254,6 @@ export class XMTP {
     )(reference);
   }
 
-  async getLastMessageById(reference: string) {
-    let isV2 = this.isV2Conversation(this.conversation);
-    let msg = isV2
-      ? this.getV2MessageById(
-          (this.conversation as V2Conversation).topic,
-          reference,
-        )
-      : this.getMessageById(reference);
-    msg = (await msg)?.content;
-    return msg;
-  }
-
-  async addToGroup(
-    groupId: string,
-    client: V3Client,
-    address: string,
-    asAdmin: boolean = false,
-  ): Promise<{ code: number; message: string }> {
-    try {
-      let lowerAddress = address.toLowerCase();
-      const { v2, v3 } = await this.isOnXMTP(lowerAddress);
-      if (!v3)
-        return {
-          code: 400,
-          message: "You don't seem to have a v3 identity ",
-        };
-      const group = await client.conversations.getConversationById(groupId);
-      console.warn("Adding to group", group?.id);
-      await group?.sync();
-      await group?.addMembers([lowerAddress]);
-      console.warn("Added member to group");
-      await group?.sync();
-      if (asAdmin) {
-        await group?.addSuperAdmin(lowerAddress);
-      }
-      const members = await group?.members();
-      console.warn("Number of members", members?.length);
-
-      if (members) {
-        for (const member of members) {
-          let lowerMemberAddress = member.accountAddresses[0].toLowerCase();
-          if (lowerMemberAddress === lowerAddress) {
-            console.warn("Member exists", lowerMemberAddress);
-            return {
-              code: 200,
-              message: "You have been added to the group",
-            };
-          }
-        }
-      }
-      return {
-        code: 400,
-        message: "Failed to add to group",
-      };
-    } catch (error) {
-      return {
-        code: 400,
-        message: "Failed to add to group",
-      };
-    }
-  }
   async isOnXMTP(address: string): Promise<{ v2: boolean; v3: boolean }> {
     try {
       const [v2, v3] = await Promise.all([
@@ -317,11 +272,9 @@ export class XMTP {
 }
 
 export async function createClient(
-  onMessage: (
-    message: DecodedMessage | DecodedMessageV2 | undefined,
-  ) => Promise<void> = async () => {}, // Default to a no-op function
+  onMessage: (message: Message | undefined) => Promise<void> = async () => {}, // Default to a no-op function
   config?: xmtpConfig,
-): Promise<XmtpClient> {
+): Promise<XMTP> {
   // Check if both clientConfig and privateKey are empty
   const testKey = await setupTestEncryptionKey();
   const { key, isRandom } = setupPrivateKey(config?.privateKey);
@@ -372,33 +325,23 @@ export async function createClient(
     finalConfig,
   );
 
+  const xmtpInstance = new XMTP(client, v2client);
+
   Promise.all([
-    streamMessages(onMessage, v2client),
-    streamMessages(onMessage, client),
+    streamMessages(onMessage, v2client, xmtpInstance),
+    streamMessages(onMessage, client, xmtpInstance),
   ]);
 
-  return {
-    client,
-    address: client.accountAddress,
-    inboxId: client.inboxId,
-    v2client,
-  } as XmtpClient;
+  return xmtpInstance as XMTP;
 }
 
 async function streamMessages(
-  onMessage: (
-    message: DecodedMessage | DecodedMessageV2 | undefined,
-  ) => Promise<void>,
+  onMessage: (message: Message | undefined) => Promise<void>,
   client: V3Client | V2Client,
+  xmtp: XMTP,
 ) {
   let v3client = client instanceof V3Client ? client : undefined;
   let v2client = client instanceof V2Client ? client : undefined;
-
-  // sync and list conversations
-  if (v3client && typeof v3client.conversations.sync === "function") {
-    await v3client.conversations.sync();
-    await v3client.conversations.list();
-  }
 
   while (true) {
     try {
@@ -406,10 +349,33 @@ async function streamMessages(
         v3client &&
         typeof v3client.conversations.streamAllMessages === "function"
       ) {
+        await v3client.conversations.sync();
+        await v3client.conversations.list();
         const stream = await v3client.conversations.streamAllMessages();
         console.warn(`\t- [v3] Stream started`);
         for await (const message of stream) {
-          onMessage(message);
+          let conversation = await xmtp.getConversationFromMessage(message);
+          if (message && conversation) {
+            try {
+              const { senderInboxId, kind } = message as V3DecodedMessage;
+              if (
+                // Filter out membership_change messages
+                senderInboxId?.toLowerCase() ===
+                  v3client.inboxId.toLowerCase() &&
+                kind !== "membership_change"
+              ) {
+                continue;
+              }
+              const parsedMessage = await parseMessage(
+                message,
+                conversation,
+                client,
+              );
+              onMessage(parsedMessage);
+            } catch (e) {
+              console.log(`error`, e);
+            }
+          }
         }
       } else if (
         v2client &&
@@ -418,7 +384,27 @@ async function streamMessages(
         const stream = await v2client.conversations.streamAllMessages();
         console.warn(`\t- [v2] Stream started`);
         for await (const message of stream) {
-          onMessage(message);
+          let conversation = await xmtp.getConversationFromMessage(message);
+          if (message && conversation) {
+            try {
+              const senderAddress = (message as V2DecodedMessage).senderAddress;
+              if (
+                //If same address do nothin
+                senderAddress?.toLowerCase() === v2client?.address.toLowerCase()
+              ) {
+                continue;
+              }
+
+              const parsedMessage = await parseMessage(
+                message,
+                conversation,
+                client,
+              );
+              onMessage(parsedMessage);
+            } catch (e) {
+              console.log(`error`, e);
+            }
+          }
         }
       }
     } catch (err) {

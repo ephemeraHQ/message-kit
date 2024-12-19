@@ -1,81 +1,16 @@
-# XMTP
+# XMTP AI
 
-XMTP provides end-to-end encrypted messaging, crucial for privacy, security, and compliance. Without it, messages are exposed to phishing, tampering, and unauthorized access.
+The XMTP ai plugin is a plugin that allows you to interact with the XMTP protocol.
 
-## Risks
+## Install
 
-Risks of not using end-to-end encryption for agent interactions:
-
-- **Phishing**: Messages can be intercepted and manipulated.
-- **Tampering**: Content can be altered without detection.
-- **Unauthorized access**: Sensitive information is vulnerable.
-
-## Backend
-
-Install the plugin
-
-```bash
-bun install xmtp-agent
+```bash [cmd]
+bun install xmtp
 ```
 
-Create a client and relay responses through the XMTP network
-
-```javascript
-import { createClient } from "xmtp-agent";
-
+```tsx
 const xmtp = await createClient(onMessage, {
   apiKey: process.env.XMTP_PRIVATE_KEY,
+  
 });
-
-const onMessage = async (message, user) => {
-  console.log(`Decoded message: ${response} by ${user}`);
-  //Your AI model response
-  xmtp.send(response);
-};
 ```
-
-### GPT example
-
-1. **`onMessage()`**: Triggered each time a new message is received from XMTP.
-2. **`xmtp.send()`**: Used to send messages (e.g., AI prompts and responses) back to the XMTP network.
-
-In this example, when `onMessage` is invoked, it takes the incoming user message, passes it to the AI model (OpenAI's Chat Completion API), and then sends the AI's response back over XMTP.
-
-```javascript
-import { createClient } from "xmtp-agent";
-import { Configuration, OpenAIApi } from "openai";
-
-const xmtp = await createClient(onMessage, {
-  apiKey: process.env.XMTP_PRIVATE_KEY,
-});
-
-const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-const openai = new OpenAIApi(configuration);
-
-// This function is called whenever a new message arrives on XMTP.
-// 'incomingMessage' represents the user's message received from the XMTP network.
-const onMessage = async (incomingMessage, user) => {
-  console.log(`Received: ${incomingMessage} by ${user}`);
-
-  // Prepare conversation history or context as needed
-  const history = [
-    { role: "system", content: "You are a helpful assistant." },
-    { role: "user", content: incomingMessage },
-  ];
-
-  // Call the OpenAI API to process the user's message
-  const response = await openai.createChatCompletion({
-    model: process.env.GPT_MODEL || "gpt-4",
-    messages: history,
-  });
-
-  const decodedResponse = response.data.choices[0].message.content.trim();
-
-  // Send the AI-generated response back to the XMTP network
-  xmtp.send(decodedResponse);
-};
-```
-
-Note: End users need to use a XMTP client to send messages to the agent.

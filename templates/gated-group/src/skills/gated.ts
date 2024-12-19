@@ -1,7 +1,8 @@
 import { Context, Skill } from "@xmtp/message-kit";
 import express from "express";
-import { V3Client } from "xmtp-agent";
+import { Client } from "@xmtp/node-sdk";
 import { checkNft } from "../plugins/alchemy.js";
+import { addToGroup, createGroup } from "../plugins/xmtp-groups.js";
 
 export const gated: Skill[] = [
   {
@@ -19,15 +20,11 @@ async function handler(context: Context) {
       sender,
       content: { skill },
     },
-    client,
+    xmtp,
   } = context;
 
   if (skill === "create") {
-    const group = await context.xmtp.createGroup(
-      client,
-      sender.address,
-      client.accountAddress,
-    );
+    const group = await createGroup(xmtp.client, sender.address, xmtp.address);
 
     await context.send(
       `Group created!\n- ID: ${group?.id}\n- Group Frame URL: https://converse.xyz/group/${group?.id}: \n- This url will deelink to the group inside Converse\n- Once in the other group you can share the invite with your friends.`,
@@ -40,7 +37,7 @@ async function handler(context: Context) {
   }
 }
 
-export function startGatedGroupServer(client: V3Client) {
+export function startGatedGroupServer(client: Client) {
   async function addWalletToGroup(
     walletAddress: string,
     groupId: string,
@@ -51,14 +48,8 @@ export function startGatedGroupServer(client: V3Client) {
       return "not verified";
     } else {
       try {
-        const added = await client.conversations.getConversationById(groupId);
-        if (added) {
-          added.addMembers([walletAddress]);
-          console.log(`Added wallet address: ${walletAddress} to the group`);
-          return "success";
-        } else {
-          return "error";
-        }
+        await addToGroup(groupId, client, walletAddress);
+        return "success";
       } catch (error: any) {
         console.log(error.message);
         return "error";

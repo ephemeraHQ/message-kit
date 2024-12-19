@@ -1,9 +1,9 @@
 import { createAgent } from "@xmtp/message-kit";
-import { createClient } from "xmtp-agent";
+import { createClient } from "xmtp";
 import { gated } from "./skills/gated.js";
 import { startGatedGroupServer } from "./skills/gated.js";
 
-const { client } = await createClient(undefined);
+const { client } = await createClient();
 
 startGatedGroupServer(client);
 

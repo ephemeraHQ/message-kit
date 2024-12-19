@@ -3704,7 +3704,7 @@ __metadata:
     typescript: "npm:^5.4.5"
     viem: "npm:^2.16.3"
     vitest: "npm:^2.1.4"
-    xmtp-agent: "workspace:*"
+    xmtp: "workspace:*"
   peerDependencies:
     "@circle-fin/developer-controlled-wallets": ^6.0.0
     "@coinbase/cbpay-js": ^2.4.0
@@ -12284,9 +12284,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"xmtp-agent@workspace:*, xmtp-agent@workspace:packages/agent":
+"xmtp@workspace:*, xmtp@workspace:packages/agent":
   version: 0.0.0-use.local
-  resolution: "xmtp-agent@workspace:packages/agent"
+  resolution: "xmtp@workspace:packages/agent"
   dependencies:
     "@changesets/changelog-git": "npm:^0.2.0"
     "@changesets/cli": "npm:^2.27.5"

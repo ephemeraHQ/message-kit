@@ -35,7 +35,7 @@ export class WalletService implements AgentWallet {
     this.walletStorage = new LocalStorage(".data/wallets");
     this.cdpEncriptionKey = (process.env.KEY as string).toLowerCase();
     this.senderAddress = context.message.sender.address.toLowerCase();
-    this.developerAddress = context.client.accountAddress.toLowerCase();
+    this.developerAddress = context.xmtp.address.toLowerCase();
   }
 
   encrypt(data: any): string {

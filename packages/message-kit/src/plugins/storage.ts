@@ -28,11 +28,13 @@ export class LocalStorage {
     }
 
     try {
-      await fsPromises.mkdir(this.baseDir, {
-        recursive: true,
-        mode: 0o755,
-      });
-      console.log("Storage directory ready:", this.baseDir);
+      const { fs } = getFS();
+      if (!fs?.existsSync(this.baseDir)) {
+        await fsPromises.mkdir(this.baseDir, {
+          recursive: true,
+          mode: 0o755,
+        });
+      }
       return true;
     } catch (error) {
       console.error("Storage directory error:", error);

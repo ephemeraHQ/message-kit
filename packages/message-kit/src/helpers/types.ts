@@ -1,5 +1,5 @@
 import { Context } from "../lib/core.js";
-import { xmtpConfig } from "xmtp-agent";
+import { xmtpConfig } from "xmtp";
 
 export type SkillResponse = {
   code: number;

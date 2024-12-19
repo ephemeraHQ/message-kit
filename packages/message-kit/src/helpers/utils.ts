@@ -139,9 +139,12 @@ import { promises as fsPromisesModule } from "fs";
 import * as fsSync from "fs";
 
 export function getFS() {
-  const fs = typeof window === "undefined" ? fsSync : undefined;
-  const fsPromises =
-    typeof window === "undefined" ? fsPromisesModule : undefined;
+  const isNode =
+    typeof globalThis.process !== "undefined" &&
+    globalThis.process.versions != null &&
+    globalThis.process.versions.node != null;
+  const fs = isNode ? fsSync : undefined;
+  const fsPromises = isNode ? fsPromisesModule : undefined;
   return { fs, fsPromises };
 }
 

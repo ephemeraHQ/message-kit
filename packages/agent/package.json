@@ -1,6 +1,6 @@
 {
-  "name": "xmtp-agent",
-  "version": "1.0.1",
+  "name": "xmtp",
+  "version": "0.0.1",
   "license": "MIT",
   "type": "module",
   "exports": {

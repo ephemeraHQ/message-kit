@@ -302,10 +302,7 @@ export async function loadSkillsFile(): Promise<Agent> {
   return agent;
 }
 
-export async function filterMessage(
-  context: Context,
-  isV2: boolean,
-): Promise<{
+export async function filterMessage(context: Context): Promise<{
   isMessageValid: boolean;
   customHandler: SkillHandler | undefined;
 }> {
@@ -316,11 +313,9 @@ export async function filterMessage(
       typeId,
       sender,
     },
-    client,
-    v2client,
     xmtp,
-    agent,
     group,
+    agent,
   } = context;
 
   //Reserved
@@ -330,21 +325,18 @@ export async function filterMessage(
     context.send("Memory cleared");
     return { isMessageValid: false, customHandler: undefined };
   }
-
+  let customOnMessage = agent?.onMessage !== undefined;
   let foundSkill = text?.startsWith("/")
     ? findSkill(text, agent?.skills ?? [])
     : undefined;
 
-  const { inboxId: senderInboxId } = client;
-  const { address: senderAddress } = v2client;
-
   const isSameAddress =
-    sender.address?.toLowerCase() === senderAddress?.toLowerCase() ||
-    (sender.inboxId?.toLowerCase() === senderInboxId.toLowerCase() &&
+    sender.address?.toLowerCase() === xmtp.address?.toLowerCase() ||
+    (sender.inboxId?.toLowerCase() === xmtp.inboxId?.toLowerCase() &&
       typeId !== "group_updated");
 
   const isSkillTriggered = foundSkill?.skill;
-  const iscommunity = agent.config?.experimental ?? false;
+  const isExperimental = (group && agent.config?.experimental) ?? false;
 
   const isAddedMemberOrPass =
     typeId === "group_updated" &&
@@ -354,14 +346,14 @@ export async function filterMessage(
       ? false
       : true;
 
-  const isRemoteAttachment = typeId == "remoteStaticAttachment";
+  const isRemoteAttachment = typeId == "attachment";
 
   const isAdminSkill = foundSkill?.adminOnly ?? false;
 
   const isAdmin =
     group &&
-    (group?.admins.includes(sender.inboxId) ||
-      group?.superAdmins.includes(sender.inboxId))
+    (group?.admins?.includes(sender.inboxId) ||
+      group?.superAdmins?.includes(sender.inboxId))
       ? true
       : false;
 
@@ -374,51 +366,45 @@ export async function filterMessage(
 
   const isImageValid = isRemoteAttachment && agent.config?.attachments;
 
-  const acceptedType = [
-    "text",
-    "remoteStaticAttachment",
-    "reply",
-    "skill",
-  ].includes(typeId ?? "");
+  const acceptedType = ["text", "attachment", "reply", "skill"].includes(
+    typeId ?? "",
+  );
   // Check if the message content triggers a tag
-  let botTag = (await getUserInfo(client.accountAddress))?.converseUsername;
+  let botTag = (await getUserInfo(xmtp.address))?.converseUsername;
   const isTagged =
     text?.toLowerCase()?.includes(agent?.tag?.toLowerCase() ?? "") ??
     text?.toLowerCase()?.includes(botTag?.toLowerCase() ?? "");
 
   const isMessageValid = isSameAddress
     ? false
-    : // v2 only accepts text, remoteStaticAttachment, reply
-      isV2 && acceptedType
+    : context.message.version == "v2" && acceptedType
       ? true
-      : //If its image is also good, if it has a skill image:true
-        isImageValid
+      : isImageValid
         ? true
         : //If its not an admin, nope
           !isAdminOrPass
           ? false
-          : iscommunity
+          : isExperimental
             ? true
             : //If its a group update but its not an added member, nope
               !isAddedMemberOrPass
               ? false
-              : //If it has a skill trigger, good
-                isSkillTriggered
+              : //If it has a tag trigger, good
+                isTagged
                 ? true
-                : //If it has a tag trigger, good
-                  isTagged
-                  ? true
-                  : false;
+                : false;
 
   if (process.env.MSG_LOG === "true") {
     logMessage({
       isSameAddress,
+      version: context.message.version,
       openai: {
         model: process?.env?.GPT_MODEL,
         key: process?.env?.OPENAI_API_KEY ? "[SET]" : "[NOT SET]",
       },
       content,
       acceptedType,
+      customOnMessage,
       attachmentDetails: {
         isRemoteAttachment,
         isImageValid,
@@ -458,7 +444,7 @@ export async function filterMessage(
     });
   }
   if (isMessageValid) {
-    logMessage(`msg_${isV2 ? "v2" : "v3"}: ` + (text ?? typeId));
+    logMessage(`msg_${context.message.version}: ` + (text ?? typeId));
   }
 
   return {

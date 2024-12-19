@@ -81,13 +81,13 @@ const { sender } = context.message;
 MessageKit provides wrapped versions of XMTP clients for easier integration:
 
 ```tsx
-import { V2Client, V3Client } from "xmtp-agent";
+import { V2Client, V3Client } from "xmtp";
 ```
 
 You can create new client instances using the `createClient` helper:
 
 ```tsx
-import { createClient } from "xmtp-agent";
+import { createClient } from "xmtp";
 
 const { v2client } = await createClient({
   // Optional configuration

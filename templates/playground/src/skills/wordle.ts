@@ -51,7 +51,7 @@ async function handleArenaMessage(context: Context) {
     message: {
       content: { text },
     },
-    group: { members },
+    group,
   } = context;
 
   const apiKey = process.env.FRAMEDL_API_KEY;
@@ -60,7 +60,9 @@ async function handleArenaMessage(context: Context) {
     await context.send("https://www.framedl.xyz/games/arena/create");
     return;
   }
-  const participantCount = members && members.length ? members.length - 1 : 0;
+  const participantCount = group?.members?.length
+    ? group.members.length - 1
+    : 0;
   const args = text?.split(" ") ?? [];
   const wordCountArg = args[1] ? parseInt(args[1], 10) : 3;
   const audienceSizeArg = args[2] ? parseInt(args[2], 10) : participantCount;
