@@ -33,16 +33,16 @@ bun install xmtp
 This is how you can use the `xmtp` package to create a client and handle messages.
 
 ```tsx
-import { createClient } from "xmtp";
+import { XMTP } from "xmtp";
 
-const xmtp = await createClient(onMessage, {
-  encryptionKey: process.env.LOCAL_KEY,
+const xmtp = await XMTP(onMessage, {
+  encryptionKey: process.env.WALLET_PRIVATE_KEY,
 });
 
 const onMessage = async (message, user) => {
-  console.log(`Decoded message: ${response} by ${user}`);
+  console.log(`Decoded message: ${message.content.text} by ${user.address}`);
   // Your AI model response
-  xmtp.send(response);
+  await xmtp.sendMessage(response);
 };
 ```
 
@@ -54,14 +54,14 @@ const onMessage = async (message, user) => {
 In this example, when `handleMessage` is invoked, it takes the incoming user message, passes it to the AI model (OpenAI's Chat Completion API), and then sends the AI's response back over XMTP.
 
 ```javascript
-import { createClient } from "xmtp";
+import { XMTP } from "xmtp";
 import { OpenAI } from "openai";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-const xmtp = await createClient(onMessage, {
+const xmtp = await XMTP(onMessage, {
   encryptionKey: process.env.LOCAL_KEY,
 });
 
@@ -102,20 +102,20 @@ bun install xmtp-client
 ### Usage
 
 ```tsx
-import { createClient, XMTP, Message } from "xmtp-client";
+import { XMTP, Message } from "xmtp-client";
 
-const xmtp = await createClient(onMessage, {
+const xmtp = await XMTP(onMessage, {
   encryptionKey: process.env.LOCAL_KEY,
 });
 
 const onSend = async (text) => {
-  const message = await xmtp.sendMessage(text, agentAddress);
   return message;
 };
 
 const onMessage = async (message, agentAddress) => {
   console.log(`Decoded message: ${message} by ${agentAddress}`);
-  // Your AI model response
+  let response; // Your ai model response
+  await xmtp.sendMessage(response, agentAddress);
 };
 ```
 

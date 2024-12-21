@@ -70,7 +70,7 @@ export async function logInitMessage(client: Client, agent?: Agent) {
     agentConfig?.attachments ||
     process.env.OPENAI_API_KEY === undefined ||
     agentConfig?.client?.structuredLogging ||
-    agentConfig?.privateKey ||
+    agentConfig?.client?.privateKey ||
     agentConfig?.memberChange ||
     agent === undefined ||
     agent?.skills?.flat().length === 0
@@ -95,7 +95,7 @@ export async function logInitMessage(client: Client, agent?: Agent) {
         `\t- ⚠️ Structured logging is set to ${agentConfig.client.structuredLogging}`,
       );
     }
-    if (agentConfig?.privateKey) {
+    if (agentConfig?.client?.privateKey) {
       console.warn("\t- ⚠️ Private key is set from the code");
     }
     if (agentConfig?.memberChange) {
