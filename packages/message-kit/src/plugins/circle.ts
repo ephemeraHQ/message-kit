@@ -1,11 +1,37 @@
 import { initiateDeveloperControlledWalletsClient } from "@circle-fin/developer-controlled-wallets";
 import { type Context } from "../lib/core";
-import { AgentWallet, AgentWalletData } from "../helpers/types";
 import { LocalStorage } from "./storage";
 
 const apiKey = process.env.CIRCLE_API_KEY;
 const entitySecret = process.env.CIRCLE_ENTITY_SECRET;
 const walletSetId = process.env.CIRCLE_WALLET_SET_ID;
+
+export type AgentWalletData = {
+  id: string;
+  wallet: any;
+  address: string;
+  agent_address: string;
+  blockchain?: string;
+  state?: string;
+  key: string;
+};
+
+export interface AgentWallet {
+  getWallet: (
+    key: string,
+    createIfNotFound?: boolean,
+  ) => Promise<AgentWalletData | undefined>;
+  transfer: (
+    fromAddress: string,
+    toAddress: string,
+    amount: number,
+  ) => Promise<any>;
+  checkBalance: (
+    key: string,
+  ) => Promise<{ address: string | undefined; balance: number }>;
+  createWallet: (key: string) => Promise<AgentWalletData>;
+  onRampURL: (amount: number, address: string) => Promise<string | undefined>;
+}
 
 const client =
   apiKey && entitySecret && walletSetId
@@ -47,8 +73,8 @@ export class WalletService implements AgentWallet {
   private walletStorage!: LocalStorage;
   private senderAddress: string;
 
-  constructor(context: Context) {
-    this.senderAddress = context.message.sender.address;
+  constructor(sender: string) {
+    this.senderAddress = sender;
     this.walletStorage = new LocalStorage(".data/wallets");
   }
 

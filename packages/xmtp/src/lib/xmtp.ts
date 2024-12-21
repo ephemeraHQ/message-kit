@@ -19,7 +19,7 @@ import {
   ReactionCodec,
 } from "@xmtp/content-type-reaction";
 import { ContentTypeText, TextCodec } from "@xmtp/content-type-text";
-import { parseMessage, isV2Conversation } from "./parse.js";
+import { parseMessage } from "./parse.js";
 import {
   Attachment,
   AttachmentCodec,
@@ -50,7 +50,7 @@ interface UserReturnType {
   account: ReturnType<typeof privateKeyToAccount>;
   wallet: ReturnType<typeof createWalletClient>;
 }
-export class XMTP {
+export class XMTPClass {
   v2client: V2Client;
   client: V3Client;
   address: string;
@@ -222,7 +222,7 @@ export class XMTP {
     return (conversation as V3Conversation)?.id !== undefined;
   }
   setMessage(message: Message) {
-    this.message = message;
+    this.message = message as Message;
   }
   async getV2ConversationByAddress(address: string) {
     try {
@@ -271,10 +271,10 @@ export class XMTP {
   }
 }
 
-export async function createClient(
+export async function XMTP(
   onMessage: (message: Message | undefined) => Promise<void> = async () => {}, // Default to a no-op function
   config?: xmtpConfig,
-): Promise<XMTP> {
+): Promise<XMTPClass> {
   // Check if both clientConfig and privateKey are empty
   const testKey = await setupTestEncryptionKey();
   const { key, isRandom } = setupPrivateKey(config?.privateKey);
@@ -283,8 +283,8 @@ export async function createClient(
   let env = process.env.XMTP_ENV as XmtpEnv;
   if (!env) env = "production" as XmtpEnv;
 
-  let volumePath = process.env.RAILWAY_VOLUME_MOUNT_PATH ?? "";
-  volumePath += ".data/xmtp";
+  let volumePath =
+    process.env.RAILWAY_VOLUME_MOUNT_PATH ?? config?.path ?? ".data/xmtp";
 
   if (fs && !fs.existsSync(volumePath)) {
     fs.mkdirSync(volumePath, { recursive: true });
@@ -305,7 +305,7 @@ export async function createClient(
   };
 
   // Merge the default configuration with the provided config. Repeated fields in clientConfig will override the default values
-  const finalConfig = { ...defaultConfig, ...config?.client };
+  const finalConfig = { ...defaultConfig, ...config };
   //v2
   const account2 = privateKeyToAccount(key as `0x${string}`);
   const wallet2 = createWalletClient({
@@ -325,20 +325,20 @@ export async function createClient(
     finalConfig,
   );
 
-  const xmtpInstance = new XMTP(client, v2client);
+  const xmtp = new XMTPClass(client, v2client);
 
   Promise.all([
-    streamMessages(onMessage, v2client, xmtpInstance),
-    streamMessages(onMessage, client, xmtpInstance),
+    streamMessages(onMessage, v2client, xmtp),
+    streamMessages(onMessage, client, xmtp),
   ]);
 
-  return xmtpInstance as XMTP;
+  return xmtp as XMTPClass;
 }
 
 async function streamMessages(
   onMessage: (message: Message | undefined) => Promise<void>,
   client: V3Client | V2Client,
-  xmtp: XMTP,
+  xmtp: XMTPClass,
 ) {
   let v3client = client instanceof V3Client ? client : undefined;
   let v2client = client instanceof V2Client ? client : undefined;
@@ -371,7 +371,8 @@ async function streamMessages(
                 conversation,
                 client,
               );
-              onMessage(parsedMessage);
+              xmtp.setMessage(parsedMessage as Message);
+              onMessage(parsedMessage as Message);
             } catch (e) {
               console.log(`error`, e);
             }
@@ -400,7 +401,8 @@ async function streamMessages(
                 conversation,
                 client,
               );
-              onMessage(parsedMessage);
+              xmtp.setMessage(parsedMessage as Message);
+              onMessage(parsedMessage as Message);
             } catch (e) {
               console.log(`error`, e);
             }

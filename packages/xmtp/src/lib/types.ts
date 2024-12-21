@@ -10,8 +10,7 @@ export interface UserReturnType {
 }
 export type xmtpConfig = {
   privateKey?: string;
-  client?: any;
-  gptModel?: string;
+  path?: string;
 } & ClientOptions;
 
 export type Conversation = {
@@ -49,6 +48,10 @@ export type Message = {
   conversation: Conversation; // Conversation the message belongs to
   sender: User; // Sender of the message
   typeId: string; // Type identifier for the message
+  client: {
+    address: string;
+    inboxId: string;
+  };
 };
 
 export interface User {

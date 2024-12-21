@@ -1,10 +1,10 @@
 # XMTP AI
 
-AI is transforming consumer tech, with messaging becoming the main channel for interacting with agent services. This shift will scale message traffic astronomically, akin to the web’s rise in the 2000s. Just as Cloudflare secured web traffic, messaging will need robust encryption, threat protection, and scalable infrastructure to handle the surge and protect sensitive AI-driven interactions.
+AI is transforming consumer tech, with messaging becoming the main channel for interacting with agent services. This shift will scale message traffic astronomically, analogous to the web’s rise in the 2000s. Just as Cloud-flare secured web traffic, messaging will need robust scalable end-to-end encrypted messages to protect sensitive communications.
 
 ## Risks
 
-⚠️ **Risks of not using end-to-end encryption**: Exposes users to Man in the Middle Attacks.
+Risks of not using end-to-end encryption:
 
 > **Man in the Middle Attacks (MITM)**: Intercept requests in between to alter or manipulate data sent or received by the AI service or user.
 
@@ -17,6 +17,8 @@ AI is transforming consumer tech, with messaging becoming the main channel for i
 Using ephemeral addresses can enhance security by allowing users to message agents anonymously, protecting their identities from exposure.
 
 ## Backend
+
+You can use the `xmtp` package to create wrapper around the messages sent and received by the AI agent.
 
 ### Installation
 
@@ -31,16 +33,16 @@ bun install xmtp
 This is how you can use the `xmtp` package to create a client and handle messages.
 
 ```tsx
-import { createClient } from "xmtp";
+import { XMTP } from "xmtp";
 
-const xmtp = await createClient(onMessage, {
-  encryptionKey: process.env.LOCAL_KEY,
+const xmtp = await XMTP(onMessage, {
+  encryptionKey: process.env.WALLET_PRIVATE_KEY,
 });
 
 const onMessage = async (message, user) => {
-  console.log(`Decoded message: ${response} by ${user}`);
+  console.log(`Decoded message: ${message.content.text} by ${user.address}`);
   // Your AI model response
-  xmtp.send(response);
+  await xmtp.sendMessage(response);
 };
 ```
 
@@ -52,14 +54,14 @@ const onMessage = async (message, user) => {
 In this example, when `handleMessage` is invoked, it takes the incoming user message, passes it to the AI model (OpenAI's Chat Completion API), and then sends the AI's response back over XMTP.
 
 ```javascript
-import { createClient } from "xmtp";
+import { XMTP } from "xmtp";
 import { OpenAI } from "openai";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-const xmtp = await createClient(onMessage, {
+const xmtp = await XMTP(onMessage, {
   encryptionKey: process.env.LOCAL_KEY,
 });
 
@@ -87,6 +89,8 @@ const onMessage = async (message, user) => {
 
 ## Frontend
 
+Same as the backend, you can use the `xmtp-client` package to create a client that decrypts and encrypts messages locally.
+
 ### Installation
 
 Install the `xmtp-client` package compatible with your frontend framework.
@@ -98,20 +102,20 @@ bun install xmtp-client
 ### Usage
 
 ```tsx
-import { createClient, XMTP, Message } from "xmtp-client";
+import { XMTP, Message } from "xmtp-client";
 
-const xmtp = await createClient(onMessage, {
+const xmtp = await XMTP(onMessage, {
   encryptionKey: process.env.LOCAL_KEY,
 });
 
 const onSend = async (text) => {
-  const message = await xmtp.sendMessage(text, agentAddress);
   return message;
 };
 
 const onMessage = async (message, agentAddress) => {
   console.log(`Decoded message: ${message} by ${agentAddress}`);
-  // Your AI model response
+  let response; // Your ai model response
+  await xmtp.sendMessage(response, agentAddress);
 };
 ```
 

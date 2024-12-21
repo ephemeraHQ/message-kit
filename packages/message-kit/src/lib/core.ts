@@ -2,7 +2,7 @@ import { Agent, SkillResponse } from "../helpers/types.js";
 import { agentReply, chatMemory, defaultSystemPrompt } from "../plugins/gpt.js";
 import { getUserInfo, userInfoCache } from "../plugins/resolver.js";
 import { logInitMessage, logMessage } from "../helpers/utils.js";
-import { Message, XMTP, createClient, Conversation } from "xmtp";
+import { Message, XMTP, Conversation, XMTPClass } from "xmtp";
 
 import { WalletService as CdpWalletService } from "../plugins/cdp.js";
 import { WalletService as CircleWalletService } from "../plugins/circle.js";
@@ -58,7 +58,7 @@ export type Context = {
   resetAwaitedState(): void;
 
   //XMTP
-  xmtp: XMTP;
+  xmtp: XMTPClass;
   conversation: Conversation;
   group: Conversation | undefined;
   getMemoryKey(): string;
@@ -74,7 +74,7 @@ export type Context = {
 
 /* Context implementation */
 export class MessageKit implements Context {
-  xmtp!: XMTP;
+  xmtp!: XMTPClass;
   storage!: LocalStorage;
   message!: Message;
   conversation!: Conversation;
@@ -97,10 +97,7 @@ export class MessageKit implements Context {
 
   async run(): Promise<void> {
     // Initialize the clients
-    this.xmtp = await createClient(
-      this.handleMessage,
-      this.agent.config?.client,
-    );
+    this.xmtp = await XMTP(this.handleMessage, this.agent.config?.client);
 
     // Store the GPT model in process.env for global access
     process.env.GPT_MODEL = this.agent.config?.gptModel || "gpt-4o";
@@ -110,11 +107,10 @@ export class MessageKit implements Context {
     message: Message,
     conversation: Conversation,
     agent: Agent,
-    xmtp: XMTP,
+    xmtp: XMTPClass,
   ): Promise<Context | undefined> {
     try {
       const context = new MessageKit(agent);
-      xmtp.setMessage(message);
       context.xmtp = xmtp;
       context.message = message;
       //trim spaces from text
@@ -176,13 +172,13 @@ export class MessageKit implements Context {
             if (process.env.MSG_LOG === "true")
               console.log("CDP Wallet Service Started");
             context.walletService = new CdpWalletService(
-              context as unknown as Context,
+              context.message.sender.address,
             );
           } else if (process.env.CIRCLE_API_KEY) {
             if (process.env.MSG_LOG === "true")
               console.log("Circle Wallet Service Started");
             context.walletService = new CircleWalletService(
-              context as unknown as Context,
+              context.message.sender.address,
             );
           }
         }
