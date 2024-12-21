@@ -61,5 +61,12 @@
     "description": "A template for a Cointoss bot.",
     "icon": "🪙",
     "author": "humanagent"
+  },
+  {
+    "href": "/templates/payroll-agent",
+    "title": "Payroll Agent",
+    "description": "An autonomous payroll management agent.",
+    "icon": "💰",
+    "author": "raihankhan-rk"
   }
 ]
