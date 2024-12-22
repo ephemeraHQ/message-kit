@@ -19,8 +19,7 @@
     "qrcode.react": "^4.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "viem": "^2.21.45",
-    "xmtp-client": "workspace:*"
+    "viem": "^2.21.45"
   },
   "devDependencies": {
     "@types/node": "^20",

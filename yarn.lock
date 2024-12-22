@@ -4174,7 +4174,6 @@ __metadata:
     react-dom: "npm:^18.2.0"
     typescript: "npm:^5"
     viem: "npm:^2.21.45"
-    xmtp-client: "workspace:*"
   languageName: unknown
   linkType: soft
 

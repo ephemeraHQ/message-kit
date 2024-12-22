@@ -5,9 +5,8 @@ import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { mainnet } from "viem/chains";
 import { Message } from "./types.js";
 import { parseMessage } from "./parse.js";
-import { XMTPClass } from "xmtp";
 
-export class XMTP {
+export class XMTPClass {
   client: Client;
   address: string;
   message: Message;
@@ -72,10 +71,10 @@ export class XMTP {
   }
 }
 
-export async function createClient(
+export async function XMTP(
   onMessage: (message: Message | undefined) => Promise<void> = async () => {},
   config?: { privateKey?: string; apiKey?: string },
-): Promise<XMTP> {
+): Promise<XMTPClass> {
   const { Client } = await import("@xmtp/xmtp-js");
   const { key } = setupPrivateKey(config?.privateKey);
   const user = createUser(key);
@@ -85,7 +84,7 @@ export async function createClient(
     env: "production",
   });
 
-  const xmtp = new XMTP(client);
+  const xmtp = new XMTPClass(client);
 
   streamMessages(onMessage, client);
 
