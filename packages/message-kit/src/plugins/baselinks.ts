@@ -7,9 +7,9 @@ export interface Frame {
 }
 
 const framesUrl =
-  process.env.FRAME_URL !== undefined
-    ? process.env.FRAME_URL
-    : "https://frames.message-kit.org";
+  process.env.BASELINKS_URL !== undefined
+    ? process.env.BASELINKS_URL
+    : "https://baselinks.vercel.app";
 
 export class baselinks {
   static async sendWallet(
@@ -17,7 +17,7 @@ export class baselinks {
     agentAddress: string,
     balance: number,
   ): Promise<string> {
-    let url = `${framesUrl}/wallet?networkId=${"base"}&agentAddress=${agentAddress}&ownerAddress=${ownerAddress}&balance=${balance}`;
+    let url = `${framesUrl}/wallet?agentAddress=${agentAddress}&ownerAddress=${ownerAddress}&balance=${balance}`;
     return url;
   }
 
@@ -29,7 +29,6 @@ export class baselinks {
   static async requestPayment(
     to: string = "humanagent.eth",
     amount: number = 0.01,
-    token: string = "usdc",
     onRampURL?: string,
   ): Promise<string> {
     let senderInfo = await getUserInfo(to);
@@ -38,7 +37,7 @@ export class baselinks {
       return "";
     }
 
-    let sendUrl = `${framesUrl}/payment?networkId=${"base"}&amount=${amount}&token=${token}&recipientAddress=${senderInfo?.address}`;
+    let sendUrl = `${framesUrl}/payment?amount=${amount}&recipientAddress=${senderInfo?.address}`;
     if (onRampURL) {
       sendUrl = sendUrl + "&onRampURL=" + encodeURIComponent(onRampURL);
     }
@@ -47,8 +46,16 @@ export class baselinks {
 
   static async sendReceipt(txLink: string, amount: number): Promise<string> {
     if (!txLink) return "";
-    let receiptUrl = `${framesUrl}/receipt?networkId=${"base"}&txLink=${txLink}&amount=${amount}`;
+    let receiptUrl = `${framesUrl}/receipt?txLink=${txLink}&amount=${amount}`;
     return receiptUrl;
+  }
+
+  static async sendCoinbaseDMLink(
+    address: string,
+    amount: number,
+  ): Promise<string> {
+    let url = `${framesUrl}/coinbase?address=${address}&amount=${amount}`;
+    return url;
   }
 
   static async converseLink(peer: string, pretext?: string): Promise<string> {

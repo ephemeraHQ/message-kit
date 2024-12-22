@@ -231,7 +231,6 @@ async function fund(
       const url = await baselinks.requestPayment(
         walletData.agent_address,
         amount,
-        "USDC",
         onRamp ? onRampURL : undefined,
       );
       await context.dm(url);
@@ -260,7 +259,6 @@ async function fund(
     const url = await baselinks.requestPayment(
       walletData.agent_address,
       Number(response),
-      "USDC",
       onRamp ? onRampURL : undefined,
     );
     await context.dm(url);

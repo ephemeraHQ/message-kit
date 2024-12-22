@@ -35,7 +35,7 @@ export async function generateMetadata({
   const { chainId, tokenAddress } = extractFrameChain(params.networkId);
   const amountUint256 = parseUnits(params.amount.toString(), 6);
   const ethereumUrl = `ethereum:${tokenAddress}@${chainId}/transfer?address=${params.recipientAddress}&uint256=${amountUint256}`;
-  const image = `${params.url}/api/payment?networkId=${params.networkId}&amount=${params.amount}&recipientAddress=${params.recipientAddress}`;
+  const image = `${params.url}/api/payment?amount=${params.amount}&recipientAddress=${params.recipientAddress}`;
 
   return {
     title: "Ethereum Payment",
@@ -63,7 +63,7 @@ export default async function Home({ searchParams }: Props) {
   const { chainId, tokenAddress } = extractFrameChain(params.networkId);
   const amountUint256 = parseUnits(params.amount.toString(), 6);
   const ethereumUrl = `ethereum:${tokenAddress}@${chainId}/transfer?address=${params.recipientAddress}&uint256=${amountUint256}`;
-  const image = `${params.url}/api/payment?networkId=${params.networkId}&amount=${params.amount}&recipientAddress=${params.recipientAddress}`;
+  const image = `${params.url}/api/payment?amount=${params.amount}&recipientAddress=${params.recipientAddress}`;
 
   return (
     <div

@@ -44,7 +44,7 @@ export async function handler(context: Context) {
     message: {
       content: {
         skill,
-        params: { amount, token, username },
+        params: { amount, username },
       },
     },
   } = context;
@@ -54,7 +54,7 @@ export async function handler(context: Context) {
     const url = await baselinks.requestPayment(receiverAddress, tipAmount);
     await context.dm(url);
   } else if (skill === "pay") {
-    const url = await baselinks.requestPayment(receiverAddress, amount, token);
+    const url = await baselinks.requestPayment(receiverAddress, amount);
     await context.dm(url);
   }
 }

@@ -26,7 +26,7 @@
     "docs": "cd packages/docs && yarn dev",
     "domain": "ngrok http --hostname=frames.ngrok.app 3000",
     "format": "turbo run format",
-    "links": "yarn build:xmtp-client && cd packages/links && yarn dev",
+    "links": " cd packages/baselinks && yarn dev",
     "play": "cd templates/playground && yarn dev",
     "publish": "yarn install && yarn build && yarn copy && node scripts/publish.js",
     "templates": "node scripts/devTemplates.js",

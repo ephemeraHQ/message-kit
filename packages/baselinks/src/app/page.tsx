@@ -2,10 +2,35 @@
 import { GeistMono as geistMono } from "geist/font/mono";
 import { GeistSans as geistSans } from "geist/font/sans";
 import Head from "next/head";
+import UrlGenerator from "../components/UrlGenerator";
+import { useState } from "react";
 
 export default function Home() {
   const url = `${process.env.NEXT_PUBLIC_URL || "http://localhost:3000"}`;
   let image = `${url}/hero.jpg`;
+  const [formData, setFormData] = useState({
+    txLink:
+      "https://sepolia.basescan.org/tx/0x2ec524f740c5831b16ca84053f9b6ae3e3923d3399d527113982e884a75e6bfa",
+    networkLogo: "https://avatars.githubusercontent.com/u/108554348?s=280&v=4",
+    amount: "1",
+    networkName: "Base",
+    tokenName: "usdc",
+  });
+
+  const [generatedUrl, setGeneratedUrl] = useState("");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const baseUrl = window.location.origin;
+
+    // Create URLSearchParams object to properly encode parameters
+    const params = new URLSearchParams({
+      txLink: formData.txLink,
+    });
+
+    setGeneratedUrl(`${baseUrl}/receipt?txLink=${formData.txLink}`);
+  };
+
   return (
     <>
       <Head>
@@ -34,37 +59,53 @@ export default function Home() {
       </Head>
       <body>
         <div
-          className={`container ${geistSans.variable} ${geistMono.variable}`}>
-          <div className="wrapper">
-            <h1 className={`title ${geistSans.className}`}>frames</h1>
-
-            <div className="powered-by" style={{ marginTop: "1rem" }}>
-              <a href="/payment" rel="noopener noreferrer">
-                Payment
-              </a>
-            </div>
-            <div className="powered-by" style={{ marginTop: "1rem" }}>
-              <a href="/generator" rel="noopener noreferrer">
-                Deeplink Generator
-              </a>
-            </div>
-            <div className="powered-by" style={{ marginTop: "1rem" }}>
-              <a href="/receipt" rel="noopener noreferrer">
-                Receipt
-              </a>
-            </div>
-
-            <div className="powered-by" style={{ marginTop: "1rem" }}>
-              <a
-                href="/dm/0xC60E6Bb79322392761BFe3081E302aEB79B30B03"
-                rel="noopener noreferrer">
-                Chat
-              </a>
-            </div>
-            <div className="powered-by" style={{ marginTop: "1rem" }}>
-              <a href="/custom" rel="noopener noreferrer">
-                Custom
-              </a>
+          className={`container ${geistSans.variable} ${geistMono.variable}`}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100vh",
+            padding: "20px",
+            boxSizing: "border-box",
+          }}>
+          <div
+            className="wrapper"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              flexDirection: "column",
+              gap: "20px",
+              textAlign: "center",
+              maxWidth: "800px",
+              width: "100%",
+            }}>
+            <div style={{}}>
+              <h1
+                className={`title ${geistSans.className}`}
+                style={{ marginBottom: "20px" }}>
+                BaseLinks
+              </h1>
+              <p
+                className={`description ${geistSans.className}`}
+                style={{ marginBottom: "40px" }}>
+                Generate payment links with QR code for coinbase wallet
+              </p>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-start",
+                  flexDirection: "column",
+                }}>
+                <UrlGenerator
+                  params={{
+                    recipientAddress: "",
+                    amount: 0,
+                    chainId: "1",
+                    tokenAddress: "",
+                  }}
+                />
+              </div>
             </div>
           </div>
         </div>

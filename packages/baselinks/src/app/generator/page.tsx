@@ -8,7 +8,7 @@ export default async function Home({
   const resolvedSearchParams = await searchParams; // Await the promises
   //tes sd
   const params = {
-    url: `${process.env.NEXT_PUBLIC_URL}`,
+    url: process.env.NEXT_PUBLIC_URL ?? "http://localhost:3000",
     recipientAddress:
       (resolvedSearchParams?.recipientAddress as string) ||
       "0x93E2fc3e99dFb1238eB9e0eF2580EFC5809C7204",

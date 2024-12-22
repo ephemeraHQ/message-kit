@@ -151,7 +151,7 @@ function Chat({ user }: { user: UserInfo }) {
       if (urlRegex.test(part)) {
         try {
           const urlType = getUrlType(part);
-          const isMessageKitUrl = part.includes("frames.message-kit.org");
+          const isMessageKitUrl = part.includes("message-kit.org");
 
           return (
             <div key={index} className={styles.urlContainer}>

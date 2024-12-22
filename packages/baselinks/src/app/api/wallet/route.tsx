@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
     let searchParams = req.nextUrl.searchParams;
 
     const params = {
-      url: process.env.NEXT_PUBLIC_URL,
+      url: process.env.NEXT_PUBLIC_URL ?? "http://localhost:3000",
       balance:
         searchParams.get("balance") ?? searchParams.get("Balance") ?? "0",
       networkId:

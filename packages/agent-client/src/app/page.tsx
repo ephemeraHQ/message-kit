@@ -15,7 +15,7 @@ export default function Home(): JSX.Element {
 
 function HomeContent(): JSX.Element {
   const searchParams = useSearchParams();
-  const address = searchParams.get("address");
+  const address = searchParams.get("address") ?? "paymentagent.eth";
   console.log("address", address);
   const [user, setUser] = useState<UserInfo | null>(null);
   const [loading, setLoading] = useState(true);

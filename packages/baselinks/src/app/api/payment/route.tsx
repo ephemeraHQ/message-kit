@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
   try {
     let searchParams = req.nextUrl.searchParams;
     let params = {
-      url: process.env.NEXT_PUBLIC_URL,
+      url: process.env.NEXT_PUBLIC_URL ?? "http://localhost:3000",
       amount: searchParams.get("amount") ?? "1",
       recipientAddress:
         searchParams.get("recipientAddress") ??

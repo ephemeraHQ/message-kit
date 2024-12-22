@@ -53,7 +53,6 @@ async function fund(context: Context, amount: number) {
   const url = await baselinks.requestPayment(
     walletData.agent_address,
     amount,
-    "USDC",
     onRamp ? onRampURL : undefined,
   );
   await context.send(url);

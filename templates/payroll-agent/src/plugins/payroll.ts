@@ -1,6 +1,7 @@
-import { getRedisClient, getAllEmployees } from "./redis.js";
+import { getAllEmployees } from "./redis.js";
 import { Context } from "@xmtp/message-kit";
 import cron from "node-cron";
+import { baselinks } from "@xmtp/message-kit";
 
 export class Payroll {
   private context: Context;
@@ -72,9 +73,7 @@ export class Payroll {
         const message = `⚠️ Insufficient funds for today's payroll!\nRequired: ${totalRequired} USDC\nAvailable: ${balance} USDC\nPlease fund your account.`;
         console.log(message);
         await this.context.send(message);
-        await this.context.send(
-          `https://frames.message-kit.org/payment?networkId=base&amount=${totalRequired}&token=USDC&recipientAddress=${wallet?.agent_address}`,
-        );
+        await baselinks.requestPayment(wallet?.agent_address, totalRequired);
         return;
       }
 

@@ -7,7 +7,7 @@ export default async function Home({
 }) {
   const resolvedSearchParams = await searchParams; // Await the promise
 
-  const url = `${process.env.NEXT_PUBLIC_URL || "http://localhost:3000"}`;
+  const url = process.env.NEXT_PUBLIC_URL || "http://localhost:3000";
   const collectionId =
     (resolvedSearchParams.collectionId as string) ||
     "0x73a333cb82862d4f66f0154229755b184fb4f5b0";

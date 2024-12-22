@@ -12,7 +12,7 @@ type Props = {
 async function getParams(searchParams: Promise<SearchParams>) {
   const resolvedSearchParams = await searchParams;
   return {
-    url: process.env.NEXT_PUBLIC_URL,
+    url: process.env.NEXT_PUBLIC_URL ?? "http://localhost:3000",
     agentAddress:
       (resolvedSearchParams?.agentAddress as string) ||
       (resolvedSearchParams?.agentaddress as string),

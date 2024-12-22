@@ -1,5 +1,5 @@
 import { describe, test, expect } from "vitest";
-import { extractFrameChain } from "../../framekit/src/app/utils/networks";
+import { extractFrameChain } from "../../baselinks/src/app/utils/networks";
 
 describe("Frame Chain Tests", () => {
   test.each([
