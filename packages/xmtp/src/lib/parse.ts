@@ -9,7 +9,7 @@ import {
   Client as V2Client,
 } from "@xmtp/xmtp-js";
 import { RemoteAttachmentCodec } from "@xmtp/content-type-remote-attachment";
-import { Message, User } from "./types";
+import { Message, User } from "../types";
 
 export async function parseMessage(
   message: V3DecodedMessage | V2DecodedMessage | undefined | null,

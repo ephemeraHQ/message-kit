@@ -1,7 +1,6 @@
 import { privateKeyToAccount } from "viem/accounts";
-import { ContentTypeId } from "@xmtp/content-type-primitives";
 import { createWalletClient } from "viem";
-import { ClientOptions } from "@xmtp/node-sdk";
+import { ClientOptions } from "@xmtp/xmtp-js";
 
 export interface UserReturnType {
   key: string;

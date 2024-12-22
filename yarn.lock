@@ -3864,29 +3864,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"agent-client@workspace:packages/agent-client":
-  version: 0.0.0-use.local
-  resolution: "agent-client@workspace:packages/agent-client"
-  dependencies:
-    "@farcaster/frame-sdk": "npm:0.0.10"
-    "@types/next": "npm:^9.0.0"
-    "@types/node": "npm:^20"
-    "@types/react": "npm:^18"
-    "@types/react-dom": "npm:^18"
-    cheerio: "npm:^1.0.0"
-    ethers: "npm:^6.13.4"
-    geist: "npm:^1.3.1"
-    next: "npm:^15.0.3"
-    qrcode: "npm:^1.5.4"
-    qrcode.react: "npm:^4.1.0"
-    react: "npm:^18.2.0"
-    react-dom: "npm:^18.2.0"
-    typescript: "npm:^5"
-    viem: "npm:^2.21.45"
-    xmtp-client: "workspace:*"
-  languageName: unknown
-  linkType: soft
-
 "agentkeepalive@npm:^4.2.1":
   version: 4.5.0
   resolution: "agentkeepalive@npm:4.5.0"
@@ -4687,6 +4664,26 @@ __metadata:
   checksum: 10/0c16bf660dadb90610553c1d8946a7fdfb81d624adea073b8440b7d795d5b5b08beb3c950c6a2cf16279365a3265158a236876d92bce16423c485c322d7dfaf8
   languageName: node
   linkType: hard
+
+"client@workspace:packages/client":
+  version: 0.0.0-use.local
+  resolution: "client@workspace:packages/client"
+  dependencies:
+    "@farcaster/frame-sdk": "npm:0.0.10"
+    "@types/next": "npm:^9.0.0"
+    "@types/node": "npm:^20"
+    "@types/react": "npm:^18"
+    "@types/react-dom": "npm:^18"
+    cheerio: "npm:^1.0.0"
+    geist: "npm:^1.3.1"
+    next: "npm:^15.0.3"
+    react: "npm:^18.2.0"
+    react-dom: "npm:^18.2.0"
+    typescript: "npm:^5"
+    viem: "npm:^2.21.45"
+    xmtp-web: "workspace:*"
+  languageName: unknown
+  linkType: soft
 
 "cliui@npm:^6.0.0":
   version: 6.0.0
@@ -12298,9 +12295,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"xmtp-client@workspace:*, xmtp-client@workspace:packages/xmtp-client":
+"xmtp-web@workspace:*, xmtp-web@workspace:packages/xmtp-web":
   version: 0.0.0-use.local
-  resolution: "xmtp-client@workspace:packages/xmtp-client"
+  resolution: "xmtp-web@workspace:packages/xmtp-web"
   dependencies:
     "@changesets/changelog-git": "npm:^0.2.0"
     "@changesets/cli": "npm:^2.27.5"

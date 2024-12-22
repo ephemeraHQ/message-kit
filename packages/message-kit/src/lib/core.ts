@@ -2,7 +2,7 @@ import { Agent, SkillResponse } from "../helpers/types.js";
 import { agentReply, chatMemory, defaultSystemPrompt } from "../plugins/gpt.js";
 import { getUserInfo, userInfoCache } from "../plugins/resolver.js";
 import { logInitMessage, logMessage } from "../helpers/utils.js";
-import { Message, XMTP, Conversation, XMTPClass } from "xmtp";
+import { Message, XMTP, Conversation, type XMTPClass } from "xmtp";
 
 import { WalletService as CdpWalletService } from "../plugins/cdp.js";
 import { WalletService as CircleWalletService } from "../plugins/circle.js";
@@ -58,7 +58,7 @@ export type Context = {
   resetAwaitedState(): void;
 
   //XMTP
-  xmtp: XMTPClass;
+  xmtp: InstanceType<typeof XMTPClass>;
   conversation: Conversation;
   group: Conversation | undefined;
   getMemoryKey(): string;
@@ -74,7 +74,7 @@ export type Context = {
 
 /* Context implementation */
 export class MessageKit implements Context {
-  xmtp!: XMTPClass;
+  xmtp!: InstanceType<typeof XMTPClass>;
   storage!: LocalStorage;
   message!: Message;
   conversation!: Conversation;
@@ -107,7 +107,7 @@ export class MessageKit implements Context {
     message: Message,
     conversation: Conversation,
     agent: Agent,
-    xmtp: XMTPClass,
+    xmtp: InstanceType<typeof XMTPClass>,
   ): Promise<Context | undefined> {
     try {
       const context = new MessageKit(agent);

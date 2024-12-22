@@ -42,7 +42,7 @@ import { mainnet } from "viem/chains";
 import { GrpcApiClient } from "@xmtp/grpc-api-client";
 import { getRandomValues } from "crypto";
 import path from "path";
-import { xmtpConfig, Message } from "./types.js";
+import { xmtpConfig, Message } from "../types.js";
 import { readFile } from "fs/promises";
 
 interface UserReturnType {

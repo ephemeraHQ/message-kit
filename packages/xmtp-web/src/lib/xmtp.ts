@@ -3,7 +3,7 @@ import { ContentTypeText, TextCodec } from "@xmtp/content-type-text";
 import { createWalletClient, http } from "viem";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { mainnet } from "viem/chains";
-import { Message } from "./types.js";
+import { Message, xmtpConfig } from "../types";
 import { parseMessage } from "./parse.js";
 
 export class XMTPClass {
@@ -23,6 +23,11 @@ export class XMTPClass {
       },
       conversation: { id: "", topic: "", createdAt: new Date() },
       id: "",
+
+      client: {
+        address: "",
+        inboxId: "",
+      },
       sent: new Date(),
       content: { text: "" },
       typeId: "text",
@@ -73,15 +78,19 @@ export class XMTPClass {
 
 export async function XMTP(
   onMessage: (message: Message | undefined) => Promise<void> = async () => {},
-  config?: { privateKey?: string; apiKey?: string },
+  config?: xmtpConfig,
 ): Promise<XMTPClass> {
+  const { key, isRandom } = await setupPrivateKey(config?.privateKey);
   const { Client } = await import("@xmtp/xmtp-js");
-  const { key } = setupPrivateKey(config?.privateKey);
   const user = createUser(key);
 
-  const client = await Client.create(user.wallet, {
+  const defaultConfig = {
     codecs: [new TextCodec()],
-    env: "production",
+    env: config?.env ?? "production",
+  };
+  const client = await Client.create(user.wallet, {
+    ...defaultConfig,
+    ...config,
   });
 
   const xmtp = new XMTPClass(client);
@@ -89,6 +98,29 @@ export async function XMTP(
   streamMessages(onMessage, client);
 
   return xmtp;
+}
+
+export async function setupPrivateKey(
+  customKey?: string,
+): Promise<{ key: string; isRandom: boolean }> {
+  let isRandom = false;
+
+  // Handle private key setup
+  let key = process?.env?.KEY || customKey;
+  if (key && !key.startsWith("0x")) {
+    key = "0x" + key;
+  }
+
+  // Generate new key if none exists or invalid
+  if (!key || !checkPrivateKey(key)) {
+    key = generatePrivateKey();
+    isRandom = true;
+  }
+
+  return {
+    key,
+    isRandom,
+  };
 }
 
 async function streamMessages(
@@ -120,20 +152,6 @@ async function streamMessages(
       console.error(`Stream encountered an error:`, err);
     }
   }
-}
-
-function setupPrivateKey(customKey?: string): { key: string } {
-  let key = customKey;
-
-  if (key && !key.startsWith("0x")) {
-    key = "0x" + key;
-  }
-
-  if (!key || !checkPrivateKey(key)) {
-    key = generatePrivateKey();
-  }
-
-  return { key };
 }
 
 function checkPrivateKey(key: string) {

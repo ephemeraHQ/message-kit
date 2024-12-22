@@ -1,5 +1,5 @@
 import { DecodedMessage, Conversation } from "@xmtp/xmtp-js";
-import { Message, User } from "./types";
+import { Message, User } from "../types";
 
 export async function parseMessage(
   message: DecodedMessage | undefined | null,

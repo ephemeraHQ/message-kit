@@ -1,13 +1,12 @@
 import React, { useCallback } from "react";
 import { useState, useEffect } from "react";
-import { Wallet } from "ethers";
 import styles from "./Chat.module.css";
 import { UserInfo } from "@/app/utils/resolver";
 import { isAddress, parseUnits } from "viem";
 import { extractFrameChain } from "@/app/utils/networks";
 import sdk from "@farcaster/frame-sdk";
 import { UrlPreview } from "./UrlPreview";
-import { XMTP, Message, XMTPClass } from "xmtp-client";
+import { XMTP, Message, XMTPClass } from "xmtp-web";
 
 type UrlType = "receipt" | "payment" | "wallet" | "unknown";
 
@@ -30,7 +29,6 @@ const isFrame = async () => {
 function Chat({ user }: { user: UserInfo }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
-  const [wallet, setWallet] = useState<any | undefined>(undefined);
   const [xmtp, setXmtp] = useState<XMTPClass | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(true);
   const [recipientInfo, setRecipientInfo] = useState<UserInfo | undefined>(
@@ -42,14 +40,15 @@ function Chat({ user }: { user: UserInfo }) {
     console.log("useEffect triggered with user:", user);
 
     const init = async () => {
-      const newWallet = Wallet.createRandom();
-      setWallet(newWallet);
-
       try {
         setRecipientInfo(user);
         if (user?.address) {
           console.log("Initializing XMTP with address:", user.address);
-          await initXmtp(newWallet);
+
+          const xmtpClient = await XMTP(onMessage);
+
+          setXmtp(xmtpClient);
+          setIsLoading(false);
         } else {
           console.error("Could not resolve recipient address");
           setIsLoading(false);
@@ -67,20 +66,6 @@ function Chat({ user }: { user: UserInfo }) {
     if (message) {
       console.log("onMessage", message);
       setMessages((prevMessages) => [...prevMessages, message]);
-    }
-  };
-
-  const initXmtp = async (wallet: any) => {
-    try {
-      const xmtpClient = await XMTP(onMessage, {
-        privateKey: wallet.privateKey,
-      });
-
-      setXmtp(xmtpClient);
-      setIsLoading(false);
-    } catch (error) {
-      console.error("Error initializing XMTP:", error);
-      setIsLoading(false);
     }
   };
 
