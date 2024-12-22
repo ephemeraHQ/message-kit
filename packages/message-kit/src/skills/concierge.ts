@@ -3,7 +3,7 @@ import { Skill } from "../helpers/types";
 import { Context } from "../lib/core";
 import { getUserInfo } from "../plugins/resolver";
 import { isAddress } from "viem";
-import { FrameKit } from "../plugins/framekit";
+import { baselinks } from "../plugins/baselinks";
 
 export const concierge: Skill[] = [
   {
@@ -106,7 +106,7 @@ export async function handleWallet(context: Context) {
     if (walletExist) {
       const { balance } = await walletService.checkBalance(sender.address);
       await context.dm("Your agent wallet address");
-      const url = await FrameKit.sendWallet(
+      const url = await baselinks.sendWallet(
         walletExist.address,
         walletExist.agent_address,
         balance,
@@ -126,8 +126,6 @@ export async function handleWallet(context: Context) {
   } else if (skill === "swap") {
     context.dm("I cant do that yet");
     // await walletService.swap(sender.address, fromToken, toToken, amount);
-    // await context.dm("Swap completed");
-    // return;
   } else if (skill === "transfer") {
     const { balance } = await walletService.checkBalance(sender.address);
     if (balance === 0) {
@@ -168,13 +166,13 @@ async function notifyUser(
   if (transaction) {
     await context.dm(`Transfer completed successfully`);
     if ((await transaction.getTransactionHash()) !== undefined) {
-      const url = await FrameKit.sendReceipt(
+      const url = await baselinks.sendReceipt(
         `https://basescan.org/tx/${await transaction.getTransactionHash()}`,
         amount,
       );
       await context.dm(url);
     } else if ((await transaction.getTransaction()) !== undefined) {
-      const url = await FrameKit.sendReceipt(
+      const url = await baselinks.sendReceipt(
         `https://basescan.org/tx/${await transaction.getTransaction()}`,
         amount,
       );
@@ -230,7 +228,7 @@ async function fund(
         walletData.agent_address,
       );
       await context.dm("Here is the payment link:");
-      const url = await FrameKit.requestPayment(
+      const url = await baselinks.requestPayment(
         walletData.agent_address,
         amount,
         "USDC",
@@ -259,7 +257,7 @@ async function fund(
       walletData.agent_address,
     );
 
-    const url = await FrameKit.requestPayment(
+    const url = await baselinks.requestPayment(
       walletData.agent_address,
       Number(response),
       "USDC",

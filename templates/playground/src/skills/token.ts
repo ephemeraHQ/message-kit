@@ -1,6 +1,6 @@
 import { Context } from "@xmtp/message-kit";
 import type { Skill } from "@xmtp/message-kit";
-import { FrameKit } from "@xmtp/message-kit";
+import { baselinks } from "@xmtp/message-kit";
 
 export const token: Skill[] = [
   {
@@ -54,6 +54,6 @@ export async function handler(context: Context) {
     ],
     image: tokenInfo.image,
   };
-  const url = await FrameKit.sendCustomFrame(frame);
+  const url = await baselinks.sendCustomFrame(frame);
   await context.dm(url);
 }

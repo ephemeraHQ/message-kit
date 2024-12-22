@@ -1,4 +1,4 @@
-import { Context, FrameKit } from "@xmtp/message-kit";
+import { Context, baselinks } from "@xmtp/message-kit";
 import type { Skill } from "@xmtp/message-kit";
 import { getRedisClient } from "../plugins/redis.js";
 import { LearnWeb3Client, Network } from "../plugins/learnweb3.js";
@@ -77,7 +77,7 @@ export async function handler(context: Context) {
   }
 
   await context.send("Here's your transaction receipt:");
-  const url = await FrameKit.sendReceipt(
+  const url = await baselinks.sendReceipt(
     result.value!,
     selectedNetwork.dripAmount as number,
   );

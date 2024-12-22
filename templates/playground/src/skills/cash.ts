@@ -1,4 +1,4 @@
-import { Context, FrameKit } from "@xmtp/message-kit";
+import { Context, baselinks } from "@xmtp/message-kit";
 import type { Skill } from "@xmtp/message-kit";
 import { USDCWallet } from "../plugins/usdc.js";
 
@@ -93,7 +93,7 @@ async function fundHandler(context: Context) {
       return;
     }
 
-    const url = await FrameKit.requestPayment(
+    const url = await baselinks.requestPayment(
       usdcWallet.agentAddress,
       fundAmount,
     );

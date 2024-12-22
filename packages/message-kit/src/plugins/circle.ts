@@ -1,5 +1,4 @@
 import { initiateDeveloperControlledWalletsClient } from "@circle-fin/developer-controlled-wallets";
-import { type Context } from "../lib/core";
 import { LocalStorage } from "./storage";
 
 const apiKey = process.env.CIRCLE_API_KEY;

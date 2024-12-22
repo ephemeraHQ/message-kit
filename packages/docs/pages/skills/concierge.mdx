@@ -50,7 +50,7 @@ async function fund(context: Context, amount: number) {
     amount,
     walletData.agent_address,
   );
-  const url = await FrameKit.requestPayment(
+  const url = await baselinks.requestPayment(
     walletData.agent_address,
     amount,
     "USDC",

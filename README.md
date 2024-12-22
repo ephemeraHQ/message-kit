@@ -12,9 +12,13 @@ A set of tools for AI developers to build on top of [XMTP](https://xmtp.org)
 
 ### Plugins
 
-- [`framekit`](/packages/framekit): A suite for backend frames
 - [`xmtp`](/packages/xmtp/): A node js wrapper for AI agents.
 - [`xmtp-client`](/packages/xmtp-client/): A client plugin for interacting with hte backend.
+
+### Other
+
+- [`agent-client`](/packages/agent-client): A suite for backend frames
+- [`baselinks`](/packages/baselinks): A suite for backend frames
 
 ## Contributing
 

@@ -228,7 +228,9 @@ function Chat({ user }: { user: UserInfo }) {
         {messages.map((msg, index) => (
           <div key={msg.id || index} className={styles.message}>
             <span className={styles.sender}>
-              {msg.sender.address === user.address ? "Agent" : "Human"}
+              {msg.sender.address.toLowerCase() === user.address?.toLowerCase()
+                ? "Agent"
+                : "Human"}
             </span>
             {renderMessageContent(msg.content?.text as string)}
           </div>

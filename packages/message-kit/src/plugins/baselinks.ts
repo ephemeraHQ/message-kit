@@ -11,7 +11,7 @@ const framesUrl =
     ? process.env.FRAME_URL
     : "https://frames.message-kit.org";
 
-export class FrameKit {
+export class baselinks {
   static async sendWallet(
     ownerAddress: string,
     agentAddress: string,

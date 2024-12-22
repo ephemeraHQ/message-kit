@@ -14,9 +14,9 @@
     "author": "ephemeraHQ"
   },
   {
-    "href": "/plugins/framekit",
-    "title": "FrameKit",
-    "description": "Use FrameKit to send frames.",
+    "href": "/plugins/baselinks",
+    "title": "Baselinks",
+    "description": "Use Baselinks to send frames.",
     "icon": "🖼️",
     "author": "ephemeraHQ"
   },

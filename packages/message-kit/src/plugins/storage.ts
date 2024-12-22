@@ -1,7 +1,5 @@
-import { getFS } from "../helpers/utils";
 import path from "path";
-
-const { fsPromises } = getFS();
+import fs from "fs";
 
 export class LocalStorage {
   private baseDir: string;
@@ -22,15 +20,14 @@ export class LocalStorage {
   }
 
   private async ensureDir(): Promise<boolean> {
-    if (!fsPromises) {
+    if (!fs) {
       console.error("Filesystem not available");
       throw new Error("Filesystem is not available");
     }
 
     try {
-      const { fs } = getFS();
       if (!fs?.existsSync(this.baseDir)) {
-        await fsPromises.mkdir(this.baseDir, {
+        fs.mkdirSync(this.baseDir, {
           recursive: true,
           mode: 0o755,
         });
@@ -52,7 +49,7 @@ export class LocalStorage {
 
     try {
       const filePath = path.join(this.baseDir, `${key.toLowerCase()}.dat`);
-      await fsPromises?.writeFile(filePath, value, "utf8");
+      fs.writeFileSync(filePath, value, "utf8");
     } catch (error) {
       throw new Error(`Failed to write file: ${error}`);
     }
@@ -61,8 +58,9 @@ export class LocalStorage {
   async get(key: string): Promise<string | undefined> {
     try {
       const filePath = path.join(this.baseDir, `${key.toLowerCase()}.dat`);
-      return (await fsPromises?.readFile(filePath, "utf8")) ?? undefined;
+      return fs.readFileSync(filePath, "utf8") ?? undefined;
     } catch (error) {
+      console.log("Error reading file:", error);
       return undefined;
     }
   }
@@ -70,18 +68,18 @@ export class LocalStorage {
   async del(key: string): Promise<void> {
     try {
       const filePath = path.join(this.baseDir, `${key.toLowerCase()}.dat`);
-      await fsPromises?.unlink(filePath);
+      fs.unlinkSync(filePath);
     } catch (error) {
-      // Ignore if file doesn't exist
+      console.log("Error deleting file:", error);
     }
   }
 
   async getWalletCount(): Promise<number> {
     try {
-      const walletFiles = await fsPromises?.readdir(this.baseDir);
+      const walletFiles = fs.readdirSync(this.baseDir);
       return walletFiles?.length || 0;
     } catch (error) {
-      console.log("Error reading directory:", this.baseDir);
+      console.log("Error reading directory:", this.baseDir, error);
       return 0;
     }
   }
