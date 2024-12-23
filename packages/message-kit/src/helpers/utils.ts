@@ -43,7 +43,10 @@ export async function checkStorage() {
     console.error("Error checking storage:", error);
   }
 }
-export async function logInitMessage(client: Client, agent?: Agent) {
+export async function logInitMessage(
+  client: Client | undefined,
+  agent?: Agent,
+) {
   if (process.env.MSG_LOG === "true" && process.env.NODE_ENV === "production")
     await checkStorage();
   const agentConfig = agent?.config;
@@ -61,16 +64,16 @@ export async function logInitMessage(client: Client, agent?: Agent) {
   Powered by XMTP \x1b[0m`;
   console.log(coolLogo);
   console.log(`\nSend a message to this account on:                              
-      \x1b[90m Converse: https://converse.xyz/dm/${client.accountAddress}\x1b[0m
-      \x1b[38;2;0;0;255m Coinbase Wallet: https://go.cb-w.com/messaging?address=${client.accountAddress}\x1b[0m
-      \x1b[38;2;128;0;128m Share in Farcaster (Framev2): https://frames.message-kit.org/dm/${client.accountAddress}\x1b[0m`);
+      \x1b[90m Converse: https://converse.xyz/dm/${client?.accountAddress}\x1b[0m
+      \x1b[38;2;0;0;255m Coinbase Wallet: https://go.cb-w.com/messaging?address=${client?.accountAddress}\x1b[0m
+      \x1b[38;2;128;0;128m Share in Farcaster (Framev2): https://client.message-kit.org/?address=${client?.accountAddress}\x1b[0m`);
 
   if (
     agentConfig?.walletService == true ||
     agentConfig?.attachments ||
     process.env.OPENAI_API_KEY === undefined ||
     agentConfig?.client?.structuredLogging ||
-    agentConfig?.privateKey ||
+    agentConfig?.client?.privateKey ||
     agentConfig?.memberChange ||
     agent === undefined ||
     agent?.skills?.flat().length === 0
@@ -95,7 +98,7 @@ export async function logInitMessage(client: Client, agent?: Agent) {
         `\t- ⚠️ Structured logging is set to ${agentConfig.client.structuredLogging}`,
       );
     }
-    if (agentConfig?.privateKey) {
+    if (agentConfig?.client?.privateKey) {
       console.warn("\t- ⚠️ Private key is set from the code");
     }
     if (agentConfig?.memberChange) {

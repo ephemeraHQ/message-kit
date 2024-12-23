@@ -19,68 +19,113 @@ import {
   ReactionCodec,
 } from "@xmtp/content-type-reaction";
 import { ContentTypeText, TextCodec } from "@xmtp/content-type-text";
-import { parseMessage, isV2Conversation } from "./parse.js";
+import { parseMessage } from "./parse.js";
 import {
   Attachment,
   AttachmentCodec,
   ContentTypeRemoteAttachment,
-  ContentTypeAttachment,
-  RemoteAttachment,
   RemoteAttachmentCodec,
 } from "@xmtp/content-type-remote-attachment";
 import * as fs from "fs";
-import { ReadReceipt, ReadReceiptCodec } from "@xmtp/content-type-read-receipt";
+import {
+  ContentTypeReadReceipt,
+  ReadReceiptCodec,
+} from "@xmtp/content-type-read-receipt";
 import {
   AgentMessage,
   AgentMessageCodec,
   ContentTypeAgentMessage,
 } from "../content-types/agent-message.js";
-import { ContentTypeId } from "@xmtp/content-type-primitives";
 import { createWalletClient, http, toBytes, toHex } from "viem";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { mainnet } from "viem/chains";
 import { GrpcApiClient } from "@xmtp/grpc-api-client";
 import { getRandomValues } from "crypto";
 import path from "path";
-import { xmtpConfig, Message } from "./types.js";
+import { xmtpConfig, Message, userMessage, UserReturnType } from "../types.js";
 import { readFile } from "fs/promises";
 
-interface UserReturnType {
-  key: string;
-  account: ReturnType<typeof privateKeyToAccount>;
-  wallet: ReturnType<typeof createWalletClient>;
-}
 export class XMTP {
-  v2client: V2Client;
-  client: V3Client;
-  address: string;
-  inboxId: string;
-  message: Message;
+  v2client: V2Client | undefined;
+  client: V3Client | undefined;
+  address: string | undefined;
+  inboxId: string | undefined;
+  onMessage: (message: Message | undefined) => Promise<void> | undefined;
+  config?: xmtpConfig;
 
-  constructor(client: V3Client, v2client: V2Client) {
+  constructor(
+    onMessage?: (message: Message | undefined) => Promise<void> | undefined,
+    config?: xmtpConfig,
+  ) {
+    this.onMessage = onMessage ?? (() => Promise.resolve());
+    this.config = config;
+  }
+
+  async init(): Promise<XMTP> {
+    const testKey = await setupTestEncryptionKey();
+    const { key, isRandom } = setupPrivateKey(this.config?.privateKey);
+    const user = createUser(key);
+
+    let env = process.env.XMTP_ENV as XmtpEnv;
+    if (!env) env = "production" as XmtpEnv;
+
+    let volumePath =
+      process.env.RAILWAY_VOLUME_MOUNT_PATH ??
+      this.config?.path ??
+      ".data/xmtp";
+
+    if (fs && !fs.existsSync(volumePath)) {
+      fs.mkdirSync(volumePath, { recursive: true });
+    }
+
+    const defaultConfig: ClientOptions = {
+      env: env,
+      dbPath: `${volumePath}/${user.account?.address.toLowerCase()}-${env}`,
+      codecs: [
+        new TextCodec(),
+        new ReactionCodec(),
+        new ReplyCodec(),
+        new RemoteAttachmentCodec(),
+        new AttachmentCodec(),
+        new ReadReceiptCodec(),
+        new AgentMessageCodec(),
+      ],
+    };
+
+    // Merge the default configuration with the provided config. Repeated fields in clientConfig will override the default values
+    const finalConfig = { ...defaultConfig, ...this.config };
+    //v2
+    const account2 = privateKeyToAccount(key as `0x${string}`);
+    const wallet2 = createWalletClient({
+      account: account2,
+      chain: mainnet,
+      transport: http(),
+    });
+    const v2client = await V2Client.create(wallet2, {
+      ...finalConfig,
+      apiUrl: undefined,
+      skipContactPublishing: false,
+      apiClientFactory: GrpcApiClient.fromOptions as any,
+    });
+    const client = await V3Client.create(
+      createSigner(user),
+      testKey,
+      finalConfig,
+    );
+
     this.client = client;
     this.v2client = v2client;
-    this.address = client.accountAddress;
-    this.inboxId = client.inboxId;
-    this.message = {} as Message;
-  }
-  async sendMessage(message: string, receiver?: string) {
-    await this.send(message, ContentTypeText, receiver ?? undefined);
-  }
-  async sendAgentMessage(message: string, metadata: any) {
-    let agentMessage = new AgentMessage(message, metadata);
-    await this.send(agentMessage, ContentTypeAgentMessage);
-  }
-  async reply(message: string, replyTo: string) {
-    const reply: Reply = {
-      content: message,
-      contentType: ContentTypeText,
-      reference: replyTo,
-    };
-    await this.send(reply, ContentTypeReply);
+
+    this.address = v2client.address;
+    this.inboxId = client.inboxId ?? v2client.address;
+    Promise.all([
+      streamMessages(this.onMessage, client, this),
+      streamMessages(this.onMessage, v2client, this),
+    ]);
+    return this;
   }
 
-  async sendImage(source: string) {
+  async getAttachment(source: string): Promise<Attachment | undefined> {
     try {
       let imgArray: Uint8Array;
       let mimeType: string;
@@ -128,7 +173,7 @@ export class XMTP {
         const file = await readFile(source);
         if (!file) {
           console.error("File operations not supported in this environment");
-          return;
+          return undefined;
         }
 
         // Check file size
@@ -142,53 +187,81 @@ export class XMTP {
         imgArray = new Uint8Array(file);
       }
 
-      const attachment = {
+      const attachment: Attachment = {
         filename,
         mimeType,
         data: imgArray,
       };
-
-      await this.send(attachment, ContentTypeRemoteAttachment);
+      return attachment;
     } catch (error) {
       console.error("Failed to send image:", error);
       throw error;
     }
   }
-  async react(emoji: string, reference: string) {
-    let reaction: Reaction = {
-      content: emoji,
-      action: "added",
-      reference: reference,
-      schema: "unicode",
-    };
-    await this.send(reaction, ContentTypeReaction);
-  }
 
-  async send(
-    message:
-      | string
-      | Reply
-      | Reaction
-      | RemoteAttachment
-      | Attachment
-      | ReadReceipt
-      | AgentMessage,
-    contentType: ContentTypeId,
-    receiver?: string,
-  ) {
-    if (this.message.version == "v2") {
+  async send(userMessage: userMessage) {
+    let contentType:
+      | typeof ContentTypeReaction
+      | typeof ContentTypeText
+      | typeof ContentTypeRemoteAttachment
+      | typeof ContentTypeAgentMessage
+      | typeof ContentTypeReadReceipt
+      | typeof ContentTypeReply = ContentTypeText;
+
+    let message: any;
+    if (!userMessage.typeId || userMessage.typeId === "text") {
+      message = userMessage.message;
+      contentType = ContentTypeText;
+    } else if (userMessage.typeId === "attachment") {
+      message = (await this.getAttachment(userMessage.message)) as Attachment;
+      contentType = ContentTypeRemoteAttachment;
+    } else if (userMessage.typeId === "reaction") {
+      message = {
+        content: userMessage.message,
+        action: "added",
+        reference: userMessage.originalMessage?.id,
+        schema: "unicode",
+      } as Reaction;
+      contentType = ContentTypeReaction;
+    } else if (userMessage.typeId === "reply") {
+      contentType = ContentTypeReply;
+      message = {
+        content: userMessage.message,
+        contentType: ContentTypeText,
+        reference: userMessage.originalMessage?.id,
+      } as Reply;
+    } else if (userMessage.typeId === "agentMessage") {
+      message = new AgentMessage(
+        userMessage.message,
+        userMessage.metadata,
+      ) as AgentMessage;
+      contentType = ContentTypeAgentMessage;
+    }
+
+    console.log(`message`, message);
+    if (userMessage.originalMessage?.version == "v2") {
       let v2Conversation = await this.getV2ConversationByAddress(
-        receiver ?? this.message.sender.address,
+        userMessage.originalMessage.client?.address,
       );
-      await v2Conversation?.send(message, {
-        contentType: contentType,
-      });
-    } else if (this.message.version == "v3") {
-      let v3Conversation = await this.client.conversations.getConversationById(
-        this.message.conversation.id,
+
+      if (!userMessage.receivers || userMessage.receivers.length == 0) {
+        userMessage.receivers = [userMessage.originalMessage.sender.address];
+      }
+      for (let receiver of userMessage.receivers) {
+        v2Conversation = await this.getV2ConversationByAddress(receiver);
+        await v2Conversation?.send(message, {
+          contentType: contentType,
+        });
+      }
+    } else if (userMessage.originalMessage?.version == "v3") {
+      let v3Conversation = await this.client?.conversations.getConversationById(
+        userMessage.originalMessage?.conversation?.id,
       );
-      if (receiver) {
-        v3Conversation = await this.client.conversations
+      if (!userMessage.receivers || userMessage.receivers.length == 0) {
+        userMessage.receivers = [userMessage.originalMessage.sender.address];
+      }
+      for (let receiver of userMessage.receivers) {
+        v3Conversation = await this.client?.conversations
           .list()
           .then(
             (conversations) =>
@@ -197,8 +270,8 @@ export class XMTP {
                   conv.dmPeerInboxId.toLowerCase() === receiver.toLowerCase(),
               ) as V3Conversation,
           );
+        await v3Conversation?.send(message, contentType);
       }
-      await v3Conversation?.send(message, contentType);
     }
   }
 
@@ -206,7 +279,7 @@ export class XMTP {
     message: V3DecodedMessage | V2DecodedMessage | undefined,
   ): Promise<V3Conversation | V2Conversation | undefined> {
     return !this.isV2Message(message)
-      ? ((await this.client.conversations.getConversationById(
+      ? ((await this.client?.conversations.getConversationById(
           (message as V3DecodedMessage)?.conversationId as string,
         )) as V3Conversation)
       : ((message as V2DecodedMessage)?.conversation as V2Conversation);
@@ -221,13 +294,11 @@ export class XMTP {
   ): conversation is V3Conversation {
     return (conversation as V3Conversation)?.id !== undefined;
   }
-  setMessage(message: Message) {
-    this.message = message;
-  }
+
   async getV2ConversationByAddress(address: string) {
     try {
-      const conversations = await this.v2client.conversations.list();
-      return conversations.find(
+      const conversations = await this.v2client?.conversations.list();
+      return conversations?.find(
         (conv) => conv.peerAddress.toLowerCase() === address.toLowerCase(),
       );
     } catch (error) {
@@ -236,21 +307,21 @@ export class XMTP {
     }
   }
 
-  getConversationKey() {
-    return `${this.message.conversation.id}`;
+  getConversationKey(message: Message) {
+    return `${message?.conversation?.id}`;
   }
 
-  getUserConversationKey() {
+  getUserConversationKey(message: Message) {
     const awaitingSender =
-      this.message.version == "v2"
-        ? this.message.sender.address
-        : this.message.sender.inboxId;
-    return `${this.message.conversation.id}:${awaitingSender}`;
+      message?.version == "v2"
+        ? message?.sender?.address
+        : message?.sender?.inboxId;
+    return `${message?.conversation?.id}:${awaitingSender}`;
   }
 
   async getMessageById(reference: string) {
-    return this.client.conversations?.getMessageById?.bind(
-      this.client.conversations,
+    return this.client?.conversations?.getMessageById?.bind(
+      this.client?.conversations,
     )(reference);
   }
 
@@ -271,72 +342,8 @@ export class XMTP {
   }
 }
 
-export async function createClient(
-  onMessage: (message: Message | undefined) => Promise<void> = async () => {}, // Default to a no-op function
-  config?: xmtpConfig,
-): Promise<XMTP> {
-  // Check if both clientConfig and privateKey are empty
-  const testKey = await setupTestEncryptionKey();
-  const { key, isRandom } = setupPrivateKey(config?.privateKey);
-  const user = createUser(key);
-
-  let env = process.env.XMTP_ENV as XmtpEnv;
-  if (!env) env = "production" as XmtpEnv;
-
-  let volumePath = process.env.RAILWAY_VOLUME_MOUNT_PATH ?? "";
-  volumePath += ".data/xmtp";
-
-  if (fs && !fs.existsSync(volumePath)) {
-    fs.mkdirSync(volumePath, { recursive: true });
-  }
-
-  const defaultConfig: ClientOptions = {
-    env: env,
-    dbPath: `${volumePath}/${user.account?.address.toLowerCase()}-${env}`,
-    codecs: [
-      new TextCodec(),
-      new ReactionCodec(),
-      new ReplyCodec(),
-      new RemoteAttachmentCodec(),
-      new AttachmentCodec(),
-      new ReadReceiptCodec(),
-      new AgentMessageCodec(),
-    ],
-  };
-
-  // Merge the default configuration with the provided config. Repeated fields in clientConfig will override the default values
-  const finalConfig = { ...defaultConfig, ...config?.client };
-  //v2
-  const account2 = privateKeyToAccount(key as `0x${string}`);
-  const wallet2 = createWalletClient({
-    account: account2,
-    chain: mainnet,
-    transport: http(),
-  });
-  const v2client = await V2Client.create(wallet2, {
-    ...finalConfig,
-    apiUrl: undefined,
-    skipContactPublishing: false,
-    apiClientFactory: GrpcApiClient.fromOptions as any,
-  });
-  const client = await V3Client.create(
-    createSigner(user),
-    testKey,
-    finalConfig,
-  );
-
-  const xmtpInstance = new XMTP(client, v2client);
-
-  Promise.all([
-    streamMessages(onMessage, v2client, xmtpInstance),
-    streamMessages(onMessage, client, xmtpInstance),
-  ]);
-
-  return xmtpInstance as XMTP;
-}
-
 async function streamMessages(
-  onMessage: (message: Message | undefined) => Promise<void>,
+  onMessage: (message: Message | undefined) => Promise<void> | undefined,
   client: V3Client | V2Client,
   xmtp: XMTP,
 ) {
@@ -352,7 +359,7 @@ async function streamMessages(
         await v3client.conversations.sync();
         await v3client.conversations.list();
         const stream = await v3client.conversations.streamAllMessages();
-        console.warn(`\t- [v3] Stream started`);
+        console.warn(`XMTP: [v3] Stream started`);
         for await (const message of stream) {
           let conversation = await xmtp.getConversationFromMessage(message);
           if (message && conversation) {
@@ -371,7 +378,8 @@ async function streamMessages(
                 conversation,
                 client,
               );
-              onMessage(parsedMessage);
+              console.log(`parsedMessage`, parsedMessage);
+              await onMessage(parsedMessage as Message);
             } catch (e) {
               console.log(`error`, e);
             }
@@ -382,7 +390,7 @@ async function streamMessages(
         typeof v2client.conversations.streamAllMessages === "function"
       ) {
         const stream = await v2client.conversations.streamAllMessages();
-        console.warn(`\t- [v2] Stream started`);
+        console.warn(`XMTP: [v2] Stream started`);
         for await (const message of stream) {
           let conversation = await xmtp.getConversationFromMessage(message);
           if (message && conversation) {
@@ -400,7 +408,8 @@ async function streamMessages(
                 conversation,
                 client,
               );
-              onMessage(parsedMessage);
+              console.log(`parsedMessage`, parsedMessage);
+              await onMessage(parsedMessage as Message);
             } catch (e) {
               console.log(`error`, e);
             }

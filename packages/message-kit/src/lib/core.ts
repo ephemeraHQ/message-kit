@@ -2,7 +2,7 @@ import { Agent, SkillResponse } from "../helpers/types.js";
 import { agentReply, chatMemory, defaultSystemPrompt } from "../plugins/gpt.js";
 import { getUserInfo, userInfoCache } from "../plugins/resolver.js";
 import { logInitMessage, logMessage } from "../helpers/utils.js";
-import { Message, XMTP, createClient, Conversation } from "xmtp";
+import { Message, XMTP, Conversation, userMessage } from "xmtp";
 
 import { WalletService as CdpWalletService } from "../plugins/cdp.js";
 import { WalletService as CircleWalletService } from "../plugins/circle.js";
@@ -49,7 +49,7 @@ export type Context = {
   executeSkill: (text: string) => Promise<SkillResponse | undefined>;
   clearMemory: (address?: string) => Promise<void>;
   clearCache: (address?: string) => Promise<void>;
-
+  send: (message: userMessage) => Promise<void>;
   awaitResponse(
     prompt: string,
     validResponses?: string[],
@@ -61,14 +61,7 @@ export type Context = {
   xmtp: XMTP;
   conversation: Conversation;
   group: Conversation | undefined;
-  getMemoryKey(): string;
-  sendAgentMessage: (message: string, metadata: any) => Promise<void>;
-  sendTo(message: string, receivers: string[]): Promise<void>;
-  reply(message: string, reference?: string): Promise<void>;
-  dm(message: string): Promise<void>;
-  send(message: string): Promise<void>;
-  sendImage(image: string): Promise<void>;
-  react(emoji: string): Promise<void>;
+  getMemoryKey(sender: string, conversationId: string): string;
   awaitedHandler: ((text: string) => Promise<boolean | void>) | undefined;
 };
 
@@ -97,14 +90,11 @@ export class MessageKit implements Context {
 
   async run(): Promise<void> {
     // Initialize the clients
-    this.xmtp = await createClient(
-      this.handleMessage,
-      this.agent.config?.client,
-    );
-
+    this.xmtp = new XMTP(this.handleMessage, this.agent.config?.client);
+    await this.xmtp.init();
     // Store the GPT model in process.env for global access
     process.env.GPT_MODEL = this.agent.config?.gptModel || "gpt-4o";
-    logInitMessage(this.xmtp.client, this.agent);
+    logInitMessage(this.xmtp?.client, this.agent);
   }
   static async create(
     message: Message,
@@ -114,7 +104,6 @@ export class MessageKit implements Context {
   ): Promise<Context | undefined> {
     try {
       const context = new MessageKit(agent);
-      xmtp.setMessage(message);
       context.xmtp = xmtp;
       context.message = message;
       //trim spaces from text
@@ -159,7 +148,7 @@ export class MessageKit implements Context {
           const result = await executeSkill(
             text,
             context.agent,
-            context as unknown as Context,
+            context as Context,
           );
           return result ?? undefined;
         };
@@ -176,19 +165,19 @@ export class MessageKit implements Context {
             if (process.env.MSG_LOG === "true")
               console.log("CDP Wallet Service Started");
             context.walletService = new CdpWalletService(
-              context as unknown as Context,
+              context.message.sender.address.toLowerCase(),
             );
           } else if (process.env.CIRCLE_API_KEY) {
             if (process.env.MSG_LOG === "true")
               console.log("Circle Wallet Service Started");
             context.walletService = new CircleWalletService(
-              context as unknown as Context,
+              context.message.sender.address.toLowerCase(),
             );
           }
         }
         context.storage = new LocalStorage(".data/storage");
 
-        return context as Context;
+        return context;
       }
       return undefined;
     } catch (error) {
@@ -216,20 +205,22 @@ export class MessageKit implements Context {
 
       //Await response
       const awaitedHandler = awaitedHandlers.get(
-        context.xmtp.getConversationKey(),
+        context.xmtp.getConversationKey(message),
       );
       if (awaitedHandler) {
         const messageText =
           context.message.content.text || context.message.content.reply || "";
         // Check if the response is from the expected user
-        const expectedUser = context.xmtp.getConversationKey().split(":")[1];
+        const expectedUser = context.xmtp
+          .getConversationKey(message)
+          .split(":")[1];
         const actualSender = message.sender.address;
 
         if (expectedUser?.toLowerCase() === actualSender?.toLowerCase()) {
           const isValidResponse = await awaitedHandler(messageText);
           // Only remove the handler if we got a valid response
           if (isValidResponse) {
-            awaitedHandlers.delete(context.xmtp.getConversationKey());
+            awaitedHandlers.delete(context.xmtp.getConversationKey(message));
           }
         }
         return;
@@ -241,7 +232,10 @@ export class MessageKit implements Context {
         const result = await customHandler(context);
         if (result && "code" in result) {
           if (result.code === 200) {
-            await context.dm(result.message);
+            await context.send({
+              message: result.message,
+              originalMessage: context.message,
+            });
           }
         }
       } else if (isMessageValid && this.agent?.onMessage)
@@ -268,7 +262,10 @@ export class MessageKit implements Context {
     validResponses?: string[],
     attempts?: number,
   ): Promise<string> {
-    await this.dm(`${prompt}`);
+    await this.send({
+      message: `${prompt}`,
+      originalMessage: this.message,
+    });
     let attemptCount = 0;
     attempts = attempts ?? 2;
 
@@ -305,66 +302,53 @@ export class MessageKit implements Context {
         }
 
         // Invalid response - send error message and continue waiting
-        await this.dm(
-          `Invalid response "${text}". Please respond with one of: ${validResponses.join(", ")}. Attempts remaining: ${attempts - attemptCount}`,
-        );
+        await this.send({
+          message: `Invalid response "${text}". Please respond with one of: ${validResponses.join(", ")}. Attempts remaining: ${attempts - attemptCount}`,
+          originalMessage: this.message,
+        });
         return false;
       };
 
       // Add the handler to the Map
-      awaitedHandlers.set(this.xmtp.getConversationKey(), handler);
+      awaitedHandlers.set(
+        this.getMemoryKey(
+          this.message.sender.address,
+          this.message.conversation.id,
+        ),
+        handler,
+      );
     });
   }
   // Method to reset the awaited state
   resetAwaitedState() {
     this.awaitingResponse = false;
     this.awaitedHandler = undefined;
-    awaitedHandlers.delete(this.xmtp.getConversationKey());
-  }
-  async sendAgentMessage(message: string, metadata: any) {
-    this.addMemory(message);
-    this.xmtp.sendAgentMessage(message, metadata);
-  }
-  async reply(message: string) {
-    this.addMemory(message);
-    await this.xmtp.reply(message, this.message.id);
-  }
-  addMemory(message: string) {
-    logMessage("sent:" + message);
-    chatMemory.addEntry(this.getMemoryKey(), message, "assistant");
+    awaitedHandlers.delete(
+      this.getMemoryKey(
+        this.message.sender.address,
+        this.message.conversation.id,
+      ),
+    );
   }
 
-  getMemoryKey() {
-    return this.xmtp.getConversationKey() + ":" + this.message?.sender?.address;
+  async send(message: userMessage): Promise<void> {
+    this.addMemory(
+      message.message,
+      message.originalMessage?.sender.address,
+      message.originalMessage?.conversation.id,
+    );
+    await this.xmtp.send(message);
+    return Promise.resolve();
+  }
+  addMemory(message: string, sender: string, conversationId: string) {
+    chatMemory.addEntry(
+      this.getMemoryKey(sender, conversationId),
+      message,
+      "assistant",
+    );
   }
 
-  async react(emoji: string) {
-    this.addMemory(emoji);
-    this.xmtp.react(emoji, this.message.id);
-  }
-
-  async sendTo(message: string, receivers: string[]) {
-    if (typeof message !== "string") {
-      console.error("Message must be a string");
-      return;
-    }
-    for (const receiver of receivers) {
-      if (this.xmtp.address.toLowerCase() === receiver.toLowerCase()) {
-        continue;
-      }
-      this.dm(message, receiver);
-    }
-  }
-  async dm(message: string, receiver?: string) {
-    this.addMemory(message);
-    this.xmtp.sendMessage(message, receiver);
-  }
-  async send(message: string) {
-    this.addMemory(message);
-    this.xmtp.sendMessage(message);
-  }
-  async sendImage(image: string) {
-    this.addMemory(image);
-    this.xmtp.sendImage(image);
+  getMemoryKey(sender: string, conversationId: string) {
+    return conversationId + ":" + sender;
   }
 }

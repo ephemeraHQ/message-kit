@@ -1,6 +1,7 @@
-import { getRedisClient, getAllEmployees } from "./redis.js";
+import { getAllEmployees } from "./redis.js";
 import { Context } from "@xmtp/message-kit";
 import cron from "node-cron";
+import { baselinks } from "@xmtp/message-kit";
 
 export class Payroll {
   private context: Context;
@@ -61,7 +62,11 @@ export class Payroll {
           .join("\n") +
         `\n\n💰 Total amount to be disbursed: ${totalRequired} USDC`;
 
-      await this.context.send(summaryMessage);
+      await this.context.send({
+        message: summaryMessage,
+        receivers: [this.senderAddress],
+        originalMessage: this.context.message,
+      });
 
       // Check wallet balance
       const { balance } = await walletService.checkBalance(this.senderAddress);
@@ -70,11 +75,18 @@ export class Payroll {
       if (Number(balance) < totalRequired) {
         const wallet = await walletService.getWallet(this.senderAddress);
         const message = `⚠️ Insufficient funds for today's payroll!\nRequired: ${totalRequired} USDC\nAvailable: ${balance} USDC\nPlease fund your account.`;
-        console.log(message);
-        await this.context.send(message);
-        await this.context.send(
-          `https://frames.message-kit.org/payment?networkId=base&amount=${totalRequired}&token=USDC&recipientAddress=${wallet?.agent_address}`,
-        );
+
+        await this.context.send({
+          message: message,
+          receivers: [this.senderAddress],
+          originalMessage: this.context.message,
+        });
+        const url = baselinks.paymentLink(wallet?.agent_address, totalRequired);
+        await this.context.send({
+          message: url,
+          receivers: [this.senderAddress],
+          originalMessage: this.context.message,
+        });
         return;
       }
 
@@ -90,22 +102,28 @@ export class Payroll {
             employee.address,
             employee.salary,
           );
-          await this.context.send(
-            `✅ Processed salary payment of ${employee.salary} USDC to ${employee.name}`,
-          );
+          await this.context.send({
+            message: `✅ Processed salary payment of ${employee.salary} USDC to ${employee.name}`,
+            receivers: [employee.address],
+            originalMessage: this.context.message,
+          });
         } catch (error: any) {
           console.error(`Payment failed for ${employee.name}:`, error);
-          await this.context.send(
-            `❌ Failed to process payment for ${employee.name}: ${error.message}`,
-          );
+          await this.context.send({
+            message: `❌ Failed to process payment for ${employee.name}: ${error.message}`,
+            receivers: [employee.address],
+            originalMessage: this.context.message,
+          });
         }
       }
       console.log("Daily payroll processing completed");
     } catch (error) {
       console.error("Error in payroll processing:", error);
-      await this.context.send(
-        "❌ An error occurred while processing payroll. Please check the logs.",
-      );
+      await this.context.send({
+        message:
+          "❌ An error occurred while processing payroll. Please check the logs.",
+        originalMessage: this.context.message,
+      });
     }
   }
 

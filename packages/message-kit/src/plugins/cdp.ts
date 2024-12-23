@@ -5,12 +5,10 @@ import {
   TimeoutError,
   Trade,
 } from "@coinbase/coinbase-sdk";
-import { type Context } from "../lib/core";
 import { keccak256, toHex, toBytes } from "viem";
-import { getUserInfo } from "../plugins/resolver";
+import { getUserInfo } from "./resolver";
 import { isAddress } from "viem";
 import { generateOnRampURL } from "@coinbase/cbpay-js";
-import { AgentWallet, AgentWalletData } from "../helpers/types";
 import { LocalStorage } from "./storage";
 
 const appId = process.env.COINBASE_APP_ID;
@@ -25,17 +23,55 @@ const coinbase =
       })
     : undefined;
 
+console.log("Coinbase initialized", coinbase !== undefined);
+export type AgentWalletData = {
+  id: string;
+  wallet: any;
+  address: string;
+  agent_address: string;
+  blockchain?: string;
+  state?: string;
+  key: string;
+};
+
+export interface AgentWallet {
+  getWallet: (
+    key: string,
+    createIfNotFound?: boolean,
+  ) => Promise<AgentWalletData | undefined>;
+  transfer: (
+    fromAddress: string,
+    toAddress: string,
+    amount: number,
+  ) => Promise<any>;
+  swap: (
+    address: string,
+    fromAssetId: string,
+    toAssetId: string,
+    amount: number,
+  ) => Promise<any>;
+  checkBalance: (
+    key: string,
+  ) => Promise<{ address: string | undefined; balance: number }>;
+  createWallet: (key: string) => Promise<AgentWalletData>;
+  onRampURL: (amount: number, address: string) => Promise<string | undefined>;
+}
+
 export class WalletService implements AgentWallet {
   private walletStorage: LocalStorage;
   private cdpEncriptionKey: string;
   private senderAddress: string;
-  private developerAddress: string;
 
-  constructor(context: Context) {
+  constructor(sender: string) {
     this.walletStorage = new LocalStorage(".data/wallets");
     this.cdpEncriptionKey = (process.env.KEY as string).toLowerCase();
-    this.senderAddress = context.message.sender.address.toLowerCase();
-    this.developerAddress = context.xmtp.address.toLowerCase();
+    this.senderAddress = sender.toLowerCase();
+    console.log(
+      "WalletService initialized with sender",
+      this.walletStorage,
+      this.cdpEncriptionKey,
+      this.senderAddress,
+    );
   }
 
   encrypt(data: any): string {
@@ -122,7 +158,7 @@ export class WalletService implements AgentWallet {
 
     try {
       const decrypted = this.decrypt(walletData);
-      let importedWallet = await Wallet.import(decrypted.data);
+      const importedWallet = await Wallet.import(decrypted.data);
       return {
         id: importedWallet.getId() ?? "",
         wallet: importedWallet,
@@ -140,11 +176,11 @@ export class WalletService implements AgentWallet {
     humanAddress: string,
   ): Promise<{ address: string | undefined; balance: number }> {
     humanAddress = humanAddress.toLowerCase();
-    let walletData = await this.getWallet(humanAddress);
+    const walletData = await this.getWallet(humanAddress);
     if (!walletData) return { address: undefined, balance: 0 };
 
     console.log(`Retrieved wallet data for ${humanAddress}`);
-    let balance = await walletData.wallet.getBalance(Coinbase.assets.Usdc);
+    const balance = await walletData.wallet.getBalance(Coinbase.assets.Usdc);
 
     return {
       address: walletData.agent_address,
@@ -169,25 +205,25 @@ export class WalletService implements AgentWallet {
   ): Promise<Transfer | undefined> {
     fromAddress = fromAddress.toLowerCase();
     toAddress = toAddress.toLowerCase();
-    let from = await this.getWallet(fromAddress);
+    const from = await this.getWallet(fromAddress);
     if (!from) return undefined;
     if (!Number(amount)) return undefined;
 
     console.log(`Retrieved wallet data for ${fromAddress}`);
-    let balance = await from.wallet.getBalance(Coinbase.assets.Usdc);
+    const balance = await from.wallet.getBalance(Coinbase.assets.Usdc);
     if (Number(balance) < amount) {
       return undefined;
     }
     if (!isAddress(toAddress) && !toAddress.includes(":")) {
-      let user = await getUserInfo(toAddress);
+      const user = await getUserInfo(toAddress);
       console.log("resolved toAddress", toAddress, user?.address);
       if (!user) {
         return undefined;
       }
       toAddress = user.address as string;
     }
-    let to = await this.getWallet(toAddress, false);
-    let toWallet = to?.agent_address ?? toAddress;
+    const to = await this.getWallet(toAddress, false);
+    const toWallet = to?.agent_address ?? toAddress;
     if (toWallet.includes(":")) {
       console.log("Failed accessing the wallet");
       return undefined;
@@ -223,7 +259,7 @@ export class WalletService implements AgentWallet {
     amount: number,
   ): Promise<Trade | undefined> {
     address = address.toLowerCase();
-    let walletData = await this.getWallet(address);
+    const walletData = await this.getWallet(address);
     if (!walletData) return undefined;
     console.log(`Retrieved wallet data for ${address}`);
 

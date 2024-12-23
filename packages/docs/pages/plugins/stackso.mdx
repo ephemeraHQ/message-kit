@@ -55,7 +55,11 @@ export async function handler(context: Context, fake?: boolean) {
   if (text) {
     if (skill === "points") {
       const points = await stack?.getPoints(sender.address);
-      context.reply(`You have ${points} points`);
+      context.send({
+        message: `You have ${points} points`,
+        originalMessage: context.message,
+        typeId: "reply",
+      });
       return;
     } else if (skill === "leaderboard") {
       const leaderboard = await stack?.getLeaderboard();
@@ -68,9 +72,11 @@ export async function handler(context: Context, fake?: boolean) {
             )}...${entry.address.slice(-4)}`}, Points: ${entry.points}`,
         )
         .join("\n");
-      context.reply(
-        `Leaderboard:\n\n${formattedLeaderboard}\n\nCheck out the public leaderboard\nhttps://www.stack.so/leaderboard/degen-group`,
-      );
+      context.send({
+        message: `Leaderboard:\n\n${formattedLeaderboard}\n\nCheck out the public leaderboard\nhttps://www.stack.so/leaderboard/degen-group`,
+        originalMessage: context.message,
+        typeId: "reply",
+      });
       return;
     }
   } else if (typeId === "group_updated") {

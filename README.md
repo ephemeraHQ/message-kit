@@ -12,9 +12,13 @@ A set of tools for AI developers to build on top of [XMTP](https://xmtp.org)
 
 ### Plugins
 
-- [`framekit`](/packages/framekit): A suite for backend frames
-- [`xmtp`](/packages/xmtp/): A node js wrapper for AI agents.
-- [`xmtp-client`](/packages/xmtp-client/): A client plugin for interacting with hte backend.
+- [`xmtp`](/packages/xmtp/): An xmtp node js wrapper for AI agents.
+- [`xmtp-e2ee`](/packages/xmtp-e2ee/): A js wrapper for AI agents.
+
+### Other
+
+- [`client`](/packages/client): A simple E2EE encrypted agent inbox
+- [`baselinks`](/packages/baselinks): A suite of coinbase wallet usdc links
 
 ## Contributing
 

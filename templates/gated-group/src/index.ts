@@ -1,11 +1,13 @@
 import { createAgent } from "@xmtp/message-kit";
-import { createClient } from "xmtp";
+import { XMTP } from "xmtp";
 import { gated } from "./skills/gated.js";
 import { startGatedGroupServer } from "./skills/gated.js";
 
-const { client } = await createClient();
-
-startGatedGroupServer(client);
+const xmtp = new XMTP();
+const { client } = await xmtp.init();
+if (client) {
+  startGatedGroupServer(client);
+}
 
 export const agent = createAgent({
   name: "Gated Group Creator Agent",

@@ -1,32 +1,35 @@
 import { describe, test, expect } from "vitest";
 import { generatePrivateKey } from "viem/accounts";
-import { createClient, createUser } from "xmtp";
+import { XMTP, createUser } from "xmtp";
 
 describe("Client Private Key Configuration Tests", () => {
   test("creates a client with a random generated key", async () => {
-    const { client, v2client } = await createClient();
-    expect(client.inboxId).toBeDefined();
-    expect(v2client.address).toBeDefined();
+    const xmtp = new XMTP();
+    const { client, v2client } = await xmtp.init();
+    expect(client?.inboxId).toBeDefined();
+    expect(v2client?.address).toBeDefined();
   }, 25000); // Added 15 second timeout
 
   test("creates a client with a provided private key", async () => {
     const privateKey = generatePrivateKey();
-    const { client, v2client } = await createClient(undefined, {
+    const xmtp = new XMTP(undefined, {
       privateKey,
     });
-    expect(client.inboxId).toBeDefined();
-    expect(v2client.address).toBeDefined();
+    const { client, v2client } = await xmtp.init();
+    expect(client?.inboxId).toBeDefined();
+    expect(v2client?.address).toBeDefined();
   }, 15000); // Added 15 second timeout
 
   test("fails gracefully with invalid private key format", async () => {
     const invalidKey = "invalid_key";
 
-    const { client } = await createClient(undefined, {
+    const xmtp = new XMTP(undefined, {
       privateKey: invalidKey,
     });
+    const { client, v2client } = await xmtp.init();
 
     // Should fall back to random key generation
-    expect(client.inboxId).toBeDefined();
+    expect(client?.inboxId).toBeDefined();
   }, 15000); // Added 15 second timeout
 
   test("creates user with valid private key", () => {

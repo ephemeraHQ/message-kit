@@ -36,14 +36,19 @@ async function handler(context: Context) {
   if (skill === "arena") {
     await handleArenaMessage(context);
   } else if (skill === "wordle") {
-    await context.send("https://framedl.xyz");
+    await context.send({
+      message: "https://framedl.xyz",
+      originalMessage: context.message,
+    });
   } else if (skill === "help") {
-    await context.send(
-      "For using this bot you can use the following commands:\n\n" +
+    await context.send({
+      message:
+        "For using this bot you can use the following commands:\n\n" +
         "/wordle, @wordle, 🔍, 🔎 - To start the game\n" +
         "/arena <word count> <audience size> - To start the arena game\n" +
         "/help - To see commands",
-    );
+      originalMessage: context.message,
+    });
   }
 }
 async function handleArenaMessage(context: Context) {
@@ -57,7 +62,10 @@ async function handleArenaMessage(context: Context) {
   const apiKey = process.env.FRAMEDL_API_KEY;
   if (!apiKey) {
     console.log("FRAMEDL_API_KEY is not set");
-    await context.send("https://www.framedl.xyz/games/arena/create");
+    await context.send({
+      message: "https://www.framedl.xyz/games/arena/create",
+      originalMessage: context.message,
+    });
     return;
   }
   const participantCount = group?.members?.length
@@ -67,11 +75,13 @@ async function handleArenaMessage(context: Context) {
   const wordCountArg = args[1] ? parseInt(args[1], 10) : 3;
   const audienceSizeArg = args[2] ? parseInt(args[2], 10) : participantCount;
   if (isNaN(wordCountArg) || isNaN(audienceSizeArg)) {
-    await context.send(
-      "usage: /arena <word count> <audience size>\n\n" +
+    await context.send({
+      message:
+        "usage: /arena <word count> <audience size>\n\n" +
         "word count: number of words in the arena (default: 3, min: 1, max: 9)\n" +
         "audience size: number of audience members (default: number of participants excluding wordle bot, min: 1, max: 15)",
-    );
+      originalMessage: context.message,
+    });
     return;
   }
 
@@ -90,9 +100,15 @@ async function handleArenaMessage(context: Context) {
 
     const data = (await response.json()) as { arenaUrl: string };
 
-    await context.send(data.arenaUrl);
+    await context.send({
+      message: data.arenaUrl,
+      originalMessage: context.message,
+    });
   } catch (error) {
     console.error(error);
-    await context.send("https://www.framedl.xyz/games/arena/create");
+    await context.send({
+      message: "https://www.framedl.xyz/games/arena/create",
+      originalMessage: context.message,
+    });
   }
 }

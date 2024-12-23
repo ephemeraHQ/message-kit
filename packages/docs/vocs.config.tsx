@@ -127,7 +127,7 @@ export default defineConfig({
       ],
     },
     {
-      text: "Fundations",
+      text: "Foundations",
       items: [
         {
           text: "Agents",

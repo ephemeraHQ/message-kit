@@ -1,5 +1,60 @@
 # Changelog
 
+## 1.3.0
+
+- **New Features**
+
+  - Introduced the Baselinks plugin for secure messaging, including installation instructions and usage examples.
+  - Added a new `PaymentFrame` component for processing payments through Coinbase.
+  - Added a `ReceiptGenerator` component for generating receipt URLs based on user input.
+  - Enhanced documentation for the `paymentagent` with multimedia elements and clearer structure.
+  - Introduced a new `UrlGenerator` component for generating Ethereum transaction URLs and QR codes.
+  - Updated messaging documentation to clarify the handling of various message types.
+
+- **Bug Fixes**
+
+  - Corrected video file extensions in the documentation.
+
+- **Documentation**
+
+  - Revised messaging security documentation for clarity and specificity.
+  - Updated README files to reflect changes in plugins and add new sections.
+
+- **Refactor**
+
+  - Renamed and restructured the XMTP class for better clarity and maintainability.
+  - Simplified the initialization of the XMTP client by removing unnecessary complexity.
+
+- **Style**
+
+  - Updated CSS styles for various components to enhance visual appeal and consistency.
+
+- **Chores**
+  - Updated configuration files for various packages to improve build processes and dependency management.
+
+## 1.2.35
+
+- **New Features**
+
+  - Enhanced documentation for the `paymentagent` with multimedia elements and clearer content structure.
+  - Added a new XMTP plugin for secure messaging with installation instructions and usage examples.
+  - Introduced `createAgent` function for streamlined agent creation across multiple templates.
+  - Added a new `xmtp-e2ee` package for secure messaging with installation instructions and usage examples.
+  - Added a new `xmtp` package for secure messaging with installation instructions and usage examples.
+
+- **Bug Fixes**
+
+  - Corrected video file extensions in documentation.
+
+- **Documentation**
+
+  - Updated various documentation files for clarity and improved organization, including the changelog and agent concepts.
+  - Improved the "Compatible apps" section in the quickstart guide for better clarity.
+  - Enhanced the XMTP plugin documentation to include detailed usage examples and installation steps.
+
+- **Chores**
+  - Updated versioning scheme across multiple packages to a generic "patch".
+
 ## 1.2.32
 
 - **New Features**
@@ -27,7 +82,7 @@
 
   - Introduced a new `Video` component for enhanced documentation presentation.
   - Added a new `XMTP` class for managing conversations and groups using the XMTP protocol.
-  - Enhanced `FrameKit` functionality for simplified receipt generation and wallet interactions.
+  - Enhanced `baselinks` functionality for simplified receipt generation and wallet interactions.
   - Added a `getWalletCount` method to the `LocalStorage` class for counting wallet files.
   - Implemented a new content type for agent messages, including encoding and decoding logic.
 
@@ -48,7 +103,7 @@
   - Removed unused imports and simplified user notification messages in the concierge skill.
   - Cleaned up documentation by removing obsolete sections and files.
   - Removed the "Introduction" entry from the sidebar configuration.
-  - Updated URL formats in the FrameKit documentation for receipts.
+  - Updated URL formats in the baselinks documentation for receipts.
 
 ## 1.2.29
 
@@ -63,7 +118,7 @@
 
 - **Documentation Updates**
 
-  - Enhanced clarity and detail in XMTP, FrameKit, and WalletService documentation.
+  - Enhanced clarity and detail in XMTP, baselinks, and WalletService documentation.
   - Streamlined the quickstart guide with improved section headers and content organization.
   - Removed redundant sections from various documentation files to focus on essential information.
   - Updated the `example_prompt.md` files for various templates to reflect new commands and user context.
@@ -80,7 +135,7 @@
 
 - **New Features**
 
-  - Introduced a new `framekit` plugin for sending frames.
+  - Introduced a new `baselinks` plugin for sending frames.
   - Added a new "Toss" template for a Cointoss bot, expanding user options.
 
 ## 1.2.27

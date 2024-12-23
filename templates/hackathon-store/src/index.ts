@@ -22,7 +22,11 @@ export const agent = createAgent({
     if (skill === "update") {
       const page = await downloadPage();
       fs.writeFileSync("src/prompt.md", page);
-      await context.reply("Notion DB updated");
+      await context.send({
+        message: "Notion DB updated",
+        originalMessage: context.message,
+        typeId: "reply",
+      });
     }
 
     await agentReply(context);

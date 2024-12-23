@@ -53,10 +53,16 @@ onMessage: async (context: Context) => {
     });
     const apiData = response.data;
     //Return the agent framework with the response
-    await context.send(response.data);
+    await context.send({
+      message: apiData,
+      originalMessage: context.message,
+    });
   } catch (error) {
     console.error("Error fetching data from API:", error);
-    await context.send("An error occurred while fetching data from the API.");
+    await context.send({
+      message: "An error occurred while fetching data from the API.",
+      originalMessage: context.message,
+    });
   }
 };
 ```

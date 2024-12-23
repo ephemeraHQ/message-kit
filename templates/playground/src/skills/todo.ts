@@ -24,7 +24,10 @@ export async function handler(context: Context) {
 
   let email = "";
   if (!previousMsg) {
-    await context.send("You need to do it on a reply.");
+    await context.send({
+      message: "You need to do it on a reply.",
+      originalMessage: context.message,
+    });
     return;
   }
   let intents = 2;
@@ -37,18 +40,21 @@ export async function handler(context: Context) {
     // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      await context.send(
-        "Invalid email format. Please try again with a valid email address.",
-      );
+      await context.send({
+        message:
+          "Invalid email format. Please try again with a valid email address.",
+        originalMessage: context.message,
+      });
       intents--;
       continue;
     }
     break;
   }
   if (intents == 0) {
-    await context.send(
-      "I couldn't get your email address. Please try again later.",
-    );
+    await context.send({
+      message: "I couldn't get your email address. Please try again later.",
+      originalMessage: context.message,
+    });
     return;
   }
   try {
@@ -69,12 +75,21 @@ export async function handler(context: Context) {
       `,
       };
       await resend.emails.send(content);
-      await context.send(`✅ Summary sent successfully to ${email}`);
+      await context.send({
+        message: `✅ Summary sent successfully to ${email}`,
+        originalMessage: context.message,
+      });
     } else {
-      await context.send("❌ Message not found.");
+      await context.send({
+        message: "❌ Message not found.",
+        originalMessage: context.message,
+      });
     }
   } catch (error) {
-    await context.send("❌ Failed to send email. Please try again later.");
+    await context.send({
+      message: "❌ Failed to send email. Please try again later.",
+      originalMessage: context.message,
+    });
     console.error("Error sending email:", error);
   }
 }

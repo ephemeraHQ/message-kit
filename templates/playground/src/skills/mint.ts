@@ -72,22 +72,32 @@ export async function handler(context: Context) {
       }
     }
     if (parsedUrl) {
-      await context.send("Here is your Mint Frame URL: ");
-      await context.send(parsedUrl);
+      await context.send({
+        message: "Here is your Mint Frame URL: ",
+        originalMessage: context.message,
+      });
+      await context.send({
+        message: parsedUrl,
+        originalMessage: context.message,
+      });
       return;
     } else {
-      await context.send(
-        "Error: Unable to parse the provided URL. Please ensure you're sending a valid Zora or Coinbase Wallet URL.",
-      );
+      await context.send({
+        message:
+          "Error: Unable to parse the provided URL. Please ensure you're sending a valid Zora or Coinbase Wallet URL.",
+        originalMessage: context.message,
+      });
       return;
     }
   } else {
     const { collection, token_id } = params;
     console.log(collection, token_id);
     if (!collection || !token_id) {
-      context.reply(
-        "Missing required parameters. Please provide collection and token_id.",
-      );
+      await context.send({
+        message:
+          "Missing required parameters. Please provide collection and token_id.",
+        originalMessage: context.message,
+      });
       return;
     }
     let mintUrl = `${baseUrl}/?transaction_type=mint&collection=${collection}&token_id=${token_id}`;

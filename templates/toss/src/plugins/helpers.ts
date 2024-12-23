@@ -30,18 +30,28 @@ export async function checkTossCorrect(
   } = context;
 
   if (!group) {
-    await context.reply("This command can only be used in a group.");
+    await context.send({
+      message: "This command can only be used in a group.",
+      originalMessage: context.message,
+      typeId: "reply",
+    });
     return undefined;
   } else if (!previousMsg) {
-    await context.reply("You must reply to a toss.");
+    await context.send({
+      message: "You must reply to a toss.",
+      originalMessage: context.message,
+      typeId: "reply",
+    });
     return undefined;
   }
 
   let toss_id = extractTossId(previousMsg);
   if (!toss_id) {
-    await context.reply(
-      "Invalid toss ID. Be sure you are replying to a original toss.",
-    );
+    await context.send({
+      message: "Invalid toss ID. Be sure you are replying to a original toss.",
+      originalMessage: context.message,
+      typeId: "reply",
+    });
     return undefined;
   }
   const tossDBClient = await getRedisClient();
@@ -53,13 +63,25 @@ export async function checkTossCorrect(
   }
 
   if (!tossData) {
-    await context.reply("Toss not found");
+    await context.send({
+      message: "Toss not found",
+      originalMessage: context.message,
+      typeId: "reply",
+    });
     return undefined;
   } else if (tossData.status === "closed") {
-    await context.reply("Toss has already ended.");
+    await context.send({
+      message: "Toss has already ended.",
+      originalMessage: context.message,
+      typeId: "reply",
+    });
     return undefined;
   } else if (tossData.group_id.toLowerCase() !== group.id.toLowerCase()) {
-    await context.reply("This toss is not in this group.");
+    await context.send({
+      message: "This toss is not in this group.",
+      originalMessage: context.message,
+      typeId: "reply",
+    });
     return undefined;
   }
 

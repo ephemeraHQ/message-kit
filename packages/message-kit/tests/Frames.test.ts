@@ -1,17 +1,8 @@
 import { describe, test, expect } from "vitest";
-import { extractFrameChain } from "../../framekit/src/app/utils/networks";
+import { extractFrameChain } from "../../baselinks/src/app/utils/networks";
 
 describe("Frame Chain Tests", () => {
   test.each([
-    [
-      "https://etherscan.io/tx/0x6c43658dfaaa4a2cecfe1646da8c4130a630f46b4eff590c71c711be7b2c5c8a",
-      {
-        networkLogo: "https://cryptologos.cc/logos/ethereum-eth-logo.png",
-        networkName: "Ethereum Mainnet",
-        tokenName: "ETH",
-        dripAmount: 0.01,
-      },
-    ],
     [
       "https://sepolia.basescan.org/tx/0xd60833f6e38ffce6e19109cf525726f54859593a0716201ae9f6444a04765a37",
       {

@@ -1,22 +1,32 @@
-# XMTP AI
+# End-to-end encrypted messaging
 
-AI is transforming consumer tech, with messaging becoming the main channel for interacting with agent services. This shift will scale message traffic astronomically, akin to the web’s rise in the 2000s. Just as Cloudflare secured web traffic, messaging will need robust encryption, threat protection, and scalable infrastructure to handle the surge and protect sensitive AI-driven interactions.
+AI is transforming consumer tech, with messaging becoming the main channel for interacting with agent services. This shift will scale message traffic astronomically, analogous to the web’s rise in the 2000s. Just as Cloud-flare secured web traffic, messaging will need robust scalable end-to-end encrypted messages to protect sensitive information.
 
 ## Risks
 
-⚠️ **Risks of not using end-to-end encryption**: Exposes users to Man in the Middle Attacks.
+Risks of not using end-to-end encryption for agent interactions exposes the users to what is called as Man in the **Middle Attacks**.
 
-> **Man in the Middle Attacks (MITM)**: Intercept requests in between to alter or manipulate data sent or received by the AI service or user.
+> **Man in the Middle Attacks**: Intercept requests in between to alter or manipulate data sent or received by the AI service
 
 - **Phishing**: Messages can be intercepted and manipulated.
-- **Privacy**: Sensitive information read by unwanted parties.
+- **Privacy**: Sensitive information read by unwanted parties
 - **Tampering**: Content can be altered without detection.
 
-## Anonymity
+:::tip
+More concrete sensitive data could include credit card details, private keys and passwords which is not yet widely spread but as agents become smarter more use cases will include this type of sharing.
+:::
 
-Using ephemeral addresses can enhance security by allowing users to message agents anonymously, protecting their identities from exposure.
+## XMTP
 
-## Backend
+XMTP provides end-to-end encrypted messaging for agent interactions, crucial for privacy, security, and compliance. Without it, messages are exposed to many security risks
+
+### Features:
+
+- **E2EE**: End to end encrypted MLS encryption
+- **Multi-agent**: Support multi-agent through group chats
+- **Interoperable**: Works across all platforms and frontends
+- **Scalable**: Decentralized, open-source
+- **Anonymous**: By default every identity is ephemeral and anonymous.
 
 ### Installation
 
@@ -28,23 +38,30 @@ bun install xmtp
 
 ### Usage
 
-This is how you can use the `xmtp` package to create a client and handle messages.
+This is how you can use the `xmtp` package to create an agent and handle messages.
+
+- `WALLET_PRIVATE_KEY`: This will encrypt all messages and make it available through its public address or ens domain.
 
 ```tsx
-import { createClient } from "xmtp";
+import { XMTP } from "xmtp";
 
-const xmtp = await createClient(onMessage, {
-  encryptionKey: process.env.LOCAL_KEY,
+const xmtp = new XMTP(onMessage, {
+  encryptionKey: WALLET_PRIVATE_KEY,
 });
-
+await xmtp.init();
 const onMessage = async (message, user) => {
-  console.log(`Decoded message: ${response} by ${user}`);
+  console.log(`Decoded message: ${message.content.text} by ${user.address}`);
   // Your AI model response
-  xmtp.send(response);
+  await xmtp.send({
+    message: response,
+    originalMessage: message,
+  });
 };
 ```
 
-### Gpt example
+For more information visit XMTP [website](https://xmtp.org/)
+
+### GPT example
 
 1. **`handleMessage`**: Triggered each time a new message is received from XMTP.
 2. **`client.send()`**: Used to send messages (e.g., AI prompts and responses) back to the XMTP network.
@@ -52,16 +69,17 @@ const onMessage = async (message, user) => {
 In this example, when `handleMessage` is invoked, it takes the incoming user message, passes it to the AI model (OpenAI's Chat Completion API), and then sends the AI's response back over XMTP.
 
 ```javascript
-import { createClient } from "xmtp";
+import { XMTP } from "xmtp";
 import { OpenAI } from "openai";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-const xmtp = await createClient(onMessage, {
-  encryptionKey: process.env.LOCAL_KEY,
+const xmtp = new XMTP(onMessage, {
+  encryptionKey: /*wallet private key*/,
 });
+await xmtp.init();
 
 const onMessage = async (message, user) => {
   console.log(`Decoded message: ${response} by ${user}`);
@@ -81,46 +99,19 @@ const onMessage = async (message, user) => {
   const response = response.data.choices[0].message.content.trim();
 
   // Send the AI-generated response back to the XMTP network
-  xmtp.send(response);
-};
-```
-
-## Frontend
-
-### Installation
-
-Install the `xmtp-client` package compatible with your frontend framework.
-
-```bash [cmd]
-bun install xmtp-client
-```
-
-### Usage
-
-```tsx
-import { createClient, XMTP, Message } from "xmtp-client";
-
-const xmtp = await createClient(onMessage, {
-  encryptionKey: process.env.LOCAL_KEY,
-});
-
-const onSend = async (text) => {
-  const message = await xmtp.sendMessage(text, agentAddress);
-  return message;
-};
-
-const onMessage = async (message, agentAddress) => {
-  console.log(`Decoded message: ${message} by ${agentAddress}`);
-  // Your AI model response
+  xmtp.send({
+    message: response,
+    originalMessage: message,
+  });
 };
 ```
 
 ### React example
 
-This is how you can use the `xmtp-client` package to create a client and handle messages.
+This is how you can use the `xmtp-e2ee` package to create a client and handle messages.
 
 ```tsx
-import { createClient, XMTP, Message } from "xmtp-client";
+import { XMTP, Message } from "xmtp-e2ee";
 // ... other imports ...
 
 function Chat({ user }: { user: UserInfo }) {
@@ -132,9 +123,6 @@ function Chat({ user }: { user: UserInfo }) {
 
   useEffect(() => {
     const init = async () => {
-      const newWallet = Wallet.createRandom();
-      // ... set wallet and recipient info ...
-
       try {
         if (user?.address) {
           await initXmtp(newWallet);
@@ -156,9 +144,8 @@ function Chat({ user }: { user: UserInfo }) {
 
   const initXmtp = async (wallet: any) => {
     try {
-      const xmtpClient = await createClient(onMessage, {
-        privateKey: wallet.privateKey,
-      });
+      const xmtpClient = new XMTP(onMessage);
+      await xmtpClient.init();
       setXmtp(xmtpClient);
       setIsLoading(false);
     } catch (error) {
@@ -172,7 +159,10 @@ function Chat({ user }: { user: UserInfo }) {
     if (!xmtp || !newMessage || !recipientInfo?.address) return;
 
     try {
-      const message = await xmtp.sendMessage(newMessage, user.address);
+      const message = await xmtp.send({
+        message: newMessage,
+        receivers: [recipientInfo.address],
+      });
       setMessages((prevMessages) => [...prevMessages, message]);
       setNewMessage("");
     } catch (error) {

@@ -3,7 +3,7 @@ import { Skill } from "../helpers/types";
 import { Context } from "../lib/core";
 import { getUserInfo } from "../plugins/resolver";
 import { isAddress } from "viem";
-import { FrameKit } from "../plugins/framekit";
+import { baselinks } from "../plugins/baselinks";
 
 export const concierge: Skill[] = [
   {
@@ -88,7 +88,7 @@ export async function handleWallet(context: Context) {
     message: {
       content: {
         skill,
-        params: { amount, recipient },
+        params: { amount, recipient, fromToken, toToken },
       },
       sender,
     },
@@ -97,51 +97,116 @@ export async function handleWallet(context: Context) {
   } = context;
 
   if (group && skill == "help") {
-    await context.reply("Check your DM's");
+    await context.send({
+      message: "Check your DM's",
+
+      originalMessage: context.message,
+      typeId: "reply",
+    });
     return;
   } else if (skill === "help") {
-    await context.dm("Im your personal assistant. How can I help you today?");
+    await context.send({
+      message: "Im your personal assistant. How can I help you today?",
+
+      originalMessage: context.message,
+    });
   } else if (skill === "address") {
     const walletExist = await walletService.getWallet(sender.address);
     if (walletExist) {
       const { balance } = await walletService.checkBalance(sender.address);
-      await context.dm("Your agent wallet address");
-      const url = await FrameKit.sendWallet(
+      await context.send({
+        message: "Your agent wallet address",
+
+        originalMessage: context.message,
+      });
+      const url = baselinks.walletDetails(
         walletExist.address,
         walletExist.agent_address,
         balance,
       );
-      await context.dm(url);
+      await context.send({
+        message: url,
+
+        originalMessage: context.message,
+      });
       return;
     }
-    await context.reply("You don't have an agent wallet.");
+    await context.send({
+      message: "You don't have an agent wallet.",
+
+      originalMessage: context.message,
+    });
   } else if (skill === "balance") {
     const { balance } = await walletService.checkBalance(sender.address);
-    await context.dm(`Your agent wallet has a balance of $${balance}`);
+    await context.send({
+      message: `Your agent wallet has a balance of $${balance}`,
+
+      originalMessage: context.message,
+    });
   } else if (skill === "fund") {
     await fund(context, amount);
     return;
   } else if (skill === "withdraw") {
     await withdraw(context, amount);
   } else if (skill === "swap") {
-    context.dm("I cant do that yet");
-    // await walletService.swap(sender.address, fromToken, toToken, amount);
-    // await context.dm("Swap completed");
-    // return;
-  } else if (skill === "transfer") {
     const { balance } = await walletService.checkBalance(sender.address);
     if (balance === 0) {
-      await context.reply("You have no funds to transfer.");
+      await context.send({
+        message: "You have no funds to transfer.",
+
+        originalMessage: context.message,
+      });
       return;
     }
     if (!recipient?.address) {
       console.log("recipient", recipient);
-      await context.reply("User not found.");
+      await context.send({
+        message: "User not found.",
+
+        originalMessage: context.message,
+      });
       return;
     }
-    await context.dm(
-      `Transferring ${amount} USDC to ${recipient?.preferredName}`,
+    await context.send({
+      message: `Swapping ${amount} ${fromToken} to ${toToken}`,
+
+      originalMessage: context.message,
+    });
+    const swap = await walletService.swap(
+      sender.address,
+      fromToken,
+      toToken,
+      amount,
     );
+    await context.send({
+      message: `Swap completed successfully`,
+
+      originalMessage: context.message,
+    });
+  } else if (skill === "transfer") {
+    const { balance } = await walletService.checkBalance(sender.address);
+    if (balance === 0) {
+      await context.send({
+        message: "You have no funds to transfer.",
+
+        originalMessage: context.message,
+      });
+      return;
+    }
+    if (!recipient?.address) {
+      console.log("recipient", recipient);
+      await context.send({
+        message: "User not found.",
+
+        originalMessage: context.message,
+      });
+      return;
+    }
+    await context.send({
+      message: `Transferring ${amount} USDC to ${recipient?.preferredName}`,
+
+      originalMessage: context.message,
+    });
     const tx = await walletService.transfer(
       sender.address,
       recipient?.address as string,
@@ -166,31 +231,49 @@ async function notifyUser(
   amount: number,
 ) {
   if (transaction) {
-    await context.dm(`Transfer completed successfully`);
+    await context.send({
+      message: `Transfer completed successfully`,
+      receivers: [context.message.sender.address],
+      originalMessage: context.message,
+    });
     if ((await transaction.getTransactionHash()) !== undefined) {
-      const url = await FrameKit.sendReceipt(
+      const url = baselinks.receiptLink(
         `https://basescan.org/tx/${await transaction.getTransactionHash()}`,
         amount,
       );
-      await context.dm(url);
+      await context.send({
+        message: url,
+        receivers: [context.message.sender.address],
+        originalMessage: context.message,
+      });
     } else if ((await transaction.getTransaction()) !== undefined) {
-      const url = await FrameKit.sendReceipt(
+      const url = baselinks.receiptLink(
         `https://basescan.org/tx/${await transaction.getTransaction()}`,
         amount,
       );
-      await context.dm(url);
+      await context.send({
+        message: url,
+        receivers: [context.message.sender.address],
+        originalMessage: context.message,
+      });
     }
   }
-  await context.dm(`Your balance was deducted by $${amount}`);
+  await context.send({
+    message: `Your balance was deducted by $${amount}`,
+    receivers: [context.message.sender.address],
+    originalMessage: context.message,
+  });
 
   if (!isAddress(toAddress)) return;
   const { v2, v3 } = await context.xmtp.isOnXMTP(toAddress);
   console.log(toAddress, { v2, v3 });
   if (!v2 && !v3) return;
   let userInfo = await getUserInfo(fromAddress);
-  await context.sendTo(`${userInfo?.preferredName} just sent you $${amount}`, [
-    toAddress,
-  ]);
+  await context.send({
+    message: `${userInfo?.preferredName} just sent you $${amount}`,
+    receivers: [toAddress],
+    originalMessage: context.message,
+  });
 }
 
 async function fund(
@@ -205,7 +288,10 @@ async function fund(
   } = context;
 
   if (amount <= 0) {
-    await context.dm("Please specify a valid amount to fund.");
+    await context.send({
+      message: "Please specify a valid amount to fund.",
+      originalMessage: context.message,
+    });
     return false;
   }
 
@@ -214,32 +300,45 @@ async function fund(
   console.log(`Retrieved wallet data for ${sender.address}`);
   let { balance } = await walletService.checkBalance(sender.address);
   if (Number(balance) === 10) {
-    await context.dm("You have maxed out your funds. Max 10 USDC.");
+    await context.send({
+      message: "You have maxed out your funds. Max 10 USDC.",
+      originalMessage: context.message,
+    });
     return false;
   } else if (amount) {
     console.log("amount", amount);
     console.log("balance", balance);
     if (amount + Number(balance) <= 10) {
       if (group) {
-        await context.reply(
-          `You need to fund your agent account. Check your DMs https://converse.xyz/${context.xmtp.address}`,
-        );
+        await context.send({
+          message: `You need to fund your agent account. Check your DMs https://converse.xyz/${context.xmtp.address}`,
+          originalMessage: context.message,
+        });
       }
       let onRampURL = await walletService.onRampURL(
         amount,
         walletData.agent_address,
       );
-      await context.dm("Here is the payment link:");
-      const url = await FrameKit.requestPayment(
+
+      await context.send({
+        message: "Here is the payment link:",
+        originalMessage: context.message,
+      });
+      const url = baselinks.paymentLink(
         walletData.agent_address,
         amount,
-        "USDC",
         onRamp ? onRampURL : undefined,
       );
-      await context.dm(url);
+      await context.send({
+        message: url,
+        originalMessage: context.message,
+      });
       return true;
     } else {
-      await context.dm("Wrong amount. Max 10 USDC.");
+      await context.send({
+        message: "Wrong amount. Max 10 USDC.",
+        originalMessage: context.message,
+      });
       return false;
     }
   } else {
@@ -259,13 +358,15 @@ async function fund(
       walletData.agent_address,
     );
 
-    const url = await FrameKit.requestPayment(
+    const url = baselinks.paymentLink(
       walletData.agent_address,
       Number(response),
-      "USDC",
       onRamp ? onRampURL : undefined,
     );
-    await context.dm(url);
+    await context.send({
+      message: url,
+      originalMessage: context.message,
+    });
     return true;
   }
 }
@@ -284,11 +385,19 @@ async function withdraw(
   console.log(`Retrieved wallet data for ${sender.address}`);
   let { balance } = await walletService.checkBalance(sender.address);
   if (amount && amount <= 0) {
-    await context.dm("Please specify a valid positive amount to withdraw.");
+    await context.send({
+      message: "Please specify a valid positive amount to withdraw.",
+      receivers: [context.message.sender.address],
+      originalMessage: context.message,
+    });
     return;
   }
   if (amount && amount > Number(balance)) {
-    await context.dm("You don't have enough funds to withdraw.");
+    await context.send({
+      message: "You don't have enough funds to withdraw.",
+      receivers: [context.message.sender.address],
+      originalMessage: context.message,
+    });
     return;
   }
   let toWithdraw = amount ?? Number(balance);

@@ -1,11 +1,10 @@
-# FrameKit
+# BaseLinks
 
 MessageKit enables developers to create interactive elements (frames) inside messaging applications. These frames can be used for various purposes such as handling payments, displaying transaction receipts, managing conversations, and creating custom interactive interfaces.
 
 - `Payment Frames`: Request and handle cryptocurrency payments
 - `Receipt Frames`: Display transaction confirmations
-- `Conversation Frames`: Manage DMs and group messages
-- `Custom Frames`: Create custom interactive UI elements
+- `Wallet Details`: Send wallet info
 
 ## Request payment
 
@@ -13,10 +12,13 @@ You can request payments using the payment frame:
 
 ```typescript
 // Request 1 USDC payment to a specific address
-const url = await FrameKit.requestPayment(recipientAddress, 1, "USDC");
+const url = baselinks.paymentLink(recipientAddress, 1);
 
 // Send the url to the user
-await context.send(url);
+await context.send({
+  message: url,
+  originalMessage: context.message,
+});
 ```
 
 ## Wallet details
@@ -25,12 +27,15 @@ You can send agent wallet info using the `sendWallet` method:
 
 ```typescript
 // Send agent wallet info
-const url = await FrameKit.sendWallet(
+const url = baselinks.walletDetails(
   "0x93E2fc3e99dFb1238eB9e0eF2580EFC5809C7204",
 );
 
 // Send the url to the user
-await context.send(url);
+await context.send({
+  message: url,
+  originalMessage: context.message,
+});
 ```
 
 Properties:
@@ -45,44 +50,20 @@ You can request receipts using the receipt frame:
 
 ```typescript
 // Request a receipt
-const url = await FrameKit.sendReceipt(urlOfTransaction);
+const url = baselinks.receiptLink(urlOfTransaction);
 
 // Send the url to the user
-await context.send(url);
+await context.send({
+  message: url,
+  originalMessage: context.message,
+});
 ```
 
 Properties:
 
 - `url`: URL of the transaction receipt scanner like basescan, etherscan, etc.
 
-## Converse
-
-You can send messages to a user or group on Converse using the `sendConverseDmFrame` and `sendConverseGroupFrame` methods.
-
-```typescript
-// Send a message to a user
-const url = await FrameKit.converseLink(userAddress);
-
-// Send the url to the user
-await context.send(url);
-
-// Send a message to a user with an optional pretext
-const url = await FrameKit.converseLink(userAddress, "Hello, how are you?");
-
-// Send the url to the user
-await context.send(url);
-
-// Send a message to a group
-const url = await FrameKit.converseGroup(groupId);
-
-// Send a message to a group with an optional pretext
-const url = await FrameKit.converseGroup(groupId, "gm all!");
-
-// Send the url to the user
-await context.send(url);
-```
-
-## Coinbase
+## Deeplinks
 
 :::warning
 Coinbase does not render frames but you can deeplink into other users inside the wallet.
@@ -90,59 +71,11 @@ Coinbase does not render frames but you can deeplink into other users inside the
 
 ```typescript
 // Send a message to a user with an optional pretext
-await context.coinbaseLink(userAddress);
-```
-
-## Custom
-
-Custom frames allow you to create interactive UI elements. Here's how to create a token price frame:
-
-```typescript
-const frame = {
-  title: "Weather Update",
-  buttons: [
-    {
-      content: "View Forecast",
-      action: "link",
-      target: "https://example.com/forecast",
-    },
-    {
-      content: "Current Temperature (75°F)",
-      action: "link",
-      target: "https://example.com/current-temperature",
-    },
-  ],
-  image: "https://example.com/weather.png",
-};
-
-const url = await FrameKit.sendCustomFrame(frame);
+const url = await context.coinbaseLink(userAddress);
 
 // Send the url to the user
-await context.send(url);
+await context.send({
+  message: url,
+  originalMessage: context.message,
+});
 ```
-
-Properties:
-
-- `title`: The header text of your frame
-- `buttons`: Array of interactive buttons (max 2)
-- `image`: URL of the image to display
-- `action`: Type of button action ("link" or "post")
-- `target`: Destination URL for button clicks
-
-:::info
-
-## Open Frames
-
-In compliance with [Open Frames](https://www.openframes.xyz/), use a meta tag in your frame's HTML to declare the client protocols your frame supports.
-
-```html
-<meta property="of:accepts:xmtp" content="vNext" />
-```
-
-These are quickstarts for different Frameworks that support Open Frames
-
-- [OnchainKit Quickstart](https://github.com/ephemeraHQ/open-frames-starter-onchainkit/): Onchain Kit quickstart that integrates XMTP.
-- [Frog Quickstart](https://github.com/ephemeraHQ/open-frames-starter-frog): Frog XMTP quickstart
-- [Frames.js Quickstart](https://github.com/ephemeraHQ/open-frames-starter-framesjs/): Frames.js quickstart that integrates XMTP.
-
-:::

@@ -43,7 +43,7 @@ const packages = [
   "packages/message-kit",
   "packages/xmtp",
   "packages/create-message-kit",
-  "packages/xmtp-client",
+  "packages/xmtp-e2ee",
 ];
 
 packages.forEach((packagePath) => {

@@ -72,7 +72,7 @@ class UserInfoCache {
 export const userInfoCache = UserInfoCache.getInstance();
 
 export const getUserInfo = async (
-  key: string,
+  key: string | undefined,
   clientAddress?: string,
 ): Promise<UserInfo | undefined> => {
   let data: UserInfo = {
