@@ -27,8 +27,14 @@ export async function handler(context: Context) {
     `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${symbol}`,
   );
   if (!response.ok) {
-    context.send("Token not found");
-    context.send("try with its full name, instead of btc it would be bitcoin");
+    context.send({
+      message: "Token not found",
+      originalMessage: context.message,
+    });
+    context.send({
+      message: "try with its full name, instead of btc it would be bitcoin",
+      originalMessage: context.message,
+    });
     return;
   }
   const data = (await response.json()) as any;
@@ -54,6 +60,6 @@ export async function handler(context: Context) {
     ],
     image: tokenInfo.image,
   };
-  const url = await baselinks.sendCustomFrame(frame);
-  await context.dm(url);
+  const url = baselinks.customFrame(frame);
+  await context.send({ message: url, originalMessage: context.message });
 }

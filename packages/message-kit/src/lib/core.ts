@@ -235,7 +235,6 @@ export class MessageKit implements Context {
             await context.send({
               message: result.message,
               originalMessage: context.message,
-              typeId: "text",
             });
           }
         }
@@ -266,7 +265,6 @@ export class MessageKit implements Context {
     await this.send({
       message: `${prompt}`,
       originalMessage: this.message,
-      typeId: "text",
     });
     let attemptCount = 0;
     attempts = attempts ?? 2;
@@ -307,7 +305,6 @@ export class MessageKit implements Context {
         await this.send({
           message: `Invalid response "${text}". Please respond with one of: ${validResponses.join(", ")}. Attempts remaining: ${attempts - attemptCount}`,
           originalMessage: this.message,
-          typeId: "text",
         });
         return false;
       };

@@ -109,7 +109,6 @@ export async function handleWallet(context: Context) {
       message: "Im your personal assistant. How can I help you today?",
 
       originalMessage: context.message,
-      typeId: "text",
     });
   } else if (skill === "address") {
     const walletExist = await walletService.getWallet(sender.address);
@@ -119,9 +118,8 @@ export async function handleWallet(context: Context) {
         message: "Your agent wallet address",
 
         originalMessage: context.message,
-        typeId: "text",
       });
-      const url = await baselinks.sendWallet(
+      const url = baselinks.walletDetails(
         walletExist.address,
         walletExist.agent_address,
         balance,
@@ -130,7 +128,6 @@ export async function handleWallet(context: Context) {
         message: url,
 
         originalMessage: context.message,
-        typeId: "text",
       });
       return;
     }
@@ -138,7 +135,6 @@ export async function handleWallet(context: Context) {
       message: "You don't have an agent wallet.",
 
       originalMessage: context.message,
-      typeId: "text",
     });
   } else if (skill === "balance") {
     const { balance } = await walletService.checkBalance(sender.address);
@@ -146,7 +142,6 @@ export async function handleWallet(context: Context) {
       message: `Your agent wallet has a balance of $${balance}`,
 
       originalMessage: context.message,
-      typeId: "text",
     });
   } else if (skill === "fund") {
     await fund(context, amount);
@@ -160,7 +155,6 @@ export async function handleWallet(context: Context) {
         message: "You have no funds to transfer.",
 
         originalMessage: context.message,
-        typeId: "text",
       });
       return;
     }
@@ -170,7 +164,6 @@ export async function handleWallet(context: Context) {
         message: "User not found.",
 
         originalMessage: context.message,
-        typeId: "text",
       });
       return;
     }
@@ -178,7 +171,6 @@ export async function handleWallet(context: Context) {
       message: `Swapping ${amount} ${fromToken} to ${toToken}`,
 
       originalMessage: context.message,
-      typeId: "text",
     });
     const swap = await walletService.swap(
       sender.address,
@@ -190,7 +182,6 @@ export async function handleWallet(context: Context) {
       message: `Swap completed successfully`,
 
       originalMessage: context.message,
-      typeId: "text",
     });
   } else if (skill === "transfer") {
     const { balance } = await walletService.checkBalance(sender.address);
@@ -199,7 +190,6 @@ export async function handleWallet(context: Context) {
         message: "You have no funds to transfer.",
 
         originalMessage: context.message,
-        typeId: "text",
       });
       return;
     }
@@ -209,7 +199,6 @@ export async function handleWallet(context: Context) {
         message: "User not found.",
 
         originalMessage: context.message,
-        typeId: "text",
       });
       return;
     }
@@ -217,7 +206,6 @@ export async function handleWallet(context: Context) {
       message: `Transferring ${amount} USDC to ${recipient?.preferredName}`,
 
       originalMessage: context.message,
-      typeId: "text",
     });
     const tx = await walletService.transfer(
       sender.address,
@@ -247,10 +235,9 @@ async function notifyUser(
       message: `Transfer completed successfully`,
       receivers: [context.message.sender.address],
       originalMessage: context.message,
-      typeId: "text",
     });
     if ((await transaction.getTransactionHash()) !== undefined) {
-      const url = await baselinks.sendReceipt(
+      const url = baselinks.receiptLink(
         `https://basescan.org/tx/${await transaction.getTransactionHash()}`,
         amount,
       );
@@ -258,10 +245,9 @@ async function notifyUser(
         message: url,
         receivers: [context.message.sender.address],
         originalMessage: context.message,
-        typeId: "text",
       });
     } else if ((await transaction.getTransaction()) !== undefined) {
-      const url = await baselinks.sendReceipt(
+      const url = baselinks.receiptLink(
         `https://basescan.org/tx/${await transaction.getTransaction()}`,
         amount,
       );
@@ -269,7 +255,6 @@ async function notifyUser(
         message: url,
         receivers: [context.message.sender.address],
         originalMessage: context.message,
-        typeId: "text",
       });
     }
   }
@@ -277,7 +262,6 @@ async function notifyUser(
     message: `Your balance was deducted by $${amount}`,
     receivers: [context.message.sender.address],
     originalMessage: context.message,
-    typeId: "text",
   });
 
   if (!isAddress(toAddress)) return;
@@ -289,7 +273,6 @@ async function notifyUser(
     message: `${userInfo?.preferredName} just sent you $${amount}`,
     receivers: [toAddress],
     originalMessage: context.message,
-    typeId: "text",
   });
 }
 
@@ -330,7 +313,6 @@ async function fund(
         await context.send({
           message: `You need to fund your agent account. Check your DMs https://converse.xyz/${context.xmtp.address}`,
           originalMessage: context.message,
-          typeId: "text",
         });
       }
       let onRampURL = await walletService.onRampURL(
@@ -342,7 +324,7 @@ async function fund(
         message: "Here is the payment link:",
         originalMessage: context.message,
       });
-      const url = await baselinks.requestPayment(
+      const url = baselinks.paymentLink(
         walletData.agent_address,
         amount,
         onRamp ? onRampURL : undefined,
@@ -376,7 +358,7 @@ async function fund(
       walletData.agent_address,
     );
 
-    const url = await baselinks.requestPayment(
+    const url = baselinks.paymentLink(
       walletData.agent_address,
       Number(response),
       onRamp ? onRampURL : undefined,
@@ -407,7 +389,6 @@ async function withdraw(
       message: "Please specify a valid positive amount to withdraw.",
       receivers: [context.message.sender.address],
       originalMessage: context.message,
-      typeId: "text",
     });
     return;
   }
@@ -416,7 +397,6 @@ async function withdraw(
       message: "You don't have enough funds to withdraw.",
       receivers: [context.message.sender.address],
       originalMessage: context.message,
-      typeId: "text",
     });
     return;
   }

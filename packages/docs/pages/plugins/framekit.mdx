@@ -12,10 +12,13 @@ You can request payments using the payment frame:
 
 ```typescript
 // Request 1 USDC payment to a specific address
-const url = await baselinks.requestPayment(recipientAddress, 1);
+const url = baselinks.paymentLink(recipientAddress, 1);
 
 // Send the url to the user
-await context.send(url);
+await context.send({
+  message: url,
+  originalMessage: context.message,
+});
 ```
 
 ## Wallet details
@@ -24,12 +27,15 @@ You can send agent wallet info using the `sendWallet` method:
 
 ```typescript
 // Send agent wallet info
-const url = await baselinks.sendWallet(
+const url = baselinks.walletDetails(
   "0x93E2fc3e99dFb1238eB9e0eF2580EFC5809C7204",
 );
 
 // Send the url to the user
-await context.send(url);
+await context.send({
+  message: url,
+  originalMessage: context.message,
+});
 ```
 
 Properties:
@@ -44,10 +50,13 @@ You can request receipts using the receipt frame:
 
 ```typescript
 // Request a receipt
-const url = await baselinks.sendReceipt(urlOfTransaction);
+const url = baselinks.receiptLink(urlOfTransaction);
 
 // Send the url to the user
-await context.send(url);
+await context.send({
+  message: url,
+  originalMessage: context.message,
+});
 ```
 
 Properties:
@@ -62,5 +71,11 @@ Coinbase does not render frames but you can deeplink into other users inside the
 
 ```typescript
 // Send a message to a user with an optional pretext
-await context.coinbaseLink(userAddress);
+const url = await context.coinbaseLink(userAddress);
+
+// Send the url to the user
+await context.send({
+  message: url,
+  originalMessage: context.message,
+});
 ```

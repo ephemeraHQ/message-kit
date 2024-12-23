@@ -19,11 +19,13 @@ This is how you can use the `xmtp-web` package to create a client and handle mes
 ```tsx
 import { XMTP } from "xmtp-web";
 
-const xmtp = await XMTP(onMessage);
+const xmtp = new XMTP(onMessage);
+
+await xmtp.init();
 
 const onMessage = async (message, user) => {
   console.log(`Decoded message: ${message.content.text} by ${user.address}`);
   // Your AI model response
-  await xmtp.sendMessage(response);
+  await xmtp.send({ message: response, originalMessage: message });
 };
 ```

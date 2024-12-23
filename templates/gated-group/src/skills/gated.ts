@@ -26,14 +26,17 @@ async function handler(context: Context) {
   if (skill === "create") {
     const group = await createGroup(xmtp.client, sender.address, xmtp.address);
 
-    await context.send(
-      `Group created!\n- ID: ${group?.id}\n- Group Frame URL: https://converse.xyz/group/${group?.id}: \n- This url will deelink to the group inside Converse\n- Once in the other group you can share the invite with your friends.`,
-    );
+    await context.send({
+      message: `Group created!\n- ID: ${group?.id}\n- Group Frame URL: https://converse.xyz/group/${group?.id}: \n- This url will deelink to the group inside Converse\n- Once in the other group you can share the invite with your friends.`,
+      originalMessage: context.message,
+    });
     return;
   } else {
-    await context.send(
-      "👋 Welcome to the Gated Bot Group!\nTo get started, type /create to set up a new group. 🚀\nThis example will check if the user has a particular nft and add them to the group if they do.\nOnce your group is created, you'll receive a unique Group ID and URL.\nShare the URL with friends to invite them to join your group!",
-    );
+    await context.send({
+      message:
+        "👋 Welcome to the Gated Bot Group!\nTo get started, type /create to set up a new group. 🚀\nThis example will check if the user has a particular nft and add them to the group if they do.\nOnce your group is created, you'll receive a unique Group ID and URL.\nShare the URL with friends to invite them to join your group!",
+      originalMessage: context.message,
+    });
   }
 }
 

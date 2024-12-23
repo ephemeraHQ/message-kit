@@ -17,13 +17,18 @@ This is how you can use the `xmtp` package to create a client and handle message
 ```tsx
 import { XMTP } from "xmtp";
 
-const xmtp = await XMTP(onMessage, {
+const xmtp = new XMTP(onMessage, {
   encryptionKey: process.env.WALLET_PRIVATE_KEY,
 });
+
+await xmtp.init();
 
 const onMessage = async (message, user) => {
   console.log(`Decoded message: ${message.content.text} by ${user.address}`);
   // Your AI model response
-  await xmtp.sendMessage(response);
+  await xmtp.send({
+    message: response,
+    originalMessage: message,
+  });
 };
 ```

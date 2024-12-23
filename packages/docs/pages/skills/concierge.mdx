@@ -24,7 +24,10 @@ The concierge will respond with your current balance.
 // Balance checking implementation
 if (skill === "balance") {
   const { balance } = await walletService.checkBalance(sender.address);
-  await context.send(`Your agent wallet has a balance of $${balance}`);
+  await context.send({
+    message: `Your agent wallet has a balance of $${balance}`,
+    originalMessage: context.message,
+  });
 }
 ```
 
@@ -46,7 +49,6 @@ async function fund(context: Context, amount: number) {
       message: "You have maxed out your funds. Max 10 USDC.",
       receivers: [context.message.sender.address],
       originalMessage: context.message,
-      typeId: "text",
     });
     return false;
   }
@@ -55,12 +57,15 @@ async function fund(context: Context, amount: number) {
     amount,
     walletData.agent_address,
   );
-  const url = await baselinks.requestPayment(
+  const url = baselinks.paymentLink(
     walletData.agent_address,
     amount,
     onRamp ? onRampURL : undefined,
   );
-  await context.send(url);
+  await context.send({
+    message: url,
+    originalMessage: context.message,
+  });
 }
 ```
 
@@ -79,13 +84,18 @@ The concierge will execute the transfer.
 if (skill === "transfer") {
   const { balance } = await walletService.checkBalance(sender.address);
   if (balance === 0) {
-    await context.reply("You have no funds to transfer.");
+    await context.send({
+      message: "You have no funds to transfer.",
+      originalMessage: context.message,
+      typeId: "reply",
+    });
     return;
   }
 
-  await context.send(
-    `Transferring ${amount} USDC to ${recipient?.preferredName}`,
-  );
+  await context.send({
+    message: `Transferring ${amount} USDC to ${recipient?.preferredName}`,
+    originalMessage: context.message,
+  });
   const tx = await walletService.transfer(
     sender.address,
     recipient?.address as string,
@@ -108,7 +118,10 @@ The concierge will execute the swap.
 // Swap implementation
 if (skill === "swap") {
   await walletService.swap(sender.address, fromToken, toToken, amount);
-  await context.send("Swap completed");
+  await context.send({
+    message: "Swap completed",
+    originalMessage: context.message,
+  });
   return;
 }
 ```

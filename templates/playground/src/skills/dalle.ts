@@ -46,9 +46,11 @@ export async function handler(context: Context) {
     });
 
     const imageUrl = response.data[0].url;
-    console.log(imageUrl);
     const message = `Here is the image generated for the prompt "${prompt}": ${imageUrl}`;
-    context.send(message);
+    context.send({
+      message: message,
+      originalMessage: context.message,
+    });
   } catch (error) {
     // @ts-ignore
     const message = `Failed to generate image. Error: ${error?.message}

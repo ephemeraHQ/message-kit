@@ -83,7 +83,12 @@ function Chat({ user }: { user: UserInfo }) {
 
     try {
       console.log("Sending message:", newMessage);
-      const message = await xmtp.sendMessage(newMessage, user.address);
+      const message = (await xmtp.send({
+        message: newMessage,
+        receivers: [recipientInfo.address],
+        originalMessage: undefined,
+      })) as Message;
+      console.log("message", message);
 
       setMessages((prevMessages) => [...prevMessages, message]);
       setNewMessage("");
@@ -128,11 +133,14 @@ function Chat({ user }: { user: UserInfo }) {
     }
   }, []);
 
-  const renderMessageContent = (text: string) => {
+  const renderMessageContent = (message: Message) => {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
-    const parts = text?.split(urlRegex);
+    //only strings
+    const textContent =
+      typeof message.content?.text === "string" ? message.content.text : "";
 
-    return parts.map((part, index) => {
+    const parts = textContent.split(urlRegex);
+    return parts?.map((part, index) => {
       if (urlRegex.test(part)) {
         try {
           const urlType = getUrlType(part);
@@ -217,7 +225,7 @@ function Chat({ user }: { user: UserInfo }) {
                 ? "Agent"
                 : "Human"}
             </span>
-            {renderMessageContent(msg.content?.text as string)}
+            {renderMessageContent(msg)}
           </div>
         ))}
       </div>

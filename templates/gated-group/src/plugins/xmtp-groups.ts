@@ -1,21 +1,21 @@
 import { Client } from "@xmtp/node-sdk";
 
 export async function createGroup(
-  client: Client,
-  senderAddress: string,
-  clientAddress: string,
+  client: Client | undefined,
+  senderAddress: string | undefined,
+  clientAddress: string | undefined,
 ) {
   try {
     let senderInboxId = "";
-    await client.conversations.sync();
+    await client?.conversations.sync();
     const group = await client?.conversations.newGroup([
-      senderAddress,
-      clientAddress,
+      senderAddress ?? "",
+      clientAddress ?? "",
     ]);
     console.log("Group created", group?.id);
-    const members = await group.members();
-    const senderMember = members.find((member) =>
-      member.accountAddresses.includes(senderAddress.toLowerCase()),
+    const members = await group?.members();
+    const senderMember = members?.find((member) =>
+      member.accountAddresses.includes(senderAddress?.toLowerCase() ?? ""),
     );
     if (senderMember) {
       senderInboxId = senderMember.inboxId;
@@ -23,13 +23,13 @@ export async function createGroup(
     } else {
       console.log("Sender not found in members list");
     }
-    await group.addSuperAdmin(senderInboxId);
+    await group?.addSuperAdmin(senderInboxId);
     console.log(
       "Sender is superAdmin",
-      await group.isSuperAdmin(senderInboxId),
+      await group?.isSuperAdmin(senderInboxId),
     );
-    await group.send(`Welcome to the new group!`);
-    await group.send(`You are now the admin of this group as well as the bot`);
+    await group?.send(`Welcome to the new group!`);
+    await group?.send(`You are now the admin of this group as well as the bot`);
     return group;
   } catch (error) {
     console.log("Error creating group", error);

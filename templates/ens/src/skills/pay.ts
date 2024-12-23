@@ -51,10 +51,10 @@ export async function handler(context: Context) {
   let receiverAddress = username?.address;
   if (skill === "tip") {
     let tipAmount = 1;
-    const url = await baselinks.requestPayment(receiverAddress, tipAmount);
-    await context.dm(url);
+    const url = baselinks.paymentLink(receiverAddress, tipAmount);
+    await context.send({ message: url, originalMessage: context.message });
   } else if (skill === "pay") {
-    const url = await baselinks.requestPayment(receiverAddress, amount);
-    await context.dm(url);
+    const url = baselinks.paymentLink(receiverAddress, amount);
+    await context.send({ message: url, originalMessage: context.message });
   }
 }

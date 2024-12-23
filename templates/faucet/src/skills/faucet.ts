@@ -1,4 +1,4 @@
-import { Context, chatMemory, Skill } from "@xmtp/message-kit";
+import { Context, Skill, baselinks } from "@xmtp/message-kit";
 import { getRedisClient } from "../plugins/redis.js";
 import {
   FIVE_MINUTES,
@@ -99,13 +99,18 @@ export async function handleFaucet(context: Context) {
     );
 
     if (!selectedNetwork) {
-      await context.send("Invalid network. Please select a valid option.");
+      await context.send({
+        message: "Invalid network. Please select a valid option.",
+        originalMessage: context.message,
+      });
       return;
     }
 
-    await context.send(
-      "Your testnet tokens are being processed. Please wait a moment for the transaction to process.",
-    );
+    await context.send({
+      message:
+        "Your testnet tokens are being processed. Please wait a moment for the transaction to process.",
+      originalMessage: context.message,
+    });
 
     const result = await learnWeb3Client.dripTokens(
       selectedNetwork.networkId,
@@ -113,24 +118,29 @@ export async function handleFaucet(context: Context) {
     );
 
     if (!result.ok) {
-      await context.send(
-        `❌ Sorry, there was an error processing your request:\n\n"${result.error!}"`,
-      );
+      await context.send({
+        message: `❌ Sorry, there was an error processing your request:\n\n"${result.error!}"`,
+        originalMessage: context.message,
+      });
       return;
     }
 
-    await context.send("Here's your transaction receipt:");
-    await context.send(
-      `${process.env.FRAME_BASE_URL}?txLink=${result.value}&networkLogo=${
-        selectedNetwork?.networkLogo
-      }&networkName=${selectedNetwork?.networkName.replaceAll(
-        " ",
-        "-",
-      )}&tokenName=${selectedNetwork?.tokenName}&amount=${
-        selectedNetwork?.dripAmount
-      }`,
+    await context.send({
+      message: "Here's your transaction receipt:",
+      originalMessage: context.message,
+    });
+    let receiptLink = baselinks.receiptLink(
+      result.value as string,
+      selectedNetwork?.dripAmount,
     );
+    await context.send({
+      message: receiptLink,
+      originalMessage: context.message,
+    });
   } else {
-    await context.send("Unknown skill. Please use 'list' or 'drip'.");
+    await context.send({
+      message: "Unknown skill. Please use 'list' or 'drip'.",
+      originalMessage: context.message,
+    });
   }
 }

@@ -83,7 +83,6 @@ export async function executeSkill(
         message: text,
         receivers: [context.message.sender.address],
         originalMessage: context.message,
-        typeId: "text",
       });
     } else if (text.startsWith("/") || text.startsWith("@")) {
       console.warn("Skill not valid", text);
@@ -92,7 +91,6 @@ export async function executeSkill(
         message: text,
         receivers: [context.message.sender.address],
         originalMessage: context.message,
-        typeId: "text",
       });
   } catch (error) {
     if (error instanceof Error) {
@@ -337,7 +335,6 @@ export async function filterMessage(context: Context): Promise<{
       message: "Memory cleared",
 
       originalMessage: context.message,
-      typeId: "text",
     });
     return { isMessageValid: false, customHandler: undefined };
   }

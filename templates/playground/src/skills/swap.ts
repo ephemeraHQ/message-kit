@@ -38,9 +38,12 @@ export async function handler(context: Context) {
   const { amount, token_from, token_to } = params;
 
   if (!amount || !token_from || !token_to) {
-    context.reply(
-      "Missing required parameters. Please provide amount, token_from, and token_to.",
-    );
+    context.send({
+      message:
+        "Missing required parameters. Please provide amount, token_from, and token_to.",
+      originalMessage: context.message,
+      typeId: "reply",
+    });
     return;
   }
 

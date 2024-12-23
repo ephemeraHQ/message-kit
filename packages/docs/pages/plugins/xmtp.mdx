@@ -35,14 +35,19 @@ This is how you can use the `xmtp` package to create a client and handle message
 ```tsx
 import { XMTP } from "xmtp";
 
-const xmtp = await XMTP(onMessage, {
+const xmtp = new XMTP(onMessage, {
   encryptionKey: process.env.WALLET_PRIVATE_KEY,
 });
+
+await xmtp.init();
 
 const onMessage = async (message, user) => {
   console.log(`Decoded message: ${message.content.text} by ${user.address}`);
   // Your AI model response
-  await xmtp.sendMessage(response, user.address);
+  await xmtp.send({
+    message: response,
+    originalMessage: message,
+  });
 };
 ```
 
@@ -61,9 +66,10 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-const xmtp = await XMTP(onMessage, {
+const xmtp = new XMTP(onMessage, {
   encryptionKey: process.env.LOCAL_KEY,
 });
+await xmtp.init();
 
 const onMessage = async (message, user) => {
   console.log(`Decoded message: ${response} by ${user}`);
@@ -83,7 +89,10 @@ const onMessage = async (message, user) => {
   const response = response.data.choices[0].message.content.trim();
 
   // Send the AI-generated response back to the XMTP network
-  xmtp.send(response);
+  xmtp.send({
+    message: response,
+    originalMessage: message,
+  });
 };
 ```
 
@@ -104,9 +113,10 @@ bun install xmtp-web
 ```tsx
 import { XMTP, Message } from "xmtp-web";
 
-const xmtp = await XMTP(onMessage, {
+const xmtp = new XMTP(onMessage, {
   encryptionKey: process.env.LOCAL_KEY,
 });
+await xmtp.init();
 
 const onSend = async (text) => {
   return message;
@@ -115,7 +125,10 @@ const onSend = async (text) => {
 const onMessage = async (message, user) => {
   console.log(`Decoded message: ${message} by ${user.address}`);
   let response; // Your ai model response
-  await xmtp.sendMessage(response, user.address);
+  await xmtp.send({
+    message: response,
+    originalMessage: message,
+  });
 };
 ```
 
@@ -124,7 +137,7 @@ const onMessage = async (message, user) => {
 This is how you can use the `xmtp-web` package to create a client and handle messages.
 
 ```tsx
-import { createClient, XMTP, Message } from "xmtp-web";
+import { XMTP, Message } from "xmtp-web";
 // ... other imports ...
 
 function Chat({ user }: { user: UserInfo }) {
@@ -160,9 +173,10 @@ function Chat({ user }: { user: UserInfo }) {
 
   const initXmtp = async (wallet: any) => {
     try {
-      const xmtpClient = await createClient(onMessage, {
+      const xmtpClient = new XMTP(onMessage, {
         privateKey: wallet.privateKey,
       });
+      await xmtpClient.init();
       setXmtp(xmtpClient);
       setIsLoading(false);
     } catch (error) {
@@ -176,7 +190,10 @@ function Chat({ user }: { user: UserInfo }) {
     if (!xmtp || !newMessage || !recipientInfo?.address) return;
 
     try {
-      const message = await xmtp.sendMessage(newMessage, user.address);
+      const message = await xmtp.send({
+        message: newMessage,
+        receivers: [recipientInfo.address],
+      });
       setMessages((prevMessages) => [...prevMessages, message]);
       setNewMessage("");
     } catch (error) {

@@ -36,7 +36,6 @@ import {
   AgentMessageCodec,
   ContentTypeAgentMessage,
 } from "../content-types/agent-message.js";
-import { ContentTypeId } from "@xmtp/content-type-primitives";
 import { createWalletClient, http, toBytes, toHex } from "viem";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { mainnet } from "viem/chains";
@@ -51,14 +50,14 @@ export class XMTP {
   client: V3Client | undefined;
   address: string | undefined;
   inboxId: string | undefined;
-  onMessage: (message: Message | undefined) => Promise<void>;
+  onMessage: (message: Message | undefined) => Promise<void> | undefined;
   config?: xmtpConfig;
 
   constructor(
-    onMessage: (message: Message | undefined) => Promise<void>,
+    onMessage?: (message: Message | undefined) => Promise<void> | undefined,
     config?: xmtpConfig,
   ) {
-    this.onMessage = onMessage;
+    this.onMessage = onMessage ?? (() => Promise.resolve());
     this.config = config;
   }
 
@@ -343,7 +342,7 @@ export class XMTP {
 }
 
 async function streamMessages(
-  onMessage: (message: Message | undefined) => Promise<void>,
+  onMessage: (message: Message | undefined) => Promise<void> | undefined,
   client: V3Client | V2Client,
   xmtp: XMTP,
 ) {
@@ -378,7 +377,6 @@ async function streamMessages(
                 conversation,
                 client,
               );
-              //xmtp.setMessage(parsedMessage as Message);
               await onMessage(parsedMessage as Message);
             } catch (e) {
               console.log(`error`, e);
@@ -408,7 +406,6 @@ async function streamMessages(
                 conversation,
                 client,
               );
-              //xmtp.setMessage(parsedMessage as Message);
               await onMessage(parsedMessage as Message);
             } catch (e) {
               console.log(`error`, e);

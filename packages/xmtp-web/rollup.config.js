@@ -9,6 +9,11 @@ const external = [
   "viem",
   "viem/accounts",
   "@xmtp/content-type-text",
+  "@xmtp/content-type-primitives",
+  "@xmtp/content-type-reaction",
+  "@xmtp/content-type-read-receipt",
+  "@xmtp/content-type-remote-attachment",
+  "@xmtp/content-type-reply",
   "viem/chains",
 ];
 

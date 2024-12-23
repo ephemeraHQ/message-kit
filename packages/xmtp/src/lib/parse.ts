@@ -21,7 +21,7 @@ export async function parseMessage(
   let content = message.content;
   if (typeId == "text") {
     content = {
-      text: content,
+      text: content.content ?? content,
     };
   } else if (typeId == "reply") {
     let previousMsg = await getLastMessageById(
@@ -112,7 +112,21 @@ export async function parseMessage(
       ((conversation as V2Conversation)?.createdAt as Date) ||
       ((conversation as V3Conversation)?.createdAt as Date),
   };
-
+  let xmtpClient: { address: string; inboxId: string } = {
+    address: "",
+    inboxId: "",
+  };
+  if (client instanceof V2Client) {
+    xmtpClient = {
+      address: (client as V2Client).address,
+      inboxId: (client as V2Client).address,
+    };
+  } else {
+    xmtpClient = {
+      address: (client as V3Client).accountAddress,
+      inboxId: (client as V3Client).inboxId,
+    };
+  }
   return {
     id: message.id,
     sender: sender,
@@ -122,6 +136,7 @@ export async function parseMessage(
     content,
     typeId,
     version: group ? "v3" : "v2",
+    client: xmtpClient,
   } as Message;
 }
 

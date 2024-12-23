@@ -25,7 +25,7 @@ const mockMessage: Message = {
     text: "Hello world",
     params: {},
   },
-  typeId: "text",
+
   version: "v2",
   sent: new Date(),
   conversation: mockConversation,

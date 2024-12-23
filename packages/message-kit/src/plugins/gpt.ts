@@ -355,7 +355,6 @@ export async function processMultilineResponse(
             message: msg,
             receivers: [context.message.sender.address],
             originalMessage: context.message,
-            typeId: "text",
           });
         }
       } else {
@@ -364,7 +363,6 @@ export async function processMultilineResponse(
           message: message,
           receivers: [context.message.sender.address],
           originalMessage: context.message,
-          typeId: "text",
         });
       }
     }

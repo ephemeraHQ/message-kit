@@ -31,6 +31,6 @@ export async function handler(context: Context) {
 
   const { amount: amountSend, token: tokenSend, username } = params;
 
-  const url = await baselinks.requestPayment(username?.address, amountSend);
-  await context.dm(url);
+  const url = baselinks.paymentLink(username?.address, amountSend);
+  await context.send({ message: url, originalMessage: context.message });
 }

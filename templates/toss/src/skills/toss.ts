@@ -86,7 +86,11 @@ export async function handleTossCreation(context: Context) {
     group,
   } = context;
   if (!group) {
-    await context.reply("This command can only be used in a group.");
+    await context.send({
+      message: "This command can only be used in a group.",
+      originalMessage: context.message,
+      typeId: "reply",
+    });
     return;
   }
 
@@ -98,7 +102,11 @@ export async function handleTossCreation(context: Context) {
       tossId + ":" + sender.address,
     );
     if (!isCreated) {
-      await context.reply("Failed to create toss wallet");
+      await context.send({
+        message: "Failed to create toss wallet",
+        originalMessage: context.message,
+        typeId: "reply",
+      });
       return;
     }
 
@@ -119,11 +127,16 @@ export async function handleTossCreation(context: Context) {
     };
     await tossDBClient.set("toss:" + tossId, JSON.stringify(tossData));
     if (tossId !== undefined) {
-      await context.send(generateTossMessage(tossData));
+      await context.send({
+        message: generateTossMessage(tossData),
+        originalMessage: context.message,
+      });
     } else {
-      await context.reply(
-        `An error occurred while creating the toss. ${tossId}`,
-      );
+      await context.send({
+        message: `An error occurred while creating the toss. ${tossId}`,
+        originalMessage: context.message,
+        typeId: "reply",
+      });
     }
   }
 }
@@ -148,7 +161,11 @@ export async function handleJoinToss(context: Context) {
 
   const tossDBClient = await getRedisClient();
   if (participants?.some((p) => p.address === sender.address)) {
-    await context.reply("You have already joined this toss.");
+    await context.send({
+      message: "You have already joined this toss.",
+      originalMessage: context.message,
+      typeId: "reply",
+    });
     return;
   }
   const { balance } = await walletService.checkBalance(sender.address);
@@ -164,7 +181,11 @@ export async function handleJoinToss(context: Context) {
       amount,
     );
     if (transfer === undefined) {
-      await context.reply("Failed to transfer funds to the toss wallet.");
+      await context.send({
+        message: "Failed to transfer funds to the toss wallet.",
+        originalMessage: context.message,
+        typeId: "reply",
+      });
       return;
     }
     const participant = {
@@ -180,12 +201,20 @@ export async function handleJoinToss(context: Context) {
       JSON.stringify({ ...tossData, participants }),
     );
 
-    await context.reply("Successfully joined the toss!");
+    await context.send({
+      message: "Successfully joined the toss!",
+      originalMessage: context.message,
+      typeId: "reply",
+    });
 
     await context.executeSkill(`/status ${toss_id}`);
   } catch (error) {
     console.error(error);
-    await context.reply("Failed to process your entry. Please try again.");
+    await context.send({
+      message: "Failed to process your entry. Please try again.",
+      originalMessage: context.message,
+      typeId: "reply",
+    });
   }
 }
 
@@ -206,10 +235,18 @@ export async function handleEndToss(context: Context) {
 
   const tossDBClient = await getRedisClient();
   if (participants?.length === 0) {
-    await context.reply("No participants for this toss.");
+    await context.send({
+      message: "No participants for this toss.",
+      originalMessage: context.message,
+      typeId: "reply",
+    });
     return;
   } else if (admin_address.toLowerCase() !== sender.address.toLowerCase()) {
-    await context.reply("Only the admin can cancel the toss.");
+    await context.send({
+      message: "Only the admin can cancel the toss.",
+      originalMessage: context.message,
+      typeId: "reply",
+    });
     return;
   }
 
@@ -217,9 +254,11 @@ export async function handleEndToss(context: Context) {
   const { balance } = await walletService.checkBalance(tempWalletID);
   const fundsNeeded = tossData.amount * participants?.length;
   if (balance < fundsNeeded) {
-    await context.reply(
-      `Toss wallet does not have enough funds ${fundsNeeded}, has ${balance}`,
-    );
+    await context.send({
+      message: `Toss wallet does not have enough funds ${fundsNeeded}, has ${balance}`,
+      originalMessage: context.message,
+      typeId: "reply",
+    });
     return;
   }
 
@@ -231,7 +270,10 @@ export async function handleEndToss(context: Context) {
     (tossData.amount * (participants?.length ?? 0)) / (winners.length ?? 1);
 
   try {
-    await context.send("Sending prize to winners...");
+    await context.send({
+      message: "Sending prize to winners...",
+      originalMessage: context.message,
+    });
     for (const winner of winners) {
       await walletService.transfer(tempWalletID, winner.address, prize);
       await tossDBClient.set(
@@ -242,15 +284,25 @@ export async function handleEndToss(context: Context) {
     // Clean up
     //await walletService.deleteTempWallet(tossWalletRedis, tossId.toString());
     if (winners.length > 0) {
-      await context.reply(generateEndTossMessage(winners, losers, prize));
+      await context.send({
+        message: generateEndTossMessage(winners, losers, prize),
+        originalMessage: context.message,
+        typeId: "reply",
+      });
     }
 
-    await context.sendTo(
-      `You received $${prize} from the toss!`,
-      winners.map((w) => w.address),
-    );
+    await context.send({
+      message: `You received $${prize} from the toss!`,
+      originalMessage: context.message,
+      receivers: winners.map((w) => w.address),
+      typeId: "reply",
+    });
   } catch (error) {
-    await context.reply(`Failed to send prize to ${winners.length} winners`);
+    await context.send({
+      message: `Failed to send prize to ${winners.length} winners`,
+      originalMessage: context.message,
+      typeId: "reply",
+    });
   }
 }
 
@@ -267,10 +319,18 @@ export async function handleCancelToss(context: Context) {
 
   const tossDBClient = await getRedisClient();
   if (participants?.length === 0) {
-    await context.reply("No participants for this toss.");
+    await context.send({
+      message: "No participants for this toss.",
+      originalMessage: context.message,
+      typeId: "reply",
+    });
     return;
   } else if (admin_address.toLowerCase() !== sender.address.toLowerCase()) {
-    await context.reply("Only the admin can cancel the toss.");
+    await context.send({
+      message: "Only the admin can cancel the toss.",
+      originalMessage: context.message,
+      typeId: "reply",
+    });
     return;
   }
 
@@ -278,9 +338,11 @@ export async function handleCancelToss(context: Context) {
   const { balance } = await walletService.checkBalance(tempWalletID);
   const fundsNeeded = tossData.amount * participants?.length;
   if (balance < fundsNeeded) {
-    await context.reply(
-      `Toss wallet does not have enough funds ${fundsNeeded}, has ${balance}`,
-    );
+    await context.send({
+      message: `Toss wallet does not have enough funds ${fundsNeeded}, has ${balance}`,
+      originalMessage: context.message,
+      typeId: "reply",
+    });
     return;
   }
   for (const participant of participants) {
@@ -291,9 +353,11 @@ export async function handleCancelToss(context: Context) {
         `Failed to send prize to ${participant.address} agent wallet`,
         error,
       );
-      await context.reply(
-        `Failed to send prize to ${participant.address} agent wallet`,
-      );
+      await context.send({
+        message: `Failed to send prize to ${participant.address} agent wallet`,
+        originalMessage: context.message,
+        typeId: "reply",
+      });
     }
   }
 
@@ -305,13 +369,20 @@ export async function handleCancelToss(context: Context) {
     JSON.stringify({ ...tossData, status: "cancelled" }),
   );
 
-  await context.reply(
-    `Toss cancelled successfully.\nFunds distributed to participants:\n
+  await context.send({
+    message: `Toss cancelled successfully.\nFunds distributed to participants:\n
     ${participants?.map((p) => `${p.name} - $${amount}`).join("\n")}`,
-  );
+    receivers: participants.map((p) => p.address),
+    originalMessage: context.message,
+    typeId: "reply",
+  });
 }
 export async function handleTossStatus(context: Context) {
   const tossData = await checkTossCorrect(context);
   if (!tossData) return;
-  await context.reply(await generateTossStatusMessage(tossData));
+  await context.send({
+    message: await generateTossStatusMessage(tossData),
+    originalMessage: context.message,
+    typeId: "reply",
+  });
 }

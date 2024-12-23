@@ -45,9 +45,10 @@ async function balanceHandler(context: Context) {
   } = context;
   const usdcWallet = new USDCWallet(sender.address);
   const { usdc } = await usdcWallet.checkBalances();
-  await context.send(
-    `Your balance is ${usdc} USDC. let me know if you want check again or to fund your wallet.`,
-  );
+  await context.send({
+    message: `Your balance is ${usdc} USDC. let me know if you want check again or to fund your wallet.`,
+    originalMessage: context.message,
+  });
 }
 
 async function fundHandler(context: Context) {
@@ -65,7 +66,10 @@ async function fundHandler(context: Context) {
     const MAX_USDC = 10;
 
     if (usdc >= MAX_USDC) {
-      await context.send(`Your balance is maxed out at ${MAX_USDC} USDC.`);
+      await context.send({
+        message: `Your balance is maxed out at ${MAX_USDC} USDC.`,
+        originalMessage: context.message,
+      });
       return;
     }
 
@@ -87,24 +91,25 @@ async function fundHandler(context: Context) {
     }
 
     if (isNaN(fundAmount) || fundAmount <= 0 || fundAmount > remainingLimit) {
-      await context.send(
-        `Invalid amount. Please specify a value between 1 and ${remainingLimit} USDC.`,
-      );
+      await context.send({
+        message: `Invalid amount. Please specify a value between 1 and ${remainingLimit} USDC.`,
+        originalMessage: context.message,
+      });
       return;
     }
 
-    const url = await baselinks.requestPayment(
-      usdcWallet.agentAddress,
-      fundAmount,
-    );
-    await context.dm(url);
-    await context.send(
-      "After funding, let me know so I can check your balance.",
-    );
+    const url = baselinks.paymentLink(usdcWallet.agentAddress, fundAmount);
+    await context.send({ message: url, originalMessage: context.message });
+    await context.send({
+      message: "After funding, let me know so I can check your balance.",
+      originalMessage: context.message,
+    });
   } catch (error) {
-    await context.send(
-      "An error occurred while processing your request. Please try again.",
-    );
+    await context.send({
+      message:
+        "An error occurred while processing your request. Please try again.",
+      originalMessage: context.message,
+    });
   }
 }
 
@@ -119,7 +124,10 @@ async function transferHandler(context: Context) {
   } = context;
   const usdcWallet = new USDCWallet(sender.address);
   if (amount > 10) {
-    await context.send("You can only transfer up to 10 USDC at a time.");
+    await context.send({
+      message: "You can only transfer up to 10 USDC at a time.",
+      originalMessage: context.message,
+    });
     return;
   }
   await usdcWallet.transferUsdc(address, amount);

@@ -8,7 +8,7 @@ export const agent = createAgent({
     const { group } = context;
 
     if (!group) {
-      await context.send(`gm`);
+      await context.send({ message: "gm", originalMessage: context.message });
     }
   },
 }).run();
