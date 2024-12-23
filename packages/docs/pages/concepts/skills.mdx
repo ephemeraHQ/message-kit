@@ -64,36 +64,69 @@ function handler(context: Context) {
 
 {/* prettier-ignore-end */}
 
-## Sending messages
+## Text messages
 
 App messages are messages that are sent when you send a reply to a message and are highlighted differently by the apps.
 
 ```tsx
-// Send a message
-await context.send("Your message.");
-// Reply to the last message
-await context.reply("Your message.");
-// Send a message to specific users
-await context.sendTo("Your message.", ["address1", "address2"]);
-// Await a response
+//text
+let textMessage: userMessage = {
+  message: "Your message.",
+  originalMessage: context.message,
+};
+await context.send(textMessage);
+
 const answer = await context.awaitResponse("Please answer with yes or no", [
   "yes",
   "no",
 ]);
 console.log(`You answered: ${answer}`);
-// Send an image (max 1MB)
-await context.sendImage("path/to/image.png");
-// Send a remote image (max 1MB)
-await context.sendImage("https://picsum.photos/200/300");
-//Send a message to another agent
-await context.sendAgentMessage("Would you like to approve this transaction?", {
-  agentId: "payment-bot",
-  skillUsed: "approve-tx",
-  amount: "10",
-  token: "USDC",
-  chain: "base",
-  destinationAddress: "0x123...789",
-});
-// Send a dm to the sender
-await context.dm("Your message.");
+```
+
+### Other messages
+
+```tsx
+// reaction
+let reaction: userMessage = {
+  message: "😅",
+  receivers: [context.message.sender.address],
+  originalMessage: context.message,
+  typeId: "reaction",
+};
+await context.send(reaction);
+
+// Reply
+let reply: userMessage = {
+  message: "Your message.",
+  receivers: [context.message.sender.address],
+  originalMessage: context.message,
+  typeId: "reply",
+};
+await context.send(reply);
+
+//Attachment
+let attachment: userMessage = {
+  message: "https://picsum.photos/200/300",
+  receivers: [context.message.sender.address],
+  originalMessage: context.message,
+  typeId: "attachment",
+};
+await context.send(attachment);
+
+//agent message
+let agentMessage: userMessage = {
+  message: "Would you like to approve this transaction?",
+  metadata: {
+    agentId: "payment-bot",
+    skillUsed: "approve-tx",
+    amount: "10",
+    token: "USDC",
+    chain: "base",
+    destinationAddress: "0x123...789",
+  },
+  receivers: [context.message.sender.address],
+  originalMessage: context.message,
+  typeId: "agent",
+};
+await context.send(agentMessage);
 ```

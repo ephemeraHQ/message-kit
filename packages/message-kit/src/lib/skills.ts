@@ -79,10 +79,21 @@ export async function executeSkill(
       if (skillAction?.handler) return skillAction.handler(mockContext);
     } else if (skillAction) {
       console.warn("No handler for", skillAction.skill);
-      return context.send(text);
+      return context.send({
+        message: text,
+        receivers: [context.message.sender.address],
+        originalMessage: context.message,
+        typeId: "text",
+      });
     } else if (text.startsWith("/") || text.startsWith("@")) {
       console.warn("Skill not valid", text);
-    } else return context.send(text);
+    } else
+      return context.send({
+        message: text,
+        receivers: [context.message.sender.address],
+        originalMessage: context.message,
+        typeId: "text",
+      });
   } catch (error) {
     if (error instanceof Error) {
       console.error(`Skill execution failed: ${error.message}`);
@@ -322,7 +333,12 @@ export async function filterMessage(context: Context): Promise<{
   if (context.message.content.text?.startsWith("/reset")) {
     context.clearMemory(sender?.address);
     //context.clearCache(sender?.address);
-    context.send("Memory cleared");
+    context.send({
+      message: "Memory cleared",
+
+      originalMessage: context.message,
+      typeId: "text",
+    });
     return { isMessageValid: false, customHandler: undefined };
   }
   let customOnMessage = agent?.onMessage !== undefined;
@@ -370,7 +386,7 @@ export async function filterMessage(context: Context): Promise<{
     typeId ?? "",
   );
   // Check if the message content triggers a tag
-  let botTag = (await getUserInfo(xmtp.address))?.converseUsername;
+  let botTag = (await getUserInfo(xmtp?.address))?.converseUsername;
   const isTagged =
     text?.toLowerCase()?.includes(agent?.tag?.toLowerCase() ?? "") ??
     text?.toLowerCase()?.includes(botTag?.toLowerCase() ?? "");

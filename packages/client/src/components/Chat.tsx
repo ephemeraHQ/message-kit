@@ -6,7 +6,7 @@ import { isAddress, parseUnits } from "viem";
 import { extractFrameChain } from "@/app/utils/networks";
 import sdk from "@farcaster/frame-sdk";
 import { UrlPreview } from "./UrlPreview";
-import { XMTP, Message, XMTPClass } from "xmtp-web";
+import { XMTP, Message } from "xmtp-web";
 
 type UrlType = "receipt" | "payment" | "wallet" | "unknown";
 
@@ -29,7 +29,7 @@ const isFrame = async () => {
 function Chat({ user }: { user: UserInfo }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
-  const [xmtp, setXmtp] = useState<XMTPClass | undefined>(undefined);
+  const [xmtp, setXmtp] = useState<XMTP | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(true);
   const [recipientInfo, setRecipientInfo] = useState<UserInfo | undefined>(
     undefined,
@@ -45,8 +45,8 @@ function Chat({ user }: { user: UserInfo }) {
         if (user?.address) {
           console.log("Initializing XMTP with address:", user.address);
 
-          const xmtpClient = await XMTP(onMessage);
-
+          const xmtpClient = new XMTP(onMessage);
+          await xmtpClient.init();
           setXmtp(xmtpClient);
           setIsLoading(false);
         } else {

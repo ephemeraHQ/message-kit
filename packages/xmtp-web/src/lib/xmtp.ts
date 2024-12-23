@@ -6,14 +6,19 @@ import { mainnet } from "viem/chains";
 import { Message, xmtpConfig } from "../types";
 import { parseMessage } from "./parse.js";
 
-export class XMTPClass {
-  client: Client;
-  address: string;
-  message: Message;
+export class XMTP {
+  client: Client | undefined;
+  address: string | undefined;
+  message: Message | undefined;
+  onMessage: (message: Message | undefined) => Promise<void>;
+  config: xmtpConfig | undefined;
 
-  constructor(client: Client) {
-    this.client = client;
-    this.address = client.address;
+  constructor(
+    onMessage: (message: Message | undefined) => Promise<void> = async () => {},
+    config?: xmtpConfig | undefined,
+  ) {
+    this.onMessage = onMessage;
+    this.config = config;
     this.message = {
       sender: {
         address: "",
@@ -35,9 +40,30 @@ export class XMTPClass {
     };
   }
 
+  async init(): Promise<XMTP> {
+    const { key, isRandom } = await setupPrivateKey(this.config?.privateKey);
+    const { Client } = await import("@xmtp/xmtp-js");
+    const user = createUser(key);
+
+    const defaultConfig = {
+      codecs: [new TextCodec()],
+      env: this.config?.env ?? "production",
+    };
+    const client = await Client.create(user.wallet, {
+      ...defaultConfig,
+      ...this.config,
+    });
+
+    this.client = client;
+    this.address = client.address;
+    streamMessages(this.onMessage, client);
+
+    return this;
+  }
+
   async sendMessage(message: string, receiver?: string): Promise<Message> {
     const conversation = await this.getConversationByAddress(
-      receiver ?? this.message.sender.address,
+      receiver ?? this.message?.sender?.address ?? "",
     );
     const toDecode = await conversation?.send(message, {
       contentType: ContentTypeText,
@@ -48,12 +74,12 @@ export class XMTPClass {
 
   async getConversationByAddress(address: string) {
     try {
-      const conversations = await this.client.conversations.list();
-      let found = conversations.find(
+      const conversations = await this.client?.conversations.list();
+      let found = conversations?.find(
         (conv) => conv.peerAddress.toLowerCase() === address.toLowerCase(),
       );
       if (!found) {
-        found = await this.client.conversations.newConversation(address);
+        found = await this.client?.conversations.newConversation(address);
       }
       return found;
     } catch (error) {
@@ -68,36 +94,12 @@ export class XMTPClass {
 
   async isOnXMTP(address: string): Promise<boolean> {
     try {
-      return await this.client.canMessage(address);
+      return (await this.client?.canMessage(address)) ?? false;
     } catch (error) {
       console.error("Error checking XMTP availability:", error);
       return false;
     }
   }
-}
-
-export async function XMTP(
-  onMessage: (message: Message | undefined) => Promise<void> = async () => {},
-  config?: xmtpConfig,
-): Promise<XMTPClass> {
-  const { key, isRandom } = await setupPrivateKey(config?.privateKey);
-  const { Client } = await import("@xmtp/xmtp-js");
-  const user = createUser(key);
-
-  const defaultConfig = {
-    codecs: [new TextCodec()],
-    env: config?.env ?? "production",
-  };
-  const client = await Client.create(user.wallet, {
-    ...defaultConfig,
-    ...config,
-  });
-
-  const xmtp = new XMTPClass(client);
-
-  streamMessages(onMessage, client);
-
-  return xmtp;
 }
 
 export async function setupPrivateKey(

@@ -203,7 +203,10 @@ export async function agentReply(context: Context) {
     let userPrompt = params?.prompt ?? text;
 
     //Memory
-    let memoryKey = context.getMemoryKey();
+    let memoryKey = context.getMemoryKey(
+      sender.address,
+      context.conversation.id,
+    );
     chatMemory.createMemory(memoryKey, systemPrompt);
     chatMemory.addEntry(memoryKey, userPrompt, "user");
 
@@ -223,7 +226,10 @@ export async function agentReply(context: Context) {
     // Log any errors that occur during the OpenAI call
     console.error("Error during OpenAI call:", error);
     // Inform the user that an error occurred
-    await context.send("An error occurred while processing your request.");
+    await context.send({
+      message: "An error occurred while processing your request.",
+      originalMessage: context.message,
+    });
     return { reply: "An error occurred while processing your request." };
   }
 }
@@ -345,11 +351,21 @@ export async function processMultilineResponse(
         if (response && typeof response.message === "string") {
           let msg = parseMarkdown(response.message);
 
-          await context.send(msg);
+          await context.send({
+            message: msg,
+            receivers: [context.message.sender.address],
+            originalMessage: context.message,
+            typeId: "text",
+          });
         }
       } else {
         // If it's not a command and didn't match forbidden prefixes, it's probably valid free-form text
-        await context.send(message);
+        await context.send({
+          message: message,
+          receivers: [context.message.sender.address],
+          originalMessage: context.message,
+          typeId: "text",
+        });
       }
     }
     return true;

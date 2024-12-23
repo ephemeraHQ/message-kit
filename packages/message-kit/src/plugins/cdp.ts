@@ -44,6 +44,12 @@ export interface AgentWallet {
     toAddress: string,
     amount: number,
   ) => Promise<any>;
+  swap: (
+    address: string,
+    fromAssetId: string,
+    toAssetId: string,
+    amount: number,
+  ) => Promise<any>;
   checkBalance: (
     key: string,
   ) => Promise<{ address: string | undefined; balance: number }>;

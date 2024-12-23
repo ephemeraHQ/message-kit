@@ -42,7 +42,12 @@ The concierge will handle the transaction.
 // Funding logic
 async function fund(context: Context, amount: number) {
   if (Number(balance) === 10) {
-    await context.dm("You have maxed out your funds. Max 10 USDC.");
+    await context.send({
+      message: "You have maxed out your funds. Max 10 USDC.",
+      receivers: [context.message.sender.address],
+      originalMessage: context.message,
+      typeId: "text",
+    });
     return false;
   }
 

@@ -2,11 +2,27 @@ import { privateKeyToAccount } from "viem/accounts";
 import { createWalletClient } from "viem";
 import { ClientOptions } from "@xmtp/node-sdk";
 
+export type userMessage = {
+  message: string;
+  originalMessage: Message;
+  metadata?: any;
+  receivers?: string[];
+  typeId?:
+    | "text"
+    | "image"
+    | "reaction"
+    | "reply"
+    | "attachment"
+    | "readReceipt"
+    | "agentMessage";
+};
+
 export interface UserReturnType {
   key: string;
   account: ReturnType<typeof privateKeyToAccount>;
   wallet: ReturnType<typeof createWalletClient>;
 }
+
 export type xmtpConfig = {
   privateKey?: string;
   path?: string;

@@ -42,7 +42,7 @@ const xmtp = await XMTP(onMessage, {
 const onMessage = async (message, user) => {
   console.log(`Decoded message: ${message.content.text} by ${user.address}`);
   // Your AI model response
-  await xmtp.sendMessage(response);
+  await xmtp.sendMessage(response, user.address);
 };
 ```
 
@@ -112,10 +112,10 @@ const onSend = async (text) => {
   return message;
 };
 
-const onMessage = async (message, agentAddress) => {
-  console.log(`Decoded message: ${message} by ${agentAddress}`);
+const onMessage = async (message, user) => {
+  console.log(`Decoded message: ${message} by ${user.address}`);
   let response; // Your ai model response
-  await xmtp.sendMessage(response, agentAddress);
+  await xmtp.sendMessage(response, user.address);
 };
 ```
 
