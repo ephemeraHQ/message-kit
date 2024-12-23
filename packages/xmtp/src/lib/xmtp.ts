@@ -116,6 +116,8 @@ export class XMTP {
     this.client = client;
     this.v2client = v2client;
 
+    this.address = v2client.address;
+    this.inboxId = client.inboxId ?? v2client.address;
     Promise.all([
       streamMessages(this.onMessage, client, this),
       streamMessages(this.onMessage, v2client, this),

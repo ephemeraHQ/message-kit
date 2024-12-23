@@ -4680,7 +4680,7 @@ __metadata:
     react-dom: "npm:^18.2.0"
     typescript: "npm:^5"
     viem: "npm:^2.21.45"
-    xmtp-web: "workspace:*"
+    xmtp-e2ee: "workspace:*"
   languageName: unknown
   linkType: soft
 
@@ -12294,9 +12294,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"xmtp-web@workspace:*, xmtp-web@workspace:packages/xmtp-web":
+"xmtp-e2ee@workspace:*, xmtp-e2ee@workspace:packages/xmtp-e2ee":
   version: 0.0.0-use.local
-  resolution: "xmtp-web@workspace:packages/xmtp-web"
+  resolution: "xmtp-e2ee@workspace:packages/xmtp-e2ee"
   dependencies:
     "@changesets/changelog-git": "npm:^0.2.0"
     "@changesets/cli": "npm:^2.27.5"

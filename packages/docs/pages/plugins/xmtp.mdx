@@ -98,20 +98,20 @@ const onMessage = async (message, user) => {
 
 ## Frontend
 
-Same as the backend, you can use the `xmtp-web` package to create a client that decrypts and encrypts messages locally.
+Same as the backend, you can use the `xmtp-e2ee` package to create a client that decrypts and encrypts messages locally.
 
 ### Installation
 
-Install the `xmtp-web` package compatible with your frontend framework.
+Install the `xmtp-e2ee` package compatible with your frontend framework.
 
 ```bash [cmd]
-bun install xmtp-web
+bun install xmtp-e2ee
 ```
 
 ### Usage
 
 ```tsx
-import { XMTP, Message } from "xmtp-web";
+import { XMTP, Message } from "xmtp-e2ee";
 
 const xmtp = new XMTP(onMessage, {
   encryptionKey: /*wallet private key*/,
@@ -134,10 +134,10 @@ const onMessage = async (message, user) => {
 
 ### React example
 
-This is how you can use the `xmtp-web` package to create a client and handle messages.
+This is how you can use the `xmtp-e2ee` package to create a client and handle messages.
 
 ```tsx
-import { XMTP, Message } from "xmtp-web";
+import { XMTP, Message } from "xmtp-e2ee";
 // ... other imports ...
 
 function Chat({ user }: { user: UserInfo }) {

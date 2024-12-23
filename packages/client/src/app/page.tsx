@@ -82,7 +82,14 @@ function ChatContent({ user }: { user: UserInfo }): JSX.Element {
   }, [isSDKLoaded]);
 
   return (
-    <div style={{ height: "100vh", width: "100%" }}>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+        width: "100%",
+      }}>
       <Chat user={user} />
     </div>
   );

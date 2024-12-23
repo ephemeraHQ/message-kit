@@ -6,7 +6,7 @@ import { isAddress, parseUnits } from "viem";
 import { extractFrameChain } from "@/app/utils/networks";
 import sdk from "@farcaster/frame-sdk";
 import { UrlPreview } from "./UrlPreview";
-import { XMTP, Message } from "xmtp-web";
+import { XMTP, Message } from "../../../xmtp-e2ee/dist";
 
 type UrlType = "receipt" | "payment" | "wallet" | "unknown";
 

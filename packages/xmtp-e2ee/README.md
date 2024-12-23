@@ -4,20 +4,20 @@
 
 ### Installation
 
-Install the `xmtp-web` package for using in the users devices.
+Install the `xmtp-e2ee` package for using in the users devices.
 
 ```bash [cmd]
-bun install xmtp-web
+bun install xmtp-e2ee
 ```
 
 ### Usage
 
-This is how you can use the `xmtp-web` package to create a client and handle messages.
+This is how you can use the `xmtp-e2ee` package to create a client and handle messages.
 
 > It will always create an anonimous identity by default.
 
 ```tsx
-import { XMTP } from "xmtp-web";
+import { XMTP } from "xmtp-e2ee";
 
 const xmtp = new XMTP(onMessage);
 

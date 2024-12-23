@@ -1,6 +1,6 @@
 {
-  "name": "xmtp-web",
-  "version": "0.0.7",
+  "name": "xmtp-e2ee",
+  "version": "0.0.8",
   "license": "MIT",
   "type": "module",
   "exports": {

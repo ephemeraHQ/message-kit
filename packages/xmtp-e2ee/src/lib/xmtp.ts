@@ -54,6 +54,7 @@ export class XMTP {
 
     this.v2client = client;
     this.address = client.address;
+    this.inboxId = client.address;
     streamMessages(this.onMessage, client);
 
     return this;
