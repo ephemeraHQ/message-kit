@@ -1,24 +1,32 @@
-# XMTP AI
+# End-to-end encrypted messaging
+
+XMTP provides end-to-end encrypted messaging for agent interactions, crucial for privacy, security, and compliance. Without it, messages are exposed to many security risks
+
+### Thesis
 
 AI is transforming consumer tech, with messaging becoming the main channel for interacting with agent services. This shift will scale message traffic astronomically, analogous to the web’s rise in the 2000s. Just as Cloud-flare secured web traffic, messaging will need robust scalable end-to-end encrypted messages to protect sensitive communications.
 
+### Features:
+
+- **E2EE**: End to end encrypted MLS encryption
+- **Multi-agent**: Support multi-agent through group chats
+- **Interoperable**: Works across all platforms and frontends
+- **Scalable**: Decentralized, open-source
+- **Anonymous**: By defaul every identity is ephemeral and anonymous.
+
 ## Risks
 
-Risks of not using end-to-end encryption:
+Risks of not using end-to-end encryption for agent interactions exposes the users to what is called as Man in the **Middle Attacks**.
 
-> **Man in the Middle Attacks (MITM)**: Intercept requests in between to alter or manipulate data sent or received by the AI service or user.
+> **Man in the Middle Attacks**: Intercept requests in between to alter or manipulate data sent or received by the AI service
 
 - **Phishing**: Messages can be intercepted and manipulated.
-- **Privacy**: Sensitive information read by unwanted parties.
+- **Privacy**: Sensible information read by unwanted parties
 - **Tampering**: Content can be altered without detection.
 
-## Anonymity
-
-Using ephemeral addresses can enhance security by allowing users to message agents anonymously, protecting their identities from exposure.
-
-## Backend
-
-You can use the `xmtp` package to create wrapper around the messages sent and received by the AI agent.
+:::tip
+More concrete sensible data could include credit card details and passwords which is not yet widely spread but as agents become smarter more use cases will include this type of sharing.
+:::
 
 ### Installation
 
@@ -31,6 +39,8 @@ bun install xmtp
 ### Usage
 
 This is how you can use the `xmtp` package to create a client and handle messages.
+
+> If you are in web use the `xmtp-e2ee` package instead.
 
 ```tsx
 import { XMTP } from "xmtp";
@@ -51,7 +61,7 @@ const onMessage = async (message, user) => {
 };
 ```
 
-### Gpt example
+### GPT example
 
 1. **`handleMessage`**: Triggered each time a new message is received from XMTP.
 2. **`client.send()`**: Used to send messages (e.g., AI prompts and responses) back to the XMTP network.
@@ -96,42 +106,6 @@ const onMessage = async (message, user) => {
 };
 ```
 
-## Frontend
-
-Same as the backend, you can use the `xmtp-e2ee` package to create a client that decrypts and encrypts messages locally.
-
-### Installation
-
-Install the `xmtp-e2ee` package compatible with your frontend framework.
-
-```bash [cmd]
-bun install xmtp-e2ee
-```
-
-### Usage
-
-```tsx
-import { XMTP, Message } from "xmtp-e2ee";
-
-const xmtp = new XMTP(onMessage, {
-  encryptionKey: /*wallet private key*/,
-});
-await xmtp.init();
-
-const onSend = async (text) => {
-  return message;
-};
-
-const onMessage = async (message, user) => {
-  console.log(`Decoded message: ${message} by ${user.address}`);
-  let response; // Your ai model response
-  await xmtp.send({
-    message: response,
-    originalMessage: message,
-  });
-};
-```
-
 ### React example
 
 This is how you can use the `xmtp-e2ee` package to create a client and handle messages.
@@ -149,9 +123,6 @@ function Chat({ user }: { user: UserInfo }) {
 
   useEffect(() => {
     const init = async () => {
-      const newWallet = Wallet.createRandom();
-      // ... set wallet and recipient info ...
-
       try {
         if (user?.address) {
           await initXmtp(newWallet);
@@ -173,9 +144,7 @@ function Chat({ user }: { user: UserInfo }) {
 
   const initXmtp = async (wallet: any) => {
     try {
-      const xmtpClient = new XMTP(onMessage, {
-        privateKey: wallet.privateKey,
-      });
+      const xmtpClient = new XMTP(onMessage);
       await xmtpClient.init();
       setXmtp(xmtpClient);
       setIsLoading(false);
