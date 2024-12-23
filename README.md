@@ -2,8 +2,6 @@
 
 A set of tools for AI developers to build on top of [XMTP](https://xmtp.org)
 
-## What's inside?
-
 ### MessageKit
 
 - [`message-kit`](/packages/message-kit): A kit for quickly building messaging apps
