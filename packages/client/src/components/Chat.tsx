@@ -37,8 +37,6 @@ function Chat({ user }: { user: UserInfo }) {
   const [processedMessageIds] = useState(new Set<string>());
 
   useEffect(() => {
-    console.log("useEffect triggered with user:", user);
-
     const init = async () => {
       try {
         setRecipientInfo(user);
@@ -64,7 +62,6 @@ function Chat({ user }: { user: UserInfo }) {
 
   const onMessage = async (message: Message | undefined) => {
     if (message) {
-      console.log("onMessage", message);
       setMessages((prevMessages) => [...prevMessages, message]);
     }
   };
@@ -88,7 +85,6 @@ function Chat({ user }: { user: UserInfo }) {
         receivers: [recipientInfo.address],
         originalMessage: undefined,
       })) as Message;
-      console.log("message", message);
 
       setMessages((prevMessages) => [...prevMessages, message]);
       setNewMessage("");
