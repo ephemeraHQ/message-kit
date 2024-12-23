@@ -208,9 +208,7 @@ export class XMTP {
 
     let message: any;
     if (!userMessage.typeId || userMessage.typeId === "text") {
-      message = {
-        content: userMessage.message,
-      };
+      message = userMessage.message;
       contentType = ContentTypeText;
     } else if (userMessage.typeId === "attachment") {
       message = (await this.getAttachment(userMessage.message)) as Attachment;
@@ -238,6 +236,7 @@ export class XMTP {
       contentType = ContentTypeAgentMessage;
     }
 
+    console.log(`message`, message);
     if (userMessage.originalMessage?.version == "v2") {
       let v2Conversation = await this.getV2ConversationByAddress(
         userMessage.originalMessage.client?.address,
@@ -377,6 +376,7 @@ async function streamMessages(
                 conversation,
                 client,
               );
+              console.log(`parsedMessage`, parsedMessage);
               await onMessage(parsedMessage as Message);
             } catch (e) {
               console.log(`error`, e);
@@ -406,6 +406,7 @@ async function streamMessages(
                 conversation,
                 client,
               );
+              console.log(`parsedMessage`, parsedMessage);
               await onMessage(parsedMessage as Message);
             } catch (e) {
               console.log(`error`, e);

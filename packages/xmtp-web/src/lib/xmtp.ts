@@ -70,9 +70,7 @@ export class XMTP {
 
     let message: any;
     if (!userMessage.typeId || userMessage.typeId === "text") {
-      message = {
-        content: userMessage.message,
-      };
+      message = userMessage.message;
       contentType = ContentTypeText;
     } else if (userMessage.typeId === "attachment") {
       message = (await this.getAttachment(userMessage.message)) as Attachment;

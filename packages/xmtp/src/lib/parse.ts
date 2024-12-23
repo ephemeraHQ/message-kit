@@ -21,7 +21,7 @@ export async function parseMessage(
   let content = message.content;
   if (typeId == "text") {
     content = {
-      text: content.content ?? content,
+      text: content,
     };
   } else if (typeId == "reply") {
     let previousMsg = await getLastMessageById(
