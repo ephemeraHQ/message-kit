@@ -4136,7 +4136,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "baselinks@workspace:packages/baselinks"
   dependencies:
-    "@farcaster/frame-sdk": "npm:0.0.10"
     "@types/next": "npm:^9.0.0"
     "@types/node": "npm:^20"
     "@types/react": "npm:^18"

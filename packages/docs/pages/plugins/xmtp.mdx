@@ -67,7 +67,7 @@ const openai = new OpenAI({
 });
 
 const xmtp = new XMTP(onMessage, {
-  encryptionKey: process.env.LOCAL_KEY,
+  encryptionKey: /*wallet private key*/,
 });
 await xmtp.init();
 
@@ -114,7 +114,7 @@ bun install xmtp-web
 import { XMTP, Message } from "xmtp-web";
 
 const xmtp = new XMTP(onMessage, {
-  encryptionKey: process.env.LOCAL_KEY,
+  encryptionKey: /*wallet private key*/,
 });
 await xmtp.init();
 

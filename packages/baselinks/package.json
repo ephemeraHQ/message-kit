@@ -9,7 +9,6 @@
     "start": "next start"
   },
   "dependencies": {
-    "@farcaster/frame-sdk": "0.0.10",
     "@types/next": "^9.0.0",
     "cheerio": "^1.0.0",
     "ethers": "^6.13.4",

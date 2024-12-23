@@ -87,11 +87,10 @@ import { V2Client, V3Client } from "xmtp";
 You can create new client instances using the `createClient` helper:
 
 ```tsx
-import { createClient } from "xmtp";
+import { XMTP } from "xmtp";
 
-const { v2client } = await createClient({
-  // Optional configuration
-});
+const xmtp = new XMTP();
+const { v2client, v3client } = await xmtp.init();
 ```
 
 ## Availability

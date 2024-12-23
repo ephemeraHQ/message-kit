@@ -148,7 +148,7 @@ export class MessageKit implements Context {
           const result = await executeSkill(
             text,
             context.agent,
-            context as unknown as Context,
+            context as Context,
           );
           return result ?? undefined;
         };
@@ -165,19 +165,19 @@ export class MessageKit implements Context {
             if (process.env.MSG_LOG === "true")
               console.log("CDP Wallet Service Started");
             context.walletService = new CdpWalletService(
-              context.message.sender.address,
+              context.message.sender.address.toLowerCase(),
             );
           } else if (process.env.CIRCLE_API_KEY) {
             if (process.env.MSG_LOG === "true")
               console.log("Circle Wallet Service Started");
             context.walletService = new CircleWalletService(
-              context.message.sender.address,
+              context.message.sender.address.toLowerCase(),
             );
           }
         }
         context.storage = new LocalStorage(".data/storage");
 
-        return context as unknown as Context;
+        return context;
       }
       return undefined;
     } catch (error) {
