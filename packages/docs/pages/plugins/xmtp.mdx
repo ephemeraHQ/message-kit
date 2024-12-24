@@ -1,4 +1,4 @@
-# End-to-end encrypted messaging
+# Secure agent messaging
 
 AI is transforming consumer tech, with messaging becoming the main channel for interacting with agent services. This shift will scale message traffic astronomically, analogous to the web’s rise in the 2000s. Just as Cloud-flare secured web traffic, messaging will need robust scalable end-to-end encrypted messages to protect sensitive information.
 
@@ -108,7 +108,11 @@ const onMessage = async (message, user) => {
 
 ### React example
 
-This is how you can use the `xmtp-e2ee` package to create a client and handle messages.
+xmtp-e2ee is a light wrapper around the xmtp package to make it easier to use in react and web. Doesnt support groups yet.
+
+```bash [cmd]
+bun install xmtp-e2ee
+```
 
 ```tsx
 import { XMTP, Message } from "xmtp-e2ee";
