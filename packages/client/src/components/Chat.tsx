@@ -140,17 +140,19 @@ function Chat({ user }: { user: UserInfo }) {
       if (urlRegex.test(part)) {
         try {
           const urlType = getUrlType(part);
-          const isMessageKitUrl = part.includes("message-kit.org");
-
+          const isMessageKitUrl =
+            part.includes("message-kit.org") ||
+            part.includes("baselinks.vercel.app");
+          const isMobile = window.innerWidth < 768;
           return (
             <div key={index} className={styles.urlContainer}>
-              {isMessageKitUrl && <UrlPreview url={part} urlType={urlType} />}
+              {isMessageKitUrl && <UrlPreview url={part} />}
               <div className={styles.buttonContainer}>
                 {urlType === "payment" && (
                   <button
                     onClick={() => {
                       const ethUrl = ethereumURL(part);
-                      openUrl(ethUrl);
+                      isMobile ? openUrl(ethUrl) : alert("Not on mobile");
                     }}
                     className={styles.urlButton}>
                     Pay in USDC

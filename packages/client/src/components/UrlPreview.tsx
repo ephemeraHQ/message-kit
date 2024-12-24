@@ -8,13 +8,7 @@ interface OgData {
   url?: string;
 }
 
-export const UrlPreview = ({
-  url,
-  urlType,
-}: {
-  url: string;
-  urlType?: string;
-}) => {
+export const UrlPreview = ({ url }: { url: string; urlType?: string }) => {
   const [ogData, setOgData] = useState<OgData | null>(null);
   const [loading, setLoading] = useState(true);
 
