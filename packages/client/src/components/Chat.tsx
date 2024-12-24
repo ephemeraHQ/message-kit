@@ -244,6 +244,9 @@ function Chat({ user }: { user: UserInfo }) {
             Send
           </button>
         </div>
+        <div className={styles.encryptionInfo}>
+          End-to-end encrypted powered by XMTP
+        </div>
       </form>
     </div>
   );

@@ -231,3 +231,11 @@
   color: var(--accent);
   font-size: 0.9rem;
 }
+.encryptionInfo {
+  text-align: center !important;
+  width: 100%;
+  font-size: 0.7rem;
+  padding: 0rem;
+  padding-top: 0.4rem;
+  display: block !important;
+}
