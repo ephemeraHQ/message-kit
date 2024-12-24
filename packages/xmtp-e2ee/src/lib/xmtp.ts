@@ -237,7 +237,8 @@ async function streamMessages(
   while (true) {
     try {
       const stream = await client.conversations.streamAllMessages();
-      console.log(`Stream started`);
+      console.log(`XMTP: [v2] Stream started`);
+
       for await (const message of stream) {
         if (message) {
           try {

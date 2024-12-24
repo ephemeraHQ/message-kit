@@ -238,7 +238,6 @@ export class XMTP {
       contentType = ContentTypeAgentMessage;
     }
 
-    console.log(`message`, message);
     if (userMessage.originalMessage?.version == "v2") {
       let v2Conversation = await this.getV2ConversationByAddress(
         userMessage.originalMessage.client?.address,
@@ -359,7 +358,7 @@ async function streamMessages(
         await v3client.conversations.sync();
         await v3client.conversations.list();
         const stream = await v3client.conversations.streamAllMessages();
-        console.warn(`XMTP: [v3] Stream started`);
+        console.log(`XMTP: [v3] Stream started`);
         for await (const message of stream) {
           let conversation = await xmtp.getConversationFromMessage(message);
           if (message && conversation) {
@@ -378,7 +377,6 @@ async function streamMessages(
                 conversation,
                 client,
               );
-              console.log(`parsedMessage`, parsedMessage);
               await onMessage(parsedMessage as Message);
             } catch (e) {
               console.log(`error`, e);
@@ -390,7 +388,7 @@ async function streamMessages(
         typeof v2client.conversations.streamAllMessages === "function"
       ) {
         const stream = await v2client.conversations.streamAllMessages();
-        console.warn(`XMTP: [v2] Stream started`);
+        console.log(`XMTP: [v2] Stream started`);
         for await (const message of stream) {
           let conversation = await xmtp.getConversationFromMessage(message);
           if (message && conversation) {
@@ -408,7 +406,6 @@ async function streamMessages(
                 conversation,
                 client,
               );
-              console.log(`parsedMessage`, parsedMessage);
               await onMessage(parsedMessage as Message);
             } catch (e) {
               console.log(`error`, e);
