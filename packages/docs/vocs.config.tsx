@@ -81,27 +81,6 @@ export default defineConfig({
       link: "/quickstart",
     },
     {
-      text: "UX",
-      items: [
-        {
-          text: "Concierge",
-          link: "/skills/concierge",
-        },
-        {
-          text: "Frames",
-          link: "/ux/frames",
-        },
-        {
-          text: "Wallet service",
-          link: "/ux/wallet-service",
-        },
-        {
-          text: "Groups",
-          link: "/ux/groups",
-        },
-      ],
-    },
-    {
       text: "Community",
       items: [
         {
