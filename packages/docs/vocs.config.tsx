@@ -81,25 +81,8 @@ export default defineConfig({
       link: "/quickstart",
     },
     {
-      text: "UX",
-      items: [
-        {
-          text: "Concierge",
-          link: "/skills/concierge",
-        },
-        {
-          text: "Frames",
-          link: "/ux/frames",
-        },
-        {
-          text: "Wallet service",
-          link: "/ux/wallet-service",
-        },
-        {
-          text: "Groups",
-          link: "/ux/groups",
-        },
-      ],
+      text: "paymentagent.eth",
+      link: "/templates/paymentagent",
     },
     {
       text: "Community",
@@ -140,6 +123,10 @@ export default defineConfig({
         {
           text: "XMTP",
           link: "/concepts/xmtp",
+        },
+        {
+          text: "Groups",
+          link: "/concepts/groups",
         },
         {
           text: "Usernames",
