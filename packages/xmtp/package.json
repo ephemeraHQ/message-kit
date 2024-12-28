@@ -22,7 +22,8 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "publish": "npm publish",
     "test": "yarn build && vitest",
-    "test:client": "vitest run tests/client"
+    "test:client": "vitest run tests/client",
+    "test:e2e": "vitest run tests/encryption"
   },
   "dependencies": {
     "@changesets/changelog-git": "^0.2.0",

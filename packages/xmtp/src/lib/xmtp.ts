@@ -248,7 +248,7 @@ export class XMTP {
       }
       for (let receiver of userMessage.receivers) {
         v2Conversation = await this.getV2ConversationByAddress(receiver);
-        await v2Conversation?.send(message, {
+        return v2Conversation?.send(message, {
           contentType: contentType,
         });
       }
@@ -269,7 +269,7 @@ export class XMTP {
                   conv.dmPeerInboxId.toLowerCase() === receiver.toLowerCase(),
               ) as V3Conversation,
           );
-        await v3Conversation?.send(message, contentType);
+        return v3Conversation?.send(message, contentType);
       }
     }
   }
@@ -308,6 +308,26 @@ export class XMTP {
 
   getConversationKey(message: Message) {
     return `${message?.conversation?.id}`;
+  }
+  async encryptMessage(message: Message): Promise<Message | undefined> {
+    return message;
+  }
+  async decryptMessage(messageId: string): Promise<Message | undefined> {
+    try {
+      // Fetch the message by ID
+      const message = await this.getMessageById(messageId);
+      if (!message) {
+        console.error(`Message with ID ${messageId} not found.`);
+        return undefined;
+      }
+      return parseMessage(message, undefined, this.client as V3Client);
+    } catch (error) {
+      console.error(
+        `Error fetching or decrypting message with ID ${messageId}:`,
+        error,
+      );
+      return undefined;
+    }
   }
 
   getUserConversationKey(message: Message) {
