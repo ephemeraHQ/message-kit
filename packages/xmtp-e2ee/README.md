@@ -1,6 +1,6 @@
 # XMTP
 
-> See [XMTP AI](https://message-kit.org/plugins/xmtp) plugin
+> See [xmtp e2ee](https://docs-xmtp-org-git-agents-ephemerahq.vercel.app/agents/plugins) plugins
 
 ### Installation
 

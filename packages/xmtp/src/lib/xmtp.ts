@@ -238,7 +238,6 @@ export class XMTP {
       contentType = ContentTypeAgentMessage;
     }
 
-    console.log(`message`, message);
     if (userMessage.originalMessage?.version == "v2") {
       let v2Conversation = await this.getV2ConversationByAddress(
         userMessage.originalMessage.client?.address,
@@ -249,7 +248,7 @@ export class XMTP {
       }
       for (let receiver of userMessage.receivers) {
         v2Conversation = await this.getV2ConversationByAddress(receiver);
-        await v2Conversation?.send(message, {
+        return v2Conversation?.send(message, {
           contentType: contentType,
         });
       }
@@ -270,7 +269,7 @@ export class XMTP {
                   conv.dmPeerInboxId.toLowerCase() === receiver.toLowerCase(),
               ) as V3Conversation,
           );
-        await v3Conversation?.send(message, contentType);
+        return v3Conversation?.send(message, contentType);
       }
     }
   }
@@ -309,6 +308,26 @@ export class XMTP {
 
   getConversationKey(message: Message) {
     return `${message?.conversation?.id}`;
+  }
+  async encryptMessage(message: Message): Promise<Message | undefined> {
+    return message;
+  }
+  async decryptMessage(messageId: string): Promise<Message | undefined> {
+    try {
+      // Fetch the message by ID
+      const message = await this.getMessageById(messageId);
+      if (!message) {
+        console.error(`Message with ID ${messageId} not found.`);
+        return undefined;
+      }
+      return parseMessage(message, undefined, this.client as V3Client);
+    } catch (error) {
+      console.error(
+        `Error fetching or decrypting message with ID ${messageId}:`,
+        error,
+      );
+      return undefined;
+    }
   }
 
   getUserConversationKey(message: Message) {
@@ -359,7 +378,7 @@ async function streamMessages(
         await v3client.conversations.sync();
         await v3client.conversations.list();
         const stream = await v3client.conversations.streamAllMessages();
-        console.warn(`XMTP: [v3] Stream started`);
+        console.log(`XMTP: [v3] Stream started`);
         for await (const message of stream) {
           let conversation = await xmtp.getConversationFromMessage(message);
           if (message && conversation) {
@@ -378,7 +397,6 @@ async function streamMessages(
                 conversation,
                 client,
               );
-              console.log(`parsedMessage`, parsedMessage);
               await onMessage(parsedMessage as Message);
             } catch (e) {
               console.log(`error`, e);
@@ -390,7 +408,7 @@ async function streamMessages(
         typeof v2client.conversations.streamAllMessages === "function"
       ) {
         const stream = await v2client.conversations.streamAllMessages();
-        console.warn(`XMTP: [v2] Stream started`);
+        console.log(`XMTP: [v2] Stream started`);
         for await (const message of stream) {
           let conversation = await xmtp.getConversationFromMessage(message);
           if (message && conversation) {
@@ -408,7 +426,6 @@ async function streamMessages(
                 conversation,
                 client,
               );
-              console.log(`parsedMessage`, parsedMessage);
               await onMessage(parsedMessage as Message);
             } catch (e) {
               console.log(`error`, e);

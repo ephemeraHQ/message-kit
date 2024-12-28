@@ -169,16 +169,13 @@
 }
 
 .urlContainer {
-  margin: 8px 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  border-radius: 8px 8px 0 0;
   max-width: 300px;
-  background: #e0e0e0;
 }
 
 .urlPreview {
-  border-radius: 8px 8px 0 0;
   overflow: hidden;
   background: #ffffff;
   border: 1px solid #b0b0b0;
@@ -230,4 +227,12 @@
   padding: 1rem;
   color: var(--accent);
   font-size: 0.9rem;
+}
+.encryptionInfo {
+  text-align: center !important;
+  width: 100%;
+  font-size: 0.7rem;
+  padding: 0rem;
+  padding-top: 0.4rem;
+  display: block !important;
 }

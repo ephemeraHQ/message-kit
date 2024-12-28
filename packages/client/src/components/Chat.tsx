@@ -37,8 +37,6 @@ function Chat({ user }: { user: UserInfo }) {
   const [processedMessageIds] = useState(new Set<string>());
 
   useEffect(() => {
-    console.log("useEffect triggered with user:", user);
-
     const init = async () => {
       try {
         setRecipientInfo(user);
@@ -64,7 +62,6 @@ function Chat({ user }: { user: UserInfo }) {
 
   const onMessage = async (message: Message | undefined) => {
     if (message) {
-      console.log("onMessage", message);
       setMessages((prevMessages) => [...prevMessages, message]);
     }
   };
@@ -88,7 +85,6 @@ function Chat({ user }: { user: UserInfo }) {
         receivers: [recipientInfo.address],
         originalMessage: undefined,
       })) as Message;
-      console.log("message", message);
 
       setMessages((prevMessages) => [...prevMessages, message]);
       setNewMessage("");
@@ -144,17 +140,19 @@ function Chat({ user }: { user: UserInfo }) {
       if (urlRegex.test(part)) {
         try {
           const urlType = getUrlType(part);
-          const isMessageKitUrl = part.includes("message-kit.org");
-
+          const isMessageKitUrl =
+            part.includes("message-kit.org") ||
+            part.includes("baselinks.vercel.app");
+          const isMobile = window.innerWidth < 768;
           return (
             <div key={index} className={styles.urlContainer}>
-              {isMessageKitUrl && <UrlPreview url={part} urlType={urlType} />}
+              {isMessageKitUrl && <UrlPreview url={part} />}
               <div className={styles.buttonContainer}>
                 {urlType === "payment" && (
                   <button
                     onClick={() => {
                       const ethUrl = ethereumURL(part);
-                      openUrl(ethUrl);
+                      isMobile ? openUrl(ethUrl) : alert("Not on mobile");
                     }}
                     className={styles.urlButton}>
                     Pay in USDC
@@ -247,6 +245,9 @@ function Chat({ user }: { user: UserInfo }) {
             disabled={isLoading}>
             Send
           </button>
+        </div>
+        <div className={styles.encryptionInfo}>
+          End-to-end encrypted powered by XMTP
         </div>
       </form>
     </div>

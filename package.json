@@ -32,6 +32,7 @@
     "templates": "node scripts/devTemplates.js",
     "test": "FORCE_COLOR=1 turbo run test --force --concurrency=1",
     "test:client": "cd packages/xmtp/tests && yarn test:client",
+    "test:e2e": "cd packages/xmtp/tests && yarn test:e2e",
     "test:flow": "cd packages/message-kit/tests && yarn test:flow",
     "test:intent": "cd packages/message-kit/tests && yarn test:intent",
     "test:links": "cd packages/message-kit/tests && yarn test:links",
