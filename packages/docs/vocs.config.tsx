@@ -81,6 +81,10 @@ export default defineConfig({
       link: "/quickstart",
     },
     {
+      text: "paymentagent.eth",
+      link: "/templates/paymentagent",
+    },
+    {
       text: "Community",
       items: [
         {
@@ -119,6 +123,10 @@ export default defineConfig({
         {
           text: "XMTP",
           link: "/concepts/xmtp",
+        },
+        {
+          text: "Groups",
+          link: "/concepts/groups",
         },
         {
           text: "Usernames",
