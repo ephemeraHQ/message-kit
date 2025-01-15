@@ -110,39 +110,6 @@ export default defineConfig({
       ],
     },
     {
-      text: "Build agents",
-      items: [
-        {
-          text: "Get started",
-          link: "/agents/get-started",
-        },
-        {
-          text: "Agent SDK",
-          link: "/agents/agent-sdk",
-        },
-        {
-          text: "Groups",
-          link: "/agents/groups",
-        },
-        {
-          text: "Identity",
-          link: "/agents/identity",
-        },
-        {
-          text: "Gated group",
-          link: "/agents/gated-group",
-        },
-        {
-          text: "Build with MessageKit",
-          link: "https://message-kit.org/",
-        },
-        {
-          text: "Guidelines",
-          link: "/agents/guidelines",
-        },
-      ],
-    },
-    {
       text: "Framework",
       items: [
         {

@@ -117,7 +117,7 @@ export async function handleTossCreation(context: Context) {
       description: params.description,
       options: params.options,
       amount: params.amount,
-      group_id: group.id,
+      group_id: group?.id ?? "",
       admin_name: (await getUserInfo(sender.address))?.preferredName ?? "",
       admin_address: sender.address,
       creator_address: sender.address,

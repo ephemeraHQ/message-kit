@@ -77,7 +77,7 @@ export async function checkTossCorrect(
       typeId: "reply",
     });
     return undefined;
-  } else if (tossData.group_id.toLowerCase() !== group.id.toLowerCase()) {
+  } else if (tossData.group_id.toLowerCase() !== group?.id.toLowerCase()) {
     await context.send({
       message: "This toss is not in this group.",
       originalMessage: context.message,

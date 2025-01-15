@@ -91,13 +91,6 @@
     "author": "humanagent"
   },
   {
-    "href": "/plugins/xmtp-groups",
-    "title": "Xmtp Groups",
-    "description": "Use Xmtp Groups to manage groups.",
-    "icon": "🧑‍🧑‍🧒",
-    "author": "ephemeraHQ"
-  },
-  {
     "href": "/plugins/gpt",
     "title": "GPT",
     "description": "Use GPT to generate text responses.",
