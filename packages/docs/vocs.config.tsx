@@ -129,16 +129,16 @@ export default defineConfig({
           link: "/agents/identity",
         },
         {
-          text: "Guidelines",
-          link: "/agents/guidelines",
-        },
-        {
           text: "Gated group",
           link: "/agents/gated-group",
         },
         {
           text: "Build with MessageKit",
           link: "https://message-kit.org/",
+        },
+        {
+          text: "Guidelines",
+          link: "/agents/guidelines",
         },
       ],
     },

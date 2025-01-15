@@ -18,53 +18,6 @@ To create a group from your agent, you can use the following code:
 const group = await client?.conversations.newGroup([address1, address2]);
 ```
 
-:::details[Reference implementation]
-
-These are some example methods for creating and managing groups for ensuring reliability and security.
-
-### Create a group
-
-```tsx
-export async function createGroup(
-  client: Client | undefined,
-  senderAddress: string | undefined,
-  clientAddress: string | undefined,
-) {
-  try {
-    let senderInboxId = "";
-    await client?.conversations.sync();
-    const group = await client?.conversations.newGroup([
-      senderAddress ?? "",
-      clientAddress ?? "",
-    ]);
-    console.log("Group created", group?.id);
-    const members = await group?.members();
-    const senderMember = members?.find((member) =>
-      member.accountAddresses.includes(senderAddress?.toLowerCase() ?? ""),
-    );
-    if (senderMember) {
-      senderInboxId = senderMember.inboxId;
-      console.log("Sender's inboxId:", senderInboxId);
-    } else {
-      console.log("Sender not found in members list");
-    }
-    await group?.addSuperAdmin(senderInboxId);
-    console.log(
-      "Sender is superAdmin",
-      await group?.isSuperAdmin(senderInboxId),
-    );
-    await group?.send(`Welcome to the new group!`);
-    await group?.send(`You are now the admin of this group as well as the bot`);
-    return group;
-  } catch (error) {
-    console.log("Error creating group", error);
-    return undefined;
-  }
-}
-```
-
-:::
-
 ### Manage members
 
 As an admin you can add members to the group.
