@@ -105,13 +105,6 @@
     "author": "ephemeraHQ"
   },
   {
-    "href": "/plugins/resolver",
-    "title": "Resolver",
-    "description": "Use Resolver to resolve messages.",
-    "icon": "🔍",
-    "author": "ephemeraHQ"
-  },
-  {
     "href": "/plugins/cdp",
     "title": "CDP Wallet Service",
     "description": "Use CDP to create agent wallets.",

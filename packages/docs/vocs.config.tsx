@@ -128,10 +128,6 @@ export default defineConfig({
           text: "Groups",
           link: "/concepts/groups",
         },
-        {
-          text: "Usernames",
-          link: "/plugins/resolver",
-        },
       ],
     },
     {

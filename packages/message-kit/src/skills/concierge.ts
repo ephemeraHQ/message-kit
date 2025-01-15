@@ -1,7 +1,7 @@
 import { Transfer } from "@coinbase/coinbase-sdk";
 import { Skill } from "../helpers/types";
 import { Context } from "../lib/core";
-import { getUserInfo } from "../plugins/resolver";
+import { getUserInfo } from "xmtp";
 import { isAddress } from "viem";
 import { baselinks } from "../plugins/baselinks";
 

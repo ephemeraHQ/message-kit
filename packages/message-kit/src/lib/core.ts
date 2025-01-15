@@ -1,6 +1,6 @@
 import { Agent, SkillResponse } from "../helpers/types.js";
 import { agentReply, chatMemory, defaultSystemPrompt } from "../plugins/gpt.js";
-import { getUserInfo, userInfoCache } from "../plugins/resolver.js";
+import { getUserInfo, userInfoCache } from "xmtp";
 import { logInitMessage, logMessage } from "../helpers/utils.js";
 import { Message, XMTP, Conversation, userMessage } from "xmtp";
 
@@ -15,7 +15,6 @@ import {
 import { logUserInteraction } from "../helpers/utils.js";
 import type { AgentConfig } from "../helpers/types";
 import { LocalStorage } from "../plugins/storage.js";
-import { astar } from "viem/chains";
 
 export function createAgent(
   agent: Agent,

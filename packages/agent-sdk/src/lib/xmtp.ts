@@ -32,13 +32,17 @@ import {
   AgentMessageCodec,
   ContentTypeAgentMessage,
 } from "../content-types/agent-message.js";
-import { createWalletClient, http, toBytes, toHex } from "viem";
+import { createWalletClient, http, isAddress, toBytes, toHex } from "viem";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { mainnet } from "viem/chains";
 import { getRandomValues } from "crypto";
 import path from "path";
 import { xmtpConfig, Message, userMessage, UserReturnType } from "../types.js";
 import { readFile } from "fs/promises";
+import dns from "dns";
+import { getUserInfo } from "../index.js";
+import { JSDOM } from "jsdom";
+import fetch from "node-fetch";
 
 export class XMTP {
   client: Client | undefined;
@@ -219,11 +223,28 @@ export class XMTP {
       userMessage.receivers = [userMessage.originalMessage?.sender.inboxId];
     }
     for (let receiver of userMessage.receivers) {
+      let resolvedAddress = receiver;
+
+      // Check if receiver is a website
+      if (receiver.startsWith("http://") || receiver.startsWith("https://")) {
+        resolvedAddress =
+          (await this.getEvmAddressFromDns(receiver)) ||
+          (await getEvmAddressFromHeaderTag(receiver)) ||
+          receiver;
+      }
+      // Check if receiver is an ENS domain
+      else if (receiver.endsWith(".eth")) {
+        resolvedAddress = (await getUserInfo(receiver))?.address || receiver;
+      } else if (isAddress(receiver)) {
+        resolvedAddress =
+          (await this.client?.getInboxIdByAddress(receiver)) || receiver;
+      }
+
       let conversation = await this.client?.conversations
         .list()
         .find(
           (conv: Conversation) =>
-            conv.dmPeerInboxId?.toLowerCase() === receiver.toLowerCase(),
+            conv.dmPeerInboxId?.toLowerCase() === resolvedAddress.toLowerCase(),
         );
       return conversation?.send(message, contentType);
     }
@@ -279,6 +300,55 @@ export class XMTP {
     const isOnXMTP = await this.client?.canMessage([address]);
     return isOnXMTP ? true : false;
   }
+
+  async getEvmAddressFromDns(domain: string): Promise<string | undefined> {
+    return new Promise((resolve, reject) => {
+      dns.resolveTxt(domain, (err, records) => {
+        if (err) {
+          console.error("Failed to resolve TXT records:", err);
+          return reject(err);
+        }
+
+        for (const recordArray of records) {
+          const recordText = recordArray.join("");
+          console.log(`Found TXT record: ${recordText}`);
+
+          const match = recordText.match(/^xmtp=(0x[a-fA-F0-9]+)/);
+          if (match && match[1]) {
+            console.log(`Extracted EVM address: ${match[1]}`);
+            return resolve(match[1]);
+          }
+        }
+        resolve(undefined);
+      });
+    });
+  }
+}
+async function getEvmAddressFromHeaderTag(
+  website: string,
+): Promise<string | undefined> {
+  try {
+    const response = await fetch(website);
+    const html = await response.text();
+    const dom = new JSDOM(html);
+    const metaTags = dom.window.document.getElementsByTagName("meta");
+
+    for (let i = 0; i < metaTags.length; i++) {
+      const metaTag = metaTags[i];
+      if (metaTag.getAttribute("name") === "xmtp") {
+        const content = metaTag.getAttribute("content");
+        if (content) {
+          const match = content.match(/^0x[a-fA-F0-9]+$/);
+          if (match) {
+            return match[0];
+          }
+        }
+      }
+    }
+  } catch (error) {
+    console.error("Failed to fetch or parse the website:", error);
+  }
+  return undefined;
 }
 
 async function streamMessages(
