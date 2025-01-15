@@ -27,9 +27,10 @@ export async function checkTossCorrect(
       content: { previousMsg },
     },
     group,
+    isDM,
   } = context;
 
-  if (!group) {
+  if (isDM) {
     await context.send({
       message: "This command can only be used in a group.",
       originalMessage: context.message,

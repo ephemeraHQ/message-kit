@@ -14,8 +14,7 @@ import { Context } from "@xmtp/message-kit";
 onMessage(async (context: Context) => {
   const {
     message, // Current message details
-    client, // V3 XMTP client
-    v2client, // V2 XMTP client
+    client, //  XMTP client
     conversation, // Current conversation
     group, // Group details if in a group chat
   } = context;
@@ -34,11 +33,10 @@ Contains information about the current message:
 - `sender`: Address of message sender
 - `sent`: Timestamp when message was sent
 - `typeId`: Type of message
-- `client`: V3 XMTP client instance
-- `v2client`: V2 XMTP client instance
+- `client`: XMTP client instance
 - `conversation`: Current conversation object with messaging methods
 
-#### Group (V3 Only)
+#### Groups
 
 Group chat information including:
 
@@ -81,7 +79,7 @@ const { sender } = context.message;
 MessageKit provides wrapped versions of XMTP clients for easier integration:
 
 ```tsx
-import { V2Client, V3Client } from "xmtp";
+import { Client } from "xmtp";
 ```
 
 You can create new client instances using the `createClient` helper:
@@ -90,7 +88,7 @@ You can create new client instances using the `createClient` helper:
 import { XMTP } from "xmtp";
 
 const xmtp = new XMTP();
-const { v2client, v3client } = await xmtp.init();
+await xmtp.init();
 ```
 
 ## Availability
@@ -98,10 +96,7 @@ const { v2client, v3client } = await xmtp.init();
 To check if a user has XMTP enabled:
 
 ```typescript
-const { v2, v3 } = await context.xmtp.isOnXMTP(address);
+const isOnXMTP = await context.xmtp.isOnXMTP(address);
 ```
 
-Returns:
-
-- `v2`: `true` if user has XMTP V2 enabled
-- `v3`: `true` if user has XMTP V3 enabled
+Returns `true` if user has XMTP enabled

@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { describe, test, expect } from "vitest";
-import { parseSkill, findSkill } from "../src/lib/skills";
+import { parseSkill, findSkill } from "../src/helpers/skills";
 import { agent } from "../../../templates/ens/src/index";
 import { fail } from "assert";
 import { UserInfo } from "../src/plugins/resolver";

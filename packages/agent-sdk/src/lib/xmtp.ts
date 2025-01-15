@@ -1,17 +1,12 @@
 import dotenv from "dotenv";
 dotenv.config();
 import {
-  DecodedMessage as V3DecodedMessage,
-  Client as V3Client,
+  DecodedMessage,
+  Client,
   ClientOptions,
   XmtpEnv,
-  Conversation as V3Conversation,
+  Conversation,
 } from "@xmtp/node-sdk";
-import {
-  DecodedMessage as V2DecodedMessage,
-  Client as V2Client,
-  Conversation as V2Conversation,
-} from "@xmtp/xmtp-js";
 import { ContentTypeReply, Reply, ReplyCodec } from "@xmtp/content-type-reply";
 import {
   ContentTypeReaction,
@@ -29,6 +24,7 @@ import {
 import * as fs from "fs";
 import {
   ContentTypeReadReceipt,
+  ReadReceipt,
   ReadReceiptCodec,
 } from "@xmtp/content-type-read-receipt";
 import {
@@ -39,15 +35,13 @@ import {
 import { createWalletClient, http, toBytes, toHex } from "viem";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { mainnet } from "viem/chains";
-import { GrpcApiClient } from "@xmtp/grpc-api-client";
 import { getRandomValues } from "crypto";
 import path from "path";
 import { xmtpConfig, Message, userMessage, UserReturnType } from "../types.js";
 import { readFile } from "fs/promises";
 
 export class XMTP {
-  v2client: V2Client | undefined;
-  client: V3Client | undefined;
+  client: Client | undefined;
   address: string | undefined;
   inboxId: string | undefined;
   onMessage: (message: Message | undefined) => Promise<void> | undefined;
@@ -94,34 +88,18 @@ export class XMTP {
 
     // Merge the default configuration with the provided config. Repeated fields in clientConfig will override the default values
     const finalConfig = { ...defaultConfig, ...this.config };
-    //v2
-    const account2 = privateKeyToAccount(key as `0x${string}`);
-    const wallet2 = createWalletClient({
-      account: account2,
-      chain: mainnet,
-      transport: http(),
-    });
-    const v2client = await V2Client.create(wallet2, {
-      ...finalConfig,
-      apiUrl: undefined,
-      skipContactPublishing: false,
-      apiClientFactory: GrpcApiClient.fromOptions as any,
-    });
-    const client = await V3Client.create(
+
+    const client = await Client.create(
       createSigner(user),
       testKey,
       finalConfig,
     );
 
     this.client = client;
-    this.v2client = v2client;
 
-    this.address = v2client.address;
-    this.inboxId = client.inboxId ?? v2client.address;
-    Promise.all([
-      streamMessages(this.onMessage, client, this),
-      streamMessages(this.onMessage, v2client, this),
-    ]);
+    this.inboxId = client.inboxId;
+    this.address = client.accountAddress;
+    Promise.all([streamMessages(this.onMessage, client, this)]);
     return this;
   }
 
@@ -237,77 +215,34 @@ export class XMTP {
       ) as AgentMessage;
       contentType = ContentTypeAgentMessage;
     }
-
-    if (userMessage.originalMessage?.version == "v2") {
-      let v2Conversation = await this.getV2ConversationByAddress(
-        userMessage.originalMessage.client?.address,
-      );
-
-      if (!userMessage.receivers || userMessage.receivers.length == 0) {
-        userMessage.receivers = [userMessage.originalMessage.sender.address];
-      }
-      for (let receiver of userMessage.receivers) {
-        v2Conversation = await this.getV2ConversationByAddress(receiver);
-        return v2Conversation?.send(message, {
-          contentType: contentType,
-        });
-      }
-    } else if (userMessage.originalMessage?.version == "v3") {
-      let v3Conversation = await this.client?.conversations.getConversationById(
-        userMessage.originalMessage?.conversation?.id,
-      );
-      if (!userMessage.receivers || userMessage.receivers.length == 0) {
-        userMessage.receivers = [userMessage.originalMessage.sender.address];
-      }
-      for (let receiver of userMessage.receivers) {
-        v3Conversation = await this.client?.conversations
-          .list()
-          .then(
-            (conversations) =>
-              conversations.find(
-                (conv: V3Conversation) =>
-                  conv.dmPeerInboxId.toLowerCase() === receiver.toLowerCase(),
-              ) as V3Conversation,
-          );
-        return v3Conversation?.send(message, contentType);
-      }
+    if (!userMessage.receivers || userMessage.receivers.length == 0) {
+      userMessage.receivers = [userMessage.originalMessage?.sender.inboxId];
+    }
+    for (let receiver of userMessage.receivers) {
+      let conversation = await this.client?.conversations
+        .list()
+        .find(
+          (conv: Conversation) =>
+            conv.dmPeerInboxId?.toLowerCase() === receiver.toLowerCase(),
+        );
+      return conversation?.send(message, contentType);
     }
   }
 
   async getConversationFromMessage(
-    message: V3DecodedMessage | V2DecodedMessage | undefined,
-  ): Promise<V3Conversation | V2Conversation | undefined> {
-    return !this.isV2Message(message)
-      ? ((await this.client?.conversations.getConversationById(
-          (message as V3DecodedMessage)?.conversationId as string,
-        )) as V3Conversation)
-      : ((message as V2DecodedMessage)?.conversation as V2Conversation);
+    message: DecodedMessage | null | undefined,
+  ): Promise<Conversation | null | undefined> {
+    return await this.client?.conversations.getConversationById(
+      (message as DecodedMessage)?.conversationId as string,
+    );
   }
 
-  isV2Message(message: V3DecodedMessage | V2DecodedMessage | undefined) {
-    return (message as V2DecodedMessage)?.conversation !== undefined;
-  }
-
-  isV3Conversation(
-    conversation: V3Conversation | V2Conversation | undefined,
-  ): conversation is V3Conversation {
-    return (conversation as V3Conversation)?.id !== undefined;
-  }
-
-  async getV2ConversationByAddress(address: string) {
-    try {
-      const conversations = await this.v2client?.conversations.list();
-      return conversations?.find(
-        (conv) => conv.peerAddress.toLowerCase() === address.toLowerCase(),
-      );
-    } catch (error) {
-      console.error("Error getting V2 conversation by sender:", error);
-      return undefined;
-    }
+  isConversation(conversation: Conversation): conversation is Conversation {
+    return conversation?.id !== undefined;
   }
 
   getConversationKey(message: Message) {
-    return `${message?.conversation?.id}`;
+    return `${message?.group?.id}`;
   }
   async encryptMessage(message: Message): Promise<Message | undefined> {
     return message;
@@ -320,7 +255,7 @@ export class XMTP {
         console.error(`Message with ID ${messageId} not found.`);
         return undefined;
       }
-      return parseMessage(message, undefined, this.client as V3Client);
+      return parseMessage(message, undefined, this.client as Client);
     } catch (error) {
       console.error(
         `Error fetching or decrypting message with ID ${messageId}:`,
@@ -331,11 +266,7 @@ export class XMTP {
   }
 
   getUserConversationKey(message: Message) {
-    const awaitingSender =
-      message?.version == "v2"
-        ? message?.sender?.address
-        : message?.sender?.inboxId;
-    return `${message?.conversation?.id}:${awaitingSender}`;
+    return `${message?.group?.id}`;
   }
 
   async getMessageById(reference: string) {
@@ -344,50 +275,32 @@ export class XMTP {
     )(reference);
   }
 
-  async isOnXMTP(address: string): Promise<{ v2: boolean; v3: boolean }> {
-    try {
-      const [v2, v3] = await Promise.all([
-        this.v2client ? this.v2client.canMessage(address) : false,
-        this.client ? this.client.canMessage([address]) : false,
-      ]);
-      return {
-        v2: v2 || false,
-        v3: v3 ? (v3 as Map<string, boolean>).get(address) || false : false,
-      };
-    } catch (error) {
-      console.error("Error checking XMTP availability:", error);
-      return { v2: false, v3: false }; // Return default values on error
-    }
+  async isOnXMTP(address: string): Promise<boolean> {
+    const isOnXMTP = await this.client?.canMessage([address]);
+    return isOnXMTP ? true : false;
   }
 }
 
 async function streamMessages(
   onMessage: (message: Message | undefined) => Promise<void> | undefined,
-  client: V3Client | V2Client,
+  client: Client | undefined,
   xmtp: XMTP,
 ) {
-  let v3client = client instanceof V3Client ? client : undefined;
-  let v2client = client instanceof V2Client ? client : undefined;
-
   while (true) {
     try {
-      if (
-        v3client &&
-        typeof v3client.conversations.streamAllMessages === "function"
-      ) {
-        await v3client.conversations.sync();
-        await v3client.conversations.list();
-        const stream = await v3client.conversations.streamAllMessages();
-        console.log(`XMTP: [v3] Stream started`);
+      await client?.conversations.sync();
+      await client?.conversations.list();
+      const stream = await client?.conversations.streamAllMessages();
+      if (stream) {
         for await (const message of stream) {
           let conversation = await xmtp.getConversationFromMessage(message);
           if (message && conversation) {
             try {
-              const { senderInboxId, kind } = message as V3DecodedMessage;
+              const { senderInboxId, kind } = message as DecodedMessage;
               if (
                 // Filter out membership_change messages
                 senderInboxId?.toLowerCase() ===
-                  v3client.inboxId.toLowerCase() &&
+                  client?.inboxId.toLowerCase() &&
                 kind !== "membership_change"
               ) {
                 continue;
@@ -395,36 +308,7 @@ async function streamMessages(
               const parsedMessage = await parseMessage(
                 message,
                 conversation,
-                client,
-              );
-              await onMessage(parsedMessage as Message);
-            } catch (e) {
-              console.log(`error`, e);
-            }
-          }
-        }
-      } else if (
-        v2client &&
-        typeof v2client.conversations.streamAllMessages === "function"
-      ) {
-        const stream = await v2client.conversations.streamAllMessages();
-        console.log(`XMTP: [v2] Stream started`);
-        for await (const message of stream) {
-          let conversation = await xmtp.getConversationFromMessage(message);
-          if (message && conversation) {
-            try {
-              const senderAddress = (message as V2DecodedMessage).senderAddress;
-              if (
-                //If same address do nothin
-                senderAddress?.toLowerCase() === v2client?.address.toLowerCase()
-              ) {
-                continue;
-              }
-
-              const parsedMessage = await parseMessage(
-                message,
-                conversation,
-                client,
+                client as Client,
               );
               await onMessage(parsedMessage as Message);
             } catch (e) {
@@ -434,7 +318,7 @@ async function streamMessages(
         }
       }
     } catch (err) {
-      console.error(`[v3] Stream encountered an error:`, err);
+      console.error(`Stream encountered an error:`, err);
     }
   }
 }

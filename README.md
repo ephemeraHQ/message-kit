@@ -10,8 +10,7 @@ A set of tools for AI developers to build on top of [XMTP](https://xmtp.org)
 
 ### Plugins
 
-- [`xmtp`](/packages/xmtp/): An xmtp node js wrapper for AI agents.
-- [`xmtp-e2ee`](/packages/xmtp-e2ee/): A js wrapper for AI agents.
+- [`agent-sdk`](/packages/agent-sdk/): An xmtp node js wrapper for AI agents.
 
 ### Other
 

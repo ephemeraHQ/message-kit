@@ -4,7 +4,7 @@ import { ClientOptions } from "@xmtp/node-sdk";
 
 export type userMessage = {
   message: string;
-  originalMessage: Message | undefined;
+  originalMessage: Message;
   metadata?: any;
   receivers?: string[];
   typeId?:
@@ -41,6 +41,7 @@ export type Conversation = {
 export type Message = {
   id: string; // Unique identifier for the message
   sent: Date; // Date when the message was sent
+  isDM: boolean; // Whether the message is a direct message
   content: {
     text?: string | undefined; // Text content of the message
     reply?: string | undefined; // Reply content if the message is a reply
@@ -58,9 +59,7 @@ export type Message = {
     skill?: string | undefined; // Skill associated with the message
     any?: any; // Any other content
   };
-  version: "v2" | "v3";
   group?: Conversation | undefined; // Group the message belongs to
-  conversation: Conversation; // Conversation the message belongs to
   sender: User; // Sender of the message
   typeId: string; // Type identifier for the message
   client: {

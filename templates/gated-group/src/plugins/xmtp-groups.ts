@@ -44,11 +44,11 @@ export async function removeFromGroup(
 ): Promise<{ code: number; message: string }> {
   try {
     let lowerAddress = senderAddress.toLowerCase();
-    const v3 = await client.canMessage([lowerAddress]);
-    if (!v3)
+    const isOnXMTP = await client.canMessage([lowerAddress]);
+    if (!isOnXMTP)
       return {
         code: 400,
-        message: "You don't seem to have a v3 identity ",
+        message: "You don't seem to have a XMTP identity ",
       };
     const conversation =
       await client.conversations.getConversationById(groupId);
@@ -93,11 +93,11 @@ export async function addToGroup(
 ): Promise<{ code: number; message: string }> {
   try {
     let lowerAddress = address.toLowerCase();
-    const v3 = await client.canMessage([lowerAddress]);
-    if (!v3)
+    const isOnXMTP = await client.canMessage([lowerAddress]);
+    if (!isOnXMTP)
       return {
         code: 400,
-        message: "You don't seem to have a v3 identity ",
+        message: "You don't seem to have a XMTP identity ",
       };
     const group = await client.conversations.getConversationById(groupId);
     console.warn("Adding to group", group?.id);

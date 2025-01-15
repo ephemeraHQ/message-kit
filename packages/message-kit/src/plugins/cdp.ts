@@ -23,7 +23,7 @@ const coinbase =
       })
     : undefined;
 
-console.log("Coinbase initialized", coinbase !== undefined);
+//console.log("Coinbase initialized", coinbase !== undefined);
 export type AgentWalletData = {
   id: string;
   wallet: any;

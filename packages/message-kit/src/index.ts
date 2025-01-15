@@ -1,5 +1,5 @@
 export * from "./lib/core.js";
-export * from "./lib/skills.js";
+export * from "./helpers/skills.js";
 export * from "./helpers/types.js";
 export * from "./plugins/gpt.js";
 export * from "./plugins/resolver.js";

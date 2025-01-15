@@ -84,7 +84,6 @@ export const getUserInfo = async (
     converseEndpoint: undefined,
     preferredName: undefined,
   };
-
   if (typeof key !== "string") {
     console.error("userinfo key must be a string");
     return data;

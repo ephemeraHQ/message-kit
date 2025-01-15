@@ -1,7 +1,7 @@
-import { Agent, Skill, SkillHandler } from "../helpers/types.js";
+import { Agent, Skill, SkillHandler } from "./types.js";
 import { getUserInfo, type UserInfo } from "../plugins/resolver.js";
-import { type Context } from "./core.js";
-import { logMessage } from "../helpers/utils.js";
+import { type Context } from "../lib/core.js";
+import { logMessage } from "./utils.js";
 
 import path from "path";
 
@@ -221,6 +221,7 @@ export async function parseSkill(
                 // Handle potential comma-separated values
                 const users = part.split(",");
                 for (const user of users) {
+                  console.log(`user`, user);
                   let userInfo = await getUserInfo(user);
                   if (userInfo?.address) {
                     result.push(userInfo);
@@ -390,27 +391,27 @@ export async function filterMessage(context: Context): Promise<{
 
   const isMessageValid = isSameAddress
     ? false
-    : context.message.version == "v2" && acceptedType
+    : isImageValid
       ? true
-      : isImageValid
-        ? true
-        : //If its not an admin, nope
-          !isAdminOrPass
-          ? false
-          : isExperimental
-            ? true
-            : //If its a group update but its not an added member, nope
-              !isAddedMemberOrPass
-              ? false
-              : //If it has a tag trigger, good
-                isTagged
+      : //If its not an admin, nope
+        !isAdminOrPass
+        ? false
+        : isExperimental
+          ? true
+          : //If its a group update but its not an added member, nope
+            !isAddedMemberOrPass
+            ? false
+            : //If it has a tag trigger, good
+              isTagged
+              ? true
+              : acceptedType
                 ? true
                 : false;
 
   if (process.env.MSG_LOG === "true") {
     logMessage({
       isSameAddress,
-      version: context.message.version,
+      version: group ? "v3" : "v2",
       openai: {
         model: process?.env?.GPT_MODEL,
         key: process?.env?.OPENAI_API_KEY ? "[SET]" : "[NOT SET]",
@@ -457,7 +458,7 @@ export async function filterMessage(context: Context): Promise<{
     });
   }
   if (isMessageValid) {
-    logMessage(`msg_${context.message.version}: ` + (text ?? typeId));
+    logMessage(`msg_${group ? "v3" : "v2"}: ` + (text ?? typeId));
   }
 
   return {

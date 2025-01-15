@@ -5,9 +5,8 @@ import { XMTP, createUser } from "xmtp";
 describe("Client Private Key Configuration Tests", () => {
   test("creates a client with a random generated key", async () => {
     const xmtp = new XMTP();
-    const { client, v2client } = await xmtp.init();
-    expect(client?.inboxId).toBeDefined();
-    expect(v2client?.address).toBeDefined();
+    await xmtp.init();
+    expect(xmtp?.inboxId).toBeDefined();
   }, 25000); // Added 15 second timeout
 
   test("creates a client with a provided private key", async () => {
@@ -15,9 +14,8 @@ describe("Client Private Key Configuration Tests", () => {
     const xmtp = new XMTP(undefined, {
       privateKey,
     });
-    const { client, v2client } = await xmtp.init();
-    expect(client?.inboxId).toBeDefined();
-    expect(v2client?.address).toBeDefined();
+    await xmtp.init();
+    expect(xmtp?.inboxId).toBeDefined();
   }, 15000); // Added 15 second timeout
 
   test("fails gracefully with invalid private key format", async () => {
@@ -26,15 +24,14 @@ describe("Client Private Key Configuration Tests", () => {
     const xmtp = new XMTP(undefined, {
       privateKey: invalidKey,
     });
-    const { client, v2client } = await xmtp.init();
+    await xmtp.init();
 
     // Should fall back to random key generation
-    expect(client?.inboxId).toBeDefined();
+    expect(xmtp?.inboxId).toBeDefined();
   }, 15000); // Added 15 second timeout
 
   test("creates user with valid private key", () => {
     const privateKey = generatePrivateKey();
-    console.log(privateKey);
     const user = createUser(privateKey);
 
     expect(user.key).toBe(privateKey);

@@ -5,9 +5,8 @@ export const agent = createAgent({
   tag: "@bot",
   description: "Gm bot.",
   onMessage: async (context) => {
-    const { group } = context;
-
-    if (!group) {
+    const { isDM } = context;
+    if (isDM) {
       await context.send({ message: "gm", originalMessage: context.message });
     }
   },

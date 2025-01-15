@@ -84,8 +84,9 @@ export async function handleTossCreation(context: Context) {
     },
     walletService,
     group,
+    isDM,
   } = context;
-  if (!group) {
+  if (isDM) {
     await context.send({
       message: "This command can only be used in a group.",
       originalMessage: context.message,

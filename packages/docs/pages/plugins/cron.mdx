@@ -22,7 +22,7 @@ import { XMTP } from "xmtp";
 export async function startCron(redisClient: RedisClientType) {
   // Daily task
   const xmtp = new XMTP();
-  const { v2client, v3client } = await xmtp.init();
+  await xmtp.init();
   console.log("Starting daily cron");
   cron.schedule(
     "0 0 * * *", // Daily or every 5 seconds in debug mode

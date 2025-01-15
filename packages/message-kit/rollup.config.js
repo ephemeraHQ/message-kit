@@ -3,21 +3,9 @@ import { defineConfig } from "rollup";
 import { dts } from "rollup-plugin-dts";
 
 const external = [
-  "@xmtp/content-type-primitives",
-  "@xmtp/content-type-text",
-  "@xmtp/content-type-reaction",
-  "@xmtp/content-type-reply",
-  "@xmtp/content-type-remote-attachment",
-  "@xmtp/node-sdk",
-  "@xmtp/message-kit",
-  "@xmtp/xmtp-js",
   "@redis/client",
-  "@xmtp/proto",
-  "@xmtp/node-bindings",
-  "@xmtp/grpc-api-client",
   "@coinbase/coinbase-sdk",
   "@coinbase/cbpay-js",
-  "@xmtp/content-type-read-receipt",
   "@circle-fin/developer-controlled-wallets",
   "cross-fetch",
   "path",

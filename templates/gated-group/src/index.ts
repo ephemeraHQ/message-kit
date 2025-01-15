@@ -9,6 +9,7 @@ if (client) {
   startGatedGroupServer(client);
 }
 
+// [!region gated]
 export const agent = createAgent({
   name: "Gated Group Creator Agent",
   tag: "@bot",
@@ -16,3 +17,4 @@ export const agent = createAgent({
   intro: "You are a gated group creator agent.",
   skills: [gated],
 }).run();
+// [!endregion gated]
