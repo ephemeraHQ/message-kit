@@ -77,8 +77,8 @@ export default defineConfig({
   },
   sidebar: [
     {
-      text: "Quickstart",
-      link: "/quickstart",
+      text: "CLI",
+      link: "/cli",
     },
     {
       text: "paymentagent.eth",
@@ -110,41 +110,62 @@ export default defineConfig({
       ],
     },
     {
-      text: "Foundations",
+      text: "Build agents",
       items: [
         {
-          text: "Agents",
-          link: "/concepts/agents",
+          text: "Get started",
+          link: "/agents/get-started",
         },
         {
-          text: "Skills",
-          link: "/concepts/skills",
-        },
-        {
-          text: "XMTP",
-          link: "/concepts/xmtp",
+          text: "Agent SDK",
+          link: "/agents/agent-sdk",
         },
         {
           text: "Groups",
-          link: "/concepts/groups",
+          link: "/agents/groups",
+        },
+        {
+          text: "Identity",
+          link: "/agents/identity",
+        },
+        {
+          text: "Guidelines",
+          link: "/agents/guidelines",
+        },
+        {
+          text: "Gated group",
+          link: "/agents/gated-group",
+        },
+        {
+          text: "Build with MessageKit",
+          link: "https://message-kit.org/",
         },
       ],
     },
     {
-      text: "Contribute",
-      link: "/contribute",
-    },
-    {
-      text: "Deployment",
-      link: "/deployment",
-    },
-    {
-      text: "Guidelines",
-      link: "/guidelines",
-    },
-    {
-      text: "Changelog",
-      link: "/changelog",
+      text: "Framework",
+      items: [
+        {
+          text: "Overview",
+          link: "/framework/overview",
+        },
+        {
+          text: "Skills",
+          link: "/framework/skills",
+        },
+        {
+          text: "Deployment",
+          link: "/framework/deployment",
+        },
+        {
+          text: "Contribute",
+          link: "/framework/contribute",
+        },
+        {
+          text: "Changelog",
+          link: "/framework/changelog",
+        },
+      ],
     },
   ],
 });

@@ -1,8 +1,4 @@
 {
-  "include": [
-    "src/**/*",
-    "rollup.config.js",
-    "../agent-sdk/src/lib/resolver.ts"
-  ],
+  "include": ["src/**/*", "rollup.config.js"],
   "extends": "@xmtp/tsconfig/base.json"
 }

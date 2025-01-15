@@ -108,7 +108,7 @@ export async function logInitMessage(
     }
     if (agentConfig?.experimental) {
       console.warn(
-        `\t- ☣️ EXPERIMENTAL MODE ENABLED:\n\t\t⚠️ All group messages will be exposed — proceed with caution.\n\t\tℹ Guidelines: https://message-kit.org/guidelines`,
+        `\t- ☣️ EXPERIMENTAL MODE ENABLED:\n\t\t⚠️ All group messages will be exposed — proceed with caution.\n\t\tℹ Guidelines: https://message-kit.org/agents/guidelines`,
       );
     }
     if (agentConfig?.walletService === true) {

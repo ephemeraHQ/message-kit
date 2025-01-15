@@ -1,11 +1,13 @@
 import { CustomHomePage } from "../../components/CustomHomePage";
 
-# Agents
+# Introduction
 
 In this document, you'll learn about the structure and components of an agent project. We'll cover the following sections:
 
 - **[Project files](#project-files)**: Understand the basic file structure of an agent project.
 - **[Agent](#agent)**: Learn how to set up and run an agent using XMTP's message-kit.
+- **[Context](#context)**: Learn how to access the context of the agent.
+- **[Groups](#groups)**: Learn how to create and manage groups.
 - **[Skills](#skills)**: Discover how to define the actions your agent can perform.
 - **[Plugins](#plugins)**: Learn about plugins that can enhance the capabilities of your agent's skills.
 - **[Vibes](#vibes)**: Understand how to define the personality and style of your agent.
@@ -50,6 +52,62 @@ config: {
 - `hideInitLogMessage`: hide the init log message with messagekit logo and stuff
 - `memberChange`: if true, member changes will be enabled, like adding members to the group
 
+## Context
+
+The `Context` object is a core component that provides access to all XMTP messaging functionality. It handles conversations, groups, and messages.
+
+```tsx
+import { Context } from "@xmtp/message-kit";
+
+onMessage(async (context: Context) => {
+  const {
+    message, // Current message details
+    client, //  XMTP client
+    conversation, // Current conversation
+    group, // Group details if in a group chat
+  } = context;
+
+  // Your message handling logic
+});
+```
+
+### Properties
+
+Contains information about the current message:
+
+- `content`: The message content
+- `sender`: Address of message sender
+- `sent`: Timestamp when message was sent
+- `typeId`: Type of message
+- `client`: XMTP client instance
+- `conversation`: Current conversation object with messaging methods
+
+## Groups
+
+MessageKit allows agents to interact inside XMTP groups. Make sure you follow the [guidelines](/agents/guidelines) for building responsible group agents on XMTP.
+
+:::info
+You need to **add the agent to the group as a member**.
+:::
+
+## Tag an agent
+
+When a message includes a tag like `@bot`, it will be received by your agent.
+
+```tsx
+export const agent: Agent = {
+  name: "Web3 Domain Bot",
+  tag: "@bot",
+  /* Your agent definition */
+};
+```
+
+Example:
+
+```bash
+@bot who owns vitalik.eth
+```
+
 ## Skills
 
 Skills are the actions that the agent can perform. They are defined in the `src/skills/your-skill.ts` file.
@@ -68,7 +126,7 @@ export const skills: Skill[] = [
 ];
 ```
 
-Learn more about skills in the [Skills](/concepts/skills) section.
+Learn more about skills in the [Skills](/framework/skills) section.
 
 ## Plugins
 

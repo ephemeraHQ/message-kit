@@ -1,20 +1,11 @@
-# XMTP AI
+# Message Kit
 
 A set of tools for AI developers to build on top of [XMTP](https://xmtp.org)
-
-### MessageKit
 
 - [`message-kit`](/packages/message-kit): A kit for quickly building messaging apps
 - [`create-message-kit`](/packages/create-message-kit): A CLI for creating new apps easily
 - [`docs`](/packages/docs): Documentation for MessageKit
-
-### Plugins
-
 - [`agent-sdk`](/packages/agent-sdk/): An xmtp node js wrapper for AI agents.
-
-### Other
-
-- [`client`](/packages/client): A simple E2EE encrypted agent inbox
 - [`baselinks`](/packages/baselinks): A suite of coinbase wallet usdc links
 
 ## Contributing

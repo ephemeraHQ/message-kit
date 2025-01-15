@@ -1,0 +1,77 @@
+# Username resolution
+
+Message Kit provides powerful username resolution capabilities through its resolver system. This allows applications to handle various types of identifiers including ENS domain and Converse usernames.
+
+## Identity
+
+Each messages comes with a sender object that contains the address, name, and avatar of the sender.
+
+- `inboxId`: A unique identifier for the user's message inbox. This remains consistent across different installations.
+- `address`: The primary blockchain address associated with the sender. This is typically an Ethereum address.
+- `accountAddresses`: An array of all blockchain addresses linked to this identity. Users can have multiple addresses associated with their XMTP identity.
+- `installationIds`: Array of unique identifiers for each installation/device where the user has XMTP enabled.
+
+## Supported identifiers
+
+- **Ethereum Addresses** - Standard hex addresses (e.g., `0x123...`)
+- **ENS Domains** - Ethereum Name Service domains (e.g., `vitalik.eth`)
+- **Converse Usernames** - Social usernames from Converse (e.g., `@fabri`)
+- **Inbox ID** - Inbox ID from Converse (e.g., `0x123...`)
+- **Website Header Tag** - Inbox ID from Converse (e.g., `xmtp=0x123...`)
+- **Website Txt record** - Inbox ID from Converse (e.g., `meta="xmtp" content="0x123...`)
+
+### Example
+
+```tsx
+let textMessage: userMessage = {
+  message: "Your message.",
+  receivers: [
+    "http://website-header-tag.com", //website header tag or txt record
+    "humanagent.eth", //ens domain
+    "0x123...", //ethereum address
+    "@fabri", //converse username
+  ],
+  originalMessage: message,
+};
+await xmtp.send(textMessage);
+```
+
+## Resolver library
+
+The resolver provides a `getUserInfo` function that returns detailed information about a user:
+
+> Is already included in MessageKit
+
+```typescript
+import { getUserInfo } from "xmtp";
+const userInfo = await getUserInfo(identifier);
+```
+
+The resolver returns a `UserInfo` object containing:
+
+- `ensDomain` - User's ENS domain if available
+- `address` - Ethereum address
+- `preferredName` - Best available name to display
+- `converseUsername` - Converse username if available
+- `avatar` - Profile picture URL if available
+- `converseEndpoint` - Converse profile endpoint
+
+## Availability
+
+Returns `true` if user has XMTP enabled
+
+```typescript
+const isOnXMTP = await xmtp.isOnXMTP(address);
+```
+
+## Caching
+
+The resolver implements automatic caching to improve performance and reduce API calls. You can manage the cache using:
+
+```typescript
+// or import directly
+import { userInfoCache } from "xmtp";
+
+userInfoCache.clear(); // clear all cache
+userInfoCache.clear(address); // clear an address
+```
