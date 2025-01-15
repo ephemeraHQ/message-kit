@@ -21,10 +21,8 @@ import {
   ContentTypeRemoteAttachment,
   RemoteAttachmentCodec,
 } from "@xmtp/content-type-remote-attachment";
-import * as fs from "fs";
 import {
   ContentTypeReadReceipt,
-  ReadReceipt,
   ReadReceiptCodec,
 } from "@xmtp/content-type-read-receipt";
 import {
@@ -35,12 +33,14 @@ import {
 import { createWalletClient, http, isAddress, toBytes, toHex } from "viem";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { mainnet } from "viem/chains";
+
 import { getRandomValues } from "crypto";
 import path from "path";
 import { xmtpConfig, Message, userMessage, UserReturnType } from "../types.js";
 import { readFile } from "fs/promises";
 import dns from "dns";
-import { getUserInfo } from "../index.js";
+import * as fs from "fs";
+import { getUserInfo } from "./resolver.js";
 import { JSDOM } from "jsdom";
 import fetch from "node-fetch";
 
