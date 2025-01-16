@@ -84,7 +84,7 @@ export default function Home() {
               <h1
                 className={`title ${geistSans.className}`}
                 style={{ marginBottom: "20px" }}>
-                BaseLinks
+                base-links
               </h1>
               <p
                 className={`description ${geistSans.className}`}

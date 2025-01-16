@@ -6,7 +6,7 @@ A set of tools for AI developers to build on top of [XMTP](https://xmtp.org)
 - [`create-message-kit`](/packages/create-message-kit): A CLI for creating new apps easily
 - [`docs`](/packages/docs): Documentation for MessageKit
 - [`agent-sdk`](/packages/agent-sdk/): An xmtp node js wrapper for AI agents.
-- [`baselinks`](/packages/baselinks): A suite of coinbase wallet usdc links
+- [`base-links`](/packages/base-links): A suite of coinbase wallet usdc links
 
 ## Contributing
 
