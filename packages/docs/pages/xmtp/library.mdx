@@ -1,0 +1,121 @@
+# Agent SDK by XMTP
+
+This package provides the XMTP agent wrapper around [SDK for Node](https://github.com/xmtp/xmtp-js/tree/main/sdks/node-sdk).
+
+## Install
+
+:::code-group
+
+```bash [bun]
+bun install xmtp
+```
+
+```bash [yarn]
+yarn add xmtp
+```
+
+```bash [npx]
+npx install xmtp
+```
+
+:::
+
+## Overview
+
+These are the steps to initialize the AgentSDK listener and send messages.
+
+- `ENCRYPTION_KEY`: The private key of the wallet that will be used to send or receive messages.
+
+```tsx
+import { XMTP } from "xmtp";
+
+const xmtp = new XMTP(onMessage, {
+  encryptionKey: ENCRYPTION_KEY,
+});
+
+await xmtp.init();
+
+const onMessage = async (message, user) => {
+  console.log(`Decoded message: ${message.content.text} by ${user.address}`);
+
+  // Your AI model response
+  const response = "Hello from AI!";
+
+  //Send text message
+  await xmtp.send({
+    message: response,
+    originalMessage: message,
+  });
+};
+```
+
+## Send messages
+
+App messages are messages that are sent when you send a reply to a message and are highlighted differently by the apps.
+
+### Text
+
+```tsx
+let textMessage: userMessage = {
+  message: "Your message.",
+  receivers: [message.sender.address],
+  originalMessage: message,
+};
+await xmtp.send(textMessage);
+```
+
+### Reaction
+
+```tsx
+let reaction: userMessage = {
+  message: "😅",
+  receivers: [message.sender.address],
+  originalMessage: message,
+  typeId: "reaction",
+};
+await xmtp.send(reaction);
+```
+
+### Reply
+
+```tsx
+let reply: userMessage = {
+  message: "Your message.",
+  receivers: [message.sender.address],
+  originalMessage: message,
+  typeId: "reply",
+};
+await xmtp.send(reply);
+```
+
+### Attachment
+
+```tsx
+let attachment: userMessage = {
+  message: "https://picsum.photos/200/300",
+  receivers: [message.sender.address],
+  originalMessage: message,
+  typeId: "attachment",
+};
+await xmtp.send(attachment);
+```
+
+### Agent message
+
+```tsx
+let agentMessage: userMessage = {
+  message: "Would you like to approve this transaction?",
+  metadata: {
+    agentId: "payment-bot",
+    skillUsed: "approve-tx",
+    amount: "10",
+    token: "USDC",
+    chain: "base",
+    destinationAddress: "0x123...789",
+  },
+  receivers: [message.sender.address],
+  originalMessage: message,
+  typeId: "agent",
+};
+await xmtp.send(agentMessage);
+```

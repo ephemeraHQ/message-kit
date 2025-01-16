@@ -42,7 +42,7 @@ This is how you can use the `xmtp` package to create a client and handle message
 import { XMTP } from "xmtp";
 
 const xmtp = new XMTP(onMessage, {
-  encryptionKey: process.env.WALLET_PRIVATE_KEY,
+  encryptionKey: process.env.ENCRYPTION_KERY,
 });
 
 await xmtp.init();

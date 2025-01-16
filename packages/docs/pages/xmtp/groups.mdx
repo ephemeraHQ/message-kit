@@ -1,0 +1,161 @@
+import { CustomHomePage } from "../../components/CustomHomePage";
+
+# Groups
+
+Agents can interact inside XMTP groups. Make sure you follow the [Guidelines](/xmtp/guidelines) for building responsible group agents on XMTP.
+
+:::info
+You need to **add the agent to the group as a member**.
+:::
+
+## Overview
+
+### Create a group
+
+To create a group from your agent, you can use the following code:
+
+```tsx
+const group = await client?.conversations.newGroup([address1, address2]);
+```
+
+### Manage members
+
+As an admin you can add members to the group.
+
+```tsx
+// get the group
+const { group } = context;
+await group.sync();
+//By address
+await group.addMembers([userAddresses]);
+//By inboxId
+await group.addMembersByInboxId([addedInboxes]);
+```
+
+:::details[Reference implementation]
+
+These are some example methods for creating and managing groups for ensuring reliability and security.
+
+### Remove from group
+
+```tsx
+export async function removeFromGroup(
+  groupId: string,
+  client: Client,
+  senderAddress: string,
+): Promise<{ code: number; message: string }> {
+  try {
+    let lowerAddress = senderAddress.toLowerCase();
+    const isOnXMTP = await client.canMessage([lowerAddress]);
+    if (!isOnXMTP)
+      return {
+        code: 400,
+        message: "You don't seem to have a XMTP identity ",
+      };
+    const conversation =
+      await client.conversations.getConversationById(groupId);
+    console.warn("removing from group", conversation?.id);
+    await conversation?.sync();
+    await conversation?.removeMembers([lowerAddress]);
+    console.warn("Removed member from group");
+    await conversation?.sync();
+    const members = await conversation?.members();
+    console.warn("Number of members", members?.length);
+
+    let wasRemoved = true;
+    if (members) {
+      for (const member of members) {
+        let lowerMemberAddress = member.accountAddresses[0].toLowerCase();
+        if (lowerMemberAddress === lowerAddress) {
+          wasRemoved = false;
+          break;
+        }
+      }
+    }
+    return {
+      code: wasRemoved ? 200 : 400,
+      message: wasRemoved
+        ? "You have been removed from the group"
+        : "Failed to remove from group",
+    };
+  } catch (error) {
+    console.log("Error removing from group", error);
+    return {
+      code: 400,
+      message: "Failed to remove from group",
+    };
+  }
+}
+```
+
+### Add to group
+
+```tsx
+export async function addToGroup(
+  groupId: string,
+  client: Client,
+  address: string,
+  asAdmin: boolean = false,
+): Promise<{ code: number; message: string }> {
+  try {
+    let lowerAddress = address.toLowerCase();
+    const isOnXMTP = await client.canMessage([lowerAddress]);
+    if (!isOnXMTP)
+      return {
+        code: 400,
+        message: "You don't seem to have a XMTP identity ",
+      };
+    const group = await client.conversations.getConversationById(groupId);
+    console.warn("Adding to group", group?.id);
+    await group?.sync();
+    await group?.addMembers([lowerAddress]);
+    console.warn("Added member to group");
+    await group?.sync();
+    if (asAdmin) {
+      await group?.addSuperAdmin(lowerAddress);
+    }
+    const members = await group?.members();
+    console.warn("Number of members", members?.length);
+
+    if (members) {
+      for (const member of members) {
+        let lowerMemberAddress = member.accountAddresses[0].toLowerCase();
+        if (lowerMemberAddress === lowerAddress) {
+          console.warn("Member exists", lowerMemberAddress);
+          return {
+            code: 200,
+            message: "You have been added to the group",
+          };
+        }
+      }
+    }
+    return {
+      code: 400,
+      message: "Failed to add to group",
+    };
+  } catch (error) {
+    return {
+      code: 400,
+      message: "Failed to add to group",
+    };
+  }
+}
+```
+
+:::
+
+### Added member event
+
+When a member is added to a group it will emit a `group_updated` event with a `addedInboxes` array containing the addresses of the users added.
+
+```tsx
+if (typeId === "group_updated") {
+  const { addedInboxes } = context.message.content;
+
+  if (addedInboxes?.length > 0) {
+    for (const inbox of addedInboxes) {
+      console.log(`User added: ${inbox.inboxId}`);
+    }
+  }
+}
+```

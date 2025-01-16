@@ -1,0 +1,66 @@
+## Identity resolution
+
+Each message comes with a sender object that contains the address, name, and avatar of the sender.
+
+- `inboxId`: A unique identifier for the user's message inbox. This remains consistent across different installations.
+- `address`: The primary blockchain address associated with the sender. This is typically an Ethereum address.
+- `accountAddresses`: An array of all blockchain addresses linked to this identity. Users can have multiple addresses associated with their XMTP identity.
+- `installationIds`: Array of unique identifiers for each installation/device where the user has XMTP enabled.
+
+## Supported identifiers
+
+- **Ethereum Addresses** - Standard hex addresses (e.g., `0x123...`)
+- **ENS Domains** - Ethereum Name Service domains (e.g., `vitalik.eth`)
+- **Converse Usernames** - Social usernames from Converse (e.g., `@fabri`)
+- **Inbox ID** - Inbox ID from Converse (e.g., `0x123...`)
+- **Website Header Tag** - Inbox ID from Converse (e.g., `xmtp=0x123...`)
+- **Website Txt record** - Inbox ID from Converse (e.g., `meta="xmtp" content="0x123...`)
+
+### Message example
+
+```tsx
+let textMessage: userMessage = {
+  message: "Your message.",
+  receivers: ["0x123..."],
+  originalMessage: message,
+};
+await xmtp.send(textMessage);
+```
+
+## Resolver library
+
+The resolver provides a `getUserInfo` function that returns detailed information about a user:
+
+```typescript
+import { getUserInfo } from "xmtp";
+const userInfo = await getUserInfo(identifier);
+```
+
+The resolver returns a `UserInfo` object containing:
+
+- `ensDomain` - User's ENS domain if available
+- `address` - Ethereum address
+- `preferredName` - Best available name to display
+- `converseUsername` - Converse username if available
+- `avatar` - Profile picture URL if available
+- `converseEndpoint` - Converse profile endpoint
+
+## User Availability
+
+Returns `true` if user has XMTP enabled
+
+```typescript
+const isOnXMTP = await xmtp.isOnXMTP(address);
+```
+
+## Cache Management
+
+The resolver implements automatic caching to improve performance and reduce API calls. You can manage the cache using:
+
+```typescript
+// or import directly
+import { userInfoCache } from "xmtp";
+
+userInfoCache.clear(); // clear all cache
+userInfoCache.clear(address); // clear an address
+```

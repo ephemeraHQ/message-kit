@@ -134,5 +134,34 @@ export default defineConfig({
         },
       ],
     },
+    {
+      text: "XMTP",
+      items: [
+        {
+          text: "Protocol",
+          link: "/xmtp/protocol",
+        },
+        {
+          text: "Library",
+          link: "/xmtp/library",
+        },
+        {
+          text: "Groups",
+          link: "/xmtp/groups",
+        },
+        {
+          text: "Identity",
+          link: "/xmtp/identity",
+        },
+        {
+          text: "Gated group",
+          link: "/xmtp/gated-group",
+        },
+        {
+          text: "Guidelines",
+          link: "/xmtp/guidelines",
+        },
+      ],
+    },
   ],
 });
