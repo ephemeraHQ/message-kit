@@ -41,7 +41,7 @@ const versionType = process.argv[2];
 // Update versions for each package
 const packages = [
   "packages/message-kit",
-  "packages/agent-sdk",
+  "packages/xmtp",
   "packages/create-message-kit",
 ];
 

@@ -302,7 +302,7 @@ ${packageManager.split("@")[0]} run dev
 
 5. Enjoy!
 ---
-Made with ❤️ by [XMTP](https://xmtp.org)
+Made with ❤️ by [Ephemera](https://ephemerahq.com)
 `;
 
   fs.writeFileSync(resolve(destDir, "README.md"), readmeContent.trim());
