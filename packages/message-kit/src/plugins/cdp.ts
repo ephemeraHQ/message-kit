@@ -6,7 +6,7 @@ import {
   Trade,
 } from "@coinbase/coinbase-sdk";
 import { keccak256, toHex, toBytes } from "viem";
-import { getUserInfo } from "./resolver";
+import { getUserInfo } from "xmtp";
 import { isAddress } from "viem";
 import { generateOnRampURL } from "@coinbase/cbpay-js";
 import { LocalStorage } from "./storage";
@@ -23,7 +23,7 @@ const coinbase =
       })
     : undefined;
 
-console.log("Coinbase initialized", coinbase !== undefined);
+//console.log("Coinbase initialized", coinbase !== undefined);
 export type AgentWalletData = {
   id: string;
   wallet: any;

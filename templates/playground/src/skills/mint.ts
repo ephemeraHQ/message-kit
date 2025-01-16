@@ -91,7 +91,6 @@ export async function handler(context: Context) {
     }
   } else {
     const { collection, token_id } = params;
-    console.log(collection, token_id);
     if (!collection || !token_id) {
       await context.send({
         message:

@@ -1,5 +1,3 @@
-import { getUserInfo } from "./resolver.js";
-
 export interface Frame {
   title: string;
   buttons: { content: string; action: string; target: string }[];

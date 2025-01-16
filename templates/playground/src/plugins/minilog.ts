@@ -17,7 +17,6 @@ export async function sendLog(title: string, description: string) {
       },
     }),
   });
-  console.log(response);
   if (!response.ok) {
     console.error("Failed to send log:", response.statusText);
   } else {

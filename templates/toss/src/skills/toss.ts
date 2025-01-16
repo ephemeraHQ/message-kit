@@ -1,4 +1,5 @@
-import { Skill, Context, getUserInfo } from "@xmtp/message-kit";
+import { Skill, Context } from "@xmtp/message-kit";
+import { getUserInfo } from "xmtp";
 import { getRedisClient } from "../plugins/redis.js";
 import {
   checkTossCorrect,
@@ -84,8 +85,9 @@ export async function handleTossCreation(context: Context) {
     },
     walletService,
     group,
+    isDM,
   } = context;
-  if (!group) {
+  if (isDM) {
     await context.send({
       message: "This command can only be used in a group.",
       originalMessage: context.message,
@@ -115,7 +117,7 @@ export async function handleTossCreation(context: Context) {
       description: params.description,
       options: params.options,
       amount: params.amount,
-      group_id: group.id,
+      group_id: group?.id ?? "",
       admin_name: (await getUserInfo(sender.address))?.preferredName ?? "",
       admin_address: sender.address,
       creator_address: sender.address,

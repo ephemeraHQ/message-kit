@@ -1,7 +1,7 @@
 import { Transfer } from "@coinbase/coinbase-sdk";
 import { Skill } from "../helpers/types";
 import { Context } from "../lib/core";
-import { getUserInfo } from "../plugins/resolver";
+import { getUserInfo } from "xmtp";
 import { isAddress } from "viem";
 import { baselinks } from "../plugins/baselinks";
 
@@ -265,9 +265,9 @@ async function notifyUser(
   });
 
   if (!isAddress(toAddress)) return;
-  const { v2, v3 } = await context.xmtp.isOnXMTP(toAddress);
-  console.log(toAddress, { v2, v3 });
-  if (!v2 && !v3) return;
+  const isOnXMTP = await context.xmtp.isOnXMTP(toAddress);
+  console.log(toAddress, isOnXMTP);
+  if (!isOnXMTP) return;
   let userInfo = await getUserInfo(fromAddress);
   await context.send({
     message: `${userInfo?.preferredName} just sent you $${amount}`,

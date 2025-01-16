@@ -77,8 +77,8 @@ export default defineConfig({
   },
   sidebar: [
     {
-      text: "Quickstart",
-      link: "/quickstart",
+      text: "CLI",
+      link: "/cli",
     },
     {
       text: "paymentagent.eth",
@@ -110,45 +110,29 @@ export default defineConfig({
       ],
     },
     {
-      text: "Foundations",
+      text: "Framework",
       items: [
         {
-          text: "Agents",
-          link: "/concepts/agents",
+          text: "Overview",
+          link: "/framework/overview",
         },
         {
           text: "Skills",
-          link: "/concepts/skills",
+          link: "/framework/skills",
         },
         {
-          text: "XMTP",
-          link: "/concepts/xmtp",
+          text: "Deployment",
+          link: "/framework/deployment",
         },
         {
-          text: "Groups",
-          link: "/concepts/groups",
+          text: "Contribute",
+          link: "/framework/contribute",
         },
         {
-          text: "Usernames",
-          link: "/plugins/resolver",
+          text: "Changelog",
+          link: "/framework/changelog",
         },
       ],
-    },
-    {
-      text: "Contribute",
-      link: "/contribute",
-    },
-    {
-      text: "Deployment",
-      link: "/deployment",
-    },
-    {
-      text: "Guidelines",
-      link: "/guidelines",
-    },
-    {
-      text: "Changelog",
-      link: "/changelog",
     },
   ],
 });

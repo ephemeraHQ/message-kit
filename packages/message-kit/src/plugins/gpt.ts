@@ -3,9 +3,9 @@ dotenv.config({ override: true });
 import OpenAI from "openai";
 import { getFS } from "../helpers/utils";
 import type { Context } from "../lib/core";
-import { getUserInfo } from "./resolver";
+import { getUserInfo } from "xmtp";
 import type { Agent } from "../helpers/types";
-import { replaceSkills } from "../lib/skills";
+import { replaceSkills } from "../helpers/skills";
 
 const isOpenAIConfigured = () => {
   return !!process.env.OPENAI_API_KEY;
@@ -205,7 +205,7 @@ export async function agentReply(context: Context) {
     //Memory
     let memoryKey = context.getMemoryKey(
       sender.address,
-      context.conversation.id,
+      context.group?.id ?? "",
     );
     chatMemory.createMemory(memoryKey, systemPrompt);
     chatMemory.addEntry(memoryKey, userPrompt, "user");
@@ -217,7 +217,6 @@ export async function agentReply(context: Context) {
       .split("\n")
       .map((message: string) => parseMarkdown(message))
       .filter((message): message is string => message.length > 0);
-    console.log("reply", messages);
 
     // Process the generated reply and send it back to the user
     await processMultilineResponse(messages, context);
@@ -320,7 +319,6 @@ Remember: Commands must be on their own line starting with /.`;
       Math.random().toString(36).substring(2, 12),
     );
 
-    // if (process.env.MSG_LOG === "true")
     console.log("Intent detected but missing command", {
       reply,
       fixPrompt,
@@ -353,7 +351,7 @@ export async function processMultilineResponse(
 
           await context.send({
             message: msg,
-            receivers: [context.message.sender.address],
+            receivers: [context.message.sender.inboxId],
             originalMessage: context.message,
           });
         }
@@ -361,7 +359,7 @@ export async function processMultilineResponse(
         // If it's not a command and didn't match forbidden prefixes, it's probably valid free-form text
         await context.send({
           message: message,
-          receivers: [context.message.sender.address],
+          receivers: [context.message.sender.inboxId],
           originalMessage: context.message,
         });
       }

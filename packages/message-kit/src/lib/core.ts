@@ -1,6 +1,6 @@
 import { Agent, SkillResponse } from "../helpers/types.js";
 import { agentReply, chatMemory, defaultSystemPrompt } from "../plugins/gpt.js";
-import { getUserInfo, userInfoCache } from "../plugins/resolver.js";
+import { getUserInfo, userInfoCache } from "xmtp";
 import { logInitMessage, logMessage } from "../helpers/utils.js";
 import { Message, XMTP, Conversation, userMessage } from "xmtp";
 
@@ -11,7 +11,7 @@ import {
   parseSkill,
   findSkill,
   filterMessage,
-} from "./skills.js";
+} from "../helpers/skills.js";
 import { logUserInteraction } from "../helpers/utils.js";
 import type { AgentConfig } from "../helpers/types";
 import { LocalStorage } from "../plugins/storage.js";
@@ -40,6 +40,7 @@ export const awaitedHandlers = new Map<
 
 /* Context Interface */
 export type Context = {
+  isDM: boolean;
   message: Message;
   storage: LocalStorage;
   agentConfig?: AgentConfig;
@@ -59,7 +60,6 @@ export type Context = {
 
   //XMTP
   xmtp: XMTP;
-  conversation: Conversation;
   group: Conversation | undefined;
   getMemoryKey(sender: string, conversationId: string): string;
   awaitedHandler: ((text: string) => Promise<boolean | void>) | undefined;
@@ -67,10 +67,10 @@ export type Context = {
 
 /* Context implementation */
 export class MessageKit implements Context {
+  isDM: boolean = false;
   xmtp!: XMTP;
   storage!: LocalStorage;
   message!: Message;
-  conversation!: Conversation;
   group!: Conversation | undefined;
   agentConfig?: AgentConfig;
   walletService!: CdpWalletService | CircleWalletService;
@@ -98,7 +98,6 @@ export class MessageKit implements Context {
   }
   static async create(
     message: Message,
-    conversation: Conversation,
     agent: Agent,
     xmtp: XMTP,
   ): Promise<Context | undefined> {
@@ -136,8 +135,8 @@ export class MessageKit implements Context {
         context.agent = agent;
         context.agent.systemPrompt = agent.systemPrompt ?? defaultSystemPrompt;
         context.agentConfig = agent.config;
-        context.group = message.group ?? undefined;
-        context.conversation = conversation;
+        context.group = message.group;
+        context.isDM = message.group?.members?.length === 2;
         context.clearMemory = async () => {
           await chatMemory.clear(message.sender?.address);
         };
@@ -192,12 +191,7 @@ export class MessageKit implements Context {
         return;
       }
 
-      const context = await MessageKit.create(
-        message,
-        message.conversation,
-        this.agent,
-        this.xmtp,
-      );
+      const context = await MessageKit.create(message, this.agent, this.xmtp);
       if (!context) {
         logMessage("No context found" + message);
         return;
@@ -313,7 +307,7 @@ export class MessageKit implements Context {
       awaitedHandlers.set(
         this.getMemoryKey(
           this.message.sender.address,
-          this.message.conversation.id,
+          this.message.group?.id ?? "",
         ),
         handler,
       );
@@ -326,7 +320,7 @@ export class MessageKit implements Context {
     awaitedHandlers.delete(
       this.getMemoryKey(
         this.message.sender.address,
-        this.message.conversation.id,
+        this.message.group?.id ?? "",
       ),
     );
   }
@@ -335,7 +329,7 @@ export class MessageKit implements Context {
     this.addMemory(
       message.message,
       message.originalMessage?.sender.address,
-      message.originalMessage?.conversation.id,
+      message.originalMessage?.group?.id as string,
     );
     await this.xmtp.send(message);
     return Promise.resolve();

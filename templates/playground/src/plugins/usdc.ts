@@ -55,7 +55,6 @@ export class USDCWallet {
   async checkBalances(): Promise<{ usdc: number; eth: number }> {
     try {
       // Check USDC balance
-      console.log(this.agentAddress);
       const usdcBalance = await this.usdcContract.balanceOf(this.agentAddress);
       const formattedUsdcBalance = ethers.formatUnits(usdcBalance, 6); // USDC has 6 decimals
       console.warn(`USDC Balance: ${formattedUsdcBalance}`);

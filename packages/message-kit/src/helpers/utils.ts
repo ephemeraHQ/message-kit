@@ -63,10 +63,9 @@ export async function logInitMessage(
   ╚═╝     ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝╚═╝   ╚═╝   
   Powered by XMTP \x1b[0m`;
   console.log(coolLogo);
-  console.log(`\nSend a message to this account on:                              
-      \x1b[90m Converse: https://converse.xyz/dm/${client?.accountAddress}\x1b[0m
-      \x1b[38;2;0;0;255m Coinbase Wallet: https://go.cb-w.com/messaging?address=${client?.accountAddress}\x1b[0m
-      \x1b[38;2;128;0;128m Share in Farcaster (Framev2): https://client.message-kit.org/?address=${client?.accountAddress}\x1b[0m`);
+  console.log(
+    `\n\tSend a message on Converse: https://converse.xyz/dm/${client?.accountAddress}\x1b[0m`,
+  );
 
   if (
     agentConfig?.walletService == true ||
@@ -109,7 +108,7 @@ export async function logInitMessage(
     }
     if (agentConfig?.experimental) {
       console.warn(
-        `\t- ☣️ EXPERIMENTAL MODE ENABLED:\n\t\t⚠️ All group messages will be exposed — proceed with caution.\n\t\tℹ Guidelines: https://message-kit.org/guidelines`,
+        `\t- ☣️ EXPERIMENTAL MODE ENABLED:\n\t\t⚠️ All group messages will be exposed — proceed with caution.\n\t\tℹ Guidelines: https://message-kit.org/agents/guidelines`,
       );
     }
     if (agentConfig?.walletService === true) {

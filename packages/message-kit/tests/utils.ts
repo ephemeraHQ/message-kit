@@ -25,8 +25,6 @@ const mockMessage: Message = {
     text: "Hello world",
     params: {},
   },
-
-  version: "v2",
   sent: new Date(),
   conversation: mockConversation,
   sender: humanAgent,

@@ -1,0 +1,541 @@
+# Changelog
+
+## 1.4.0
+
+- **Rebranding**
+
+  - Project renamed from "XMTP AI" to "Message Kit"
+  - Updated documentation and references across the framework
+
+- **Package Restructuring**
+
+  - Removed `xmtp`, `xmtp-e2ee`, and `client` packages
+  - Introduced new `agent-sdk` package
+  - Consolidated and simplified package structure
+
+- **Documentation Updates**
+
+  - Reorganized documentation sections
+  - Updated links and navigation paths
+  - Improved clarity of framework overview and concepts
+
+- **Messaging Infrastructure**
+
+  - Transitioned from V2 to V3 XMTP protocol
+  - Simplified client initialization and message handling
+  - Enhanced group messaging capabilities
+
+- **Dependency Management**
+
+  - Updated and streamlined external dependencies
+  - Removed legacy code and version-specific implementations
+
+- **Performance Improvements**
+  - Optimized message parsing and routing
+  - Improved error handling and logging mechanisms
+
+## 1.3.0
+
+- **New Features**
+
+  - Introduced the Baselinks plugin for secure messaging, including installation instructions and usage examples.
+  - Added a new `PaymentFrame` component for processing payments through Coinbase.
+  - Added a `ReceiptGenerator` component for generating receipt URLs based on user input.
+  - Enhanced documentation for the `paymentagent` with multimedia elements and clearer structure.
+  - Introduced a new `UrlGenerator` component for generating Ethereum transaction URLs and QR codes.
+  - Updated messaging documentation to clarify the handling of various message types.
+
+- **Bug Fixes**
+
+  - Corrected video file extensions in the documentation.
+
+- **Documentation**
+
+  - Revised messaging security documentation for clarity and specificity.
+  - Updated README files to reflect changes in plugins and add new sections.
+
+- **Refactor**
+
+  - Renamed and restructured the XMTP class for better clarity and maintainability.
+  - Simplified the initialization of the XMTP client by removing unnecessary complexity.
+
+- **Style**
+
+  - Updated CSS styles for various components to enhance visual appeal and consistency.
+
+- **Chores**
+  - Updated configuration files for various packages to improve build processes and dependency management.
+
+## 1.2.35
+
+- **New Features**
+
+  - Enhanced documentation for the `paymentagent` with multimedia elements and clearer content structure.
+  - Added a new XMTP plugin for secure messaging with installation instructions and usage examples.
+  - Introduced `createAgent` function for streamlined agent creation across multiple templates.
+  - Added a new `xmtp` package for secure messaging with installation instructions and usage examples.
+
+- **Bug Fixes**
+
+  - Corrected video file extensions in documentation.
+
+- **Documentation**
+
+  - Updated various documentation files for clarity and improved organization, including the changelog and agent concepts.
+  - Improved the "Compatible apps" section in the quickstart guide for better clarity.
+  - Enhanced the XMTP plugin documentation to include detailed usage examples and installation steps.
+
+- **Chores**
+  - Updated versioning scheme across multiple packages to a generic "patch".
+
+## 1.2.32
+
+- **New Features**
+
+  - Introduced local storage functionality for enhanced data management.
+  - Added initialization tracking and improved message handling in the MessageKit module.
+  - Enhanced skill execution and parsing processes with improved error handling.
+  - Updated wallet management features with better error handling and logging.
+  - Expanded messaging capabilities with new methods for sending messages between agents.
+
+- **Bug Fixes**
+
+  - Enhanced error handling for skill execution and wallet management processes.
+
+- **Documentation**
+
+  - Improved clarity regarding the structure of the `sender` object and updated messaging functionalities.
+
+- **Chores**
+  - Adjusted import statements and refined method logic across several classes for better functionality.
+
+## 1.2.30
+
+- **New Features**
+
+  - Introduced a new `Video` component for enhanced documentation presentation.
+  - Added a new `XMTP` class for managing conversations and groups using the XMTP protocol.
+  - Enhanced `baselinks` functionality for simplified receipt generation and wallet interactions.
+  - Added a `getWalletCount` method to the `LocalStorage` class for counting wallet files.
+  - Implemented a new content type for agent messages, including encoding and decoding logic.
+
+- **Documentation**
+
+  - Updated section titles to emphasize the "library" aspect across various documentation pages.
+  - Enhanced clarity in the WalletService documentation regarding identifier terminology.
+  - Improved group creation and management instructions in the documentation.
+  - Removed the "Prompt" section from the Payment Agent documentation to streamline content.
+  - Introduced a new documentation page for "Frames" detailing their interaction with agents.
+
+- **Bug Fixes**
+
+  - Corrected the title of the Circle Wallet Service documentation.
+  - Removed outdated references to the XMTP plugin in multiple documentation files.
+
+- **Chores**
+  - Removed unused imports and simplified user notification messages in the concierge skill.
+  - Cleaned up documentation by removing obsolete sections and files.
+  - Removed the "Introduction" entry from the sidebar configuration.
+  - Updated URL formats in the baselinks documentation for receipts.
+
+## 1.2.29
+
+- **New Features**
+
+  - Introduced detailed documentation for agents, including structure, functionality, and configuration options.
+  - Added a new section for "Skills" in the documentation, defining skills and their properties.
+  - New "Payment Agent" template option available during project initialization.
+  - Added documentation for the `WalletService` class, detailing wallet management functionalities.
+  - Introduced a new `Local Storage` section in the documentation for managing data storage.
+  - Launched the Wallet Concierge, a personal financial assistant for managing digital assets within XMTP conversations.
+
+- **Documentation Updates**
+
+  - Enhanced clarity and detail in XMTP, baselinks, and WalletService documentation.
+  - Streamlined the quickstart guide with improved section headers and content organization.
+  - Removed redundant sections from various documentation files to focus on essential information.
+  - Updated the `example_prompt.md` files for various templates to reflect new commands and user context.
+  - Updated the skills documentation to reflect changes in wallet management functionalities.
+
+- **Bug Fixes**
+
+  - Updated user information retrieval methods across multiple skills, ensuring consistency and clarity.
+
+- **Chores**
+  - Removed unused import statements from community documentation files to streamline code.
+
+## 1.2.28
+
+- **New Features**
+
+  - Introduced a new `baselinks` plugin for sending frames.
+  - Added a new "Toss" template for a Cointoss bot, expanding user options.
+
+## 1.2.27
+
+- **New Features**
+
+  - Introduced a new script for the `frames` package to facilitate development.
+  - Added new test scripts and modified existing ones for improved testing coverage.
+  - Enhanced documentation for contributing skills and improved user experience in the MessageKit community.
+
+- **Bug Fixes**
+
+  - Updated links in documentation for better navigation and accuracy.
+  - Improved error handling in various components to prevent runtime errors.
+
+- **Documentation**
+
+  - Updated changelog to reflect new features and improvements.
+  - Enhanced clarity in documentation regarding structure and agent implementation details.
+
+- **Refactor**
+
+  - Replaced `XMTPContext` with `Context` across multiple files for consistency.
+  - Streamlined various functions and improved type handling for better clarity and maintainability.
+
+- **Chores**
+  - Minor updates to configuration files and dependencies to ensure compatibility and stability.
+
+## 1.2.26
+
+- **New Features**
+
+  - Introduced new "Degen" and "Kuzco Llama" vibes, enhancing character options.
+  - Added documentation for a new "Human Agent" functionality, detailing user wallet interactions.
+  - Expanded the skills library with a new "Agent Wallet" skill.
+  - Added a new command for tipping users, allowing fixed cryptocurrency transfers.
+
+- **Documentation Updates**
+
+  - Clarified references to the XMTP Plugin and improved comments for better readability.
+  - Restructured and updated documentation on username resolution and supported identifiers.
+  - Enhanced clarity in various sections of the skills and vibes documentation.
+  - Added detailed descriptions and usage examples for the XMTP protocol and its clients.
+  - Updated various documentation files to reflect changes in method signatures and parameters.
+
+- **Bug Fixes**
+
+  - Corrected typographical errors and improved grammatical accuracy in documentation.
+
+- **Chores**
+  - Minor formatting adjustments and newlines added in various configuration and package files.
+  - Updated links and sidebar entries for improved navigation in the documentation.
+
+## 1.2.25
+
+- **New Features**
+  - Enhanced error handling and logging for message processing and skills management.
+  - Updated mock objects in tests for better simulation of actual components.
+- **Bug Fixes**
+
+  - Improved undefined safety checks throughout the application to prevent runtime errors.
+
+- **Refactor**
+
+  - Adjusted the `skills` property handling in various components to ensure safer access and usage.
+  - Removed the `skills` property from the `agent` object in multiple templates.
+
+- **Documentation**
+  - Minor updates to documentation reflecting changes in the handling of the `skills` property.
+
+## 1.2.24
+
+- **New Features**
+
+  - Enhanced contribution guidelines for the MessageKit community.
+  - Updated community projects section for better clarity.
+  - New `Vibe` feature introduced, defining agent personalities.
+  - New `concierge` skills for wallet management added.
+  - Introduction of the "Hackathon Store" template and its associated documentation.
+  - New `vibes` documentation and individual sections for each vibe added.
+  - New section "End result" added to various documentation files.
+  - New `ChatMemory` class for managing chat histories introduced.
+  - Streamlined message handling and agent structure in various templates.
+
+- **Bug Fixes**
+
+  - Corrected typographical errors in various documentation sections.
+
+- **Documentation**
+
+  - Improved clarity and structure in multiple documentation files.
+  - Removed outdated documentation related to Notion and POAP plugins.
+  - Updated installation instructions and commands in the README files.
+  - Added detailed steps for contributing templates, skills, and plugins.
+
+- **Chores**
+  - Updated version numbers across multiple package files.
+  - Removed unused code and files related to previous functionalities.
+  - New testing flow for message-kit on ubuntu-latest
+
+## 1.2.21
+
+- **Documentation**
+  - Enhanced clarity and structure of contribution guidelines for the MessageKit community.
+  - Updated community projects section for broader descriptions and corrected inaccuracies in hackathon details.
+  - Corrected typographical error in the description of the "Projects" tile on the homepage.
+  - Improved documentation on file structure, wallet service, and Context for better usability.
+  - Removed outdated Notion and POAP plugin documentation.
+  - Streamlined the initialization process and clarified storage and encryption mechanisms for the WalletService.
+  - Updated environment variable documentation and removed obsolete entries.
+  - Removed documentation related to the "The General Store" project and associated files.
+  - Updated version numbers across various configuration files and scripts.
+  - Removed obsolete environment variable declarations from the example files.
+  - Added new test scripts for improved testing coverage in the MessageKit package.
+
+## 1.2.19
+
+- **New Features**
+
+  - Updated version numbers across multiple packages to reflect the latest release (1.2.18).
+  - Enhanced CLI warnings to notify users of version compatibility issues with MessageKit.
+  - Introduced new commands in the example prompt for retrieving cryptocurrency prices and searching the internet.
+
+- **Documentation**
+  - Updated version reference in the documentation configuration to match the new release version (1.2.18).
+  - Improved clarity and detail in documentation regarding frames and username resolution.
+
+## 1.2.18
+
+- **New Features**
+
+  - Introduced new skills including "Faucet," "Mint," "Swap," and "Pay" for enhanced user interaction with cryptocurrency transactions.
+  - Added a "Faucet" feature to allow users to obtain testnet tokens.
+  - Implemented a "Gated Group" functionality for managing group memberships.
+  - Expanded the skill set with a new "Coinbase Agent" template for user interactions with Coinbase.
+  - Added new templates for various functionalities, including a general store and a game called "Toss."
+
+- **Documentation**
+
+  - Updated and added documentation for new skills and features, including detailed usage instructions and environment variable configurations.
+  - Introduced structured prompts for various agents, enhancing user interaction clarity.
+  - Removed outdated documentation files to streamline user guidance.
+  - Enhanced guidelines for contributing to the community.
+  - Added a new section for interacting with Notion and delivering POAPs.
+
+- **Bug Fixes**
+
+  - Enhanced error handling across various functionalities to improve user experience and feedback.
+
+- **Chores**
+  - Consolidated and organized `.gitignore` entries for better file management.
+  - Updated configuration files for improved project structure and clarity.
+
+## 1.2.14
+
+- **New Features**
+
+  - Introduced a new "ENS Agent" documentation, detailing its functionality and usage.
+  - Added a new skill for generating images using DALL-E.
+  - New "Contribute" guide for community contributions, including skills, templates, and plugins.
+
+- **Documentation Updates**
+
+  - Updated various documentation files to reflect new paths and improved clarity.
+  - Enhanced the "Frames" documentation with detailed parameters and examples for payments and receipts.
+  - Streamlined the community examples section for better organization and clarity.
+  - Introduced a new documentation page for the MessageKit templates library.
+
+- **Bug Fixes**
+
+  - Corrected hyperlink references throughout the documentation to reflect updated paths.
+
+- **Style Improvements**
+
+  - Enhanced CSS for improved responsiveness and dark mode compatibility.
+  - Updated README files to provide clearer guidance and links to resources.
+
+- **Chores**
+  - Renamed and reorganized package names and paths for better alignment with current functionality.
+
+## 1.2.11
+
+- Framesv2 integration: Now every agent can have its own landing page for interaction via web and v2 frames via farcaster.
+
+## 1.1.10
+
+- CDP integration: Create agents with CDP SDK for swaps, mints and payments.
+
+## 1.2.9
+
+- **New Features**
+
+  - Added USDC management features, allowing users to check balances, fund wallets, and transfer USDC.
+  - New environment variables added for improved configuration options.
+  - Added a new "Agent Wallet" section in the documentation to facilitate wallet management.
+  - Introduced the `WalletService` class for managing agent wallets, enabling gasless payments and transfers.
+
+- **Documentation**
+  - Updated README files and documentation pages to provide clearer instructions and new environment variable requirements, including detailed setup for the USDC and AgentService functionalities.
+  - Added a new section in the sidebar for "Agent Wallet" to enhance navigation.
+
+## 1.2.8
+
+- **New Features**
+
+  - Introduced new commands for group management: `/create` for creating a new group and `/id` for retrieving the group ID.
+  - Added documentation for the Alchemy plugin to facilitate interaction with the Alchemy API.
+  - New issue template for skill requests to streamline user submissions.
+  - New skill for sending updates to subscribers via a messaging context.
+  - Enhanced functionality for the `/pay` command to include an address parameter.
+  - Added a new skill for checking NFT ownership through the Alchemy API.
+  - New skill for resetting the conversation by clearing memory and usernames cache.
+
+- **Bug Fixes**
+
+  - Improved error handling in various skills and functions to ensure consistent responses.
+
+- **Documentation**
+
+  - Updated several documentation files for clarity and consistency, including terminology changes from "middleware" to "plugin."
+  - Enhanced example prompts and user context in documentation.
+
+- **Refactor**
+
+  - Reorganized code structure by moving handler functions from `handlers` to `skills` directory.
+  - Updated import paths and skill names for better clarity and consistency.
+
+- **Style**
+
+  - Minor formatting adjustments in documentation and CSS styles for improved readability and visual consistency.
+
+- **Chores**
+  - Cleaned up package configurations and scripts for better project management.
+
+## 1.1.11
+
+- **New Features**
+  - Updated version numbers across multiple packages to `1.1.11`.
+  - Introduced new skills for handling payments and token queries.
+  - Added a "Game" feature for interactive requests.
+- **Documentation**
+
+  - Enhanced documentation for message handling, skills, and payment processing.
+  - Added sections for manual installation and GPT examples.
+  - Updated existing documentation to reflect changes in commands and functionality.
+
+- **Bug Fixes**
+
+  - Improved error handling in various contexts, including payment and message processing.
+
+- **Chores** - Removed outdated files and references to improve codebase clarity. - Updated environment variable names for consistency.
+
+## 1.1.10
+
+**Summary of Changes**
+
+The pull request introduces several updates and improvements across multiple files in the project:
+
+- **Template Renaming**: The `gm` template has been renamed to `gpt` throughout the codebase. This reflects a shift to using GPT-based agents for more advanced interactions.
+
+- **Prompt Enhancements**: Agent prompt functions have been updated to use a simplified and more effective prompt generation method. The prompts now leverage a `defaultPromptTemplate`, improving the way agents generate and handle prompts for GPT-based models.
+
+- **Skill Definitions Updates**: Skill definitions in `skills.ts` files have been modified. The `triggers` property has been removed from skill objects, and parameters have been updated to enhance skill parsing and execution.
+
+- **New Test Suites**: New test files have been added to improve testing coverage for agents and skill parsing. These include tests for agent prompting, skill parsing, and group interactions.
+
+- **Codebase Cleanup**: Outdated files and templates, such as the old `gm` template and middleware files, have been removed to streamline the codebase and reduce clutter.
+
+- **Documentation Updates**: Documentation has been extensively updated to reflect all changes. This includes updates to READMEs, code examples, tutorial guides, and the AI Skills framework documentation.
+
+- **Dependency and Configuration Updates**: Several dependencies have been updated to newer versions, and configurations like package versions and build scripts have been adjusted accordingly.
+
+- **Improvements in Handlers and Skills**: Handler functions have been refined for better error handling and functionality, particularly in agent and group templates.
+
+- **User Information Resolution**: Enhancements have been made to how user information is resolved and cached, improving efficiency and consistency when retrieving user data like ENS domains and addresses.
+
+Overall, these changes aim to enhance the functionality of GPT-based agents, improve code quality, update documentation for better developer experience, and streamline the project structure.
+
+## 1.1.8
+
+**Summary of Changes**
+
+- Introduced new commands for handling group interactions, including `/id` for retrieving group ID.
+- Added a new section for "AI Skills" in the documentation, detailing a framework for building AI agents.
+- Enhanced command execution with improved error handling and response structures.
+- Streamlined command handling for gaming interactions and tipping features.
+- Expanded example responses in the `agent_prompt` function for ENS domain interactions.
+- Added a new handler for group commands to manage "help" and "id" requests.
+- Modified the `/exists` command to allow access for all users, removing the admin-only restriction.
+
+- **Bug Fixes**
+
+  - Resolved issues related to command execution and improved logging for better error tracking.
+
+- **Documentation**
+
+  - Updated installation instructions and added more resources for users.
+  - Enhanced clarity in documentation regarding command processing and multi-line responses.
+  - Modified the `processing` documentation to reflect changes in handling multi-line responses.
+  - Removed references to `STACK_API_KEY` in documentation, indicating it is no longer required.
+
+- **Chores** - Removed outdated files and consolidated functionality to improve code organization. - Simplified development setup by removing unnecessary dependencies and replacing `nodemon` with `node --watch`. - Introduced post-install scripts for TypeScript compilation.
+
+## 1.1.5
+
+**Summary of Changes**
+
+-Tagline: An open framework for building AI agents ?
++Tagline: An open framework for building AI agents
+
+- Lighter but more structured and robust.
+- Updated directory
+- Each agent can have its own landing in messagekit (devs can do PRs)
+- Quickstarts section
+  - Skills: There is a 4-step approach to AI Skills:
+  - Definition: Define the skills
+  - Parsing: From @base please let swap 1 eth to usdc to /swap 1 eth usdc
+  - Processing: For an agent to process new lines
+  - Scenarios: For the agent to understand the context and perform skills autonomously.
+  - Reasoning: For the agent to understand all context and perform skills autonomously.
+- Resolver: Fetches context from the user like ENS domain or Converse username
+
+## 1.0.0
+
+**Summary of Changes**
+
+- Added `adminOnly` skills for group settings for skills enabled only for admin of groups
+- Added `memberChange` as optional runner config for enabling new members added
+- Added `attachment` as optional runner config for enabling attachments in the stream
+- New CLI logo
+- Updated CLI notes and warnings
+- Implemented logging for sent messages.
+- Created Converse usernames endpoint. https://github.com/ephemeraHQ/converse-website/pull/32
+- Revamped skill handler and triggers.
+- Added logging for invalid skills.
+- Added handling for incorrect and non-skill inputs.
+- New Tagline: `An open framework for building AI agents`
+- Updated tests
+- Improved `isMessageValid` for filtering messages
+- Added `isTagged` in the filter
+- Restructured the isMessageValid logic
+- Updated streams with reconnect logic
+- Updated types based on Skills
+
+**Documentation:**
+
+- Restructured directory
+- Added quickstarts.
+- Replaced one-to-one with Agent example
+- Documented `skills`
+- Renamed examples as templates
+- How to use a second `createClient` client
+- Optional parameters concepts/structure#optional-parameters
+- Added changelog
+
+**Middleware:**
+Added Middleware section as the layer where to interact with external services in general.
+
+- GPT: Use gpt responses (Updated)
+- Cron: Send updates daily
+- Resolver: Resolve ens and converse usernames
+- Notion: Interact with notion docs
+- Redis: Interact with Redis DB
+- Stackso: Use stackso for tracking points and loyalty programs
+- Vision: Use GPT vision to parse attachments
+- Learnweb3: Use learnweb3 libraries for testnet funds
+
+**Bug Fixes:**
+
+- Fixed CLI issues when install with npm `npm init message-kit`

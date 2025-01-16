@@ -1,4 +1,5 @@
-import { Context, getUserInfo, Skill } from "@xmtp/message-kit";
+import { Context, Skill } from "@xmtp/message-kit";
+import { getUserInfo } from "xmtp";
 
 const frameUrl = "https://ens.steer.fun/";
 
