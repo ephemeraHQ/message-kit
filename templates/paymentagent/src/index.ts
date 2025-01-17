@@ -1,6 +1,6 @@
-import { concierge, createAgent } from "@xmtp/message-kit";
+import { createAgent } from "@xmtp/message-kit";
 import { degen } from "./vibes/degen.js";
-
+import { concierge } from "./skills/concierge.js";
 export const agent = createAgent({
   name: "Human Agent",
   tag: "@bot",
@@ -13,5 +13,3 @@ export const agent = createAgent({
     walletService: true,
   },
 }).run();
-
-

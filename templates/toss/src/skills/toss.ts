@@ -1,5 +1,5 @@
 import { Skill, Context } from "@xmtp/message-kit";
-import { getUserInfo } from "xmtp";
+import { getUserInfo } from "@xmtp/agent-starter";
 import { getRedisClient } from "../plugins/redis.js";
 import {
   checkTossCorrect,

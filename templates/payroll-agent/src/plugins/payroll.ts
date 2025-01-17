@@ -1,7 +1,7 @@
 import { getAllEmployees } from "./redis.js";
 import { Context } from "@xmtp/message-kit";
 import cron from "node-cron";
-import { baselinks } from "@xmtp/message-kit";
+import { baselinks } from "./baselinks.js";
 
 export class Payroll {
   private context: Context;

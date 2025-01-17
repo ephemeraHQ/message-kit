@@ -1,5 +1,5 @@
 import { createAgent } from "@xmtp/message-kit";
-import { XMTP } from "xmtp";
+import { XMTP } from "@xmtp/agent-starter";
 import { gated } from "./skills/gated.js";
 import { startGatedGroupServer } from "./skills/gated.js";
 

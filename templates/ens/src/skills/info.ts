@@ -1,5 +1,5 @@
 import { Context, Skill } from "@xmtp/message-kit";
-import { getUserInfo } from "xmtp";
+import { getUserInfo } from "@xmtp/agent-starter";
 
 // [!region define]
 export const info: Skill[] = [

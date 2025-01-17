@@ -77,12 +77,12 @@ export default defineConfig({
   },
   sidebar: [
     {
-      text: "CLI",
-      link: "/cli",
+      text: "Overview",
+      link: "/framework/overview",
     },
     {
-      text: "paymentagent.eth",
-      link: "/templates/paymentagent",
+      text: "CLI",
+      link: "/cli",
     },
     {
       text: "Community",
@@ -110,58 +110,16 @@ export default defineConfig({
       ],
     },
     {
-      text: "Framework",
-      items: [
-        {
-          text: "Overview",
-          link: "/framework/overview",
-        },
-        {
-          text: "Skills",
-          link: "/framework/skills",
-        },
-        {
-          text: "Deployment",
-          link: "/framework/deployment",
-        },
-        {
-          text: "Contribute",
-          link: "/framework/contribute",
-        },
-        {
-          text: "Changelog",
-          link: "/framework/changelog",
-        },
-      ],
+      text: "Deployment",
+      link: "/framework/deployment",
     },
     {
-      text: "XMTP",
-      items: [
-        {
-          text: "Protocol",
-          link: "/xmtp/protocol",
-        },
-        {
-          text: "Library",
-          link: "/xmtp/library",
-        },
-        {
-          text: "Groups",
-          link: "/xmtp/groups",
-        },
-        {
-          text: "Identity",
-          link: "/xmtp/identity",
-        },
-        {
-          text: "Gated group",
-          link: "/xmtp/gated-group",
-        },
-        {
-          text: "Guidelines",
-          link: "/xmtp/guidelines",
-        },
-      ],
+      text: "Contribute",
+      link: "/framework/contribute",
+    },
+    {
+      text: "Changelog",
+      link: "/changelog",
     },
   ],
 });

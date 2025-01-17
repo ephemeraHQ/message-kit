@@ -1,5 +1,5 @@
 {
-  "name": "gated-group",
+  "name": "gated-group-template",
   "private": true,
   "type": "module",
   "scripts": {

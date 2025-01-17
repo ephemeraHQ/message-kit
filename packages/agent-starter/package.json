@@ -1,0 +1,63 @@
+{
+  "name": "@xmtp/agent-starter",
+  "version": "0.1.0",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.js"
+    }
+  },
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "build:watch": "yarn build -w",
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "publish": "npm publish",
+    "test": "yarn build && vitest",
+    "test:client": "vitest run tests/client",
+    "test:e2e": "vitest run tests/encryption"
+  },
+  "dependencies": {
+    "@changesets/changelog-git": "^0.2.0",
+    "@changesets/cli": "^2.27.5",
+    "@xmtp/content-type-primitives": "^2.0.0",
+    "@xmtp/content-type-reaction": "^2.0.0",
+    "@xmtp/content-type-read-receipt": "^2.0.0",
+    "@xmtp/content-type-remote-attachment": "^2.0.0",
+    "@xmtp/content-type-reply": "^2.0.0",
+    "@xmtp/content-type-text": "^2.0.0",
+    "@xmtp/node-sdk": "^0.0.38",
+    "dotenv": "^16.4.5",
+    "jsdom": "^26.0.0",
+    "typescript": "^5.4.5",
+    "viem": "^2.16.3"
+  },
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^11.1.6",
+    "@types/jsdom": "^21.1.7",
+    "@types/node": "^20.14.2",
+    "@vitest/coverage-v8": "^2.1.4",
+    "prettier": "^3.3.1",
+    "rollup": "^4.18.0",
+    "rollup-plugin-dts": "^6.1.1",
+    "ts-node": "^10.9.2",
+    "turbo": "^2.2.3",
+    "vitest": "^2.1.4"
+  },
+  "packageManager": "yarn@4.5.1",
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
+}

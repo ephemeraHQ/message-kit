@@ -1,5 +1,5 @@
-import { Context, baselinks } from "@xmtp/message-kit";
-import type { Skill } from "@xmtp/message-kit";
+import { Context, Skill } from "@xmtp/message-kit";
+import { baselinks } from "../plugins/baselinks.js";
 import { getRedisClient } from "../plugins/redis.js";
 import { LearnWeb3Client, Network } from "../plugins/learnweb3.js";
 
