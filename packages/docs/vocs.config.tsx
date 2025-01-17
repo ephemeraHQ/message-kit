@@ -81,20 +81,24 @@ export default defineConfig({
       link: "/xmtp/library",
     },
     {
+      text: "Resolver",
+      link: "/xmtp/resolver",
+    },
+    {
       text: "Examples",
       link: "/examples",
       items: [
-        {
-          text: "Resolver",
-          link: "/xmtp/examples/resolver",
-        },
         {
           text: "Gated group",
           link: "/xmtp/examples/gated-group",
         },
         {
-          text: "Deployment",
-          link: "/xmtp/examples/deployment",
+          text: "Railway deployment",
+          link: "/xmtp/examples/railway",
+        },
+        {
+          text: "Replit deployment",
+          link: "/xmtp/examples/replit",
         },
       ],
     },

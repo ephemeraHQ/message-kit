@@ -42,7 +42,3 @@ After running `dev`, you can end send a message to the agent and it will reply!
 ![](/img/cli/1.png)
 
 > A screenshot of the terminal after running `dev`
-
-### Deploy
-
-See [Deployment](/deployment) for more information.
