@@ -6294,9 +6294,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"gated-group@workspace:packages/gated-group":
+"gated-group@workspace:recipes/gated-group":
   version: 0.0.0-use.local
-  resolution: "gated-group@workspace:packages/gated-group"
+  resolution: "gated-group@workspace:recipes/gated-group"
   dependencies:
     "@types/express": "npm:^4.17.20"
     "@types/node": "npm:^20.14.2"
@@ -8918,8 +8918,8 @@ __metadata:
   linkType: hard
 
 "openai@npm:^4.52.7":
-  version: 4.79.0
-  resolution: "openai@npm:4.79.0"
+  version: 4.79.1
+  resolution: "openai@npm:4.79.1"
   dependencies:
     "@types/node": "npm:^18.11.18"
     "@types/node-fetch": "npm:^2.6.4"
@@ -8938,7 +8938,7 @@ __metadata:
       optional: true
   bin:
     openai: bin/cli
-  checksum: 10/8d2933e6f595428dab18176481068d866b88923bf8b1b7d3bcc0e6fda2b51d72410cd9f87c7dbea31e35b5af8b61a5f52870dc9469296d78e2561c0b57a64eb6
+  checksum: 10/455b32778d63328a2fb4f24de749e110399f5977ec5027b28bdf7a129b4fc706600a8d1be09a2d260f8f797743b31364a49c4b222306a67f87c222b527039448
   languageName: node
   linkType: hard
 

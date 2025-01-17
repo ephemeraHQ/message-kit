@@ -6,6 +6,7 @@
   "workspaces": [
     "templates/*",
     "packages/*",
+    "recipes/*",
     "shared/*"
   ],
   "scripts": {
@@ -23,7 +24,7 @@
     "docs": "cd packages/docs && yarn dev",
     "domain": "ngrok http --hostname=frames.ngrok.app 3000",
     "format": "turbo run format",
-    "gated": "yarn build:agent-starter && cd packages/gated-group && yarn dev",
+    "gated": "yarn build:agent-starter && cd recipes/gated-group && yarn dev",
     "links": " cd packages/base-links && yarn dev",
     "play": "cd templates/playground && yarn dev",
     "publish": "yarn install && yarn build && yarn copy && node scripts/publish.js",
