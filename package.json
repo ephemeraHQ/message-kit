@@ -10,7 +10,6 @@
     "shared/*"
   ],
   "scripts": {
-    "build": "yarn build:message-kit && yarn build:packages && yarn build:templates && yarn build:recipes",
     "build:agent-starter": "turbo run build --filter=./packages/agent-starter --force",
     "build:message-kit": "turbo run build --filter=./packages/message-kit --force",
     "build:packages": "turbo run build --filter='./packages/*' --filter='!./packages/message-kit'",
