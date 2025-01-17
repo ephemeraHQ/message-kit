@@ -1,3 +1,4 @@
-# base-links
+![Status](https://img.shields.io/badge/Deprecated-brown)
 
-See [base-links](https://message-kit.org/plugins/base-links) in MessageKit.
+> [!CAUTION]
+> The Baselinks repo is no longer mantained

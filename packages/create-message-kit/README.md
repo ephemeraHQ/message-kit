@@ -1,7 +1,7 @@
 ![Status](https://img.shields.io/badge/Deprecated-brown)
 
 > [!CAUTION]
-> The MessageKit framework is no longer mantained
+> The MessageKit CLI is no longer mantained
 
 # CLI
 
