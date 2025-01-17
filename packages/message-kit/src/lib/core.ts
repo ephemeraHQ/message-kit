@@ -1,5 +1,5 @@
 import { Agent, SkillResponse } from "../helpers/types.js";
-import { agentReply, chatMemory, defaultSystemPrompt } from "../plugins/gpt.js";
+import { agentReply, chatMemory, defaultSystemPrompt } from "./gpt.js";
 import { getUserInfo, userInfoCache } from "xmtp";
 import { logInitMessage, logMessage } from "../helpers/utils.js";
 import { Message, XMTP, Conversation, userMessage } from "xmtp";

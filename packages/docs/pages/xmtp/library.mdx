@@ -1,28 +1,16 @@
-# Agent SDK by XMTP
+# XMTP
 
-This package provides the XMTP agent wrapper around [SDK for Node](https://github.com/xmtp/xmtp-js/tree/main/sdks/node-sdk).
+This library provides a wrapper around [SDK for Node](https://github.com/xmtp/xmtp-js/tree/main/sdks/node-sdk) to make it easier to use in your agent.
 
 ## Install
-
-:::code-group
-
-```bash [bun]
-bun install xmtp
-```
 
 ```bash [yarn]
 yarn add xmtp
 ```
 
-```bash [npx]
-npx install xmtp
-```
-
-:::
-
 ## Overview
 
-These are the steps to initialize the AgentSDK listener and send messages.
+These are the steps to initialize the XMTP listener and send messages.
 
 - `ENCRYPTION_KEY`: The private key of the wallet that will be used to send or receive messages.
 
@@ -49,60 +37,108 @@ const onMessage = async (message, user) => {
 };
 ```
 
+## Address availability
+
+Returns `true` if an address has XMTP enabled
+
+```typescript
+const isOnXMTP = await xmtp.canMessage(address);
+```
+
+## Groups
+
+To learn more about groups, read the [XMTP documentation](https://docs.xmtp.org/inboxes/group-permissions).
+
+:::info
+You need to **add the agent to the group as a member**.
+:::
+
+To create a group from your agent, you can use the following code:
+
+```tsx
+const group = await xmtp?.conversations.newGroup([address1, address2]);
+```
+
+As an admin you can add members to the group.
+
+```tsx
+// get the group
+await group.sync();
+//By address
+await group.addMembers([userAddresses]);
+//By inboxId
+await group.addMembersByInboxId([addedInboxes]);
+```
+
+## Receive messages
+
+```tsx
+const onMessage = async (message, user) => {
+  console.log(`Decoded message: ${message.content.text} by ${user.address}`);
+  let typeId = message.typeId;
+
+  if (typeId === "text") {
+    // Do something with the text
+  } else if (typeId === "reaction") {
+    // Do something with the reaction
+  } else if (typeId === "reply") {
+    // Do something with the `reply`
+  } else if (typeId === "attachment") {
+    // Do something with the attachment data url
+  } else if (typeId === "agent_message") {
+    // Do something with the agent message
+  } else if (typeId === "group_updated") {
+    // Do something with the group updated metadata
+  }
+};
+```
+
 ## Send messages
 
 App messages are messages that are sent when you send a reply to a message and are highlighted differently by the apps.
 
-### Text
+:::code-group
 
-```tsx
+```tsx [Text]
 let textMessage: userMessage = {
   message: "Your message.",
-  receivers: [message.sender.address],
-  originalMessage: message,
+  receivers: ["0x123..."], // optional
+  originalMessage: message, // optional
 };
 await xmtp.send(textMessage);
 ```
 
-### Reaction
-
-```tsx
+```tsx [Reaction]
 let reaction: userMessage = {
   message: "😅",
-  receivers: [message.sender.address],
-  originalMessage: message,
+  receivers: ["0x123..."], // optional
+  originalMessage: message, // optional
   typeId: "reaction",
 };
 await xmtp.send(reaction);
 ```
 
-### Reply
-
-```tsx
+```tsx [Reply]
 let reply: userMessage = {
   message: "Your message.",
-  receivers: [message.sender.address],
-  originalMessage: message,
+  receivers: ["0x123..."], // optional
+  originalMessage: message, // optional
   typeId: "reply",
 };
 await xmtp.send(reply);
 ```
 
-### Attachment
-
-```tsx
+```tsx [Attachment]
 let attachment: userMessage = {
   message: "https://picsum.photos/200/300",
-  receivers: [message.sender.address],
-  originalMessage: message,
+  receivers: ["0x123..."], // optional
+  originalMessage: message, // optional
   typeId: "attachment",
 };
 await xmtp.send(attachment);
 ```
 
-### Agent message
-
-```tsx
+```tsx [Agent]
 let agentMessage: userMessage = {
   message: "Would you like to approve this transaction?",
   metadata: {
@@ -113,9 +149,11 @@ let agentMessage: userMessage = {
     chain: "base",
     destinationAddress: "0x123...789",
   },
-  receivers: [message.sender.address],
-  originalMessage: message,
+  receivers: ["0x123..."], // optional
+  originalMessage: message, // optional
   typeId: "agent",
 };
 await xmtp.send(agentMessage);
 ```
+
+:::

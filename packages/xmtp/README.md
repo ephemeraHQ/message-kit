@@ -57,6 +57,83 @@ const onMessage = async (message, user) => {
 };
 ```
 
+## Identity
+
+Each message comes with a sender object that contains the address, name, and avatar of the sender.
+
+- `inboxId`: A unique identifier for the user's message inbox. This remains consistent across different installations.
+- `address`: The primary blockchain address associated with the sender. This is typically an Ethereum address.
+- `accountAddresses`: An array of all blockchain addresses linked to this identity. Users can have multiple addresses associated with their XMTP identity.
+- `installationIds`: Array of unique identifiers for each installation/device where the user has XMTP enabled.
+
+### Address availability
+
+Returns `true` if an address has XMTP enabled
+
+```typescript
+const isOnXMTP = await xmtp.canMessage(address);
+```
+
+## Groups
+
+To learn more about groups, read the [XMTP documentation](https://docs.xmtp.org/inboxes/group-permissions).
+
+:::info
+You need to **add the agent to the group as a member**.
+:::
+
+To create a group from your agent, you can use the following code:
+
+```tsx
+const group = await xmtp?.conversations.newGroup([address1, address2]);
+```
+
+As an admin you can add members to the group.
+
+```tsx
+// get the group
+await group.sync();
+//By address
+await group.addMembers([userAddresses]);
+//By inboxId
+await group.addMembersByInboxId([addedInboxes]);
+```
+
+## Receive messages
+
+```tsx
+const onMessage = async (message, user) => {
+  console.log(`Decoded message: ${message.content.text} by ${user.address}`);
+
+  if (typeId === "text") {
+    // Do something with the text
+  } else if (typeId === "reaction") {
+    // Do something with the reaction
+  } else if (typeId === "reply") {
+    // Do something with the `reply`
+  } else if (typeId === "attachment") {
+    // Do something with the attachment data url
+  } else if (typeId === "agent_message") {
+    // Do something with the agent message
+  } else if (typeId === "group_updated") {
+    // Do something with the group updated metadata
+  }
+};
+```
+
+## Send messages
+
+App messages are messages that are sent when you send a reply to a message and are highlighted differently by the apps.
+
+```tsx [Text]
+let textMessage: userMessage = {
+  message: "Your message.",
+  receivers: [message.sender.address],
+  originalMessage: message,
+};
+await xmtp.send(textMessage);
+```
+
 ## XMTP network environments
 
 XMTP provides `production`, `dev`, and `local` network environments to support the development phases of your project. To learn more about these environments, see our [official documentation](https://xmtp.org/docs/build/authentication#environments).

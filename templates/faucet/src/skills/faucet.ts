@@ -1,4 +1,5 @@
-import { Context, Skill, baselinks } from "@xmtp/message-kit";
+import { Context, Skill } from "@xmtp/message-kit";
+import { baselinks } from "../plugins/baselinks.js";
 import { getRedisClient } from "../plugins/redis.js";
 import {
   FIVE_MINUTES,

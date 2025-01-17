@@ -38,10 +38,12 @@ import { getRandomValues } from "crypto";
 import path from "path";
 import { xmtpConfig, Message, userMessage, UserReturnType } from "../types.js";
 import { readFile } from "fs/promises";
-import dns from "dns";
 import * as fs from "fs";
-import { getUserInfo } from "./resolver.js";
-import { JSDOM } from "jsdom";
+import {
+  getEvmAddressFromDns,
+  getEvmAddressFromHeaderTag,
+  getUserInfo,
+} from "./resolver.js";
 import fetch from "node-fetch";
 
 export class XMTP {
@@ -228,7 +230,7 @@ export class XMTP {
       // Check if receiver is a website
       if (receiver.startsWith("http://") || receiver.startsWith("https://")) {
         resolvedAddress =
-          (await this.getEvmAddressFromDns(receiver)) ||
+          (await getEvmAddressFromDns(receiver)) ||
           (await getEvmAddressFromHeaderTag(receiver)) ||
           receiver;
       }
@@ -296,61 +298,11 @@ export class XMTP {
     )(reference);
   }
 
-  async isOnXMTP(address: string): Promise<boolean> {
+  async canMessage(address: string): Promise<boolean> {
     const isOnXMTP = await this.client?.canMessage([address]);
     return isOnXMTP ? true : false;
   }
-
-  async getEvmAddressFromDns(domain: string): Promise<string | undefined> {
-    return new Promise((resolve, reject) => {
-      dns.resolveTxt(domain, (err, records) => {
-        if (err) {
-          console.error("Failed to resolve TXT records:", err);
-          return reject(err);
-        }
-
-        for (const recordArray of records) {
-          const recordText = recordArray.join("");
-          console.log(`Found TXT record: ${recordText}`);
-
-          const match = recordText.match(/^xmtp=(0x[a-fA-F0-9]+)/);
-          if (match && match[1]) {
-            console.log(`Extracted EVM address: ${match[1]}`);
-            return resolve(match[1]);
-          }
-        }
-        resolve(undefined);
-      });
-    });
-  }
 }
-async function getEvmAddressFromHeaderTag(
-  website: string,
-): Promise<string | undefined> {
-  try {
-    const response = await fetch(website);
-    const html = await response.text();
-    const dom = new JSDOM(html);
-    const metaTags = dom.window.document.getElementsByTagName("meta");
-
-    for (let i = 0; i < metaTags.length; i++) {
-      const metaTag = metaTags[i];
-      if (metaTag.getAttribute("name") === "xmtp") {
-        const content = metaTag.getAttribute("content");
-        if (content) {
-          const match = content.match(/^0x[a-fA-F0-9]+$/);
-          if (match) {
-            return match[0];
-          }
-        }
-      }
-    }
-  } catch (error) {
-    console.error("Failed to fetch or parse the website:", error);
-  }
-  return undefined;
-}
-
 async function streamMessages(
   onMessage: (message: Message | undefined) => Promise<void> | undefined,
   client: Client | undefined,

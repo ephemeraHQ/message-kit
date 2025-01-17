@@ -1,6 +1,5 @@
 import { Transfer } from "@coinbase/coinbase-sdk";
-import { Skill } from "../helpers/types";
-import { Context } from "../lib/core";
+import { Skill, Context } from "@xmtp/message-kit";
 import { getUserInfo } from "xmtp";
 import { isAddress } from "viem";
 import { baselinks } from "../plugins/baselinks";
@@ -265,7 +264,7 @@ async function notifyUser(
   });
 
   if (!isAddress(toAddress)) return;
-  const isOnXMTP = await context.xmtp.isOnXMTP(toAddress);
+  const isOnXMTP = await context.xmtp.canMessage(toAddress);
   console.log(toAddress, isOnXMTP);
   if (!isOnXMTP) return;
   let userInfo = await getUserInfo(fromAddress);

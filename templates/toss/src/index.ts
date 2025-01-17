@@ -1,4 +1,5 @@
-import { concierge, createAgent } from "@xmtp/message-kit";
+import { createAgent } from "@xmtp/message-kit";
+import { concierge } from "./skills/concierge.js";
 import { systemPrompt } from "./prompt.js";
 import { toss } from "./skills/toss.js";
 

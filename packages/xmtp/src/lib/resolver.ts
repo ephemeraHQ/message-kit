@@ -1,4 +1,6 @@
 import { isAddress } from "viem";
+import { JSDOM } from "jsdom";
+import dns from "dns";
 export const converseEndpointURL = "https://converse.xyz/profile/";
 
 export type InfoCache = Map<string, UserInfo>;
@@ -204,3 +206,55 @@ const fetchWithTimeout = async (
     console.error("fetching");
   }
 };
+
+export async function getEvmAddressFromDns(
+  domain: string,
+): Promise<string | undefined> {
+  return new Promise((resolve, reject) => {
+    dns.resolveTxt(domain, (err, records) => {
+      if (err) {
+        console.error("Failed to resolve TXT records:", err);
+        return reject(err);
+      }
+
+      for (const recordArray of records) {
+        const recordText = recordArray.join("");
+        console.log(`Found TXT record: ${recordText}`);
+
+        const match = recordText.match(/^xmtp=(0x[a-fA-F0-9]+)/);
+        if (match && match[1]) {
+          console.log(`Extracted EVM address: ${match[1]}`);
+          return resolve(match[1]);
+        }
+      }
+      resolve(undefined);
+    });
+  });
+}
+
+export async function getEvmAddressFromHeaderTag(
+  website: string,
+): Promise<string | undefined> {
+  try {
+    const response = await fetch(website);
+    const html = await response.text();
+    const dom = new JSDOM(html);
+    const metaTags = dom.window.document.getElementsByTagName("meta");
+
+    for (let i = 0; i < metaTags.length; i++) {
+      const metaTag = metaTags[i];
+      if (metaTag.getAttribute("name") === "xmtp") {
+        const content = metaTag.getAttribute("content");
+        if (content) {
+          const match = content.match(/^0x[a-fA-F0-9]+$/);
+          if (match) {
+            return match[0];
+          }
+        }
+      }
+    }
+  } catch (error) {
+    console.error("Failed to fetch or parse the website:", error);
+  }
+  return undefined;
+}

@@ -1,4 +1,5 @@
-import { concierge, createAgent } from "@xmtp/message-kit";
+import { createAgent } from "@xmtp/message-kit";
+import { concierge } from "./skills/concierge.js";
 
 export const agent = createAgent({
   name: "Circle Wallet Agent",

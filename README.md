@@ -2,10 +2,12 @@
 
 A set of tools for AI developers to build on top of [XMTP](https://xmtp.org)
 
-- [`message-kit`](/packages/message-kit): A kit for quickly building messaging apps
-- [`create-message-kit`](/packages/create-message-kit): A CLI for creating new apps easily
+> Try XMTP using [xmtp.chat](https://xmtp.chat)
+
+- [`framework ⚠️`](/packages/framework): A kit for quickly building messaging apps
+- [`cli ⚠️`](/packages/cli): A CLI for creating new apps easily
 - [`docs`](/packages/docs): Documentation for MessageKit
-- [`agent-sdk`](/packages/xmtp/): An xmtp node js wrapper for AI agents.
+- [`xmtp`](/packages/xmtp/): An node js wrapper for AI agents around the [node-sdk](https://github.com/xmtp/xmtp-js/tree/main/sdks/node-sdk)
 - [`base-links`](/packages/base-links): A suite of coinbase wallet usdc links
 
 ## Contributing

@@ -1,4 +1,5 @@
-import { Context, baselinks, Skill } from "@xmtp/message-kit";
+import { Context, Skill } from "@xmtp/message-kit";
+import { baselinks } from "../plugins/baselinks";
 
 export const pay: Skill[] = [
   {

@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 dotenv.config({ override: true });
 import OpenAI from "openai";
 import { getFS } from "../helpers/utils";
-import type { Context } from "../lib/core";
+import type { Context } from "./core";
 import { getUserInfo } from "xmtp";
 import type { Agent } from "../helpers/types";
 import { replaceSkills } from "../helpers/skills";

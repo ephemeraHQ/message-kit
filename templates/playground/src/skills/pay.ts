@@ -1,5 +1,5 @@
-import { baselinks, Context } from "@xmtp/message-kit";
-import type { Skill } from "@xmtp/message-kit";
+import { baselinks } from "../plugins/baselinks.js";
+import { Context, Skill } from "@xmtp/message-kit";
 
 export const registerSkill: Skill[] = [
   {

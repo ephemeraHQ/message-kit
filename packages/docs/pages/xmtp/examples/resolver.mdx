@@ -1,0 +1,54 @@
+## Resolver library
+
+The resolver provides a `getUserInfo` function that returns detailed information about a user:
+
+```typescript
+import { getUserInfo } from "xmtp";
+const userInfo = await getUserInfo(identifier);
+```
+
+**Supported identifiers**
+
+- **Ethereum Addresses** - Standard hex addresses (e.g., `0x123...`)
+- **ENS Domains** - Ethereum Name Service domains (e.g., `vitalik.eth`)
+- **Converse Usernames** - Social usernames from Converse (e.g., `@fabri`)
+- **Inbox ID** - Inbox ID from Converse (e.g., `0x123...`)
+- **Website Header Tag** - Inbox ID from Converse (e.g., `xmtp=0x123...`)
+- **Website Txt record** - Inbox ID from Converse (e.g., `meta="xmtp" content="0x123...`)
+
+The resolver returns a `UserInfo` object containing:
+
+- `ensDomain` - User's ENS domain if available
+- `address` - Ethereum address
+- `preferredName` - Best available name to display
+- `converseUsername` - Converse username if available
+- `avatar` - Profile picture URL if available
+- `converseEndpoint` - Converse profile endpoint
+
+### Message example
+
+```tsx
+let textMessage: userMessage = {
+  message: "Hello, world!",
+  receivers: [
+    "0x123...", // address
+    "vitalik.eth", // ens
+    "@fabri", // converse username
+    "https://example.com", // website header tag or txt record
+  ],
+  originalMessage: message,
+};
+await xmtp.send(textMessage);
+```
+
+## Cache Management
+
+The resolver implements automatic caching to improve performance and reduce API calls. You can manage the cache using:
+
+```typescript
+// or import directly
+import { userInfoCache } from "xmtp";
+
+userInfoCache.clear(); // clear all cache
+userInfoCache.clear(address); // clear an address
+```

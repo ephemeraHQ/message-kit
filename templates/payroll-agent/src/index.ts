@@ -1,9 +1,10 @@
-import { concierge, agentReply, createAgent } from "@xmtp/message-kit";
+import { agentReply, createAgent } from "@xmtp/message-kit";
 import { degen } from "./vibes/degen.js";
 import { registerEmployees } from "./skills/register.js";
 import { removeEmployee } from "./skills/remove.js";
 import { Payroll } from "./plugins/payroll.js";
 import { listEmployees } from "./skills/list.js";
+import { concierge } from "./skills/concierge.js";
 
 let processor: Payroll | null = null;
 

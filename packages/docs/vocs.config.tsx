@@ -77,91 +77,30 @@ export default defineConfig({
   },
   sidebar: [
     {
-      text: "CLI",
-      link: "/cli",
+      text: "Library",
+      link: "/xmtp/library",
     },
     {
-      text: "paymentagent.eth",
-      link: "/templates/paymentagent",
-    },
-    {
-      text: "Community",
+      text: "Examples",
+      link: "/examples",
       items: [
         {
-          text: "Skills",
-          link: "/community/skills",
-        },
-        {
-          text: "Plugins",
-          link: "/community/plugins",
-        },
-        {
-          text: "Templates",
-          link: "/community/templates",
-        },
-        {
-          text: "Vibes",
-          link: "/community/vibes",
-        },
-        {
-          text: "Projects",
-          link: "/community/projects",
-        },
-      ],
-    },
-    {
-      text: "Framework",
-      items: [
-        {
-          text: "Overview",
-          link: "/framework/overview",
-        },
-        {
-          text: "Skills",
-          link: "/framework/skills",
-        },
-        {
-          text: "Deployment",
-          link: "/framework/deployment",
-        },
-        {
-          text: "Contribute",
-          link: "/framework/contribute",
-        },
-        {
-          text: "Changelog",
-          link: "/framework/changelog",
-        },
-      ],
-    },
-    {
-      text: "XMTP",
-      items: [
-        {
-          text: "Protocol",
-          link: "/xmtp/protocol",
-        },
-        {
-          text: "Library",
-          link: "/xmtp/library",
-        },
-        {
-          text: "Groups",
-          link: "/xmtp/groups",
-        },
-        {
-          text: "Identity",
-          link: "/xmtp/identity",
+          text: "Resolver",
+          link: "/xmtp/examples/resolver",
         },
         {
           text: "Gated group",
-          link: "/xmtp/gated-group",
+          link: "/xmtp/examples/gated-group",
         },
         {
-          text: "Guidelines",
-          link: "/xmtp/guidelines",
+          text: "Deployment",
+          link: "/xmtp/examples/deployment",
         },
       ],
+    },
+    {
+      text: "Changelog",
+      link: "/changelog",
     },
   ],
 });
