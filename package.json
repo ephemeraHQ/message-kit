@@ -6,13 +6,15 @@
   "workspaces": [
     "templates/*",
     "packages/*",
+    "recipes/*",
     "shared/*"
   ],
   "scripts": {
-    "build": "yarn build:message-kit && yarn build:packages && yarn build:templates",
+    "build": "yarn build:message-kit && yarn build:packages && yarn build:templates && yarn build:recipes",
     "build:agent-starter": "turbo run build --filter=./packages/agent-starter --force",
     "build:message-kit": "turbo run build --filter=./packages/message-kit --force",
     "build:packages": "turbo run build --filter='./packages/*' --filter='!./packages/message-kit'",
+    "build:recipes": "turbo run build --filter='./recipes/*'",
     "build:templates": "turbo run build --filter='./templates/*'",
     "bump": "node scripts/update-version.js -t patch",
     "changeset": "yarn copy && changeset add --type patch",
@@ -23,7 +25,7 @@
     "docs": "cd packages/docs && yarn dev",
     "domain": "ngrok http --hostname=frames.ngrok.app 3000",
     "format": "turbo run format",
-    "gated": "yarn build:agent-starter && cd packages/gated-group && yarn dev",
+    "gated": "yarn build:agent-starter && cd recipes/gated-group && yarn dev",
     "links": " cd packages/base-links && yarn dev",
     "play": "cd templates/playground && yarn dev",
     "publish": "yarn install && yarn build && yarn copy && node scripts/publish.js",
