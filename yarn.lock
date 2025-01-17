@@ -6294,9 +6294,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"gated-group@workspace:recipes/gated-group":
+"gated-group@workspace:packages/gated-group":
   version: 0.0.0-use.local
-  resolution: "gated-group@workspace:recipes/gated-group"
+  resolution: "gated-group@workspace:packages/gated-group"
   dependencies:
     "@types/express": "npm:^4.17.20"
     "@types/node": "npm:^20.14.2"
