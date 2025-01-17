@@ -110,14 +110,6 @@ export default defineConfig({
       ],
     },
     {
-      text: "Agent starter",
-      link: "/xmtp/agent-starter",
-    },
-    {
-      text: "Resolver",
-      link: "/xmtp/resolver",
-    },
-    {
       text: "Deployment",
       link: "/framework/deployment",
     },
