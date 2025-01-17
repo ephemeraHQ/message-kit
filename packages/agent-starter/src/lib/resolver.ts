@@ -243,7 +243,7 @@ export async function getEvmAddressFromHeaderTag(
 
     for (let i = 0; i < metaTags.length; i++) {
       const metaTag = metaTags[i];
-      if (metaTag.getAttribute("name") === "xmtp") {
+      if (metaTag.getAttribute("name") === "@xmtp/agent-starter") {
         const content = metaTag.getAttribute("content");
         if (content) {
           const match = content.match(/^0x[a-fA-F0-9]+$/);

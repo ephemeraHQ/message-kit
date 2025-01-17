@@ -1,8 +1,4 @@
 {
-  "include": [
-    "src/**/*",
-    "rollup.config.js",
-    "../../templates/paymentagent/src/skills/concierge.ts"
-  ],
+  "include": ["src/**/*", "rollup.config.js"],
   "extends": "@xmtp/tsconfig/base.json"
 }

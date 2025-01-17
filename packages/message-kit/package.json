@@ -39,12 +39,12 @@
     "@coinbase/cbpay-js": "^2.4.0",
     "@coinbase/coinbase-sdk": "0.11.2",
     "@redis/client": "^1.6.0",
+    "@xmtp/agent-starter": "workspace:*",
     "cross-fetch": "^4.0.0",
     "dotenv": "^16.4.5",
     "openai": "^4.52.7",
     "typescript": "^5.4.5",
-    "viem": "^2.16.3",
-    "xmtp": "0.1.0"
+    "viem": "^2.16.3"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^11.1.6",

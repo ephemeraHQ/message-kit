@@ -1,6 +1,6 @@
-# XMTP
+# Agent starter
 
-This library provides a wrapper around [SDK for Node](https://github.com/xmtp/xmtp-js/tree/main/sdks/node-sdk) to make it easier to use in your agent.
+This library provides a wrapper around [XMTP SDK for Node](https://github.com/xmtp/xmtp-js/tree/main/sdks/node-sdk) to make it easier to use in your agent.
 
 ## Install
 
@@ -15,19 +15,17 @@ These are the steps to initialize the XMTP listener and send messages.
 - `ENCRYPTION_KEY`: The private key of the wallet that will be used to send or receive messages.
 
 ```tsx
-import { XMTP } from "xmtp";
-
+import { XMTP } from "@xmtp/agent-starter";
 const xmtp = new XMTP(onMessage, {
   encryptionKey: ENCRYPTION_KEY,
 });
-
 await xmtp.init();
 
 const onMessage = async (message, user) => {
   console.log(`Decoded message: ${message.content.text} by ${user.address}`);
 
   // Your AI model response
-  const response = "Hello from AI!";
+  const response = await api("Hi, how are you?");
 
   //Send text message
   await xmtp.send({

@@ -1,5 +1,5 @@
 import { Context, Skill } from "@xmtp/message-kit";
-import { getUserInfo } from "xmtp";
+import { getUserInfo } from "@xmtp/agent-starter";
 
 const ensUrl = "https://app.ens.domains/";
 

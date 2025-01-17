@@ -1,5 +1,5 @@
 import { Agent, Skill, SkillHandler } from "./types.js";
-import { getUserInfo, type UserInfo } from "xmtp";
+import { getUserInfo, type UserInfo } from "@xmtp/agent-starter";
 import { type Context } from "../lib/core.js";
 import { logMessage } from "./utils.js";
 

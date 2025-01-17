@@ -1,6 +1,6 @@
 import { describe, test, expect } from "vitest";
 import { generatePrivateKey } from "viem/accounts";
-import { XMTP, createUser } from "xmtp";
+import { XMTP, createUser } from "@xmtp/agent-starter";
 
 describe("Client Private Key Configuration Tests", () => {
   test("creates a client with a random generated key", async () => {
@@ -10,9 +10,9 @@ describe("Client Private Key Configuration Tests", () => {
   }, 25000); // Added 15 second timeout
 
   test("creates a client with a provided private key", async () => {
-    const privateKey = generatePrivateKey();
+    const encryptionKey = generatePrivateKey();
     const xmtp = new XMTP(undefined, {
-      privateKey,
+      encryptionKey,
     });
     await xmtp.init();
     expect(xmtp?.inboxId).toBeDefined();
@@ -22,7 +22,7 @@ describe("Client Private Key Configuration Tests", () => {
     const invalidKey = "invalid_key";
 
     const xmtp = new XMTP(undefined, {
-      privateKey: invalidKey,
+      encryptionKey: invalidKey,
     });
     await xmtp.init();
 

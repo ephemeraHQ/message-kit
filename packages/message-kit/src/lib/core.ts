@@ -1,8 +1,8 @@
 import { Agent, SkillResponse } from "../helpers/types.js";
 import { agentReply, chatMemory, defaultSystemPrompt } from "./gpt.js";
-import { getUserInfo, userInfoCache } from "xmtp";
+import { getUserInfo, userInfoCache } from "@xmtp/agent-starter";
 import { logInitMessage, logMessage } from "../helpers/utils.js";
-import { Message, XMTP, Conversation, userMessage } from "xmtp";
+import { Message, XMTP, Conversation, userMessage } from "@xmtp/agent-starter";
 
 import { WalletService as CdpWalletService } from "../plugins/cdp.js";
 import { WalletService as CircleWalletService } from "../plugins/circle.js";
@@ -90,7 +90,15 @@ export class MessageKit implements Context {
 
   async run(): Promise<void> {
     // Initialize the clients
-    this.xmtp = new XMTP(this.handleMessage, this.agent.config?.client);
+    let agent = {
+      ...this.agent,
+      encryptionKey: process.env.ENCRYPTION_KEY as string,
+      onMessage: this.handleMessage,
+      config: {
+        hideInitLogMessage: true,
+      },
+    };
+    this.xmtp = new XMTP(agent);
     await this.xmtp.init();
     // Store the GPT model in process.env for global access
     process.env.GPT_MODEL = this.agent.config?.gptModel || "gpt-4o";
@@ -184,7 +192,7 @@ export class MessageKit implements Context {
       return undefined;
     }
   }
-  handleMessage = async (message: Message | undefined) => {
+  handleMessage = async (message: Message) => {
     try {
       if (!message) {
         console.warn("Received undefined message");

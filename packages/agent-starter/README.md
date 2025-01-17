@@ -39,7 +39,7 @@ yarn add xmtp
 This is how you can use the `xmtp` package to create a client and handle messages.
 
 ```tsx
-import { XMTP } from "xmtp";
+import { XMTP } from "@xmtp/agent-starter";
 
 const xmtp = new XMTP(onMessage, {
   encryptionKey: process.env.ENCRYPTION_KERY,

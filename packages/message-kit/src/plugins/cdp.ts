@@ -6,20 +6,20 @@ import {
   Trade,
 } from "@coinbase/coinbase-sdk";
 import { keccak256, toHex, toBytes } from "viem";
-import { getUserInfo } from "xmtp";
+import { getUserInfo } from "@xmtp/agent-starter";
 import { isAddress } from "viem";
 import { generateOnRampURL } from "@coinbase/cbpay-js";
 import { LocalStorage } from "./storage";
 
 const appId = process.env.COINBASE_APP_ID;
 const apiKeyName = process.env.COINBASE_API_KEY_NAME;
-const privateKey = process.env.COINBASE_API_KEY_PRIVATE_KEY;
+const encryptionKey = process.env.COINBASE_API_KEY_PRIVATE_KEY;
 
 const coinbase =
-  apiKeyName && privateKey
+  apiKeyName && encryptionKey
     ? new Coinbase({
         apiKeyName,
-        privateKey,
+        privateKey: encryptionKey,
       })
     : undefined;
 

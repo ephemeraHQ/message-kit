@@ -21,7 +21,7 @@ const erc20Abi = [
 export class USDCWallet {
   walletDir: string;
   senderAddress: string;
-  privateKey: string;
+  encryptionKey: string;
   agentAddress: string;
   usdcContract: ethers.Contract;
   wallet: ethers.Wallet;
@@ -38,16 +38,16 @@ export class USDCWallet {
 
     if (fs.existsSync(walletFilePath)) {
       const walletData = fs.readFileSync(walletFilePath, "utf8");
-      this.privateKey = walletData.match(/KEY=(.+)/)?.[1]?.trim() ?? "";
+      this.encryptionKey = walletData.match(/KEY=(.+)/)?.[1]?.trim() ?? "";
     } else {
-      this.privateKey = generatePrivateKey();
-      let usdcWallet = new ethers.Wallet(this.privateKey, provider);
-      const walletData = `KEY=${this.privateKey}\nADDRESS=${usdcWallet.address}`;
+      this.encryptionKey = generatePrivateKey();
+      let usdcWallet = new ethers.Wallet(this.encryptionKey, provider);
+      const walletData = `KEY=${this.encryptionKey}\nADDRESS=${usdcWallet.address}`;
       fs.writeFileSync(walletFilePath, walletData);
     }
 
     // Initialize wallet and USDC contract
-    this.wallet = new ethers.Wallet(this.privateKey, provider);
+    this.wallet = new ethers.Wallet(this.encryptionKey, provider);
     this.agentAddress = this.wallet.address;
     this.usdcContract = new ethers.Contract(usdcAddress, erc20Abi, this.wallet);
   }

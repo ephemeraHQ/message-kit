@@ -3,7 +3,7 @@ dotenv.config({ override: true });
 import OpenAI from "openai";
 import { getFS } from "../helpers/utils";
 import type { Context } from "./core";
-import { getUserInfo } from "xmtp";
+import { getUserInfo } from "@xmtp/agent-starter";
 import type { Agent } from "../helpers/types";
 import { replaceSkills } from "../helpers/skills";
 

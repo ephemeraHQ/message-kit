@@ -1,6 +1,6 @@
 import { vi } from "vitest";
 import { Agent } from "../src/helpers/types";
-import { Message, Conversation, User } from "xmtp";
+import { Message, Conversation, User } from "@xmtp/agent-starter";
 
 // Define mocks at the top level
 const mockConversation: Conversation = {

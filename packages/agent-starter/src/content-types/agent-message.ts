@@ -7,7 +7,7 @@ import type {
 // Create a unique identifier for your content type
 export const ContentTypeAgentMessage = new ContentTypeId({
   authorityId: "xmtp.org",
-  typeId: "agent-message",
+  typeId: "agent_message",
   versionMajor: 1,
   versionMinor: 0,
 });

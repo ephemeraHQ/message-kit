@@ -1768,65 +1768,65 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@next/env@npm:15.1.4":
-  version: 15.1.4
-  resolution: "@next/env@npm:15.1.4"
-  checksum: 10/b93e08227566191f0dff25f0a00bc6437e3be91afe12c371d3dcee5e4e1c2df41f51413d18068d2026b3b06b2f5586a5cb636a83bb9b78bf2e8fc8019747cfe8
+"@next/env@npm:15.1.5":
+  version: 15.1.5
+  resolution: "@next/env@npm:15.1.5"
+  checksum: 10/0dfc9eec15fcf3cfe4ee1398f1d2bee82de539b16ce16c3890fcc9795a155e77abbe73ff7c0bc98a345093cb99582ab506a6f0b4bbb33d682269121c1fa6f155
   languageName: node
   linkType: hard
 
-"@next/swc-darwin-arm64@npm:15.1.4":
-  version: 15.1.4
-  resolution: "@next/swc-darwin-arm64@npm:15.1.4"
+"@next/swc-darwin-arm64@npm:15.1.5":
+  version: 15.1.5
+  resolution: "@next/swc-darwin-arm64@npm:15.1.5"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@next/swc-darwin-x64@npm:15.1.4":
-  version: 15.1.4
-  resolution: "@next/swc-darwin-x64@npm:15.1.4"
+"@next/swc-darwin-x64@npm:15.1.5":
+  version: 15.1.5
+  resolution: "@next/swc-darwin-x64@npm:15.1.5"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@next/swc-linux-arm64-gnu@npm:15.1.4":
-  version: 15.1.4
-  resolution: "@next/swc-linux-arm64-gnu@npm:15.1.4"
+"@next/swc-linux-arm64-gnu@npm:15.1.5":
+  version: 15.1.5
+  resolution: "@next/swc-linux-arm64-gnu@npm:15.1.5"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@next/swc-linux-arm64-musl@npm:15.1.4":
-  version: 15.1.4
-  resolution: "@next/swc-linux-arm64-musl@npm:15.1.4"
+"@next/swc-linux-arm64-musl@npm:15.1.5":
+  version: 15.1.5
+  resolution: "@next/swc-linux-arm64-musl@npm:15.1.5"
   conditions: os=linux & cpu=arm64 & libc=musl
   languageName: node
   linkType: hard
 
-"@next/swc-linux-x64-gnu@npm:15.1.4":
-  version: 15.1.4
-  resolution: "@next/swc-linux-x64-gnu@npm:15.1.4"
+"@next/swc-linux-x64-gnu@npm:15.1.5":
+  version: 15.1.5
+  resolution: "@next/swc-linux-x64-gnu@npm:15.1.5"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@next/swc-linux-x64-musl@npm:15.1.4":
-  version: 15.1.4
-  resolution: "@next/swc-linux-x64-musl@npm:15.1.4"
+"@next/swc-linux-x64-musl@npm:15.1.5":
+  version: 15.1.5
+  resolution: "@next/swc-linux-x64-musl@npm:15.1.5"
   conditions: os=linux & cpu=x64 & libc=musl
   languageName: node
   linkType: hard
 
-"@next/swc-win32-arm64-msvc@npm:15.1.4":
-  version: 15.1.4
-  resolution: "@next/swc-win32-arm64-msvc@npm:15.1.4"
+"@next/swc-win32-arm64-msvc@npm:15.1.5":
+  version: 15.1.5
+  resolution: "@next/swc-win32-arm64-msvc@npm:15.1.5"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"@next/swc-win32-x64-msvc@npm:15.1.4":
-  version: 15.1.4
-  resolution: "@next/swc-win32-x64-msvc@npm:15.1.4"
+"@next/swc-win32-x64-msvc@npm:15.1.5":
+  version: 15.1.5
+  resolution: "@next/swc-win32-x64-msvc@npm:15.1.5"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
@@ -3246,9 +3246,9 @@ __metadata:
   linkType: hard
 
 "@types/ms@npm:*":
-  version: 0.7.34
-  resolution: "@types/ms@npm:0.7.34"
-  checksum: 10/f38d36e7b6edecd9badc9cf50474159e9da5fa6965a75186cceaf883278611b9df6669dc3a3cc122b7938d317b68a9e3d573d316fcb35d1be47ec9e468c6bd8a
+  version: 2.1.0
+  resolution: "@types/ms@npm:2.1.0"
+  checksum: 10/532d2ebb91937ccc4a89389715e5b47d4c66e708d15942fe6cc25add6dc37b2be058230a327dd50f43f89b8b6d5d52b74685a9e8f70516edfc9bdd6be910eff4
   languageName: node
   linkType: hard
 
@@ -3623,6 +3623,36 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@xmtp/agent-starter@workspace:*, @xmtp/agent-starter@workspace:packages/agent-starter":
+  version: 0.0.0-use.local
+  resolution: "@xmtp/agent-starter@workspace:packages/agent-starter"
+  dependencies:
+    "@changesets/changelog-git": "npm:^0.2.0"
+    "@changesets/cli": "npm:^2.27.5"
+    "@rollup/plugin-typescript": "npm:^11.1.6"
+    "@types/jsdom": "npm:^21.1.7"
+    "@types/node": "npm:^20.14.2"
+    "@vitest/coverage-v8": "npm:^2.1.4"
+    "@xmtp/content-type-primitives": "npm:^2.0.0"
+    "@xmtp/content-type-reaction": "npm:^2.0.0"
+    "@xmtp/content-type-read-receipt": "npm:^2.0.0"
+    "@xmtp/content-type-remote-attachment": "npm:^2.0.0"
+    "@xmtp/content-type-reply": "npm:^2.0.0"
+    "@xmtp/content-type-text": "npm:^2.0.0"
+    "@xmtp/node-sdk": "npm:^0.0.38"
+    dotenv: "npm:^16.4.5"
+    jsdom: "npm:^26.0.0"
+    prettier: "npm:^3.3.1"
+    rollup: "npm:^4.18.0"
+    rollup-plugin-dts: "npm:^6.1.1"
+    ts-node: "npm:^10.9.2"
+    turbo: "npm:^2.2.3"
+    typescript: "npm:^5.4.5"
+    viem: "npm:^2.16.3"
+    vitest: "npm:^2.1.4"
+  languageName: unknown
+  linkType: soft
+
 "@xmtp/content-type-group-updated@npm:^2.0.0":
   version: 2.0.0
   resolution: "@xmtp/content-type-group-updated@npm:2.0.0"
@@ -3701,6 +3731,7 @@ __metadata:
     "@rollup/plugin-typescript": "npm:^11.1.6"
     "@types/node": "npm:^20.14.2"
     "@vitest/coverage-v8": "npm:^2.1.4"
+    "@xmtp/agent-starter": "workspace:*"
     cross-fetch: "npm:^4.0.0"
     dotenv: "npm:^16.4.5"
     openai: "npm:^4.52.7"
@@ -3712,7 +3743,6 @@ __metadata:
     typescript: "npm:^5.4.5"
     viem: "npm:^2.16.3"
     vitest: "npm:^2.1.4"
-    xmtp: "npm:0.1.0"
   peerDependencies:
     "@circle-fin/developer-controlled-wallets": ^6.0.0
     "@coinbase/cbpay-js": ^2.4.0
@@ -3881,8 +3911,8 @@ __metadata:
   linkType: hard
 
 "alchemy-sdk@npm:^3.0.0":
-  version: 3.5.0
-  resolution: "alchemy-sdk@npm:3.5.0"
+  version: 3.5.1
+  resolution: "alchemy-sdk@npm:3.5.1"
   dependencies:
     "@ethersproject/abi": "npm:^5.7.0"
     "@ethersproject/abstract-provider": "npm:^5.7.0"
@@ -3898,7 +3928,7 @@ __metadata:
     axios: "npm:^1.7.4"
     sturdy-websocket: "npm:^0.2.1"
     websocket: "npm:^1.0.34"
-  checksum: 10/551e1a2824abed3d28e5e7f964628b72a07546cd6968efedba1d71d12786d38f1dc092caebb29ca125e129f40eeaafa096304b37cab13d3e465aa5842222096f
+  checksum: 10/315a860a2c7b121807eedad749c5cc6f5961d10c6d68bdf1f8398d46f89835d146befef2741eb2a1ab916b6051acc9f17d53d4df76b2f62a9f3dd144d9775603
   languageName: node
   linkType: hard
 
@@ -6033,14 +6063,14 @@ __metadata:
   linkType: hard
 
 "fdir@npm:^6.4.2":
-  version: 6.4.2
-  resolution: "fdir@npm:6.4.2"
+  version: 6.4.3
+  resolution: "fdir@npm:6.4.3"
   peerDependencies:
     picomatch: ^3 || ^4
   peerDependenciesMeta:
     picomatch:
       optional: true
-  checksum: 10/5ff80d1d2034e75cc68be175401c9f64c4938a6b2c1e9a0c27f2d211ffbe491fd86d29e4576825d9da8aff9bd465f0283427c2dddc11653457906c46d3bbc448
+  checksum: 10/8e6d20f4590dc168de1374a9cadaa37e20ca6e0b822aa247c230e7ea1d9e9674a68cd816146435e4ecc98f9285091462ab7e5e56eebc9510931a1794e4db68b2
   languageName: node
   linkType: hard
 
@@ -6251,14 +6281,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"gated-group@workspace:templates/gated-group":
+"gated-group-template@workspace:templates/gated-group":
   version: 0.0.0-use.local
-  resolution: "gated-group@workspace:templates/gated-group"
+  resolution: "gated-group-template@workspace:templates/gated-group"
   dependencies:
     "@types/express": "npm:^4.17.20"
     "@types/node": "npm:^20.14.2"
     "@xmtp/message-kit": "workspace:*"
     alchemy-sdk: "npm:^3.0.0"
+    express: "npm:^4.19.2"
+    typescript: "npm:^5.4.5"
+  languageName: unknown
+  linkType: soft
+
+"gated-group@workspace:packages/gated-group":
+  version: 0.0.0-use.local
+  resolution: "gated-group@workspace:packages/gated-group"
+  dependencies:
+    "@types/express": "npm:^4.17.20"
+    "@types/node": "npm:^20.14.2"
+    "@xmtp/agent-starter": "workspace:*"
     express: "npm:^4.19.2"
     typescript: "npm:^5.4.5"
   languageName: unknown
@@ -7827,6 +7869,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"message-kit@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "message-kit@workspace:."
+  dependencies:
+    "@changesets/changelog-git": "npm:^0.2.0"
+    "@changesets/cli": "npm:^2.27.5"
+    prettier: "npm:^3.3.1"
+    prettier-plugin-packagejson: "npm:^2.5.0"
+    punycode: "npm:^2.3.1"
+    readline-sync: "npm:^1.4.10"
+    turbo: "npm:^1.13.4"
+    typescript: "npm:^5.4.5"
+  languageName: unknown
+  linkType: soft
+
 "methods@npm:~1.1.2":
   version: 1.1.2
   resolution: "methods@npm:1.1.2"
@@ -8570,18 +8627,18 @@ __metadata:
   linkType: hard
 
 "next@npm:*, next@npm:^15.0.3":
-  version: 15.1.4
-  resolution: "next@npm:15.1.4"
+  version: 15.1.5
+  resolution: "next@npm:15.1.5"
   dependencies:
-    "@next/env": "npm:15.1.4"
-    "@next/swc-darwin-arm64": "npm:15.1.4"
-    "@next/swc-darwin-x64": "npm:15.1.4"
-    "@next/swc-linux-arm64-gnu": "npm:15.1.4"
-    "@next/swc-linux-arm64-musl": "npm:15.1.4"
-    "@next/swc-linux-x64-gnu": "npm:15.1.4"
-    "@next/swc-linux-x64-musl": "npm:15.1.4"
-    "@next/swc-win32-arm64-msvc": "npm:15.1.4"
-    "@next/swc-win32-x64-msvc": "npm:15.1.4"
+    "@next/env": "npm:15.1.5"
+    "@next/swc-darwin-arm64": "npm:15.1.5"
+    "@next/swc-darwin-x64": "npm:15.1.5"
+    "@next/swc-linux-arm64-gnu": "npm:15.1.5"
+    "@next/swc-linux-arm64-musl": "npm:15.1.5"
+    "@next/swc-linux-x64-gnu": "npm:15.1.5"
+    "@next/swc-linux-x64-musl": "npm:15.1.5"
+    "@next/swc-win32-arm64-msvc": "npm:15.1.5"
+    "@next/swc-win32-x64-msvc": "npm:15.1.5"
     "@swc/counter": "npm:0.1.3"
     "@swc/helpers": "npm:0.5.15"
     busboy: "npm:1.6.0"
@@ -8626,7 +8683,7 @@ __metadata:
       optional: true
   bin:
     next: dist/bin/next
-  checksum: 10/c486ba1b4cae0e11c6ad233d1ec72d0b045be9c9215aaff9f518f4f58a7c47354682f24bf7e7419a892371bc29dd077f8a71ae95e0163ee6d708922b6bcab277
+  checksum: 10/92ef299cfa80210c71ac1d04a886fe0ef6474619f84404746247d39b6ab6e620842b0d83cc154a30a30115f3498b84915b9cb8da4541bbc51738e96c3ccfe8db
   languageName: node
   linkType: hard
 
@@ -8850,19 +8907,19 @@ __metadata:
   linkType: hard
 
 "oniguruma-to-es@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "oniguruma-to-es@npm:2.0.0"
+  version: 2.1.0
+  resolution: "oniguruma-to-es@npm:2.1.0"
   dependencies:
     emoji-regex-xs: "npm:^1.0.0"
     regex: "npm:^5.1.1"
     regex-recursion: "npm:^5.1.1"
-  checksum: 10/b22ef1342c7bf8d7049e21cb6d2ecf7840d446b4f05b9cdbef6706a1f4215cbbca6a7a0d969c2e82a4db0f0ddfb2a4b2c3db24e808a5a360246645164e022396
+  checksum: 10/8cfe3d462375cebacd914759eef84d8a3b182628d9ade5a0f0846866c269f82b2ef30f89415e244fae4c32562e92a834c7a8b1dd8a42aa40969e0b86381354c0
   languageName: node
   linkType: hard
 
 "openai@npm:^4.52.7":
-  version: 4.78.1
-  resolution: "openai@npm:4.78.1"
+  version: 4.79.0
+  resolution: "openai@npm:4.79.0"
   dependencies:
     "@types/node": "npm:^18.11.18"
     "@types/node-fetch": "npm:^2.6.4"
@@ -8872,13 +8929,16 @@ __metadata:
     formdata-node: "npm:^4.3.2"
     node-fetch: "npm:^2.6.7"
   peerDependencies:
+    ws: ^8.18.0
     zod: ^3.23.8
   peerDependenciesMeta:
+    ws:
+      optional: true
     zod:
       optional: true
   bin:
     openai: bin/cli
-  checksum: 10/dd0fa54d693fabb802070dbd5096fb8d537b0be60fea55cf8a10f06e52bd2beeb3d9d8a2e103b37ac38966e71ac14ac3fbea0dc036ac56d815910ac0cc83b411
+  checksum: 10/8d2933e6f595428dab18176481068d866b88923bf8b1b7d3bcc0e6fda2b51d72410cd9f87c7dbea31e35b5af8b61a5f52870dc9469296d78e2561c0b57a64eb6
   languageName: node
   linkType: hard
 
@@ -9166,9 +9226,9 @@ __metadata:
   linkType: hard
 
 "pathe@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "pathe@npm:2.0.1"
-  checksum: 10/f6b628b28b228a1960b30c969d8cdc989c0f7041af3904ce794f050b60846c6b599e72e6a491012b4f414c3c441a9adfc1be66ad5d51633ae42793d29e2f03d5
+  version: 2.0.2
+  resolution: "pathe@npm:2.0.2"
+  checksum: 10/027dd246720ec6d3b5567e2b0201f1a815b6a69f2912a4dcafed59620afc729af15b4aff4bc780504c88d11dfb081c051e37327b928a093e714c3e09bf35aff3
   languageName: node
   linkType: hard
 
@@ -9377,17 +9437,17 @@ __metadata:
   linkType: hard
 
 "prettier-plugin-packagejson@npm:^2.5.0":
-  version: 2.5.7
-  resolution: "prettier-plugin-packagejson@npm:2.5.7"
+  version: 2.5.8
+  resolution: "prettier-plugin-packagejson@npm:2.5.8"
   dependencies:
-    sort-package-json: "npm:2.13.0"
+    sort-package-json: "npm:2.14.0"
     synckit: "npm:0.9.2"
   peerDependencies:
     prettier: ">= 1.16.0"
   peerDependenciesMeta:
     prettier:
       optional: true
-  checksum: 10/eca337657660e706134a1509053c39a88249965ff8ec692074c24ad7c2234b878d48c0ccb803e0827a47e676cbeb5ce7845e21f9fbe2c9bdf12e2565b91d0515
+  checksum: 10/9c5d3c92ac9c873af652636c9007bc368f03c685aba8fef0f1ae41de88235f7acebdee080970f61583639ef89e07391ef01150a30c2d5e5ae615bb507053423a
   languageName: node
   linkType: hard
 
@@ -10618,9 +10678,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sort-package-json@npm:2.13.0":
-  version: 2.13.0
-  resolution: "sort-package-json@npm:2.13.0"
+"sort-package-json@npm:2.14.0":
+  version: 2.14.0
+  resolution: "sort-package-json@npm:2.14.0"
   dependencies:
     detect-indent: "npm:^7.0.1"
     detect-newline: "npm:^4.0.0"
@@ -10632,7 +10692,7 @@ __metadata:
     tinyglobby: "npm:^0.2.9"
   bin:
     sort-package-json: cli.js
-  checksum: 10/06081222ca6a0affddb613d6ee703012aba460b3b41930a229b1ba222f5829fc5dba996b69e229c198164112600455dc3178bbd7819f80c33503dbea61f67fac
+  checksum: 10/f528be0e41840c6fa7f2a8f0d22110f9cc7d43d0cefe69c9f9f7d59e6680097c9839473d24749cfe611613c0cdf67ea9d28b13f97e9b8bcd20eb7be2ed52a214
   languageName: node
   linkType: hard
 
@@ -12202,51 +12262,6 @@ __metadata:
   checksum: 10/4ad5924974efd004a47cce6acf5c0269aee0e62f9a805a426db3337af7bcbd331099df174b024ace4fb18971b8a56de386d2e73a1c4b020e3abd63a4a9b917f1
   languageName: node
   linkType: hard
-
-"xmtp-ai@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "xmtp-ai@workspace:."
-  dependencies:
-    "@changesets/changelog-git": "npm:^0.2.0"
-    "@changesets/cli": "npm:^2.27.5"
-    prettier: "npm:^3.3.1"
-    prettier-plugin-packagejson: "npm:^2.5.0"
-    punycode: "npm:^2.3.1"
-    readline-sync: "npm:^1.4.10"
-    turbo: "npm:^1.13.4"
-    typescript: "npm:^5.4.5"
-  languageName: unknown
-  linkType: soft
-
-"xmtp@npm:0.1.0, xmtp@workspace:packages/xmtp":
-  version: 0.0.0-use.local
-  resolution: "xmtp@workspace:packages/xmtp"
-  dependencies:
-    "@changesets/changelog-git": "npm:^0.2.0"
-    "@changesets/cli": "npm:^2.27.5"
-    "@rollup/plugin-typescript": "npm:^11.1.6"
-    "@types/jsdom": "npm:^21.1.7"
-    "@types/node": "npm:^20.14.2"
-    "@vitest/coverage-v8": "npm:^2.1.4"
-    "@xmtp/content-type-primitives": "npm:^2.0.0"
-    "@xmtp/content-type-reaction": "npm:^2.0.0"
-    "@xmtp/content-type-read-receipt": "npm:^2.0.0"
-    "@xmtp/content-type-remote-attachment": "npm:^2.0.0"
-    "@xmtp/content-type-reply": "npm:^2.0.0"
-    "@xmtp/content-type-text": "npm:^2.0.0"
-    "@xmtp/node-sdk": "npm:^0.0.38"
-    dotenv: "npm:^16.4.5"
-    jsdom: "npm:^26.0.0"
-    prettier: "npm:^3.3.1"
-    rollup: "npm:^4.18.0"
-    rollup-plugin-dts: "npm:^6.1.1"
-    ts-node: "npm:^10.9.2"
-    turbo: "npm:^2.2.3"
-    typescript: "npm:^5.4.5"
-    viem: "npm:^2.16.3"
-    vitest: "npm:^2.1.4"
-  languageName: unknown
-  linkType: soft
 
 "y18n@npm:^4.0.0":
   version: 4.0.3

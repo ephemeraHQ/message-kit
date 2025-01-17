@@ -1,6 +1,8 @@
 import { privateKeyToAccount } from "viem/accounts";
 import { createWalletClient } from "viem";
-import { ClientOptions } from "@xmtp/node-sdk";
+import { ClientOptions, Client } from "@xmtp/node-sdk";
+export type { Client };
+export type { ClientOptions };
 
 export type userMessage = {
   message: string;
@@ -24,9 +26,15 @@ export interface UserReturnType {
 }
 
 export type xmtpConfig = {
-  privateKey?: string;
   path?: string;
+  hideInitLogMessage?: boolean;
 } & ClientOptions;
+
+export type Agent = {
+  encryptionKey: string;
+  onMessage: (message: Message) => Promise<void>;
+  config?: xmtpConfig;
+};
 
 export type Conversation = {
   id: string;

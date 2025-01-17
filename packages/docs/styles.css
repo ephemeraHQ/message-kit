@@ -20,6 +20,20 @@
   top: 0;
 }
 
+.deprecation-notice {
+  background-color: white;
+  padding: 1rem;
+  border-radius: 1rem;
+  border: 1px solid var(--vocs-color_textAccent);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.deprecation-notice strong,
+.deprecation-notice p {
+  color: var(--vocs-color_textAccent);
+}
+
 .custom-homepage-headline-text {
   font-size: 2.5rem;
   font-weight: bold;
@@ -225,7 +239,7 @@
 .vocs_Callout_info .vocs_Paragraph,
 .vocs_Callout_info .vocs_Link,
 .vocs_Callout_info .vocs_ListItem {
-  color: white !important;
+  color: var(--vocs-color_textAccent) !important;
 }
 .dark .custom-homepage-tile:hover {
   border: white 1px solid !important;

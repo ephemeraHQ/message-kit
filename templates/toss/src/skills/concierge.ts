@@ -1,6 +1,6 @@
 import { Transfer } from "@coinbase/coinbase-sdk";
 import { Skill, Context } from "@xmtp/message-kit";
-import { getUserInfo } from "xmtp";
+import { getUserInfo } from "@xmtp/agent-starter";
 import { isAddress } from "viem";
 import { baselinks } from "../plugins/baselinks.js";
 

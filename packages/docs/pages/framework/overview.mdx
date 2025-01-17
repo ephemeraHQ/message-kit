@@ -1,4 +1,4 @@
-import { CustomHomePage } from "../components/CustomHomePage";
+import { CustomHomePage } from "../../components/CustomHomePage";
 
 # Introduction
 
@@ -90,7 +90,7 @@ MessageKit allows agents to interact inside XMTP groups. Make sure you follow th
 You need to **add the agent to the group as a member**.
 :::
 
-### Tag an agent
+## Tag an agent
 
 When a message includes a tag like `@bot`, it will be received by your agent.
 
@@ -126,69 +126,7 @@ export const skills: Skill[] = [
 ];
 ```
 
-### Defining a skill
-
-```tsx
-import { Skill } from "@xmtp/message-kit";
-
-export const checkDomain: Skill[] = [
-  {
-    skill: // name of the skill
-    handler: handler(context)
-    examples: // examples of the skill
-    description: // description of the skill
-    params: {
-      <name>: {
-        default: "" // default value
-        type: "string" | "number" | "username" | "quoted" | "address" | "prompt" | "url"
-        values: ["USDC","ETH"]// accepted values
-        optional: true // if true, the parameter is optional
-        plural: false // if true, the parameter is an array
-      }
-  },
-];
-```
-
-### Handling logic
-
-When a message is send through XMTP to your agent, the `handler` function is triggered. It brings the message with all the context.
-
-{/* prettier-ignore-start */}
-
-```tsx [src/index.ts]
-function handler(context: Context) {
-  const {
-    message: {
-      content: {
-        text,
-        params,
-        attachment,
-        reply,
-        reference,
-        skill,
-        previousMsg,
-      },
-      sender: { address, inboxId, username, ensDomain },
-      sent,
-      typeId,
-    },
-  } = context;
-
-  if (typeId === "text") {
-    // Do something with the text
-  } else if (typeId === "skill") {
-    // Do something with the skill
-    const { address, domain } = params;
-    // Use params
-  } else if (typeId === "reply") {
-    // Do something with the `reply`
-    console.log(reply, previousMsg);
-  } else if (typeId === "attachment") {
-    // Do something with the attachment data url
-    console.log(attachment);
-  }
-}
-```
+Learn more about skills in the [Skills](/framework/skills) section.
 
 ## Plugins
 
@@ -212,6 +150,8 @@ export const getRedisClient = async () => {
 };
 ```
 
+See [Plugins](/community/plugins) for more information.
+
 ## Vibes
 
 Vibes are the personalities of the agent. They are defined in the `src/vibes/your-vibe.ts` file.
@@ -226,3 +166,5 @@ export const chill: Vibe = {
   style: // style of the vibe
 };
 ```
+
+> See [Vibes](/community/vibes) for more information.

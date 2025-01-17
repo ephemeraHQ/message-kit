@@ -77,30 +77,53 @@ export default defineConfig({
   },
   sidebar: [
     {
-      text: "Library",
-      link: "/xmtp/library",
+      text: "Overview",
+      link: "/framework/overview",
+    },
+    {
+      text: "CLI",
+      link: "/cli",
+    },
+    {
+      text: "Community",
+      items: [
+        {
+          text: "Skills",
+          link: "/community/skills",
+        },
+        {
+          text: "Plugins",
+          link: "/community/plugins",
+        },
+        {
+          text: "Templates",
+          link: "/community/templates",
+        },
+        {
+          text: "Vibes",
+          link: "/community/vibes",
+        },
+        {
+          text: "Projects",
+          link: "/community/projects",
+        },
+      ],
+    },
+    {
+      text: "Agent starter",
+      link: "/xmtp/agent-starter",
     },
     {
       text: "Resolver",
       link: "/xmtp/resolver",
     },
     {
-      text: "Examples",
-      link: "/examples",
-      items: [
-        {
-          text: "Gated group",
-          link: "/xmtp/examples/gated-group",
-        },
-        {
-          text: "Railway deployment",
-          link: "/xmtp/examples/railway",
-        },
-        {
-          text: "Replit deployment",
-          link: "/xmtp/examples/replit",
-        },
-      ],
+      text: "Deployment",
+      link: "/framework/deployment",
+    },
+    {
+      text: "Contribute",
+      link: "/framework/contribute",
     },
     {
       text: "Changelog",

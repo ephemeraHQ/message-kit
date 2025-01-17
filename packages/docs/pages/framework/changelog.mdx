@@ -1,21 +1,6 @@
 # Changelog
 
-## XMTP Library
-
-### 0.1.2
-
-- Introduced a new `xmtp` package for XMTP messaging
-
-## Message Kit 1.5.0 deprecation
-
-### 1.5.0
-
-- Deprecated MessageKit framework & CLI in favor of a lower level SDK
-- Introduced a new `xmtp` package for XMTP messaging
-- Introduced a new `resolver` package for resolving identities to EVM addresses
-- Deprecated `base-links` package for generating Coinbase usdc links
-
-### 1.4.0
+## 1.4.0
 
 - **Rebranding**
 
@@ -24,7 +9,8 @@
 
 - **Package Restructuring**
 
-  - Introduced new `xmtp` package
+  - Removed `xmtp`, `xmtp-e2ee`, and `client` packages
+  - Introduced new `agent-sdk` package
   - Consolidated and simplified package structure
 
 - **Documentation Updates**
@@ -45,15 +31,14 @@
   - Removed legacy code and version-specific implementations
 
 - **Performance Improvements**
-
   - Optimized message parsing and routing
   - Improved error handling and logging mechanisms
 
-  ### 1.3.0
+## 1.3.0
 
 - **New Features**
 
-  - Introduced the base-links plugin for secure messaging, including installation instructions and usage examples.
+  - Introduced the Baselinks plugin for secure messaging, including installation instructions and usage examples.
   - Added a new `PaymentFrame` component for processing payments through Coinbase.
   - Added a `ReceiptGenerator` component for generating receipt URLs based on user input.
   - Enhanced documentation for the `paymentagent` with multimedia elements and clearer structure.
@@ -79,10 +64,9 @@
   - Updated CSS styles for various components to enhance visual appeal and consistency.
 
 - **Chores**
-
   - Updated configuration files for various packages to improve build processes and dependency management.
 
-  ### 1.2.35
+## 1.2.35
 
 - **New Features**
 
@@ -102,10 +86,9 @@
   - Enhanced the XMTP plugin documentation to include detailed usage examples and installation steps.
 
 - **Chores**
-
   - Updated versioning scheme across multiple packages to a generic "patch".
 
-  ### 1.2.32
+## 1.2.32
 
 - **New Features**
 
@@ -124,16 +107,15 @@
   - Improved clarity regarding the structure of the `sender` object and updated messaging functionalities.
 
 - **Chores**
-
   - Adjusted import statements and refined method logic across several classes for better functionality.
 
-  ### 1.2.30
+## 1.2.30
 
 - **New Features**
 
   - Introduced a new `Video` component for enhanced documentation presentation.
   - Added a new `XMTP` class for managing conversations and groups using the XMTP protocol.
-  - Enhanced `base-links` functionality for simplified receipt generation and wallet interactions.
+  - Enhanced `baselinks` functionality for simplified receipt generation and wallet interactions.
   - Added a `getWalletCount` method to the `LocalStorage` class for counting wallet files.
   - Implemented a new content type for agent messages, including encoding and decoding logic.
 
@@ -151,13 +133,12 @@
   - Removed outdated references to the XMTP plugin in multiple documentation files.
 
 - **Chores**
-
   - Removed unused imports and simplified user notification messages in the concierge skill.
   - Cleaned up documentation by removing obsolete sections and files.
   - Removed the "Introduction" entry from the sidebar configuration.
-  - Updated URL formats in the base-links documentation for receipts.
+  - Updated URL formats in the baselinks documentation for receipts.
 
-  ### 1.2.29
+## 1.2.29
 
 - **New Features**
 
@@ -170,7 +151,7 @@
 
 - **Documentation Updates**
 
-  - Enhanced clarity and detail in XMTP, base-links, and WalletService documentation.
+  - Enhanced clarity and detail in XMTP, baselinks, and WalletService documentation.
   - Streamlined the quickstart guide with improved section headers and content organization.
   - Removed redundant sections from various documentation files to focus on essential information.
   - Updated the `example_prompt.md` files for various templates to reflect new commands and user context.
@@ -181,17 +162,16 @@
   - Updated user information retrieval methods across multiple skills, ensuring consistency and clarity.
 
 - **Chores**
-
   - Removed unused import statements from community documentation files to streamline code.
 
-  ### 1.2.28
+## 1.2.28
 
 - **New Features**
 
-  - Introduced a new `base-links` plugin for sending frames.
+  - Introduced a new `baselinks` plugin for sending frames.
   - Added a new "Toss" template for a Cointoss bot, expanding user options.
 
-  ### 1.2.27
+## 1.2.27
 
 - **New Features**
 
@@ -215,10 +195,9 @@
   - Streamlined various functions and improved type handling for better clarity and maintainability.
 
 - **Chores**
-
   - Minor updates to configuration files and dependencies to ensure compatibility and stability.
 
-  ### 1.2.26
+## 1.2.26
 
 - **New Features**
 
@@ -240,11 +219,10 @@
   - Corrected typographical errors and improved grammatical accuracy in documentation.
 
 - **Chores**
-
   - Minor formatting adjustments and newlines added in various configuration and package files.
   - Updated links and sidebar entries for improved navigation in the documentation.
 
-  ### 1.2.25
+## 1.2.25
 
 - **New Features**
   - Enhanced error handling and logging for message processing and skills management.
@@ -259,10 +237,9 @@
   - Removed the `skills` property from the `agent` object in multiple templates.
 
 - **Documentation**
-
   - Minor updates to documentation reflecting changes in the handling of the `skills` property.
 
-  ### 1.2.24
+## 1.2.24
 
 - **New Features**
 
@@ -288,15 +265,13 @@
   - Added detailed steps for contributing templates, skills, and plugins.
 
 - **Chores**
-
   - Updated version numbers across multiple package files.
   - Removed unused code and files related to previous functionalities.
   - New testing flow for message-kit on ubuntu-latest
 
-  ### 1.2.21
+## 1.2.21
 
 - **Documentation**
-
   - Enhanced clarity and structure of contribution guidelines for the MessageKit community.
   - Updated community projects section for broader descriptions and corrected inaccuracies in hackathon details.
   - Corrected typographical error in the description of the "Projects" tile on the homepage.
@@ -309,7 +284,7 @@
   - Removed obsolete environment variable declarations from the example files.
   - Added new test scripts for improved testing coverage in the MessageKit package.
 
-  ### 1.2.19
+## 1.2.19
 
 - **New Features**
 
@@ -318,11 +293,10 @@
   - Introduced new commands in the example prompt for retrieving cryptocurrency prices and searching the internet.
 
 - **Documentation**
-
   - Updated version reference in the documentation configuration to match the new release version (1.2.18).
   - Improved clarity and detail in documentation regarding frames and username resolution.
 
-  ### 1.2.18
+## 1.2.18
 
 - **New Features**
 
@@ -345,11 +319,10 @@
   - Enhanced error handling across various functionalities to improve user experience and feedback.
 
 - **Chores**
-
   - Consolidated and organized `.gitignore` entries for better file management.
   - Updated configuration files for improved project structure and clarity.
 
-  ### 1.2.14
+## 1.2.14
 
 - **New Features**
 
@@ -374,18 +347,17 @@
   - Updated README files to provide clearer guidance and links to resources.
 
 - **Chores**
-
   - Renamed and reorganized package names and paths for better alignment with current functionality.
 
-  ### 1.2.11
+## 1.2.11
 
 - Framesv2 integration: Now every agent can have its own landing page for interaction via web and v2 frames via farcaster.
 
-### 1.1.10
+## 1.1.10
 
 - CDP integration: Create agents with CDP SDK for swaps, mints and payments.
 
-### 1.2.9
+## 1.2.9
 
 - **New Features**
 
@@ -395,11 +367,10 @@
   - Introduced the `WalletService` class for managing agent wallets, enabling gasless payments and transfers.
 
 - **Documentation**
-
   - Updated README files and documentation pages to provide clearer instructions and new environment variable requirements, including detailed setup for the USDC and AgentService functionalities.
   - Added a new section in the sidebar for "Agent Wallet" to enhance navigation.
 
-  ### 1.2.8
+## 1.2.8
 
 - **New Features**
 
@@ -430,10 +401,9 @@
   - Minor formatting adjustments in documentation and CSS styles for improved readability and visual consistency.
 
 - **Chores**
-
   - Cleaned up package configurations and scripts for better project management.
 
-  ### 1.1.11
+## 1.1.11
 
 - **New Features**
   - Updated version numbers across multiple packages to `1.1.11`.
@@ -451,7 +421,7 @@
 
 - **Chores** - Removed outdated files and references to improve codebase clarity. - Updated environment variable names for consistency.
 
-### 1.1.10
+## 1.1.10
 
 **Summary of Changes**
 
@@ -477,7 +447,7 @@ The pull request introduces several updates and improvements across multiple fil
 
 Overall, these changes aim to enhance the functionality of GPT-based agents, improve code quality, update documentation for better developer experience, and streamline the project structure.
 
-### 1.1.8
+## 1.1.8
 
 **Summary of Changes**
 
@@ -502,7 +472,7 @@ Overall, these changes aim to enhance the functionality of GPT-based agents, imp
 
 - **Chores** - Removed outdated files and consolidated functionality to improve code organization. - Simplified development setup by removing unnecessary dependencies and replacing `nodemon` with `node --watch`. - Introduced post-install scripts for TypeScript compilation.
 
-### 1.1.5
+## 1.1.5
 
 **Summary of Changes**
 
@@ -521,7 +491,7 @@ Overall, these changes aim to enhance the functionality of GPT-based agents, imp
   - Reasoning: For the agent to understand all context and perform skills autonomously.
 - Resolver: Fetches context from the user like ENS domain or Converse username
 
-### 1.0.0
+## 1.0.0
 
 **Summary of Changes**
 

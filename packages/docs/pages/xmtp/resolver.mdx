@@ -5,7 +5,7 @@ The resolver library provides tools for resolving identities to EVM addresses an
 ## Quick start
 
 ```typescript
-import { getUserInfo } from "xmtp";
+import { getUserInfo } from "@xmtp/agent-starter";
 
 // Because user identifiers come in all shapes and sizes!
 const identifier = "vitalik.eth"; // Could also be "0x123...", "@fabri", or even a website
@@ -31,7 +31,7 @@ console.log(userInfo);
 - **Converse Usernames** : Example: `@fabri`
 - **Inbox ID** : Example: `0x1234...` (Converse inbox ID)
 - **Website Header Tag** : Example: `https://example.com` containing `xmtp=0x1234...`
-- **Website TXT Record** : Example: `meta="xmtp" content="0x1234..."`
+- **Website TXT Record** : Example: `meta="@xmtp/agent-starter" content="0x1234..."`
 
 ### Returned UserInfo
 
@@ -71,7 +71,7 @@ await xmtp.send(textMessage);
 Skip the repeated lookups—use the built-in cache to store user data. Clear it whenever you need a fresh slate:
 
 ```typescript
-import { userInfoCache } from "xmtp";
+import { userInfoCache } from "@xmtp/agent-starter";
 
 // Clear the entire cache:
 userInfoCache.clear();

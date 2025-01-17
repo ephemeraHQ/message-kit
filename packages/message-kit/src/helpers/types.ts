@@ -1,5 +1,5 @@
 import { Context } from "../lib/core.js";
-import { xmtpConfig } from "xmtp";
+import { xmtpConfig } from "@xmtp/agent-starter";
 
 export type SkillResponse = {
   code: number;
@@ -8,6 +8,8 @@ export type SkillResponse = {
 };
 
 export type AgentConfig = {
+  // agent encryption key
+  encryptionKey?: string;
   // client options from XMTP client
   client?: xmtpConfig;
   // if true, the init log message with messagekit logo and stuff will be hidden

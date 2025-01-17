@@ -35,13 +35,7 @@ import { mainnet } from "viem/chains";
 
 import { getRandomValues } from "crypto";
 import path from "path";
-import {
-  xmtpConfig,
-  Message,
-  userMessage,
-  UserReturnType,
-  User,
-} from "./types.js";
+import { Message, userMessage, UserReturnType, User, Agent } from "./types.js";
 import { readFile } from "fs/promises";
 import * as fs from "fs";
 import {
@@ -51,24 +45,28 @@ import {
 } from "./resolver.js";
 import fetch from "node-fetch";
 
+export async function createAgent(agent: Agent): Promise<XMTP> {
+  let xmtp: XMTP | null = null; // Ensure a single instance
+  xmtp = new XMTP(agent);
+  await xmtp.init();
+  return xmtp;
+}
+
 export class XMTP {
   client: Client | undefined;
   address: string | undefined;
   inboxId: string | undefined;
-  onMessage: (message: Message | undefined) => Promise<void> | undefined;
-  config?: xmtpConfig;
+  onMessage: (message: Message) => Promise<void>;
+  agent?: Agent;
 
-  constructor(
-    onMessage?: (message: Message | undefined) => Promise<void> | undefined,
-    config?: xmtpConfig,
-  ) {
-    this.onMessage = onMessage ?? (() => Promise.resolve());
-    this.config = config;
+  constructor(agent?: Agent) {
+    this.onMessage = agent?.onMessage ?? (() => Promise.resolve());
+    this.agent = agent;
   }
 
   async init(): Promise<XMTP> {
     const testKey = await setupTestEncryptionKey();
-    const { key, isRandom } = setupPrivateKey(this.config?.privateKey);
+    const { key, isRandom } = setupPrivateKey(this.agent?.encryptionKey);
     const user = createUser(key);
 
     let env = process.env.XMTP_ENV as XmtpEnv;
@@ -76,7 +74,7 @@ export class XMTP {
 
     let volumePath =
       process.env.RAILWAY_VOLUME_MOUNT_PATH ??
-      this.config?.path ??
+      this.agent?.config?.path ??
       ".data/xmtp";
 
     if (fs && !fs.existsSync(volumePath)) {
@@ -98,7 +96,7 @@ export class XMTP {
     };
 
     // Merge the default configuration with the provided config. Repeated fields in clientConfig will override the default values
-    const finalConfig = { ...defaultConfig, ...this.config };
+    const finalConfig = { ...defaultConfig, ...this.agent?.config };
 
     const client = await Client.create(
       createSigner(user),
@@ -309,7 +307,7 @@ export class XMTP {
   }
 }
 async function streamMessages(
-  onMessage: (message: Message | undefined) => Promise<void> | undefined,
+  onMessage: (message: Message) => Promise<void>,
   client: Client | undefined,
   xmtp: XMTP,
 ) {
@@ -319,13 +317,24 @@ async function streamMessages(
       await client?.conversations.list();
       const stream = await client?.conversations.streamAllMessages();
       if (stream) {
+        if (xmtp.agent?.config?.hideInitLogMessage !== true) {
+          console.log(`XMTP agent initialized on ${xmtp?.address}`);
+          console.log(
+            `Send a message on:\n\t- https://xmtp.chat\n\t- https://converse.xyz/dm/${xmtp?.address}`,
+          );
+          console.log(
+            `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Logging new messages to console ↴`,
+          );
+        }
         for await (const message of stream) {
           let conversation = await xmtp.getConversationFromMessage(message);
           if (message && conversation) {
             try {
               const { senderInboxId, kind } = message as DecodedMessage;
+
               if (
-                // Filter out membership_change messages
+                // Filter out membership_change messages and sent by one
                 senderInboxId?.toLowerCase() ===
                   client?.inboxId.toLowerCase() &&
                 kind !== "membership_change"
