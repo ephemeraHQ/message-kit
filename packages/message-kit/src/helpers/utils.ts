@@ -97,7 +97,7 @@ export async function logInitMessage(
         `\t- ⚠️ Structured logging is set to ${agentConfig.client.structuredLogging}`,
       );
     }
-    if (agentConfig?.client?.encryptionKey) {
+    if (agentConfig?.encryptionKey) {
       console.warn("\t- ⚠️ Private key is set from the code");
     }
     if (agentConfig?.memberChange) {
