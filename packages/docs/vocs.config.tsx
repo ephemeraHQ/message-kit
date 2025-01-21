@@ -10,6 +10,10 @@ export default defineConfig({
         <meta property="og:image" content="https://message-kit.org/hero.jpg" />
         <meta property="fc:frame" content="vNext" />
         <meta property="of:version" content="vNext" />
+        <meta
+          name="xmtp"
+          content="0x93e2fc3e99dfb1238eb9e0ef2580efc5809c7204"
+        />
         <meta property="of:accepts:xmtp" content="vNext" />
         <meta property="of:image" content="https://message-kit.org/hero.jpg" />
         <meta
