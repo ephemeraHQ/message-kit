@@ -59,17 +59,17 @@ export interface AgentWallet {
 
 export class WalletService implements AgentWallet {
   private walletStorage: LocalStorage;
-  private cdpEncriptionKey: string;
+  private cdpEncryptionKey: string;
   private senderAddress: string;
 
   constructor(sender: string) {
     this.walletStorage = new LocalStorage(".data/wallets");
-    this.cdpEncriptionKey = (process.env.KEY as string).toLowerCase();
+    this.cdpEncryptionKey = (process.env.KEY as string).toLowerCase();
     this.senderAddress = sender.toLowerCase();
     console.log(
       "WalletService initialized with sender",
       this.walletStorage,
-      this.cdpEncriptionKey,
+      this.cdpEncryptionKey,
       this.senderAddress,
     );
   }
@@ -79,7 +79,7 @@ export class WalletService implements AgentWallet {
       data = data.toLowerCase();
     }
     const dataString = JSON.stringify(data);
-    const key = keccak256(toHex(this.cdpEncriptionKey));
+    const key = keccak256(toHex(this.cdpEncryptionKey));
     // Simple XOR encryption with the key
     const encrypted = Buffer.from(dataString).map(
       (byte, i) => byte ^ parseInt(key.slice(2 + (i % 64), 4 + (i % 64)), 16),
@@ -91,7 +91,7 @@ export class WalletService implements AgentWallet {
     if (typeof data === "string") {
       data = data.toLowerCase();
     }
-    const key = keccak256(toHex(this.cdpEncriptionKey));
+    const key = keccak256(toHex(this.cdpEncryptionKey));
     const encrypted = toBytes(data);
     const decrypted = encrypted.map(
       (byte, i) => byte ^ parseInt(key.slice(2 + (i % 64), 4 + (i % 64)), 16),
