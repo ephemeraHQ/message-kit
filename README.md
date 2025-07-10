@@ -1,9 +1,11 @@
-# Message Kit
-
 ![Status](https://img.shields.io/badge/Deprecated-brown)
 
 > [!CAUTION]
-> This project has not been maintained since 2024. It has been deprecated in favor of the [xmtp-agents](https://github.com/ephemeraHQ/xmtp-agents) project.
+> This repository is no longer maintained. It has been deprecated in favor of the [xmtp-agent-examples](https://github.com/ephemeraHQ/xmtp-agent-examples) project.
+
+The documentation below is provided for historical reference only.
+
+# Message Kit
 
 A set of tools for AI developers to build on top of [XMTP](https://xmtp.org)
 yarn 
