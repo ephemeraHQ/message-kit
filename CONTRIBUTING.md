@@ -2,4 +2,4 @@
 
 Welcome to the MessageKit community!
 
-- See contibuting in [Docs](https://message-kit.org/contribute)
+- See contributing in [Docs](https://message-kit.org/contribute)
